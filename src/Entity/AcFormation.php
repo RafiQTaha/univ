@@ -15,10 +15,10 @@ class AcFormation
     #[ORM\Column(type: 'integer')]
     private $id;
 
-    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'acFormations')]
+    #[ORM\ManyToOne(targetEntity: User::class)]
     private $user_created;
 
-    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'acFormations')]
+    #[ORM\ManyToOne(targetEntity: User::class)]
     private $user_updated;
 
     #[ORM\ManyToOne(targetEntity: AcEtablissement::class, inversedBy: 'acFormations')]
@@ -48,9 +48,13 @@ class AcFormation
     #[ORM\OneToMany(mappedBy: 'formation', targetEntity: AcPromotion::class)]
     private $acPromotions;
 
+    #[ORM\OneToMany(mappedBy: 'formation', targetEntity: AcAnnee::class)]
+    private $acAnnees;
+
     public function __construct()
     {
         $this->acPromotions = new ArrayCollection();
+        $this->acAnnees = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -202,6 +206,36 @@ class AcFormation
             // set the owning side to null (unless already changed)
             if ($acPromotion->getFormation() === $this) {
                 $acPromotion->setFormation(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|AcAnnee[]
+     */
+    public function getAcAnnees(): Collection
+    {
+        return $this->acAnnees;
+    }
+
+    public function addAcAnnee(AcAnnee $acAnnee): self
+    {
+        if (!$this->acAnnees->contains($acAnnee)) {
+            $this->acAnnees[] = $acAnnee;
+            $acAnnee->setFormation($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAcAnnee(AcAnnee $acAnnee): self
+    {
+        if ($this->acAnnees->removeElement($acAnnee)) {
+            // set the owning side to null (unless already changed)
+            if ($acAnnee->getFormation() === $this) {
+                $acAnnee->setFormation(null);
             }
         }
 

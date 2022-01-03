@@ -15,10 +15,10 @@ class AcModule
     #[ORM\Column(type: 'integer')]
     private $id;
 
-    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'acModules')]
+    #[ORM\ManyToOne(targetEntity: User::class)]
     private $user_created;
 
-    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'acModules')]
+    #[ORM\ManyToOne(targetEntity: User::class)]
     private $user_updated;
 
     #[ORM\ManyToOne(targetEntity: AcSemestre::class, inversedBy: 'acModules')]

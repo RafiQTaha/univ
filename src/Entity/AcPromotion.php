@@ -18,10 +18,10 @@ class AcPromotion
     #[ORM\ManyToOne(targetEntity: AcFormation::class, inversedBy: 'acPromotions')]
     private $formation;
 
-    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'acPromotions')]
+    #[ORM\ManyToOne(targetEntity: User::class)]
     private $user_created;
 
-    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'acPromotions')]
+    #[ORM\ManyToOne(targetEntity: User::class)]
     private $user_updated;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]

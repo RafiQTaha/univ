@@ -15,10 +15,10 @@ class AcEtablissement
     #[ORM\Column(type: 'integer')]
     private $id;
 
-    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'acEtablissements')]
+    #[ORM\ManyToOne(targetEntity: User::class)]
     private $user_created;
 
-    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'acEtablissements')]
+    #[ORM\ManyToOne(targetEntity: User::class)]
     private $user_updated;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
