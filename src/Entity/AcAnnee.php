@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\AcAnneeRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: AcAnneeRepository::class)]
@@ -45,6 +47,18 @@ class AcAnnee
 
     #[ORM\Column(type: 'datetime', nullable: true)]
     private $updated;
+
+    #[ORM\OneToMany(mappedBy: 'annee', targetEntity: TPreinscription::class)]
+    private $preinscriptions;
+
+    #[ORM\OneToMany(mappedBy: 'annee', targetEntity: TInscription::class)]
+    private $inscriptions;
+
+    public function __construct()
+    {
+        $this->preinscriptions = new ArrayCollection();
+        $this->inscriptions = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -179,6 +193,66 @@ class AcAnnee
     public function setUpdated(?\DateTimeInterface $updated): self
     {
         $this->updated = $updated;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|TPreinscription[]
+     */
+    public function getPreinscriptions(): Collection
+    {
+        return $this->preinscriptions;
+    }
+
+    public function addPreinscription(TPreinscription $preinscription): self
+    {
+        if (!$this->preinscriptions->contains($preinscription)) {
+            $this->preinscriptions[] = $preinscription;
+            $preinscription->setAnnee($this);
+        }
+
+        return $this;
+    }
+
+    public function removePreinscription(TPreinscription $preinscription): self
+    {
+        if ($this->preinscriptions->removeElement($preinscription)) {
+            // set the owning side to null (unless already changed)
+            if ($preinscription->getAnnee() === $this) {
+                $preinscription->setAnnee(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|TInscription[]
+     */
+    public function getInscriptions(): Collection
+    {
+        return $this->inscriptions;
+    }
+
+    public function addInscription(TInscription $inscription): self
+    {
+        if (!$this->inscriptions->contains($inscription)) {
+            $this->inscriptions[] = $inscription;
+            $inscription->setAnnee($this);
+        }
+
+        return $this;
+    }
+
+    public function removeInscription(TInscription $inscription): self
+    {
+        if ($this->inscriptions->removeElement($inscription)) {
+            // set the owning side to null (unless already changed)
+            if ($inscription->getAnnee() === $this) {
+                $inscription->setAnnee(null);
+            }
+        }
 
         return $this;
     }

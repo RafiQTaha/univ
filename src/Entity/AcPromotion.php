@@ -45,9 +45,13 @@ class AcPromotion
     #[ORM\OneToMany(mappedBy: 'promotion', targetEntity: AcSemestre::class)]
     private $acSemestres;
 
+    #[ORM\OneToMany(mappedBy: 'promotion', targetEntity: TInscription::class)]
+    private $inscriptions;
+
     public function __construct()
     {
         $this->acSemestres = new ArrayCollection();
+        $this->inscriptions = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -187,6 +191,36 @@ class AcPromotion
             // set the owning side to null (unless already changed)
             if ($acSemestre->getPromotion() === $this) {
                 $acSemestre->setPromotion(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|TInscription[]
+     */
+    public function getInscriptions(): Collection
+    {
+        return $this->inscriptions;
+    }
+
+    public function addInscription(TInscription $inscription): self
+    {
+        if (!$this->inscriptions->contains($inscription)) {
+            $this->inscriptions[] = $inscription;
+            $inscription->setPromotion($this);
+        }
+
+        return $this;
+    }
+
+    public function removeInscription(TInscription $inscription): self
+    {
+        if ($this->inscriptions->removeElement($inscription)) {
+            // set the owning side to null (unless already changed)
+            if ($inscription->getPromotion() === $this) {
+                $inscription->setPromotion(null);
             }
         }
 

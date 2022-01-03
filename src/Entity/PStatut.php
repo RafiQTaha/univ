@@ -45,12 +45,6 @@ class PStatut
     #[ORM\Column(type: 'integer', nullable: true)]
     private $anuller;
 
-    #[ORM\Column(type: 'integer', nullable: true)]
-    private $exportStudentSpace;
-
-    #[ORM\Column(type: 'integer', nullable: true)]
-    private $exportStage;
-
     #[ORM\OneToMany(mappedBy: 'statut', targetEntity: TEtudiant::class)]
     private $etudiants;
 
@@ -60,11 +54,15 @@ class PStatut
     #[ORM\OneToMany(mappedBy: 'statut', targetEntity: TAdmission::class)]
     private $admissions;
 
+    #[ORM\OneToMany(mappedBy: 'statut', targetEntity: TInscription::class)]
+    private $inscriptions;
+
     public function __construct()
     {
         $this->etudiants = new ArrayCollection();
         $this->preinscriptions = new ArrayCollection();
         $this->admissions = new ArrayCollection();
+        $this->inscriptions = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -192,30 +190,6 @@ class PStatut
         return $this;
     }
 
-    public function getExportStudentSpace(): ?int
-    {
-        return $this->exportStudentSpace;
-    }
-
-    public function setExportStudentSpace(?int $exportStudentSpace): self
-    {
-        $this->exportStudentSpace = $exportStudentSpace;
-
-        return $this;
-    }
-
-    public function getExportStage(): ?int
-    {
-        return $this->exportStage;
-    }
-
-    public function setExportStage(?int $exportStage): self
-    {
-        $this->exportStage = $exportStage;
-
-        return $this;
-    }
-
     /**
      * @return Collection|TEtudiant[]
      */
@@ -300,6 +274,36 @@ class PStatut
             // set the owning side to null (unless already changed)
             if ($admission->getStatut() === $this) {
                 $admission->setStatut(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|TInscription[]
+     */
+    public function getInscriptions(): Collection
+    {
+        return $this->inscriptions;
+    }
+
+    public function addInscription(TInscription $inscription): self
+    {
+        if (!$this->inscriptions->contains($inscription)) {
+            $this->inscriptions[] = $inscription;
+            $inscription->setStatut($this);
+        }
+
+        return $this;
+    }
+
+    public function removeInscription(TInscription $inscription): self
+    {
+        if ($this->inscriptions->removeElement($inscription)) {
+            // set the owning side to null (unless already changed)
+            if ($inscription->getStatut() === $this) {
+                $inscription->setStatut(null);
             }
         }
 
