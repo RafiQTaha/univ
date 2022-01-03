@@ -61,6 +61,9 @@ class TPreinscription
     #[ORM\OneToMany(mappedBy: 'preinscription', targetEntity: TAdmission::class)]
     private $admissions;
 
+    #[ORM\ManyToOne(targetEntity: AcAnnee::class, inversedBy: 'preinscriptions')]
+    private $annee;
+
     public function __construct()
     {
         $this->admissions = new ArrayCollection();
@@ -265,6 +268,18 @@ class TPreinscription
                 $admission->setPreinscription(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getAnnee(): ?AcAnnee
+    {
+        return $this->annee;
+    }
+
+    public function setAnnee(?AcAnnee $annee): self
+    {
+        $this->annee = $annee;
 
         return $this;
     }

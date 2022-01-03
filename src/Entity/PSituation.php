@@ -17,7 +17,7 @@ class PSituation
     private $designation;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private $abrevation;
+    private $abreviation;
 
     public function getId(): ?int
     {
@@ -36,14 +36,14 @@ class PSituation
         return $this;
     }
 
-    public function getAbrevation(): ?string
+    public function getAbreviation(): ?string
     {
         return $this->abrevation;
     }
 
-    public function setAbrevation(?string $abrevation): self
+    public function setAbreviation(?string $abreviation): self
     {
-        $this->abrevation = $abrevation;
+        $this->abreviation = $abreviation;
 
         return $this;
     }

@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\TAdmissionRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: TAdmissionRepository::class)]
@@ -36,6 +38,14 @@ class TAdmission
 
     #[ORM\Column(type: 'datetime', nullable: true)]
     private $updated;
+
+    #[ORM\OneToMany(mappedBy: 'admission', targetEntity: TInscription::class)]
+    private $inscriptions;
+
+    public function __construct()
+    {
+        $this->inscriptions = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -134,6 +144,36 @@ class TAdmission
     public function setUpdated(?\DateTimeInterface $updated): self
     {
         $this->updated = $updated;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|TInscription[]
+     */
+    public function getInscriptions(): Collection
+    {
+        return $this->inscriptions;
+    }
+
+    public function addInscription(TInscription $inscription): self
+    {
+        if (!$this->inscriptions->contains($inscription)) {
+            $this->inscriptions[] = $inscription;
+            $inscription->setAdmission($this);
+        }
+
+        return $this;
+    }
+
+    public function removeInscription(TInscription $inscription): self
+    {
+        if ($this->inscriptions->removeElement($inscription)) {
+            // set the owning side to null (unless already changed)
+            if ($inscription->getAdmission() === $this) {
+                $inscription->setAdmission(null);
+            }
+        }
 
         return $this;
     }

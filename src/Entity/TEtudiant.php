@@ -246,6 +246,9 @@ class TEtudiant
     #[ORM\OneToMany(mappedBy: 'etudiant', targetEntity: TPreinscription::class)]
     private $preinscriptions;
 
+    #[ORM\Column(type: 'smallint', nullable: true)]
+    private $eia;
+
     public function __construct()
     {
         $this->preinscriptions = new ArrayCollection();
@@ -1194,6 +1197,18 @@ class TEtudiant
                 $preinscription->setEtudiant(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getEia(): ?int
+    {
+        return $this->eia;
+    }
+
+    public function setEia(?int $eia): self
+    {
+        $this->eia = $eia;
 
         return $this;
     }
