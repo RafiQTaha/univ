@@ -40,7 +40,7 @@ class AcElement
     #[ORM\Column(type: 'float', nullable: true)]
     private $coefficient;
 
-    #[ORM\Column(type: 'text', nullable: true)]
+    #[ORM\Column(type: 'json', nullable: true)]
     private $coefficient_epreuve;
 
     #[ORM\Column(type: 'integer', nullable: true)]
@@ -169,12 +169,12 @@ class AcElement
         return $this;
     }
 
-    public function getCoefficientEpreuve(): ?string
+    public function getCoefficientEpreuve(): ?array
     {
         return $this->coefficient_epreuve;
     }
 
-    public function setCoefficientEpreuve(?string $coefficient_epreuve): self
+    public function setCoefficientEpreuve(?array $coefficient_epreuve): self
     {
         $this->coefficient_epreuve = $coefficient_epreuve;
 
