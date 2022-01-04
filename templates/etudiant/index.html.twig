@@ -1,0 +1,90 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Univ - Groupe Inscriptions{% endblock %}
+
+{% block body %}
+<div class="main-content">
+    <section class="section">
+        <div class="section-header">
+          <h1>Compte Etudiant</h1>
+          <div class="section-header-breadcrumb">
+              {# <div class="breadcrumb-item active"><a href="#">Dashboard</a></div>
+              <div class="breadcrumb-item"><a href="#">Layout</a></div>
+              <div class="breadcrumb-item">Default Layout</div> #}
+              <button href="#" class="btn btn-primary canvas_grpins ml-1" id="modal_group_ins" data-toggle="modal" data-target="#valider-modal"><i class="fas fa-check"></i>  Valider</button>
+              <button type="button" class="btn btn-success ml-1" id="modal_group_ins" data-toggle="modal" data-target="#importer-modal"><i class="fas fa-file-excel"></i>  Importer Etudiants</button>
+              <button href="#" class="btn btn-primary canvas_grpins ml-1" id="modal_group_ins" data-toggle="modal" data-target="#date-d-appel-modal"><i class="fas fa-phone"></i>  Date dernier appel</button>
+              <button href="#" class="btn btn-primary canvas_grpins ml-1" id="modal_group_ins" data-toggle="modal" data-target="#statut-modal"><i class="far fa-check-square"></i>  Statut</button>
+              <button href="#" class="btn btn-primary canvas_grpins ml-1" id="modal_group_ins" data-toggle="modal" data-target="#releves-notes-modal"><i class="fas fa-copy"></i>  Relevés notes</button>
+              <button href="#" class="btn btn-primary canvas_grpins ml-1" id="modal_group_ins" data-toggle="modal" data-target="#suivi-modal"><i class="fas fa-stream"></i>  Suivi</button>
+              <button href="#" class="btn btn-danger canvas_grpins ml-1" id="modal_group_ins" data-toggle="modal" data-target="#supprimer-modal"><i class="fas fa-trash-alt"></i>  Supprimer</button>
+              <button href="#" class="btn btn-primary canvas_grpins ml-1" id="modal_group_ins" data-toggle="modal" data-target="#modifier-modal"><i class="fas fa-edit"></i>  Modifier</button>
+              <button href="#" class="btn btn-primary canvas_grpins ml-1" id="modal_group_ins" data-toggle="modal" data-target="#ajouter-modal"><i class="fas fa-plus-circle"></i>  Ajouter</button>
+          </div>
+        </div>
+
+        <div class="section-body">
+        <div class="card">
+            <div class="card-header">
+            <h4>Tableau des inscriptions</h4>
+            </div>
+            <div class="card-body">
+            <table id="datables_group_inscription" class="display" style="width:100%">
+                <thead>
+                    <tr>
+                        <th>id</th>
+                        <th>Code</th>
+                        <th>Nom</th>
+                        <th>Prenom</th>
+                        <th>Promotion</th>
+                        <th>Formation</th>
+                        <th>Année</th>
+                        <th>Niv 1</th>
+                        <th>Niv 2</th>
+                        <th>Niv 3</th>
+                        
+                    </tr>
+                </thead>
+                <tbody>
+                    
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <th>id</th>
+                        <th>Code</th>
+                        <th>Nom</th>
+                        <th>Prenom</th>
+                        <th>Promotion</th>
+                        <th>Formation</th>
+                        <th>Année</th>
+                        <th>Niv 1</th>
+                        <th>Niv 2</th>
+                        <th>Niv 3</th>
+                    </tr>
+                </tfoot>
+            </table>
+            </div>
+            
+        </div>
+        </div>
+    </section>
+</div>
+
+
+
+<!--Modal Import Group-->
+{% include 'etudiant/models/valider.html.twig' %}
+{% include 'etudiant/models/importer.html.twig' %}
+{% include 'etudiant/models/date_d_appel.html.twig' %}
+{% include 'etudiant/models/statut.html.twig' %}
+{% include 'etudiant/models/releves_notes.html.twig' %}
+{% include 'etudiant/models/suivi.html.twig' %}
+{% include 'etudiant/models/supprimer.html.twig' %}
+{% include 'etudiant/models/modifier.html.twig' %}
+{% include 'etudiant/models/ajouter.html.twig' %}
+{% endblock %}
+
+{% block javascripts %}
+{{parent()}}
+
+{% endblock %}

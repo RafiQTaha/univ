@@ -8,11 +8,11 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class IndexController extends AbstractController
 {   
-    /**
-     * @Route("/", name="index")
-     */
-    public function index(): Response
-    {
-        return $this->redirectToRoute('app_login');
-    }
+    // /**
+    //  * @Route("/", name="index")
+    //  */
+    // public function index(): Response
+    // {
+    //     return $this->redirectToRoute('app_login');
+    // }
 }
