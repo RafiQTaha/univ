@@ -1,0 +1,75 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello EtudiantController!{% endblock %}
+
+{% block body %}
+<div class="main-content">
+    <section class="section">
+        <div class="section-header">
+        <h1>Import Groupes Inscriptions</h1>
+        <div class="section-header-breadcrumb">
+            {# <div class="breadcrumb-item active"><a href="#">Dashboard</a></div>
+            <div class="breadcrumb-item"><a href="#">Layout</a></div>
+            <div class="breadcrumb-item">Default Layout</div> #}
+            <a href="#" class="btn btn-primary canvas_grpins"><i class="fas fa-file-download "></i>  Canvas</a>
+            <button class="btn btn-success ml-2 " id="modal_group_ins"><i class="fas fa-file-upload"></i>  Import</button>
+        </div>
+        </div>
+
+        <div class="section-body">
+        <div class="card">
+            <div class="card-header">
+            <h4>Tableau des inscriptions</h4>
+            </div>
+            <div class="card-body">
+            <table id="datables_etudiant" class="display" style="width:100%">
+                <thead>
+                    <tr>
+                        <th>id</th>
+                        <th>Code</th>
+                        <th>Nom</th>
+                        <th>Prenom</th>
+                        <th>Categorie</th>
+                        <th>Type de bac</th>
+                        <th>Télé1</th>
+                        <th>Télé2</th>
+                        <th>Valider</th>
+                        <th>Statut</th>
+                        <th>D.import</th>
+                        <th>Rég</th>
+                        
+                    </tr>
+                </thead>
+                <tbody>
+                    
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <th>id</th>
+                        <th>Code</th>
+                        <th>Nom</th>
+                        <th>Prenom</th>
+                        <th>Categorie</th>
+                        <th>Type de bac</th>
+                        <th>Télé1</th>
+                        <th>Télé2</th>
+                        <th>Valider</th>
+                        <th>Statut</th>
+                        <th>D.import</th>
+                        <th>Rég</th>
+                    </tr>
+                </tfoot>
+            </table>
+            </div>
+            
+        </div>
+        </div>
+    </section>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+{{parent()}}
+<script src="/assets/js/etudiant/etudiant.js"></script>
+
+{% endblock %}

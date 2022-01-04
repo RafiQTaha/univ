@@ -21,10 +21,10 @@ class TAdmission
     #[ORM\ManyToOne(targetEntity: TPreinscription::class, inversedBy: 'admissions')]
     private $preinscription;
 
-    #[ORM\ManyToOne(targetEntity: user::class)]
+    #[ORM\ManyToOne(targetEntity: User::class)]
     private $userCreated;
 
-    #[ORM\ManyToOne(targetEntity: user::class)]
+    #[ORM\ManyToOne(targetEntity: User::class)]
     private $userUpdated;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
