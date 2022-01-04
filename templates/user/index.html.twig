@@ -6,14 +6,20 @@
 <div class="main-content">
     <section class="section">
         <div class="section-header">
-        <h1>Import Groupes Inscriptions</h1>
-        <div class="section-header-breadcrumb">
-            {# <div class="breadcrumb-item active"><a href="#">Dashboard</a></div>
-            <div class="breadcrumb-item"><a href="#">Layout</a></div>
-            <div class="breadcrumb-item">Default Layout</div> #}
-            <a href="#" class="btn btn-primary canvas_grpins"><i class="fas fa-file-download "></i>  Canvas</a>
-            <button class="btn btn-success ml-2 " id="modal_group_ins"><i class="fas fa-file-upload"></i>  Import</button>
-        </div>
+          <h1>Import Groupes Inscriptions</h1>
+          <div class="section-header-breadcrumb">
+              {# <div class="breadcrumb-item active"><a href="#">Dashboard</a></div>
+              <div class="breadcrumb-item"><a href="#">Layout</a></div>
+              <div class="breadcrumb-item">Default Layout</div> #}
+              <a href="#" class="btn btn-primary canvas_grpins"><i class="fas fa-file-download "></i>  Canvas</a>
+              <button type="button" class="btn btn-success ml-2 " id="modal_group_ins" data-toggle="modal" data-target="#fire-modal-1"><i class="fas fa-file-upload"></i>  Import</button>
+              <a href="#" class="btn btn-primary canvas_grpins"><i class="fas fa-file-download "></i>  date</a>
+              <a href="#" class="btn btn-primary canvas_grpins"><i class="fas fa-file-download "></i>  statut</a>
+              <a href="#" class="btn btn-primary canvas_grpins"><i class="fas fa-file-download "></i>  Canvas</a>
+              <a href="#" class="btn btn-primary canvas_grpins"><i class="fas fa-file-download "></i>  Canvas</a>
+              <a href="#" class="btn btn-primary canvas_grpins"><i class="fas fa-file-download "></i>  Canvas</a>
+              <a href="#" class="btn btn-primary canvas_grpins"><i class="fas fa-file-download "></i>  Canvas</a>
+          </div>
         </div>
 
         <div class="section-body">
@@ -66,23 +72,13 @@
 
 
 <!--Modal Import Group-->
-<div
-  class="modal"
-  tabindex="-1"
-  role="dialog"
-  id="fire-modal-1"
-  aria-modal="true"
->
+{# {% include 'models.html.twig' %} #}
+<div class="modal" tabindex="-1" role="dialog" id="fire-modal-1" aria-modal="true">
   <div class="modal-dialog modal-md" role="document">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title">Import Group Inscription</h5>
-        <button
-          type="button"
-          class="close"
-          data-dismiss="modal"
-          aria-label="Close"
-        >
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">×</span>
         </button>
       </div>
