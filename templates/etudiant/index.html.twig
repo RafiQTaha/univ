@@ -2,6 +2,7 @@
 
 {% block title %}Univ - Groupe Inscriptions{% endblock %}
 
+
 {% block body %}
 <div class="main-content">
     <section class="section">
@@ -29,6 +30,7 @@
             <h4>Tableau des inscriptions</h4>
             </div>
             <div class="card-body">
+
             <table id="datables_group_inscription" class="display" style="width:100%">
                 <thead>
                     <tr>
@@ -36,12 +38,15 @@
                         <th>Code</th>
                         <th>Nom</th>
                         <th>Prenom</th>
-                        <th>Promotion</th>
-                        <th>Formation</th>
-                        <th>Année</th>
-                        <th>Niv 1</th>
-                        <th>Niv 2</th>
-                        <th>Niv 3</th>
+                        <th>Categorie</th>
+                        <th>Type de bac</th>
+                        <th>Télé1</th>
+                        <th>Télé2</th>
+                        <th>Valider</th>
+                        <th>Statut</th>
+                        <th>D.import</th>
+                        <th>Rég</th>
+
                         
                     </tr>
                 </thead>
@@ -54,12 +59,16 @@
                         <th>Code</th>
                         <th>Nom</th>
                         <th>Prenom</th>
-                        <th>Promotion</th>
-                        <th>Formation</th>
-                        <th>Année</th>
-                        <th>Niv 1</th>
-                        <th>Niv 2</th>
-                        <th>Niv 3</th>
+
+                        <th>Categorie</th>
+                        <th>Type de bac</th>
+                        <th>Télé1</th>
+                        <th>Télé2</th>
+                        <th>Valider</th>
+                        <th>Statut</th>
+                        <th>D.import</th>
+                        <th>Rég</th>
+
                     </tr>
                 </tfoot>
             </table>
@@ -82,9 +91,13 @@
 {% include 'etudiant/models/supprimer.html.twig' %}
 {% include 'etudiant/models/modifier.html.twig' %}
 {% include 'etudiant/models/ajouter.html.twig' %}
+
 {% endblock %}
 
 {% block javascripts %}
 {{parent()}}
 
+<script src="/assets/js/etudiant/etudiant.js"></script>
+
 {% endblock %}
+

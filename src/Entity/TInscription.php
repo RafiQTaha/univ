@@ -28,10 +28,10 @@ class TInscription
     #[ORM\ManyToOne(targetEntity: AcPromotion::class, inversedBy: 'inscriptions')]
     private $promotion;
 
-    #[ORM\ManyToOne(targetEntity: user::class)]
+    #[ORM\ManyToOne(targetEntity: User::class)]
     private $userCreated;
 
-    #[ORM\ManyToOne(targetEntity: user::class)]
+    #[ORM\ManyToOne(targetEntity: User::class)]
     private $userUpdated;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
