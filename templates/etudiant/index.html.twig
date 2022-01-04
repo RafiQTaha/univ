@@ -1,19 +1,27 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello EtudiantController!{% endblock %}
+{% block title %}Univ - Groupe Inscriptions{% endblock %}
+
 
 {% block body %}
 <div class="main-content">
     <section class="section">
         <div class="section-header">
-        <h1>Import Groupes Inscriptions</h1>
-        <div class="section-header-breadcrumb">
-            {# <div class="breadcrumb-item active"><a href="#">Dashboard</a></div>
-            <div class="breadcrumb-item"><a href="#">Layout</a></div>
-            <div class="breadcrumb-item">Default Layout</div> #}
-            <a href="#" class="btn btn-primary canvas_grpins"><i class="fas fa-file-download "></i>  Canvas</a>
-            <button class="btn btn-success ml-2 " id="modal_group_ins"><i class="fas fa-file-upload"></i>  Import</button>
-        </div>
+          <h1>Compte Etudiant</h1>
+          <div class="section-header-breadcrumb">
+              {# <div class="breadcrumb-item active"><a href="#">Dashboard</a></div>
+              <div class="breadcrumb-item"><a href="#">Layout</a></div>
+              <div class="breadcrumb-item">Default Layout</div> #}
+              <button href="#" class="btn btn-primary canvas_grpins ml-1" id="modal_group_ins" data-toggle="modal" data-target="#valider-modal"><i class="fas fa-check"></i>  Valider</button>
+              <button type="button" class="btn btn-success ml-1" id="modal_group_ins" data-toggle="modal" data-target="#importer-modal"><i class="fas fa-file-excel"></i>  Importer Etudiants</button>
+              <button href="#" class="btn btn-primary canvas_grpins ml-1" id="modal_group_ins" data-toggle="modal" data-target="#date-d-appel-modal"><i class="fas fa-phone"></i>  Date dernier appel</button>
+              <button href="#" class="btn btn-primary canvas_grpins ml-1" id="modal_group_ins" data-toggle="modal" data-target="#statut-modal"><i class="far fa-check-square"></i>  Statut</button>
+              <button href="#" class="btn btn-primary canvas_grpins ml-1" id="modal_group_ins" data-toggle="modal" data-target="#releves-notes-modal"><i class="fas fa-copy"></i>  Relevés notes</button>
+              <button href="#" class="btn btn-primary canvas_grpins ml-1" id="modal_group_ins" data-toggle="modal" data-target="#suivi-modal"><i class="fas fa-stream"></i>  Suivi</button>
+              <button href="#" class="btn btn-danger canvas_grpins ml-1" id="modal_group_ins" data-toggle="modal" data-target="#supprimer-modal"><i class="fas fa-trash-alt"></i>  Supprimer</button>
+              <button href="#" class="btn btn-primary canvas_grpins ml-1" id="modal_group_ins" data-toggle="modal" data-target="#modifier-modal"><i class="fas fa-edit"></i>  Modifier</button>
+              <button href="#" class="btn btn-primary canvas_grpins ml-1" id="modal_group_ins" data-toggle="modal" data-target="#ajouter-modal"><i class="fas fa-plus-circle"></i>  Ajouter</button>
+          </div>
         </div>
 
         <div class="section-body">
@@ -22,7 +30,8 @@
             <h4>Tableau des inscriptions</h4>
             </div>
             <div class="card-body">
-            <table id="datables_etudiant" class="display" style="width:100%">
+
+            <table id="datables_group_inscription" class="display" style="width:100%">
                 <thead>
                     <tr>
                         <th>id</th>
@@ -37,6 +46,7 @@
                         <th>Statut</th>
                         <th>D.import</th>
                         <th>Rég</th>
+
                         
                     </tr>
                 </thead>
@@ -49,6 +59,7 @@
                         <th>Code</th>
                         <th>Nom</th>
                         <th>Prenom</th>
+
                         <th>Categorie</th>
                         <th>Type de bac</th>
                         <th>Télé1</th>
@@ -57,6 +68,7 @@
                         <th>Statut</th>
                         <th>D.import</th>
                         <th>Rég</th>
+
                     </tr>
                 </tfoot>
             </table>
@@ -66,10 +78,26 @@
         </div>
     </section>
 </div>
+
+
+
+<!--Modal Import Group-->
+{% include 'etudiant/models/valider.html.twig' %}
+{% include 'etudiant/models/importer.html.twig' %}
+{% include 'etudiant/models/date_d_appel.html.twig' %}
+{% include 'etudiant/models/statut.html.twig' %}
+{% include 'etudiant/models/releves_notes.html.twig' %}
+{% include 'etudiant/models/suivi.html.twig' %}
+{% include 'etudiant/models/supprimer.html.twig' %}
+{% include 'etudiant/models/modifier.html.twig' %}
+{% include 'etudiant/models/ajouter.html.twig' %}
+
 {% endblock %}
 
 {% block javascripts %}
 {{parent()}}
+
 <script src="/assets/js/etudiant/etudiant.js"></script>
 
 {% endblock %}
+
