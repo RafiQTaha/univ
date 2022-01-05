@@ -1,5 +1,17 @@
+const Toast = Swal.mixin({
+  toast: true,
+  position: 'top-end',
+  showConfirmButton: false,
+  timer: 3000,
+  timerProgressBar: true,
+  didOpen: (toast) => {
+    toast.addEventListener('mouseenter', Swal.stopTimer)
+    toast.addEventListener('mouseleave', Swal.resumeTimer)
+  },
+})
+let id_etudiant = false;
+
 $(document).ready(function () {
-  let id_etudiant;
 
 var table = $("#datables_etudiant").DataTable({
     lengthMenu: [
@@ -27,15 +39,11 @@ var table = $("#datables_etudiant").DataTable({
     // });
     
   $('body').on('click','#datables_etudiant tr',function () {
-    $('tr').removeClass('active');
+    $('#datables_etudiant tr').removeClass('active');
     $(this).addClass('active');
-    let id_etudiant = $(this).attr('id');
-    alert(id_etudiant);
-    // axios.get('/api/formation/'+id_etudiant)
-    // .then(success => {
-    //   $('.formation').css('display','block');
-    //   $('#formation').html(success.data);
-    // })
+    id_etudiant = $(this).attr('id');
+    // alert(id_etudiant);
+   
     
   })
 
@@ -48,6 +56,19 @@ var table = $("#datables_etudiant").DataTable({
       $('#formation').html(success.data);
     })
     
+  })
+
+  $("#valider-modal").on('click', () => {
+    console.log(id_etudiant);
+    if(!id_etudiant){
+      Toast.fire({
+        icon: 'error',
+        title: 'Veuillez selection une ligne!',
+      })
+      return;
+    }
+
+    $('#validermodal').modal("show")
   })
 
 
@@ -98,5 +119,7 @@ var table = $("#datables_etudiant").DataTable({
     }
     // $("#save_import")[0].reset();
   });
+
+
 
 })
