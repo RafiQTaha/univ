@@ -22,9 +22,7 @@ class EtudiantController extends AbstractController
     public function index(): Response
     {
         
-        return $this->render('etudiant/index.html.twig', [
-            'controller_name' => 'EtudiantController',
-        ]);
+        return $this->render('etudiant/index.html.twig');
     }
     #[Route('/list', name: 'etudiant_list')]
     public function list(Request $request): Response
