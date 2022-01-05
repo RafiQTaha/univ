@@ -249,9 +249,16 @@ class TEtudiant
     #[ORM\Column(type: 'smallint', nullable: true)]
     private $eia;
 
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private $etablissement;
+
+    #[ORM\OneToMany(mappedBy: 'etudiant', targetEntity: TPreinscritionReleveNote::class)]
+    private $tPreinscritionReleveNotes;
+
     public function __construct()
     {
         $this->preinscriptions = new ArrayCollection();
+        $this->tPreinscritionReleveNotes = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -1209,6 +1216,48 @@ class TEtudiant
     public function setEia(?int $eia): self
     {
         $this->eia = $eia;
+
+        return $this;
+    }
+
+    public function getEtablissement(): ?string
+    {
+        return $this->etablissement;
+    }
+
+    public function setEtablissement(?string $etablissement): self
+    {
+        $this->etablissement = $etablissement;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|TPreinscritionReleveNote[]
+     */
+    public function getTPreinscritionReleveNotes(): Collection
+    {
+        return $this->tPreinscritionReleveNotes;
+    }
+
+    public function addTPreinscritionReleveNote(TPreinscritionReleveNote $tPreinscritionReleveNote): self
+    {
+        if (!$this->tPreinscritionReleveNotes->contains($tPreinscritionReleveNote)) {
+            $this->tPreinscritionReleveNotes[] = $tPreinscritionReleveNote;
+            $tPreinscritionReleveNote->setEtudiant($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTPreinscritionReleveNote(TPreinscritionReleveNote $tPreinscritionReleveNote): self
+    {
+        if ($this->tPreinscritionReleveNotes->removeElement($tPreinscritionReleveNote)) {
+            // set the owning side to null (unless already changed)
+            if ($tPreinscritionReleveNote->getEtudiant() === $this) {
+                $tPreinscritionReleveNote->setEtudiant(null);
+            }
+        }
 
         return $this;
     }

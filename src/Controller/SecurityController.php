@@ -2,10 +2,13 @@
 
 namespace App\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use App\Entity\User;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class SecurityController extends AbstractController
 {
@@ -14,9 +17,9 @@ class SecurityController extends AbstractController
      */
     public function login(AuthenticationUtils $authenticationUtils): Response
     {
-        // if ($this->getUser()) {
-        //     return $this->redirectToRoute('target_path');
-        // }
+        if ($this->getUser()) {
+            return $this->redirectToRoute('etudiant_index');
+        }
 
         // get the login error if there is one
         $error = $authenticationUtils->getLastAuthenticationError();
@@ -24,6 +27,24 @@ class SecurityController extends AbstractController
         $lastUsername = $authenticationUtils->getLastUsername();
 
         return $this->render('security/login.html.twig', ['last_username' => $lastUsername, 'error' => $error]);
+    }
+    /**
+     * @Route("/register", name="app_register")
+     */
+    public function register(UserPasswordHasherInterface $passwordHasher, ManagerRegistry $doctrine): Response
+    {
+        $user = new User();
+        $user->setUsername('admin');
+        $user->setPassword($passwordHasher->hashPassword(
+            $user,
+            '0123456789'
+        ));
+        $user->setRoles(['ROLE_SUPERADMIN']);
+        
+        $doctrine->getManager()->persist($user);
+        $doctrine->getManager()->flush();
+
+        return new Response('good');
     }
 
     /**
