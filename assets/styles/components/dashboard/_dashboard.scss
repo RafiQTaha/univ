@@ -251,6 +251,8 @@ textarea.form-control {
 .form-control[type="color"],
 select.form-control:not([size]):not([multiple]) {
   height: calc(2.25rem + 6px);
+  padding: 0;
+  font-size: 1.3rem;
 }
 
 .form-control.creditcard {
@@ -1255,6 +1257,7 @@ select.form-control:not([size]):not([multiple]) {
   height: 6rem;
   vertical-align: middle;
 }
+
 .table:not(.table-sm) thead th {
   border-bottom: none;
   background-color: rgba(0, 0, 0, 0.04);
@@ -6259,4 +6262,8 @@ tr:first-child > td > .fc-day-grid-event {
   .wizard-steps .wizard-step {
     margin-bottom: 5rem;
   }
+}
+.active{
+  background-color:#6777ef !important;
+  color:#fff !important;
 }

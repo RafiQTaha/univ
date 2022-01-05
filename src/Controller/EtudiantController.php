@@ -21,9 +21,9 @@ class EtudiantController extends AbstractController
     #[Route('/', name: 'etudiant_index')]
     public function index(): Response
     {
-        
         return $this->render('etudiant/index.html.twig');
     }
+    
     #[Route('/list', name: 'etudiant_list')]
     public function list(Request $request): Response
     {
@@ -108,5 +108,14 @@ class EtudiantController extends AbstractController
         );
         // die;
         return new Response(json_encode($json_data));
+    }
+
+    #[Route('/list_preins/{id_etud}', name: 'etudiant_list_preins')]
+    public function list_preins(Request $request): Response
+    {
+
+        
+
+
     }
 }

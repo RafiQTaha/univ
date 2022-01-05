@@ -2,14 +2,67 @@
 <div class="modal-dialog modal-md" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">Validation Modal</h5>
+        <h5 class="modal-title">Valider Des Etudiants</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"> 
         <span aria-hidden="true">×</span>
         </button>
       </div>
       <div class="modal-body">
-        <div class="alert alert-info">Veuillez selectionner un ligne Pour Continuer Cette opération !!</div>
+        {# <div class="alert alert-info">Veuillez selectionner un ligne Pour Continuer Cette opération !!</div> #}
+          <div class="etablissement">
+            <label for="etablissement">Etablissement:</label>
+            <select class="form-control" id="etablissement">
+            </select>
+          </div>
+          <div class="formation" style="display: none;">
+            <label for="formation">Formation:</label>
+            <select class="form-control" id="formation">
+            </select>
+          </div>
+          <div class="d-flex mt-2 mb-2">
+            <button class="btn btn-primary ml-auto">G.Preinscription</button>
+            <button class="btn">Fermer</button>
+            <button class="btn btn-primary">Enregistrer</button>
+          </div>
+          <table id="datables_etudiant_modal" class="display mt-3" style="width:100%">
+            <thead>
+              <tr>
+                  <th>id</th>
+                  <th>Code</th>
+                  <th>Nom</th>
+                  <th>Prenom</th>
+                  <th>Categorie</th>
+                  <th>Type de bac</th>
+                  <th>Télé1</th>
+                  <th>Télé2</th>
+                  <th>Valider</th>
+                  <th>Statut</th>
+                  <th>D.import</th>
+                  <th>Rég</th>
+              </tr>
+          </thead>
+          <tbody>
+              
+          </tbody>
+          <tfoot>
+              <tr>
+                  <th>id</th>
+                  <th>Code</th>
+                  <th>Nom</th>
+                  <th>Prenom</th>
+                  <th>Categorie</th>
+                  <th>Type de bac</th>
+                  <th>Télé1</th>
+                  <th>Télé2</th>
+                  <th>Valider</th>
+                  <th>Statut</th>
+                  <th>D.import</th>
+                  <th>Rég</th>
+              </tr>
+          </tfoot>
+        </table>
       </div>
     </div>
   </div>
 </div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.24.0/axios.min.js"></script>
