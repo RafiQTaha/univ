@@ -33,9 +33,9 @@ class EtudiantController extends AbstractController
     #[Route('/', name: 'etudiant_index')]
     public function index(): Response
     {
-        
         return $this->render('etudiant/index.html.twig');
     }
+    
     #[Route('/list', name: 'etudiant_list')]
     public function list(Request $request): Response
     {
@@ -117,12 +117,22 @@ class EtudiantController extends AbstractController
             "draw" => intval($params->get('draw')),
             "recordsTotal" => intval($totalRecords),
             "recordsFiltered" => intval($totalRecords),
-            "data" => $data   // total data array
+            "data" => $data   // total data arrayhttps://github.com/RafiQTaha/univ/pull/11/conflict?name=src%252FController%252FEtudiantController.php&ancestor_oid=55e78bf8830fdb4aa6149b0b193d22c648890826&base_oid=e2be8c94438d4ba52dfbd919f9bcbf22e1205bf1&head_oid=fd09553b2cbe8473cf94c3276f97f04dcc4ac6a3
         );
         // die;
         return new Response(json_encode($json_data));
     }
 
+
+    #[Route('/list_preins/{id_etud}', name: 'etudiant_list_preins')]
+    public function list_preins(Request $request): Response
+    {
+
+        
+
+
+    }
+  
     #[Route('/import', name: 'etudiant_import')]
     public function etudiantImport(Request $request, SluggerInterface $slugger) {
         $file = $request->files->get('file');
@@ -309,6 +319,6 @@ class EtudiantController extends AbstractController
         $writer->save($temp_file);
         return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);
 
-        
+       
     }
 }
