@@ -1,14 +1,47 @@
 <div class="modal" tabindex="-1" role="dialog" id="releves-notes-modal" aria-modal="true"> 
-<div class="modal-dialog modal-md" role="document">
+<div class="modal-dialog modal-md" style="max-width: 720px"  role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">Releves Notes Modal</h5>
+        <h5 class="modal-title">Releves Notes</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"> 
         <span aria-hidden="true">×</span>
         </button>
       </div>
       <div class="modal-body">
-        <div class="alert alert-info">Veuillez selectionner un ligne Pour Continuer Cette opération !!</div>
+        {# <div class="alert alert-info">Veuillez selectionner un ligne Pour Continuer Cette opération !!</div> #}
+        <div class="row">
+          <div class="col-md-6">
+            <form id="relevenote_save">
+              <div class="row">
+                <div class="col-md-9">
+                  <label>Matière (*)</label>
+                  <select class="form-control" name="matiere" id="matiereDispo">
+                    <option value="">Selection une matiere</option>
+                  </select>
+                </div>
+                <div class="col-md-3">
+                  <label>Note (*)</label>
+                  <input class="form-control" type="number" style="padding: 0 !important;" placeholder="0.0" id="matiereNote">
+                </div>
+              </div>
+              <button class="btn btn-primary"><i class="fas fa-check-circle"></i>Enregistrer</button>
+            
+            </form>
+          </div>
+          <div class="col-md-6">
+            <table class="matiereExist">
+              <thead>
+                <th>Ord</th>
+                <th>Désignation</th>
+                <th>Note</th>
+                <th>Sup</th>
+              </thead>
+              <tbody>
+
+              </tbody>
+            </table>
+          </div>
+      </div>
       </div>
     </div>
   </div>
