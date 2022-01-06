@@ -26,7 +26,7 @@ class ApiController extends AbstractController
     public function getetbalissement(): Response
     {
         $etbalissements = $this->em->getRepository(AcEtablissement::class)->findAll();
-        $data = $this->dropdown($etbalissements);
+        $data = $this->dropdown($etbalissements,'Etablissement');
         return new JsonResponse($data);
         
     }
@@ -34,13 +34,13 @@ class ApiController extends AbstractController
     public function getformation($id): Response
     {
         $formations = $this->em->getRepository(AcFormation::class)->findBy(['etablissement'=>$id]);
-        $data = $this->dropdown($formations);
+        $data = $this->dropdown($formations,'Formation');
         return new JsonResponse($data);
     }
 
-    public function dropdown($objects)
+    public function dropdown($objects,$choix)
     {
-        $data = "<option selected enabled>Choix Formation</option>";
+        $data = "<option selected enabled>Choix ".$choix."</option>";
         foreach ($objects as $object) {
             $data .="<option value=".$object->getId().">".$object->getDesignation()."</option>";
          }

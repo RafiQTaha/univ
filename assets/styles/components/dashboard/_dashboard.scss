@@ -716,7 +716,7 @@ select.form-control:not([size]):not([multiple]) {
 .alert {
   color: #fff;
   border: none;
-  padding: 15px 2rem;
+  // padding: 15px 2rem;
 }
 .alert .alert-title {
   font-size: 1.8rem;
@@ -4506,7 +4506,7 @@ table.dataTable.no-footer {
 
 .dataTables_wrapper {
   padding: 0 !important;
-  font-size: 13px !important;
+  font-size: 1rem !important;
 }
 .dataTables_wrapper .dataTables_paginate .paginate_button {
   padding: 0 !important;
@@ -6269,4 +6269,7 @@ tr:first-child > td > .fc-day-grid-event {
 .active{
   background-color:#6777ef !important;
   color:#fff !important;
+}
+.modal-dialog {
+  max-width: 620px !important;
 }

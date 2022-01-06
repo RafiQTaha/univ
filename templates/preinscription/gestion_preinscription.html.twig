@@ -1,0 +1,84 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Univ - Groupe Inscriptions{% endblock %}
+
+
+{% block body %}
+<div class="main-content">
+    <section class="section">
+        <div class="section-header">
+          <h1>Gestion Des Pré-Inscription</h1>
+          <div class="section-header-breadcrumb">
+              <button href="#" class="btn btn-primary  ml-1" id="valider-modal"><i class="fas fa-check"></i>  Valider</button>
+              <button href="#" class="btn  btn-primary ml-1" id="preinscription_print" ><i class="fas fa-print"></i>  Imprimer</button>
+              <button href="#" class="btn btn-danger  ml-1" id="modal_group_ins" ><i class="fas fa-trash-alt"></i>  Supprimer</button>
+              <button href="#" class="btn btn-primary  ml-1" id="modal_group_ins" ><i class="fas fa-edit"></i>  Modifier</button>
+          </div>
+        </div>
+
+        <div class="section-body">
+        <div class="card">
+            <div class="card-header">
+                <h4>Tableau des Pré-Inscription</h4>
+            </div>
+            <div class="card-body">
+
+            <table id="datables_preinscription" class="display" style="width:100%">
+                <thead>
+                    <tr>
+                        <th>Option</th>
+                        <th>Id</th>
+                        <th>Code</th>
+                        <th>Nom</th>
+                        <th>Prenom</th>
+                        <th>Etablissement</th>
+                        <th>Formation</th>
+                        <th>Categorie</th>
+                        <th>Type de Bac</th>
+                        <th>Note</th>
+                        <th>Statut</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <th>Option</th>
+                        <th>Id</th>
+                        <th>Code</th>
+                        <th>Nom</th>
+                        <th>Prenom</th>
+                        <th>Etablissement</th>
+                        <th>Formation</th>
+                        <th>Categorie</th>
+                        <th>Type de Bac</th>
+                        <th>Note</th>
+                        <th>Statut</th>
+                    </tr>
+                </tfoot>
+            </table>
+            </div>
+            
+        </div>
+        </div>
+    </section>
+</div>
+
+
+
+<!--Modal Import Group-->
+{% include 'preinscription/modals/valider.html.twig' %}
+{% include 'preinscription/modals/imprimer.html.twig' %}
+{% include 'preinscription/modals/supprimer.html.twig' %}
+{% include 'preinscription/modals/modifier.html.twig' %}
+
+{% endblock %}
+
+{% block javascripts %}
+{{parent()}}
+
+<script src="/assets/js/preinscription/preinscription.js"></script>
+
+{% endblock %}
+
