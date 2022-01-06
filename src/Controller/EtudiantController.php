@@ -127,15 +127,6 @@ class EtudiantController extends AbstractController
         return new Response(json_encode($json_data));
     }
 
-
-    #[Route('/list_preins/{id_etud}', name: 'etudiant_list_preins')]
-    public function list_preins(Request $request): Response
-    {
-
-        
-
-
-    }
   
     #[Route('/import', name: 'etudiant_import')]
     public function etudiantImport(Request $request, SluggerInterface $slugger) {
@@ -185,6 +176,7 @@ class EtudiantController extends AbstractController
                 $etudiant->setDateNaissance($date->setTimestamp(strtotime($sheet[4])));
                 $etudiant->setLieuNaissance($sheet[5]);
                 $etudiant->setSexe($sheet[6]);
+                $etudiant->setTeleListe('Intéressé');
                 // $etudiant->setStFamille();
                 // $etudiant->setStFamilleParent();
                 $etudiant->setNationalite($sheet[9]);

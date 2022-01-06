@@ -11,7 +11,7 @@ const Toast = Swal.mixin({
 })
 let id_etudiant = false;
 
-$(document).ready(function () {
+$(document).ready(function  () {
 
 var table = $("#datables_etudiant").DataTable({
   lengthMenu: [
@@ -30,14 +30,17 @@ var table = $("#datables_etudiant").DataTable({
 let tableListPreinscription;
 
 
-  
-  axios.get('/api/etbalissement')
-    .then(success => {
-      $('#etablissement').html(success.data);
-      // console.log(success.data);
-    })
-    
-  $('body').on('click','#datables_etudiant tbody tr',function () {
+  async () => {
+    try {
+      const request = await axios.get('/api/etbalissement');
+      const data = request.data;
+      $('#etablissement').html(data);
+ 
+    } catch (error) {
+      console.log(error.response.data);
+    }  
+  }
+  $('body').on('click','#datables_etudiant tr',function () {
     $('#datables_etudiant tr').removeClass('active');
     $(this).addClass('active');
     id_etudiant = $(this).attr('id');
@@ -125,10 +128,21 @@ let tableListPreinscription;
  
 
 
+  
+  $('#releve_note').on('click', () => {
+    if(!id_etudiant){
+      Toast.fire({
+        icon: 'error',
+        title: 'Veuillez selection une ligne!',
+      })
+      return;
+    }
+    $("#releves-notes-modal").modal("show");
+  })
+
   $('#etudiant_import').on('click', () => {
     $("#importer-modal").modal("show");
   })
-
   $('#save_import').on('submit', async (e) => {
     e.preventDefault();
     $(".modal-body .alert").remove();
