@@ -6,9 +6,12 @@ use DateTime;
 use App\Entity\PStatut;
 use App\Entity\XTypeBac;
 use App\Entity\TEtudiant;
+use App\Entity\TPreinscription;
 use App\Entity\XAcademie;
 use App\Entity\NatureDemande;
+use App\Entity\AcAnnee;
 use App\Controller\DatatablesController;
+use App\Entity\AcFormation;
 use Doctrine\Persistence\ManagerRegistry;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
@@ -17,6 +20,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use PhpOffice\PhpSpreadsheet\Reader\Xlsx as Reader;
+use Proxies\__CG__\App\Entity\AcFormation as EntityAcFormation;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -117,7 +121,7 @@ class EtudiantController extends AbstractController
             "draw" => intval($params->get('draw')),
             "recordsTotal" => intval($totalRecords),
             "recordsFiltered" => intval($totalRecords),
-            "data" => $data   // total data arrayhttps://github.com/RafiQTaha/univ/pull/11/conflict?name=src%252FController%252FEtudiantController.php&ancestor_oid=55e78bf8830fdb4aa6149b0b193d22c648890826&base_oid=e2be8c94438d4ba52dfbd919f9bcbf22e1205bf1&head_oid=fd09553b2cbe8473cf94c3276f97f04dcc4ac6a3
+            "data" => $data   
         );
         // die;
         return new Response(json_encode($json_data));
@@ -313,4 +317,103 @@ class EtudiantController extends AbstractController
 
        
     }
+    #[Route('/etudiant_valider/{etudiant}', name: 'etudiant_valider')]
+    public function etudiant_valider(Request $request,TEtudiant $etudiant): Response
+    {   
+        $current_year = date('Y').'/'.date('Y')+1; 
+        $id_formation = $request->get('formation');
+        $formation = $this->em->getRepository(AcFormation::class)->find($id_formation);
+        $annee = $this->em->getRepository(AcAnnee::class)->findOneBy(['formation'=>$formation,'designation'=>'2021/2022']);
+        if(!$annee) {
+            return new JsonResponse('Annee untrouvable!', 500);
+        }
+        $preinsctiption = new TPreinscription();
+        $preinsctiption->setStatut($etudiant->getStatut());
+        $preinsctiption->setEtudiant($etudiant);
+        $preinsctiption->setInscriptionValide(1);
+        $preinsctiption->setRangP(0);
+        $preinsctiption->setRangS(0);
+        $preinsctiption->setActive(1);
+        $preinsctiption->setCreated(new DateTime('now'));
+        $preinsctiption->setAnnee($annee);
+        $this->em->persist($preinsctiption);
+        $this->em->flush();
+        $preinsctiption->setCode('PRE-'.$formation->getAbreviation().str_pad($preinsctiption->getId(), 8, '0', STR_PAD_LEFT).'/'.date('Y'));
+        $this->em->flush();
+        return new JsonResponse('Bien Enregistrer');
+    }
+    
+    #[Route('/list/preinscription/{etudiant}', name: 'list_etudiant_preinscription')]
+    public function listPreinscription(Request $request,TEtudiant $etudiant): Response
+    {   
+        $params = $request->query;
+        $where = $totalRows = $sqlRequest = "";
+        $filtre = "where 1 = 1 and pre.etudiant_id =" . $etudiant->getId();        
+        $columns = array(
+            array( 'db' => 'pre.code','dt' => 0 ),
+            array( 'db' => 'etu.nom','dt' => 1),
+            array( 'db' => 'etu.prenom','dt' => 2),
+            array( 'db' => 'etab.abreviation','dt' => 3),
+            array( 'db' => 'LOWER(form.abreviation)','dt' => 4),
+        );
+        // dd($columns);
+        $sql = "SELECT " . implode(", ", DatatablesController::Pluck($columns, 'db')) . "
+                      
+                FROM tpreinscription pre
+                inner join tetudiant etu on etu.id = pre.etudiant_id
+                inner join ac_annee an on an.id = pre.annee_id
+                inner join ac_formation form on form.id = an.formation_id              
+                inner join ac_etablissement etab on etab.id = form.etablissement_id           
+
+                $filtre"
+        ;
+        // dd($sql);
+        $totalRows .= $sql;
+        $sqlRequest .= $sql;
+        $stmt = $this->em->getConnection()->prepare($sql);
+        $newstmt = $stmt->executeQuery();
+        $totalRecords = count($newstmt->fetchAll());
+        // dd($sql);
+        $my_columns = DatatablesController::Pluck($columns, 'db');
+
+        // search 
+        $where = DatatablesController::Search($request, $columns);
+        if (isset($where) && $where != '') {
+            $sqlRequest .= $where;
+        }
+        $sqlRequest .= DatatablesController::Order($request, $columns);
+        // dd($sqlRequest);
+        $stmt = $this->em->getConnection()->prepare($sqlRequest);
+        $resultSet = $stmt->executeQuery();
+        $result = $resultSet->fetchAll();
+
+
+        $data = array();
+        // dd($result);
+        $i = 1;
+        foreach ($result as $key => $row) {
+            // dump($row);
+            $nestedData = array();
+            $cd = $i;
+            $nestedData[] = $cd;
+            foreach (array_values($row) as $key => $value) {
+                $nestedData[] = $value;
+            }
+            $data[] = $nestedData;
+            // dd($nestedData);
+            $i++;
+        }
+        // dd($data);
+        $json_data = array(
+            "draw" => intval($params->get('draw')),
+            "recordsTotal" => intval($totalRecords),
+            "recordsFiltered" => intval($totalRecords),
+            "data" => $data   
+        );
+        // die;
+        return new Response(json_encode($json_data));
+        
+    }
+
+
 }

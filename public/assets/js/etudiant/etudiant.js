@@ -14,26 +14,28 @@ let id_etudiant = false;
 $(document).ready(function  () {
 
 var table = $("#datables_etudiant").DataTable({
-    lengthMenu: [
-      [10, 15, 25, 50, 100, 20000000000000],
-      [10, 15, 25, 50, 100, "All"],
-    ],
-    order: [[0, "desc"]],
-    ajax: "/etudiant/list",
-    processing: true,
-    serverSide: true,
-    deferRender: true,
-    language: {
-      url: "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/French.json",
-    },
-  });
+  lengthMenu: [
+    [10, 15, 25, 50, 100, 20000000000000],
+    [10, 15, 25, 50, 100, "All"],
+  ],
+  order: [[0, "desc"]],
+  ajax: "/etudiant/list",
+  processing: true,
+  serverSide: true,
+  deferRender: true,
+  language: {
+    url: "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/French.json",
+  },
+});
+let tableListPreinscription;
+
 
   async () => {
     try {
       const request = await axios.get('/api/etbalissement');
       const data = request.data;
       $('#etablissement').html(data);
-  
+ 
     } catch (error) {
       console.log(error.response.data);
     }  
@@ -42,8 +44,22 @@ var table = $("#datables_etudiant").DataTable({
     $('#datables_etudiant tr').removeClass('active');
     $(this).addClass('active');
     id_etudiant = $(this).attr('id');
-    // alert(id_etudiant);
-   
+    tableListPreinscription = $("#datables_etudiant_modal").DataTable({
+      lengthMenu: [
+        [10, 15, 25, 50, 100, 20000000000000],
+        [10, 15, 25, 50, 100, "All"],
+      ],
+      order: [[0, "desc"]],
+      ajax: "/etudiant/list/preinscription/"+id_etudiant,
+      processing: true,
+      serverSide: true,
+      deferRender: true,
+      language: {
+        url: "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/French.json",
+      },
+      stateSave: true,
+      bDestroy: true
+    });
     
   })
 
@@ -55,6 +71,42 @@ var table = $("#datables_etudiant").DataTable({
       $('.formation').css('display','block');
       $('#formation').html(success.data);
     })
+  })
+
+  $('body').on('change','#formation',function (e) {
+    e.preventDefault();
+    $('#enregistrer').removeAttr("disabled");
+  })
+
+  $('body').on('submit','.form-valider',async function (e) {
+    e.preventDefault();
+
+
+
+    let formdata = $(this).serialize();
+    $(".modal-body .alert").remove();
+    const icon = $(".form-valider .btn i");
+    icon.removeClass('fa-check-circle').addClass("fa-spinner fa-spin");
+    try{
+      const request = await  axios.post('/etudiant/etudiant_valider/'+id_etudiant,formdata)
+      const data = request.data;
+      $("#validermodal .modal-body").prepend(
+        `<div class="alert alert-success">
+            <p>${data}</p>
+          </div>`
+      );  
+      icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin");
+      tableListPreinscription.ajax.reload();
+    }catch(error){
+      const message = error.response.data;
+      console.log(error, error.response);
+      $(".modal-body .alert").remove();
+      $(".modal-body").prepend(
+        `<div class="alert alert-danger">${message}</div>`
+      );
+      icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
+    }
+
     
   })
 
