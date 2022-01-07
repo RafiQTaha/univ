@@ -51,6 +51,9 @@ class AcFormation
     #[ORM\OneToMany(mappedBy: 'formation', targetEntity: AcAnnee::class)]
     private $acAnnees;
 
+    #[ORM\ManyToOne(targetEntity: PFrais::class, inversedBy: 'formation')]
+    private $acFormations;
+
     public function __construct()
     {
         $this->acPromotions = new ArrayCollection();
@@ -238,6 +241,18 @@ class AcFormation
                 $acAnnee->setFormation(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getAcFormations(): ?PFrais
+    {
+        return $this->acFormations;
+    }
+
+    public function setAcFormations(?PFrais $acFormations): self
+    {
+        $this->acFormations = $acFormations;
 
         return $this;
     }
