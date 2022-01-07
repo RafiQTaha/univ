@@ -8,6 +8,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Entity\TOperation;
+use App\Entity\TPreinscription;
 
 #[Route('/preinscription')]
 class PreinscriptionController extends AbstractController
@@ -206,6 +207,16 @@ class PreinscriptionController extends AbstractController
         );
         // die;
         return new Response(json_encode($json_data));
+    }
+
+    #[Route('/annulation_preinscription/{id}', name: 'annulation_preinscription')]
+    public function annulation_preinscription($preinscription)
+    {
+        // $preinscription = $this->em->getRepository(TEtudiant::class)->find();
+        $preinscription->setInscriptionValide(0);
+        $this->em->persist($preinscription);
+        $this->em->flush();
+
     }
 
     #[Route('/test', name: 'test')]
