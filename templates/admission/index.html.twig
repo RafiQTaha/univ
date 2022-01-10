@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Univ - Compte Etudiant{% endblock %}
+{% block title %}Univ - Groupe Inscriptions{% endblock %}
 
 
 {% block body %}
@@ -29,51 +29,25 @@
         <div class="section-body">
         <div class="card">
             <div class="card-header">
-            <h4>Tableau des inscriptions</h4>
+                <ul class="nav nav-pills">                
+                    <li class="nav-item mr-2">
+                        <a href="#candidats_admissibles" class="nav-link active">Candidats Admissibles</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#candidats_admis" class="nav-link">Candidats Admis</a>
+                    </li>                
+                </ul>
             </div>
             <div class="card-body">
+                <div class="tab-content">
+                    <div class="tab-pane fade show active" id="candidats_admissibles">
+                       {% include 'admission/pages/candidat_admissibles.html.twig' %}                     
+                    </div>
+                    <div class="tab-pane fade" id="candidats_admis">
+                       {% include 'admission/pages/candidat_admis.html.twig' %}                            
+                    </div>
+                </div>
 
-            <table id="datables_etudiant" class="display" style="width:100%">
-                <thead>
-                    <tr>
-                        <th>id</th>
-                        <th>Code</th>
-                        <th>Nom</th>
-                        <th>Prenom</th>
-                        <th>Categorie</th>
-                        <th>Type de bac</th>
-                        <th>Note</th>
-                        <th>Télé1</th>
-                        <th>Télé2</th>
-                        <th>Valider</th>
-                        <th>Statut</th>
-                        <th>D.D.Appele</th>
-                        <th>D.import</th>
-                        <th>Rég</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    
-                </tbody>
-                <tfoot>
-                    <tr>
-                        <th>id</th>
-                        <th>Code</th>
-                        <th>Nom</th>
-                        <th>Prenom</th>
-                        <th>Categorie</th>
-                        <th>Type de bac</th>
-                        <th>Note</th>
-                        <th>Télé1</th>
-                        <th>Télé2</th>
-                        <th>Valider</th>
-                        <th>Statut</th>
-                        <th>D.D.Appele</th>
-                        <th>D.import</th>
-                        <th>Rég</th>
-                    </tr>
-                </tfoot>
-            </table>
             </div>
             
         </div>
@@ -84,7 +58,7 @@
 
 
 <!--Modal Import Group-->
-{% include 'etudiant/modals/valider.html.twig' %}
+{# {% include 'etudiant/modals/valider.html.twig' %}
 {% include 'etudiant/modals/importer.html.twig' %}
 {% include 'etudiant/modals/date_d_appel.html.twig' %}
 {% include 'etudiant/modals/statut.html.twig' %}
@@ -92,14 +66,14 @@
 {% include 'etudiant/modals/suivi.html.twig' %}
 {% include 'etudiant/modals/supprimer.html.twig' %}
 {% include 'etudiant/modals/modifier.html.twig' %}
-{% include 'etudiant/modals/ajouter.html.twig' %}
+{% include 'etudiant/modals/ajouter.html.twig' %} #}
 
 {% endblock %}
 
 {% block javascripts %}
 {{parent()}}
 
-<script src="/assets/js/etudiant/etudiant.js"></script>
+<script src="/assets/js/admission/admissions.js"></script>
 
 {% endblock %}
 

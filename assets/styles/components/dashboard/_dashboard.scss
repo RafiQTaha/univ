@@ -1253,8 +1253,8 @@ select.form-control:not([size]):not([multiple]) {
 }
 .table:not(.table-sm):not(.table-md):not(.dataTable) td,
 .table:not(.table-sm):not(.table-md):not(.dataTable) th {
-  padding: 0 25px;
-  height: 6rem;
+  // padding: 0 25px;
+  // height: 6rem;
   vertical-align: middle;
 }
 
@@ -4952,7 +4952,7 @@ tr:first-child > td > .fc-day-grid-event {
   box-sizing: border-box;
   cursor: pointer;
   display: block;
-  min-height: 42px;
+  // min-height: 42px;
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
@@ -5009,7 +5009,7 @@ tr:first-child > td > .fc-day-grid-event {
   top: 1px;
   right: 1px;
   width: 4rem;
-  min-height: 42px;
+  // min-height: 42px;
 }
 
 .select2-container--default
@@ -6266,7 +6266,7 @@ tr:first-child > td > .fc-day-grid-event {
 .sorting_1 {
   background: none !important;
 }
-.active{
+.active_databales{
   background-color:#6777ef !important;
   color:#fff !important;
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Etudiant;
 
 use DateTime;
 use App\Entity\PStatut;
@@ -12,6 +12,8 @@ use App\Entity\NatureDemande;
 use App\Entity\AcAnnee;
 use App\Controller\DatatablesController;
 use App\Entity\AcFormation;
+use App\Entity\PMatiere;
+use App\Entity\TPreinscriptionReleveNote;
 use Doctrine\Persistence\ManagerRegistry;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
@@ -20,7 +22,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use PhpOffice\PhpSpreadsheet\Reader\Xlsx as Reader;
-use Proxies\__CG__\App\Entity\AcFormation as EntityAcFormation;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -62,7 +63,8 @@ class EtudiantController extends AbstractController
             array( 'db' => 'etu.tel1','dt' => 7),
             array( 'db' => 'etu.tel2','dt' => 8),
             array( 'db' => 'LOWER(st.designation)','dt' => 9),
-            array( 'db' => 'etu.created','dt' => 10 )
+            array( 'db' => 'etu.tele_liste','dt' => 10),
+            array( 'db' => 'etu.created','dt' => 11 )
         );
         // dd($columns);
         $sql = "SELECT " . implode(", ", DatatablesController::Pluck($columns, 'db')) . "
@@ -354,7 +356,7 @@ class EtudiantController extends AbstractController
             array( 'db' => 'etu.nom','dt' => 1),
             array( 'db' => 'etu.prenom','dt' => 2),
             array( 'db' => 'etab.abreviation','dt' => 3),
-            array( 'db' => 'LOWER(form.abreviation)','dt' => 4),
+            array( 'db' => 'UPPER(form.abreviation)','dt' => 4),
         );
         // dd($columns);
         $sql = "SELECT " . implode(", ", DatatablesController::Pluck($columns, 'db')) . "
@@ -415,5 +417,97 @@ class EtudiantController extends AbstractController
         
     }
 
+    #[Route('/matiere/{etudiant}', name: 'etudiant_exist_matiere')]
+    public function getMatiere(Request $request, TEtudiant $etudiant) 
+    {
+        $matiereExist = '';
+        $i = 1;
+        $arrayOfExistMatiere = [];
+        foreach ($etudiant->getTPreinscritionReleveNotes() as $etudiantMatiere) {
+            $matiereExist .= "
+                <tr>
+                    <td>".$i."</td> 
+                    <td>".$etudiantMatiere->getMatiere()->getDesignation()."</td> 
+                    <td>".$etudiantMatiere->getNote()."</td>
+                    <td><i class='delete_matiere fa fa-trash'  id='".$etudiantMatiere->getId()."' style='cursor:pointer; color:red' ></i></td>
+                </tr>";
+            $i++;
+            array_push($arrayOfExistMatiere, $etudiantMatiere->getMatiere()->getId());
+        }
+        // dd($matiereExist);
+        $matiereNotSelected = $this->em->getRepository(PMatiere::class)->findAll();
+        $data = "<option selected enabled>Selection une matiere</option>";
+        foreach ($matiereNotSelected as $matiere) {
+           if(!in_array($matiere->getId(), $arrayOfExistMatiere)) {
+                $data .="<option value=".$matiere->getId().">".$matiere->getDesignation()."</option>";
+           }
+        }
+        return new JsonResponse([
+            'table' => $matiereExist,
+            'matieres' => $data
+        ]);
+    }
+    #[Route('/addmatiere/{etudiant}', name: 'etudiant_add_matiere')]
+    public function addMatiere(Request $request, TEtudiant $etudiant) 
+    {
+        $matiere = $request->get('matiere');
+        $note = $request->get('note');
+        // dd($matiere);
+        $preinscriptioReleveNote = new TPreinscriptionReleveNote();
+        $preinscriptioReleveNote->setUserCreated($this->getUser());
+        $preinscriptioReleveNote->setNote($note);
+        $preinscriptioReleveNote->setEtudiant($etudiant);
+        $preinscriptioReleveNote->setMatiere(
+            $this->em->getRepository(PMatiere::class)->find($matiere)
+        );
+        $preinscriptioReleveNote->setCreated(new \DateTime('now'));
+        $this->em->persist($preinscriptioReleveNote);
+        $this->em->flush();
+       
+        return new JsonResponse("Bien enregistre");
+    }
 
+    #[Route('/matiere/delete/{preinscriptionnote}', name: 'etudiant_remove_matiere')]
+    public function removeMatiere(Request $request, TPreinscriptionReleveNote $preinscriptionnote) 
+    {
+        
+        $this->em->remove($preinscriptionnote);
+        $this->em->flush();
+       
+        return new JsonResponse("Bien enregistre");
+    }
+
+    #[Route('/datedernierappel/{etudiant}', name: 'etudiant_dernier_appele')]
+    public function dateDernierAppele(Request $request, TEtudiant $etudiant) 
+    {
+        $etudiant->setTeleListe($request->get('dateappelle'));
+        $this->em->flush();
+        return new JsonResponse("Bien enregistre");
+    }
+
+    #[Route('/statut/{etudiant}', name: 'etudiant_statut')]
+    public function statutEtudiant(Request $request, TEtudiant $etudiant) 
+    {
+        $status = $this->em->getRepository(PStatut::class)->findBy(['table0' => 'etudiant']);
+        $html = "<option value=''>Choix statut</option>";
+        foreach ($status as $statut) {
+            if($statut->getId() == $etudiant->getStatut()->getId()) {
+                $html .= "<option value='".$statut->getId()."' selected>".$statut->getDesignation()."</option>";
+            } else {
+                $html .= "<option value='".$statut->getId()."'>".$statut->getDesignation()."</option>";
+            }
+        }
+        return new JsonResponse($html);
+    }
+    #[Route('/statut/persist/{etudiant}', name: 'etudiant_statut_persist')]
+    public function persistStatutEtudiant(Request $request, TEtudiant $etudiant) 
+    {
+        $statut = $this->em->getRepository(PStatut::class)->find($request->get('statut'));
+        $etudiant->setStatut($statut);
+        $this->em->flush();
+        return new JsonResponse("Bien Enregistre");
+    }
+
+
+   
 }

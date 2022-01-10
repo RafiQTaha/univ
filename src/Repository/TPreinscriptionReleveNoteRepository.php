@@ -2,21 +2,21 @@
 
 namespace App\Repository;
 
-use App\Entity\TPreinscritionReleveNote;
+use App\Entity\TPreinscriptionReleveNote;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @method TPreinscritionReleveNote|null find($id, $lockMode = null, $lockVersion = null)
- * @method TPreinscritionReleveNote|null findOneBy(array $criteria, array $orderBy = null)
- * @method TPreinscritionReleveNote[]    findAll()
- * @method TPreinscritionReleveNote[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method TPreinscriptionReleveNote|null find($id, $lockMode = null, $lockVersion = null)
+ * @method TPreinscriptionReleveNote|null findOneBy(array $criteria, array $orderBy = null)
+ * @method TPreinscriptionReleveNote[]    findAll()
+ * @method TPreinscriptionReleveNote[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class TPreinscritionReleveNoteRepository extends ServiceEntityRepository
+class TPreinscriptionReleveNoteRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, TPreinscritionReleveNote::class);
+        parent::__construct($registry, TPreinscriptionReleveNote::class);
     }
 
     // /**

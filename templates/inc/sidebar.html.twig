@@ -11,22 +11,31 @@
     </div>
     <ul class="sidebar-menu">
       <li class="menu-header">Dashboard</li>
-      <li class="nav-item dropdown ">
+      <li class="nav-item dropdown {% if getCurrentUrl == 'etudiant'%} active {% endif %}">
         <a href="#" class="nav-link has-dropdown"
           ><i class="fas fa-users"></i><span>Etudiant</span></a
         >
         <ul class="dropdown-menu">
-          <li><a class="nav-link" href="{{path('etudiant_index')}}">Compte Etudiant</a></li>
+          <li><a class="nav-link {% if secondCurrentUrl == ''%} activeSecondUrl {% endif %}" href="{{path('etudiant_index')}}">Compte Etudiant</a></li>
            {# <li><a class="nav-link" href="index.html">Ecommerce Dashboard</a></li>  #}
         </ul>
       </li>
-      <li class="nav-item dropdown ">
+      <li class="nav-item dropdown {% if getCurrentUrl == 'preinscription'%} active {% endif %}">
         <a href="#" class="nav-link has-dropdown"
           ><i class="fas fa-users"></i><span>Pré-Inscription</span></a
         >
         <ul class="dropdown-menu">
           <li><a class="nav-link" href="{{path('preinscription_index')}}">Pré-Inscription</a></li>
-          <li><a class="nav-link" href="{{path('gestion_preinscription')}}">Gestion Des Pre-inscriptions</a></li>
+          <li><a class="nav-link {% if secondCurrentUrl == 'gestion_preinscription'%} activeSecondUrl {% endif %}" href="{{path('gestion_preinscription')}}">Gestion Des Pre-inscriptions</a></li>
+        </ul>
+      </li>
+      <li class="nav-item dropdown {% if getCurrentUrl == 'admission'%} active {% endif %}">
+        <a href="#" class="nav-link has-dropdown"
+          ><i class="fas fa-users"></i><span>Admission</span></a
+        >
+        <ul class="dropdown-menu">
+          <li><a class="nav-link {% if secondCurrentUrl == 'admissions'%} activeSecondUrl {% endif %}" href="{{path('admission_index')}}">Admissions</a></li>
+          <li><a class="nav-link {% if secondCurrentUrl == 'gestion_admission'%} activeSecondUrl {% endif %}" href="#">Gestion des admissions</a></li>
         </ul>
       </li>
       {# <li class="nav-item dropdown {% if getCurrentUrl == 'inscription'%} active {% endif %}">
