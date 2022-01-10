@@ -64,9 +64,13 @@ class TPreinscription
     #[ORM\ManyToOne(targetEntity: AcAnnee::class, inversedBy: 'preinscriptions')]
     private $annee;
 
+    #[ORM\OneToMany(mappedBy: 'preinscription', targetEntity: TOperationcab::class)]
+    private $operationcabs;
+
     public function __construct()
     {
         $this->admissions = new ArrayCollection();
+        $this->operationcabs = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -280,6 +284,36 @@ class TPreinscription
     public function setAnnee(?AcAnnee $annee): self
     {
         $this->annee = $annee;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|TOperationcab[]
+     */
+    public function getOperationcabs(): Collection
+    {
+        return $this->operationcabs;
+    }
+
+    public function addOperationcab(TOperationcab $operationcab): self
+    {
+        if (!$this->operationcabs->contains($operationcab)) {
+            $this->operationcabs[] = $operationcab;
+            $operationcab->setPreinscription($this);
+        }
+
+        return $this;
+    }
+
+    public function removeOperationcab(TOperationcab $operationcab): self
+    {
+        if ($this->operationcabs->removeElement($operationcab)) {
+            // set the owning side to null (unless already changed)
+            if ($operationcab->getPreinscription() === $this) {
+                $operationcab->setPreinscription(null);
+            }
+        }
 
         return $this;
     }
