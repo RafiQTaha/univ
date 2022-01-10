@@ -2,11 +2,11 @@
 
 namespace App\Entity;
 
-use App\Repository\TPreinscritionReleveNoteRepository;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\TPreinscriptionReleveNoteRepository;
 
-#[ORM\Entity(repositoryClass: TPreinscritionReleveNoteRepository::class)]
-class TPreinscritionReleveNote
+#[ORM\Entity(repositoryClass: TPreinscriptionReleveNoteRepository::class)]
+class TPreinscriptionReleveNote
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]

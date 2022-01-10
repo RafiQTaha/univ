@@ -22,9 +22,6 @@ class TPreinscription
     #[ORM\JoinColumn(nullable: false)]
     private $etudiant;
 
-    #[ORM\ManyToOne(targetEntity: PStatut::class, inversedBy: 'preinscriptions')]
-    private $statutDeliberation;
-
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $code;
 
@@ -36,15 +33,6 @@ class TPreinscription
 
     #[ORM\Column(type: 'integer')]
     private $rangS;
-
-    #[ORM\Column(type: 'string', length: 100, nullable: true)]
-    private $categorieListe;
-
-    #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private $admissionListe;
-
-    #[ORM\Column(type: 'string', length: 100, nullable: true)]
-    private $teleListe;
 
     #[ORM\Column(type: 'smallint', nullable: true)]
     private $active;
@@ -63,6 +51,12 @@ class TPreinscription
 
     #[ORM\ManyToOne(targetEntity: AcAnnee::class, inversedBy: 'preinscriptions')]
     private $annee;
+
+    #[ORM\ManyToOne(targetEntity: PStatut::class)]
+    private $categorieListe;
+
+    #[ORM\ManyToOne(targetEntity: PStatut::class)]
+    private $admissionListe;
 
     public function __construct()
     {
@@ -98,17 +92,6 @@ class TPreinscription
         return $this;
     }
 
-    public function getStatutDeliberation(): ?PStatut
-    {
-        return $this->statutDeliberation;
-    }
-
-    public function setStatutDeliberation(?PStatut $statutDeliberation): self
-    {
-        $this->statutDeliberation = $statutDeliberation;
-
-        return $this;
-    }
 
     public function getCode(): ?string
     {
@@ -154,42 +137,6 @@ class TPreinscription
     public function setRangS(int $rangS): self
     {
         $this->rangS = $rangS;
-
-        return $this;
-    }
-
-    public function getCategorieListe(): ?string
-    {
-        return $this->categorieListe;
-    }
-
-    public function setCategorieListe(?string $categorieListe): self
-    {
-        $this->categorieListe = $categorieListe;
-
-        return $this;
-    }
-
-    public function getAdmissionListe(): ?string
-    {
-        return $this->admissionListe;
-    }
-
-    public function setAdmissionListe(?string $admissionListe): self
-    {
-        $this->admissionListe = $admissionListe;
-
-        return $this;
-    }
-
-    public function getTeleListe(): ?string
-    {
-        return $this->teleListe;
-    }
-
-    public function setTeleListe(?string $teleListe): self
-    {
-        $this->teleListe = $teleListe;
 
         return $this;
     }
@@ -280,6 +227,30 @@ class TPreinscription
     public function setAnnee(?AcAnnee $annee): self
     {
         $this->annee = $annee;
+
+        return $this;
+    }
+
+    public function getCategorieListe(): ?PStatut
+    {
+        return $this->categorieListe;
+    }
+
+    public function setCategorieListe(?PStatut $categorieListe): self
+    {
+        $this->categorieListe = $categorieListe;
+
+        return $this;
+    }
+
+    public function getAdmissionListe(): ?PStatut
+    {
+        return $this->admissionListe;
+    }
+
+    public function setAdmissionListe(?PStatut $admissionListe): self
+    {
+        $this->admissionListe = $admissionListe;
 
         return $this;
     }

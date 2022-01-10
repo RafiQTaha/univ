@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Preinscription;
 
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -9,7 +9,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 #[Route('/preinscription')]
-class PreinscriptionController extends AbstractController
+class GestionPreinscriptionController extends AbstractController
 {
     private $em;
     public function __construct(ManagerRegistry $doctrine)
