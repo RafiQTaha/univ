@@ -30,9 +30,13 @@ class POrganisme
     #[ORM\OneToMany(mappedBy: 'organisme', targetEntity: TInscription::class)]
     private $inscriptions;
 
+    #[ORM\OneToMany(mappedBy: 'organisme', targetEntity: TOperationcab::class)]
+    private $operationcabs;
+
     public function __construct()
     {
         $this->inscriptions = new ArrayCollection();
+        $this->operationcabs = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -112,6 +116,36 @@ class POrganisme
             // set the owning side to null (unless already changed)
             if ($inscription->getOrganisme() === $this) {
                 $inscription->setOrganisme(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|TOperationcab[]
+     */
+    public function getOperationcabs(): Collection
+    {
+        return $this->operationcabs;
+    }
+
+    public function addOperationcab(TOperationcab $operationcab): self
+    {
+        if (!$this->operationcabs->contains($operationcab)) {
+            $this->operationcabs[] = $operationcab;
+            $operationcab->setOrganisme($this);
+        }
+
+        return $this;
+    }
+
+    public function removeOperationcab(TOperationcab $operationcab): self
+    {
+        if ($this->operationcabs->removeElement($operationcab)) {
+            // set the owning side to null (unless already changed)
+            if ($operationcab->getOrganisme() === $this) {
+                $operationcab->setOrganisme(null);
             }
         }
 

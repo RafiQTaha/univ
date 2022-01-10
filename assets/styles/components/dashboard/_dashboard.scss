@@ -3928,7 +3928,7 @@ body.layout-3 .main-footer {
 .main-sidebar .sidebar-menu li ul.dropdown-menu li a {
   color: #868e96;
   height: 35px;
-  padding-left: 65px;
+  padding-left: 30px;
   font-weight: 400;
 }
 .main-sidebar .sidebar-menu li ul.dropdown-menu li a:hover {
@@ -6274,4 +6274,11 @@ tr:first-child > td > .fc-day-grid-event {
 .modal-dialog {
   max-width: 620px !important;
 }
-
+.etat_bg_nf{
+  background-color :#fde0e0 !important ;
+  color :#3c3c3c !important;
+}
+.etat_bg_reg{
+  background-color : #ceffce !important;
+  color :#3c3c3c !important;
+}

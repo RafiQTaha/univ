@@ -9,10 +9,17 @@
         <div class="section-header">
           <h1>Gestion Des Pré-Inscription</h1>
           <div class="section-header-breadcrumb">
-              <button href="#" class="btn btn-primary  ml-1" id="valider-modal"><i class="fas fa-check"></i>  Valider</button>
-              <button href="#" class="btn  btn-primary ml-1" id="preinscription_print" ><i class="fas fa-print"></i>  Imprimer</button>
-              <button href="#" class="btn btn-danger  ml-1" id="modal_group_ins" ><i class="fas fa-trash-alt"></i>  Supprimer</button>
-              <button href="#" class="btn btn-primary  ml-1" id="modal_group_ins" ><i class="fas fa-edit"></i>  Modifier</button>
+              <button href="#" class="btn btn-danger  ml-1" id="valider-modal"><i class="fas fa-times-circle"></i>  Annuler</button>
+              <button href="#" class="btn btn-primary  ml-1" id="valider-modal"><i class="fas fa-check"></i>  Admission</button>
+              <button href="#" class="btn btn-primary  ml-1" id="frais_inscription-modal"><i class="fas fa-money-bill-alt"></i>  Frais Inscription</button>
+              <button href="#" class="btn btn-success  ml-1" id="valider-modal"><i class="fas fa-file-excel"></i>  Reporting</button>
+              <button href="#" class="btn btn-primary  ml-1" id="valider-modal"><i class="fas fa-print"></i>  Reporting</button>
+              <button href="#" class="btn btn-primary  ml-1" id="valider-modal"><i class="fas fa-check"></i>  Doc Bourse</button>
+              <button href="#" class="btn btn-primary  ml-1" id="valider-modal"><i class="fas fa-check"></i>  Doc Preinscription</button>
+              <button href="#" class="btn btn-primary  ml-1" id="valider-modal"><i class="fas fa-print"></i>  Pre Selection</button>
+              <button href="#" class="btn btn-primary  ml-1" id="valider-modal"><i class="fas fa-print"></i>  Preinscription</button>
+              <button href="#" class="btn btn-primary  ml-1" id="valider-modal"><i class="fas fa-edit"></i>  Modifier</button>
+              <button href="#" class="btn btn-primary  ml-1" id="modal_group_ins" ><i class="fab fa-telegram-plane"></i>  PreSelection</button>
           </div>
         </div>
 
@@ -23,7 +30,7 @@
             </div>
             <div class="card-body">
 
-            <table id="datables_preinscription" class="display" style="width:100%">
+            <table id="datables_gestion_preinscription" class="display" style="width:100%">
                 <thead>
                     <tr>
                         <th>Option</th>
@@ -36,7 +43,10 @@
                         <th>Categorie</th>
                         <th>Type de Bac</th>
                         <th>Note</th>
-                        <th>Statut</th>
+                        <th>Etat</th>
+                        <th>Delib</th>
+                        <th>Nbr</th>
+                        <th>Date</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -54,7 +64,10 @@
                         <th>Categorie</th>
                         <th>Type de Bac</th>
                         <th>Note</th>
-                        <th>Statut</th>
+                        <th>Etat</th>
+                        <th>Delib</th>
+                        <th>Nbr</th>
+                        <th>Date</th>
                     </tr>
                 </tfoot>
             </table>
