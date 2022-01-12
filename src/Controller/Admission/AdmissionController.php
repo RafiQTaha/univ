@@ -2,11 +2,15 @@
 
 namespace App\Controller\Admission;
 
+use App\Entity\TAdmission;
+use App\Entity\TPreinscription;
 use App\Controller\DatatablesController;
+use App\Entity\PStatut;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 
@@ -23,7 +27,7 @@ class AdmissionController extends AbstractController
     #[Route('/', name: 'admission_index')]
     public function index(): Response
     {
-        return $this->render('admission/index.html.twig');
+        return $this->render('admission/admissions.html.twig');
     }
     #[Route('/candidat_addmissible_list', name: 'candidat_admissible_list')]
     public function candidatAddmissibleList(Request $request): Response
@@ -38,16 +42,17 @@ class AdmissionController extends AbstractController
             array( 'db' => 'etab.abreviation','dt' => 3),
             array( 'db' => 'UPPER(form.abreviation)','dt' => 4),
             array( 'db' => 'nd.designation','dt' => 5),
-            array( 'db' => 'pre.rang_p','dt' => 6),
-            array( 'db' => 'pre.rang_s','dt' => 7),
-            array( 'db' => 'nd.concours','dt' => 8),
-            array( 'db' => 'UPPER(st.designation)','dt' => 9),
-            array( 'db' => 'UPPER(st2.designation)','dt' => 10),
-            array( 'db' => 'pre.id','dt' => 11),
+            array( 'db' => 'etu.moyenne_bac','dt' => 6),
+            array( 'db' => 'pre.rang_p','dt' => 7),
+            array( 'db' => 'pre.rang_s','dt' => 8),
+            array( 'db' => 'nd.concours','dt' => 9),
+            array( 'db' => 'UPPER(st.designation)','dt' => 10),
+            array( 'db' => 'UPPER(st2.designation)','dt' => 11),
+            array( 'db' => 'pre.id','dt' => 12),
 
         );
 
-        $filtre .= "adm.id is null and st2.table0 = 'preinscription' AND st2.phase0 = 'admission' and st2.visible_admission = '1' and st2.visible = '1' ";
+        $filtre .= " adm.id is null and st2.table0 = 'preinscription' AND st2.phase0 = 'admission' and st2.visible_admission = '1' and st2.visible = '1' ";
         $sql = "SELECT " . implode(", ", DatatablesController::Pluck($columns, 'db')) . "
                       
                 FROM tpreinscription pre
@@ -89,13 +94,15 @@ class AdmissionController extends AbstractController
         foreach ($result as $key => $row) {
             $nestedData = array();
             $cd = $row['id'];
+            $nestedData[] = "<input type ='checkbox' class='check_admissible' id ='$cd' >";
             $nestedData[] = $cd;
             // dd($row);
+
             foreach (array_values($row) as $key => $value) {
-                if($key == 8) {
-                    $nestedData[] = $value == 1 ? 'Sans Concours' : 'Avec Concours';
+                if($key == 9) {
+                    $nestedData[] = $value == 1 ? 'Avec Concours' : 'Sans Concours';
                 }
-                else if($key < 11) {
+                else if($key < 12) {
                     $nestedData[] = $value;
                 }
             }
@@ -113,5 +120,30 @@ class AdmissionController extends AbstractController
         );
         // die;
         return new Response(json_encode($json_data));
+    }
+    #[Route('/new', name: 'admission_new')]
+    public function admissionNew(Request $request): Response
+    {
+        // dd($request);
+        $ids = json_decode($request->get('idpreins'));
+        foreach ($ids as $id) {
+            $preinscription = $this->em->getRepository(TPreinscription::class)->find($id);
+            $admission = new TAdmission();
+            $admission->setPreinscription($preinscription);
+            $admission->setUserCreated($this->getUser());
+            $admission->setStatut(
+                $this->em->getRepository(PStatut::class)->find(7)
+            );
+            $admission->setCreated(new \DateTime('now'));
+            $this->em->persist($admission);
+            $this->em->flush();
+            $formation = $preinscription->getAnnee()->getFormation()->getAbreviation();
+            $etablissement = $preinscription->getAnnee()->getFormation()->getEtablissement()->getAbreviation();
+
+            $admission->setCode('ADM-'.$etablissement.'_'.$formation.str_pad($admission->getId(), 8, '0', STR_PAD_LEFT));
+            $this->em->flush();
+        }
+
+        return new JsonResponse('Admission bien enregister', 200);
     }
 }
