@@ -127,7 +127,6 @@ $(document).ready(function  () {
       })
       return;
     }
-
     $('#validermodal').modal("show")
   })
   $('body').on('submit','.form-valider',async function (e) {
