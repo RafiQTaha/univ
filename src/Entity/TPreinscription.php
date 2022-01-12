@@ -240,7 +240,7 @@ class TPreinscription
         return $this->categorieListe;
     }
 
-    public function setCategorieListe(?PStatut $categorieListe): self
+    public function setCategorieListe(?PStatut $categorieListe)
     {
         $this->categorieListe = $categorieListe;
     }
@@ -268,7 +268,7 @@ class TPreinscription
         return $this->admissionListe;
     }
 
-    public function setAdmissionListe(?PStatut $admissionListe): self
+    public function setAdmissionListe(?PStatut $admissionListe)
     {
         $this->admissionListe = $admissionListe;
     }

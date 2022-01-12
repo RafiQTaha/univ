@@ -1,24 +1,27 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Preinscription;
 
-use Doctrine\Persistence\ManagerRegistry;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
 use App\Entity\TOperation;
 use App\Entity\TPreinscription;
+use App\Controller\DatatablesController;
+use App\Entity\PStatut;
+use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
-#[Route('/preinscription')]
-class PreinscriptionController extends AbstractController
+#[Route('/preinscription/gestion')]
+class GestionPreinscriptionController extends AbstractController
 {
     private $em;
     public function __construct(ManagerRegistry $doctrine)
     {
         $this->em = $doctrine->getManager();
     }
-    #[Route('/', name: 'preinscription_index')]
+    #[Route('/preinscription', name: 'preinscription_index')]
     public function index(): Response
     {   
         return $this->render('preinscription/index.html.twig');
@@ -106,7 +109,7 @@ class PreinscriptionController extends AbstractController
         // die;
         return new Response(json_encode($json_data));
     }
-    #[Route('/gestion_preinscription', name: 'gestion_preinscription')]
+    #[Route('/', name: 'gestion_preinscription')]
     public function gestion_preinscription(): Response
     {   
         return $this->render('preinscription/gestion_preinscription.html.twig');
@@ -116,7 +119,7 @@ class PreinscriptionController extends AbstractController
     {   
         $params = $request->query;
         $where = $totalRows = $sqlRequest = "";
-        $filtre = "where 1=1 AND inscription_valide = '1' AND an.cloture_academique = 'non' ";        
+        $filtre = "where 1=1 AND inscription_valide = '1' ";        
         $columns = array(
             array( 'db' => 'pre.id','dt' => 0 ),
             array( 'db' => 'pre.code','dt' => 1),
@@ -225,13 +228,32 @@ class PreinscriptionController extends AbstractController
         return new Response(json_encode(1));
     }
 
-    #[Route('/test', name: 'test')]
-    public function test(Request $request): Response
+    // #[Route('/test', name: 'test')]
+    // public function test(Request $request): Response
+    // {
+    //     $sqls="SELECT (CASE WHEN EXISTS (SELECT cab.code FROM toperationcab cab INNER JOIN tregelement reg ON reg.operation_id = cab.id WHERE cab.preinscription_id = 8) THEN 'Reglé' WHEN EXISTS (SELECT cab2.code FROM toperationcab cab2 LEFT JOIN tregelement reg2 ON reg2.operation_id = cab2.id WHERE cab2.preinscription_id = 8 ANd reg2.operation_id IS NULL) THEN 'Facturé' ELSE 'N.Facturé' END ) AS facture";
+    //     $stmts = $this->em->getConnection()->prepare($sqls);
+    //     $resultSets = $stmts->executeQuery();
+    //     $results = $resultSets->fetchAll();
+    //     dd($results[0]['facture']);
+    // }
+    
+    #[Route('/admission_preinscription', name: 'admission_preinscription')]
+    public function admissionPreinscription(Request $request): Response
     {
-        $sqls="SELECT (CASE WHEN EXISTS (SELECT cab.code FROM toperationcab cab INNER JOIN tregelement reg ON reg.operation_id = cab.id WHERE cab.preinscription_id = 8) THEN 'Reglé' WHEN EXISTS (SELECT cab2.code FROM toperationcab cab2 LEFT JOIN tregelement reg2 ON reg2.operation_id = cab2.id WHERE cab2.preinscription_id = 8 ANd reg2.operation_id IS NULL) THEN 'Facturé' ELSE 'N.Facturé' END ) AS facture";
-        $stmts = $this->em->getConnection()->prepare($sqls);
-        $resultSets = $stmts->executeQuery();
-        $results = $resultSets->fetchAll();
-        dd($results[0]['facture']);
+        // dd($request);
+        $ids = json_decode($request->get('idpreins'));
+        foreach ($ids as $id) {
+            $preinscription = $this->em->getRepository(TPreinscription::class)->find($id);
+            $preinscription->setCategorieListe(
+                $this->em->getRepository(PStatut::class)->find(1)
+            );
+            $preinscription->setAdmissionListe(
+                $this->em->getRepository(PStatut::class)->find(5)
+            );
+            $this->em->flush();
+        }
+
+        return new JsonResponse('Admission bien enregister', 200);
     }
 }
