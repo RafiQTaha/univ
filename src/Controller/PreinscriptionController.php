@@ -172,7 +172,7 @@ class PreinscriptionController extends AbstractController
             $nestedData = array();
             $cd = $row['id'];
             // $nestedData[] = $cd;
-            $nestedData[] = "<input type ='checkbox' class='cat' id ='$cd' >";
+            $nestedData[] = "<input type ='checkbox' class='check_preins' id ='$cd' >";
             $k = 0;
             foreach (array_values($row) as $key => $value) {
                 if($k == 9) {
@@ -209,14 +209,20 @@ class PreinscriptionController extends AbstractController
         return new Response(json_encode($json_data));
     }
 
-    #[Route('/annulation_preinscription/{id}', name: 'annulation_preinscription')]
-    public function annulation_preinscription($preinscription)
-    {
-        // $preinscription = $this->em->getRepository(TEtudiant::class)->find();
-        $preinscription->setInscriptionValide(0);
-        $this->em->persist($preinscription);
-        $this->em->flush();
-
+    #[Route('/annulation_preinscription', name: 'annulation_preinscription')]
+    public function annulation_preinscription(Request $request)
+    {   
+        dd($request);
+        $ids = $request->get('idpreins');
+        foreach( $ids as $id){
+            dump($id);
+        }
+        die;
+        // $preinscription = $this->em->getRepository(TPreinscription::class)->find($id);
+        // $preinscription->setInscriptionValide(0);
+        // $this->em->persist($preinscription);
+        // $this->em->flush();
+        return new Response(json_encode(1));
     }
 
     #[Route('/test', name: 'test')]
