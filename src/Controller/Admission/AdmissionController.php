@@ -46,7 +46,7 @@ class AdmissionController extends AbstractController
             array( 'db' => 'pre.id','dt' => 11),
 
         );
-        // dd($columns);
+
         $filtre .= "adm.id is null and st2.table0 = 'preinscription' AND st2.phase0 = 'admission' and st2.visible_admission = '1' and st2.visible = '1' ";
         $sql = "SELECT " . implode(", ", DatatablesController::Pluck($columns, 'db')) . "
                       
