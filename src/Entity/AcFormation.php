@@ -51,13 +51,14 @@ class AcFormation
     #[ORM\OneToMany(mappedBy: 'formation', targetEntity: AcAnnee::class)]
     private $acAnnees;
 
-    #[ORM\ManyToOne(targetEntity: PFrais::class, inversedBy: 'formation')]
-    private $acFormations;
+    #[ORM\OneToMany(mappedBy: 'formation', targetEntity: PFrais::class)]
+    private $frais;
 
     public function __construct()
     {
         $this->acPromotions = new ArrayCollection();
         $this->acAnnees = new ArrayCollection();
+        $this->frais = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -245,15 +246,34 @@ class AcFormation
         return $this;
     }
 
-    public function getAcFormations(): ?PFrais
+    /**
+     * @return Collection|PFrais[]
+     */
+    public function getFrais(): Collection
     {
-        return $this->acFormations;
+        return $this->frais;
     }
 
-    public function setAcFormations(?PFrais $acFormations): self
+    public function addFrai(PFrais $frai): self
     {
-        $this->acFormations = $acFormations;
+        if (!$this->frais->contains($frai)) {
+            $this->frais[] = $frai;
+            $frai->setFormation($this);
+        }
 
         return $this;
     }
+
+    public function removeFrai(PFrais $frai): self
+    {
+        if ($this->frais->removeElement($frai)) {
+            // set the owning side to null (unless already changed)
+            if ($frai->getFormation() === $this) {
+                $frai->setFormation(null);
+            }
+        }
+
+        return $this;
+    }
+
 }

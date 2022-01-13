@@ -30,9 +30,6 @@ class PFrais
     #[ORM\Column(type: 'string', length: 255)]
     private $ice;
 
-    #[ORM\OneToMany(mappedBy: 'acFormations', targetEntity: AcFormation::class)]
-    private $formation;
-
     #[ORM\Column(type: 'smallint')]
     private $active;
 
@@ -42,9 +39,18 @@ class PFrais
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $Nature;
 
+    #[ORM\OneToMany(mappedBy: 'frais', targetEntity: TOperationdet::class)]
+    private $operationdets;
+
+    #[ORM\ManyToOne(targetEntity: AcFormation::class, inversedBy: 'frais')]
+    private $formation;
+
+    #[ORM\ManyToOne(targetEntity: POrganisme::class, inversedBy: 'frias')]
+    private $organisme;
+
     public function __construct()
     {
-        $this->formation = new ArrayCollection();
+        $this->operationdets = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -112,36 +118,6 @@ class PFrais
         return $this;
     }
 
-    /**
-     * @return Collection|AcFormation[]
-     */
-    public function getFormation(): Collection
-    {
-        return $this->formation;
-    }
-
-    public function addFormation(AcFormation $formation): self
-    {
-        if (!$this->formation->contains($formation)) {
-            $this->formation[] = $formation;
-            $formation->setAcFormations($this);
-        }
-
-        return $this;
-    }
-
-    public function removeFormation(AcFormation $formation): self
-    {
-        if ($this->formation->removeElement($formation)) {
-            // set the owning side to null (unless already changed)
-            if ($formation->getAcFormations() === $this) {
-                $formation->setAcFormations(null);
-            }
-        }
-
-        return $this;
-    }
-
     public function getActive(): ?int
     {
         return $this->active;
@@ -174,6 +150,60 @@ class PFrais
     public function setNature(?string $Nature): self
     {
         $this->Nature = $Nature;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|TOperationdet[]
+     */
+    public function getOperationdets(): Collection
+    {
+        return $this->operationdets;
+    }
+
+    public function addOperationdet(TOperationdet $operationdet): self
+    {
+        if (!$this->operationdets->contains($operationdet)) {
+            $this->operationdets[] = $operationdet;
+            $operationdet->setFrais($this);
+        }
+
+        return $this;
+    }
+
+    public function removeOperationdet(TOperationdet $operationdet): self
+    {
+        if ($this->operationdets->removeElement($operationdet)) {
+            // set the owning side to null (unless already changed)
+            if ($operationdet->getFrais() === $this) {
+                $operationdet->setFrais(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getFormation(): ?AcFormation
+    {
+        return $this->formation;
+    }
+
+    public function setFormation(?AcFormation $formation): self
+    {
+        $this->formation = $formation;
+
+        return $this;
+    }
+
+    public function getOrganisme(): ?POrganisme
+    {
+        return $this->organisme;
+    }
+
+    public function setOrganisme(?POrganisme $organisme): self
+    {
+        $this->organisme = $organisme;
 
         return $this;
     }

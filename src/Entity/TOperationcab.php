@@ -42,9 +42,13 @@ class TOperationcab
     #[ORM\OneToMany(mappedBy: 'operation', targetEntity: TRegelement::class)]
     private $regelements;
 
+    #[ORM\OneToMany(mappedBy: 'operationcab', targetEntity: TOperationdet::class)]
+    private $operationdets;
+
     public function __construct()
     {
         $this->regelements = new ArrayCollection();
+        $this->operationdets = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -172,6 +176,36 @@ class TOperationcab
             // set the owning side to null (unless already changed)
             if ($regelement->getOperation() === $this) {
                 $regelement->setOperation(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|TOperationdet[]
+     */
+    public function getOperationdets(): Collection
+    {
+        return $this->operationdets;
+    }
+
+    public function addOperationdet(TOperationdet $operationdet): self
+    {
+        if (!$this->operationdets->contains($operationdet)) {
+            $this->operationdets[] = $operationdet;
+            $operationdet->setOperationcab($this);
+        }
+
+        return $this;
+    }
+
+    public function removeOperationdet(TOperationdet $operationdet): self
+    {
+        if ($this->operationdets->removeElement($operationdet)) {
+            // set the owning side to null (unless already changed)
+            if ($operationdet->getOperationcab() === $this) {
+                $operationdet->setOperationcab(null);
             }
         }
 

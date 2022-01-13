@@ -26,7 +26,7 @@
         >
         <ul class="dropdown-menu">
           <li><a class="nav-link" href="{{path('preinscription_index')}}">Pré-Inscription</a></li>
-          <li><a class="nav-link {% if secondCurrentUrl == 'gestion_preinscription'%} activeSecondUrl {% endif %}" href="{{path('gestion_preinscription')}}">Gestion Des Pre-inscriptions</a></li>
+          <li><a class="nav-link {% if secondCurrentUrl == 'gestion'%} activeSecondUrl {% endif %}" href="{{path('gestion_preinscription')}}">Gestion Des Pre-inscriptions</a></li>
         </ul>
       </li>
       <li class="nav-item dropdown {% if getCurrentUrl == 'admission'%} active {% endif %}">
@@ -35,7 +35,7 @@
         >
         <ul class="dropdown-menu">
           <li><a class="nav-link {% if secondCurrentUrl == 'admissions'%} activeSecondUrl {% endif %}" href="{{path('admission_index')}}">Admissions</a></li>
-          <li><a class="nav-link {% if secondCurrentUrl == 'gestion_admission'%} activeSecondUrl {% endif %}" href="#">Gestion des admissions</a></li>
+          <li><a class="nav-link {% if secondCurrentUrl == 'gestion'%} activeSecondUrl {% endif %}" href="{{path('gestion_admission')}}">Gestion des admissions</a></li>
         </ul>
       </li>
       {# <li class="nav-item dropdown {% if getCurrentUrl == 'inscription'%} active {% endif %}">
