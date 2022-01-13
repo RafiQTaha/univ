@@ -324,10 +324,21 @@ class EtudiantController extends AbstractController
     {   
         $current_year = date('Y').'/'.date('Y')+1; 
         $id_formation = $request->get('formation');
+        
         $formation = $this->em->getRepository(AcFormation::class)->find($id_formation);
-        $annee = $this->em->getRepository(AcAnnee::class)->findOneBy(['formation'=>$formation,'designation'=>'2021/2022']);
+        if(strpos($formation->getDesignation(), 'Résidanat') === false){
+            $annee = $this->em->getRepository(AcAnnee::class)->findOneBy(['formation'=>$formation,'designation'=>'2021/2022']);
+        }else{
+            $id_annee = $request->get('annee');
+            $annee = $this->em->getRepository(AcAnnee::class)->find($id_annee);
+        }
         if(!$annee) {
             return new JsonResponse('Annee untrouvable!', 500);
+        }
+        $exist = count($this->em->getRepository(TPreinscription::class)->findBy(['etudiant'=>$etudiant,'annee'=>$annee]));
+        // dd($exist);
+        if ($exist > 0) {
+            return new JsonResponse(1);
         }
         $preinsctiption = new TPreinscription();
         $preinsctiption->setStatut($etudiant->getStatut());

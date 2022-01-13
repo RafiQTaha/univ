@@ -12,7 +12,7 @@ const Toast = Swal.mixin({
 })
 let id_preinscription = false;
 let idpreins = [];
-var table = $("#datables_preinscription").DataTable({
+var table_preins = $("#datables_preinscription").DataTable({
     lengthMenu: [
         [10, 15, 25, 50, 100, 20000000000000],
         [10, 15, 25, 50, 100, "All"],
@@ -27,7 +27,7 @@ var table = $("#datables_preinscription").DataTable({
     },
 });
 
-var table = $("#datables_gestion_preinscription").DataTable({
+var table_gestion_preins = $("#datables_gestion_preinscription").DataTable({
     lengthMenu: [
         [10, 15, 25, 50, 100, 20000000000000],
         [10, 15, 25, 50, 100, "All"],
@@ -48,40 +48,24 @@ var table = $("#datables_gestion_preinscription").DataTable({
         url: "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/French.json",
     },
 });
-    
 
-
-$('body').on('click','#datables_gestion_preinscription tbody tr',function () {
-    const input = $(this).find("input");
-    // $("#datables_gestion_preinscription tbody tr").removeClass('active_databales');
-    if(input.is(":checked")){
-        input.prop("checked",false);
-        const index = idpreins.indexOf(input.attr("id"));
-        idpreins.splice(index,1);
-        id_preinscription = null;
-    }else{
-        input.prop("checked",true);
-        idpreins.push(input.attr("id"));
-        // $(this).addClass('active_databales');
-        id_preinscription = $(this).attr('id');
-    }
-    console.log(idpreins);
-})
-
-$('body').on('dblclick','#datables_gestion_preinscription tbody tr',function () {
-    // const input = $(this).find("input");
-    if($(this).hasClass('active_databales')) {
-        $(this).removeClass('active_databales');
-        id_preinscription = null;
-    } else {
-        $("#datables_gestion_preinscription tbody tr").removeClass('active_databales');
-        $(this).addClass('active_databales');
-        id_preinscription = $(this).attr('id');
-    }
-    
-})
-
-$("#valider-modal").on('click', async (e) => {
+const load_frais_inscription = () => {
+    if(id_preinscription){
+        const icon = $("#frais_inscription i");
+         icon.removeClass('fa-money-bill-alt').addClass("fa-spinner fa-spin");
+        axios.get('/preinscription/gestion/frais_preins_modals/'+id_preinscription)
+      .then(success => {
+          $('.modal-preins .etudiant_info').html(success.data);
+          icon.removeClass("fa-spinner fa-spin").addClass('fa-money-bill-alt');
+        // success.data
+      })
+      .catch(err => {
+        console.log(err);
+        icon.removeClass("fa-spinner fa-spin").addClass('fa-money-bill-alt');
+      })
+    }    
+  }
+$('body').on('click','#frais_inscription',function (e) {
     e.preventDefault();
     if(!id_preinscription){
         Toast.fire({
@@ -90,8 +74,52 @@ $("#valider-modal").on('click', async (e) => {
         })
         return;
     }
+    $('#frais_inscription-modal').modal("show");
+});
+
+
+$('body').on('click','#datables_gestion_preinscription tbody tr',function (e) {
+    e.preventDefault();
+    const input = $(this).find("input");
+    if(input.is(":checked")){
+        input.prop("checked",false);
+        const index = idpreins.indexOf(input.attr("id"));
+        idpreins.splice(index,1);
+    }else{
+        input.prop("checked",true);
+        idpreins.push(input.attr("id"));
+    }
+    console.log(idpreins);
+})
+
+$('body').on('dblclick','#datables_gestion_preinscription tbody tr',function (e) {
+    e.preventDefault();
+    // const input = $(this).find("input");
+    if($(this).hasClass('active_databales')) {
+        $(this).removeClass('active_databales');
+        id_preinscription = null;
+    } else {
+        $("#datables_gestion_preinscription tbody tr").removeClass('active_databales');
+        $(this).addClass('active_databales');
+        id_preinscription = $(this).attr('id');
+        load_frais_inscription();
+    }
+    console.log(id_preinscription);
+})
+
+$("#annulation").on('click', async (e) => {
+    e.preventDefault();
+    if(!id_preinscription){
+        Toast.fire({
+          icon: 'error',
+          title: 'Veuillez selection une ligne!',
+        })
+        return;
+    }
+    const icon = $("#annulation i");
+    icon.removeClass('fa-times-circle').addClass("fa-spinner fa-spin");
     var formData = new FormData();
-    formData.append('idpreins', idpreins);
+    formData.append('idpreins', JSON.stringify(idpreins));
     try {
         const request = await axios.post("/preinscription/gestion/annulation_preinscription", formData);
         const data = await request.data;
@@ -99,7 +127,8 @@ $("#valider-modal").on('click', async (e) => {
             icon: 'success',
             title: 'Preinscription Bien Annuler',
         })
-        table.ajax.reload();
+        icon.addClass('fa-times-circle').removeClass("fa-spinner fa-spin");
+        table_gestion_preins.ajax.reload();
       } catch (error) {
         const message = error.response.data;
         console.log(error, error.response);
@@ -132,7 +161,7 @@ $("#admission").on('click', async (e) => {
         })
         icon.addClass('fa-check').removeClass("fa-spinner fa-spin");
 
-        table.ajax.reload();
+        table_gestion_preins.ajax.reload();
       } catch (error) {
         const message = error.response.data;
         console.log(error, error.response);
@@ -144,6 +173,7 @@ $("#admission").on('click', async (e) => {
 
       }
 })
+
 
 
 

@@ -113,11 +113,24 @@ $(document).ready(function  () {
 
   $('body').on('change','#formation',function (e) {
     e.preventDefault();
+    let id_forma = $(this).val();
+    axios.get('/api/annee/'+id_forma)
+    .then(success => {
+      if(success.data !== 1){
+        $('.annee').css('display','block');
+        $('#annee').html(success.data).select2();
+      }else{
+        $('.annee').css('display','none');
+      }
+    })
     $('#enregistrer').removeAttr("disabled");
   })
 
+  $('body').on('change','#annee',function (e) {
+    e.preventDefault();
+    $('#enregistrer').removeAttr("disabled");
+  })
   
-
   $("#valider-modal").on('click', () => {
     console.log(id_etudiant);
     if(!id_etudiant){
@@ -139,13 +152,23 @@ $(document).ready(function  () {
     try{
       const request = await  axios.post('/etudiant/etudiant_valider/'+id_etudiant,formdata)
       const data = request.data;
-      modalAlert.prepend(
-        `<div class="alert alert-success">
-            <p>${data}</p>
-          </div>`
-      );  
-      icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin");
-      tableListPreinscription.ajax.reload();
+      if (data === 1) {
+        $("#validermodal .modal-body").prepend(
+          `<div class="alert alert-danger">Etudiant déja inscrit dans la meme formation</div>`
+        );
+        icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin");
+      }else{
+        $("#validermodal .modal-body").prepend(
+          `<div class="alert alert-success">${data}</div>`
+        );
+        // modalAlert.prepend(
+        //   `<div class="alert alert-success">
+        //       <p>${data}</p>
+        //     </div>`
+        // );  
+        icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin");
+        tableListPreinscription.ajax.reload();
+      }
     }catch(error){
       const message = error.response.data;
       console.log(error, error.response);

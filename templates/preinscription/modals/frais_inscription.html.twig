@@ -1,0 +1,66 @@
+<div class="modal" tabindex="-1" role="dialog" id="frais_inscription-modal" aria-modal="true"> 
+<div class="modal-dialog modal-md modal-preins" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Données Frais d'inscriprion</h5>
+        </hr>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"> 
+        <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        {# <div class="alert alert-info">Veuillez selectionner un ligne Pour Continuer Cette opération !!</div> #}
+        <div class="etudiant_info">
+          {# <p><span>Etablissement</span> : xx</p>
+          <p><span>Formation</span> : xx</p>
+          <p><span>Categorie</span> : xx</p>
+          <p><span>Nom</span> : xx</p>
+          <p><span>Prenom</span> : xx</p>
+          <p><span>Cin</span> : xx</p>
+          <p><span>Cne</span> : xx</p> #}
+        </div>
+        <h5 class="title-article">Saisie Article</h5>
+        <div class="article">
+          <div class="left">
+            <div class="field frais">
+              <label for="frais">Frais de scolarité (*)</label>
+              <select class="form-control" name="frais" id="frais">
+              </select>
+            </div>
+            <div class="field ">
+              <label for="montant">Montant(*):</label>
+              <input type="text" class="form-control" id='montant'>
+            </div>
+          </div>
+          <div class="right">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th scope="col">Ord</th>
+                  <th scope="col" style="">Designation</th>
+                  <th scope="col" style="">Montant</th>
+                  <th scope="col">Sup</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- <tr>
+                  <th scope="row">1</th>
+                  <td>Mark</td>
+                  <td>Otto</td>
+                  <td>@mdo</td>
+                </tr>
+                <tr>
+                  <th scope="row">2</th>
+                  <td>Jacob</td>
+                  <td>Thornton</td>
+                  <td>@fat</td>
+                </tr> -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.24.0/axios.min.js"></script>
