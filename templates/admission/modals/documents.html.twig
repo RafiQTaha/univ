@@ -10,13 +10,22 @@
       <div class="modal-body">
         <!-- <div class="alert alert-info">Veuillez selectionner un ligne Pour Continuer Cette opération !!</div> -->
     
-        <select name="from[]" id="multiselect" class="form-control" size="8" multiple="multiple" style="margin-bottom: 1.5rem">
-
-        </select>
+        <div class="ms-container" id="ms-multiselect">
+            <div class="ms-selectable">
+                <ul class="ms-list" tabindex="-1">
+                
+                </ul>
+            </div>
+            <div class="ms-selection">
+                <ul class="ms-list" tabindex="-1">
+                       
+                </ul>
+            </div>
+        </div>
          
 
         <button type="button" class="btn btn-primary mt-2"><i class="fas fa-copy"></i> Imprimer</button>
-        <button type="button" id="save_document" class="btn btn-success mt-2"><i class="fas fa-check-circle"></i> Enregistrer</button>
+        {# <button type="button" id="save_document" class="btn btn-success mt-2"><i class="fas fa-check-circle"></i> Enregistrer</button> #}
 
       </div>
     </div>

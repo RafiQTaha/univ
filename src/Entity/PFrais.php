@@ -45,9 +45,7 @@ class PFrais
     #[ORM\ManyToOne(targetEntity: AcFormation::class, inversedBy: 'frais')]
     private $formation;
 
-    #[ORM\ManyToOne(targetEntity: POrganisme::class, inversedBy: 'frias')]
-    private $organisme;
-
+   
     public function __construct()
     {
         $this->operationdets = new ArrayCollection();
@@ -196,15 +194,5 @@ class PFrais
         return $this;
     }
 
-    public function getOrganisme(): ?POrganisme
-    {
-        return $this->organisme;
-    }
-
-    public function setOrganisme(?POrganisme $organisme): self
-    {
-        $this->organisme = $organisme;
-
-        return $this;
-    }
+    
 }

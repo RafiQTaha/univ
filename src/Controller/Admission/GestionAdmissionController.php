@@ -129,55 +129,52 @@ class GestionAdmissionController extends AbstractController
     public function admissionGetdocuments(Request $request, TAdmission $admission): Response
     {
         $documentsExists = $this->em->getRepository(TAdmissionDocument::class)->findBy(['preinscription' => $admission->getPreinscription()]);
-        // if(count($documentsExists) > 0) {
-        //     $documents = $this->em->getRepository(PDocument::class)->getDocmentDoesNotExist($admission);
-        // } else {
+        if(count($documentsExists) > 0) {
+            $documents = $this->em->getRepository(PDocument::class)->getDocmentDoesNotExist($admission);
+        } else {
         $documents = $this->em->getRepository(PDocument::class)->findAllBy($admission);
-        // }
+        }
         $documentHtml = "";
-        $documentExistArray = [];
+        $documentExistHtml = "";
         foreach ($documentsExists as $documentsExist) {
-            array_push($documentExistArray, $documentsExist->getDocument()->getId());
-         }
+            $documentExistHtml .= '
+            <li class="ms-elem-selection" id="'.$documentsExist->getDocument()->getId().'" >
+                <span> '.$documentsExist->getDocument()->getDesignation().' </span>
+            </li>';
+        }
         foreach ($documents as $document) {
-            if(in_array($document->getId(), $documentExistArray)) {
-                $documentHtml .= "<option value='".$document->getId()."' selected> ".$document->getDesignation()." </option>";
-            } else {
-                $documentHtml .= "<option value='".$document->getId()."'> ".$document->getDesignation()." </option>";
-            }
+            $documentHtml .= '
+            <li class="ms-elem-selectable" id="'.$document->getId().'">
+                <span> '.$document->getDesignation().' </span>
+            </li>';
+            
         }
         
-        return new JsonResponse(['documents' => $documentHtml, 'documentsExists' => $documentExistArray], 200);
+        return new JsonResponse(['documents' => $documentHtml, 'documentsExists' => $documentExistHtml], 200);
     }
+    
     #[Route('/adddocuments', name: 'admission_adddocuments')]
     public function addDocuments(Request $request): Response
     {
         $admission = $this->em->getRepository(TAdmission::class)->find($request->get('idAdmission'));
-        $documentsId = json_decode($request->get('documents'));
-        $notSelectedDocumentsId = json_decode($request->get('notselecteddocuments'));
-        dd($notSelectedDocumentsId);
-        $documentsDisponible = $admission->getPreinscription()->getAdmissionDocuments();
-        if(count($documentsId) == 0) {
-            foreach ($documentsDisponible as $documentDelete) {
-                $this->em->remove($documentDelete);
-                $this->em->flush();
-            }
-        } else {
-            foreach ($documentsId as $documentId) {
-                $document = $this->em->getRepository(PDocument::class)->find($documentId);
-                $existDocument = $this->em->getRepository(TAdmissionDocument::class)->findBy(['preinscription' => $admission->getPreinscription(), 'document' => $document]);
-                if(!$existDocument) {
-                    $admissionDocument = new TAdmissionDocument();
-                    $admissionDocument->setPreinscription($admission->getPreinscription());
-                    $admissionDocument->setDocument($document);
-                    $this->em->persist($admissionDocument);
-                    $this->em->flush();
-                    $admissionDocument->setCode('DIN'.str_pad($admissionDocument->getId(), 8, '0', STR_PAD_LEFT));
-                    $this->em->flush();
-                }
-            }
-            return new JsonResponse('Bien Enregistre', 200);
-        }
-
+        $documentAdmission = new TAdmissionDocument();
+        $documentAdmission->setPreinscription($admission->getPreinscription());
+        $documentAdmission->setDocument(
+            $this->em->getRepository(PDocument::class)->find($request->get('idDocument'))
+        );
+        $this->em->persist($documentAdmission);
+        $this->em->flush();
+        $documentAdmission->setCode('DIN'.str_pad($documentAdmission->getId(), 8, '0', STR_PAD_LEFT));
+        $this->em->flush();
+        return new JsonResponse('Bien Enregistre', 200);
+    }
+    #[Route('/deletedocument', name: 'admission_deletedocument')]
+    public function deleteDocument(Request $request): Response
+    {
+        $admission = $this->em->getRepository(TAdmission::class)->find($request->get('idAdmission'));
+        $existDocument = $this->em->getRepository(TAdmissionDocument::class)->findOneBy(['preinscription' => $admission->getPreinscription(), 'document' => $request->get('idDocument')]);
+        $this->em->remove($existDocument);
+        $this->em->flush();
+        return new JsonResponse('Bien Enregistre', 200);
     }
 }
