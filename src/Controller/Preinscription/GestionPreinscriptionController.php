@@ -220,37 +220,6 @@ class GestionPreinscriptionController extends AbstractController
         $this->em->flush();
         return new Response(json_encode(1));
     }
-
-    #[Route('/test/{id}', name: 'test')]
-    public function test(Request $request,TPreinscription $preinscription): Response
-    {
-        // $sqls="SELECT etab.designation as etab, forma.designation as Formation,etu.nom as nom,etu.prenom as prenom,etu.date_naissance as dateNaissance, etu.cin as cin, nat.designation, etu.cne as CNE
-        // FROM tpreinscription pre 
-        // inner join tetudiant etu on etu.id = pre.etudiant_id
-        // inner join nature_demande nat on nat.id = etu.nature_demande_id
-        // inner join ac_annee an on an.id = pre.annee_id
-        // inner join ac_formation forma on forma.id = an.formation_id
-        // inner join ac_etablissement etab on etab.id = forma.etablissement_id;";
-        // $stmts = $this->em->getConnection()->prepare($sqls);
-        // $resultSets = $stmts->executeQuery();
-        // $results = $resultSets->fetchAll();
-            $etudiant = $preinscription->getEtudiant();
-            $natutre = $etudiant->getNatureDemande();
-            $annee = $preinscription->getAnnee();
-            $formation =$annee->getFormation();
-            $etablissement=$formation->getEtablissement();
-            $donnee_frais = "<p><span>Etablissement</span> : ".$etablissement->getDesignation()."</p>
-            <p><span>Formation</span> : ".$formation->getDesignation()."</p>
-            <p><span>Categorie</span> : ".$natutre->getDesignation()."</p>
-            <p><span>Nom</span> : ".$etudiant->getNom()."</p>
-            <p><span>Prenom</span> : ".$etudiant->getPrenom()."</p>
-            <p><span>Cin</span> : ".$etudiant->getCin()."</p>
-            <p><span>Cne</span> : ".$etudiant->getCne()."</p>";
-            dd(
-                $donnee_frais
-            );
-        dd($preinscription->getEtudiant()->getNatureDemande()->getDesignation());
-    }
     
     #[Route('/admission_preinscription', name: 'admission_preinscription')]
     public function admissionPreinscription(Request $request): Response
@@ -284,7 +253,24 @@ class GestionPreinscriptionController extends AbstractController
                         <p><span>Prenom</span> : ".$etudiant->getPrenom()."</p>
                         <p><span>Cin</span> : ".$etudiant->getCin()."</p>
                         <p><span>Cne</span> : ".$etudiant->getCne()."</p>";
-
         return new JsonResponse($donnee_frais, 200);
+    }
+
+    #[Route('/article_frais/{id}', name: 'article_frais')]
+    public function article_frais(Request $request,TPreinscription $preinscription): Response
+    {   
+        
+        return new JsonResponse('', 200);
+    }
+
+    #[Route('/test/{id}', name: 'test')]
+    public function test(Request $request,TPreinscription $preinscription): Response
+    {
+            // $etudiant = $preinscription->getEtudiant();
+            // $natutre = $etudiant->getNatureDemande();
+            // $etablissement = $formation->getEtablissement();
+            $annee = $preinscription->getAnnee();
+            $formation = $annee->getFormation();
+            dd($formation);
     }
 }
