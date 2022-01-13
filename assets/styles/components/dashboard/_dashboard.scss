@@ -6279,6 +6279,51 @@ tr:first-child > td > .fc-day-grid-event {
   background-color : #ceffce !important;
   color :#3c3c3c !important;
 }
+.modal-preins{
+  max-width: 55% !important;
+}
+.modal .etudiant_info{
+  display:flex;
+  width:100%;
+  flex-wrap: wrap;
+  border:1px solid #eee;
+  border-top: 3px solid #6777ef;
+  padding: 5px;
+  border-radius: 6px;
+}
+.modal .etudiant_info p{
+  flex:48%;
+  line-height: 1.5rem !important;
+}
+.modal .etudiant_info p span{
+  font-weight:900;
+}
+.title-article{
+  font-weight:900;
+  padding: 10px 0;
+  font-size: 1.5rem;
+}
+.article{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.article .left{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex : 0 60%;
+}
+.article .right{
+  flex: 0 37%;
+}
+.article .left .field{
+  display:flex;
+  flex-direction:column;
+}
+.article .left .field.frais{
+  flex: 0 55%;
+}
 .active_databales{
   background-color:#6777ef !important;
   color:#fff !important;

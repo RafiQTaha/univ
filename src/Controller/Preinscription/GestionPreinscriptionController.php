@@ -198,50 +198,32 @@ class GestionPreinscriptionController extends AbstractController
             $nestedData["DT_RowId"] = $cd;
             $nestedData["DT_RowClass"] = $etat_bg;
             $data[] = $nestedData;
-            // dd($nestedData);
             $i++;
         }
-        // dd($data);
         $json_data = array(
             "draw" => intval($params->get('draw')),
             "recordsTotal" => intval($totalRecords),
             "recordsFiltered" => intval($totalRecords),
             "data" => $data   
         );
-        // die;
         return new Response(json_encode($json_data));
     }
 
     #[Route('/annulation_preinscription', name: 'annulation_preinscription')]
     public function annulation_preinscription(Request $request)
     {   
-        dd($request);
-        $ids = $request->get('idpreins');
-        foreach( $ids as $id){
-            dump($id);
+        $ids = json_decode($request->get('idpreins'));
+        foreach ($ids as $id) {
+            $preinscription = $this->em->getRepository(TPreinscription::class)->find($id);
+            $preinscription->setInscriptionValide(0);
         }
-        die;
-        // $preinscription = $this->em->getRepository(TPreinscription::class)->find($id);
-        // $preinscription->setInscriptionValide(0);
-        // $this->em->persist($preinscription);
-        // $this->em->flush();
+        $this->em->flush();
         return new Response(json_encode(1));
     }
-
-    // #[Route('/test', name: 'test')]
-    // public function test(Request $request): Response
-    // {
-    //     $sqls="SELECT (CASE WHEN EXISTS (SELECT cab.code FROM toperationcab cab INNER JOIN tregelement reg ON reg.operation_id = cab.id WHERE cab.preinscription_id = 8) THEN 'Reglé' WHEN EXISTS (SELECT cab2.code FROM toperationcab cab2 LEFT JOIN tregelement reg2 ON reg2.operation_id = cab2.id WHERE cab2.preinscription_id = 8 ANd reg2.operation_id IS NULL) THEN 'Facturé' ELSE 'N.Facturé' END ) AS facture";
-    //     $stmts = $this->em->getConnection()->prepare($sqls);
-    //     $resultSets = $stmts->executeQuery();
-    //     $results = $resultSets->fetchAll();
-    //     dd($results[0]['facture']);
-    // }
     
     #[Route('/admission_preinscription', name: 'admission_preinscription')]
     public function admissionPreinscription(Request $request): Response
     {
-        // dd($request);
         $ids = json_decode($request->get('idpreins'));
         foreach ($ids as $id) {
             $preinscription = $this->em->getRepository(TPreinscription::class)->find($id);
@@ -253,7 +235,42 @@ class GestionPreinscriptionController extends AbstractController
             );
             $this->em->flush();
         }
-
         return new JsonResponse('Admission bien enregister', 200);
+    }
+
+    #[Route('/frais_preins_modals/{id}', name: 'frais_preins_modals')]
+    public function frais_preins_modals(Request $request,TPreinscription $preinscription): Response
+    {   
+        $etudiant = $preinscription->getEtudiant();
+        $natutre = $etudiant->getNatureDemande();
+        $annee = $preinscription->getAnnee();
+        $formation =$annee->getFormation();
+        $etablissement=$formation->getEtablissement();
+        $donnee_frais = "<p><span>Etablissement</span> : ".$etablissement->getDesignation()."</p>
+                        <p><span>Formation</span> : ".$formation->getDesignation()."</p>
+                        <p><span>Categorie</span> : ".$natutre->getDesignation()."</p>
+                        <p><span>Nom</span> : ".$etudiant->getNom()."</p>
+                        <p><span>Prenom</span> : ".$etudiant->getPrenom()."</p>
+                        <p><span>Cin</span> : ".$etudiant->getCin()."</p>
+                        <p><span>Cne</span> : ".$etudiant->getCne()."</p>";
+        return new JsonResponse($donnee_frais, 200);
+    }
+
+    #[Route('/article_frais/{id}', name: 'article_frais')]
+    public function article_frais(Request $request,TPreinscription $preinscription): Response
+    {   
+        
+        return new JsonResponse('', 200);
+    }
+
+    #[Route('/test/{id}', name: 'test')]
+    public function test(Request $request,TPreinscription $preinscription): Response
+    {
+            // $etudiant = $preinscription->getEtudiant();
+            // $natutre = $etudiant->getNatureDemande();
+            // $etablissement = $formation->getEtablissement();
+            $annee = $preinscription->getAnnee();
+            $formation = $annee->getFormation();
+            dd($formation);
     }
 }

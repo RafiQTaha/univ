@@ -5,6 +5,7 @@ namespace App\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use App\Entity\AcEtablissement;
 use App\Entity\AcFormation;
+use App\Entity\AcAnnee;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\Persistence\ManagerRegistry;
@@ -36,6 +37,22 @@ class ApiController extends AbstractController
         $formations = $this->em->getRepository(AcFormation::class)->findBy(['etablissement'=>$id]);
         $data = $this->dropdown($formations,'Formation');
         return new JsonResponse($data);
+    }
+
+    
+    #[Route('/annee/{id}', name: 'getannee')]
+    public function getannee($id): Response
+    {   
+        $formations = $this->em->getRepository(AcFormation::class)->find($id);
+        // dd($formations->getDesignation());
+        if(strpos($formations->getDesignation(), 'Résidanat') === false){
+            return new JsonResponse(1);
+        }else{
+            $annee = $this->em->getRepository(AcAnnee::class)->findBy(['formation'=>$id],['id'=>'DESC'],2);
+            $data = $this->dropdown($annee,'Annee');
+            return new JsonResponse($data);
+        }
+        
     }
 
     public function dropdown($objects,$choix)
