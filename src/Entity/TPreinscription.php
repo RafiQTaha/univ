@@ -59,12 +59,15 @@ class TPreinscription
     private $admissionListe;
     #[ORM\OneToMany(mappedBy: 'preinscription', targetEntity: TOperationcab::class)]
     private $operationcabs;
+    #[ORM\OneToMany(mappedBy: 'preinscription', targetEntity: TAdmissionDocument::class)]
+    private $admissionDocuments;
 
 
     public function __construct()
     {
         $this->admissions = new ArrayCollection();
         $this->operationcabs = new ArrayCollection();
+        $this->admissionDocuments = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -278,6 +281,36 @@ class TPreinscription
             // set the owning side to null (unless already changed)
             if ($operationcab->getPreinscription() === $this) {
                 $operationcab->setPreinscription(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|TAdmissionDocument[]
+     */
+    public function getAdmissionDocuments(): Collection
+    {
+        return $this->admissionDocuments;
+    }
+
+    public function addAdmissionDocument(TAdmissionDocument $admissionDocument): self
+    {
+        if (!$this->admissionDocuments->contains($admissionDocument)) {
+            $this->admissionDocuments[] = $admissionDocument;
+            $admissionDocument->setPreinscription($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAdmissionDocument(TAdmissionDocument $admissionDocument): self
+    {
+        if ($this->admissionDocuments->removeElement($admissionDocument)) {
+            // set the owning side to null (unless already changed)
+            if ($admissionDocument->getPreinscription() === $this) {
+                $admissionDocument->setPreinscription(null);
             }
         }
 

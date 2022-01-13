@@ -2,10 +2,11 @@
 
 namespace App\Entity;
 
-use App\Repository\POrganismeRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
+use App\Entity\PFrais;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\POrganismeRepository;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 
 #[ORM\Entity(repositoryClass: POrganismeRepository::class)]
 class POrganisme
@@ -33,10 +34,14 @@ class POrganisme
     #[ORM\OneToMany(mappedBy: 'organisme', targetEntity: TOperationcab::class)]
     private $operationcabs;
 
+    #[ORM\OneToMany(mappedBy: 'organisme', targetEntity: PFrais::class)]
+    private $frais;
+
     public function __construct()
     {
         $this->inscriptions = new ArrayCollection();
         $this->operationcabs = new ArrayCollection();
+        $this->frais = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -146,6 +151,36 @@ class POrganisme
             // set the owning side to null (unless already changed)
             if ($operationcab->getOrganisme() === $this) {
                 $operationcab->setOrganisme(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|PFrais[]
+     */
+    public function getFrais(): Collection
+    {
+        return $this->frais;
+    }
+
+    public function addFrais(PFrais $fria): self
+    {
+        if (!$this->frais->contains($fria)) {
+            $this->frais[] = $fria;
+            $fria->setOrganisme($this);
+        }
+
+        return $this;
+    }
+
+    public function removeFrais(PFrais $fria): self
+    {
+        if ($this->frais->removeElement($fria)) {
+            // set the owning side to null (unless already changed)
+            if ($fria->getOrganisme() === $this) {
+                $fria->setOrganisme(null);
             }
         }
 

@@ -121,6 +121,86 @@ class AdmissionController extends AbstractController
         // die;
         return new Response(json_encode($json_data));
     }
+    #[Route('/candidat_admis_list', name: 'candidat_admis_list')]
+    public function candidatAdmisList(Request $request): Response
+    {
+        $params = $request->query;
+        $where = $totalRows = $sqlRequest = "";
+        $filtre = "where 1 = 1";       
+        $columns = array(
+            array( 'db' => 'ad.code','dt' => 0),
+            array( 'db' => 'UPPER(pre.code)','dt' => 1),
+            array( 'db' => 'etu.nom','dt' => 2),
+            array( 'db' => 'etu.prenom','dt' => 3),
+            array( 'db' => 'etab.abreviation','dt' => 4),
+            array( 'db' => 'UPPER(form.abreviation)','dt' => 5),
+            array( 'db' => 'nd.designation','dt' => 6),
+            array( 'db' => 'ad.id','dt' => 7)
+
+        );
+
+        $sql = "SELECT " . implode(", ", DatatablesController::Pluck($columns, 'db')) . "
+                      
+                FROM tadmission ad
+                inner join tpreinscription pre on pre.id = ad.preinscription_id
+                inner join tetudiant etu on etu.id = pre.etudiant_id
+                inner join ac_annee an on an.id = pre.annee_id
+                inner join ac_formation form on form.id = an.formation_id              
+                inner join ac_etablissement etab on etab.id = form.etablissement_id 
+                LEFT JOIN nature_demande nd ON etu.nature_demande_id = nd.id
+                $filtre"
+        ;
+        // dd($sql);
+        $totalRows .= $sql;
+        $sqlRequest .= $sql;
+        $stmt = $this->em->getConnection()->prepare($sql);
+        $newstmt = $stmt->executeQuery();
+        $totalRecords = count($newstmt->fetchAll());
+        // dd($sql);
+        $my_columns = DatatablesController::Pluck($columns, 'db');
+
+        // search 
+        $where = DatatablesController::Search($request, $columns);
+        if (isset($where) && $where != '') {
+            $sqlRequest .= $where;
+        }
+        $sqlRequest .= DatatablesController::Order($request, $columns);
+        // dd($sqlRequest);
+        $stmt = $this->em->getConnection()->prepare($sqlRequest);
+        $resultSet = $stmt->executeQuery();
+        $result = $resultSet->fetchAll();
+
+
+        $data = array();
+        // dd($result);
+        $i = 1;
+        foreach ($result as $key => $row) {
+            $nestedData = array();
+            $cd = $row['id'];
+            $nestedData[] = "<input type ='checkbox' class='check_admissible' id ='$cd' >";
+            $nestedData[] = $cd;
+            // dd($row);
+
+            foreach (array_values($row) as $key => $value) {
+                if($key < 7) {
+                    $nestedData[] = $value;
+                }
+            }
+            $nestedData["DT_RowId"] = $cd;
+            $nestedData["DT_RowClass"] = $cd;
+            $data[] = $nestedData;
+            $i++;
+        }
+        // dd($data);
+        $json_data = array(
+            "draw" => intval($params->get('draw')),
+            "recordsTotal" => intval($totalRecords),
+            "recordsFiltered" => intval($totalRecords),
+            "data" => $data   
+        );
+        // die;
+        return new Response(json_encode($json_data));
+    }
     #[Route('/new', name: 'admission_new')]
     public function admissionNew(Request $request): Response
     {
@@ -145,5 +225,19 @@ class AdmissionController extends AbstractController
         }
 
         return new JsonResponse('Admission bien enregister', 200);
+    }
+    #[Route('/annuler', name: 'admission_annuler')]
+    public function admissionAnnuler(Request $request): Response
+    {
+        $ids = json_decode($request->get('idAdmissions'));
+        foreach ($ids as $id) {
+            $admission = $this->em->getRepository(TAdmission::class)->find($id);
+            if(count($admission->getInscriptions()) > 0) {
+                return new JsonResponse(['error' => $admission->getCode() . 'déja inscrit'] , 500);
+            }
+            $this->em->remove($admission);
+            $this->em->flush();
+        }
+        return new JsonResponse('Admissions bien annuler', 200);
     }
 }
