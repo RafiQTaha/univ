@@ -12,6 +12,7 @@ const Toast = Swal.mixin({
 })
 let id_preinscription = false;
 let idpreins = [];
+let frais = [];
 var table_preins = $("#datables_preinscription").DataTable({
     lengthMenu: [
         [10, 15, 25, 50, 100, 20000000000000],
@@ -49,7 +50,7 @@ var table_gestion_preins = $("#datables_gestion_preinscription").DataTable({
     },
 });
 
-const load_frais_inscription = () => {
+const load_etud_info = () => {
     if(id_preinscription){
         const icon = $("#frais_inscription i");
          icon.removeClass('fa-money-bill-alt').addClass("fa-spinner fa-spin");
@@ -65,6 +66,22 @@ const load_frais_inscription = () => {
       })
     }    
   }
+
+const load_frais_preins = () => {
+    if(id_preinscription){
+        axios.get('/preinscription/gestion/article_frais/'+id_preinscription)
+        .then(success => {
+            $('.modal-preins .article #frais').html(success.data).select2();
+        // success.data
+        })
+        .catch(err => {
+        console.log(err);
+        icon.removeClass("fa-spinner fa-spin").addClass('fa-money-bill-alt');
+        })
+    }    
+}
+
+
 $('body').on('click','#frais_inscription',function (e) {
     e.preventDefault();
     if(!id_preinscription){
@@ -76,7 +93,78 @@ $('body').on('click','#frais_inscription',function (e) {
     }
     $('#frais_inscription-modal').modal("show");
 });
+$('body').on('change','.modal-preins .article #frais',function (e) {
+    e.preventDefault();
+    let frais = $(this).find(':selected').attr('data-id');
+    $('.modal-preins .article #montant').val(frais);
+});
+$('body').on('click','.modal #add-btn',function () {
+    let fraisId  = $('.modal-preins .article #frais').val();
+    let fraisText  = $('.modal-preins .article #frais').find(':selected').text();
+    let prix  = $('.modal-preins .article #montant').val();
+    const index = frais.findIndex(frais => frais.id == fraisId );
+    if(index == -1) {
+        frais.push({
+            id: fraisId ,
+            designation: fraisText,
+            montant: prix
+        });
+        rawFrais();
+    }
+})
+const rawFrais = () => {
+    let html = "";
+    frais.map((f, i) => {
+        html += `
+        
+        <tr>
+            <td>${i + 1}</td>
+            <td>${f.designation}</td>
+            <td>${f.montant}</td>
+            <td><button class='delete_frais btn btn-danger'  id='${f.id}'><i class='fa fa-trash'></i></button></td>
+        </tr>
+    `
+    })
+    $(".modal-preins .table-fee tbody").html(html)
+}
+$("body").on("click", '.delete_frais', function () {
+    const index = frais.findIndex(frais => frais.id == $(this).attr("id"));
+    frais.splice(index,1);
+    rawFrais();
+})
 
+$("body").on("click", '.modal .save', async function (e) {
+    e.preventDefault();
+    if(frais.length < 1){
+        Toast.fire({
+          icon: 'error',
+          title: 'Veuillez Ajouter Des Lignes!',
+        })
+        return;
+    }
+    const icon = $(".modal .save i");
+    icon.removeClass('fa-trash').addClass("fa-spinner fa-spin");
+    var formData = new FormData();
+    formData.append('frais', JSON.stringify(frais));
+    try {
+        const request = await axios.post("/preinscription/gestion/addfrais/"+id_preinscription, formData);
+        const data = await request.data;
+        Toast.fire({
+            icon: 'success',
+            title: 'Frais Bien Ajouter',
+        })
+        icon.addClass('fa-trash').removeClass("fa-spinner fa-spin");
+        $(".modal-preins .table-fee tbody").empty();
+        table_gestion_preins.ajax.reload();
+      } catch (error) {
+        const message = error.response.data;
+        console.log(error, error.response);
+        Toast.fire({
+            icon: 'error',
+            title: 'Some Error',
+        })
+      }
+})
 
 $('body').on('click','#datables_gestion_preinscription tbody tr',function (e) {
     e.preventDefault();
@@ -92,7 +180,7 @@ $('body').on('click','#datables_gestion_preinscription tbody tr',function (e) {
     console.log(idpreins);
 })
 
-$('body').on('dblclick','#datables_gestion_preinscription tbody tr',function (e) {
+    $('body').on('dblclick','#datables_gestion_preinscription tbody tr',function (e) {
     e.preventDefault();
     // const input = $(this).find("input");
     if($(this).hasClass('active_databales')) {
@@ -102,7 +190,8 @@ $('body').on('dblclick','#datables_gestion_preinscription tbody tr',function (e)
         $("#datables_gestion_preinscription tbody tr").removeClass('active_databales');
         $(this).addClass('active_databales');
         id_preinscription = $(this).attr('id');
-        load_frais_inscription();
+        load_etud_info();
+        load_frais_preins();
     }
     console.log(id_preinscription);
 })
