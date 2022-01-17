@@ -2,19 +2,24 @@
 
 namespace App\Controller\Preinscription;
 
+use DateTime;
+use App\Entity\PFrais;
+use App\Entity\PStatut;
 use App\Entity\TOperation;
 use App\Entity\TPreinscription;
+use App\Entity\TOperationcab;
+use App\Entity\POrganisme;
+use App\Controller\ApiController;
 use App\Controller\DatatablesController;
-use App\Entity\PStatut;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[Route('/preinscription/gestion')]
-class GestionPreinscriptionController extends AbstractController
+class GestionPreinscriptionController extends ApiController
 {
     private $em;
     public function __construct(ManagerRegistry $doctrine)
@@ -259,18 +264,46 @@ class GestionPreinscriptionController extends AbstractController
     #[Route('/article_frais/{id}', name: 'article_frais')]
     public function article_frais(Request $request,TPreinscription $preinscription): Response
     {   
-        
-        return new JsonResponse('', 200);
+        $formation = $preinscription->getAnnee()->getFormation();
+        $frais = $this->em->getRepository(PFrais::class)->findBy(['formation'=>$formation,'categorie'=>'Pré-inscription']);
+        $data = "<option selected enabled>Choix Fraix</option>";
+        foreach ($frais as $frs) {
+            $data .="<option value=".$frs->getId()." data-id=".$frs->getmontant().">".$frs->getDesignation()."</option>";
+        }
+        return new JsonResponse($data, 200);
+    }
+
+    #[Route('/addfrais/{id}', name: 'addfrais')]
+    public function addfrais(Request $request,TPreinscription $preinscription): Response
+    {   
+        $ids = json_decode($request->get('frais'));
+        $operationcab = new TOperationcab();
+        $operationcab->setPreinscription($preinscription);
+        $operationcab->setAnnee($preinscription->getAnnee());
+        $operationcab->setOrganisme($this->em->getRepository(POrganisme::class)->find(7));
+        $operationcab->setCategorie('pré-inscription');
+        $operationcab->setCreated(new DateTime('now'));
+        $this->em->persist($operationcab);
+        $this->em->flush();
+        $etab = $preinscription->getAnnee()->getFormation()->getEtablissement()->getAbreviation();
+        $operationcab->setCode($etab.'-FAC'.str_pad($operationcab->getId(), 8, '0', STR_PAD_LEFT).'/'.date('Y'));
+        $this->em->flush();
+        return new JsonResponse(1, 200);
+        // foreach($ids as $idfrais){
+
+        // };
     }
 
     #[Route('/test/{id}', name: 'test')]
     public function test(Request $request,TPreinscription $preinscription): Response
     {
-            // $etudiant = $preinscription->getEtudiant();
-            // $natutre = $etudiant->getNatureDemande();
-            // $etablissement = $formation->getEtablissement();
-            $annee = $preinscription->getAnnee();
-            $formation = $annee->getFormation();
-            dd($formation);
+        // $formation = $preinscription->getAnnee()->getFormation();
+        // $frais = $this->em->getRepository(PFrais::class)->findBy(['formation'=>$formation,'categorie'=>'Pré-inscription']);
+        // $data = "<option selected enabled>Choix Fraix</option>";
+        // foreach ($frais as $frs) {
+        //     $data .="<option value='".$frs->getId()."' montant='".$frs->getmontant()."'>".$frs->getDesignation()."</option>";
+        // }
+        // dd($data);
+            // $data = $this->dropdown($annee,'Annee');
     }
 }

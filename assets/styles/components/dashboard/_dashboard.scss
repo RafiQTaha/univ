@@ -6280,16 +6280,19 @@ tr:first-child > td > .fc-day-grid-event {
   color :#3c3c3c !important;
 }
 .modal-preins{
-  max-width: 55% !important;
+  max-width: 75% !important;
 }
-.modal .etudiant_info{
-  display:flex;
+.modal .modal-box{
   width:100%;
   flex-wrap: wrap;
   border:1px solid #eee;
   border-top: 3px solid #6777ef;
-  padding: 5px;
   border-radius: 6px;
+  margin-bottom:1rem;
+  padding: 5px;
+}
+.modal .etudiant_info{
+  display:flex;
 }
 .modal .frais_info{
   border:1px solid #eee;
@@ -6312,7 +6315,8 @@ tr:first-child > td > .fc-day-grid-event {
 .article{
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: baseline;
+  box-shadow : none !important;
 }
 .article .left{
   display: flex;
@@ -6330,8 +6334,16 @@ tr:first-child > td > .fc-day-grid-event {
 .article .left .field.frais{
   flex: 0 55%;
 }
+
+.article .left .field.add{
+  align-self: end;
+}
+.modal .modal-preins .save{
+  float:right;
+
 .select2-results__option {
   padding: 0 1rem !important;
+
 }
 .active_databales{
   background-color:#6777ef !important;

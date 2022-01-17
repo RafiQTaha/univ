@@ -10,55 +10,43 @@
       </div>
       <div class="modal-body">
         {# <div class="alert alert-info">Veuillez selectionner un ligne Pour Continuer Cette opération !!</div> #}
-        <div class="etudiant_info">
-          {# <p><span>Etablissement</span> : xx</p>
-          <p><span>Formation</span> : xx</p>
-          <p><span>Categorie</span> : xx</p>
-          <p><span>Nom</span> : xx</p>
-          <p><span>Prenom</span> : xx</p>
-          <p><span>Cin</span> : xx</p>
-          <p><span>Cne</span> : xx</p> #}
+        <div class="etudiant_info modal-box">
+        
         </div>
-        <h5 class="title-article">Saisie Article</h5>
-        <div class="article">
-          <div class="left">
-            <div class="field frais">
-              <label for="frais">Frais de scolarité (*)</label>
-              <select class="form-control" name="frais" id="frais">
-              </select>
+        <div class="modal-box">
+          <h5 class="title-article">Saisie Article</h5>
+          <div class="article ">
+            <div class="left">
+                <div class="field frais">
+                  <label for="frais">Frais de scolarité (*)</label>
+                  <select class="form-control" name="frais" id="frais">
+                  </select>
+                </div>
+                <div class="field ">
+                  <label for="montant">Montant(*):</label>
+                  <input type="text" class="form-control" id='montant'>
+                </div>
+                <div class="field add">
+                  <button type="button" class="btn btn-primary add-btn" id="add-btn"><i class="fas fa-plus"></i> Ajouter</button>  
+                </div>
             </div>
-            <div class="field ">
-              <label for="montant">Montant(*):</label>
-              <input type="text" class="form-control" id='montant'>
+            <div class="right">
+              <table class="table table-fee">
+                <thead>
+                  <tr>
+                    <th scope="col">Ord</th>
+                    <th scope="col" style="width:25rem">Designation</th>
+                    <th scope="col">Montant</th>
+                    <th scope="col">Sup</th>
+                  </tr>
+                </thead>
+                <tbody>
+                </tbody>
+              </table>
             </div>
           </div>
-          <div class="right">
-            <table class="table">
-              <thead>
-                <tr>
-                  <th scope="col">Ord</th>
-                  <th scope="col" style="">Designation</th>
-                  <th scope="col" style="">Montant</th>
-                  <th scope="col">Sup</th>
-                </tr>
-              </thead>
-              <tbody>
-                <!-- <tr>
-                  <th scope="row">1</th>
-                  <td>Mark</td>
-                  <td>Otto</td>
-                  <td>@mdo</td>
-                </tr>
-                <tr>
-                  <th scope="row">2</th>
-                  <td>Jacob</td>
-                  <td>Thornton</td>
-                  <td>@fat</td>
-                </tr> -->
-              </tbody>
-            </table>
-          </div>
         </div>
+        <button class="btn btn-success save"><i class="fas fa-save"></i> Enregistrer</button>
       </div>
     </div>
   </div>
