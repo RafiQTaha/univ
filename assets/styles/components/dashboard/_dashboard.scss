@@ -6291,6 +6291,12 @@ tr:first-child > td > .fc-day-grid-event {
   padding: 5px;
   border-radius: 6px;
 }
+.modal .frais_info{
+  border:1px solid #eee;
+  border-top: 3px solid #6777ef;
+  padding: 5px;
+  border-radius: 6px;
+}
 .modal .etudiant_info p{
   flex:48%;
   line-height: 1.5rem !important;
@@ -6323,6 +6329,9 @@ tr:first-child > td > .fc-day-grid-event {
 }
 .article .left .field.frais{
   flex: 0 55%;
+}
+.select2-results__option {
+  padding: 0 1rem !important;
 }
 .active_databales{
   background-color:#6777ef !important;
