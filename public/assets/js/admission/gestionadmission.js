@@ -11,6 +11,7 @@ const Toast = Swal.mixin({
     })
     let id_admission = false;
     let idAdmissions = [];
+    let frais = [];
     
     $(document).ready(function  () {
     var table = $("#datatables_gestion_admission").DataTable({
@@ -36,10 +37,28 @@ const Toast = Swal.mixin({
         });
     const getDocuments = async () => {
         try {
+            const icon = $('#document i')
+            icon.removeClass('fa-check').addClass('fa-spinner fa-spin')
             const request = await axios.get("/admission/gestion/getdocuments/"+id_admission);
             const data = await request.data;
             $('.ms-selectable .ms-list').html(data.documents)
             $('.ms-selection .ms-list').html(data.documentsExists)
+            icon.addClass('fa-check').removeClass('fa-spinner fa-spin')
+        } catch (error) {
+            const message = error.response.data;
+            console.log(error, error.response);
+            Toast.fire({
+                icon: 'error',
+                title: 'Some Error',
+            })    
+            icon.addClass('fa-check').removeClass('fa-spinner fa-spin')
+        }
+    }
+    const getOrganisme = async () => {
+        try {
+            const request = await axios.get("/api/organisme");
+            const data = await request.data;
+            $('#organisme').html(data).select2();
           } catch (error) {
             const message = error.response.data;
             console.log(error, error.response);
@@ -47,6 +66,42 @@ const Toast = Swal.mixin({
                 icon: 'error',
                 title: 'Some Error',
             })    
+        }
+    }
+    const getFrais = async () => {
+        try {
+            const request = await axios.get("/api/frais/"+id_admission);
+            const data = await request.data;
+            $('#frais').html(data).select2();
+          } catch (error) {
+            const message = error.response.data;
+            console.log(error, error.response);
+            Toast.fire({
+                icon: 'error',
+                title: 'Some Error',
+            })    
+        }
+    }
+    $("#frais").on("change", () => {
+        $("#montant").val($("#frais").find(":selected").data('frais'))
+    })
+    getOrganisme();
+    const getAdmissionInfos = async () => {
+        try {
+            const icon = $('#frais-modal i')
+            icon.removeClass('fa-money-bill-alt').addClass('fa-spinner fa-spin')
+            const request = await axios.get("/admission/gestion/info/"+id_admission);
+            const data = await request.data;
+            $('.etudiant_info').html(data);
+            icon.addClass('fa-money-bill-alt').removeClass('fa-spinner fa-spin')
+        } catch (error) {
+            const message = error.response.data;
+            console.log(error, error.response);
+            Toast.fire({
+                icon: 'error',
+                title: 'Some Error',
+            })    
+            icon.addClass('fa-money-bill-alt').removeClass('fa-spinner fa-spin')
         }
     }
     $('body').on('click','#datatables_gestion_admission tbody tr',function () {
@@ -71,10 +126,24 @@ const Toast = Swal.mixin({
             $(this).addClass('active_databales');
             id_admission = $(this).attr('id');
             getDocuments();
+            getAdmissionInfos();
+            getFrais();
+           
         }
         
     })
     
+    $("#document").on("click", () => {
+        if(!id_admission){
+          Toast.fire({
+            icon: 'error',
+            title: 'Veuillez selection une ligne!',
+          })
+          return;
+        }
+  
+        $("#document_modal").modal("show")
+    })
     $("body").on("click", ".ms-elem-selection", async function() {
         $('.ms-selectable .ms-list').prepend($(this).clone().removeClass("ms-elem-selection").addClass("ms-elem-selectable"))
         var formData = new FormData();
@@ -108,8 +177,7 @@ const Toast = Swal.mixin({
             })
         }
     })
-
-    $("#document").on("click", () => {
+    $("#frais-modal").on("click", () => {
         if(!id_admission){
           Toast.fire({
             icon: 'error',
@@ -118,8 +186,80 @@ const Toast = Swal.mixin({
           return;
         }
   
-        $("#document_modal").modal("show")
-        console.log(id_admission);
+        $("#frais_inscription-modal").modal("show")
+    })
+
+    $("#add_frais_gestion").on("click", () => {
+        let fraisId = $("#frais").find(":selected").val();
+        let fraisText = $("#frais").find(":selected").text();
+        let prix = $("#montant").val();
+        let ice = $("#ice").val();
+        const index = frais.findIndex(frais => frais.id == fraisId);
+        // console.log(index)
+        if(index === -1) {
+            frais.push({
+                id: fraisId,
+                designation: fraisText,
+                montant: prix,
+                ice: ice
+            });
+            rawFrais();
+        }
+    })
+    
+
+    const rawFrais = () => {
+        let html = "";
+        frais.map((f, i) => {
+            html += `
+            <tr>
+                <td>${i + 1}</td>
+                <td>${f.designation}</td>
+                <td>${f.montant}</td>
+                <td>${f.ice}</td>
+                <td><button class='delete_frais btn btn-danger'  id='${f.id}'><i class='fa fa-trash' ></i></button></td>
+            </tr>
+        `
+        })
+        // console.log(html);
+        $(".table_frais_admission").html(html)
+    }
+    $("body").on("click", '.delete_frais', function () {
+        const index = frais.findIndex(frais => frais.id == $(this).attr("id"));
+        frais.splice(index,1);
+        rawFrais();
+    })
+    $("#save_frais_gestion").on("click", async () => {
+        let formData = new FormData();
+        formData.append("frais", JSON.stringify(frais))
+        formData.append("organisme", $("#organisme").val())
+        let modalAlert = $("#frais_inscription-modal .modal-body .alert")
+    
+        modalAlert.remove();
+        const icon = $("#save_frais_gestion i");
+        icon.removeClass('fa-check-circle').addClass("fa-spinner fa-spin");
+        
+        try {
+          const request = await axios.post('/admission/gestion/addfrais/'+id_admission, formData);
+          const response = request.data;
+          $("#frais_inscription-modal .modal-body").prepend(
+            `<div class="alert alert-success">
+                <p>${response}</p>
+              </div>`
+          );
+          icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
+          $(".table_frais_admission").empty()
+          table.ajax.reload();
+        } catch (error) {
+          const message = error.response.data;
+          console.log(error, error.response);
+          modalAlert.remove();
+          $("#frais_inscription-modal .modal-body").prepend(
+            `<div class="alert alert-danger">${message}</div>`
+          );
+          icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
+          
+        }
     })
 })
     

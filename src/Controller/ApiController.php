@@ -2,18 +2,21 @@
 
 namespace App\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use App\Entity\AcEtablissement;
-use App\Entity\AcFormation;
+use App\Entity\PFrais;
 use App\Entity\AcAnnee;
+use App\Entity\POrganisme;
+use App\Entity\TAdmission;
+use App\Entity\AcFormation;
+use App\Entity\AcEtablissement;
+use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Encoder\XmlEncoder;
+use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
-use Symfony\Component\Serializer\Serializer;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[Route('api')]
 class ApiController extends AbstractController
@@ -54,12 +57,35 @@ class ApiController extends AbstractController
         }
         
     }
+    #[Route('/organisme', name: 'getorganisme')]
+    public function getOrganisme(): Response
+    {   
+        $organisme = $this->em->getRepository(POrganisme::class)->findAll();
+        $data = $this->dropdown($organisme,'organisme');
+        return new JsonResponse($data);        
+    }
+    #[Route('/frais/{admission}', name: 'getFraisByFormation')]
+    public function getFraisByFormation(TAdmission $admission): Response
+    {   
+        $formation = $admission->getPreinscription()->getAnnee()->getFormation();
+        $frais = $this->em->getRepository(PFrais::class)->findBy(["formation" => $formation]);
+        $data = $this->dropdownData($frais,'frais');
+        return new JsonResponse($data);        
+    }
 
     public function dropdown($objects,$choix)
     {
-        $data = "<option selected enabled>Choix ".$choix."</option>";
+        $data = "<option selected enabled value=''>Choix ".$choix."</option>";
         foreach ($objects as $object) {
             $data .="<option value=".$object->getId().">".$object->getDesignation()."</option>";
+         }
+         return $data;
+    }
+    public function dropdownData($objects,$choix)
+    {
+        $data = "<option selected enabled value=''>Choix ".$choix."</option>";
+        foreach ($objects as $object) {
+            $data .="<option value=".$object->getId()." data-frais=".$object->getMontant().">".$object->getDesignation()."</option>";
          }
          return $data;
     }

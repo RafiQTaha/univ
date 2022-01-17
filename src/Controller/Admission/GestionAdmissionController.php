@@ -5,7 +5,11 @@ namespace App\Controller\Admission;
 use App\Entity\TAdmission;
 use App\Controller\DatatablesController;
 use App\Entity\PDocument;
+use App\Entity\PFrais;
+use App\Entity\POrganisme;
 use App\Entity\TAdmissionDocument;
+use App\Entity\TOperationcab;
+use App\Entity\TOperationdet;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -177,4 +181,69 @@ class GestionAdmissionController extends AbstractController
         $this->em->flush();
         return new JsonResponse('Bien Enregistre', 200);
     }
+    #[Route('/info/{admission}', name: 'admission_info')]
+    public function admissionInfo(Request $request, TAdmission $admission): Response
+    {
+        $etudiant = $admission->getPreinscription()->getEtudiant();
+        $natutre = $etudiant->getNatureDemande();
+        $annee = $admission->getPreinscription()->getAnnee();
+        $formation =$annee->getFormation();
+        $etablissement=$formation->getEtablissement();
+        $donnee_frais = "<p><span>Etablissement</span> : ".$etablissement->getDesignation()."</p>
+                        <p><span>Formation</span> : ".$formation->getDesignation()."</p>
+                        <p><span>Categorie</span> : ".$natutre->getDesignation()."</p>
+                        <p><span>Nom</span> : ".$etudiant->getNom()."</p>
+                        <p><span>Prenom</span> : ".$etudiant->getPrenom()."</p>
+                        <p><span>Cin</span> : ".$etudiant->getCin()."</p>
+                        <p><span>Cne</span> : ".$etudiant->getCne()."</p>";
+        return new JsonResponse($donnee_frais, 200);
+    }
+    #[Route('/addfrais/{admission}', name: 'admission_addfrais')]
+    public function admissionAddFrais(Request $request, TAdmission $admission): Response
+    {
+        // dd($request->get("organisme"));
+        $arrayOfFrais = json_decode($request->get('frais'));
+        $operationCab = new TOperationcab();
+        $operationCab->setPreinscription($admission->getPreinscription());
+        $operationCab->setUserCretated($this->getUser());
+        if($request->get("organisme") != "") {
+            $operationCab->setOrganisme(
+                $this->em->getRepository(POrganisme::class)->find($request->get("organisme"))
+            );
+        } else {
+            $operationCab->setOrganisme(
+                $this->em->getRepository(POrganisme::class)->find(7)
+            );
+        }
+        $operationCab->setAnnee($admission->getPreinscription()->getAnnee());
+        $operationCab->setCategorie('admission');
+        $operationCab->setCreated(new \DateTime("now"));
+        $this->em->persist($operationCab);
+        $this->em->flush();
+        $operationCab->setCode(
+            $admission->getPreinscription()->getAnnee()->getFormation()->getEtablissement()->getAbreviation()."-FAC".str_pad($operationCab->getId(), 8, '0', STR_PAD_LEFT)."/".date('Y')
+        );
+        $this->em->flush();
+
+        foreach ($arrayOfFrais as $fraisObject) {
+            $frais =  $this->em->getRepository(PFrais::class)->find($fraisObject->id);
+            $operationDet = new TOperationdet();
+            $operationDet->setOperationcab($operationCab);
+            $operationDet->setFrais($frais);
+            $operationDet->setMontant($fraisObject->montant);
+            $operationDet->setIce($fraisObject->ice);
+            $operationDet->setCreated(new \DateTime("now"));
+            $operationDet->setUserCreated($this->getUser());
+            $operationDet->setRemise(0);
+            $this->em->persist($operationDet);
+            $this->em->flush();
+            $operationDet->setCode(
+                "OPD".str_pad($operationDet->getId(), 8, '0', STR_PAD_LEFT)
+            );
+            $this->em->flush();
+        }
+
+        return new JsonResponse("Bien Enregistre", 200);
+    }
+    
 }

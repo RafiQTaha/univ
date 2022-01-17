@@ -43,6 +43,9 @@ class TOperationdet
     #[ORM\Column(type: 'datetime', nullable: true)]
     private $updated;
 
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private $ice;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -164,6 +167,18 @@ class TOperationdet
     public function setUpdated(?\DateTimeInterface $updated): self
     {
         $this->updated = $updated;
+
+        return $this;
+    }
+
+    public function getIce(): ?string
+    {
+        return $this->ice;
+    }
+
+    public function setIce(?string $ice): self
+    {
+        $this->ice = $ice;
 
         return $this;
     }
