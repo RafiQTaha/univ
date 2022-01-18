@@ -290,6 +290,7 @@ class GestionAdmissionController extends AbstractController
     public function getAnneeDisponible(Request $request, TAdmission $admission): Response
     {
         $annee = date('Y').'/'.date('Y')+1;
+        // $inscription = 
     }
     
 }

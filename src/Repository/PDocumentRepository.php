@@ -83,6 +83,7 @@ class PDocumentRepository extends ServiceEntityRepository
             ->getArrayResult()
         ;
         // dd($subQuery);
+        
 
     }
     public function findAllBy($etablissmenet, $attribution)
