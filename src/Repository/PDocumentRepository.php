@@ -35,9 +35,9 @@ class PDocumentRepository extends ServiceEntityRepository
         ;
     }
     */
-
     
-    public function getDocmentDoesNotExist($admission)
+    
+    public function getDocumentDoesNotExistAdmission($admission)
     {
         $subQueryBuilder = $this->getEntityManager()->createQueryBuilder();
         $subQuery = $subQueryBuilder
@@ -69,18 +69,18 @@ class PDocumentRepository extends ServiceEntityRepository
 
         return $query->getResult();
     }
-    public function findAllBy($admission)
+    public function findAllBy($etablissmenet, $attribution)
     {
         $queryBuilder = $this->getEntityManager()->createQueryBuilder();
         $query = $queryBuilder
             ->select(['p'])
             ->from('App:PDocument', 'p')
             ->innerJoin('p.etablissement', 'etab')
-            ->Where('p.attribution = :INSCRIPTION')
+            ->Where('p.attribution = :attribution')
             ->andWhere('p.active = :active')
             ->andWhere('etab = :etab')
-            ->setParameter('INSCRIPTION', 'INSCRIPTION')
-            ->setParameter('etab', $admission->getPreinscription()->getAnnee()->getFormation()->getEtablissement())
+            ->setParameter('attribution', $attribution)
+            ->setParameter('etab', $etablissmenet)
             ->setParameter('active', '1')
             ->getQuery()
         ;

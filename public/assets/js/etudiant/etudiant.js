@@ -36,7 +36,7 @@ $(document).ready(function  () {
   const getEtablissement = async () => {
     console.log('amine')
     try {
-      const request = await axios.get('/api/etbalissement');
+      const request = await axios.get('/api/etablissement');
       const data = request.data;
       $('#etablissement').html(data).select2();
 

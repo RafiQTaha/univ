@@ -6293,6 +6293,7 @@ tr:first-child > td > .fc-day-grid-event {
 }
 .modal .etudiant_info{
   display:flex;
+  flex-wrap: wrap;
 }
 .modal .frais_info{
   border:1px solid #eee;
@@ -6340,7 +6341,7 @@ tr:first-child > td > .fc-day-grid-event {
 }
 .modal .modal-preins .save{
   float:right;
-
+}
 .select2-results__option {
   padding: 0 1rem !important;
 

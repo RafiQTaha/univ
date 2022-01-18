@@ -47,4 +47,15 @@ class TOperationdetRepository extends ServiceEntityRepository
         ;
     }
     */
+    public function getSumMontantByCodeFacture($operation)
+    {
+        return $this->createQueryBuilder('t')
+            ->select("SUM(t.montant) as total")
+            ->Where('t.operationcab = :operation')
+            ->setParameter('operation', $operation)
+            ->groupBy('t.operationcab')
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
+    }
 }

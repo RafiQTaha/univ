@@ -86,6 +86,36 @@ const Toast = Swal.mixin({
         $("#montant").val($("#frais").find(":selected").data('frais'))
     })
     getOrganisme();
+    $("#etablissement").select2()
+    $("#etablissement").on('change', async function (){
+        const id_etab = $(this).val();
+        table.columns(1).search("").draw();
+        table.columns(2).search("").draw();
+        table.columns(0).search(id_etab).draw();
+        let response = ""
+        if(id_etab != "") {
+            const request = await axios.get('/api/formation/'+id_etab);
+            response = request.data
+        } else {
+            
+            $('#annee').html("").select2();
+        }
+        $('#formation').html(response).select2();
+    })
+    $("#formation").on('change', async function (){
+        const id_formation = $(this).val();
+        table.columns(2).search("").draw();
+        table.columns(1).search(id_formation).draw();
+        let response = ""
+        if(id_formation != "") {
+            const request = await axios.get('/api/annee/'+id_formation);
+            response = request.data
+        }
+        $('#annee').html(response).select2();
+    })
+    $("#annee").on('change', async function (){
+        table.columns(2).search($(this).val()).draw();
+    })
     const getAdmissionInfos = async () => {
         try {
             const icon = $('#frais-modal i')
@@ -190,20 +220,23 @@ const Toast = Swal.mixin({
     })
 
     $("#add_frais_gestion").on("click", () => {
+
         let fraisId = $("#frais").find(":selected").val();
-        let fraisText = $("#frais").find(":selected").text();
-        let prix = $("#montant").val();
-        let ice = $("#ice").val();
-        const index = frais.findIndex(frais => frais.id == fraisId);
-        // console.log(index)
-        if(index === -1) {
-            frais.push({
-                id: fraisId,
-                designation: fraisText,
-                montant: prix,
-                ice: ice
-            });
-            rawFrais();
+        if(fraisId != "") {
+            let fraisText = $("#frais").find(":selected").text();
+            let prix = $("#montant").val();
+            let ice = $("#ice").val();
+            const index = frais.findIndex(frais => frais.id == fraisId);
+            // console.log(index)
+            if(index === -1) {
+                frais.push({
+                    id: fraisId,
+                    designation: fraisText,
+                    montant: prix,
+                    ice: ice
+                });
+                rawFrais();
+            }
         }
     })
     
@@ -244,11 +277,12 @@ const Toast = Swal.mixin({
           const response = request.data;
           $("#frais_inscription-modal .modal-body").prepend(
             `<div class="alert alert-success">
-                <p>${response}</p>
+                <p>Bien Enregistre</p>
               </div>`
           );
           icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
           $(".table_frais_admission").empty()
+          window.open("/admission/gestion/facture/"+response, '_blank');
           table.ajax.reload();
         } catch (error) {
           const message = error.response.data;
@@ -260,6 +294,18 @@ const Toast = Swal.mixin({
           icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
           
         }
+    })
+
+    $("#inscription-modal").on("click", () => {
+        if(!id_admission){
+          Toast.fire({
+            icon: 'error',
+            title: 'Veuillez selection une ligne!',
+          })
+          return;
+        }
+  
+        $("#inscription_modal").modal("show")
     })
 })
     
