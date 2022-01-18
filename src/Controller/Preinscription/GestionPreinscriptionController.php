@@ -8,9 +8,12 @@ use App\Entity\PStatut;
 use App\Entity\TOperation;
 use App\Entity\TPreinscription;
 use App\Entity\TOperationcab;
+use App\Entity\TOperationdet;
 use App\Entity\POrganisme;
+use App\Entity\PDocument;
 use App\Controller\ApiController;
 use App\Controller\DatatablesController;
+use App\Entity\User;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -19,7 +22,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[Route('/preinscription/gestion')]
-class GestionPreinscriptionController extends ApiController
+class GestionPreinscriptionController extends AbstractController
 {
     private $em;
     public function __construct(ManagerRegistry $doctrine)
@@ -182,6 +185,7 @@ class GestionPreinscriptionController extends ApiController
             // $nestedData[] = $cd;
             $nestedData[] = "<input type ='checkbox' class='check_preins' id ='$cd' >";
             $k = 0;
+            $etat_bg="";
             foreach (array_values($row) as $key => $value) {
                 if($k == 9) {
                     $sqls="SELECT (CASE WHEN EXISTS (SELECT cab.code FROM toperationcab cab INNER JOIN tregelement reg ON reg.operation_id = cab.id WHERE cab.preinscription_id = ".$row['id'].") THEN 'Reglé' WHEN EXISTS (SELECT cab2.code FROM toperationcab cab2 LEFT JOIN tregelement reg2 ON reg2.operation_id = cab2.id WHERE cab2.preinscription_id = ".$row['id']." ANd reg2.operation_id IS NULL) THEN 'Facturé' ELSE 'N.Facturé' END ) AS facture";
@@ -278,6 +282,7 @@ class GestionPreinscriptionController extends ApiController
     {   
         $ids = json_decode($request->get('frais'));
         $operationcab = new TOperationcab();
+        $operationdet = new TOperationdet();
         $operationcab->setPreinscription($preinscription);
         $operationcab->setAnnee($preinscription->getAnnee());
         $operationcab->setOrganisme($this->em->getRepository(POrganisme::class)->find(7));
@@ -288,10 +293,67 @@ class GestionPreinscriptionController extends ApiController
         $etab = $preinscription->getAnnee()->getFormation()->getEtablissement()->getAbreviation();
         $operationcab->setCode($etab.'-FAC'.str_pad($operationcab->getId(), 8, '0', STR_PAD_LEFT).'/'.date('Y'));
         $this->em->flush();
+        foreach($ids as $idfrais){
+            $operationdet->setOperationcab($operationcab);
+            $operationdet->setFrais($this->em->getRepository(PFrais::class)->find($idfrais->id));
+            $operationdet->setMontant($idfrais->montant);
+            $operationdet->setRemise(0);
+            $operationdet->setCreated(new DateTime('now'));
+            $operationdet->setUpdated(new DateTime('now'));
+            $this->em->persist($operationdet);
+            $this->em->flush();
+            $operationdet->setCode('OPD'.str_pad($operationdet->getId(), 8, '0', STR_PAD_LEFT));
+            $this->em->flush();
+        };
         return new JsonResponse(1, 200);
-        // foreach($ids as $idfrais){
+    }
 
-        // };
+    #[Route('/getdoc_preinscription/{id}', name: 'getdoc_preinscription')]
+    public function getdoc_preinscription(Request $request,TPreinscription $preinscription): Response
+    {
+        // $documentsExists = $this->em->getRepository(TPreinscription::class)->findBy(['preinscription' => $admission->getPreinscription()]);
+        $documentsExists = $preinscription->getDocuments();
+        $etablissement = $preinscription->getAnnee()->getFormation()->getEtablissement();
+        if(count($documentsExists) > 0) {
+            $documents = $this->em->getRepository(PDocument::class)->getDocumentDoesNotExistPreisncriptions($preinscription, $etablissement);
+        } else {
+            $documents = $this->em->getRepository(PDocument::class)->findBy(['etablissement'=>$etablissement,'attribution'=>'PREINSCRIPTION','active'=>1]);
+        }
+        $documentHtml = "";
+        $documentExistHtml = "";
+        foreach ($documentsExists as $documentsExist) {
+            $documentExistHtml .= '
+            <li class="ms-elem-selection" id="'.$documentsExist->getId().'" >
+                <span> '.$documentsExist->getDesignation().' </span>
+            </li>';
+        }
+        foreach ($documents as $document) {
+            $documentHtml .= '
+            <li class="ms-elem-selectable" id="'.$document->getId().'">
+                <span> '.$document->getDesignation().' </span>
+            </li>';
+            
+        }
+        
+        return new JsonResponse(['documents' => $documentHtml, 'documentsExists' => $documentExistHtml], 200);
+    }
+    
+    #[Route('/adddocuments_preins', name: 'adddocuments_preins')]
+    public function adddocuments_preins(Request $request): Response
+    {
+        $preinscription = $this->em->getRepository(TPreinscription::class)->find($request->get('idPreinscription'));
+        $preinscription->addDocument($this->em->getRepository(PDocument::class)->find($request->get('idDocument')));
+        $this->em->flush();
+        return new JsonResponse('Bien Enregistre', 200);
+    }
+
+    #[Route('/deletedocuments_preins', name: 'deletedocuments_preins')]
+    public function deletedocuments_preins(Request $request): Response
+    {
+        $preinscription = $this->em->getRepository(TPreinscription::class)->find($request->get('idPreinscription'));
+        $preinscription->removeDocument($this->em->getRepository(PDocument::class)->find($request->get('idDocument')));
+        $this->em->flush();
+        return new JsonResponse('Bien Supprimer', 200);
     }
 
     #[Route('/test/{id}', name: 'test')]
@@ -305,5 +367,6 @@ class GestionPreinscriptionController extends ApiController
         // }
         // dd($data);
             // $data = $this->dropdown($annee,'Annee');
+            dd('');
     }
 }

@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Repository;
 
 use App\Entity\PDocument;
@@ -35,9 +34,9 @@ class PDocumentRepository extends ServiceEntityRepository
         ;
     }
     */
-
     
-    public function getDocmentDoesNotExist($admission)
+    
+    public function getDocumentDoesNotExistAdmission($admission)
     {
         $subQueryBuilder = $this->getEntityManager()->createQueryBuilder();
         $subQuery = $subQueryBuilder
@@ -69,18 +68,52 @@ class PDocumentRepository extends ServiceEntityRepository
 
         return $query->getResult();
     }
-    public function findAllBy($admission)
-    {
+
+    public function getDocumentDoesNotExistPreisncriptions($preinscription, $etablissement)
+    {   
+        $subQueryBuilder = $this->getEntityManager()->createQueryBuilder();
+        $subQuery = $subQueryBuilder
+            ->select(['d.id'])
+            ->from('App:TPreinscription', 'p')
+            ->innerJoin('p.documents', 'd')
+            ->where('p.id = :preinscription')
+            ->setParameter('preinscription', $preinscription)
+            ->getQuery()
+            ->getArrayResult()
+        ;
+        // dd($subQuery);
         $queryBuilder = $this->getEntityManager()->createQueryBuilder();
         $query = $queryBuilder
             ->select(['p'])
             ->from('App:PDocument', 'p')
             ->innerJoin('p.etablissement', 'etab')
             ->Where('p.attribution = :INSCRIPTION')
+            ->andWhere($queryBuilder->expr()->notIn('p.id', ':subQuery'))
             ->andWhere('p.active = :active')
             ->andWhere('etab = :etab')
-            ->setParameter('INSCRIPTION', 'INSCRIPTION')
-            ->setParameter('etab', $admission->getPreinscription()->getAnnee()->getFormation()->getEtablissement())
+            ->setParameter('subQuery', $subQuery)
+            ->setParameter('INSCRIPTION', 'PREINSCRIPTION')
+            ->setParameter('etab', $etablissement)
+            ->setParameter('active', '1')
+            ->getQuery()
+        ;
+
+        return $query->getResult();
+    }
+
+
+    public function findAllBy($etablissmenet, $attribution)
+    {
+        $queryBuilder = $this->getEntityManager()->createQueryBuilder();
+        $query = $queryBuilder
+            ->select(['p'])
+            ->from('App:PDocument', 'p')
+            ->innerJoin('p.etablissement', 'etab')
+            ->Where('p.attribution = :attribution')
+            ->andWhere('p.active = :active')
+            ->andWhere('etab = :etab')
+            ->setParameter('attribution', $attribution)
+            ->setParameter('etab', $etablissmenet)
             ->setParameter('active', '1')
             ->getQuery()
         ;
