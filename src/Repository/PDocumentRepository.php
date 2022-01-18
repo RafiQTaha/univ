@@ -69,6 +69,7 @@ class PDocumentRepository extends ServiceEntityRepository
         return $query->getResult();
     }
 
+
     public function getDocumentDoesNotExistPreisncriptions($preinscription, $etablissement)
     {   
         $subQueryBuilder = $this->getEntityManager()->createQueryBuilder();
@@ -82,26 +83,8 @@ class PDocumentRepository extends ServiceEntityRepository
             ->getArrayResult()
         ;
         // dd($subQuery);
-        $queryBuilder = $this->getEntityManager()->createQueryBuilder();
-        $query = $queryBuilder
-            ->select(['p'])
-            ->from('App:PDocument', 'p')
-            ->innerJoin('p.etablissement', 'etab')
-            ->Where('p.attribution = :INSCRIPTION')
-            ->andWhere($queryBuilder->expr()->notIn('p.id', ':subQuery'))
-            ->andWhere('p.active = :active')
-            ->andWhere('etab = :etab')
-            ->setParameter('subQuery', $subQuery)
-            ->setParameter('INSCRIPTION', 'PREINSCRIPTION')
-            ->setParameter('etab', $etablissement)
-            ->setParameter('active', '1')
-            ->getQuery()
-        ;
 
-        return $query->getResult();
     }
-
-
     public function findAllBy($etablissmenet, $attribution)
     {
         $queryBuilder = $this->getEntityManager()->createQueryBuilder();
@@ -109,6 +92,10 @@ class PDocumentRepository extends ServiceEntityRepository
             ->select(['p'])
             ->from('App:PDocument', 'p')
             ->innerJoin('p.etablissement', 'etab')
+            ->Where('p.attribution = :attribution')
+            ->andWhere('p.active = :active')
+            ->andWhere('etab = :etab')
+
             ->Where('p.attribution = :attribution')
             ->andWhere('p.active = :active')
             ->andWhere('etab = :etab')

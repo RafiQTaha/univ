@@ -3,14 +3,17 @@
 namespace App\Controller\Preinscription;
 
 use DateTime;
+use Mpdf\Mpdf;
 use App\Entity\PFrais;
 use App\Entity\PStatut;
+use App\Entity\POrganisme;
 use App\Entity\TOperation;
-use App\Entity\TPreinscription;
 use App\Entity\TOperationcab;
+
 use App\Entity\TOperationdet;
 use App\Entity\POrganisme;
 use App\Entity\PDocument;
+use App\Entity\TPreinscription;
 use App\Controller\ApiController;
 use App\Controller\DatatablesController;
 use App\Entity\User;
@@ -356,6 +359,28 @@ class GestionPreinscriptionController extends AbstractController
         return new JsonResponse('Bien Supprimer', 200);
     }
 
+    #[Route('/facture/{operationcab}', name: 'preinscription_facture')]
+    public function preinscriptionFacture(Request $request, TOperationcab $operationcab): Response
+    {
+        $reglementTotal = $this->em->getRepository(TRegelement::class)->getSumMontantByCodeFacture($operationcab);
+        $operationTotal = $this->em->getRepository(TOperationdet::class)->getSumMontantByCodeFacture($operationcab);
+        // dd($reglement, $operationDetails);
+        $html = $this->render("facture/pdfs/facture.html.twig", [
+            'reglementTotal' => $reglementTotal,
+            'operationTotal' => $operationTotal,
+            'operationcab' => $operationcab
+        ])->getContent();
+        $mpdf = new Mpdf();
+        $mpdf->SetHTMLHeader(
+            $this->render("facture/pdfs/header.html.twig")->getContent()
+        );
+        $mpdf->SetHTMLFooter(
+            $this->render("facture/pdfs/footer.html.twig")->getContent()
+        );
+        $mpdf->WriteHTML($html);
+        $mpdf->Output("facture.pdf", "I");
+    }
+    
     #[Route('/test/{id}', name: 'test')]
     public function test(Request $request,TPreinscription $preinscription): Response
     {
@@ -369,4 +394,6 @@ class GestionPreinscriptionController extends AbstractController
             // $data = $this->dropdown($annee,'Annee');
             dd('');
     }
+
+    
 }

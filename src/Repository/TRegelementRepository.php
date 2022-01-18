@@ -22,19 +22,24 @@ class TRegelementRepository extends ServiceEntityRepository
     // /**
     //  * @return TRegelement[] Returns an array of TRegelement objects
     //  */
-    /*
-    public function findByExampleField($value)
+    
+    public function getSumMontantByCodeFacture($operation)
     {
-        return $this->createQueryBuilder('t')
-            ->andWhere('t.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('t.id', 'ASC')
-            ->setMaxResults(10)
+        $request = $this->createQueryBuilder('t')
+            ->select("SUM(t.montant) as total")
+            ->Where('t.impayer = 0')
+            ->andWhere('t.operation = :operation')
+            ->setParameter('operation', $operation)
+            ->groupBy('t.operation')
             ->getQuery()
-            ->getResult()
+            ->getOneOrNullResult()
         ;
+        if(!$request) {
+            return ['total' => 0];
+        } 
+        return $request;
     }
-    */
+    
 
     /*
     public function findOneBySomeField($value): ?TRegelement

@@ -6293,6 +6293,7 @@ tr:first-child > td > .fc-day-grid-event {
 }
 .modal .etudiant_info{
   display:flex;
+  flex-wrap: wrap;
 }
 .modal .frais_info{
   border:1px solid #eee;

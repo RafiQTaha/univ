@@ -2,14 +2,17 @@
 
 namespace App\Controller\Admission;
 
-use App\Entity\TAdmission;
-use App\Controller\DatatablesController;
-use App\Entity\PDocument;
+use Mpdf\Mpdf;
 use App\Entity\PFrais;
+use App\Entity\PDocument;
 use App\Entity\POrganisme;
-use App\Entity\TAdmissionDocument;
+use App\Entity\TAdmission;
+use App\Entity\TRegelement;
 use App\Entity\TOperationcab;
 use App\Entity\TOperationdet;
+use App\Entity\TAdmissionDocument;
+use App\Controller\DatatablesController;
+use App\Entity\AcEtablissement;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -29,14 +32,29 @@ class GestionAdmissionController extends AbstractController
     #[Route('/', name: 'gestion_admission')]
     public function index(): Response
     {
-        return $this->render('admission/gestion_admission.html.twig');
+        return $this->render('admission/gestion_admission.html.twig', [
+            'etablissements' => $this->em->getRepository(AcEtablissement::class)->findAll()
+        ]);
     }
     #[Route('/list', name: 'gestion_admission_list')]
     public function gestionAdmissionList(Request $request): Response
     {
         $params = $request->query;
         $where = $totalRows = $sqlRequest = "";
-        $filtre = "where 1 = 1";       
+        $filtre = "where 1 = 1";   
+        // dd($params->get('columns')[0]);
+
+        if (!empty($params->get('columns')[0]['search']['value'])) {
+            // dd("in");
+            $filtre .= " and etab.id = '" . $params->get('columns')[0]['search']['value'] . "' ";
+        }
+
+        if (!empty($params->get('columns')[1]['search']['value'])) {
+            $filtre .= " and form.id = '" . $params->get('columns')[1]['search']['value'] . "' ";
+        }    
+        if (!empty($params->get('columns')[2]['search']['value'])) {
+            $filtre .= " and an.id = '" . $params->get('columns')[2]['search']['value'] . "' ";
+        }    
         $columns = array(
             array( 'db' => 'ad.code','dt' => 0),
             array( 'db' => 'UPPER(pre.code)','dt' => 1),
@@ -134,9 +152,9 @@ class GestionAdmissionController extends AbstractController
     {
         $documentsExists = $this->em->getRepository(TAdmissionDocument::class)->findBy(['preinscription' => $admission->getPreinscription()]);
         if(count($documentsExists) > 0) {
-            $documents = $this->em->getRepository(PDocument::class)->getDocmentDoesNotExist($admission);
+            $documents = $this->em->getRepository(PDocument::class)->getDocumentDoesNotExistAdmission($admission);
         } else {
-            $documents = $this->em->getRepository(PDocument::class)->findAllBy($admission);
+          $documents = $this->em->getRepository(PDocument::class)->findAllBy($admission->getPreinscription()->getAnnee()->getFormation()->getEtablissement(), "INSCRIPTION");
         }
         $documentHtml = "";
         $documentExistHtml = "";
@@ -198,6 +216,7 @@ class GestionAdmissionController extends AbstractController
                         <p><span>Cne</span> : ".$etudiant->getCne()."</p>";
         return new JsonResponse($donnee_frais, 200);
     }
+
     #[Route('/addfrais/{admission}', name: 'admission_addfrais')]
     public function admissionAddFrais(Request $request, TAdmission $admission): Response
     {
@@ -243,7 +262,34 @@ class GestionAdmissionController extends AbstractController
             $this->em->flush();
         }
 
-        return new JsonResponse("Bien Enregistre", 200);
+        return new JsonResponse($operationCab->getId(), 200);
+    }
+
+    #[Route('/facture/{operationcab}', name: 'admission_facture')]
+    public function factureAdmission(Request $request, TOperationcab $operationcab): Response
+    {
+        $reglementTotal = $this->em->getRepository(TRegelement::class)->getSumMontantByCodeFacture($operationcab);
+        $operationTotal = $this->em->getRepository(TOperationdet::class)->getSumMontantByCodeFacture($operationcab);
+        // dd($reglement, $operationDetails);
+        $html = $this->render("facture/pdfs/facture.html.twig", [
+            'reglementTotal' => $reglementTotal,
+            'operationTotal' => $operationTotal,
+            'operationcab' => $operationcab
+        ])->getContent();
+        $mpdf = new Mpdf();
+        $mpdf->SetHTMLHeader(
+            $this->render("facture/pdfs/header.html.twig")->getContent()
+        );
+        $mpdf->SetHTMLFooter(
+            $this->render("facture/pdfs/footer.html.twig")->getContent()
+        );
+        $mpdf->WriteHTML($html);
+        $mpdf->Output("facture.pdf", "I");
+    }
+    #[Route('/getAnneeDisponible/{admission}', name: 'admission_annee_disponible')]
+    public function getAnneeDisponible(Request $request, TAdmission $admission): Response
+    {
+        $annee = date('Y').'/'.date('Y')+1;
     }
     
 }
