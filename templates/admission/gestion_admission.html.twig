@@ -13,7 +13,7 @@
               <div class="breadcrumb-item"><a href="#">Layout</a></div>
               <div class="breadcrumb-item">Default Layout</div> #}
 
-              <button href="#" class="btn btn-primary  ml-1" id="valider-modal"><i class="fas fa-check"></i>  Inscription</button>
+              <button href="#" class="btn btn-primary  ml-1" id="inscription-modal"><i class="fas fa-check"></i>  Inscription</button>
               <button href="#" class="btn  btn-success ml-1" id="frais-modal" ><i class="fas fa-money-bill-alt"></i>  Frais d'admission</button>
               <button href="#" class="btn btn-primary  ml-1" id="document" ><i class="fas fa-check"></i>  Doc Admission</button>
               <button href="#" class="btn btn-primary  ml-1" id="etudiant_statut" ><i class="far fa-copy"></i>  List des Admis</button>
@@ -32,7 +32,29 @@
             <h4>Tableau des inscriptions</h4>
             </div>
             <div class="card-body">
-
+            <div class="card-search" style="margin-bottom: 1.5rem;">
+                <div class="row">
+                    <div class="col-md-2">
+                        <label for="etablissement">Etablissement:</label>
+                        <select class="form-control" name="etablissement" id="etablissement">
+                            <option value="">Choix etablissement</option>
+                            {% for etablissement in etablissements %}
+                                <option value="{{etablissement.id}}">{{etablissement.designation}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label for="formation">Formation:</label>
+                        <select class="form-control" name="formation" id="formation">
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label for="frais">annee:</label>
+                        <select class="form-control" name="annee" id="annee">
+                        </select>
+                    </div>
+                </div>
+            </div>
             <table id="datatables_gestion_admission" class="display" style="width:100%">
                 <thead>
                     <tr>
@@ -80,6 +102,7 @@
 <!--Modal Import Group-->
 {% include 'admission/modals/documents.html.twig' %}
 {% include 'admission/modals/frais.html.twig' %}
+{% include 'admission/modals/inscription.html.twig' %}
 
 {% endblock %}
 

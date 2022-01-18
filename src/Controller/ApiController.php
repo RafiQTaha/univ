@@ -18,7 +18,7 @@ use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
-#[Route('api')]
+#[Route('/api')]
 class ApiController extends AbstractController
 {
     public function __construct(ManagerRegistry $doctrine)
@@ -26,7 +26,7 @@ class ApiController extends AbstractController
         $this->em = $doctrine->getManager();
         // $em = $this->getDoctrine()->getManager();
     }
-    #[Route('/etbalissement', name: 'getetbalissement')]
+    #[Route('/etablissement', name: 'getetbalissement')]
     public function getetbalissement(): Response
     {
         $etbalissements = $this->em->getRepository(AcEtablissement::class)->findAll();
@@ -43,12 +43,18 @@ class ApiController extends AbstractController
     }
 
     
-    #[Route('/annee/{id}', name: 'getannee')]
-    public function getannee($id): Response
+    #[Route('/annee/{id}', name: 'getAnnee')]
+    public function getAnnee($id): Response
     {   
-        $formations = $this->em->getRepository(AcFormation::class)->find($id);
-        // dd($formations->getDesignation());
-        if(strpos($formations->getDesignation(), 'Résidanat') === false){
+        $annee = $this->em->getRepository(AcAnnee::class)->findBy(['formation'=>$id],['id'=>'DESC']);
+        $data = $this->dropdown($annee,'Annee');
+        return new JsonResponse($data);
+    }
+    #[Route('/anneeresidanat/{id}', name: 'anneeResidanat')]
+    public function anneeResidanat($id): Response
+    {   
+        $formation = $this->em->getRepository(AcFormation::class)->find($id);
+        if(strpos($formation->getDesignation(), 'Résidanat') === false){
             return new JsonResponse(1);
         }else{
             $annee = $this->em->getRepository(AcAnnee::class)->findBy(['formation'=>$id],['id'=>'DESC'],2);
