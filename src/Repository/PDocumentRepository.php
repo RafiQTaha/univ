@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Repository;
 
 use App\Entity\PDocument;
@@ -69,6 +68,23 @@ class PDocumentRepository extends ServiceEntityRepository
 
         return $query->getResult();
     }
+
+
+    public function getDocumentDoesNotExistPreisncriptions($preinscription, $etablissement)
+    {   
+        $subQueryBuilder = $this->getEntityManager()->createQueryBuilder();
+        $subQuery = $subQueryBuilder
+            ->select(['d.id'])
+            ->from('App:TPreinscription', 'p')
+            ->innerJoin('p.documents', 'd')
+            ->where('p.id = :preinscription')
+            ->setParameter('preinscription', $preinscription)
+            ->getQuery()
+            ->getArrayResult()
+        ;
+        // dd($subQuery);
+
+    }
     public function findAllBy($etablissmenet, $attribution)
     {
         $queryBuilder = $this->getEntityManager()->createQueryBuilder();
@@ -76,6 +92,10 @@ class PDocumentRepository extends ServiceEntityRepository
             ->select(['p'])
             ->from('App:PDocument', 'p')
             ->innerJoin('p.etablissement', 'etab')
+            ->Where('p.attribution = :attribution')
+            ->andWhere('p.active = :active')
+            ->andWhere('etab = :etab')
+
             ->Where('p.attribution = :attribution')
             ->andWhere('p.active = :active')
             ->andWhere('etab = :etab')

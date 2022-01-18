@@ -36,9 +36,13 @@ class PDocument
     #[ORM\OneToMany(mappedBy: 'document', targetEntity: TAdmissionDocument::class)]
     private $admissionDocuments;
 
+    #[ORM\ManyToMany(targetEntity: TPreinscription::class, mappedBy: 'documents')]
+    private $preinscriptions;
+
     public function __construct()
     {
         $this->admissionDocuments = new ArrayCollection();
+        $this->preinscriptions = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -143,6 +147,34 @@ class PDocument
             if ($admissionDocument->getDocument() === $this) {
                 $admissionDocument->setDocument(null);
             }
+        }
+
+        return $this;
+    }
+    
+
+    /**
+     * @return Collection|TPreinscription[]
+     */
+    public function getPreinscriptions(): Collection
+    {
+        return $this->preinscriptions;
+    }
+
+    public function addPreinscription(TPreinscription $preinscription): self
+    {
+        if (!$this->preinscriptions->contains($preinscription)) {
+            $this->preinscriptions[] = $preinscription;
+            $preinscription->addDocument($this);
+        }
+
+        return $this;
+    }
+
+    public function removePreinscription(TPreinscription $preinscription): self
+    {
+        if ($this->preinscriptions->removeElement($preinscription)) {
+            $preinscription->removeDocument($this);
         }
 
         return $this;

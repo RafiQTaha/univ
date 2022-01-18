@@ -28,14 +28,14 @@ class TOperationdet
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $code;
 
-    #[ORM\Column(type: 'float', nullable: true)]
+    #[ORM\Column(type: 'smallint', nullable: true)]
     private $montant;
 
     #[ORM\Column(type: 'float', nullable: true)]
     private $remise;
 
-    #[ORM\Column(type: 'boolean', nullable: true)]
-    private $active;
+    // #[ORM\Column(type: 'boolean', nullable: true)]
+    // private $active;
 
     #[ORM\Column(type: 'datetime', nullable: true)]
     private $created;
@@ -111,12 +111,12 @@ class TOperationdet
         return $this;
     }
 
-    public function getMontant(): ?float
+    public function getMontant(): ?int
     {
         return $this->montant;
     }
 
-    public function setMontant(?float $montant): self
+    public function setMontant(?int $montant): self
     {
         $this->montant = $montant;
 
@@ -135,17 +135,17 @@ class TOperationdet
         return $this;
     }
 
-    public function getActive(): ?bool
-    {
-        return $this->active;
-    }
+    // public function getActive(): ?bool
+    // {
+    //     return $this->active;
+    // }
 
-    public function setActive(?bool $active): self
-    {
-        $this->active = $active;
+    // public function setActive(?bool $active): self
+    // {
+    //     $this->active = $active;
 
-        return $this;
-    }
+    //     return $this;
+    // }
 
     public function getCreated(): ?\DateTimeInterface
     {

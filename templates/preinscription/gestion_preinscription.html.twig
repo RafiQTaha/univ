@@ -15,7 +15,7 @@
               <button href="#" class="btn btn-success  ml-1" id="valider-modal"><i class="fas fa-file-excel"></i>  Reporting</button>
               <button href="#" class="btn btn-primary  ml-1" id="valider-modal"><i class="fas fa-print"></i>  Reporting</button>
               <button href="#" class="btn btn-primary  ml-1" id="valider-modal"><i class="fas fa-check"></i>  Doc Bourse</button>
-              <button href="#" class="btn btn-primary  ml-1" id="valider-modal"><i class="fas fa-check"></i>  Doc Preinscription</button>
+              <button href="#" class="btn btn-primary  ml-1" id="doc_preinscription"><i class="fas fa-check"></i>  Doc Preinscription</button>
               <button href="#" class="btn btn-primary  ml-1" id="valider-modal"><i class="fas fa-print"></i>  Pre Selection</button>
               <button href="#" class="btn btn-primary  ml-1" id="valider-modal"><i class="fas fa-print"></i>  Preinscription</button>
               <button href="#" class="btn btn-primary  ml-1" id="valider-modal"><i class="fas fa-edit"></i>  Modifier</button>
@@ -29,7 +29,7 @@
                 <h4>Tableau des Pré-Inscription</h4>
             </div>
             <div class="card-body">
-
+        
             <table id="datables_gestion_preinscription" class="display" style="width:100%">
                 <thead>
                     <tr>
@@ -82,13 +82,14 @@
 
 <!--Modal Import Group-->
 {% include 'preinscription/modals/frais_inscription.html.twig' %}
+{% include 'preinscription/modals/documents_preins.html.twig' %}
 
 {% endblock %}
 
 {% block javascripts %}
 {{parent()}}
 
-<script src="/assets/js/preinscription/preinscription.js"></script>
+<script src="/assets/js/preinscription/gestionpreinscription.js"></script>
 
 {% endblock %}
 

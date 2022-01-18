@@ -154,7 +154,7 @@ class GestionAdmissionController extends AbstractController
         if(count($documentsExists) > 0) {
             $documents = $this->em->getRepository(PDocument::class)->getDocumentDoesNotExistAdmission($admission);
         } else {
-        $documents = $this->em->getRepository(PDocument::class)->findAllBy($admission->getPreinscription()->getAnnee()->getFormation()->getEtablissement(), "INSCRIPTION");
+          $documents = $this->em->getRepository(PDocument::class)->findAllBy($admission->getPreinscription()->getAnnee()->getFormation()->getEtablissement(), "INSCRIPTION");
         }
         $documentHtml = "";
         $documentExistHtml = "";
