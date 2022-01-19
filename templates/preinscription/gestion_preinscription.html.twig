@@ -11,15 +11,16 @@
           <div class="section-header-breadcrumb">
               <button href="#" class="btn btn-danger  ml-1" id="annulation"><i class="fas fa-times-circle"></i>  Annuler</button>
               <button href="#" class="btn btn-primary  ml-1" id="admission"><i class="fas fa-check"></i>  Admission</button>
-              <button href="#" class="btn btn-primary  ml-1" id="frais_inscription"><i class="fas fa-money-bill-alt"></i>  Frais Pre-Inscription</button>
-              <button href="#" class="btn btn-success  ml-1" id="valider-modal"><i class="fas fa-file-excel"></i>  Reporting</button>
-              <button href="#" class="btn btn-primary  ml-1" id="valider-modal"><i class="fas fa-print"></i>  Reporting</button>
-              <button href="#" class="btn btn-primary  ml-1" id="valider-modal"><i class="fas fa-check"></i>  Doc Bourse</button>
+              <button href="#" class="btn btn-primary  ml-1" id="frais_preinscription"><i class="fas fa-money-bill-alt"></i>  Frais Pre-Inscription</button>
+              <button href="#" class="btn btn-success  ml-1" id="valider-modal" style="display:none"><i class="fas fa-file-excel"></i>  Reporting</button>
+              <button href="#" class="btn btn-primary  ml-1" id="valider-modal" style="display:none"><i class="fas fa-print"></i>  Reporting</button>
+              <button href="#" class="btn btn-primary  ml-1" id="valider-modal" style="display:none"><i class="fas fa-check"></i>  Doc Bourse</button>
               <button href="#" class="btn btn-primary  ml-1" id="doc_preinscription"><i class="fas fa-check"></i>  Doc Preinscription</button>
-              <button href="#" class="btn btn-primary  ml-1" id="valider-modal"><i class="fas fa-print"></i>  Pre Selection</button>
-              <button href="#" class="btn btn-primary  ml-1" id="valider-modal"><i class="fas fa-print"></i>  Preinscription</button>
-              <button href="#" class="btn btn-primary  ml-1" id="valider-modal"><i class="fas fa-edit"></i>  Modifier</button>
-              <button href="#" class="btn btn-primary  ml-1" id="modal_group_ins" ><i class="fab fa-telegram-plane"></i>  PreSelection</button>
+              <button href="#" class="btn btn-primary  ml-1" id="att_preinscription" ><i class="fas fa-print"></i>  Att Preinscription</button>
+              <button href="#" class="btn btn-primary  ml-1" id="valider-modal" style="display:none"><i class="fas fa-print"></i>  Pre Selection</button>
+              <button href="#" class="btn btn-primary  ml-1" id="valider-modal" style="display:none"><i class="fas fa-print"></i>  Preinscription</button>
+              <button href="#" class="btn btn-primary  ml-1" id="valider-modal" style="display:none"><i class="fas fa-edit"></i>  Modifier</button>
+              <button href="#" class="btn btn-primary  ml-1" id="modal_group_ins" style="display:none"><i class="fab fa-telegram-plane"></i>  PreSelection</button>
           </div>
         </div>
 
@@ -29,7 +30,34 @@
                 <h4>Tableau des Pré-Inscription</h4>
             </div>
             <div class="card-body">
-        
+                <div class="card-search" style="margin-bottom: 1.5rem;">
+                    <div class="row">
+                        <div class="col-md-2">
+                            <label for="etablissement">Etablissement:</label>
+                            <select class="form-control" name="etablissement" id="etablissement">
+                                 <option value="">Choix etablissement</option>
+                                {% for etablissement in etablissements %}
+                                    <option value="{{etablissement.id}}">{{etablissement.designation}}</option>
+                                {% endfor %} 
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label for="formation">Formation:</label>
+                            <select class="form-control" name="formation" id="formation">
+                                <option value="">Choix Formation</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label for="nature">Nature De Demande:</label>
+                            <select class="form-control" name="nature" id="nature">
+                                <option value="">Choix Nature De Demande</option>
+                                {% for nature in natures %}
+                                    <option value="{{nature.id}}">{{nature.code}} {{nature.designation}}</option>
+                                {% endfor %} 
+                            </select>
+                        </div>
+                    </div>
+                </div>
             <table id="datables_gestion_preinscription" class="display" style="width:100%">
                 <thead>
                     <tr>
@@ -81,7 +109,7 @@
 
 
 <!--Modal Import Group-->
-{% include 'preinscription/modals/frais_inscription.html.twig' %}
+{% include 'preinscription/modals/frais_preinscription.html.twig' %}
 {% include 'preinscription/modals/documents_preins.html.twig' %}
 
 {% endblock %}

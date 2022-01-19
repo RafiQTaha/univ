@@ -52,7 +52,7 @@ var table_gestion_preins = $("#datables_gestion_preinscription").DataTable({
 
 const load_etud_info = () => {
     if(id_preinscription){
-        const icon = $("#frais_inscription i");
+        const icon = $("#frais_preinscription i");
          icon.removeClass('fa-money-bill-alt').addClass("fa-spinner fa-spin");
         axios.get('/preinscription/gestion/frais_preins_modals/'+id_preinscription)
       .then(success => {
@@ -100,7 +100,32 @@ const getDocumentsPreins = async () => {
     }
 }
 
-$('body').on('click','#frais_inscription',function (e) {
+
+$("#etablissement").select2();
+$("#formation").select2();
+$("#nature").select2();
+$("#etablissement").on('change', async function (){
+    const id_etab = $(this).val();
+    table_gestion_preins.columns(1).search("").draw();
+    table_gestion_preins.columns(2).search("").draw();
+    table_gestion_preins.columns(0).search(id_etab).draw();
+    let response = ""
+    if(id_etab != "") {
+        const request = await axios.get('/api/formation/'+id_etab);
+        response = request.data
+    }
+    $('#formation').html(response).select2();
+})
+$("#formation").on('change', async function (){
+    const id_formation = $(this).val();
+    table_gestion_preins.columns(2).search("").draw();
+    table_gestion_preins.columns(1).search(id_formation).draw();
+})
+$("#nature").on('change', async function (){
+    table_gestion_preins.columns(2).search($(this).val()).draw();
+})
+
+$('body').on('click','#frais_preinscription',function (e) {
     e.preventDefault();
     if(!id_preinscription){
         Toast.fire({
@@ -109,7 +134,7 @@ $('body').on('click','#frais_inscription',function (e) {
         })
         return;
     }
-    $('#frais_inscription-modal').modal("show");
+    $('#frais_preinscription-modal').modal("show");
 });
 $('body').on('change','.modal-preins .article #frais',function (e) {
     e.preventDefault();
@@ -174,6 +199,7 @@ $("body").on("click", '.modal .save', async function (e) {
         icon.addClass('fa-trash').removeClass("fa-spinner fa-spin");
         $(".modal-preins .table-fee tbody").empty();
         table_gestion_preins.ajax.reload();
+        window.open('/preinscription/gestion/facture/'+data, '_blank');
       } catch (error) {
         const message = error.response.data;
         console.log(error, error.response);
@@ -326,10 +352,16 @@ $("body").on("click", ".ms-elem-selection", async function() {
     }
 })
 
-
-
-
-
+    $('body').on('click','#att_preinscription',function () {
+        if(!id_preinscription){
+            Toast.fire({
+                icon: 'error',
+                title: 'Veuillez selection une ligne!',
+            })
+            return;
+        }
+        window.open('/preinscription/gestion/attestation_preinscription/'+id_preinscription, '_blank');
+    })
 
 })
 

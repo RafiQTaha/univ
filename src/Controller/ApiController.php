@@ -8,6 +8,7 @@ use App\Entity\POrganisme;
 use App\Entity\TAdmission;
 use App\Entity\AcFormation;
 use App\Entity\AcEtablissement;
+use App\Entity\NatureDemande;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\HttpFoundation\Response;
@@ -30,15 +31,14 @@ class ApiController extends AbstractController
     public function getetbalissement(): Response
     {
         $etbalissements = $this->em->getRepository(AcEtablissement::class)->findAll();
-        $data = $this->dropdown($etbalissements,'Etablissement');
+         $data = self::dropdown($etbalissements,'Etablissement');
         return new JsonResponse($data);
-        
     }
     #[Route('/formation/{id}', name: 'getformation')]
     public function getformation($id): Response
     {
         $formations = $this->em->getRepository(AcFormation::class)->findBy(['etablissement'=>$id]);
-        $data = $this->dropdown($formations,'Formation');
+         $data = self::dropdown($formations,'Formation');
         return new JsonResponse($data);
     }
 
@@ -47,18 +47,28 @@ class ApiController extends AbstractController
     public function getAnnee($id): Response
     {   
         $annee = $this->em->getRepository(AcAnnee::class)->findBy(['formation'=>$id],['id'=>'DESC']);
-        $data = $this->dropdown($annee,'Annee');
+        $data = self::dropdown($annee,'Annee');
         return new JsonResponse($data);
     }
+
+    
+    #[Route('/nature_demande', name: 'nature_demande')]
+    public function getnature_demande(): Response
+    {
+        $nature = $this->em->getRepository(NatureDemande::class)->findAll();
+        $data = self::dropdown($nature,'Nature De Demande');
+        return new JsonResponse($data);
+    }
+
+
     #[Route('/anneeresidanat/{id}', name: 'anneeResidanat')]
-    public function anneeResidanat($id): Response
+    public function anneeResidanat(AcFormation $formation): Response
     {   
-        $formation = $this->em->getRepository(AcFormation::class)->find($id);
         if(strpos($formation->getDesignation(), 'Résidanat') === false){
             return new JsonResponse(1);
         }else{
-            $annee = $this->em->getRepository(AcAnnee::class)->findBy(['formation'=>$id],['id'=>'DESC'],2);
-            $data = $this->dropdown($annee,'Annee');
+            $annee = $this->em->getRepository(AcAnnee::class)->findBy(['formation'=>$formation],['id'=>'DESC'],2);
+            $data = self::dropdown($annee,'Annee');
             return new JsonResponse($data);
         }
         
@@ -67,7 +77,7 @@ class ApiController extends AbstractController
     public function getOrganisme(): Response
     {   
         $organisme = $this->em->getRepository(POrganisme::class)->findAll();
-        $data = $this->dropdown($organisme,'organisme');
+         $data = self::dropdown($organisme,'organisme');
         return new JsonResponse($data);        
     }
     #[Route('/frais/{admission}', name: 'getFraisByFormation')]
@@ -75,11 +85,11 @@ class ApiController extends AbstractController
     {   
         $formation = $admission->getPreinscription()->getAnnee()->getFormation();
         $frais = $this->em->getRepository(PFrais::class)->findBy(["formation" => $formation]);
-        $data = $this->dropdownData($frais,'frais');
+        $data = self::dropdownData($frais,'frais');
         return new JsonResponse($data);        
     }
 
-    public function dropdown($objects,$choix)
+    static function dropdown($objects,$choix)
     {
         $data = "<option selected enabled value=''>Choix ".$choix."</option>";
         foreach ($objects as $object) {
@@ -87,7 +97,7 @@ class ApiController extends AbstractController
          }
          return $data;
     }
-    public function dropdownData($objects,$choix)
+    static function dropdownData($objects,$choix)
     {
         $data = "<option selected enabled value=''>Choix ".$choix."</option>";
         foreach ($objects as $object) {
