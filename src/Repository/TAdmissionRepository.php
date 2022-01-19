@@ -22,29 +22,21 @@ class TAdmissionRepository extends ServiceEntityRepository
     // /**
     //  * @return TAdmission[] Returns an array of TAdmission objects
     //  */
-    /*
-    public function findByExampleField($value)
+    
+    public function getAdmissionByAnnee($annee)
     {
         return $this->createQueryBuilder('t')
-            ->andWhere('t.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('t.id', 'ASC')
-            ->setMaxResults(10)
+            ->innerJoin("t.preinscription", "preinscription")
+            ->where("preinscription.annee = :annee")
+            ->setParameter('annee', $annee)
+            ->orderBy('t.id', 'DESC')
             ->getQuery()
             ->getResult()
         ;
     }
-    */
+    
 
-    /*
-    public function findOneBySomeField($value): ?TAdmission
-    {
-        return $this->createQueryBuilder('t')
-            ->andWhere('t.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
+    
+    
+    
 }

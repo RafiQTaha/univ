@@ -2,6 +2,7 @@
 
 namespace App\Controller\Admission;
 
+use App\Controller\ApiController;
 use Mpdf\Mpdf;
 use App\Entity\PFrais;
 use App\Entity\PDocument;
@@ -12,7 +13,11 @@ use App\Entity\TOperationcab;
 use App\Entity\TOperationdet;
 use App\Entity\TAdmissionDocument;
 use App\Controller\DatatablesController;
+use App\Entity\AcAnnee;
 use App\Entity\AcEtablissement;
+use App\Entity\AcPromotion;
+use App\Entity\PStatut;
+use App\Entity\TInscription;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -290,7 +295,55 @@ class GestionAdmissionController extends AbstractController
     public function getAnneeDisponible(Request $request, TAdmission $admission): Response
     {
         $annee = date('Y').'/'.date('Y')+1;
-        // $inscription = 
+        $inscription = $this->em->getRepository(TInscription::class)->getActiveInscriptionByAnnee($admission,$annee);
+        
+        if(!$inscription) {
+            $findAnnee = $this->em->getRepository(AcAnnee::class)->findBy(['designation' => $annee, 'formation' => $admission->getPreinscription()->getAnnee()->getFormation()]);
+            $promotions = $this->em->getRepository(AcPromotion::class)->findBy(['formation' => $admission->getPreinscription()->getAnnee()->getFormation()]);
+            $promotionHtml = ApiController::dropdown($promotions, "promotion");
+            $anneeHtml = ApiController::dropdown($findAnnee, "annee");
+            return new JsonResponse(['anneeHtml' => $anneeHtml, 'promotionHtml' => $promotionHtml], 200);
+        }
+
+        return new JsonResponse("Etudiant deja inscrit à l'année courant!", 500);
+    }
+    #[Route('/inscription/{admission}', name: 'admission_inscription')]
+    public function inscriptionAction(Request $request, TAdmission $admission): Response
+    {
+        $annee = $this->em->getRepository(AcAnnee::class)->find($request->get('annee_inscription'));
+        $promotion = $this->em->getRepository(AcPromotion::class)->find($request->get('promotion_inscription'));
+        $inscription = new TInscription();
+        $inscription->setStatut(
+            $this->em->getRepository(PStatut::class)->find(13)
+        );
+        $inscription->setUserCreated($this->getUser());
+        $inscription->setAnnee($annee);
+        $inscription->setPromotion($promotion);
+        $inscription->setAdmission($admission);
+        $inscription->setCreated(new \DateTime("now"));
+        $this->em->persist($inscription);
+        $this->em->flush();
+        $inscription->setCode('INS-'. $annee->getFormation()->getEtablissement()->getAbreviation().str_pad($inscription->getId(), 8, '0', STR_PAD_LEFT).'/'.date("Y"));
+        $this->em->flush();
+        return new JsonResponse("Bien Enregistre code inscription: " . $inscription->getCode(), 200);
+    }
+    #[Route('/listadmission/{annee}', name: 'admission_list_admis')]
+    public function admissionListAdmis(Request $request, AcAnnee $annee): Response
+    {
+        $admissions = $this->em->getRepository(TAdmission::class)->getAdmissionByAnnee($annee);
+        $html = $this->render("admission/pdfs/list.html.twig", [
+            "annee" => $annee,
+            "admissions" => $admissions
+            ])->getContent();
+        $mpdf = new Mpdf();
+        $mpdf->SetHTMLHeader(
+            $this->render("admission/pdfs/header.html.twig")->getContent()
+        );
+        $mpdf->SetHTMLFooter(
+            $this->render("admission/pdfs/footer.html.twig")->getContent()
+        );
+        $mpdf->WriteHTML($html);
+        $mpdf->Output("facture.pdf", "I");
     }
     
 }

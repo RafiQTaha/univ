@@ -47,4 +47,18 @@ class TInscriptionRepository extends ServiceEntityRepository
         ;
     }
     */
+    public function getActiveInscriptionByAnnee($admission, $annee)
+    {
+        return $this->createQueryBuilder('t')
+            ->innerJoin("t.annee", "annee")
+            ->innerJoin("t.statut", "statut")
+            ->where('t.admission = :admission')
+            ->andWhere("annee.designation = :annee")
+            ->andWhere("statut.id = 13")
+            ->setParameter('admission', $admission)
+            ->setParameter('annee', $annee)
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
+    }
 }
