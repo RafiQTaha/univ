@@ -31,14 +31,14 @@ class ApiController extends AbstractController
     public function getetbalissement(): Response
     {
         $etbalissements = $this->em->getRepository(AcEtablissement::class)->findAll();
-         $data = self::dropdown($etbalissements,'Etablissement');
+        $data = self::dropdown($etbalissements,'Etablissement');
         return new JsonResponse($data);
     }
     #[Route('/formation/{id}', name: 'getformation')]
     public function getformation($id): Response
     {
         $formations = $this->em->getRepository(AcFormation::class)->findBy(['etablissement'=>$id]);
-         $data = self::dropdown($formations,'Formation');
+        $data = self::dropdown($formations,'Formation');
         return new JsonResponse($data);
     }
 
@@ -77,7 +77,7 @@ class ApiController extends AbstractController
     public function getOrganisme(): Response
     {   
         $organisme = $this->em->getRepository(POrganisme::class)->findAll();
-         $data = self::dropdown($organisme,'organisme');
+        $data = self::dropdown($organisme,'organisme');
         return new JsonResponse($data);        
     }
     #[Route('/frais/{admission}', name: 'getFraisByFormation')]
@@ -102,6 +102,18 @@ class ApiController extends AbstractController
         $data = "<option selected enabled value=''>Choix ".$choix."</option>";
         foreach ($objects as $object) {
             $data .="<option value=".$object->getId()." data-frais=".$object->getMontant().">".$object->getDesignation()."</option>";
+         }
+         return $data;
+    }
+    static function dropDownSelected($objects,$choix, $value)
+    {
+        $data = "<option selected enabled value=''>Choix ".$choix."</option>";
+        foreach ($objects as $object) {
+            if($object->getId() === $value->getId()) {
+                $data .="<option value=".$object->getId()." selected>".$object->getDesignation()."</option>";
+            } else {
+                $data .="<option value=".$object->getId()." >".$object->getDesignation()."</option>";
+            }
          }
          return $data;
     }

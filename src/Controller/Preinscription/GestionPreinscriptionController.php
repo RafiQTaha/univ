@@ -255,6 +255,7 @@ class GestionPreinscriptionController extends AbstractController
         } else {
             $documents = $this->em->getRepository(PDocument::class)->findBy(['etablissement'=>$etablissement,'attribution'=>'PREINSCRIPTION','active'=>1]);
         }
+        // dd($documentsExists);
         $documentHtml = "";
         $documentExistHtml = "";
         foreach ($documentsExists as $documentsExist) {
