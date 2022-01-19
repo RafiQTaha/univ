@@ -9,9 +9,7 @@ use App\Entity\PStatut;
 use App\Entity\POrganisme;
 use App\Entity\TOperation;
 use App\Entity\TOperationcab;
-
 use App\Entity\TOperationdet;
-use App\Entity\POrganisme;
 use App\Entity\PDocument;
 use App\Entity\TPreinscription;
 use App\Controller\ApiController;
@@ -322,6 +320,7 @@ class GestionPreinscriptionController extends AbstractController
         } else {
             $documents = $this->em->getRepository(PDocument::class)->findBy(['etablissement'=>$etablissement,'attribution'=>'PREINSCRIPTION','active'=>1]);
         }
+        // dd($documentsExists);
         $documentHtml = "";
         $documentExistHtml = "";
         foreach ($documentsExists as $documentsExist) {

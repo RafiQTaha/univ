@@ -24,17 +24,18 @@ const Toast = Swal.mixin({
         processing: true,
         serverSide: true,
         deferRender: true,
-        // drawCallback: function () {
-        //     idpreins.forEach((e) => {
-        //         $("body tr#" + e)
-        //         .find("input")
-        //         .prop("checked", true);
-        //     });
-        // },
+        drawCallback: function () {
+            idAdmissions.forEach((e) => {
+                $("body tr#" + e)
+                .find("input")
+                .prop("checked", true);
+            });
+            $("body tr#" + id_admission).addClass('active_databales')
+        },
         language: {
             url: "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/French.json",
         },
-        });
+    });
     const getDocuments = async () => {
         try {
             const icon = $('#document i')
@@ -89,8 +90,7 @@ const Toast = Swal.mixin({
     $("#etablissement").select2()
     $("#etablissement").on('change', async function (){
         const id_etab = $(this).val();
-        table.columns(1).search("").draw();
-        table.columns(2).search("").draw();
+        table.columns().search("");
         table.columns(0).search(id_etab).draw();
         let response = ""
         if(id_etab != "") {
@@ -104,7 +104,7 @@ const Toast = Swal.mixin({
     })
     $("#formation").on('change', async function (){
         const id_formation = $(this).val();
-        table.columns(2).search("").draw();
+        table.columns().search("");
         table.columns(1).search(id_formation).draw();
         let response = ""
         if(id_formation != "") {
@@ -114,6 +114,7 @@ const Toast = Swal.mixin({
         $('#annee').html(response).select2();
     })
     $("#annee").on('change', async function (){
+        table.columns().search("");
         table.columns(2).search($(this).val()).draw();
     })
     const getAdmissionInfos = async () => {
@@ -134,6 +135,25 @@ const Toast = Swal.mixin({
             icon.addClass('fa-money-bill-alt').removeClass('fa-spinner fa-spin')
         }
     }
+    const getInscriptionAnnee = async () => {
+        const icon = $('#inscription-modal i')
+        try {
+            icon.removeClass('fa-check').addClass('fa-spinner fa-spin')
+            const request = await axios.get("/admission/gestion/getAnneeDisponible/"+id_admission);
+            const data = await request.data;
+            $('#annee_inscription').html(data.anneeHtml).select2();
+            $('#promotion_inscription').html(data.promotionHtml).select2();
+        } catch (error) {
+            const message = error.response.data;
+            console.log(error, error.response);
+            Toast.fire({
+                icon: 'info',
+                title: message,
+            })    
+        }
+        icon.addClass('fa-check').removeClass('fa-spinner fa-spin')
+    }
+    
     $('body').on('click','#datatables_gestion_admission tbody tr',function () {
         const input = $(this).find("input");
         if(input.is(":checked")){
@@ -155,6 +175,7 @@ const Toast = Swal.mixin({
             $("#datatables_gestion_admission tbody tr").removeClass('active_databales');
             $(this).addClass('active_databales');
             id_admission = $(this).attr('id');
+            getInscriptionAnnee();
             getDocuments();
             getAdmissionInfos();
             getFrais();
@@ -304,8 +325,39 @@ const Toast = Swal.mixin({
           })
           return;
         }
-  
+        $("#inscription_modal .modal-body .alert").remove()
         $("#inscription_modal").modal("show")
+    })
+    $("#inscription_save").on("submit", async function (e){
+        e.preventDefault();
+        let formData = new FormData($(this)[0]);
+        let modalAlert = $("#inscription_modal .modal-body .alert")
+    
+        modalAlert.remove();
+        const icon = $("#inscription_save .btn i");
+        icon.removeClass('fa-check-circle').addClass("fa-spinner fa-spin");
+        
+        try {
+          const request = await axios.post('/admission/gestion/inscription/'+id_admission, formData);
+          const response = request.data;
+          $("#inscription_modal .modal-body").prepend(
+            `<div class="alert alert-success">
+                <p>${response}</p>
+              </div>`
+          );
+          icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
+          $("#annee_inscription, #promotion_inscription").empty()
+          table.ajax.reload()
+        } catch (error) {
+          const message = error.response.data;
+          console.log(error, error.response);
+          modalAlert.remove();
+          $("#inscription_modal .modal-body").prepend(
+            `<div class="alert alert-danger">${message}</div>`
+          );
+          icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
+          
+        }
     })
 })
     
