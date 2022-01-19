@@ -9,12 +9,15 @@ use App\Entity\PStatut;
 use App\Entity\POrganisme;
 use App\Entity\TOperation;
 use App\Entity\TOperationcab;
+use App\Entity\TRegelement;
+use App\Entity\AcEtablissement;
 use App\Entity\TOperationdet;
 use App\Entity\PDocument;
 use App\Entity\TPreinscription;
+use App\Entity\NatureDemande;
+use App\Entity\User;
 use App\Controller\ApiController;
 use App\Controller\DatatablesController;
-use App\Entity\User;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -30,105 +33,37 @@ class GestionPreinscriptionController extends AbstractController
     {
         $this->em = $doctrine->getManager();
     }
-    #[Route('/preinscription', name: 'preinscription_index')]
-    public function index(): Response
-    {   
-        return $this->render('preinscription/index.html.twig');
-    }
 
-    #[Route('/list', name: 'preinscription_list')]
-    public function list(Request $request): Response
-    {
-        $params = $request->query;
-        $where = $totalRows = $sqlRequest = "";
-        $filtre = "where 1 = 1 ";        
-        $columns = array(
-            array( 'db' => 'pre.id','dt' => 0 ),
-            array( 'db' => 'pre.code','dt' => 1),
-            array( 'db' => 'etu.nom','dt' => 2),
-            array( 'db' => 'etu.prenom','dt' => 3),
-            array( 'db' => 'etab.abreviation','dt' => 4),
-            array( 'db' => 'LOWER(form.abreviation)','dt' => 5),
-            array( 'db' => 'LOWER(nat.designation)','dt' => 6),
-            array( 'db' => 'tbac.designation','dt' => 7),
-            array( 'db' => 'etu.moyenne_bac','dt' => 8),
-            array( 'db' => 'LOWER(stat.code)','dt' => 9),
-            // array( 'db' => 'LOWER(stat.code)','dt' => 10),
-            // array( 'db' => 'LOWER(stat.code)','dt' => 11),
-            // array( 'db' => 'LOWER(stat.code)','dt' => 12),
-        );
-        $sql = "SELECT " . implode(", ", DatatablesController::Pluck($columns, 'db')) . "
-                      
-         
-        FROM `tpreinscription` pre 
-        inner join tetudiant etu on etu.id = pre.etudiant_id
-        inner join ac_annee an on an.id = pre.annee_id
-        inner join ac_formation form on form.id = an.formation_id
-        inner join ac_etablissement etab on etab.id = form.etablissement_id
-        left join xtype_bac tbac on tbac.id = etu.type_bac_id 
-        left join nature_demande nat on nat.id = etu.nature_demande_id 
-        inner join pstatut stat on stat.id = pre.statut_id    
-
-                $filtre"
-        ;
-        // dd($sql);
-        $totalRows .= $sql;
-        $sqlRequest .= $sql;
-        $stmt = $this->em->getConnection()->prepare($sql);
-        $newstmt = $stmt->executeQuery();
-        $totalRecords = count($newstmt->fetchAll());
-        // dd($sql);
-        $my_columns = DatatablesController::Pluck($columns, 'db');
-
-        // search 
-        $where = DatatablesController::Search($request, $columns);
-        if (isset($where) && $where != '') {
-            $sqlRequest .= $where;
-        }
-        $sqlRequest .= DatatablesController::Order($request, $columns);
-        // dd($sqlRequest);
-        $stmt = $this->em->getConnection()->prepare($sqlRequest);
-        $resultSet = $stmt->executeQuery();
-        $result = $resultSet->fetchAll();
-
-
-        $data = array();
-        // dd($result);
-        $i = 1;
-        foreach ($result as $key => $row) {
-            // dump($row);
-            $nestedData = array();
-            $cd = $row['id'];
-            // $nestedData[] = $cd;
-            $nestedData[] = "<input type ='checkbox' class='cat' id ='$cd' >";
-            foreach (array_values($row) as $key => $value) {
-                $nestedData[] = $value;
-            }
-            $data[] = $nestedData;
-            // dd($nestedData);
-            $i++;
-        }
-        // dd($data);
-        $json_data = array(
-            "draw" => intval($params->get('draw')),
-            "recordsTotal" => intval($totalRecords),
-            "recordsFiltered" => intval($totalRecords),
-            "data" => $data   
-        );
-        // die;
-        return new Response(json_encode($json_data));
-    }
     #[Route('/', name: 'gestion_preinscription')]
     public function gestion_preinscription(): Response
     {   
-        return $this->render('preinscription/gestion_preinscription.html.twig');
+        $etbalissements = $this->em->getRepository(AcEtablissement::class)->findAll();
+        $natures = $this->em->getRepository(NatureDemande::class)->findAll();
+        return $this->render('preinscription/gestion_preinscription.html.twig',[
+            'etablissements' => $etbalissements,
+            'natures' => $natures,
+        ]);
     }
     #[Route('/list/gestion_preinscription', name: 'list/gestion_preinscription')]
     public function list_gestion_preinscription(Request $request): Response
     {   
+         
         $params = $request->query;
         $where = $totalRows = $sqlRequest = "";
-        $filtre = "where 1=1 AND inscription_valide = '1' ";        
+        $filtre = "where 1=1 AND inscription_valide = '1' ";
+        
+        if (!empty($params->get('columns')[0]['search']['value'])) {
+            // dd("in");
+            $filtre .= " and etab.id = '" . $params->get('columns')[0]['search']['value'] . "' ";
+        }
+
+        if (!empty($params->get('columns')[1]['search']['value'])) {
+            $filtre .= " and form.id = '" . $params->get('columns')[1]['search']['value'] . "' ";
+        }    
+        if (!empty($params->get('columns')[2]['search']['value'])) {
+            $filtre .= " and nat.id = '" . $params->get('columns')[2]['search']['value'] . "' ";
+        }  
+
         $columns = array(
             array( 'db' => 'pre.id','dt' => 0 ),
             array( 'db' => 'pre.code','dt' => 1),
@@ -306,7 +241,7 @@ class GestionPreinscriptionController extends AbstractController
             $operationdet->setCode('OPD'.str_pad($operationdet->getId(), 8, '0', STR_PAD_LEFT));
             $this->em->flush();
         };
-        return new JsonResponse(1, 200);
+        return new JsonResponse($operationcab->getId(), 200);
     }
 
     #[Route('/getdoc_preinscription/{id}', name: 'getdoc_preinscription')]
@@ -356,6 +291,31 @@ class GestionPreinscriptionController extends AbstractController
         $preinscription->removeDocument($this->em->getRepository(PDocument::class)->find($request->get('idDocument')));
         $this->em->flush();
         return new JsonResponse('Bien Supprimer', 200);
+    }
+
+    #[Route('/attestation_preinscription/{preinscription}', name: 'attestation_preinscription')]
+    public function attestationpreinscription(Request $request, TPreinscription $preinscription): Response
+    {
+        $html = $this->render("attestaion/pdfs/content.html.twig", [
+            'preinscription' => $preinscription,
+            'annee' => $preinscription->getAnnee(),
+            'etablissement' => $preinscription->getAnnee()->getFormation()->getEtablissement(),
+            'formation' => $preinscription->getAnnee()->getFormation(),
+            'etudiant' => $preinscription->getEtudiant(),
+        ])->getContent();
+        $mpdf = new Mpdf([
+            'mode' => 'utf-8',
+            'margin_left' => '5',
+            'margin_right' => '5',
+            ]);
+        $mpdf->SetHTMLHeader(
+            $this->render("attestaion/pdfs/header.html.twig")->getContent()
+        );
+        $mpdf->SetHTMLFooter(
+            $this->render("attestaion/pdfs/footer.html.twig")->getContent()
+        );
+        $mpdf->WriteHTML($html);
+        $mpdf->Output("attestaion.pdf", "I");
     }
 
     #[Route('/facture/{operationcab}', name: 'preinscription_facture')]
