@@ -34,9 +34,6 @@ class TOperationdet
     #[ORM\Column(type: 'float', nullable: true)]
     private $remise;
 
-    // #[ORM\Column(type: 'boolean', nullable: true)]
-    // private $active;
-
     #[ORM\Column(type: 'datetime', nullable: true)]
     private $created;
 
