@@ -199,6 +199,7 @@ $("body").on("click", '.modal .save', async function (e) {
         icon.addClass('fa-trash').removeClass("fa-spinner fa-spin");
         $(".modal-preins .table-fee tbody").empty();
         table_gestion_preins.ajax.reload();
+        frais = [];
         window.open('/preinscription/gestion/facture/'+data, '_blank');
       } catch (error) {
         const message = error.response.data;
@@ -352,16 +353,30 @@ $("body").on("click", ".ms-elem-selection", async function() {
     }
 })
 
-    $('body').on('click','#att_preinscription',function () {
-        if(!id_preinscription){
-            Toast.fire({
-                icon: 'error',
-                title: 'Veuillez selection une ligne!',
-            })
-            return;
-        }
-        window.open('/preinscription/gestion/attestation_preinscription/'+id_preinscription, '_blank');
-    })
+$('body').on('click','#att_preinscription',function () {
+    if(!id_preinscription){
+        Toast.fire({
+            icon: 'error',
+            title: 'Veuillez selection une ligne!',
+        })
+        return;
+    }
+    window.open('/preinscription/gestion/attestation_preinscription/'+id_preinscription, '_blank');
+})
 
+$('body').on('click','#modifier',function () {
+    if(!id_preinscription){
+        Toast.fire({
+            icon: 'error',
+            title: 'Veuillez selection une ligne!',
+        })
+        return;
+    }
+    $('#modifier_modal').modal("show");
+})
+
+$('.nav-pills a').on('click', function (e) {
+    $(this).tab('show');
+})
 })
 

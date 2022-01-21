@@ -161,6 +161,8 @@ class GestionPreinscriptionController extends AbstractController
         foreach ($ids as $id) {
             $preinscription = $this->em->getRepository(TPreinscription::class)->find($id);
             $preinscription->setInscriptionValide(0);
+            $preinscription->setUserUpdated($this->getUser());
+            $preinscription->setUpdated(New DateTime('now'));
         }
         $this->em->flush();
         return new Response(json_encode(1));
@@ -218,7 +220,6 @@ class GestionPreinscriptionController extends AbstractController
     {   
         $ids = json_decode($request->get('frais'));
         $operationcab = new TOperationcab();
-        $operationdet = new TOperationdet();
         $operationcab->setPreinscription($preinscription);
         $operationcab->setAnnee($preinscription->getAnnee());
         $operationcab->setOrganisme($this->em->getRepository(POrganisme::class)->find(7));
@@ -230,12 +231,15 @@ class GestionPreinscriptionController extends AbstractController
         $operationcab->setCode($etab.'-FAC'.str_pad($operationcab->getId(), 8, '0', STR_PAD_LEFT).'/'.date('Y'));
         $this->em->flush();
         foreach($ids as $idfrais){
+            $operationdet = new TOperationdet();
             $operationdet->setOperationcab($operationcab);
             $operationdet->setFrais($this->em->getRepository(PFrais::class)->find($idfrais->id));
             $operationdet->setMontant($idfrais->montant);
             $operationdet->setRemise(0);
             $operationdet->setCreated(new DateTime('now'));
             $operationdet->setUpdated(new DateTime('now'));
+            $operationdet->setUserCreated($this->getUser());
+            $operationdet->setUserUpdated($this->getUser());
             $this->em->persist($operationdet);
             $this->em->flush();
             $operationdet->setCode('OPD'.str_pad($operationdet->getId(), 8, '0', STR_PAD_LEFT));
@@ -303,7 +307,13 @@ class GestionPreinscriptionController extends AbstractController
             'formation' => $preinscription->getAnnee()->getFormation(),
             'etudiant' => $preinscription->getEtudiant(),
         ])->getContent();
-        $mpdf = new Mpdf();
+        $mpdf = new Mpdf([
+            'mode' => 'utf-8',
+            'margin_left' => '5',
+            'margin_right' => '5',
+            ]);
+        // $mpdf->SetTitle('Attestation de pré-inscription '.$preinscription->getEtudiant()->getNom().' '.$preinscription->getEtudiant()->getPrenom());
+        $mpdf->SetTitle('Attestation de Pré-Inscription');
         $mpdf->SetHTMLHeader(
             $this->render("attestaion/pdfs/header.html.twig")->getContent()
         );
@@ -326,6 +336,7 @@ class GestionPreinscriptionController extends AbstractController
             'operationcab' => $operationcab
         ])->getContent();
         $mpdf = new Mpdf();
+        $mpdf->SetTitle('Facture');
         $mpdf->SetHTMLHeader(
             $this->render("facture/pdfs/header.html.twig")->getContent()
         );
@@ -337,16 +348,9 @@ class GestionPreinscriptionController extends AbstractController
     }
     
     #[Route('/test/{id}', name: 'test')]
-    public function test(Request $request,TPreinscription $preinscription): Response
+    public function test(Request $request): Response
     {
-        // $formation = $preinscription->getAnnee()->getFormation();
-        // $frais = $this->em->getRepository(PFrais::class)->findBy(['formation'=>$formation,'categorie'=>'Pré-inscription']);
-        // $data = "<option selected enabled>Choix Fraix</option>";
-        // foreach ($frais as $frs) {
-        //     $data .="<option value='".$frs->getId()."' montant='".$frs->getmontant()."'>".$frs->getDesignation()."</option>";
-        // }
-        // dd($data);
-            // $data = $this->dropdown($annee,'Annee');
+        
             dd('');
     }
 
