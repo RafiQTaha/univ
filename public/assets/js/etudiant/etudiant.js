@@ -114,7 +114,7 @@ $(document).ready(function  () {
   $('body').on('change','#formation',function (e) {
     e.preventDefault();
     let id_forma = $(this).val();
-    axios.get('/api/annee/'+id_forma)
+    axios.get('/api/anneeresidanat/'+id_forma)
     .then(success => {
       if(success.data !== 1){
         $('.annee').css('display','block');
@@ -168,6 +168,7 @@ $(document).ready(function  () {
         // );  
         icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin");
         tableListPreinscription.ajax.reload();
+        table.ajax.reload();
       }
     }catch(error){
       const message = error.response.data;

@@ -16,7 +16,7 @@
           ><i class="fas fa-users"></i><span>Etudiant</span></a
         >
         <ul class="dropdown-menu">
-          <li><a class="nav-link {% if secondCurrentUrl == ''%} activeSecondUrl {% endif %}" href="{{path('etudiant_index')}}">Compte Etudiant</a></li>
+          <li><a class="nav-link {% if getCurrentUrl == 'etudiant' and secondCurrentUrl == ''%} activeSecondUrl {% endif %}" href="{{path('etudiant_index')}}">Compte Etudiant</a></li>
            {# <li><a class="nav-link" href="index.html">Ecommerce Dashboard</a></li>  #}
         </ul>
       </li>
@@ -26,7 +26,7 @@
         >
         <ul class="dropdown-menu">
           <li><a class="nav-link" href="{{path('preinscription_index')}}">Pré-Inscription</a></li>
-          <li><a class="nav-link {% if secondCurrentUrl == 'gestion'%} activeSecondUrl {% endif %}" href="{{path('gestion_preinscription')}}">Gestion Des Pre-inscriptions</a></li>
+          <li><a class="nav-link {% if getCurrentUrl == 'preinscription' and secondCurrentUrl == 'gestion'%} activeSecondUrl {% endif %}" href="{{path('gestion_preinscription')}}">Gestion Des Pre-inscriptions</a></li>
         </ul>
       </li>
       <li class="nav-item dropdown {% if getCurrentUrl == 'admission'%} active {% endif %}">
@@ -34,8 +34,8 @@
           ><i class="fas fa-users"></i><span>Admission</span></a
         >
         <ul class="dropdown-menu">
-          <li><a class="nav-link {% if secondCurrentUrl == 'admissions'%} activeSecondUrl {% endif %}" href="{{path('admission_index')}}">Admissions</a></li>
-          <li><a class="nav-link {% if secondCurrentUrl == 'gestion'%} activeSecondUrl {% endif %}" href="{{path('gestion_admission')}}">Gestion des admissions</a></li>
+          <li><a class="nav-link {% if getCurrentUrl == 'admission' and secondCurrentUrl == 'admissions'%} activeSecondUrl {% endif %}" href="{{path('admission_index')}}">Admissions</a></li>
+          <li><a class="nav-link {% if getCurrentUrl == 'admission' and secondCurrentUrl == 'gestion'%} activeSecondUrl {% endif %}" href="{{path('gestion_admission')}}">Gestion des admissions</a></li>
         </ul>
       </li>
       <li class="nav-item dropdown {% if getCurrentUrl == 'inscription'%} active {% endif %}">
@@ -43,7 +43,15 @@
           ><i class="fas fa-users"></i><span>Inscription</span></a
         >
         <ul class="dropdown-menu">
-          <li><a class="nav-link {% if secondCurrentUrl == 'gestion'%} activeSecondUrl {% endif %}" href="{{path('gestion_inscription')}}">Gestion des inscriptions</a></li>
+          <li><a class="nav-link {% if getCurrentUrl == 'inscription' and secondCurrentUrl == 'gestion'%} activeSecondUrl {% endif %}" href="{{path('gestion_inscription')}}">Gestion des inscriptions</a></li>
+        </ul>
+      </li>
+      <li class="nav-item dropdown {% if getCurrentUrl == 'inscription'%} active {% endif %}">
+        <a href="#" class="nav-link has-dropdown"
+          ><i class="fad fa-books"></i><span>Adminstration epreuves</span></a
+        >
+        <ul class="dropdown-menu">
+          <li><a class="nav-link {% if getCurrentUrl == 'inscription' and secondCurrentUrl == 'gestion'%} activeSecondUrl {% endif %}" href="{{path('gestion_inscription')}}">Epreuves et affiliation</a></li>
         </ul>
       </li>
       {# <li class="nav-item dropdown {% if getCurrentUrl == 'inscription'%} active {% endif %}">

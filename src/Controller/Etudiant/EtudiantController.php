@@ -70,9 +70,9 @@ class EtudiantController extends AbstractController
         $sql = "SELECT " . implode(", ", DatatablesController::Pluck($columns, 'db')) . "
                       
                 FROM tetudiant etu
-                inner join pstatut st on st.id = etu.statut_id
-                inner join nature_demande nd on nd.id = etu.nature_demande_id
-                inner join xtype_bac xtb on xtb.id = etu.type_bac_id              
+                left join pstatut st on st.id = etu.statut_id
+                left join nature_demande nd on nd.id = etu.nature_demande_id
+                left join xtype_bac xtb on xtb.id = etu.type_bac_id              
 
                 $filtre"
         ;

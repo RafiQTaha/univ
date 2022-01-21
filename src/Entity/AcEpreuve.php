@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\AcEpreuveRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: AcEpreuveRepository::class)]
@@ -13,156 +15,53 @@ class AcEpreuve
     #[ORM\Column(type: 'integer')]
     private $id;
 
-    #[ORM\ManyToOne(targetEntity: User::class)]
-    private $user_created;
-
-    #[ORM\ManyToOne(targetEntity: User::class)]
-    private $user_updated;
-
-    #[ORM\Column(type: 'integer', nullable: true)]
-    private $nature_epreuve;
-
-    #[ORM\Column(type: 'integer', nullable: true)]
-    private $enseignant;
-
-    #[ORM\Column(type: 'integer', nullable: true)]
-    private $statut;
-
-    #[ORM\Column(type: 'integer', nullable: true)]
-    private $groupe;
-
-    #[ORM\Column(type: 'integer', nullable: true)]
-    private $controle_epreuve;
-
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $code;
 
-    #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private $designation;
-
-    #[ORM\Column(type: 'float', nullable: true)]
+    #[ORM\Column(type: 'integer', nullable: true)]
     private $coefficient;
 
-    #[ORM\Column(type: 'date', nullable: true)]
-    private $date_epreuve;
+    #[ORM\ManyToOne(targetEntity: AcAnnee::class, inversedBy: 'epreuves')]
+    private $annee;
 
-    #[ORM\Column(type: 'text', nullable: true)]
+    #[ORM\ManyToOne(targetEntity: AcElement::class, inversedBy: 'epreuves')]
+    private $element;
+
+    #[ORM\ManyToOne(targetEntity: PNatureEpreuve::class, inversedBy: 'epreuves')]
+    private $natureEpreuve;
+
+    #[ORM\ManyToOne(targetEntity: PEnseignant::class, inversedBy: 'epreuves')]
+    private $enseignant;
+
+    #[ORM\Column(type: 'date', nullable: true)]
+    private $dateEpreuve;
+
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $observation;
 
     #[ORM\Column(type: 'integer', nullable: true)]
     private $anonymat;
 
-    #[ORM\Column(type: 'integer', nullable: true)]
-    private $nature_anonymat;
+    #[ORM\ManyToOne(targetEntity: PStatut::class)]
+    private $statut;
 
-    #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private $nature;
-
-    #[ORM\Column(type: 'smallint', nullable: true)]
-    private $active;
-
-    #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private $reference;
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    private $userCreated;
 
     #[ORM\Column(type: 'datetime', nullable: true)]
     private $created;
 
-    #[ORM\Column(type: 'datetime', nullable: true)]
-    private $updated;
+    #[ORM\OneToMany(mappedBy: 'epreuve', targetEntity: ExGnotes::class)]
+    private $gnotes;
 
-    #[ORM\Column(type: 'text', nullable: true)]
-    private $position_actuel;
-
-    #[ORM\Column(type: 'text', nullable: true)]
-    private $historique;
+    public function __construct()
+    {
+        $this->gnotes = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getUserCreated(): ?User
-    {
-        return $this->user_created;
-    }
-
-    public function setUserCreated(?User $user_created): self
-    {
-        $this->user_created = $user_created;
-
-        return $this;
-    }
-
-    public function getUserUpdated(): ?User
-    {
-        return $this->user_updated;
-    }
-
-    public function setUserUpdated(?User $user_updated): self
-    {
-        $this->user_updated = $user_updated;
-
-        return $this;
-    }
-
-    public function getNatureEpreuve(): ?int
-    {
-        return $this->nature_epreuve;
-    }
-
-    public function setNatureEpreuve(?int $nature_epreuve): self
-    {
-        $this->nature_epreuve = $nature_epreuve;
-
-        return $this;
-    }
-
-    public function getEnseignant(): ?int
-    {
-        return $this->enseignant;
-    }
-
-    public function setEnseignant(?int $enseignant): self
-    {
-        $this->enseignant = $enseignant;
-
-        return $this;
-    }
-
-    public function getStatut(): ?int
-    {
-        return $this->statut;
-    }
-
-    public function setStatut(?int $statut): self
-    {
-        $this->statut = $statut;
-
-        return $this;
-    }
-
-    public function getGroupe(): ?int
-    {
-        return $this->groupe;
-    }
-
-    public function setGroupe(?int $groupe): self
-    {
-        $this->groupe = $groupe;
-
-        return $this;
-    }
-
-    public function getControleEpreuve(): ?int
-    {
-        return $this->controle_epreuve;
-    }
-
-    public function setControleEpreuve(?int $controle_epreuve): self
-    {
-        $this->controle_epreuve = $controle_epreuve;
-
-        return $this;
     }
 
     public function getCode(): ?string
@@ -177,38 +76,74 @@ class AcEpreuve
         return $this;
     }
 
-    public function getDesignation(): ?string
-    {
-        return $this->designation;
-    }
-
-    public function setDesignation(?string $designation): self
-    {
-        $this->designation = $designation;
-
-        return $this;
-    }
-
-    public function getCoefficient(): ?float
+    public function getCoefficient(): ?int
     {
         return $this->coefficient;
     }
 
-    public function setCoefficient(?float $coefficient): self
+    public function setCoefficient(?int $coefficient): self
     {
         $this->coefficient = $coefficient;
 
         return $this;
     }
 
-    public function getDateEpreuve(): ?\DateTimeInterface
+    public function getAnnee(): ?AcAnnee
     {
-        return $this->date_epreuve;
+        return $this->annee;
     }
 
-    public function setDateEpreuve(?\DateTimeInterface $date_epreuve): self
+    public function setAnnee(?AcAnnee $annee): self
     {
-        $this->date_epreuve = $date_epreuve;
+        $this->annee = $annee;
+
+        return $this;
+    }
+
+    public function getElement(): ?AcElement
+    {
+        return $this->element;
+    }
+
+    public function setElement(?AcElement $element): self
+    {
+        $this->element = $element;
+
+        return $this;
+    }
+
+    public function getNatureEpreuve(): ?PNatureEpreuve
+    {
+        return $this->natureEpreuve;
+    }
+
+    public function setNatureEpreuve(?PNatureEpreuve $natureEpreuve): self
+    {
+        $this->natureEpreuve = $natureEpreuve;
+
+        return $this;
+    }
+
+    public function getEnseignant(): ?PEnseignant
+    {
+        return $this->enseignant;
+    }
+
+    public function setEnseignant(?PEnseignant $enseignant): self
+    {
+        $this->enseignant = $enseignant;
+
+        return $this;
+    }
+
+    public function getDateEpreuve(): ?\DateTimeInterface
+    {
+        return $this->dateEpreuve;
+    }
+
+    public function setDateEpreuve(?\DateTimeInterface $dateEpreuve): self
+    {
+        $this->dateEpreuve = $dateEpreuve;
 
         return $this;
     }
@@ -237,50 +172,26 @@ class AcEpreuve
         return $this;
     }
 
-    public function getNatureAnonymat(): ?int
+    public function getStatut(): ?PStatut
     {
-        return $this->nature_anonymat;
+        return $this->statut;
     }
 
-    public function setNatureAnonymat(?int $nature_anonymat): self
+    public function setStatut(?PStatut $statut): self
     {
-        $this->nature_anonymat = $nature_anonymat;
+        $this->statut = $statut;
 
         return $this;
     }
 
-    public function getNature(): ?string
+    public function getUserCreated(): ?User
     {
-        return $this->nature;
+        return $this->userCreated;
     }
 
-    public function setNature(?string $nature): self
+    public function setUserCreated(?User $userCreated): self
     {
-        $this->nature = $nature;
-
-        return $this;
-    }
-
-    public function getActive(): ?int
-    {
-        return $this->active;
-    }
-
-    public function setActive(?int $active): self
-    {
-        $this->active = $active;
-
-        return $this;
-    }
-
-    public function getReference(): ?string
-    {
-        return $this->reference;
-    }
-
-    public function setReference(?string $reference): self
-    {
-        $this->reference = $reference;
+        $this->userCreated = $userCreated;
 
         return $this;
     }
@@ -297,38 +208,32 @@ class AcEpreuve
         return $this;
     }
 
-    public function getUpdated(): ?\DateTimeInterface
+    /**
+     * @return Collection|ExGnotes[]
+     */
+    public function getGnotes(): Collection
     {
-        return $this->updated;
+        return $this->gnotes;
     }
 
-    public function setUpdated(?\DateTimeInterface $updated): self
+    public function addGnote(ExGnotes $gnote): self
     {
-        $this->updated = $updated;
+        if (!$this->gnotes->contains($gnote)) {
+            $this->gnotes[] = $gnote;
+            $gnote->setEpreuve($this);
+        }
 
         return $this;
     }
 
-    public function getPositionActuel(): ?string
+    public function removeGnote(ExGnotes $gnote): self
     {
-        return $this->position_actuel;
-    }
-
-    public function setPositionActuel(?string $position_actuel): self
-    {
-        $this->position_actuel = $position_actuel;
-
-        return $this;
-    }
-
-    public function getHistorique(): ?string
-    {
-        return $this->historique;
-    }
-
-    public function setHistorique(?string $historique): self
-    {
-        $this->historique = $historique;
+        if ($this->gnotes->removeElement($gnote)) {
+            // set the owning side to null (unless already changed)
+            if ($gnote->getEpreuve() === $this) {
+                $gnote->setEpreuve(null);
+            }
+        }
 
         return $this;
     }

@@ -71,13 +71,7 @@ a {
   -o-transition: all 0.5s;
 }
 
-a:not(.btn-social-icon):not(.btn-social):not(.page-link) .ion,
-a:not(.btn-social-icon):not(.btn-social):not(.page-link) .fas,
-a:not(.btn-social-icon):not(.btn-social):not(.page-link) .far,
-a:not(.btn-social-icon):not(.btn-social):not(.page-link) .fal,
-a:not(.btn-social-icon):not(.btn-social):not(.page-link) .fab {
-  margin-left: 4px;
-}
+
 
 .bg-primary {
   background-color: #6777ef !important;
@@ -3850,6 +3844,7 @@ body.layout-3 .main-footer {
 }
 .main-sidebar .sidebar-menu li {
   display: block;
+  // padding-bottom: 1rem;
 }
 .main-sidebar .sidebar-menu li.menu-header {
   padding: 3px 15px;
@@ -3866,7 +3861,7 @@ body.layout-3 .main-footer {
   position: relative;
   display: flex;
   align-items: center;
-  height: 3rem;
+  // height: 3rem;
   padding: 0 1rem;
   width: 100%;
   letter-spacing: 0.3px;
@@ -3880,8 +3875,8 @@ body.layout-3 .main-footer {
   margin-top: 2px;
 }
 .main-sidebar .sidebar-menu li a i {
-  width: 2.8rem;
-  margin-right: 2rem;
+  // width: 2.8rem;
+  margin-right: .5rem;
   text-align: center;
 }
 .main-sidebar .sidebar-menu li a span {
@@ -3928,7 +3923,7 @@ body.layout-3 .main-footer {
 }
 .main-sidebar .sidebar-menu li ul.dropdown-menu li a {
   color: #868e96;
-  height: 35px;
+  // height: 35px;
   padding-left: 30px;
   font-weight: 400;
 }
@@ -6363,4 +6358,9 @@ tr:first-child > td > .fc-day-grid-event {
 .active_databales{
   background-color:#6777ef !important;
   color:#fff !important;
+}
+
+.main-sidebar .sidebar-menu li.nav-item {
+  margin: 1rem 0;
+
 }

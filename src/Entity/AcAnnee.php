@@ -57,11 +57,15 @@ class AcAnnee
     #[ORM\OneToMany(mappedBy: 'annee', targetEntity: TOperationcab::class)]
     private $operationcabs;
 
+    #[ORM\OneToMany(mappedBy: 'annee', targetEntity: AcEpreuve::class)]
+    private $epreuves;
+
     public function __construct()
     {
         $this->preinscriptions = new ArrayCollection();
         $this->inscriptions = new ArrayCollection();
         $this->operationcabs = new ArrayCollection();
+        $this->epreuves = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -285,6 +289,36 @@ class AcAnnee
             // set the owning side to null (unless already changed)
             if ($operationcab->getAnnee() === $this) {
                 $operationcab->setAnnee(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|AcEpreuve[]
+     */
+    public function getEpreuves(): Collection
+    {
+        return $this->epreuves;
+    }
+
+    public function addEpreufe(AcEpreuve $epreufe): self
+    {
+        if (!$this->epreuves->contains($epreufe)) {
+            $this->epreuves[] = $epreufe;
+            $epreufe->setAnnee($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEpreufe(AcEpreuve $epreufe): self
+    {
+        if ($this->epreuves->removeElement($epreufe)) {
+            // set the owning side to null (unless already changed)
+            if ($epreufe->getAnnee() === $this) {
+                $epreufe->setAnnee(null);
             }
         }
 

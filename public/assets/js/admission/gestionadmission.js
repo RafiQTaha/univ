@@ -143,7 +143,10 @@ const Toast = Swal.mixin({
             const data = await request.data;
             $('#annee_inscription').html(data.anneeHtml).select2();
             $('#promotion_inscription').html(data.promotionHtml).select2();
+            $('#inscription-modal').attr('disabled', false);
         } catch (error) {
+            $('#inscription-modal').attr('disabled', true);
+            $('#annee_inscription, #promotion_inscription').empty()
             const message = error.response.data;
             console.log(error, error.response);
             Toast.fire({
@@ -170,6 +173,8 @@ const Toast = Swal.mixin({
         
         if($(this).hasClass('active_databales')) {
             $(this).removeClass('active_databales');
+            $('#inscription-modal').attr('disabled', true);
+
             id_admission = null;
         } else {
             $("#datatables_gestion_admission tbody tr").removeClass('active_databales');
@@ -303,6 +308,7 @@ const Toast = Swal.mixin({
           );
           icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
           $(".table_frais_admission").empty()
+          frais = [];
           window.open("/admission/gestion/facture/"+response, '_blank');
           table.ajax.reload();
         } catch (error) {
@@ -358,6 +364,17 @@ const Toast = Swal.mixin({
           icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
           
         }
+    })
+
+    $("#attestation_admission").on('click', function(){
+        if(!id_admission) {
+            Toast.fire({
+                icon: 'error',
+                title: 'Veuillez selection une ligne!',
+            })
+            return;
+        }
+        window.open("/admission/gestion/attestation/"+id_admission, '_blank');
     })
 })
     

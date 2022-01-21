@@ -255,6 +255,9 @@ class TEtudiant
     #[ORM\OneToMany(mappedBy: 'etudiant', targetEntity: TPreinscriptionReleveNote::class)]
     private $tPreinscritionReleveNotes;
 
+    #[ORM\ManyToOne(targetEntity: POrganisme::class, inversedBy: 'etudiants')]
+    private $organisme;
+
     public function __construct()
     {
         $this->preinscriptions = new ArrayCollection();
@@ -1258,6 +1261,18 @@ class TEtudiant
                 $tPreinscritionReleveNote->setEtudiant(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getOrganisme(): ?POrganisme
+    {
+        return $this->organisme;
+    }
+
+    public function setOrganisme(?POrganisme $organisme): self
+    {
+        $this->organisme = $organisme;
 
         return $this;
     }
