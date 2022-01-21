@@ -45,6 +45,9 @@ class TOperationcab
     #[ORM\OneToMany(mappedBy: 'operationcab', targetEntity: TOperationdet::class)]
     private $operationdets;
 
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    private $userCreated;
+
     public function __construct()
     {
         $this->regelements = new ArrayCollection();
@@ -208,6 +211,18 @@ class TOperationcab
                 $operationdet->setOperationcab(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getUserCreated(): ?User
+    {
+        return $this->userCreated;
+    }
+
+    public function setUserCreated(?User $userCreated): self
+    {
+        $this->userCreated = $userCreated;
 
         return $this;
     }

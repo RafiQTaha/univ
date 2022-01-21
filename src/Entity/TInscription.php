@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\TInscriptionRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: TInscriptionRepository::class)]
@@ -15,9 +17,6 @@ class TInscription
 
     #[ORM\ManyToOne(targetEntity: PStatut::class, inversedBy: 'inscriptions')]
     private $statut;
-
-    #[ORM\ManyToOne(targetEntity: POrganisme::class, inversedBy: 'inscriptions')]
-    private $organisme;
 
     #[ORM\ManyToOne(targetEntity: TAdmission::class, inversedBy: 'inscriptions')]
     private $admission;
@@ -61,6 +60,14 @@ class TInscription
     #[ORM\Column(type: 'datetime', nullable: true)]
     private $updated;
 
+    #[ORM\OneToMany(mappedBy: 'inscription', targetEntity: ExGnotes::class)]
+    private $gnotes;
+
+    public function __construct()
+    {
+        $this->gnotes = new ArrayCollection();
+    }
+
     public function getId(): ?int
     {
         return $this->id;
@@ -78,17 +85,6 @@ class TInscription
         return $this;
     }
 
-    public function getOrganisme(): ?POrganisme
-    {
-        return $this->organisme;
-    }
-
-    public function setOrganisme(?POrganisme $organisme): self
-    {
-        $this->organisme = $organisme;
-
-        return $this;
-    }
 
     public function getAdmission(): ?TAdmission
     {
@@ -254,6 +250,36 @@ class TInscription
     public function setUpdated(?\DateTimeInterface $updated): self
     {
         $this->updated = $updated;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|ExGnotes[]
+     */
+    public function getGnotes(): Collection
+    {
+        return $this->gnotes;
+    }
+
+    public function addGnote(ExGnotes $gnote): self
+    {
+        if (!$this->gnotes->contains($gnote)) {
+            $this->gnotes[] = $gnote;
+            $gnote->setInscription($this);
+        }
+
+        return $this;
+    }
+
+    public function removeGnote(ExGnotes $gnote): self
+    {
+        if ($this->gnotes->removeElement($gnote)) {
+            // set the owning side to null (unless already changed)
+            if ($gnote->getInscription() === $this) {
+                $gnote->setInscription(null);
+            }
+        }
 
         return $this;
     }
