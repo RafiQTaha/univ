@@ -135,18 +135,6 @@ class TOperationdet
         return $this;
     }
 
-    // public function getActive(): ?bool
-    // {
-    //     return $this->active;
-    // }
-
-    // public function setActive(?bool $active): self
-    // {
-    //     $this->active = $active;
-
-    //     return $this;
-    // }
-
     public function getCreated(): ?\DateTimeInterface
     {
         return $this->created;

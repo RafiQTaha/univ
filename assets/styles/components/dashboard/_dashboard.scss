@@ -6279,8 +6279,11 @@ tr:first-child > td > .fc-day-grid-event {
   background-color : #ceffce !important;
   color :#3c3c3c !important;
 }
-.modal-preins{
+.modal .modal-preins{
   max-width: 75% !important;
+}
+.modal .modal-modifier{
+  max-width: 85% !important;
 }
 .modal .modal-box{
   width:100%;
@@ -6345,6 +6348,17 @@ tr:first-child > td > .fc-day-grid-event {
 .select2-results__option {
   padding: 0 1rem !important;
 
+}
+.modal .modal-modifier .modal-body {
+  padding : 0 !important;
+}
+.modal .modal-modifier .modal-body .card-body{
+  padding : 0 !important;
+}
+
+.tab-content .col-md-3,
+.tab-content .col-md-6{
+  float:left;
 }
 .active_databales{
   background-color:#6777ef !important;
