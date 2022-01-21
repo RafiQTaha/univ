@@ -242,6 +242,8 @@ class GestionAdmissionController extends AbstractController
         $operationCab->setAnnee($admission->getPreinscription()->getAnnee());
         $operationCab->setCategorie('admission');
         $operationCab->setCreated(new \DateTime("now"));
+        $operationCab->setUserCreated($this->getUser());
+
         $this->em->persist($operationCab);
         $this->em->flush();
         $operationCab->setCode(
@@ -257,7 +259,6 @@ class GestionAdmissionController extends AbstractController
             $operationDet->setMontant($fraisObject->montant);
             $operationDet->setIce($fraisObject->ice);
             $operationDet->setCreated(new \DateTime("now"));
-            $operationDet->setUserCreated($this->getUser());
             $operationDet->setRemise(0);
             $this->em->persist($operationDet);
             $this->em->flush();
@@ -344,6 +345,28 @@ class GestionAdmissionController extends AbstractController
         );
         $mpdf->WriteHTML($html);
         $mpdf->Output("facture.pdf", "I");
+    }
+
+    #[Route('/attestation/{admission}', name: 'attestation_admisison')]
+    public function attestationAdmisison(Request $request, TAdmission $admission): Response
+    {
+        $preinscription = $admission->getPreinscription();
+        $html = $this->render("attestaion/pdfs/admission.html.twig", [
+            'preinscription' => $preinscription,
+            'annee' => $preinscription->getAnnee(),
+            'etablissement' => $preinscription->getAnnee()->getFormation()->getEtablissement(),
+            'formation' => $preinscription->getAnnee()->getFormation(),
+            'etudiant' => $preinscription->getEtudiant(),
+        ])->getContent();
+        $mpdf = new Mpdf();
+        $mpdf->SetHTMLHeader(
+            $this->render("attestaion/pdfs/header.html.twig")->getContent()
+        );
+        $mpdf->SetHTMLFooter(
+            $this->render("attestaion/pdfs/footer.html.twig")->getContent()
+        );
+        $mpdf->WriteHTML($html);
+        $mpdf->Output("attestaion.pdf", "I");
     }
     
 }

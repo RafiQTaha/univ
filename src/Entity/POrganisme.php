@@ -28,18 +28,18 @@ class POrganisme
     #[ORM\Column(type: 'boolean')]
     private $active;
 
-    #[ORM\OneToMany(mappedBy: 'organisme', targetEntity: TInscription::class)]
-    private $inscriptions;
-
     #[ORM\OneToMany(mappedBy: 'organisme', targetEntity: TOperationcab::class)]
     private $operationcabs;
+
+    #[ORM\OneToMany(mappedBy: 'organisme', targetEntity: TEtudiant::class)]
+    private $etudiants;
 
     
 
     public function __construct()
     {
-        $this->inscriptions = new ArrayCollection();
         $this->operationcabs = new ArrayCollection();
+        $this->etudiants = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -96,36 +96,6 @@ class POrganisme
     }
 
     /**
-     * @return Collection|TInscription[]
-     */
-    public function getInscriptions(): Collection
-    {
-        return $this->inscriptions;
-    }
-
-    public function addInscription(TInscription $inscription): self
-    {
-        if (!$this->inscriptions->contains($inscription)) {
-            $this->inscriptions[] = $inscription;
-            $inscription->setOrganisme($this);
-        }
-
-        return $this;
-    }
-
-    public function removeInscription(TInscription $inscription): self
-    {
-        if ($this->inscriptions->removeElement($inscription)) {
-            // set the owning side to null (unless already changed)
-            if ($inscription->getOrganisme() === $this) {
-                $inscription->setOrganisme(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
      * @return Collection|TOperationcab[]
      */
     public function getOperationcabs(): Collection
@@ -149,6 +119,36 @@ class POrganisme
             // set the owning side to null (unless already changed)
             if ($operationcab->getOrganisme() === $this) {
                 $operationcab->setOrganisme(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|TEtudiant[]
+     */
+    public function getEtudiants(): Collection
+    {
+        return $this->etudiants;
+    }
+
+    public function addEtudiant(TEtudiant $etudiant): self
+    {
+        if (!$this->etudiants->contains($etudiant)) {
+            $this->etudiants[] = $etudiant;
+            $etudiant->setOrganisme($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEtudiant(TEtudiant $etudiant): self
+    {
+        if ($this->etudiants->removeElement($etudiant)) {
+            // set the owning side to null (unless already changed)
+            if ($etudiant->getOrganisme() === $this) {
+                $etudiant->setOrganisme(null);
             }
         }
 
