@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\AcElementRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: AcElementRepository::class)]
@@ -54,6 +56,14 @@ class AcElement
 
     #[ORM\Column(type: 'datetime', nullable: true)]
     private $updated;
+
+    #[ORM\OneToMany(mappedBy: 'element', targetEntity: AcEpreuve::class)]
+    private $epreuves;
+
+    public function __construct()
+    {
+        $this->epreuves = new ArrayCollection();
+    }
     
 
     public function getId(): ?int
@@ -225,6 +235,36 @@ class AcElement
     public function setUpdated(?\DateTimeInterface $updated): self
     {
         $this->updated = $updated;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|AcEpreuve[]
+     */
+    public function getEpreuves(): Collection
+    {
+        return $this->epreuves;
+    }
+
+    public function addEpreufe(AcEpreuve $epreufe): self
+    {
+        if (!$this->epreuves->contains($epreufe)) {
+            $this->epreuves[] = $epreufe;
+            $epreufe->setElement($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEpreufe(AcEpreuve $epreufe): self
+    {
+        if ($this->epreuves->removeElement($epreufe)) {
+            // set the owning side to null (unless already changed)
+            if ($epreufe->getElement() === $this) {
+                $epreufe->setElement(null);
+            }
+        }
 
         return $this;
     }

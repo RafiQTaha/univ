@@ -8,6 +8,7 @@ use App\Entity\POrganisme;
 use App\Entity\TAdmission;
 use App\Entity\AcFormation;
 use App\Entity\AcEtablissement;
+use App\Entity\AcPromotion;
 use App\Entity\NatureDemande;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Serializer\Serializer;
@@ -43,6 +44,13 @@ class ApiController extends AbstractController
     }
 
     
+    #[Route('/promotion/{formation}', name: 'getPromotion')]
+    public function getPromotion(AcFormation $formation): Response
+    {   
+        $promotions = $this->em->getRepository(AcPromotion::class)->findBy(['formation'=>$formation],['id'=>'ASC']);
+        $data = self::dropdown($promotions,'promotion');
+        return new JsonResponse($data);
+    }
     #[Route('/annee/{id}', name: 'getAnnee')]
     public function getAnnee($id): Response
     {   

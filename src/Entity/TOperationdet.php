@@ -19,12 +19,6 @@ class TOperationdet
     #[ORM\ManyToOne(targetEntity: PFrais::class, inversedBy: 'operationdets')]
     private $frais;
 
-    #[ORM\ManyToOne(targetEntity: User::class)]
-    private $userCreated;
-
-    #[ORM\ManyToOne(targetEntity: User::class)]
-    private $userUpdated;
-
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $code;
 
@@ -71,30 +65,6 @@ class TOperationdet
     public function setFrais(?PFrais $frais): self
     {
         $this->frais = $frais;
-
-        return $this;
-    }
-
-    public function getUserCreated(): ?User
-    {
-        return $this->userCreated;
-    }
-
-    public function setUserCreated(?User $userCreated): self
-    {
-        $this->userCreated = $userCreated;
-
-        return $this;
-    }
-
-    public function getUserUpdated(): ?User
-    {
-        return $this->userUpdated;
-    }
-
-    public function setUserUpdated(?User $userUpdated): self
-    {
-        $this->userUpdated = $userUpdated;
 
         return $this;
     }

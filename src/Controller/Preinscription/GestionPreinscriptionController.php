@@ -296,18 +296,14 @@ class GestionPreinscriptionController extends AbstractController
     #[Route('/attestation_preinscription/{preinscription}', name: 'attestation_preinscription')]
     public function attestationpreinscription(Request $request, TPreinscription $preinscription): Response
     {
-        $html = $this->render("attestaion/pdfs/content.html.twig", [
+        $html = $this->render("attestaion/pdfs/preinscription.html.twig", [
             'preinscription' => $preinscription,
             'annee' => $preinscription->getAnnee(),
             'etablissement' => $preinscription->getAnnee()->getFormation()->getEtablissement(),
             'formation' => $preinscription->getAnnee()->getFormation(),
             'etudiant' => $preinscription->getEtudiant(),
         ])->getContent();
-        $mpdf = new Mpdf([
-            'mode' => 'utf-8',
-            'margin_left' => '5',
-            'margin_right' => '5',
-            ]);
+        $mpdf = new Mpdf();
         $mpdf->SetHTMLHeader(
             $this->render("attestaion/pdfs/header.html.twig")->getContent()
         );
