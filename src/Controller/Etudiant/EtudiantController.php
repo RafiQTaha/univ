@@ -2,6 +2,7 @@
 
 namespace App\Controller\Etudiant;
 
+use App\Controller\ApiController;
 use DateTime;
 use App\Entity\PStatut;
 use App\Entity\XTypeBac;
@@ -27,7 +28,7 @@ use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 
-#[Route('/etudiant')]
+#[Route('/etudiant/etudiants')]
 class EtudiantController extends AbstractController
 {
     private $em;
@@ -38,7 +39,15 @@ class EtudiantController extends AbstractController
     #[Route('/', name: 'etudiant_index')]
     public function index(): Response
     {
-        return $this->render('etudiant/index.html.twig');
+        //check if user has access to this page
+        $operations = ApiController::check($this->getUser(), 'etudiant_index', $this->em);
+        // dd($operations);
+        if(!$operations) {
+            return $this->render("errors/403.html.twig");
+        }
+        return $this->render('etudiant/index.html.twig', [
+            'operations' => $operations
+        ]);
     }
     
     #[Route('/list', name: 'etudiant_list')]

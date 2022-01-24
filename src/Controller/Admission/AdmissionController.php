@@ -2,6 +2,7 @@
 
 namespace App\Controller\Admission;
 
+use App\Controller\ApiController;
 use App\Entity\TAdmission;
 use App\Entity\TPreinscription;
 use App\Controller\DatatablesController;
@@ -27,7 +28,14 @@ class AdmissionController extends AbstractController
     #[Route('/', name: 'admission_index')]
     public function index(): Response
     {
-        return $this->render('admission/admissions.html.twig');
+        $operations = ApiController::check($this->getUser(), 'admission_index', $this->em);
+        if(!$operations) {
+            return $this->render("errors/403.html.twig");
+
+        }
+        return $this->render('admission/admissions.html.twig', [
+            'operations' => $operations
+        ]);
     }
     #[Route('/candidat_addmissible_list', name: 'candidat_admissible_list')]
     public function candidatAddmissibleList(Request $request): Response
@@ -208,20 +216,22 @@ class AdmissionController extends AbstractController
         $ids = json_decode($request->get('idpreins'));
         foreach ($ids as $id) {
             $preinscription = $this->em->getRepository(TPreinscription::class)->find($id);
-            $admission = new TAdmission();
-            $admission->setPreinscription($preinscription);
-            $admission->setUserCreated($this->getUser());
-            $admission->setStatut(
-                $this->em->getRepository(PStatut::class)->find(7)
-            );
-            $admission->setCreated(new \DateTime('now'));
-            $this->em->persist($admission);
-            $this->em->flush();
-            $formation = $preinscription->getAnnee()->getFormation()->getAbreviation();
-            $etablissement = $preinscription->getAnnee()->getFormation()->getEtablissement()->getAbreviation();
-
-            $admission->setCode('ADM-'.$etablissement.'_'.$formation.str_pad($admission->getId(), 8, '0', STR_PAD_LEFT));
-            $this->em->flush();
+            if(count($preinscription->getAdmissions()) == 0) {
+                $admission = new TAdmission();
+                $admission->setPreinscription($preinscription);
+                $admission->setUserCreated($this->getUser());
+                $admission->setStatut(
+                    $this->em->getRepository(PStatut::class)->find(7)
+                );
+                $admission->setCreated(new \DateTime('now'));
+                $this->em->persist($admission);
+                $this->em->flush();
+                $formation = $preinscription->getAnnee()->getFormation()->getAbreviation();
+                $etablissement = $preinscription->getAnnee()->getFormation()->getEtablissement()->getAbreviation();
+    
+                $admission->setCode('ADM-'.$etablissement.'_'.$formation.str_pad($admission->getId(), 8, '0', STR_PAD_LEFT));
+                $this->em->flush();
+            }
         }
 
         return new JsonResponse('Admission bien enregister', 200);

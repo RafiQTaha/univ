@@ -29,9 +29,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'UserCrteated', targetEntity: TOperationcab::class)]
     private $operationcabs;
 
+    #[ORM\ManyToMany(targetEntity: UsOperation::class, inversedBy: 'users')]
+    private $operations;
+
     public function __construct()
     {
         $this->operationcabs = new ArrayCollection();
+        $this->operations = new ArrayCollection();
     }
 
     
@@ -142,6 +146,30 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $operationcab->setUserCrteated(null);
             }
         }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|UsOperation[]
+     */
+    public function getOperations(): Collection
+    {
+        return $this->operations;
+    }
+
+    public function addOperation(UsOperation $operation): self
+    {
+        if (!$this->operations->contains($operation)) {
+            $this->operations[] = $operation;
+        }
+
+        return $this;
+    }
+
+    public function removeOperation(UsOperation $operation): self
+    {
+        $this->operations->removeElement($operation);
 
         return $this;
     }

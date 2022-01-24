@@ -33,12 +33,22 @@ class GestionAdmissionController extends AbstractController
     public function __construct(ManagerRegistry $doctrine)
     {
         $this->em = $doctrine->getManager();
+        
     }
     #[Route('/', name: 'gestion_admission')]
     public function index(): Response
     {
+     
+        //check if user has access to this page
+        $operations = ApiController::check($this->getUser(), 'gestion_admission', $this->em);
+        if(!$operations) {
+            return $this->render("errors/403.html.twig");
+
+        }
+        // dd($operations);
         return $this->render('admission/gestion_admission.html.twig', [
-            'etablissements' => $this->em->getRepository(AcEtablissement::class)->findAll()
+            'etablissements' => $this->em->getRepository(AcEtablissement::class)->findAll(),
+            'operations' => $operations
         ]);
     }
     #[Route('/list', name: 'gestion_admission_list')]
@@ -61,15 +71,15 @@ class GestionAdmissionController extends AbstractController
             $filtre .= " and an.id = '" . $params->get('columns')[2]['search']['value'] . "' ";
         }    
         $columns = array(
-            array( 'db' => 'ad.code','dt' => 0),
-            array( 'db' => 'UPPER(pre.code)','dt' => 1),
-            array( 'db' => 'etu.nom','dt' => 2),
-            array( 'db' => 'etu.prenom','dt' => 3),
-            array( 'db' => 'etab.abreviation','dt' => 4),
-            array( 'db' => 'UPPER(form.abreviation)','dt' => 5),
-            array( 'db' => 'tab.montant','dt' => 6),
-            array( 'db' => 'st.designation','dt' => 7),
-            array( 'db' => 'ad.id','dt' => 8)
+            array( 'db' => 'ad.id','dt' => 0),
+            array( 'db' => 'ad.code','dt' => 1),
+            array( 'db' => 'UPPER(pre.code)','dt' => 2),
+            array( 'db' => 'etu.nom','dt' => 3),
+            array( 'db' => 'etu.prenom','dt' => 4),
+            array( 'db' => 'etab.abreviation','dt' => 5),
+            array( 'db' => 'UPPER(form.abreviation)','dt' => 6),
+            array( 'db' => 'tab.montant','dt' => 7),
+            array( 'db' => 'st.designation','dt' => 8)
 
         );
         $filtre .= " AND adm.statut_id = 7";
@@ -124,11 +134,11 @@ class GestionAdmissionController extends AbstractController
             // dd($row);
 
             foreach (array_values($row) as $key => $value) {
-                if($key == 7) {
+                if($key == 8) {
                     $nestedData[] = count($this->em->getRepository(TAdmission::class)->find($row['id'])->getInscriptions()) > 0 ? 'Inscrit' : 'Non Inscrit';
                     $nestedData[] = $value;
                 }
-                else if($key < 8) {
+                else if($key > 0) {
                     $nestedData[] = $value;
                 }
             }
