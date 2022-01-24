@@ -31,8 +31,15 @@ class GestionInscriptionController extends AbstractController
     #[Route('/', name: 'gestion_inscription')]
     public function index(): Response
     {
+         //check if user has access to this page
+        $operations = ApiController::check($this->getUser(), 'gestion_inscription', $this->em);
+        if(!$operations) {
+            return $this->render("errors/403.html.twig");
+
+        }
         return $this->render('inscription/gestion_inscription.html.twig', [
-            'etablissements' => $this->em->getRepository(AcEtablissement::class)->findAll()
+            'etablissements' => $this->em->getRepository(AcEtablissement::class)->findAll(),
+            'operations' => $operations
         ]);
     }
     
@@ -199,6 +206,7 @@ class GestionInscriptionController extends AbstractController
         }
         $operationCab->setAnnee($inscription->getAnnee());
         $operationCab->setCategorie('inscription');
+        $operationCab->setUserCreated($this->getUser());
         $operationCab->setCreated(new \DateTime("now"));
         $this->em->persist($operationCab);
         $this->em->flush();
@@ -215,7 +223,6 @@ class GestionInscriptionController extends AbstractController
             $operationDet->setMontant($fraisObject->montant);
             $operationDet->setIce($fraisObject->ice);
             $operationDet->setCreated(new \DateTime("now"));
-            $operationDet->setUserCreated($this->getUser());
             $operationDet->setRemise(0);
             $this->em->persist($operationDet);
             $this->em->flush();
@@ -239,6 +246,7 @@ class GestionInscriptionController extends AbstractController
             'operationcab' => $operationcab
         ])->getContent();
         $mpdf = new Mpdf();
+        $mpdf->showImageErrors = true;
         $mpdf->SetHTMLHeader(
             $this->render("facture/pdfs/header.html.twig")->getContent()
         );

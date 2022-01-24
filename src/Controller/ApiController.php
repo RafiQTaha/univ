@@ -10,6 +10,8 @@ use App\Entity\AcFormation;
 use App\Entity\AcEtablissement;
 use App\Entity\AcPromotion;
 use App\Entity\NatureDemande;
+use App\Entity\UsOperation;
+use App\Entity\UsSousModule;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\HttpFoundation\Response;
@@ -23,6 +25,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 #[Route('/api')]
 class ApiController extends AbstractController
 {
+    private $em;
     public function __construct(ManagerRegistry $doctrine)
     {
         $this->em = $doctrine->getManager();
@@ -125,5 +128,15 @@ class ApiController extends AbstractController
          }
          return $data;
     }
+
+    static function check($user, $link, $em) {
+        if(in_array('ROLE_ADMIN', $user->getRoles())) {
+            $operations = $em->getRepository(UsOperation::class)->findAllBySousModule($link);
+            return $operations;
+        }
+        $operations = $em->getRepository(UsOperation::class)->getOperationByLinkSousModule($user, $link);
+        return $operations;
+    }
+    
 
 }

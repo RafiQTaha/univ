@@ -16,7 +16,7 @@ var table_preins = $("#datables_preinscription").DataTable({
         [10, 15, 25, 50, 100, "All"],
     ],
     order: [[0, "desc"]],
-    ajax: "/preinscription/list",
+    ajax: "/preinscription/preinscriptions/list",
     processing: true,
     serverSide: true,
     deferRender: true,

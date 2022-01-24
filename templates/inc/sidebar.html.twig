@@ -11,16 +11,21 @@
     </div>
     <ul class="sidebar-menu">
       <li class="menu-header">Dashboard</li>
-      <li class="nav-item dropdown {% if getCurrentUrl == 'etudiant'%} active {% endif %}">
+        {# {{dump(app.session.get('modules'))}} #}
+      {% for module in app.session.get('modules') %}
+      
+      <li class="nav-item dropdown {% if getCurrentUrl == module.module.prefix %} active {% endif %}">
         <a href="#" class="nav-link has-dropdown"
-          ><i class="fas fa-users"></i><span>Etudiant</span></a
+          ><i class="{{module.module.icon}}"></i><span>{{module.module.designation}}</span></a
         >
         <ul class="dropdown-menu">
-          <li><a class="nav-link {% if getCurrentUrl == 'etudiant' and secondCurrentUrl == ''%} activeSecondUrl {% endif %}" href="{{path('etudiant_index')}}">Compte Etudiant</a></li>
-           {# <li><a class="nav-link" href="index.html">Ecommerce Dashboard</a></li>  #}
+          {% for sousModule in module.sousModule %}
+            <li><a class="nav-link {% if getCurrentUrl == module.module.prefix and secondCurrentUrl == sousModule.prefix %} activeSecondUrl {% endif %}" href="{{path(sousModule.link)}}">{{sousModule.designation}}</a></li>
+          {% endfor %}
         </ul>
       </li>
-      <li class="nav-item dropdown {% if getCurrentUrl == 'preinscription'%} active {% endif %}">
+      {% endfor %}
+      {# <li class="nav-item dropdown {% if getCurrentUrl == 'preinscription'%} active {% endif %}">
         <a href="#" class="nav-link has-dropdown"
           ><i class="fas fa-users"></i><span>Pré-Inscription</span></a
         >
@@ -53,7 +58,7 @@
         <ul class="dropdown-menu">
           <li><a class="nav-link {% if getCurrentUrl == 'inscription' and secondCurrentUrl == 'gestion'%} activeSecondUrl {% endif %}" href="{{path('gestion_inscription')}}">Epreuves et affiliation</a></li>
         </ul>
-      </li>
+      </li> #}
       {# <li class="nav-item dropdown {% if getCurrentUrl == 'inscription'%} active {% endif %}">
         <a href="#" class="nav-link has-dropdown"
           ><i class="fas fa-users"></i><span>Inscription</span></a

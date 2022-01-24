@@ -19,7 +19,7 @@ $(document).ready(function  () {
       [10, 15, 25, 50, 100, "All"],
     ],
     order: [[0, "desc"]],
-    ajax: "/etudiant/list",
+    ajax: "/etudiant/etudiants/list",
     processing: true,
     serverSide: true,
     deferRender: true,
@@ -46,7 +46,7 @@ $(document).ready(function  () {
   }
   const loadExistMatieres = () => {
     $(".matiereExist tbody").html('<i class="fas fa-spinner fa-spin"></i>')
-    axios.get('/etudiant/matiere/'+id_etudiant)
+    axios.get('/etudiant/etudiants/matiere/'+id_etudiant)
       .then(success => {
         $(".matiereExist tbody").html(success.data.table)
         $("#matiereDispo").html(success.data.matieres).select2();
@@ -57,7 +57,7 @@ $(document).ready(function  () {
       })
   }
   const loadEtudiantStatut = () => {
-    axios.get('/etudiant/statut/'+id_etudiant)
+    axios.get('/etudiant/etudiants/statut/'+id_etudiant)
       .then(success => {
         $("#statut").html(success.data)
       })
@@ -84,7 +84,7 @@ $(document).ready(function  () {
         [10, 15, 25, 50, 100, "All"],
       ],
       order: [[0, "desc"]],
-      ajax: "/etudiant/list/preinscription/"+id_etudiant,
+      ajax: "/etudiant/etudiants/list/preinscription/"+id_etudiant,
       processing: true,
       serverSide: true,
       deferRender: true,
@@ -150,7 +150,7 @@ $(document).ready(function  () {
     const icon = $(".form-valider .btn i");
     icon.removeClass('fa-check-circle').addClass("fa-spinner fa-spin");
     try{
-      const request = await  axios.post('/etudiant/etudiant_valider/'+id_etudiant,formdata)
+      const request = await  axios.post('/etudiant/etudiants/etudiant_valider/'+id_etudiant,formdata)
       const data = request.data;
       if (data === 1) {
         $("#validermodal .modal-body").prepend(
@@ -209,7 +209,7 @@ $(document).ready(function  () {
     const icon = $("#relevenote_save .btn i");
     icon.removeClass('fa-check-circle').addClass("fa-spinner fa-spin");
     try{
-      const request = await  axios.post('/etudiant/addmatiere/'+id_etudiant,formdata)
+      const request = await  axios.post('/etudiant/etudiants/addmatiere/'+id_etudiant,formdata)
       const data = request.data;
       modalAlert.prepend(
         `<div class="alert alert-success">
@@ -237,7 +237,7 @@ $(document).ready(function  () {
     let id = $(this).attr("id");
     $(this).removeClass("fa-trash").addClass("fa-spinner fa-spin");
     try {
-      const request = axios.post("/etudiant/matiere/delete/"+id)
+      const request = axios.post("/etudiant/etudiants/matiere/delete/"+id)
       const data = request.data;
       
       loadExistMatieres();
@@ -261,7 +261,7 @@ $(document).ready(function  () {
     formData.append('file', $('.myfile').prop('files')[0]);
     console.log(formData);
     try {
-      const request = await axios.post("/etudiant/import", formData, {
+      const request = await axios.post("/etudiant/etudiants/import", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -275,7 +275,7 @@ $(document).ready(function  () {
       );
       console.log(data.existed);
       if(data.existed > 0) {
-        window.open("/etudiant/download", '_blank');
+        window.open("/etudiant/etudiants/download", '_blank');
       }
       icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin");
       table.ajax.reload();
@@ -314,7 +314,7 @@ $(document).ready(function  () {
     icon.removeClass('fa-check-circle').addClass("fa-spinner fa-spin");
     
     try {
-      const request = await axios.post('/etudiant/datedernierappel/'+id_etudiant, formData);
+      const request = await axios.post('/etudiant/etudiants/datedernierappel/'+id_etudiant, formData);
       const response = request.data;
       $("#date-d-appel-modal .modal-body").prepend(
         `<div class="alert alert-success">
@@ -356,7 +356,7 @@ $(document).ready(function  () {
     icon.removeClass('fa-check-circle').addClass("fa-spinner fa-spin");
     
     try {
-      const request = await axios.post('/etudiant/statut/persist/'+id_etudiant, formData);
+      const request = await axios.post('/etudiant/etudiants/statut/persist/'+id_etudiant, formData);
       const response = request.data;
       $("#statut-modal .modal-body").prepend(
         `<div class="alert alert-success">
