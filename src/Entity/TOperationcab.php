@@ -31,7 +31,7 @@ class TOperationcab
     private $observation;
 
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'operationcabs')]
-    private $UserCretated;
+    private $UserCreated;
 
     #[ORM\Column(type: 'datetime', nullable: true)]
     private $created;
@@ -119,14 +119,14 @@ class TOperationcab
         return $this;
     }
 
-    public function getUserCretated(): ?User
+    public function getUserCreated(): ?User
     {
-        return $this->UserCretated;
+        return $this->UserCreated;
     }
 
-    public function setUserCretated(?User $UserCretated): self
+    public function setUserCreated(?User $UserCreated): self
     {
-        $this->UserCretated = $UserCretated;
+        $this->UserCreated = $UserCreated;
 
         return $this;
     }
