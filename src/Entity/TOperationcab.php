@@ -29,10 +29,7 @@ class TOperationcab
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $observation;
-
-    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'operationcabs')]
-    private $UserCreated;
-
+    
     #[ORM\Column(type: 'datetime', nullable: true)]
     private $created;
 
@@ -115,18 +112,6 @@ class TOperationcab
     public function setObservation(?string $observation): self
     {
         $this->observation = $observation;
-
-        return $this;
-    }
-
-    public function getUserCreated(): ?User
-    {
-        return $this->UserCreated;
-    }
-
-    public function setUserCreated(?User $UserCreated): self
-    {
-        $this->UserCreated = $UserCreated;
 
         return $this;
     }

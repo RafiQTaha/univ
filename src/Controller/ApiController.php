@@ -9,9 +9,12 @@ use App\Entity\TAdmission;
 use App\Entity\AcFormation;
 use App\Entity\AcEtablissement;
 use App\Entity\AcPromotion;
+use App\Entity\AcSemestre;
 use App\Entity\NatureDemande;
 use App\Entity\UsOperation;
 use App\Entity\UsSousModule;
+use App\Entity\AcModule;
+use App\Entity\AcElement;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\HttpFoundation\Response;
@@ -59,6 +62,30 @@ class ApiController extends AbstractController
     {   
         $annee = $this->em->getRepository(AcAnnee::class)->findBy(['formation'=>$id],['id'=>'DESC']);
         $data = self::dropdown($annee,'Annee');
+        return new JsonResponse($data);
+    }
+    
+    #[Route('/semestre/{id}', name: 'getSemestre')]
+    public function getSemestre($id): Response
+    {   
+        $semestre = $this->em->getRepository(AcSemestre::class)->findBy(['promotion'=>$id]);
+        $data = self::dropdown($semestre,'Semestre');
+        return new JsonResponse($data);
+    }
+
+    #[Route('/module/{id}', name: 'getModule')]
+    public function getModule($id): Response
+    {   
+        $module = $this->em->getRepository(AcModule::class)->findBy(['semestre'=>$id]);
+        $data = self::dropdown($module,'Module');
+        return new JsonResponse($data);
+    }
+
+    #[Route('/element/{id}', name: 'getElement')]
+    public function getElement($id): Response
+    {   
+        $element = $this->em->getRepository(AcElement::class)->findBy(['module'=>$id]);
+        $data = self::dropdown($element,'Element');
         return new JsonResponse($data);
     }
 

@@ -31,7 +31,13 @@ class PreinscriptionController extends AbstractController
     #[Route('/', name: 'preinscription_index')]
     public function index(): Response
     {   
-        return $this->render('preinscription/preinscription.html.twig');
+        $operations = ApiController::check($this->getUser(), 'preinscription_index', $this->em);
+        if(!$operations) {
+            return $this->render("errors/403.html.twig");
+        }
+        return $this->render('preinscription/preinscription.html.twig',[
+            'operations' => $operations
+        ]);
     }
 
     #[Route('/list', name: 'preinscription_list')]

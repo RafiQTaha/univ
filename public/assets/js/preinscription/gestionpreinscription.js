@@ -13,20 +13,20 @@ const Toast = Swal.mixin({
 let id_preinscription = false;
 let idpreins = [];
 let frais = [];
-var table_preins = $("#datables_preinscription").DataTable({
-    lengthMenu: [
-        [10, 15, 25, 50, 100, 20000000000000],
-        [10, 15, 25, 50, 100, "All"],
-    ],
-    order: [[0, "desc"]],
-    ajax: "/preinscription/list",
-    processing: true,
-    serverSide: true,
-    deferRender: true,
-    language: {
-    url: "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/French.json",
-    },
-});
+// var table_preins = $("#datables_preinscription").DataTable({
+//     lengthMenu: [
+//         [10, 15, 25, 50, 100, 20000000000000],
+//         [10, 15, 25, 50, 100, "All"],
+//     ],
+//     order: [[0, "desc"]],
+//     ajax: "/preinscription/list",
+//     processing: true,
+//     serverSide: true,
+//     deferRender: true,
+//     language: {
+//     url: "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/French.json",
+//     },
+// });
 
 var table_gestion_preins = $("#datables_gestion_preinscription").DataTable({
     lengthMenu: [
@@ -72,11 +72,11 @@ const load_frais_preins = () => {
         axios.get('/preinscription/gestion/article_frais/'+id_preinscription)
         .then(success => {
             $('.modal-preins .article #frais').html(success.data).select2();
-        // success.data
+            // success.data
         })
         .catch(err => {
-        console.log(err);
-        icon.removeClass("fa-spinner fa-spin").addClass('fa-money-bill-alt');
+            console.log(err);
+            icon.removeClass("fa-spinner fa-spin").addClass('fa-money-bill-alt');
         })
     }    
 }
@@ -106,8 +106,8 @@ $("#formation").select2();
 $("#nature").select2();
 $("#etablissement").on('change', async function (){
     const id_etab = $(this).val();
-    table_gestion_preins.columns(1).search("").draw();
-    table_gestion_preins.columns(2).search("").draw();
+    table_gestion_preins.columns().search("");
+
     table_gestion_preins.columns(0).search(id_etab).draw();
     let response = ""
     if(id_etab != "") {
@@ -159,7 +159,6 @@ const rawFrais = () => {
     let html = "";
     frais.map((f, i) => {
         html += `
-        
         <tr>
             <td>${i + 1}</td>
             <td>${f.designation}</td>
