@@ -114,7 +114,6 @@ const Toast = Swal.mixin({
             const request = await axios.get('/api/formation/'+id_etab);
             response = request.data
         } else {
-            
             $('#annee').html("").select2();
             $('#promotion').html("").select2();
         }
