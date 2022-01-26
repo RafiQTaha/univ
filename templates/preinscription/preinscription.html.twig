@@ -9,10 +9,9 @@
         <div class="section-header">
           <h1>Pré-Inscription</h1>
           <div class="section-header-breadcrumb">
-              <button href="#" class="btn btn-primary  ml-1" id="valider-modal"><i class="fas fa-check"></i>  Valider</button>
-              <button href="#" class="btn  btn-primary ml-1" id="preinscription_print" ><i class="fas fa-print"></i>  Imprimer</button>
-              <button href="#" class="btn btn-danger  ml-1" id="modal_group_ins" ><i class="fas fa-trash-alt"></i>  Supprimer</button>
-              <button href="#" class="btn btn-primary  ml-1" id="modal_group_ins" ><i class="fas fa-edit"></i>  Modifier</button>
+            {% for operation in operations %}
+                <a href="{{operation.link}}" class="{{operation.classTag}}" id="{{operation.idTag}}"><i class="{{operation.icon}}"></i>  {{operation.designation}}</a>
+            {% endfor %}
           </div>
         </div>
 

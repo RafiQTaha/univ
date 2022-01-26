@@ -39,9 +39,14 @@ class GestionPreinscriptionController extends AbstractController
     {   
         $etbalissements = $this->em->getRepository(AcEtablissement::class)->findAll();
         $natures = $this->em->getRepository(NatureDemande::class)->findAll();
+        $operations = ApiController::check($this->getUser(), 'gestion_preinscription', $this->em);
+        if(!$operations) {
+            return $this->render("errors/403.html.twig");
+        }
         return $this->render('preinscription/gestion_preinscription.html.twig',[
             'etablissements' => $etbalissements,
             'natures' => $natures,
+            'operations' => $operations
         ]);
     }
     #[Route('/list/gestion_preinscription', name: 'list/gestion_preinscription')]

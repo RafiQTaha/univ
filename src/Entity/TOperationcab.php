@@ -116,7 +116,6 @@ class TOperationcab
         return $this;
     }
 
-
     public function getCreated(): ?\DateTimeInterface
     {
         return $this->created;

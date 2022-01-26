@@ -6277,6 +6277,9 @@ tr:first-child > td > .fc-day-grid-event {
 .modal .modal-preins{
   max-width: 75% !important;
 }
+.modal .modalnotes{
+  max-width: 37% !important;
+}
 .modal .modal-modifier{
   max-width: 85% !important;
 }
@@ -6350,7 +6353,22 @@ tr:first-child > td > .fc-day-grid-event {
 .modal .modal-modifier .modal-body .card-body{
   padding : 0 !important;
 }
-
+.modalnotes .input_note{
+  width: 40px;
+}
+.modalnotes .input_note,
+.modalnotes .obs_note{
+  border: none;
+  outline: none;
+  background:none;
+}
+.modalnotes .input_note:focus,
+.modalnotes .obs_note:focus{
+  border: 1px solid #6777ef;
+}
+// .modalnotes form{
+//   text-align:center;
+// }
 .tab-content .col-md-3,
 .tab-content .col-md-6{
   float:left;
@@ -6359,8 +6377,6 @@ tr:first-child > td > .fc-day-grid-event {
   background-color:#6777ef !important;
   color:#fff !important;
 }
-
 .main-sidebar .sidebar-menu li.nav-item {
   margin: 1rem 0;
-
 }
