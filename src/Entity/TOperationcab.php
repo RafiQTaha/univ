@@ -29,7 +29,7 @@ class TOperationcab
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $observation;
-    
+
     #[ORM\Column(type: 'datetime', nullable: true)]
     private $created;
 

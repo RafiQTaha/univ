@@ -9,7 +9,7 @@
         <div class="section-header">
           <h1>Adminstration Des Epreuves</h1>
           <div class="section-header-breadcrumb">
-              {% for operation in operations %}
+              {% for operation in operations | sort((a, b) => a.ordre <=> b.ordre) %}
                 <a href="{{operation.link}}" class="{{operation.classTag}}" id="{{operation.idTag}}"><i class="{{operation.icon}}"></i>  {{operation.designation}}</a>
               {% endfor %}
           </div>
@@ -18,74 +18,25 @@
         <div class="section-body">
         <div class="card">
             <div class="card-header">
-            <h4>Tableau des epreuves</h4>
+                <ul class="nav nav-pills">                
+                    <li class="nav-item mr-2">
+                        <a href="#normal" class="nav-link active">Session normal</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#rattrapage" class="nav-link">Session rattrapage</a>
+                    </li>                
+                </ul>
             </div>
             <div class="card-body">
-            {# <div class="card-search" style="margin-bottom: 1.5rem;">
-                <div class="row">
-                    <div class="col-md-2">
-                        <label for="etablissement">Etablissement:</label>
-                        <select class="form-control" name="etablissement" id="etablissement">
-                            <option value="">Choix etablissement</option>
-                            {% for etablissement in etablissements %}
-                                <option value="{{etablissement.id}}">{{etablissement.designation}}</option>
-                            {% endfor %}
-                        </select>
+                <div class="tab-content">
+                    <div class="tab-pane fade show active" id="normal">
+                       {% include 'administration_epreuve/pages/list_epreuve_normal.html.twig' %}                     
                     </div>
-                    <div class="col-md-2">
-                        <label for="formation">Formation:</label>
-                        <select class="form-control" name="formation" id="formation">
-                        </select>
-                    </div>
-                    <div class="col-md-2">
-                        <label for="promotion">Promotion:</label>
-                        <select class="form-control" name="promotion" id="promotion">
-                        </select>
-                    </div>
-                    <div class="col-md-2">
-                        <label for="frais">annee:</label>
-                        <select class="form-control" name="annee" id="annee">
-                        </select>
+                    <div class="tab-pane fade" id="rattrapage">
+                       {% include 'administration_epreuve/pages/list_epreuve_rattrapage.html.twig' %}                            
                     </div>
                 </div>
-            </div> #}
-            <table id="datatables_admin_epreuve" class="display" style="width:100%">
-                <thead>
-                    <tr>
-                        <th>Option</th>
-                        <th>id</th>
-                        <th>C.Ins</th>
-                        <th>Nom</th>
-                        <th>Prenom</th>
-                        <th>CNE</th>
-                        <th>CIN</th>
-                        <th>Etablissement</th>
-                        <th>Formation</th>
-                        <th>Promotion</th>
-                        <th>Année</th>
-                        <th>Statut</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    
-                </tbody>
-                <tfoot>
-                    <tr>
-                        <th>Option</th>
-                        <th>id</th>
-                        <th>C.Ins</th>
-                        <th>Nom</th>
-                        <th>Prenom</th>
-                        <th>CNE</th>
-                        <th>CIN</th>
-                        <th>Etablissement</th>
-                        <th>Formation</th>
-                        <th>Promotion</th>
-                        <th>Année</th>
-                        <th>Statut</th>
-                    </tr>
-                </tfoot>
-            </table>
+
             </div>
             
         </div>
@@ -96,8 +47,8 @@
 
 
 <!--Modal Import Group-->
-{% include 'inscription/modals/statut.html.twig' %}
-{% include 'inscription/modals/frais.html.twig' %}
+{% include 'administration_epreuve/modals/affilier.html.twig' %}
+{% include 'administration_epreuve/modals/import.html.twig' %}
 
 {% endblock %}
 

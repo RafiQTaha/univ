@@ -61,4 +61,19 @@ class TInscriptionRepository extends ServiceEntityRepository
             ->getOneOrNullResult()
         ;
     }
+    public function getInscriptionsByEpreuve($epreuve)
+    {
+        return $this->createQueryBuilder('t')
+            ->innerJoin("t.promotion", "promotion")
+            ->innerJoin("t.annee", "annee")
+            ->innerJoin("t.statut", "statut")
+            ->where('promotion = :promotion')
+            ->andWhere("annee = :annee")
+            ->andWhere("statut.id = 13")
+            ->setParameter('promotion', $epreuve->getElement()->getModule()->getSemestre()->getPromotion())
+            ->setParameter('annee', $epreuve->getAnnee())
+            ->getQuery()
+            ->getResult()
+        ;
+    }
 }

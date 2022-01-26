@@ -1374,7 +1374,7 @@ table tr:hover .table-links {
 
 .tab-content > .tab-pane {
   padding: 1rem 0;
-  line-height: 24px;
+  // line-height: 24px;
 }
 
 .tab-bordered .tab-pane {
@@ -2638,7 +2638,7 @@ a.dropdown-item.active {
 }
 
 .tab-content > .tab-pane {
-  line-height: 2.8rem;
+  // line-height: 2.8rem;
 }
 
 ul.nav-tabs li.nav-item a.nav-link i {
@@ -4122,15 +4122,15 @@ body:not(.sidebar-mini)
   }
 }
 
-.article {
-  // box-shadow: 0 4px 8px rgba(0, 0, 0, 0.03);
-  box-shadow: 0 4px .8rem rgba(0, 0, 0, 0.03);
-  background-color: #fff;
-  border-radius: 3px;
-  border: none;
-  position: relative;
-  margin-bottom: 3rem;
-}
+// .article {
+//   // box-shadow: 0 4px 8px rgba(0, 0, 0, 0.03);
+//   box-shadow: 0 4px .8rem rgba(0, 0, 0, 0.03);
+//   background-color: #fff;
+//   border-radius: 3px;
+//   border: none;
+//   position: relative;
+//   margin-bottom: 3rem;
+// }
 .article .article-header {
   height: 17rem;
   position: relative;
@@ -6314,32 +6314,32 @@ tr:first-child > td > .fc-day-grid-event {
   padding: 10px 0;
   font-size: 1.5rem;
 }
-.article{
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  box-shadow : none !important;
-}
-.article .left{
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex : 0 60%;
-}
-.article .right{
-  flex: 0 37%;
-}
-.article .left .field{
-  display:flex;
-  flex-direction:column;
-}
-.article .left .field.frais{
-  flex: 0 55%;
-}
+// .article{
+//   display: flex;
+//   justify-content: space-between;
+//   // align-items: baseline;
+//   box-shadow : none !important;
+// }
+// .article .left{
+//   display: flex;
+//   justify-content: space-between;
+//   // align-items: center;
+//   flex : 0 60%;
+// }
+// .article .right{
+//   flex: 0 37%;
+// }
+// .article .left .field{
+//   display:flex;
+//   flex-direction:column;
+// }
+// .article .left .field.frais{
+//   flex: 0 55%;
+// }
 
-.article .left .field.add{
-  align-self: end;
-}
+// .article .left .field.add{
+//   align-self: end;
+// }
 .modal .modal-preins .save{
   float:right;
 }
