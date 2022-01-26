@@ -15,22 +15,24 @@
         </div>
         <div class="modal-box">
           <h5 class="title-article">Saisie Article</h5>
-          <div class="article ">
-            <div class="left">
-                <div class="field frais">
-                  <label for="frais">Frais de scolarité (*)</label>
-                  <select class="form-control" name="frais" id="frais">
-                  </select>
-                </div>
-                <div class="field ">
-                  <label for="montant">Montant(*):</label>
-                  <input type="text" class="form-control" id='montant'>
+          <div class="article row">
+            <div class="left col-md-6">
+                <div class="row mb-4">
+                  <div class="field frais col-md-8">
+                    <label for="frais">Frais de scolarité (*)</label>
+                    <select class="form-control" name="frais" id="frais">
+                    </select>
+                  </div>
+                  <div class="field col-md-4">
+                    <label for="montant">Montant(*):</label>
+                    <input type="text" class="form-control" id='montant'>
+                  </div>
                 </div>
                 <div class="field add">
                   <button type="button" class="btn btn-primary add-btn" id="add-btn"><i class="fas fa-plus"></i> Ajouter</button>  
                 </div>
             </div>
-            <div class="right">
+            <div class="right col-md-6">
               <table class="table table-fee">
                 <thead>
                   <tr>

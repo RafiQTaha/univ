@@ -36,6 +36,9 @@ class UsOperation
     #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'operations')]
     private $users;
 
+    #[ORM\Column(type: 'integer', nullable: true)]
+    private $ordre;
+
     public function __construct()
     {
         $this->users = new ArrayCollection();
@@ -141,6 +144,18 @@ class UsOperation
         if ($this->users->removeElement($user)) {
             $user->removeOperation($this);
         }
+
+        return $this;
+    }
+
+    public function getOrdre(): ?int
+    {
+        return $this->ordre;
+    }
+
+    public function setOrdre(?int $ordre): self
+    {
+        $this->ordre = $ordre;
 
         return $this;
     }
