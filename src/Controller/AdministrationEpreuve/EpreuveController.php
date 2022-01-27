@@ -13,6 +13,7 @@ use App\Entity\PNatureEpreuve;
 use App\Controller\ApiController;
 use App\Controller\DatatablesController;
 use Doctrine\Persistence\ManagerRegistry;
+use Mpdf\Mpdf;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Symfony\Component\HttpFoundation\Request;
@@ -273,6 +274,7 @@ class EpreuveController extends AbstractController
         $sheet->setCellValue('F1', 'date_epreuve');
         $sheet->setCellValue('G1', 'anonymat');
         $sheet->setCellValue('H1', 'Observation');
+        $sheet->setCellValue('I1', 'Nature');
 
         $writer = new Xlsx($spreadsheet);
         $fileName = 'epreuves.xlsx';
@@ -336,6 +338,7 @@ class EpreuveController extends AbstractController
             $epreuve->setEnseignant(
                 $this->em->getRepository(PEnseignant::class)->find($sheet[4])
             );
+            $epreuve->setNature($sheet[8]);
             $epreuve->setCreated(new \DateTime("now"));
             $this->em->persist($epreuve);
             $this->em->flush();
@@ -369,9 +372,15 @@ class EpreuveController extends AbstractController
                     $gnote->setInscription($inscription);
                     $gnote->setUserCreated($this->getUser());
                     $gnote->setCreated(new \DateTime("now"));
-                    if($epreuve->getAnonymat() == 1) {
-                        $gnote->setAnonymat($inscription->getCodeAnonymat());
-                        $sheet->setCellValue('C'.$i, $inscription->getCodeAnonymat());
+                    if($epreuve->getAnonymat() == 1) {                        
+                        if($epreuve->getNatureEpreuve()->getNature() == 'normale') {
+                            $gnote->setAnonymat($inscription->getCodeAnonymat());     
+                            $sheet->setCellValue('C'.$i, $inscription->getCodeAnonymat());
+
+                        } else {
+                            $gnote->setAnonymat($inscription->getCodeAnonymatRat());
+                            $sheet->setCellValue('C'.$i, $inscription->getCodeAnonymatRat());
+                        }                        
                     }
                     $this->em->persist($gnote);
                     $sheet->setCellValue('A'.$i, $epreuve->getId());
@@ -426,7 +435,11 @@ class EpreuveController extends AbstractController
             $gnote->setUserCreated($this->getUser());
             $gnote->setCreated(new \DateTime("now"));
             if($epreuve->getAnonymat() == 1) {
-                $gnote->setAnonymat($inscription->getCodeAnonymat());
+                if($epreuve->getNatureEpreuve()->getNature() == 'normale') {
+                    $gnote->setAnonymat($inscription->getCodeAnonymat());                    
+                } else {
+                    $gnote->setAnonymat($inscription->getCodeAnonymatRat());
+                }
             }
             $this->em->persist($gnote);
         }
@@ -463,5 +476,51 @@ class EpreuveController extends AbstractController
         }
         return new JsonResponse("Bien delôturer", 200);
 
+    }
+    #[Route('/checkifanonymat/{epreuve}', name: 'administration_epreuve_checkifanonymat')]
+    public function administrationEpreuveCheckifanonymat(AcEpreuve $epreuve) {
+        $html = "<p><span>Etablissement</span> : ".$epreuve->getAnnee()->getFormation()->getEtablissement()->getDesignation()."</p>
+          <p><span>Formation</span> : ".$epreuve->getAnnee()->getFormation()->getDesignation()."</p>
+          <p><span>Promotion</span> : ".$epreuve->getElement()->getModule()->getSemestre()->getPromotion()->getDesignation()."</p>
+          <p><span>Module</span> : ".$epreuve->getElement()->getModule()->getDesignation()."</p>
+          <p><span>Element</span> : ".$epreuve->getElement()->getDesignation()."</p>";
+        if($epreuve->getAnonymat() == 1) {
+            $anonymat = "oui";
+        } else {
+            $anonymat = "non";
+        }
+        return new JsonResponse(['html' => $html,'id' => $epreuve->getId(), 'anonymat' => $anonymat], 200);
+
+    }
+    #[Route('/impression/{epreuve}/{anonymat}', name: 'administration_epreuve_impression')]
+    public function administrationEpreuveImpression(AcEpreuve $epreuve, $anonymat) {
+        
+            
+        $html = $this->render("administration_epreuve/pdfs/header.html.twig")->getContent();
+        if($epreuve->getAnonymat() == 1 && $anonymat == 1){
+            $html .= $this->render("administration_epreuve/pdfs/anonymat.html.twig", [
+                'epreuve' => $epreuve
+            ])->getContent();
+        } else {
+            $html .= $this->render("administration_epreuve/pdfs/clair.html.twig", [
+                'epreuve' => $epreuve
+            ])->getContent();
+            
+        }
+        $html .= $this->render("administration_epreuve/pdfs/footer.html.twig")->getContent();
+        $mpdf = new Mpdf([
+            'mode' => 'utf-8',
+            'margin_left' => '5',
+            'margin_right' => '5',
+            'margin_top' => '5',
+            'margin_bottom' => '5',
+            ]);
+        // $mpdf->SetHTMLHeader(
+        // );
+        // $mpdf->SetHTMLFooter(
+        //     $this->render("administration_epreuve/pdfs/footer.html.twig")->getContent()
+        // );
+        $mpdf->WriteHTML($html);
+        $mpdf->Output("epreuve_".$epreuve->getId().".pdf", "I");
     }
 }
