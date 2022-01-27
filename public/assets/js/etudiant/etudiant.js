@@ -167,8 +167,8 @@ $(document).ready(function  () {
         //     </div>`
         // );  
         icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin");
-        tableListPreinscription.ajax.reload();
-        table.ajax.reload();
+        tableListPreinscription.ajax.reload(null, false);
+        table.ajax.reload(null, false);
       }
     }catch(error){
       const message = error.response.data;
@@ -278,7 +278,7 @@ $(document).ready(function  () {
         window.open("/etudiant/etudiants/download", '_blank');
       }
       icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin");
-      table.ajax.reload();
+      table.ajax.reload(null, false);
     } catch (error) {
       const message = error.response.data;
       console.log(error, error.response);
@@ -322,7 +322,7 @@ $(document).ready(function  () {
           </div>`
       );
       icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
-      table.ajax.reload()
+      table.ajax.reload(null, false)
     } catch (error) {
       const message = error.response.data;
       console.log(error, error.response);
@@ -364,7 +364,7 @@ $(document).ready(function  () {
           </div>`
       );
       icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
-      table.ajax.reload()
+      table.ajax.reload(null, false)
     } catch (error) {
       const message = error.response.data;
       console.log(error, error.response);
