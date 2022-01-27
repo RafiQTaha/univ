@@ -310,7 +310,7 @@ const Toast = Swal.mixin({
           $(".table_frais_admission").empty()
           frais = [];
           window.open("/admission/gestion/facture/"+response, '_blank');
-          table.ajax.reload();
+          table.ajax.reload(null, false);
         } catch (error) {
           const message = error.response.data;
           console.log(error, error.response);
@@ -353,7 +353,7 @@ const Toast = Swal.mixin({
           );
           icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
           $("#annee_inscription, #promotion_inscription").empty()
-          table.ajax.reload()
+          table.ajax.reload(null, false)
         } catch (error) {
           const message = error.response.data;
           console.log(error, error.response);

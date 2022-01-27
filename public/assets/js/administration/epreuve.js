@@ -159,8 +159,8 @@ $(document).ready(function  () {
               </div>`
           );
           icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
-          tableEpreuveNormal.ajax.reload()
-          tableEpreuveRattrapage.ajax.reload()
+          tableEpreuveNormal.ajax.reload(null, false)
+          tableEpreuveRattrapage.ajax.reload(null, false)
         } catch (error) {
           const message = error.response.data;
           console.log(error, error.response);
@@ -201,8 +201,8 @@ $(document).ready(function  () {
                         title: "Epreuves déja affilier ou valider",
                     }) 
                 }
-                tableEpreuveNormal.ajax.reload()
-                tableEpreuveRattrapage.ajax.reload()
+                tableEpreuveNormal.ajax.reload(null, false)
+                tableEpreuveRattrapage.ajax.reload(null, false)
             } catch (error) {
                 console.log(error)
                 const message = error.response.data;
@@ -293,8 +293,8 @@ $(document).ready(function  () {
                   </div>`
             );
             $(".list_etudiants").empty()
-            tableEpreuveRattrapage.ajax.reload();
-            tableEpreuveNormal.ajax.reload();
+            tableEpreuveRattrapage.ajax.reload(null, false);
+            tableEpreuveNormal.ajax.reload(null, false);
         } catch (error) {
             console.log(error)
             const message = error.response.data;
@@ -329,8 +329,8 @@ $(document).ready(function  () {
                 icon: 'success',
                 title: response,
             }) 
-            tableEpreuveNormal.ajax.reload()
-            tableEpreuveRattrapage.ajax.reload()
+            tableEpreuveNormal.ajax.reload(null, false)
+            tableEpreuveRattrapage.ajax.reload(null, false)
         } catch (error) {
             console.log(error)
             const message = error.response.data;
@@ -364,8 +364,8 @@ $(document).ready(function  () {
                 icon: 'success',
                 title: response,
             }) 
-            tableEpreuveNormal.ajax.reload()
-            tableEpreuveRattrapage.ajax.reload()
+            tableEpreuveNormal.ajax.reload(null, false)
+            tableEpreuveRattrapage.ajax.reload(null, false)
         } catch (error) {
             console.log(error)
             const message = error.response.data;
@@ -378,5 +378,59 @@ $(document).ready(function  () {
         }
     })
 
+
+    $('#epreuve_imprimer').on('click', async function(e){
+        e.preventDefault();
+        if(!id_epreuve) {
+            Toast.fire({
+                icon: 'error',
+                title: 'Veuillez selection une ligne!',
+            })
+            return;
+        }
+        const icon = $("#epreuve_imprimer i");
+        icon.removeClass('fa-copy').addClass("fa-spinner fa-spin");
+        
+        try {
+            const request = await axios.get('/administration/epreuve/checkifanonymat/'+id_epreuve);
+            const response = request.data;
+            console.log(response)
+            icon.addClass('fa-copy').removeClass("fa-spinner fa-spin ");
+            $("#imprimer_epreuve").modal("show")
+            $('#imprimer_epreuve .etudiant_info').html(response.html);
+            $('#imprimer_epreuve .epreuve_title').html(response.id);
+            if(response.anonymat == "oui") {
+                $('#imprimer_epreuve .actions').html(
+                    `<a href="#" class="btn btn-success mt-3" id="impression_clair">Impression Clair</a>
+                    <a href="#" class="btn btn-secondary mt-3" id="impression_anonymat">Impression Anonymat</a>`
+                );
+            } else {
+                $('#imprimer_epreuve .actions').html(
+                    `<a href="#" class="btn btn-success mt-3" id="impression_clair">Impression Clair</a>`
+                );
+            }
+
+        } catch (error) {
+            console.log(error)
+            const message = error.response.data;
+            Toast.fire({
+                icon: 'error',
+                title: message,
+            }) 
+            icon.addClass('fa-copy').removeClass("fa-spinner fa-spin ");
+            
+        }
+    })
+
+    $('body').on('click', '#impression_clair', function(e){
+        e.preventDefault();
+        window.open("/administration/epreuve/impression/"+id_epreuve+"/0", '_blank');
+    })
+    $('body').on('click', '#impression_anonymat', function(e){
+        e.preventDefault();
+        window.open("/administration/epreuve/impression/"+id_epreuve+"/1", '_blank');
+    })
 })
     
+
+

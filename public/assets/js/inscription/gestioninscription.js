@@ -122,14 +122,16 @@ const Toast = Swal.mixin({
     $("#formation").on('change', async function (){
         const id_formation = $(this).val();
         table.columns().search("");
-        table.columns(1).search(id_formation).draw();
         let responseAnnee = ""
         let responsePromotion = ""
         if(id_formation != "") {
+            table.columns(1).search(id_formation).draw();
             const requestPromotion = await axios.get('/api/promotion/'+id_formation);
             responsePromotion = requestPromotion.data
             const requestAnnee = await axios.get('/api/annee/'+id_formation);
             responseAnnee = requestAnnee.data
+        } else {
+            table.columns(0).search($("#etablissement").val()).draw();
         }
         $('#annee').html(responseAnnee).select2();
         $('#promotion').html(responsePromotion).select2();
@@ -137,12 +139,22 @@ const Toast = Swal.mixin({
     
     $("#promotion").on('change', async function (){
         table.columns().search("");
-        table.columns(2).search($(this).val()).draw();
+        if($(this).val() != "") {
+            if($("#annee").val() != "") {
+                table.columns(3).search($("#annee").val());
+            }
+            table.columns(2).search($(this).val()).draw();
+        } else {
+            table.columns(1).search($("#formation").val()).draw();
+        }
+
     })
     $("#annee").on('change', async function (){
         table.columns().search("");
-        table.columns(2).search($("#promotion").val());
-        table.columns(3).search($(this).val()).draw();
+        if($(this).val() != "") {
+            table.columns(3).search($(this).val());
+        } 
+        table.columns(2).search($("#promotion").val()).draw();
     })
 
     $('body').on('click','#datatables_gestion_inscription tbody tr',function () {
@@ -251,7 +263,7 @@ const Toast = Swal.mixin({
           $(".table_frais_admission").empty()
           frais = [];
           window.open("/inscription/gestion/facture/"+response, '_blank');
-          table.ajax.reload();
+          table.ajax.reload(null, false);
         } catch (error) {
           const message = error.response.data;
           console.log(error, error.response);
@@ -295,7 +307,7 @@ const Toast = Swal.mixin({
           );
           icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
           $("#annee_inscription, #promotion_inscription").empty()
-          table.ajax.reload()
+          table.ajax.reload(null, false)
         } catch (error) {
           const message = error.response.data;
           console.log(error, error.response);
@@ -308,3 +320,4 @@ const Toast = Swal.mixin({
         }
     })
 })
+

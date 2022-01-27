@@ -55,6 +55,7 @@ class UsOperationRepository extends ServiceEntityRepository
             ->andWhere('sousModule.link = :link')
             ->setParameter('user', $user)
             ->setParameter('link', $link)
+            ->orderBy("u.ordre", 'ASC')
             ->getQuery()
             ->getResult()
         ;
@@ -65,6 +66,7 @@ class UsOperationRepository extends ServiceEntityRepository
             ->innerJoin('u.sousModule', "sousModule")
             ->where('sousModule.link = :link')
             ->setParameter('link', $link)
+            ->orderBy("u.ordre", 'ASC')
             ->getQuery()
             ->getResult()
         ;

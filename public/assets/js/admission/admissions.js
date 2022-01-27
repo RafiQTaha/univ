@@ -112,8 +112,8 @@ $('#admission').on('click', async (e) => {
         })
         icon.addClass('fa-check').removeClass("fa-spinner fa-spin");
 
-        table.ajax.reload();
-        tableAdmis.ajax.reload();
+        table.ajax.reload(null, false);
+        tableAdmis.ajax.reload(null, false);
       } catch (error) {
         const message = error.response.data;
         console.log(error, error.response);
@@ -155,8 +155,8 @@ $('#annuler').on('click', async (e) => {
         }
         icon.addClass('fa-exclamation-triangle').removeClass("fa-spinner fa-spin");
 
-        tableAdmis.ajax.reload();
-        table.ajax.reload();
+        tableAdmis.ajax.reload(null, false);
+        table.ajax.reload(null, false);
       } catch (error) {
         const message = error.response.data;
         console.log(error, error.response);
