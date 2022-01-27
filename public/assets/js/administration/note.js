@@ -25,6 +25,24 @@ $(document).ready(function () {
         url: "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/French.json",
         },
     });
+    function table_note_inscription(){
+        $("#datables_notes_inscription").DataTable({
+            lengthMenu: [
+                [10, 15, 25, 50, 100, 20000000000000],
+                [10, 15, 25, 50, 100, "All"],
+            ],
+            order: [[2, "DESC"]],
+            ajax: "/administration/note/list/note_inscription/"+id_epreuve,
+            processing: true,
+            serverSide: true,
+            deferRender: true,
+            language: {
+                url: "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/French.json",
+            },
+            stateSave: true,
+            bDestroy: true
+        });
+    }
     $('body').on('dblclick','#datables_notes_epreuve tbody tr',function (e) {
         e.preventDefault();
         if($(this).hasClass('active_databales')) {
@@ -36,22 +54,7 @@ $(document).ready(function () {
             // const icon = $('#note i');
             // icon.removeClass('fa-newspaper').addClass('fa-spinner fa-spin');
             id_epreuve = $(this).attr('id');
-            table_note_inscription = $("#datables_notes_inscription").DataTable({
-                lengthMenu: [
-                    [10, 15, 25, 50, 100, 20000000000000],
-                    [10, 15, 25, 50, 100, "All"],
-                ],
-                order: [[0, "desc"]],
-                ajax: "/administration/note/list/note_inscription/"+id_epreuve,
-                processing: true,
-                serverSide: true,
-                deferRender: true,
-                language: {
-                    url: "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/French.json",
-                },
-                stateSave: true,
-                bDestroy: true
-            });
+            table_note_inscription()
             // icon.addClass('fa-newspaper').removeClass('fa-spinner fa-spin')
         }
     })
@@ -143,34 +146,87 @@ $(document).ready(function () {
     })
     $('body').on('submit','.save_note', async function (e){
         e.preventDefault();
-        let id_exgnotes = $(this).attr('id');
+        let id_exgnotes = $(this).find('input').attr('id');
+        if( $(this).find('input').val() < 0 || $(this).find('input').val() > 20){
+            
+            Toast.fire({
+                icon: 'error',
+                title: 'La Note doit etre entre 0 et 20',
+              })
+              return;
+        }
+        $(this).find('input').blur();
         var formData = new FormData($(this)[0]);
-        // $(this).parent().parent().next('tr').find('.input_note').focus();
+        $(this).parent().parent().next('tr').find('.input_note').focus();
         const request = await axios.post('/administration/note/note_update/'+id_exgnotes, formData);
         response = request.data
         const data = await request.data;
     })
     $('body').on('submit','.save_obs', async function (e){
         e.preventDefault();
-        let id_exgnotes = $(this).attr('id');
-        var formData = new FormData($(this)[0]);
-        // $(this).parent().parent().next('tr').find('.input_note').focus();
-        const request = await axios.post('/administration/note/note_update/'+id_exgnotes, formData);
-        response = request.data
-        const data = await request.data;
         $(this).find('input').blur();
+        let id_exgnotes = $(this).find('input').attr('id');
+        var formData = new FormData($(this)[0]);
+        $(this).parent().parent().next('tr').find('.input_obs').focus();
+        const request = await axios.post('/administration/note/observation_update/'+id_exgnotes, formData);
+        const data = await request.data;
     })
     $('body').on('click','.check_note_ins', async function (){
         var formData = new FormData();
+        let id_exgnotes = $(this).attr('id');
         if ($(this).prop('checked') == true) {
             formData.append('absence',true);
-            const request = await axios.post('/administration/note/note_update/'+id_epreuve, formData);
-            response = request.data;
+            const request = await axios.post('/administration/note/absence_update/'+id_exgnotes, formData);
+            const data = await request.data;
         }else{
             formData.append('absence',false);
-            const request = await axios.post('/administration/note/note_update/'+id_epreuve, formData);
-            response = request.data;
+            const request = await axios.post('/administration/note/absence_update/'+id_exgnotes, formData);
+            const data = await request.data;
         }
-      });
+    })
+    $("#import").on('click', async function (e){
+        e.preventDefault();
+        if(!id_epreuve){
+            Toast.fire({
+              icon: 'error',
+              title: 'Veuillez selection une ligne!',
+            })
+            return;
+        }
+        $('#import_en_masse').modal("show");
+    })
+    $('body').on('click','#epreuve_canvas', function (){
+        window.open('/administration/note/canvas/'+id_epreuve, '_blank');
+    })
+    $("#import_epreuve_save").on("submit", async function(e) {
+        e.preventDefault();
+        let formData = new FormData($(this)[0]);
+        let modalAlert = $("#import_en_masse .modal-body .alert")
+    
+        modalAlert.remove();
+        const icon = $("#epreuve_enregistre i");
+        icon.removeClass('fa-check-circle').addClass("fa-spinner fa-spin");
+        
+        try {
+          const request = await axios.post('/administration/note/import/'+id_epreuve, formData);
+          const response = request.data;
+          $("#import_en_masse .modal-body").prepend(
+            `<div class="alert alert-success">
+                <p>${response}</p>
+              </div>`
+          );
+          icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
+          table_note_inscription()
+        } catch (error) {
+          const message = error.response.data;
+          console.log(error, error.response);
+          modalAlert.remove();
+          $("#import_en_masse .modal-body").prepend(
+            `<div class="alert alert-danger">${message}</div>`
+          );
+          icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
+          
+        }
+    })
     
 });
