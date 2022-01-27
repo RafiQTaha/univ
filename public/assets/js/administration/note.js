@@ -26,12 +26,12 @@ $(document).ready(function () {
         },
     });
     function table_note_inscription(){
-        $("#datables_notes_inscription").DataTable({
+        var table_notes_inscription =  $("#datatables_notes_inscription").DataTable({
             lengthMenu: [
                 [10, 15, 25, 50, 100, 20000000000000],
                 [10, 15, 25, 50, 100, "All"],
             ],
-            order: [[2, "DESC"]],
+            order: [[2, "asc"]],
             ajax: "/administration/note/list/note_inscription/"+id_epreuve,
             processing: true,
             serverSide: true,

@@ -109,8 +109,8 @@ class NoteEpreuveController extends AbstractController
         INNER JOIN ac_annee ann on ann.id = epv.annee_id
         INNER JOIN (SELECT epreuve_id,COUNT(id) nbr_effectif FROM ex_gnotes GROUP BY epreuve_id) ne ON ne.epreuve_id = epv.id 
         LEFT JOIN (SELECT epreuve_id,COUNT(id) nbr_absence FROM ex_gnotes WHERE absence = '1' GROUP BY epreuve_id) na ON na.epreuve_id = epv.id
-        LEFT JOIN (SELECT epreuve_id, COUNT(id) nbr_saisi FROM ex_gnotes WHERE absence = '0' AND (note IS NOT NULL AND note <> '') GROUP BY epreuve_id) ni ON ni.epreuve_id = epv.id 
-        LEFT JOIN (SELECT epreuve_id, COUNT(id) nbr_non_saisi FROM ex_gnotes WHERE absence = '0' AND (note IS NULL OR note = '' ) GROUP BY epreuve_id) nni ON nni.epreuve_id = epv.id Where 1=1 $filtre";
+        LEFT JOIN (SELECT epreuve_id, COUNT(id) nbr_saisi FROM ex_gnotes WHERE (absence = '0' or absence is null)  AND (note IS NOT NULL AND note <> '') GROUP BY epreuve_id) ni ON ni.epreuve_id = epv.id 
+        LEFT JOIN (SELECT epreuve_id, COUNT(id) nbr_non_saisi FROM ex_gnotes WHERE (absence = '0' or absence is null) AND (note IS NULL OR note = '' ) GROUP BY epreuve_id) nni ON nni.epreuve_id = epv.id Where 1=1 $filtre";
         // dd($sql);
         $totalRows .= $sql;
         $sqlRequest .= $sql;
@@ -176,8 +176,8 @@ class NoteEpreuveController extends AbstractController
         $where = $totalRows = $sqlRequest = "";
         $filtre = " where prv.id = $id_epruve ";
         $columns = array(
-            array( 'db' => 'ex.id','dt' => 0 ),
-            array( 'db' => 'upper(ins.id)','dt' => 1 ),
+            array( 'db' => 'lower(ex.id)','dt' => 0 ),
+            array( 'db' => 'ins.id','dt' => 1 ),
             array( 'db' => 'etu.nom','dt' => 2),
             array( 'db' => 'etu.prenom','dt' => 3),
             array( 'db' => 'ex.note','dt' => 4),
@@ -205,7 +205,7 @@ class NoteEpreuveController extends AbstractController
             $sqlRequest .= $where;
         }
         $sqlRequest .= DatatablesController::Order($request, $columns);
-        
+        // dd($sqlRequest);
         $stmt = $this->em->getConnection()->prepare($sqlRequest);
         $resultSet = $stmt->executeQuery();
         $result = $resultSet->fetchAll();

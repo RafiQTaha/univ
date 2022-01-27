@@ -55,6 +55,7 @@ class DatatablesController extends AbstractController {
 
     static function Order($request, $columns) {
         $params = $request->query;
+        // dd($params);
         $sqlRequest = "";
         $sqlRequest = " ORDER BY " . self::Pluck($columns, 'db')[$params->get('order')[0]['column']] . "   " . $params->get('order')[0]['dir'] . "  LIMIT " . $params->get('start') . " ," . $params->get('length') . " ";
         return $sqlRequest;
