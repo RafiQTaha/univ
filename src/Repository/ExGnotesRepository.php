@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\AcAnnee;
 use App\Entity\ExGnotes;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -36,15 +37,19 @@ class ExGnotesRepository extends ServiceEntityRepository
     }
     */
 
-    /*
-    public function findOneBySomeField($value): ?ExGnotes
+    public function ExgnotesOrderByNom($epreuve)
     {
         return $this->createQueryBuilder('e')
-            ->andWhere('e.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
+                    ->innerJoin('e.epreuve', "epreuve")
+                    ->innerJoin('e.inscription', "inscription")
+                    ->innerJoin('inscription.admission', "admission")
+                    ->innerJoin('admission.preinscription', "preinscription")
+                    ->innerJoin('preinscription.etudiant', "etudiant")
+                    ->where(' epreuve= :epreuve')
+                    ->setParameter('epreuve', $epreuve)
+                    ->orderBy('etudiant.nom','ASC')
+                    ->getQuery()
+                    ->getResult()
         ;
     }
-    */
 }

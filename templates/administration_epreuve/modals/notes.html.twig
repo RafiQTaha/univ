@@ -11,7 +11,7 @@
           <table id="datables_notes_inscription" class="display mt-3" style="width:100%">
             <thead>
               <tr>
-                <th>ORD</th>
+                <th>ID</th>
                 <th>NOM</th>
                 <th>PRENOM</th>
                 <th>NOTE</th>
@@ -24,73 +24,12 @@
           </tbody>
           <tfoot>
               <tr>
-                <th>ORD</th>
+                <th>ID</th>
                 <th>NOM</th>
                 <th>PRENOM</th>
                 <th>NOTE</th>
                 <th>Absents</th>
                 <th>OBSERVATION</th>
-              </tr>
-          </tfoot>
-        </table>
-      </div>
-    </div>
-  </div>
-</div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.24.0/axios.min.js"></script><div class="modal" role="dialog" id="validermodal" aria-modal="true"> 
-<div class="modal-dialog modal-md" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Valider Des Etudiants</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"> 
-        <span aria-hidden="true">×</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        {# <div class="alert alert-info">Veuillez selectionner un ligne Pour Continuer Cette opération !!</div> #}
-          <form action="" class="form-valider">
-            <div class="etablissement">
-              <label for="etablissement">Etablissement:</label>
-              <select class="form-control" name="etablissement" id="etablissement">
-              </select>
-            </div>
-            <div class="formation" style="display: none;">
-              <label for="formation">Formation:</label>
-              <select class="form-control" name="formation" id="formation">
-              </select>
-            </div>
-            <div class="annee" style="display: none;">
-              <label for="annee">Annee:</label>
-              <select class="form-control" name="annee" id="annee">
-              </select>
-            </div>
-            <div class="d-flex mt-5 mb-5">
-              <button class="btn btn-primary ml-auto">G.Preinscription</button>
-              <button type="submit" class="btn btn-success ml-5" id="enregistrer" disabled> <i class="fas fa-check-circle"></i> Enregistrer</button>
-            </div>
-          </form>
-          <table id="datables_etudiant_modal" class="display mt-3" style="width:100%">
-            <thead>
-              <tr>
-                <th>ORD</th>
-                <th>CODE</th>
-                <th>NOM</th>
-                <th>PRENOM</th>
-                <th>ETABLISSEMENT</th>
-                <th>FORMATION</th>
-              </tr>
-          </thead>
-          <tbody>
-              
-          </tbody>
-          <tfoot>
-              <tr>
-                <th>ORD</th>
-                <th>CODE</th>
-                <th>NOM</th>
-                <th>PRENOM</th>
-                <th>ETABLISSEMENT</th>
-                <th>FORMATION</th>
               </tr>
           </tfoot>
         </table>

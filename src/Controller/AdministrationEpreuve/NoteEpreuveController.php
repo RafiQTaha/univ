@@ -15,6 +15,14 @@ use Mpdf\Mpdf;
 use App\Controller\DatatablesController;
 use App\Entity\AcEpreuve;
 use App\Entity\ExGnotes;
+use App\Entity\TInscription;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\Reader\Xlsx as reader;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\String\Slugger\SluggerInterface;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 
 #[Route('/administration/note')]
 class NoteEpreuveController extends AbstractController
@@ -56,7 +64,7 @@ class NoteEpreuveController extends AbstractController
             $filtre .= " and forma.id = '" . $params->get('columns')[1]['search']['value'] . "' ";
         }   
         if (!empty($params->get('columns')[2]['search']['value'])) {
-            $filtre .= " and prm.id = '" . $params->get('columns')[12]['search']['value'] . "' ";
+            $filtre .= " and prm.id = '" . $params->get('columns')[2]['search']['value'] . "' ";
         }   
         if (!empty($params->get('columns')[3]['search']['value'])) {
             $filtre .= " and sem.id = '" . $params->get('columns')[3]['search']['value'] . "' ";
@@ -81,10 +89,10 @@ class NoteEpreuveController extends AbstractController
             array( 'db' => 'left(forma.abreviation , 10)','dt' => 6),
             array( 'db' => 'left(CONCAT(ens.nom,"  ",ens.prenom) , 10)','dt' => 7),
             array( 'db' => 'nepv.abreviation','dt' => 8),
-            array( 'db' => 'nbr_e','dt' => 9),
-            array( 'db' => 'nbr_a','dt' => 10),
-            array( 'db' => 'nbr_i','dt' => 11),
-            array( 'db' => 'nbr_ni','dt' => 12),
+            array( 'db' => 'nbr_effectif','dt' => 9),
+            array( 'db' => 'nbr_absence','dt' => 10),
+            array( 'db' => 'nbr_saisi','dt' => 11),
+            array( 'db' => 'nbr_non_saisi','dt' => 12),
             array( 'db' => 'stat.designation','dt' => 13),
         );
         $sql = "SELECT " . implode(", ", DatatablesController::Pluck($columns, 'db')) . "
@@ -99,10 +107,10 @@ class NoteEpreuveController extends AbstractController
         INNER JOIN pstatut stat ON stat.id = epv.statut_id
         INNER JOIN pnature_epreuve nepv ON nepv.id = epv.nature_epreuve_id
         INNER JOIN ac_annee ann on ann.id = epv.annee_id
-        INNER JOIN (SELECT epreuve_id,COUNT(id) nbr_e FROM ex_gnotes GROUP BY epreuve_id) ne ON ne.epreuve_id = epv.id 
-        LEFT JOIN (SELECT epreuve_id,COUNT(id) nbr_a FROM ex_gnotes WHERE absence = '1' GROUP BY epreuve_id) na ON na.epreuve_id = epv.id
-        LEFT JOIN (SELECT epreuve_id, COUNT(id) nbr_i FROM ex_gnotes WHERE absence = '0' AND (note IS NOT NULL AND note <> '') GROUP BY epreuve_id) ni ON ni.epreuve_id = epv.id 
-        LEFT JOIN (SELECT epreuve_id, COUNT(id) nbr_ni FROM ex_gnotes WHERE absence = '0' AND (note IS NULL OR note = '' ) GROUP BY epreuve_id) nni ON nni.epreuve_id = epv.id Where  1=1 $filtre";
+        INNER JOIN (SELECT epreuve_id,COUNT(id) nbr_effectif FROM ex_gnotes GROUP BY epreuve_id) ne ON ne.epreuve_id = epv.id 
+        LEFT JOIN (SELECT epreuve_id,COUNT(id) nbr_absence FROM ex_gnotes WHERE absence = '1' GROUP BY epreuve_id) na ON na.epreuve_id = epv.id
+        LEFT JOIN (SELECT epreuve_id, COUNT(id) nbr_saisi FROM ex_gnotes WHERE absence = '0' AND (note IS NOT NULL AND note <> '') GROUP BY epreuve_id) ni ON ni.epreuve_id = epv.id 
+        LEFT JOIN (SELECT epreuve_id, COUNT(id) nbr_non_saisi FROM ex_gnotes WHERE absence = '0' AND (note IS NULL OR note = '' ) GROUP BY epreuve_id) nni ON nni.epreuve_id = epv.id Where 1=1 $filtre";
         // dd($sql);
         $totalRows .= $sql;
         $sqlRequest .= $sql;
@@ -139,9 +147,9 @@ class NoteEpreuveController extends AbstractController
             }
             ///lst add*
 
-            if ($row['nbr_i'] == 0) {
+            if ($row['nbr_saisi'] == 0) {
                 $etat_bg = 'etat_bg_nf';
-            } elseif ($row['nbr_i'] > 0 AND $row['nbr_i'] < ($row['nbr_e'] - $row['nbr_a'])) {
+            } elseif ($row['nbr_saisi'] > 0 AND $row['nbr_saisi'] < ($row['nbr_effectif'] - $row['nbr_absence'])) {
                 $etat_bg = '';
             } else {
                 $etat_bg = 'etat_bg_reg';
@@ -164,17 +172,17 @@ class NoteEpreuveController extends AbstractController
     #[Route('/list/note_inscription/{id_epruve}', name: 'list_note_inscription')]
     public function note_inscription(Request $request, $id_epruve): Response
     {   
-         
         $params = $request->query;
         $where = $totalRows = $sqlRequest = "";
-        $filtre = " prv.id=".$id_epruve." and ins.statut_id in (13,14)";
+        $filtre = " where prv.id = $id_epruve ";
         $columns = array(
             array( 'db' => 'ex.id','dt' => 0 ),
-            array( 'db' => 'etu.nom','dt' => 1),
-            array( 'db' => 'etu.prenom','dt' => 2),
-            array( 'db' => 'ex.note','dt' => 3),
-            array( 'db' => 'ex.absence','dt' => 4),
-            array( 'db' => 'ex.observation','dt' => 5),
+            array( 'db' => 'upper(ins.id)','dt' => 1 ),
+            array( 'db' => 'etu.nom','dt' => 2),
+            array( 'db' => 'etu.prenom','dt' => 3),
+            array( 'db' => 'ex.note','dt' => 4),
+            array( 'db' => 'ex.absence','dt' => 5),
+            array( 'db' => 'ex.observation','dt' => 6),
         );
         $sql = "SELECT " . implode(", ", DatatablesController::Pluck($columns, 'db')) . "
         from ex_gnotes ex
@@ -182,7 +190,7 @@ class NoteEpreuveController extends AbstractController
         INNER JOIN tinscription ins on ins.id = ex.inscription_id
         INNER JOIN tadmission adm on adm.id = ins.admission_id
         INNER JOIN tpreinscription prei on prei.id = adm.preinscription_id
-        INNER JOIN tetudiant etu on etu.id = prei.etudiant_id";
+        INNER JOIN tetudiant etu on etu.id = prei.etudiant_id $filtre";
         // dd($sql);
         $totalRows .= $sql;
         $sqlRequest .= $sql;
@@ -204,25 +212,25 @@ class NoteEpreuveController extends AbstractController
         $data = array();
         $i = 1;
         foreach ($result as $key => $row) {
-            // dump($row);die;
+            // dump($row['id']);
             $nestedData = array();
             $cd = $row['id'];
-            $nestedData[] = $i;
+            // $nestedData[] = $cd;
             $etat_bg="";
             foreach (array_values($row) as $key => $value) { 
                 if($key > 0) {
-                    if($key == 3){
-                        $value = "<form class='save_note' id ='$i'><input type ='text' name='input_note' class='input_note' id ='$i' data-id='$cd' value='$value'></form>";
-                    }
                     if($key == 4){
+                        $value = "<form class='save_note' id ='$i'><input type ='float' name='input_note' class='input_note' id='$cd' value='$value' min='0.0' max='20.0' placeholder='-'></form>";
+                    }
+                    if($key == 5){
                         if($value == 0) {
                             $value = "<center><input type ='checkbox' class='check_note_ins' id ='$cd'></center>";
                         }else{
                             $value = "<center><input type ='checkbox' class='check_note_ins' id ='$cd' checked></center>";
                         }
                     }
-                    if ($key == 5) {
-                        $value = "<form class='save_obs' id ='$i'> <input type='text' class='obs_note' data-id='$cd' name='input_obs' value='$value'> </form>";
+                    if ($key == 6) {
+                        $value = "<form class='save_obs' id ='$i'> <input type='text' class='obs_note' id='$cd' name='input_obs' value='$value'> </form>";
                     }
                     $nestedData[] = $value;
                 }
@@ -244,13 +252,15 @@ class NoteEpreuveController extends AbstractController
     #[Route('/note_update/{id}', name: 'note_update')]
     public function note_update(Request $request, ExGnotes $exgnotes): Response
     {   
-        // dd($request->get('absence'));
-        // dd(,$exgnotes->getAbsence());
-        if($request->get('input_note')){
-            $exgnotes->setNote($request->get('input_note'));
-        }elseif($request->get('input_obs')){
-            $exgnotes->setObservation($request->get('input_obs'));
-        }elseif($request->get('absence')){
+        if(empty($request->get('input_note')) || $request->get('input_note')){
+            $exgnotes->setNote($request->get('input_note') == "" ?  NULL : $request->get('input_note'));
+        }
+        if(empty($request->get('input_obs')) || $request->get('input_obs')){
+            // dd('fff');
+            $exgnotes->setObservation($request->get('input_obs') == "" ? NULL : $request->get('input_obs'));
+        }
+        // dd('test');
+        if($request->get('absence')){
             if($request->get('absence') == 'true'){
                 $exgnotes->setAbsence(1);
             }else{
@@ -259,5 +269,116 @@ class NoteEpreuveController extends AbstractController
         }
         $this->em->flush();
         return new Response('Note Bien Changé');
+    }
+    #[Route('/observation_update/{id}', name: 'observation_update')]
+    public function observation_update(Request $request, ExGnotes $exgnotes): Response
+    {   
+        if(empty($request->get('input_obs')) || $request->get('input_obs')){
+            $exgnotes->setObservation($request->get('input_obs') == "" ? NULL : $request->get('input_obs'));
+        }
+        // dd('test');
+        if($request->get('absence')){
+            if($request->get('absence') == 'true'){
+                $exgnotes->setAbsence(1);
+            }else{
+                $exgnotes->setAbsence(0);
+            }
+        }
+        $this->em->flush();
+        return new Response('Note Bien Changé');
+    }
+    #[Route('/absence_update/{id}', name: 'absence_update')]
+    public function absence_update(Request $request, ExGnotes $exgnotes): Response
+    {   
+        if($request->get('absence')){
+            if($request->get('absence') == 'true'){
+                $exgnotes->setAbsence(1);
+            }else{
+                $exgnotes->setAbsence(0);
+            }
+        }
+        $this->em->flush();
+        return new Response('Note Bien Changé');
+    }
+    #[Route('/canvas/{id}', name: 'administration_note_epreuve_canvas')]
+    public function noteepreuveCanvas(AcEpreuve $epreuve) {
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        $sheet->setCellValue('A1', 'id');
+        $sheet->setCellValue('B1', 'nom');
+        $sheet->setCellValue('C1', 'prenom');
+        $sheet->setCellValue('D1', 'note');
+        $sheet->setCellValue('E1', 'absence');
+        $sheet->setCellValue('F1', 'observation');
+        if($epreuve->getAnonymat() == 1){
+            $sheet->setCellValue('G1', 'Anonymat');
+        }
+        $i=2;
+        $gnotes = $this->em->getRepository(ExGnotes::class)->ExgnotesOrderByNom($epreuve);
+        foreach($gnotes as $gnote) {
+            $sheet->setCellValue('A'.$i, $gnote->getInscription()->getId());
+            $sheet->setCellValue('B'.$i, $gnote->getInscription()->getAdmission()->getPreinscription()->getEtudiant()->getNom());
+            $sheet->setCellValue('C'.$i, $gnote->getInscription()->getAdmission()->getPreinscription()->getEtudiant()->getPrenom());
+            $sheet->setCellValue('D'.$i, $gnote->getNote());
+            $sheet->setCellValue('E'.$i, $gnote->getAbsence() ? '1' : '');
+            $sheet->setCellValue('F'.$i, $gnote->getObservation());
+            if($epreuve->getAnonymat() == 1){
+                $sheet->setCellValue('G'.$i, $gnote->getAnonymat());
+            }
+            $i++;
+        }
+
+        $writer = new Xlsx($spreadsheet);
+        $fileName = 'epreuves_'.$epreuve->getId().'.xlsx';
+        $temp_file = tempnam(sys_get_temp_dir(), $fileName);
+        $writer->save($temp_file);
+
+        return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);
+    }
+
+    #[Route('/import/{id}', name: 'administration_note_import')]
+    public function epreuveEnMasse(Request $request, SluggerInterface $slugger,AcEpreuve $epreuve) {
+        $file = $request->files->get('file');
+        // dd($file);
+        if(!$file){
+            return new JsonResponse('Prière d\'importer le fichier',500);
+        }
+        if($file->guessExtension() !== 'xlsx'){
+            return new JsonResponse('Prière d\'enregister un fichier xlsx', 500);            
+        }
+
+        $originalFilename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+        // this is needed to safely include the file name as part of the URL
+        $safeFilename = $slugger->slug($originalFilename);
+        $newFilename = $safeFilename.'-'.uniqid().'_'.$this->getUser()->getUsername().'.'.$file->guessExtension();
+
+        // Move the file to the directory where brochures are stored
+        try {
+            $file->move(
+                $this->getParameter('note_epreuve_create_directory'),
+                $newFilename
+            );
+        } catch (FileException $e) {
+            throw new \Exception($e);
+        }
+        $reader = new reader();
+        $spreadsheet = $reader->load($this->getParameter('note_epreuve_create_directory').'/'.$newFilename);
+        $worksheet = $spreadsheet->getActiveSheet();
+        $spreadSheetArys = $worksheet->toArray();
+
+        unset($spreadSheetArys[0]);
+        $sheetCount = count($spreadSheetArys);
+
+        foreach ($spreadSheetArys as $sheet) {
+            // dd();
+            $inscription = $this->em->getRepository(TInscription::class)->find($sheet[0]);
+            $exgnote = $this->em->getRepository(ExGnotes::class)->findOneBy(['epreuve'=>$epreuve,'inscription'=>$inscription]);
+            
+            $exgnote->setNote($sheet[3] = "" ? NULL : $sheet[3]);
+            $exgnote->setAbsence($sheet[4]);
+            $exgnote->setObservation($sheet[5]);
+            $this->em->flush();
+        }
+        return new JsonResponse("Total des epreuves crée est ".$sheetCount);
     }
 }

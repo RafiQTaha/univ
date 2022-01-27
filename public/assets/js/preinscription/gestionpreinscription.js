@@ -197,7 +197,7 @@ $("body").on("click", '.modal .save', async function (e) {
         })
         icon.addClass('fa-trash').removeClass("fa-spinner fa-spin");
         $(".modal-preins .table-fee tbody").empty();
-        table_gestion_preins.ajax.reload();
+        table_gestion_preins.ajax.reload(null,false);
         frais = [];
         window.open('/preinscription/gestion/facture/'+data, '_blank');
       } catch (error) {
@@ -262,7 +262,7 @@ $("#annulation").on('click', async (e) => {
             title: 'Preinscription Bien Annuler',
         })
         icon.addClass('fa-times-circle').removeClass("fa-spinner fa-spin");
-        table_gestion_preins.ajax.reload();
+        table_gestion_preins.ajax.reload(null,false);
       } catch (error) {
         const message = error.response.data;
         console.log(error, error.response);
@@ -295,7 +295,7 @@ $("#admission").on('click', async (e) => {
         })
         icon.addClass('fa-check').removeClass("fa-spinner fa-spin");
 
-        table_gestion_preins.ajax.reload();
+        table_gestion_preins.ajax.reload(null,false);
       } catch (error) {
         const message = error.response.data;
         console.log(error, error.response);
