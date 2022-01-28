@@ -87,13 +87,14 @@ class NoteEpreuveController extends AbstractController
             array( 'db' => 'left(ele.designation , 8)','dt' => 4),
             array( 'db' => 'left(etab.abreviation , 10)','dt' => 5),
             array( 'db' => 'left(forma.abreviation , 10)','dt' => 6),
-            array( 'db' => 'left(CONCAT(ens.nom,"  ",ens.prenom) , 10)','dt' => 7),
-            array( 'db' => 'nepv.abreviation','dt' => 8),
-            array( 'db' => 'nbr_effectif','dt' => 9),
-            array( 'db' => 'nbr_absence','dt' => 10),
-            array( 'db' => 'nbr_saisi','dt' => 11),
-            array( 'db' => 'nbr_non_saisi','dt' => 12),
-            array( 'db' => 'stat.designation','dt' => 13),
+            array( 'db' => 'lower(prm.designation)','dt' => 7),
+            array( 'db' => 'left(CONCAT(ens.nom,"  ",ens.prenom) , 10)','dt' => 8),
+            array( 'db' => 'nepv.abreviation','dt' => 9),
+            array( 'db' => 'nbr_effectif','dt' => 10),
+            array( 'db' => 'nbr_absence','dt' => 11),
+            array( 'db' => 'nbr_saisi','dt' => 12),
+            array( 'db' => 'nbr_non_saisi','dt' => 13),
+            array( 'db' => 'stat.designation','dt' => 14),
         );
         $sql = "SELECT " . implode(", ", DatatablesController::Pluck($columns, 'db')) . "
         FROM ac_epreuve epv 
