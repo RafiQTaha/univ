@@ -54,6 +54,9 @@ class AcEpreuve
     #[ORM\OneToMany(mappedBy: 'epreuve', targetEntity: ExGnotes::class)]
     private $gnotes;
 
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private $nature;
+
     public function __construct()
     {
         $this->gnotes = new ArrayCollection();
@@ -234,6 +237,18 @@ class AcEpreuve
                 $gnote->setEpreuve(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getNature(): ?string
+    {
+        return $this->nature;
+    }
+
+    public function setNature(string $nature): self
+    {
+        $this->nature = $nature;
 
         return $this;
     }

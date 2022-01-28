@@ -239,7 +239,6 @@ class GestionAdmissionController extends AbstractController
         $arrayOfFrais = json_decode($request->get('frais'));
         $operationCab = new TOperationcab();
         $operationCab->setPreinscription($admission->getPreinscription());
-        $operationCab->setUserCretated($this->getUser());
         if($request->get("organisme") != "") {
             $operationCab->setOrganisme(
                 $this->em->getRepository(POrganisme::class)->find($request->get("organisme"))
