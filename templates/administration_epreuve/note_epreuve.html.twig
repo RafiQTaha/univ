@@ -1,13 +1,13 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Univ - Gestion Preinscriptions{% endblock %}
+{% block title %}Univ - Notes{% endblock %}
 
 
 {% block body %}
 <div class="main-content">
     <section class="section">
         <div class="section-header">
-          <h1>Gestion Des Pré-Inscription</h1>
+          <h1>Adminstration Des Epreuves</h1>
           <div class="section-header-breadcrumb">
             {% for operation in operations %}
                  <a href="{{operation.link}}" class="{{operation.classTag}}" id="{{operation.idTag}}"><i class="{{operation.icon}}"></i>  {{operation.designation}}</a>
@@ -17,7 +17,7 @@
         <div class="section-body">
         <div class="card">
             <div class="card-header">
-                <h4>Tableau des Pré-Inscription</h4>
+                <h4>Tableau des Epreuves</h4>
             </div>
             <div class="card-body">
                 <div class="card-search" style="margin-bottom: 1.5rem;">
@@ -82,6 +82,7 @@
                         <th>Element</th>
                         <th>Etablissement</th>
                         <th>Formation</th>
+                        <th>Promotion</th>
                         <th>Enseignant</th>
                         <th>Nature</th>
                         <th>Effectif</th>
@@ -103,6 +104,7 @@
                         <th>Element</th>
                         <th>Etablissement</th>
                         <th>Formation</th>
+                        <th>Promotion</th>
                         <th>Enseignant</th>
                         <th>Nature</th>
                         <th>Effectif</th>

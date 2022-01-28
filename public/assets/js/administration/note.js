@@ -63,11 +63,21 @@ $(document).ready(function () {
     $("#etablissement").on('change', async function (){
         const id_etab = $(this).val();
         table_notes_epreuve.columns().search("");
-        table_notes_epreuve.columns(0).search(id_etab).draw();
+       
         let response = ""
         if(id_etab != "") {
+            if ($("#professeur").val() != "") {
+                table_notes_epreuve.columns(6).search($("#professeur").val())
+            }
+            table_notes_epreuve.columns(0).search(id_etab).draw();
             const request = await axios.get('/api/formation/'+id_etab);
             response = request.data
+        }else{
+            if ($("#professeur").val() != "") {
+                table_notes_epreuve.columns(6).search($("#professeur").val()).draw();
+            }else{
+                table_notes_epreuve.columns().search("").draw();
+            }
         }
         $('#semestre').html('').select2();
         $('#module').html('').select2();
@@ -77,12 +87,17 @@ $(document).ready(function () {
     })
     $("#formation").on('change', async function (){
         const id_formation = $(this).val();
-        table_notes_epreuve.columns().search("").draw();
-        table_notes_epreuve.columns(1).search(id_formation).draw();
+        table_notes_epreuve.columns().search("");
+        if ($("#professeur").val() != "") {
+            table_notes_epreuve.columns(6).search($("#professeur").val());
+        }
         let response = ""
         if(id_formation != "") {
+            table_notes_epreuve.columns(1).search(id_formation).draw();
             const request = await axios.get('/api/promotion/'+id_formation);
             response = request.data
+        }else{
+            table_notes_epreuve.columns(0).search($("#etablissement").val()).draw();
         }
         $('#semestre').html('').select2();
         $('#module').html('').select2();
@@ -91,11 +106,16 @@ $(document).ready(function () {
     })
     $("#promotion").on('change', async function (){
         const id_promotion = $(this).val();
-        table_notes_epreuve.columns().search("").draw();
-        table_notes_epreuve.columns(2).search(id_promotion).draw();
+        table_notes_epreuve.columns().search("");
+        if ($("#professeur").val() != "") {
+            table_notes_epreuve.columns(6).search($("#professeur").val());
+        }
         if(id_promotion != "") {
+            table_notes_epreuve.columns(2).search(id_promotion).draw();
             const request = await axios.get('/api/semestre/'+id_promotion);
             response = request.data
+        }else{
+            table_notes_epreuve.columns(1).search($("#formation").val()).draw();
         }
         $('#semestre').html('').select2();
         $('#module').html('').select2();
@@ -104,11 +124,16 @@ $(document).ready(function () {
     })
     $("#semestre").on('change', async function (){
         const id_semestre = $(this).val();
-        table_notes_epreuve.columns().search("").draw();
-        table_notes_epreuve.columns(3).search(id_semestre).draw();
+        table_notes_epreuve.columns().search("");
+        if ($("#professeur").val() != "") {
+            table_notes_epreuve.columns(6).search($("#professeur").val())
+        }
         if(id_semestre != "") {
             const request = await axios.get('/api/module/'+id_semestre);
+            table_notes_epreuve.columns(3).search(id_semestre).draw();
             response = request.data
+        }else{
+            table_notes_epreuve.columns(2).search($("#promotion").val()).draw();
         }
         $('#module').html('').select2();
         $('#element').html('').select2();
@@ -116,23 +141,33 @@ $(document).ready(function () {
     })
     $("#module").on('change', async function (){
         const id_module = $(this).val();
-        table_notes_epreuve.columns().search("").draw();
-        table_notes_epreuve.columns(4).search(id_module).draw();
+        table_notes_epreuve.columns().search("");
+        if ($("#professeur").val() != "") {
+            table_notes_epreuve.columns(6).search($("#professeur").val())
+        }
         if(id_module != "") {
+            table_notes_epreuve.columns(4).search(id_module).draw();
             const request = await axios.get('/api/element/'+id_module);
             response = request.data
+        }else{
+            table_notes_epreuve.columns(3).search($("#semestre").val()).draw();
         }
+
         $('#element').html(response).select2();
     })
     $("#element").on('change', async function (){
         const id_element = $(this).val();
-        table_notes_epreuve.columns().search("").draw();
+        table_notes_epreuve.columns().search("");
+        if ($("#professeur").val() != "") {
+            table_notes_epreuve.columns(6).search($("#professeur").val())
+        }
         table_notes_epreuve.columns(5).search(id_element).draw();
     })
     $("#professeur").on('change', async function (){
         const id_prof = $(this).val();
         table_notes_epreuve.columns(6).search(id_prof).draw();
     })
+
     $("#note").on('click', async function (e){
         e.preventDefault();
         if(!id_epreuve){
@@ -148,7 +183,6 @@ $(document).ready(function () {
         e.preventDefault();
         let id_exgnotes = $(this).find('input').attr('id');
         if( $(this).find('input').val() < 0 || $(this).find('input').val() > 20){
-            
             Toast.fire({
                 icon: 'error',
                 title: 'La Note doit etre entre 0 et 20',
