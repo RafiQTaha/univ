@@ -10,11 +10,13 @@ use App\Entity\AcFormation;
 use App\Entity\AcEtablissement;
 use App\Entity\AcPromotion;
 use App\Entity\AcSemestre;
+use App\Entity\XBanque;
 use App\Entity\NatureDemande;
 use App\Entity\UsOperation;
 use App\Entity\UsSousModule;
 use App\Entity\AcModule;
 use App\Entity\AcElement;
+use App\Entity\TEtudiant;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\HttpFoundation\Response;
@@ -34,7 +36,7 @@ class ApiController extends AbstractController
         $this->em = $doctrine->getManager();
         // $em = $this->getDoctrine()->getManager();
     }
-    #[Route('/etablissement', name: 'getetbalissement')]
+    #[Route('/etablissement', name: 'getetablissement')]
     public function getetbalissement(): Response
     {
         $etbalissements = $this->em->getRepository(AcEtablissement::class)->findAll();
@@ -118,6 +120,20 @@ class ApiController extends AbstractController
         $data = self::dropdown($organisme,'organisme');
         return new JsonResponse($data);        
     }
+    
+    #[Route('/nature_etudiant/{admission}', name: 'getnatureetudiant')]
+    public function getNatureEtudiant(TAdmission $admission): Response
+    {   
+        $nature = $admission->getPreinscription()->getEtudiant()->getNatureDemande()->getDesignation();
+        // dd($nature);
+        if ($nature !== 'Payant') {
+            $organisme = $this->em->getRepository(POrganisme::class)->findAll();
+        }else {
+            $organisme = [];
+        }
+        $data = self::dropdown($organisme,'organisme');
+        return new JsonResponse($data);        
+    }
     #[Route('/frais/{admission}', name: 'getFraisByFormation')]
     public function getFraisByFormation(TAdmission $admission): Response
     {   
@@ -125,6 +141,21 @@ class ApiController extends AbstractController
         $frais = $this->em->getRepository(PFrais::class)->findBy(["formation" => $formation]);
         $data = self::dropdownData($frais,'frais');
         return new JsonResponse($data);        
+    }
+    
+    #[Route('/banque', name: 'getbanque')]
+    public function getbanque(): Response
+    {
+        $banques = $this->em->getRepository(XBanque::class)->findAll();
+        $data = self::dropdown($banques,'Banque');
+        return new JsonResponse($data);
+    }
+    #[Route('/paiement', name: 'getpaiement')]
+    public function getpaiement(): Response
+    {
+        $paiements = $this->em->getRepository(XModalites::class)->findAll();
+        $data = self::dropdown($paiements,'Type De Paiement');
+        return new JsonResponse($data);
     }
 
     static function dropdown($objects,$choix)

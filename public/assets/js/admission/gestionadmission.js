@@ -83,6 +83,20 @@ const Toast = Swal.mixin({
             })    
         }
     }
+    const getNatureEtudiant = async () =>{
+        try {
+            const request = await axios.get("/api/nature_etudiant/"+id_admission);
+            const data = await request.data;
+            $('#organisme').html(data).select2();
+          } catch (error) {
+            const message = error.response.data;
+            console.log(error, error.response);
+            Toast.fire({
+                icon: 'error',
+                title: 'Some Error',
+            })    
+        }
+    }
     $("#frais").on("change", () => {
         $("#montant").val($("#frais").find(":selected").data('frais'))
     })
@@ -174,12 +188,12 @@ const Toast = Swal.mixin({
         if($(this).hasClass('active_databales')) {
             $(this).removeClass('active_databales');
             $('#inscription-modal').attr('disabled', true);
-
             id_admission = null;
         } else {
             $("#datatables_gestion_admission tbody tr").removeClass('active_databales');
             $(this).addClass('active_databales');
             id_admission = $(this).attr('id');
+            getNatureEtudiant();
             getInscriptionAnnee();
             getDocuments();
             getAdmissionInfos();
@@ -352,7 +366,7 @@ const Toast = Swal.mixin({
               </div>`
           );
           icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
-          $("#annee_inscription, #promotion_inscription").empty()
+          $("#annee_inscription, #promotion_inscription, #organisme").empty()
           table.ajax.reload(null, false)
         } catch (error) {
           const message = error.response.data;

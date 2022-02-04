@@ -140,10 +140,12 @@ $(document).ready(function  () {
       })
       return;
     }
+    $("#validermodal .modal-body #annee,#validermodal .modal-body #formation").empty();
     $('#validermodal').modal("show")
   })
   $('body').on('submit','.form-valider',async function (e) {
     e.preventDefault();
+    // alert('test');
     let formdata = $(this).serialize();
     let modalAlert =  $("#validermodal .modal-body .alert");
     modalAlert.remove();
@@ -178,7 +180,10 @@ $(document).ready(function  () {
         `<div class="alert alert-danger">${message}</div>`
       );
       icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
-    }    
+    } 
+    setTimeout(() => {
+      $(".modal-body .alert").remove();
+    }, 2000)  
   })
 
   $('#releve_note').on('click', () => {

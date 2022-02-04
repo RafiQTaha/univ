@@ -45,6 +45,9 @@ class TOperationcab
     #[ORM\ManyToOne(targetEntity: User::class)]
     private $userCreated;
 
+    #[ORM\Column(type: 'float', nullable: true)]
+    private $active;
+
     public function __construct()
     {
         $this->regelements = new ArrayCollection();
@@ -208,6 +211,18 @@ class TOperationcab
     public function setUserCreated(?User $userCreated): self
     {
         $this->userCreated = $userCreated;
+
+        return $this;
+    }
+
+    public function getActive(): ?float
+    {
+        return $this->active;
+    }
+
+    public function setActive(?float $active): self
+    {
+        $this->active = $active;
 
         return $this;
     }

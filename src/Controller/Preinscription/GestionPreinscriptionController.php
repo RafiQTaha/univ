@@ -166,7 +166,7 @@ class GestionPreinscriptionController extends AbstractController
         foreach ($ids as $id) {
             $preinscription = $this->em->getRepository(TPreinscription::class)->find($id);
             $preinscription->setInscriptionValide(0);
-            $preinscription->setUserUpdated($this->getUser());
+            // $preinscription->setUserUpdated($this->getUser());
             $preinscription->setUpdated(New DateTime('now'));
         }
         $this->em->flush();
@@ -224,24 +224,26 @@ class GestionPreinscriptionController extends AbstractController
     public function addfrais(Request $request,TPreinscription $preinscription): Response
     {   
         $ids = json_decode($request->get('frais'));
-        $operationcab = new TOperationcab();
-        $operationcab->setPreinscription($preinscription);
-        $operationcab->setAnnee($preinscription->getAnnee());
-        $operationcab->setOrganisme($this->em->getRepository(POrganisme::class)->find(7));
-        $operationcab->setCategorie('pré-inscription');
-        $operationcab->setCreated(new DateTime('now'));
-        $operationcab->setUserCreated($this->getUser());
-        $this->em->persist($operationcab);
-        $this->em->flush();
-        $etab = $preinscription->getAnnee()->getFormation()->getEtablissement()->getAbreviation();
-        $operationcab->setCode($etab.'-FAC'.str_pad($operationcab->getId(), 8, '0', STR_PAD_LEFT).'/'.date('Y'));
-        $this->em->flush();
+        // $operationcab = new TOperationcab();
+        // $operationcab->setPreinscription($preinscription);
+        // $operationcab->setAnnee($preinscription->getAnnee());
+        // $operationcab->setOrganisme($this->em->getRepository(POrganisme::class)->find(7));
+        // $operationcab->setCategorie('inscription');
+        // $operationcab->setCreated(new DateTime('now'));
+        // $operationcab->setUserCreated($this->getUser());
+        // $this->em->persist($operationcab);
+        // $this->em->flush();
+        // $etab = $preinscription->getAnnee()->getFormation()->getEtablissement()->getAbreviation();
+        // $operationcab->setCode($etab.'-FAC'.str_pad($operationcab->getId(), 8, '0', STR_PAD_LEFT).'/'.date('Y'));
+        // $this->em->flush();
+        $operationcab = $this->em->getRepository(TOperationcab::class)->findOneBy(['preinscription'=>$preinscription,'categorie'=>'pré-inscription']);
         foreach($ids as $idfrais){
             $operationdet = new TOperationdet();
             $operationdet->setOperationcab($operationcab);
             $operationdet->setFrais($this->em->getRepository(PFrais::class)->find($idfrais->id));
             $operationdet->setMontant($idfrais->montant);
             $operationdet->setRemise(0);
+            $operationDet->setActive(1);
             $operationdet->setCreated(new DateTime('now'));
             $operationdet->setUpdated(new DateTime('now'));
             $this->em->persist($operationdet);
