@@ -3456,7 +3456,7 @@ body.sidebar-mini .main-sidebar .sidebar-menu > li ul.dropdown-menu {
   background-color: #fff;
   left: 65px;
   top: 1rem;
-  width: 20rem;
+  width: 22rem;
   display: none;
   box-shadow: 0 0 3rem rgba(0, 0, 0, 0.03);
 }
@@ -6287,6 +6287,13 @@ tr:first-child > td > .fc-day-grid-event {
 }
 .modal .modal-modifier{
   max-width: 85% !important;
+}
+.modal .modal-facture{
+  max-width: 50% !important;
+}
+.modal .modal-facture input{
+ width: 100%;
+ line-height: 24px !important; 
 }
 .modal .modal-box{
   width:100%;

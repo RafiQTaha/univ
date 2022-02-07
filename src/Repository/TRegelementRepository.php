@@ -27,7 +27,7 @@ class TRegelementRepository extends ServiceEntityRepository
     {
         $request = $this->createQueryBuilder('t')
             ->select("SUM(t.montant) as total")
-            ->Where('t.impayer = 0')
+            // ->Where('t.impayer = 0')
             ->andWhere('t.operation = :operation')
             ->setParameter('operation', $operation)
             ->groupBy('t.operation')

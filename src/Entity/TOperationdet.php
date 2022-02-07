@@ -37,6 +37,9 @@ class TOperationdet
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $ice;
 
+    #[ORM\Column(type: 'float', nullable: true)]
+    private $active;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -134,6 +137,18 @@ class TOperationdet
     public function setIce(?string $ice): self
     {
         $this->ice = $ice;
+
+        return $this;
+    }
+
+    public function getActive(): ?float
+    {
+        return $this->active;
+    }
+
+    public function setActive(?float $active): self
+    {
+        $this->active = $active;
 
         return $this;
     }

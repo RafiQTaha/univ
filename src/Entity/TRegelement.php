@@ -28,38 +28,41 @@ class TRegelement
     #[ORM\Column(type: 'date', nullable: true)]
     private $date_reglement;
 
-    #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private $periode;
+    // #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    // private $periode;
 
-    #[ORM\Column(type: 'integer', nullable: true)]
-    private $duree;
+    // #[ORM\Column(type: 'integer', nullable: true)]
+    // private $duree;
 
-    #[ORM\Column(type: 'date', nullable: true)]
-    private $debut;
+    // #[ORM\Column(type: 'date', nullable: true)]
+    // private $debut;
 
-    #[ORM\Column(type: 'date', nullable: true)]
-    private $fin;
+    // #[ORM\Column(type: 'date', nullable: true)]
+    // private $fin;
 
-    #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private $sens;
+    // #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    // private $sens;
 
-    #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private $paiement;
-
-    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[ORM\ManyToOne(targetEntity: XBanque::class, inversedBy: 'regelements')]
     private $banque;
 
+    #[ORM\ManyToOne(targetEntity: XModalites::class, inversedBy: 'regelements')]
+    private $paiement;
+    
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $reference;
 
-    #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private $brd;
+    // #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    // private $brd;
 
-    #[ORM\Column(type: 'integer', nullable: true)]
-    private $impayer;
+    // #[ORM\Column(type: 'integer', nullable: true)]
+    // private $impayer;
 
     #[ORM\Column(type: 'datetime', nullable: true)]
     private $created;
+
+    #[ORM\ManyToOne(targetEntity: TBrdpaiement::class, inversedBy: 'regelements')]
+    private $bordereau;
 
     public function getId(): ?int
     {
@@ -126,86 +129,86 @@ class TRegelement
         return $this;
     }
 
-    public function getPeriode(): ?string
-    {
-        return $this->periode;
-    }
+    // public function getPeriode(): ?string
+    // {
+    //     return $this->periode;
+    // }
 
-    public function setPeriode(?string $periode): self
-    {
-        $this->periode = $periode;
+    // public function setPeriode(?string $periode): self
+    // {
+    //     $this->periode = $periode;
 
-        return $this;
-    }
+    //     return $this;
+    // }
 
-    public function getDuree(): ?int
-    {
-        return $this->duree;
-    }
+    // public function getDuree(): ?int
+    // {
+    //     return $this->duree;
+    // }
 
-    public function setDuree(?int $duree): self
-    {
-        $this->duree = $duree;
+    // public function setDuree(?int $duree): self
+    // {
+    //     $this->duree = $duree;
 
-        return $this;
-    }
+    //     return $this;
+    // }
 
-    public function getDebut(): ?\DateTimeInterface
-    {
-        return $this->debut;
-    }
+    // public function getDebut(): ?\DateTimeInterface
+    // {
+    //     return $this->debut;
+    // }
 
-    public function setDebut(?\DateTimeInterface $debut): self
-    {
-        $this->debut = $debut;
+    // public function setDebut(?\DateTimeInterface $debut): self
+    // {
+    //     $this->debut = $debut;
 
-        return $this;
-    }
+    //     return $this;
+    // }
 
-    public function getFin(): ?\DateTimeInterface
-    {
-        return $this->fin;
-    }
+    // public function getFin(): ?\DateTimeInterface
+    // {
+    //     return $this->fin;
+    // }
 
-    public function setFin(?\DateTimeInterface $fin): self
-    {
-        $this->fin = $fin;
+    // public function setFin(?\DateTimeInterface $fin): self
+    // {
+    //     $this->fin = $fin;
 
-        return $this;
-    }
+    //     return $this;
+    // }
 
-    public function getSens(): ?string
-    {
-        return $this->sens;
-    }
+    // public function getSens(): ?string
+    // {
+    //     return $this->sens;
+    // }
 
-    public function setSens(?string $sens): self
-    {
-        $this->sens = $sens;
+    // public function setSens(?string $sens): self
+    // {
+    //     $this->sens = $sens;
 
-        return $this;
-    }
+    //     return $this;
+    // }
 
-    public function getPaiement(): ?string
-    {
-        return $this->paiement;
-    }
-
-    public function setPaiement(?string $paiement): self
-    {
-        $this->paiement = $paiement;
-
-        return $this;
-    }
-
-    public function getBanque(): ?string
+    public function getBanque(): ?XBanque
     {
         return $this->banque;
     }
 
-    public function setBanque(?string $banque): self
+    public function setBanque(?XBanque $banque): self
     {
         $this->banque = $banque;
+
+        return $this;
+    }
+
+    public function getPaiement(): ?XModalites
+    {
+        return $this->paiement;
+    }
+
+    public function setPaiement(?XModalites $paiement): self
+    {
+        $this->paiement = $paiement;
 
         return $this;
     }
@@ -254,6 +257,18 @@ class TRegelement
     public function setCreated(?\DateTimeInterface $created): self
     {
         $this->created = $created;
+
+        return $this;
+    }
+
+    public function getBordereau(): ?TBrdpaiement
+    {
+        return $this->bordereau;
+    }
+
+    public function setBordereau(?TBrdpaiement $bordereau): self
+    {
+        $this->bordereau = $bordereau;
 
         return $this;
     }

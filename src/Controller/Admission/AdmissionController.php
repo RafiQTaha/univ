@@ -2,11 +2,14 @@
 
 namespace App\Controller\Admission;
 
+use DateTime;
 use App\Controller\ApiController;
 use App\Entity\TAdmission;
 use App\Entity\TPreinscription;
 use App\Controller\DatatablesController;
 use App\Entity\PStatut;
+use App\Entity\TOperationcab;
+use App\Entity\POrganisme;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -27,14 +30,15 @@ class AdmissionController extends AbstractController
 
     #[Route('/', name: 'admission_index')]
     public function index(): Response
-    {
+    {   
+        $organismes = $this->em->getRepository(POrganisme::class)->findAll();
         $operations = ApiController::check($this->getUser(), 'admission_index', $this->em);
         if(!$operations) {
             return $this->render("errors/403.html.twig");
-
         }
         return $this->render('admission/admissions.html.twig', [
-            'operations' => $operations
+            'operations' => $operations,
+            'organismes' => $organismes
         ]);
     }
     #[Route('/candidat_addmissible_list', name: 'candidat_admissible_list')]
@@ -134,7 +138,7 @@ class AdmissionController extends AbstractController
     {
         $params = $request->query;
         $where = $totalRows = $sqlRequest = "";
-        $filtre = "where 1 = 1";       
+        $filtre = " where 1 = 1 ";       
         $columns = array(
             array( 'db' => 'ad.code','dt' => 0),
             array( 'db' => 'UPPER(pre.code)','dt' => 1),
@@ -155,10 +159,9 @@ class AdmissionController extends AbstractController
                 inner join ac_annee an on an.id = pre.annee_id
                 inner join ac_formation form on form.id = an.formation_id              
                 inner join ac_etablissement etab on etab.id = form.etablissement_id 
-                LEFT JOIN nature_demande nd ON etu.nature_demande_id = nd.id
+                LEFT JOIN nature_demande nd ON etu.nature_demande_id = nd.id 
                 $filtre"
         ;
-        // dd($sql);
         $totalRows .= $sql;
         $sqlRequest .= $sql;
         $stmt = $this->em->getConnection()->prepare($sql);
@@ -166,7 +169,7 @@ class AdmissionController extends AbstractController
         $totalRecords = count($newstmt->fetchAll());
         // dd($sql);
         $my_columns = DatatablesController::Pluck($columns, 'db');
-
+        
         // search 
         $where = DatatablesController::Search($request, $columns);
         if (isset($where) && $where != '') {
@@ -174,6 +177,7 @@ class AdmissionController extends AbstractController
         }
         $sqlRequest .= DatatablesController::Order($request, $columns);
         // dd($sqlRequest);
+        // dd($sql);
         $stmt = $this->em->getConnection()->prepare($sqlRequest);
         $resultSet = $stmt->executeQuery();
         $result = $resultSet->fetchAll();
@@ -228,8 +232,21 @@ class AdmissionController extends AbstractController
                 $this->em->flush();
                 $formation = $preinscription->getAnnee()->getFormation()->getAbreviation();
                 $etablissement = $preinscription->getAnnee()->getFormation()->getEtablissement()->getAbreviation();
-    
                 $admission->setCode('ADM-'.$etablissement.'_'.$formation.str_pad($admission->getId(), 8, '0', STR_PAD_LEFT));
+                $this->em->flush();
+                
+                $operationcab = new TOperationcab();
+                $operationcab->setPreinscription($preinscription);
+                $operationcab->setAnnee($preinscription->getAnnee());
+                $operationcab->setOrganisme($this->em->getRepository(POrganisme::class)->find(7));
+                $operationcab->setCategorie('admission');
+                $operationcab->setCreated(new DateTime('now'));
+                $operationcab->setUserCreated($this->getUser());
+                $operationcab->setActive(0);
+                $this->em->persist($operationcab);
+                $this->em->flush();
+                $etab = $preinscription->getAnnee()->getFormation()->getEtablissement()->getAbreviation();
+                $operationcab->setCode($etab.'-FAC'.str_pad($operationcab->getId(), 8, '0', STR_PAD_LEFT).'/'.date('Y'));
                 $this->em->flush();
             }
         }

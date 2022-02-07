@@ -14,6 +14,8 @@ use App\Entity\AcAnnee;
 use App\Controller\DatatablesController;
 use App\Entity\AcFormation;
 use App\Entity\PMatiere;
+use App\Entity\POrganisme;
+use App\Entity\TOperationcab;
 use App\Entity\TPreinscriptionReleveNote;
 use Doctrine\Persistence\ManagerRegistry;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
@@ -349,19 +351,34 @@ class EtudiantController extends AbstractController
         if ($exist > 0) {
             return new JsonResponse(1);
         }
-        $preinsctiption = new TPreinscription();
-        $preinsctiption->setStatut($etudiant->getStatut());
-        $preinsctiption->setEtudiant($etudiant);
-        $preinsctiption->setInscriptionValide(1);
-        $preinsctiption->setRangP(0);
-        $preinsctiption->setRangS(0);
-        $preinsctiption->setActive(1);
-        $preinsctiption->setCreated(new DateTime('now'));
-        $preinsctiption->setAnnee($annee);
-        $this->em->persist($preinsctiption);
+        $preinscription = new TPreinscription();
+        $preinscription->setStatut($etudiant->getStatut());
+        $preinscription->setEtudiant($etudiant);
+        $preinscription->setInscriptionValide(1);
+        $preinscription->setRangP(0);
+        $preinscription->setRangS(0);
+        $preinscription->setActive(1);
+        $preinscription->setCreated(new DateTime('now'));
+        $preinscription->setAnnee($annee);
+        $this->em->persist($preinscription);
         $this->em->flush();
-        $preinsctiption->setCode('PRE-'.$formation->getAbreviation().str_pad($preinsctiption->getId(), 8, '0', STR_PAD_LEFT).'/'.date('Y'));
+        $preinscription->setCode('PRE-'.$formation->getAbreviation().str_pad($preinscription->getId(), 8, '0', STR_PAD_LEFT).'/'.date('Y'));
         $this->em->flush();
+
+        $operationcab = new TOperationcab();
+        $operationcab->setPreinscription($preinscription);
+        $operationcab->setAnnee($preinscription->getAnnee());
+        $operationcab->setOrganisme($this->em->getRepository(POrganisme::class)->find(7));
+        $operationcab->setCategorie('pré-inscription');
+        $operationcab->setCreated(new DateTime('now'));
+        $operationcab->setUserCreated($this->getUser());
+        $operationcab->setActive(0);
+        $this->em->persist($operationcab);
+        $this->em->flush();
+        $etab = $preinscription->getAnnee()->getFormation()->getEtablissement()->getAbreviation();
+        $operationcab->setCode($etab.'-FAC'.str_pad($operationcab->getId(), 8, '0', STR_PAD_LEFT).'/'.date('Y'));
+        $this->em->flush();
+        
         return new JsonResponse('Bien Enregistrer');
     }
     

@@ -43,7 +43,6 @@ class GestionAdmissionController extends AbstractController
         $operations = ApiController::check($this->getUser(), 'gestion_admission', $this->em);
         if(!$operations) {
             return $this->render("errors/403.html.twig");
-
         }
         // dd($operations);
         return $this->render('admission/gestion_admission.html.twig', [
@@ -237,38 +236,42 @@ class GestionAdmissionController extends AbstractController
     {
         // dd($request->get("organisme"));
         $arrayOfFrais = json_decode($request->get('frais'));
-        $operationCab = new TOperationcab();
-        $operationCab->setPreinscription($admission->getPreinscription());
-        if($request->get("organisme") != "") {
-            $operationCab->setOrganisme(
-                $this->em->getRepository(POrganisme::class)->find($request->get("organisme"))
-            );
-        } else {
-            $operationCab->setOrganisme(
-                $this->em->getRepository(POrganisme::class)->find(7)
-            );
-        }
-        $operationCab->setAnnee($admission->getPreinscription()->getAnnee());
-        $operationCab->setCategorie('admission');
-        $operationCab->setCreated(new \DateTime("now"));
-        $operationCab->setUserCreated($this->getUser());
+        // $operationCab = new TOperationcab();
+        $preinscription = $admission->getPreinscription();
+        // $operationcab = $this->em->getRepository(TOperationcab::class)->findOneBy(['preinscription'=>$preinscription,'categorie'=>'admission']);
+        // $operationCab->setPreinscription($admission->getPreinscription());
+        // if($request->get("organisme") != "") {
+        //     $operationCab->setOrganisme(
+        //         $this->em->getRepository(POrganisme::class)->find($request->get("organisme"))
+        //     );
+        // } else {
+        //     $operationCab->setOrganisme(
+        //         $this->em->getRepository(POrganisme::class)->find(7)
+        //     );
+        // }
+        // $operationCab->setAnnee($admission->getPreinscription()->getAnnee());
+        // $operationCab->setCategorie('admission');
+        // $operationCab->setCreated(new \DateTime("now"));
+        // $operationCab->setUserCreated($this->getUser());
 
-        $this->em->persist($operationCab);
-        $this->em->flush();
-        $operationCab->setCode(
-            $admission->getPreinscription()->getAnnee()->getFormation()->getEtablissement()->getAbreviation()."-FAC".str_pad($operationCab->getId(), 8, '0', STR_PAD_LEFT)."/".date('Y')
-        );
-        $this->em->flush();
-
+        // $this->em->persist($operationCab);
+        // $this->em->flush();
+        // $operationCab->setCode(
+        //     $admission->getPreinscription()->getAnnee()->getFormation()->getEtablissement()->getAbreviation()."-FAC".str_pad($operationCab->getId(), 8, '0', STR_PAD_LEFT)."/".date('Y')
+        // );
+        // $this->em->flush();
+        $operationcab = $this->em->getRepository(TOperationcab::class)->findOneBy(['preinscription'=>$preinscription,'categorie'=>'admission']);
+        // dd($operationcab);
         foreach ($arrayOfFrais as $fraisObject) {
             $frais =  $this->em->getRepository(PFrais::class)->find($fraisObject->id);
             $operationDet = new TOperationdet();
-            $operationDet->setOperationcab($operationCab);
+            $operationDet->setOperationcab($operationcab);
             $operationDet->setFrais($frais);
             $operationDet->setMontant($fraisObject->montant);
             $operationDet->setIce($fraisObject->ice);
             $operationDet->setCreated(new \DateTime("now"));
             $operationDet->setRemise(0);
+            $operationDet->setActive(1);
             $this->em->persist($operationDet);
             $this->em->flush();
             $operationDet->setCode(
@@ -277,7 +280,7 @@ class GestionAdmissionController extends AbstractController
             $this->em->flush();
         }
 
-        return new JsonResponse($operationCab->getId(), 200);
+        return new JsonResponse($operationcab->getId(), 200);
     }
 
     #[Route('/facture/{operationcab}', name: 'admission_facture')]
@@ -334,6 +337,34 @@ class GestionAdmissionController extends AbstractController
         $this->em->persist($inscription);
         $this->em->flush();
         $inscription->setCode('INS-'. $annee->getFormation()->getEtablissement()->getAbreviation().str_pad($inscription->getId(), 8, '0', STR_PAD_LEFT).'/'.date("Y"));
+        $this->em->flush();
+        // Add New Facture Inscription
+        // dd($operationcabs = $this->em->getRepository(TOperationcab::class)->findBy(['preinscription'=>$admission->getPreinscription()]));
+        $operationcabs = $this->em->getRepository(TOperationcab::class)->findBy(['preinscription'=>$inscription->getAdmission()->getPreinscription()]);
+        foreach($operationcabs as $operationcab){
+            $operationcab->setActive(1);
+        }
+        $operationCab = new TOperationcab();
+        $operationCab->setPreinscription($inscription->getAdmission()->getPreinscription());
+        $operationCab->setUserCreated($this->getUser());
+        if($request->get("organisme") != "") {
+            $operationCab->setOrganisme(
+                $this->em->getRepository(POrganisme::class)->find($request->get("organisme"))
+            );
+        } else {
+            $operationCab->setOrganisme(
+                $this->em->getRepository(POrganisme::class)->find(7)
+            );
+        }
+        $operationCab->setAnnee($inscription->getAnnee());
+        $operationCab->setCategorie('inscription');
+        $operationCab->setCreated(new \DateTime("now"));
+        $operationCab->setActive(0);
+        $this->em->persist($operationCab);
+        $this->em->flush();
+        $operationCab->setCode(
+            $inscription->getAnnee()->getFormation()->getEtablissement()->getAbreviation()."-FAC".str_pad($operationCab->getId(), 8, '0', STR_PAD_LEFT)."/".date('Y')
+        );
         $this->em->flush();
         return new JsonResponse("Bien Enregistre code inscription: " . $inscription->getCode(), 200);
     }

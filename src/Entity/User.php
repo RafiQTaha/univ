@@ -29,9 +29,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\ManyToMany(targetEntity: UsOperation::class, inversedBy: 'users')]
     private $operations;
 
+    #[ORM\OneToMany(mappedBy: 'UserCreated', targetEntity: TBrdpaiement::class)]
+    private $bordereaux;
+
     public function __construct()
     {
         $this->operations = new ArrayCollection();
+        $this->bordereaux = new ArrayCollection();
     }
 
     
@@ -136,6 +140,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function removeOperation(UsOperation $operation): self
     {
         $this->operations->removeElement($operation);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|TBrdpaiement[]
+     */
+    public function getBordereaux(): Collection
+    {
+        return $this->bordereaux;
+    }
+
+    public function addBordereaux(TBrdpaiement $bordereaux): self
+    {
+        if (!$this->bordereaux->contains($bordereaux)) {
+            $this->bordereaux[] = $bordereaux;
+            $bordereaux->setUserCreated($this);
+        }
+
+        return $this;
+    }
+
+    public function removeBordereaux(TBrdpaiement $bordereaux): self
+    {
+        if ($this->bordereaux->removeElement($bordereaux)) {
+            // set the owning side to null (unless already changed)
+            if ($bordereaux->getUserCreated() === $this) {
+                $bordereaux->setUserCreated(null);
+            }
+        }
 
         return $this;
     }

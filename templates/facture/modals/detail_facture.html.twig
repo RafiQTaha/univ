@@ -1,0 +1,48 @@
+<div class="modal" role="dialog" id="detail_facture_modal" aria-modal="true"> 
+<div class="modal-dialog modal-md modal-facture" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Detaille Facture</h5>
+        </hr>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"> 
+        <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <div class="modal-body">
+            <div class="row mb-4">
+                <div class="col-md-5">
+                    <label for="frais">Frais de scolarité (*):</label>
+                    <select class="form-control" name="frais" id="frais">
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="montant">Montant(*):</label>
+                    <input type="text" class="form-control" id='montant'>
+                </div>
+                <div class="col-md-4">
+                    <label for="ice">ICE:</label>
+                    <input type="number" class="form-control" id="ice" maxlength="15" placeholder="15 Chiffres">
+                </div>
+            </div>
+            <button class="btn btn-primary mb-4 float-right" id="add_detaille"><i class="fas fa-plus"></i> Ajouter</button>
+            <table class="table table-fee table_detaille_facture">
+                <thead>
+                    <tr>
+                        <th scope="col">Ord</th>
+                        <th scope="col" style="width:25rem">Designation</th>
+                        <th scope="col">Montant</th>
+                        <th scope="col">Remise</th>
+                        <th scope="col">Desactive</th>
+                    </tr>
+                </thead>
+                <tbody >
+                </tbody>
+              </table>
+
+      </div>
+
+
+
+    </div>
+  </div>
+</div>
