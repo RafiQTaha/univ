@@ -22,19 +22,20 @@ class AcElementRepository extends ServiceEntityRepository
     // /**
     //  * @return AcElement[] Returns an array of AcElement objects
     //  */
-    /*
-    public function findByExampleField($value)
+    
+    public function getElementsBySemestre($semestre)
     {
         return $this->createQueryBuilder('a')
-            ->andWhere('a.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('a.id', 'ASC')
-            ->setMaxResults(10)
+            ->innerJoin("a.module", "module")
+            ->where('module.semestre = :semestre')
+            ->andWhere("module.active = 1")
+            ->andWhere("a.active = 1")
+            ->setParameter('semestre', $semestre)
             ->getQuery()
             ->getResult()
         ;
     }
-    */
+    
 
     /*
     public function findOneBySomeField($value): ?AcElement

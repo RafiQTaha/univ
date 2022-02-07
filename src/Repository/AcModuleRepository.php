@@ -36,15 +36,18 @@ class AcModuleRepository extends ServiceEntityRepository
     }
     */
 
-    /*
-    public function findOneBySomeField($value): ?AcModule
+    
+    public function findByPromotion($promotion)
     {
         return $this->createQueryBuilder('a')
-            ->andWhere('a.exampleField = :val')
-            ->setParameter('val', $value)
+            ->innerJoin("a.semestre", "semestre")
+            ->where("semestre.promotion = :promotion")
+            ->andWhere('a.active = 1')
+            ->andWhere('semestre.active = 1')
+            ->setParameter('promotion', $promotion)
             ->getQuery()
-            ->getOneOrNullResult()
+            ->getResult()
         ;
     }
-    */
+    
 }

@@ -63,9 +63,24 @@ class TInscription
     #[ORM\OneToMany(mappedBy: 'inscription', targetEntity: ExGnotes::class)]
     private $gnotes;
 
+    #[ORM\OneToMany(mappedBy: 'inscription', targetEntity: ExEnotes::class)]
+    private $enotes;
+
+    #[ORM\OneToMany(mappedBy: 'inscription', targetEntity: ExMnotes::class)]
+    private $mnotes;
+
+    #[ORM\OneToMany(mappedBy: 'inscription', targetEntity: ExSnotes::class)]
+    private $snotes;
+
+    #[ORM\OneToOne(mappedBy: 'inscription', targetEntity: ExAnotes::class, cascade: ['persist', 'remove'])]
+    private $anotes;
+
     public function __construct()
     {
         $this->gnotes = new ArrayCollection();
+        $this->enotes = new ArrayCollection();
+        $this->mnotes = new ArrayCollection();
+        $this->snotes = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -280,6 +295,118 @@ class TInscription
                 $gnote->setInscription(null);
             }
         }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|ExEnotes[]
+     */
+    public function getEnotes(): Collection
+    {
+        return $this->enotes;
+    }
+
+    public function addEnote(ExEnotes $enote): self
+    {
+        if (!$this->enotes->contains($enote)) {
+            $this->enotes[] = $enote;
+            $enote->setInscription($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEnote(ExEnotes $enote): self
+    {
+        if ($this->enotes->removeElement($enote)) {
+            // set the owning side to null (unless already changed)
+            if ($enote->getInscription() === $this) {
+                $enote->setInscription(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|ExMnotes[]
+     */
+    public function getMnotes(): Collection
+    {
+        return $this->mnotes;
+    }
+
+    public function addMnote(ExMnotes $mnote): self
+    {
+        if (!$this->mnotes->contains($mnote)) {
+            $this->mnotes[] = $mnote;
+            $mnote->setInscription($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMnote(ExMnotes $mnote): self
+    {
+        if ($this->mnotes->removeElement($mnote)) {
+            // set the owning side to null (unless already changed)
+            if ($mnote->getInscription() === $this) {
+                $mnote->setInscription(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|ExSnotes[]
+     */
+    public function getSnotes(): Collection
+    {
+        return $this->snotes;
+    }
+
+    public function addSnote(ExSnotes $snote): self
+    {
+        if (!$this->snotes->contains($snote)) {
+            $this->snotes[] = $snote;
+            $snote->setInscription($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSnote(ExSnotes $snote): self
+    {
+        if ($this->snotes->removeElement($snote)) {
+            // set the owning side to null (unless already changed)
+            if ($snote->getInscription() === $this) {
+                $snote->setInscription(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getAnotes(): ?ExAnotes
+    {
+        return $this->anotes;
+    }
+
+    public function setAnotes(?ExAnotes $anotes): self
+    {
+        // unset the owning side of the relation if necessary
+        if ($anotes === null && $this->anotes !== null) {
+            $this->anotes->setInscription(null);
+        }
+
+        // set the owning side of the relation if necessary
+        if ($anotes !== null && $anotes->getInscription() !== $this) {
+            $anotes->setInscription($this);
+        }
+
+        $this->anotes = $anotes;
 
         return $this;
     }
