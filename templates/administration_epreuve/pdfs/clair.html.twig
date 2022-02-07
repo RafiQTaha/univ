@@ -234,13 +234,16 @@
 </table>
 
 <br/>
-<table style="width: 100% ; background: #FFFFFF;font-size: 10px" cellspacing="0" class="slh">
+<table style="width: 100% ; background: #FFFFFF;font-size: 12px" cellspacing="0" class="slh">
     <thead>
-        <tr style="background-color: rgb(31, 79, 122);font-size: 9px;">
+        <tr style="background-color: rgb(31, 79, 122);font-size: 12px;">
             <th style="width: 7%;text-align: left; padding:6px;border-right:1px solid white;font-weight: bold;color: white;font-size: 10px">ORD</th>
+            {% if epreuve.anonymat == 1 %}
+            <th style="width: 15%;text-align: left; padding:6px;border-right:1px solid white;font-weight: bold;color: white;font-size: 10px">Anonymat</th>
+            {% endif %}
             <th style="width: 23%;text-align: left; padding:6px;border-right:1px solid white;font-weight: bold;color: white;font-size: 10px">Nom</th>
             <th style="width: 20%;text-align: left; padding:6px;border-right:1px solid white;font-weight: bold;color: white;font-size: 10px">Prenom</th>
-            <th style="width: 20%;text-align: left; padding:6px;border-right:1px solid white;font-weight: bold;color: white;font-size: 10px">Note</th>
+            <th style="width: 10%;text-align: left; padding:6px;border-right:1px solid white;font-weight: bold;color: white;font-size: 10px">Note</th>
             <th style="width: 15%;text-align: left; padding:6px;border-right:1px solid white;font-weight: bold;color: white;font-size: 10px">Absence</th>
             <th style="width: 15%;text-align: left; padding:6px;border-right:1px solid white;font-weight: bold;color: white;font-size: 10px">Observation</th>
         </tr>
@@ -249,6 +252,9 @@
         {% for gnote in epreuve.gnotes %}
         <tr>
             <td style="padding:6px;border-right:1px solid white;text-align: left;">{{loop.index}}</td>
+            {% if epreuve.anonymat == 1 %}
+            <td style="padding:6px;border-right:1px solid white;text-align: left;">{{gnote.anonymat}}</td>
+            {% endif %}
             <td style="padding:6px;border-right:1px solid white;text-align: left;">{{gnote.inscription.admission.preinscription.etudiant.nom}}</td>
             <td style="padding:6px;border-right:1px solid white;text-align: left;">{{gnote.inscription.admission.preinscription.etudiant.prenom}}</td>
             <td style="padding:6px;border-right:1px solid white;text-align: left;">{{gnote.note}}</td>

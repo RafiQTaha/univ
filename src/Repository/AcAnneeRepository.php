@@ -36,15 +36,18 @@ class AcAnneeRepository extends ServiceEntityRepository
     }
     */
 
-    /*
-    public function findOneBySomeField($value): ?AcAnnee
+    
+    public function getActiveAnneeByFormation($formation): ?AcAnnee
     {
         return $this->createQueryBuilder('a')
-            ->andWhere('a.exampleField = :val')
-            ->setParameter('val', $value)
+            ->where('a.validation_academique = :non')
+            ->andWhere('a.cloture_academique = :non')
+            ->andWhere('a.formation = :formation')
+            ->setParameter('formation', $formation)
+            ->setParameter('non', "non")
             ->getQuery()
             ->getOneOrNullResult()
         ;
     }
-    */
+    
 }

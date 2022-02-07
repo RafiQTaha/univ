@@ -76,4 +76,54 @@ class TInscriptionRepository extends ServiceEntityRepository
             ->getResult()
         ;
     }
+    public function getInscriptionsByAnneeAndPromo($annee, $promotion, $order)
+    {
+        if($order == 2) {
+            $order = 'DESC';
+        } else {
+            $order = 'ASC';
+        }
+        $request =  $this->createQueryBuilder('t')
+            ->innerJoin("t.statut", "statut")
+            ->innerJoin("t.admission", "admission")
+            ->innerJoin("admission.preinscription", "preinscription")
+            ->innerJoin("preinscription.etudiant", "etudiant")
+            ->where('t.promotion = :promotion')
+            ->andWhere("t.annee = :annee")
+            ->andWhere("statut.id = 13")
+            ->setParameter('promotion', $promotion)
+            ->setParameter('annee', $annee)
+            ->orderBy('etudiant.nom', $order)
+            ->getQuery()
+            ->getResult()
+        ;
+        return $request;
+    }
+    public function getInscriptionsByAnneeAndPromoAndElement($annee, $promotion,$element, $order)
+    {
+        if($order == 2) {
+            $order = 'DESC';
+        } else {
+            $order = 'ASC';
+        }
+        $request =  $this->createQueryBuilder('t')
+            ->innerJoin("t.statut", "statut")
+            ->innerJoin("t.admission", "admission")
+            ->innerJoin("admission.preinscription", "preinscription")
+            ->innerJoin("preinscription.etudiant", "etudiant")
+            ->innerJoin("t.enotes", "enotes")
+            ->innerJoin("enotes.element", "element")
+            ->where('t.promotion = :promotion')
+            ->andWhere('element = :element')
+            ->andWhere("t.annee = :annee")
+            ->andWhere("statut.id = 13")
+            ->setParameter('promotion', $promotion)
+            ->setParameter('element', $element->getId())
+            ->setParameter('annee', $annee)
+            ->orderBy('etudiant.nom', $order)
+            ->getQuery()
+            ->getResult()
+        ;
+        return $request;
+    }
 }

@@ -21,7 +21,7 @@ class AcSemestre
     #[ORM\ManyToOne(targetEntity: User::class)]
     private $user_updated;
 
-    #[ORM\ManyToOne(targetEntity: AcPromotion::class, inversedBy: 'acSemestres')]
+    #[ORM\ManyToOne(targetEntity: AcPromotion::class, inversedBy: 'semestres')]
     private $promotion;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
@@ -46,12 +46,14 @@ class AcSemestre
     private $coefficient_ass;
 
     #[ORM\OneToMany(mappedBy: 'semestre', targetEntity: AcModule::class)]
-    private $acModules;
+    private $modules;
 
     public function __construct()
     {
-        $this->acModules = new ArrayCollection();
+        $this->modules = new ArrayCollection();
     }
+
+  
 
     public function getId(): ?int
     {
@@ -181,30 +183,32 @@ class AcSemestre
     /**
      * @return Collection|AcModule[]
      */
-    public function getAcModules(): Collection
+    public function getModules(): Collection
     {
-        return $this->acModules;
+        return $this->modules;
     }
 
-    public function addAcModule(AcModule $acModule): self
+    public function addModule(AcModule $module): self
     {
-        if (!$this->acModules->contains($acModule)) {
-            $this->acModules[] = $acModule;
-            $acModule->setSemestre($this);
+        if (!$this->modules->contains($module)) {
+            $this->modules[] = $module;
+            $module->setSemestre($this);
         }
 
         return $this;
     }
 
-    public function removeAcModule(AcModule $acModule): self
+    public function removeModule(AcModule $module): self
     {
-        if ($this->acModules->removeElement($acModule)) {
+        if ($this->modules->removeElement($module)) {
             // set the owning side to null (unless already changed)
-            if ($acModule->getSemestre() === $this) {
-                $acModule->setSemestre(null);
+            if ($module->getSemestre() === $this) {
+                $module->setSemestre(null);
             }
         }
 
         return $this;
     }
+
+   
 }

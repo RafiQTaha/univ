@@ -24,7 +24,7 @@ class AcElement
     #[ORM\ManyToOne(targetEntity: AcModule::class, inversedBy: 'acElements')]
     private $module;
 
-    #[ORM\Column(type: 'integer', nullable: true)]
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $nature;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
@@ -60,9 +60,17 @@ class AcElement
     #[ORM\OneToMany(mappedBy: 'element', targetEntity: AcEpreuve::class)]
     private $epreuves;
 
+    #[ORM\OneToMany(mappedBy: 'element', targetEntity: ExControle::class)]
+    private $controles;
+
+    #[ORM\OneToMany(mappedBy: 'element', targetEntity: ExEnotes::class)]
+    private $enotes;
+
     public function __construct()
     {
         $this->epreuves = new ArrayCollection();
+        $this->controles = new ArrayCollection();
+        $this->enotes = new ArrayCollection();
     }
     
 
@@ -107,12 +115,12 @@ class AcElement
         return $this;
     }
 
-    public function getNature(): ?int
+    public function getNature(): ?string
     {
         return $this->nature;
     }
 
-    public function setNature(?int $nature): self
+    public function setNature(?string $nature): self
     {
         $this->nature = $nature;
 
@@ -263,6 +271,66 @@ class AcElement
             // set the owning side to null (unless already changed)
             if ($epreufe->getElement() === $this) {
                 $epreufe->setElement(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|ExControle[]
+     */
+    public function getControles(): Collection
+    {
+        return $this->controles;
+    }
+
+    public function addControle(ExControle $controle): self
+    {
+        if (!$this->controles->contains($controle)) {
+            $this->controles[] = $controle;
+            $controle->setElement($this);
+        }
+
+        return $this;
+    }
+
+    public function removeControle(ExControle $controle): self
+    {
+        if ($this->controles->removeElement($controle)) {
+            // set the owning side to null (unless already changed)
+            if ($controle->getElement() === $this) {
+                $controle->setElement(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|ExEnotes[]
+     */
+    public function getEnotes(): Collection
+    {
+        return $this->enotes;
+    }
+
+    public function addEnote(ExEnotes $enote): self
+    {
+        if (!$this->enotes->contains($enote)) {
+            $this->enotes[] = $enote;
+            $enote->setElement($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEnote(ExEnotes $enote): self
+    {
+        if ($this->enotes->removeElement($enote)) {
+            // set the owning side to null (unless already changed)
+            if ($enote->getElement() === $this) {
+                $enote->setElement(null);
             }
         }
 
