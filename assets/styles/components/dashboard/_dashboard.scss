@@ -3806,11 +3806,15 @@ body.layout-3 .main-footer {
 }
 
 .main-sidebar .sidebar-brand {
-  display: inline-block;
-  width: 100%;
-  text-align: center;
-  height: 6rem;
-  line-height: 6rem;
+  display: flex;
+    width: 100%;
+    text-align: center;
+    height: 5rem;
+    /* line-height: 6rem; */
+    align-items: center;
+    align-content: center;
+    flex-direction: column;
+    margin-top: 1rem;
 }
 .main-sidebar .sidebar-brand.sidebar-brand-sm {
   display: none;
@@ -3841,6 +3845,7 @@ body.layout-3 .main-footer {
 .main-sidebar .sidebar-menu {
   padding: 0;
   margin: 0;
+  margin-top: 2rem;
 }
 .main-sidebar .sidebar-menu li {
   display: block;

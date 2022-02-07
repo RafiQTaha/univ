@@ -177,8 +177,8 @@ class NoteEpreuveController extends AbstractController
         $where = $totalRows = $sqlRequest = "";
         $filtre = " where prv.id = $id_epruve ";
         $columns = array(
-            array( 'db' => 'lower(ex.id)','dt' => 0 ),
-            array( 'db' => 'ins.id','dt' => 1 ),
+            array( 'db' => 'ex.id','dt' => 0 ),
+            array( 'db' => 'upper(ins.id)','dt' => 1 ),
             array( 'db' => 'etu.nom','dt' => 2),
             array( 'db' => 'etu.prenom','dt' => 3),
             array( 'db' => 'ex.note','dt' => 4),

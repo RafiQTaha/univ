@@ -15,6 +15,7 @@ use App\Entity\UsOperation;
 use App\Entity\UsSousModule;
 use App\Entity\AcModule;
 use App\Entity\AcElement;
+use App\Entity\PNatureEpreuve;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\HttpFoundation\Response;
@@ -53,14 +54,14 @@ class ApiController extends AbstractController
     #[Route('/promotion/{formation}', name: 'getPromotion')]
     public function getPromotion(AcFormation $formation): Response
     {   
-        $promotions = $this->em->getRepository(AcPromotion::class)->findBy(['formation'=>$formation],['id'=>'ASC']);
+        $promotions = $this->em->getRepository(AcPromotion::class)->findBy(['formation'=>$formation, 'active' => 1],['id'=>'ASC']);
         $data = self::dropdown($promotions,'promotion');
         return new JsonResponse($data);
     }
     #[Route('/annee/{id}', name: 'getAnnee')]
     public function getAnnee($id): Response
     {   
-        $annee = $this->em->getRepository(AcAnnee::class)->findBy(['formation'=>$id],['id'=>'DESC']);
+        $annee = $this->em->getRepository(AcAnnee::class)->findBy(['formation'=>$id, 'active' => 1],['id'=>'DESC']);
         $data = self::dropdown($annee,'Annee');
         return new JsonResponse($data);
     }
@@ -68,7 +69,7 @@ class ApiController extends AbstractController
     #[Route('/semestre/{id}', name: 'getSemestre')]
     public function getSemestre($id): Response
     {   
-        $semestre = $this->em->getRepository(AcSemestre::class)->findBy(['promotion'=>$id]);
+        $semestre = $this->em->getRepository(AcSemestre::class)->findBy(['promotion'=>$id, 'active' => 1]);
         $data = self::dropdown($semestre,'Semestre');
         return new JsonResponse($data);
     }
@@ -76,7 +77,7 @@ class ApiController extends AbstractController
     #[Route('/module/{id}', name: 'getModule')]
     public function getModule($id): Response
     {   
-        $module = $this->em->getRepository(AcModule::class)->findBy(['semestre'=>$id]);
+        $module = $this->em->getRepository(AcModule::class)->findBy(['semestre'=>$id, 'active' => 1]);
         $data = self::dropdown($module,'Module');
         return new JsonResponse($data);
     }
@@ -84,7 +85,7 @@ class ApiController extends AbstractController
     #[Route('/element/{id}', name: 'getElement')]
     public function getElement($id): Response
     {   
-        $element = $this->em->getRepository(AcElement::class)->findBy(['module'=>$id]);
+        $element = $this->em->getRepository(AcElement::class)->findBy(['module'=>$id, 'active' => 1]);
         $data = self::dropdown($element,'Element');
         return new JsonResponse($data);
     }
@@ -124,6 +125,13 @@ class ApiController extends AbstractController
         $formation = $admission->getPreinscription()->getAnnee()->getFormation();
         $frais = $this->em->getRepository(PFrais::class)->findBy(["formation" => $formation]);
         $data = self::dropdownData($frais,'frais');
+        return new JsonResponse($data);        
+    }
+    #[Route('/nature_erpeuve/{nature}', name: 'getFraisByFormation')]
+    public function getNatureEpreuveByNature($nature): Response
+    {   
+        $natrueEpreuves = $this->em->getRepository(PNatureEpreuve::class)->findBy(["nature" => $nature]);
+        $data = self::dropdown($natrueEpreuves,'nature epreuve');
         return new JsonResponse($data);        
     }
 

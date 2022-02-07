@@ -21,9 +21,7 @@ class AcModule
     #[ORM\ManyToOne(targetEntity: User::class)]
     private $user_updated;
 
-    #[ORM\ManyToOne(targetEntity: AcSemestre::class, inversedBy: 'acModules')]
-    private $semestre;
-
+    
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $code;
 
@@ -46,11 +44,14 @@ class AcModule
     private $updated;
 
     #[ORM\OneToMany(mappedBy: 'module', targetEntity: AcElement::class)]
-    private $acElements;
+    private $elements;
+
+    #[ORM\ManyToOne(targetEntity: AcSemestre::class, inversedBy: 'modules')]
+    private $semestre;
 
     public function __construct()
     {
-        $this->acElements = new ArrayCollection();
+        $this->elements = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -78,18 +79,6 @@ class AcModule
     public function setUserUpdated(?User $user_updated): self
     {
         $this->user_updated = $user_updated;
-
-        return $this;
-    }
-
-    public function getSemestre(): ?AcSemestre
-    {
-        return $this->semestre;
-    }
-
-    public function setSemestre(?AcSemestre $semestre): self
-    {
-        $this->semestre = $semestre;
 
         return $this;
     }
@@ -181,29 +170,41 @@ class AcModule
     /**
      * @return Collection|AcElement[]
      */
-    public function getAcElements(): Collection
+    public function getElements(): Collection
     {
-        return $this->acElements;
+        return $this->elements;
     }
 
-    public function addAcElement(AcElement $acElement): self
+    public function addElement(AcElement $element): self
     {
-        if (!$this->acElements->contains($acElement)) {
-            $this->acElements[] = $acElement;
-            $acElement->setModule($this);
+        if (!$this->elements->contains($element)) {
+            $this->elements[] = $element;
+            $element->setModule($this);
         }
 
         return $this;
     }
 
-    public function removeAcElement(AcElement $acElement): self
+    public function removeElement(AcElement $element): self
     {
-        if ($this->acElements->removeElement($acElement)) {
+        if ($this->elements->removeElement($element)) {
             // set the owning side to null (unless already changed)
-            if ($acElement->getModule() === $this) {
-                $acElement->setModule(null);
+            if ($element->getModule() === $this) {
+                $element->setModule(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getSemestre(): ?AcSemestre
+    {
+        return $this->semestre;
+    }
+
+    public function setSemestre(?AcSemestre $semestre): self
+    {
+        $this->semestre = $semestre;
 
         return $this;
     }
