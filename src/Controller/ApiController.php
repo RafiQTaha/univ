@@ -139,7 +139,7 @@ class ApiController extends AbstractController
     public function getFraisByFormation(TAdmission $admission): Response
     {   
         $formation = $admission->getPreinscription()->getAnnee()->getFormation();
-        $frais = $this->em->getRepository(PFrais::class)->findBy(["formation" => $formation]);
+        $frais = $this->em->getRepository(PFrais::class)->findBy(["formation" => $formation, 'categorie' => "admission"]);
         $data = self::dropdownData($frais,'frais');
         return new JsonResponse($data);        
     }
@@ -159,7 +159,7 @@ class ApiController extends AbstractController
         $data = self::dropdown($paiements,'Type De Paiement');
         return new JsonResponse($data);
     }
-    #[Route('/nature_erpeuve/{nature}', name: 'getFraisByFormation')]
+    #[Route('/nature_erpeuve/{nature}', name: 'getNatureEpreuveByNature')]
     public function getNatureEpreuveByNature($nature): Response
     {   
         $natrueEpreuves = $this->em->getRepository(PNatureEpreuve::class)->findBy(["nature" => $nature]);

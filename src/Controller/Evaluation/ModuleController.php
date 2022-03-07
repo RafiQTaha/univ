@@ -112,16 +112,16 @@ class ModuleController extends AbstractController
 
             }
             if($nb_ele == $nb_ini){
-                $moyenne_ini = 0;
+                $moyenne_ini = "-1";
             }
             if($nb_ele == $nb_rat){
-                $moyenne_rat = 0;
+                $moyenne_rat = "-1";
             }
             if($nb_ele == $nb_rachat){
-                $note_rachat = 0;
+                $note_rachat = "-1";
             }
             if($nb_ele == $nb_tot){
-                $moyenne_tot = 0;
+                $moyenne_tot = "-1";
             }
             $moy_ini = number_format($moyenne_ini / $total_coef, 2, '.', ' ') ; 
             $moy_rat = number_format($moyenne_rat / $total_coef, 2, '.', ' ') ; 
@@ -320,4 +320,166 @@ class ModuleController extends AbstractController
         return new JsonResponse("Bien Recalculer", 200);
 
     }
+    #[Route('/statut/{type}', name: 'administration_module_statut')]
+    public function administrationElementStatut(Request $request, $type) 
+    {         
+        $session = $request->getSession();
+        $dataSaved = $session->get('data_module')['data_saved'];
+        $elements = $session->get('data_module')['elements'];
+        $module = $session->get('data_module')['module'];
+        $annee = $this->em->getRepository(AcAnnee::class)->getActiveAnneeByFormation($module->getSemestre()->getPromotion()->getFormation());
+        if($type == 'avantrachat'){
+            foreach ($dataSaved as $data) {
+                $inscription = $this->em->getRepository(TInscription::class)->find($data['inscription']->getId());
+                $mnote = $this->em->getRepository(ExMnotes::class)->findOneBy(['module' => $module, 'inscription' => $inscription]);
+                $data_elements_min = $this->em->getRepository(ExEnotes::class)->GetElementsByCodeAnneeCodeModule($annee, $module, $inscription, 'min', 'statutDef');
+                $data_elements_max = $this->em->getRepository(ExEnotes::class)->GetElementsByCodeAnneeCodeModule($annee, $module, $inscription, 'max', 'statutDef');
+                $data_elements_max_aff = $this->em->getRepository(ExEnotes::class)->GetElementsByCodeAnneeCodeModule($annee, $module, $inscription, 'max', 'statutAff');
+                $min_element_module_statut_def = $max_element_module_statut_def = "";
+                // dd($data_elements_min);
+                if ($data_elements_min) {
+                    $min_element_module_statut_def = $data_elements_min[0]->getStatutDef()->getId();
+                }
+                if ($data_elements_max) {
+                    $max_element_module_statut_def = $data_elements_max[0]->getStatutDef()->getId();
+                    $max_element_module_statut_aff = $data_elements_max_aff[0]->getStatutAff()->getId();
+                }
+                $result = $this->ModuleGetStatutAvantRachat($mnote, 8, 10, $min_element_module_statut_def, $max_element_module_statut_def, $max_element_module_statut_aff);
+
+                if (isset($result) and !empty($result)) {
+                    $mnote->setStatutS2(
+                        $this->em->getRepository(PeStatut::class)->find($result['statut_s2'])
+                    );
+                    $mnote->setStatutAff(
+                        $this->em->getRepository(PeStatut::class)->find($result['statut_aff'])
+                    );
+                    $mnote->setStatutDef(
+                        $this->em->getRepository(PeStatut::class)->find($result['statut_def'])
+                    );
+                }
+            }
+        
+        }
+        elseif($type == "apresrachat") {
+            foreach ($dataSaved as $data) {
+                $inscription = $this->em->getRepository(TInscription::class)->find($data['inscription']->getId());
+                $mnote = $this->em->getRepository(ExMnotes::class)->findOneBy(['module' => $module, 'inscription' => $inscription]);
+                
+                $data_elements = $this->em->getRepository(ExEnotes::class)->GetElementsByCodeAnneeCodeModule($annee, $module, $inscription, 'all', 'statutDef');
+                
+                $result = $this->ModuleGetStatutApresRachat($data_elements, $mnote, 8, 10);
+
+                if (isset($result) and !empty($result)) {
+                    $mnote->setStatutS2(
+                        $this->em->getRepository(PeStatut::class)->find($result['statut_s2'])
+                    );
+                    $mnote->setStatutAff(
+                        $this->em->getRepository(PeStatut::class)->find($result['statut_aff'])
+                    );
+                    $mnote->setStatutDef(
+                        $this->em->getRepository(PeStatut::class)->find($result['statut_def'])
+                    );
+                }
+            }
+        }
+        
+        $this->em->flush();
+        return new JsonResponse("Bien enregistre", 200);
+
+    }
+
+    public function ModuleGetStatutAvantRachat($mnote, $note_eliminatoire, $note_validation, $min_element_module_statut_def, $max_element_module_statut_def, $max_element_module_statut_aff) {
+
+
+        $send_data = array();
+//        if ($data->statut_aff == 60 || $data->statut_aff == 62) {
+//            
+//        }
+//        else{
+        if($min_element_module_statut_def == 52 || $max_element_module_statut_aff == 52){
+            $send_data['statut_s2'] = 53;
+            $send_data['statut_def'] = 53;
+            $send_data['statut_aff'] = 53;
+        }
+        else{
+            if ($mnote->getNote() < $note_eliminatoire || $min_element_module_statut_def == 16) {
+                $send_data['statut_s2'] = 29;
+                $send_data['statut_def'] = 29;
+                $send_data['statut_aff'] = 29;
+            } else {
+                if ($mnote->getNote() < $note_validation) {
+                    $send_data['statut_s2'] = 31;
+                    $send_data['statut_def'] = 31;
+                    $send_data['statut_aff'] = 31;
+                } else {
+
+                    switch ($min_element_module_statut_def) {
+                        case 52:
+                            $send_data['statut_s2'] = 53;
+                            $send_data['statut_def'] = 53;
+                            $send_data['statut_aff'] = 53;
+                            break;
+                        case 18:
+                            $send_data['statut_s2'] = 32;
+                            $send_data['statut_def'] = 32;
+                            $send_data['statut_aff'] = 55;
+                            break;
+                        case 19:
+                            $send_data['statut_s2'] = 32;
+                            $send_data['statut_def'] = 32;
+                            if ($max_element_module_statut_aff == 54) {
+                                $send_data['statut_aff'] = 55;
+                            } else {
+                                $send_data['statut_aff'] = 34;
+                            }
+                            break;
+                        case 21:
+                            if ($max_element_module_statut_def == 21) {
+                                $send_data['statut_s2'] = 34;
+                                $send_data['statut_def'] = 34;
+                                $send_data['statut_aff'] = 34;
+                            } else {
+                                $send_data['statut_s2'] = 55;
+                                $send_data['statut_def'] = 55;
+                                $send_data['statut_aff'] = 55;
+                            }
+                            break;
+                        case 22:
+                            $send_data['statut_s2'] = 35;
+                            $send_data['statut_def'] = 35;
+                            $send_data['statut_aff'] = 35;
+                            break;
+                        case 54:
+                            $send_data['statut_s2'] = 55;
+                            $send_data['statut_def'] = 55;
+                            $send_data['statut_aff'] = 55;
+                            break;
+                    }
+                }
+            }
+        }
+//        }
+        return $send_data;
+    }
+
+    public function ModuleGetStatutApresRachat($data, $mnote, $note_eliminatoire, $note_validation) {
+        $send_data = array();
+        foreach ($data as $key => $value) {
+            if ($value->getStatutAff()->getId() == 17 || $value->getStatutDef()->getId() == 20) {
+                if ($mnote->getNote() < $note_validation) {
+                    $send_data['statut_s2'] = 30;
+                    $send_data['statut_def'] = 30;
+                    $send_data['statut_aff'] = 30;
+                    break;
+                } else {
+                    $send_data['statut_s2'] = 33;
+                    $send_data['statut_def'] = 33;
+                    $send_data['statut_aff'] = 33;
+                    break;
+                }
+            }
+        }
+        return $send_data;
+    }
+    
 }

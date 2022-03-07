@@ -85,6 +85,9 @@ class ExEnotes
     #[ORM\Column(type: 'integer', nullable: true)]
     private $pondEfr = 1;
 
+    #[ORM\ManyToOne(targetEntity: PeStatut::class)]
+    private $statutRachat;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -374,6 +377,18 @@ class ExEnotes
     public function setPondEfr(?int $pondEfr): self
     {
         $this->pondEfr = $pondEfr;
+
+        return $this;
+    }
+
+    public function getStatutRachat(): ?PeStatut
+    {
+        return $this->statutRachat;
+    }
+
+    public function setStatutRachat(?PeStatut $statutRachat): self
+    {
+        $this->statutRachat = $statutRachat;
 
         return $this;
     }

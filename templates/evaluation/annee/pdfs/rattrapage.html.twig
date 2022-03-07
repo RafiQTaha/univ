@@ -1,7 +1,7 @@
 <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro" rel="stylesheet">
 
 <style type="text/Css">
-   body{
+    body{
         font-family: 'Source Sans Pro', sans-serif;
        
     }
@@ -73,7 +73,7 @@
                 <h2 >MODULE</h2>
                 <table cellspacing="0" style="width:55%; text-align: left; font-size: 12px ; " >
                     <tr>
-                        <td style=" font-weight: bold ; color:#525252; font-size: 11px ; padding: 5px 0px">Abréviation </td> 
+                        <td style=" font-weight: bold ; color:#525252; font-size: 12px ; padding: 5px 0px">Abréviation </td> 
                         <td style="font-weight: bold ; color:#525252;font-size: 11px; padding: 5px 0px">Désignation</td> 
                     </tr>
                     {% for statut in statutModules %}
@@ -92,22 +92,24 @@
                         <td style="padding: 0px 20px 0px 0px; width: 100%">
 
                             
-
+                            <h2>SEMESTRE 1</h2>
                             <table cellspacing="0" style="width: 100%; padding:0: 20px; text-align: left; font-size: 12px" >
                                 <tr style="border-bottom: 1px solid">
-                                    <td style="width: 70px ; font-weight: bold ; font-size: 11px ;  padding: 5px 0px">Code </td> 
-                                    <td style="width: 370px ;font-weight: bold ; font-size: 11px ;  padding: 5px 0px ">Désignation</td> 
-                                    <td style="width: 100px ;font-weight: bold ;font-size: 11px ;  padding: 5px 0px ">Signature</td> 
+                                    <td style="width: 10% ; font-weight: bold ; font-size: 12px ;  padding: 5px 0px">Code </td> 
+                                    <td style="width: 60% ;font-weight: bold ; font-size: 12px ;  padding: 5px 0px ">Désignation</td> 
+                                    <td style="width: 20% ;font-weight: bold ;font-size: 12px ;  padding: 5px 0px ">Signature</td> 
                                 </tr>
 
 
 
                                 {% for module in modules %}
-                                <tr >
-                                    <td style="font-weight: bold; padding: 10px 20px 10px 0px ;border-top: 1px solid" >MOD{{module.id}}</td> 
-                                    <td style=" padding: 10px 20px 10px 0px ;border-top: 1px solid">{{module.designation}}</td> 
-                                    <td style="width: 100%; padding: 10px 20px 10px 0px ;border-top: 1px solid"></td>
-                                </tr>
+                                    {% if module.semestre.id == semestre1.id %}
+                                    <tr >
+                                        <td style="font-weight: bold; padding: 10px 20px 10px 0px ;border-top: 1px solid" >MOD{{module.id}}</td> 
+                                        <td style=" padding: 10px 20px 10px 0px ;border-top: 1px solid">{{module.designation}}</td> 
+                                        <td style="width: 100%; padding: 10px 20px 10px 0px ;border-top: 1px solid"></td>
+                                    </tr>
+                                    {% endif %}
                                 {% endfor %}
                                 
 
@@ -118,19 +120,18 @@
                     </tr>
                 </table>
             </td>
-            <br>
+
         </tr>
                 
-        <tr style="margin-top:10px;">
+        <tr>
 
 
                 <td>
-                <br>
                 <h2>SEMESTRE</h2>
                 <table cellspacing="0" style="width:100%; text-align: left; font-size: 12px ; " >
                     <tr>
-                        <td style=" font-weight: bold ; color:#525252; font-size: 11px ; padding: 5px 0px">Abréviation </td> 
-                        <td style="font-weight: bold ; color:#525252 ;; font-size: 11px; padding: 5px 0px">Désignation</td> 
+                        <td style=" font-weight: bold ; color:#525252; font-size: 12px ; padding: 5px 0px">Abréviation </td> 
+                        <td style="font-weight: bold ; color:#525252 ;; font-size: 12px; padding: 5px 0px">Désignation</td> 
                         
                     </tr>
                     {% for statut in statutSemestres %}
@@ -144,13 +145,73 @@
                 <br>
             </td>
             <td>
+                <table cellspacing="0" style="width:100%">
+                    <tr>
+                        <td style="padding: 0px 20px 0px 0px; width: 100%">
+
+                            
+                            <h2>SEMESTRE 2</h2>
+                            <table cellspacing="0" style="width: 100%; padding:0: 20px; text-align: left; font-size: 12px" >
+                                <tr style="border-bottom: 1px solid">
+                                    <td style="width: 10% ; font-weight: bold ; font-size: 12px ;  padding: 5px 0px">Code </td> 
+                                    <td style="width: 60% ;font-weight: bold ; font-size: 12px ;  padding: 5px 0px ">Désignation</td> 
+                                    <td style="width: 20% ;font-weight: bold ;font-size: 12px ;  padding: 5px 0px ">Signature</td> 
+                                </tr>
+
+
+
+                                {% for module in modules %}
+                                    {% if module.semestre.id == semestre2.id %}
+                                    <tr >
+                                        <td style="font-weight: bold; padding: 10px 20px 10px 0px ;border-top: 1px solid" >MOD{{module.id}}</td> 
+                                        <td style=" padding: 10px 20px 10px 0px ;border-top: 1px solid">{{module.designation}}</td> 
+                                        <td style="width: 100%; padding: 10px 20px 10px 0px ;border-top: 1px solid"></td>
+                                    </tr>
+                                    {% endif %}
+                                {% endfor %}
+                                
+
+                            </table>   
+
+                        </td>
+                        
+                    </tr>
+                </table>
+            </td>
+        </tr>
+
+
+
+        <tr>
+
+
+                <td>
+                <h2>ANNEE</h2>
+                <table cellspacing="0" style="width:50%; text-align: left; font-size: 12px ; " >
+                    <tr>
+                        <td style=" font-weight: bold ; color:#525252; font-size: 12px ; padding: 5px 0px">Abréviation </td> 
+                        <td style="font-weight: bold ; color:#525252 ;; font-size: 12px; padding: 5px 0px">Désignation</td> 
+                        
+                    </tr>
+                    {% for statut in statutAnnees %}
+                    <tr>
+                        <td style="font-weight: bold; padding: 0px 20px 0px 0px " >{{statut.abreviation}}</td> 
+                        <td >{{statut.designation}}</td> 
+                    </tr>
+                    {% endfor %}
+                </table> 
+                
+                <br>
+            </td>
+            <td>
+               
             </td>
         </tr>
     </tbody>
 </table>
 <br>
 
-{# <pagebreak /> #}
+<pagebreak />
 
 <table cellspacing="0" style="width: 100%; text-align: left; font-size: 12px" >
     <tr>
@@ -171,8 +232,19 @@
             <th style="width:120px; text-align: left;font-weight: 600">Nom</th>
             <th style="width:120px;text-align: left;font-weight: 600">Prénom</th>
             {% for module in modules %}
-                <th style="width:100px;text-align: left;font-weight: 600">MOD{{module.id}}</th>  
+                {% if module.semestre.id == semestre1.id %}
+                    <th style="width:80;text-align: left;font-weight: 600">MOD{{module.id}}</th>  
+                {% endif %}
             {% endfor %} 
+            <th style="width:35px;font-size: 7px ; color: #fff ;   font-weight: bold;background: #7f7f7f">Semestre 1</th>
+            <th style="width:40px;font-size: 7px; text-align: left ; color: #fff ;    font-weight: bold;background: #7f7f7f;">Statut</th>
+            {% for module in modules %}
+                {% if module.semestre.id == semestre2.id %}
+                    <th style="width:80;text-align: left;font-weight: 600">MOD{{module.id}}</th>  
+                {% endif %}
+            {% endfor %} 
+             <th style="width:35px;font-size: 7px ; color: #fff ;   font-weight: bold;background: #7f7f7f">Semestre 2</th>
+            <th style="width:40px;font-size: 7px; text-align: left ; color: #fff ;    font-weight: bold;background: #7f7f7f;">Statut</th>
             <th style="width:80px; background-color: #525252;color: white; text-align: center;font-weight: 800">Moyenne Validation</th>
             <th style="width:80px; background-color: #525252;color: white; text-align: center;font-weight: 800">Moyenne Classement</th>
             <th style="width:80px; background-color: #525252;color: white; text-align: center;font-weight: 800">Statut</th>
@@ -183,20 +255,65 @@
     </thead>
     <tbody>
         {% for data in dataSaved %}
-            <tr style="font-size: 9px;padding: 5px ;">
+            <tr class="brd" style="font-size: 9px;padding: 5px ;">
                 <td style="font-size: 9px; padding-top: 3px; text-align:center; padding-bottom: 3px">{{loop.index}}</td>
                 <td style="font-size: 9px; padding-top: 3px; text-align:left; padding-bottom: 3px">{{data.inscription.id}}</td>
                 <td style="font-size: 9px; text-align: left">{{data.inscription.admission.preinscription.etudiant.nom}}</td>
                 <td style="font-size: 9px; text-align: left">{{data.inscription.admission.preinscription.etudiant.prenom}}</td>
                 {% for noteModule in data.noteModules %}
-                    {% if affichage == 0 %} 
-                        <td style="font-size: 9px; text-align: left">{{noteModule.note}} {{noteModule.statut.abreviationDef}}</td>  
-
-                        
-                    {% elseif affichage == 1 %}
-                        <td style="font-size: 9px; text-align: left">{{noteModule.note}} {{noteModule.statut.abreviationAff}}</td>  
+                    {% if noteModule.module.semestre.id == semestre1.id %}
+                        {% if affichage == 0 %}             
+                            <td style="font-size: 9px; text-align: left">{{noteModule.note}} {{noteModule.statut.abreviationDef}}</td>  
+                        {% elseif affichage == 1 %}
+                            <td style="font-size: 9px; text-align: left">{{noteModule.note}} {{noteModule.statut.abreviationAff}}</td>  
+                        {% endif %}
                     {% endif %}
                 {% endfor %}
+                <td style="background: #f2f2f2;font-weight: bold">
+                {% if affichage == 0 %}  
+                        {% set semestre1Note %}
+                        {{render(controller(
+                            'App\\Controller\\Evaluation\\AnneeController::getNoteSemestre', { inscription: data.inscription, semestre: semestre1, statut: "statutDef" }
+                        ))}}
+                        {% endset %}
+                {% elseif affichage == 1 %}
+                    {% set semestre1Note %}
+                        {{render(controller(
+                            'App\\Controller\\Evaluation\\AnneeController::getNoteSemestre', { inscription: data.inscription, semestre: semestre1, statut: "statutAff" }
+                        ))}}
+                    {% endset %}
+                {% endif %}
+                {% set semestre1Note = semestre1Note|split("/")%}
+                {{semestre1Note[0]}} 
+                </td>
+                <td style=" text-align: left ; background: #f2f2f2;font-weight: bold">{{semestre1Note[1]}}</td>
+                {% for noteModule in data.noteModules %}
+                    {% if noteModule.module.semestre.id == semestre2.id %}
+                        {% if affichage == 0 %}             
+                            <td style="font-size: 9px; text-align: left">{{noteModule.note}} {{noteModule.statut.abreviationDef}}</td>  
+                        {% elseif affichage == 1 %}
+                            <td style="font-size: 9px; text-align: left">{{noteModule.note}} {{noteModule.statut.abreviationAff}}</td>  
+                        {% endif %}
+                    {% endif %}
+                {% endfor %}
+                <td style="background: #f2f2f2;font-weight: bold">
+                {% if affichage == 0 %}  
+                    {% set semestre2Note %}
+                    {{render(controller(
+                            'App\\Controller\\Evaluation\\AnneeController::getNoteSemestre', { inscription: data.inscription, semestre: semestre2, statut: "statutDef" }
+                        ))}} 
+                    {% endset %}
+                {% elseif affichage == 1 %}
+                    {% set semestre2Note %}
+                    {{render(controller(
+                            'App\\Controller\\Evaluation\\AnneeController::getNoteSemestre', { inscription: data.inscription, semestre: semestre2, statut: "statutAff" }
+                        ))}}
+                    {% endset %}
+                {% endif %}
+                {% set semestre2Note = semestre2Note|split("/")%}
+                {{semestre2Note[0]}} 
+                </td>
+                <td style=" text-align: left ; background: #f2f2f2;font-weight: bold">{{semestre2Note[1]}}</td>
                 <td style="font-size: 9px; background: #d8d8d8; text-align: center ; color: #000; font-weight: bold;"> 
                     {{data.moyenneNormal|number_format(2, '.', ',') }}
                 </td>
@@ -206,13 +323,12 @@
                 <td style="font-size: 9px; background: #d8d8d8; text-align: center ; color: #000; font-weight: bold;"> 
                     {% if affichage == 0 %} 
                         {{ render(controller(
-                            'App\\Controller\\Evaluation\\SemestreController::getStatut', { inscription: data.inscription, semestre: semestre, statut: "statutDef" }
+                            'App\\Controller\\Evaluation\\AnneeController::getStatut', { inscription: data.inscription, statut: "statutDef" }
                         )) }}
                     {% elseif affichage == 1 %}
                         {{ render(controller(
-                            'App\\Controller\\Evaluation\\SemestreController::getStatut', { inscription: data.inscription, semestre: semestre, statut: "statutAff" }
+                            'App\\Controller\\Evaluation\\AnneeController::getStatut', { inscription: data.inscription, statut: "statutAff" }
                         )) }}
-                    {% else %}
                     {% endif %}
                 </td>
             </tr>

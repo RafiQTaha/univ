@@ -8,6 +8,7 @@ use App\Entity\AcElement;
 use App\Entity\AcEtablissement;
 use App\Entity\ExControle;
 use App\Entity\ExEnotes;
+use App\Entity\PeStatut;
 use App\Entity\TInscription;
 use Doctrine\Persistence\ManagerRegistry;
 use Mpdf\Mpdf;
@@ -276,5 +277,268 @@ class ElementController extends AbstractController
         $this->em->flush();
         return new JsonResponse("Bien Recalculer", 200);
 
+    }
+    #[Route('/statut/{type}', name: 'administration_element_statut')]
+    public function administrationElementStatut(Request $request, $type) 
+    {         
+        $session = $request->getSession();
+        $dataSaved = $session->get('data_element')['data_saved'];
+        $element = $session->get('data_element')['element'];
+        if($type == 's1'){
+            foreach ($dataSaved as $data) {
+                $inscription = $this->em->getRepository(TInscription::class)->find($data['inscription']->getId());
+                $enote = $this->em->getRepository(ExEnotes::class)->findOneBy(['element' => $element, 'inscription' => $inscription]);
+                $m_cc = $enote->getCcr() < $enote->getMcc() || !$enote->getCcr() ? $enote->getMcc() : $enote->getCcr();
+                $m_tp = $enote->getTpr() < $enote->getMtp() || !$enote->getTpr() ? $enote->getMtp() : $enote->getTpr();
+                $m_ef = $enote->getEfr() < $enote->getMef() || !$enote->getEfr() ? $enote->getMef() : $enote->getEfr();
+                if($element->getNature() == "NE003" || $element->getNature() == "NE004" || $element->getNature() == "NE005"){
+                    $result = $this->ElementGetStatutS1_pratique($enote, ['mcc' => $m_cc, 'mtp'=>$m_tp, 'mef'=>$m_ef], 10,10);
+                } else {
+                    $result = $this->ElementGetStatutS1($enote, ['mcc' => $m_cc, 'mtp'=>$m_tp, 'mef'=>$m_ef], 7, 10);
+                }
+                if (isset($result) and !empty($result)) {
+                    $enote->setStatutS1(
+                        $this->em->getRepository(PeStatut::class)->find($result['statut_s1'])
+                    );
+                    $enote->setStatutAff(
+                        $this->em->getRepository(PeStatut::class)->find($result['statut_aff'])
+                    );
+                    $enote->setStatutDef(
+                        $this->em->getRepository(PeStatut::class)->find($result['statut_def'])
+                    );
+                }
+            }
+        }
+        elseif($type == "s2") {
+            foreach ($dataSaved as $data) {
+                $inscription = $this->em->getRepository(TInscription::class)->find($data['inscription']->getId());
+                $enote = $this->em->getRepository(ExEnotes::class)->findOneBy(['element' => $element, 'inscription' => $inscription]);
+                $m_cc = $enote->getCcr() < $enote->getMcc() || !$enote->getCcr() ? $enote->getMcc() : $enote->getCcr();
+                $m_tp = $enote->getTpr() < $enote->getMtp() || !$enote->getTpr() ? $enote->getMtp() : $enote->getTpr();
+                $m_ef = $enote->getEfr() < $enote->getMef() || !$enote->getEfr() ? $enote->getMef() : $enote->getEfr();
+                if($element->getNature() == "NE003" || $element->getNature() == "NE004" || $element->getNature() == "NE005"){
+                    $result = $this->ElementGetStatutS2_pratique($enote, ['mcc' => $m_cc, 'mtp'=>$m_tp, 'mef'=>$m_ef], 10,10);
+                } else {
+                    $result = $this->ElementGetStatutS2($enote, ['mcc' => $m_cc, 'mtp'=>$m_tp, 'mef'=>$m_ef], 7, 10);
+                }
+                if (isset($result) and !empty($result)) {
+                    $enote->setStatutS2(
+                        $this->em->getRepository(PeStatut::class)->find($result['statut_s2'])
+                    );
+                    $enote->setStatutAff(
+                        $this->em->getRepository(PeStatut::class)->find($result['statut_aff'])
+                    );
+                    $enote->setStatutDef(
+                        $this->em->getRepository(PeStatut::class)->find($result['statut_def'])
+                    );
+                }
+            }
+        }
+        elseif($type == "rachat") {
+            foreach ($dataSaved as $data) {
+                $inscription = $this->em->getRepository(TInscription::class)->find($data['inscription']->getId());
+                $enote = $this->em->getRepository(ExEnotes::class)->findOneBy(['element' => $element, 'inscription' => $inscription]);
+                if($element->getNature() == "NE003" || $element->getNature() == "NE004" || $element->getNature() == "NE005"){
+                    $result = $this->ElementGetStatutRachat_pratique($enote);
+                    if (isset($result) and !empty($result)) {
+                        $enote->setStatutS2(
+                            $this->em->getRepository(PeStatut::class)->find($result['statut_s2'])
+                        );
+                        $enote->setStatutAff(
+                            $this->em->getRepository(PeStatut::class)->find($result['statut_aff'])
+                        );
+                        $enote->setStatutDef(
+                            $this->em->getRepository(PeStatut::class)->find($result['statut_def'])
+                        );
+                    }
+                } else {
+                    $result = $this->ElementGetStatutRachat($enote);
+                   
+                    if (isset($result) and !empty($result)) {
+                        $enote->setStatutRachat(
+                            $this->em->getRepository(PeStatut::class)->find($result['statut_rachat'])
+                        );
+                        $enote->setStatutAff(
+                            $this->em->getRepository(PeStatut::class)->find($result['statut_aff'])
+                        );
+                        $enote->setStatutDef(
+                            $this->em->getRepository(PeStatut::class)->find($result['statut_def'])
+                        );
+                    
+                    }
+                }
+            }
+        }
+        $this->em->flush();
+        return new JsonResponse("Bien enregistre", 200);
+
+    }
+
+    public function ElementGetStatutS1_pratique($enote, $noteComposantInitial, $note_eliminatoire, $note_validation) {
+        //var_dump($data);
+        $send_data = array();
+        if ($enote->getNoteIni() < 10 || ($enote->getMef() && $enote->getMef() < 10))   {
+            $send_data['statut_s1'] = 12;
+            $send_data['statut_def'] = 12;
+            $send_data['statut_aff'] = 12;
+        } else {
+            if((isset($noteComposantInitial["mcc"]) && $noteComposantInitial["mcc"] < 10) || (isset($noteComposantInitial["mtp"]) && $noteComposantInitial["mcc"] < 10)){
+                $send_data['statut_s1'] = 16;
+                $send_data['statut_def'] = 16;
+                $send_data['statut_aff'] = 16;
+            }
+            else{
+                $send_data['statut_s1'] = 15;
+                $send_data['statut_def'] = 15;
+                $send_data['statut_aff'] = 15;
+            }
+            
+        }
+        return $send_data;
+    }
+    public function ElementGetStatutS1($enote, $noteComposantInitial, $note_eliminatoire, $note_validation) {
+        //var_dump($data);
+        $send_data = array();
+        if ($enote->getNoteIni() < 7) {
+            $send_data['statut_s1'] = 12;
+            $send_data['statut_def'] = 12;
+            $send_data['statut_aff'] = 12;
+        } else {
+            if ($enote->getNoteIni() < 10) {
+                
+                //NE PAS METTRE A JOUR. MERCI
+                if ((isset($noteComposantInitial["mcc"]) && $noteComposantInitial["mcc"] < 7) || (isset($noteComposantInitial["mtp"]) && $noteComposantInitial["mtp"] < 7 ) || ( $enote->getMef() && $enote->getMef() < 7 )) {
+                    $send_data['statut_s1'] = 12;
+                    $send_data['statut_def'] = 12;
+                    $send_data['statut_aff'] = 12;
+                } else {
+                    $send_data['statut_s1'] = 13;
+                    $send_data['statut_def'] = 13;
+                    $send_data['statut_aff'] = 13;
+                }
+            } else {
+                if (($enote->getMef() && $enote->getMef() < 7)) {
+                    $send_data['statut_s1'] = 12;
+                    $send_data['statut_def'] = 12;
+                    $send_data['statut_aff'] = 12;
+                } else {
+                    if ((isset($noteComposantInitial["mcc"]) && $noteComposantInitial["mcc"] < 7) || (isset($noteComposantInitial["mtp"]) && $noteComposantInitial["mtp"] < 7)) {
+//                    if ((isset($noteComposantInitial['mtp']) && $noteComposantInitial['mtp'] < 7)) {
+                        $send_data['statut_s1'] = 16;
+                        $send_data['statut_def'] = 16;
+                        $send_data['statut_aff'] = 16;
+                    } else {
+                        if ((isset($noteComposantInitial["mcc"]) && $noteComposantInitial["mcc"] < 10 ) || (isset($noteComposantInitial["mtp"]) && $noteComposantInitial["mcc"] < 10 ) || ($enote->getMef() && $enote->getMef() < 10)) {
+                            $send_data['statut_s1'] = 19;
+                            $send_data['statut_def'] = 19;
+                        } else {
+                            $send_data['statut_s1'] = 15;
+                            $send_data['statut_def'] = 15;
+                        }
+                        $send_data['statut_aff'] = 15;
+                    }
+                }
+            }
+        }
+        return $send_data;
+    }
+    public function ElementGetStatutS2_pratique($enote, $noteComposantInitial, $note_eliminatoire, $note_validation) {
+        //  var_dump($data); die();
+        $send_data = array();
+
+        if ($enote->getStatutS1()->getId() == 15) {
+            $send_data['statut_s2'] = 21;
+            $send_data['statut_def'] = 21;
+            $send_data['statut_aff'] = 21;
+        } else {
+            if ($enote->getStatutS1()->getId() == 16 || (isset($noteComposantInitial['mcc']) && $noteComposantInitial['mcc'] < 10) || (isset($noteComposantInitial['mtp']) && $noteComposantInitial['mtp'] < 10) || (isset($noteComposantInitial['mef']) && $noteComposantInitial['mef'] < 10) || $enote->getNote() < 10) {
+                $send_data['statut_s2'] = 16;
+                $send_data['statut_def'] = 16;
+                $send_data['statut_aff'] = 16;
+            } else {
+                $send_data['statut_s2'] = 54;
+                $send_data['statut_def'] = 54;
+                $send_data['statut_aff'] = 54;
+            }
+        }
+
+        return $send_data;
+    }
+    public function ElementGetStatutS2($enote, $noteComposantInitial, $note_eliminatoire, $note_validation) {
+
+        $send_data = array();
+
+         if ($enote->getStatutS1()->getId() == 52) {
+            $send_data['statut_s2'] = 52;
+            $send_data['statut_def'] = 52;
+            $send_data['statut_aff'] = 52;
+        } else {
+
+            if ($enote->getStatutS1()->getId() == 15) {
+                $send_data['statut_s2'] = 21;
+                $send_data['statut_def'] = 21;
+                $send_data['statut_aff'] = 21;
+            } 
+            if ($enote->getStatutS1()->getId() == 19) {
+                $send_data['statut_s2'] = 19;
+                $send_data['statut_def'] = 19;
+                $send_data['statut_aff'] = 21;
+            }else {
+
+                if ((isset($noteComposantInitial['mcc']) && $noteComposantInitial['mcc'] < 7) || (isset($noteComposantInitial['mtp']) && $noteComposantInitial['mtp'] < 7 ) || ( isset($noteComposantInitial['mef']) && $noteComposantInitial['mef'] < 7 ) || ( $enote->getNote() && $enote->getNote() < $note_eliminatoire )) {
+                    $send_data['statut_s2'] = 16;
+                    $send_data['statut_def'] = 16;
+                    $send_data['statut_aff'] = 16;
+                } else {
+                    if ($enote->getNote() < 10) {
+                        $send_data['statut_s2'] = 18;
+                        $send_data['statut_def'] = 18;
+                        $send_data['statut_aff'] = 18;
+                    } else {
+                        if ((isset($noteComposantInitial['mcc']) && $noteComposantInitial['mcc'] < 10 ) || (isset($noteComposantInitial['mtp']) && $noteComposantInitial['mtp'] < 10 ) || (isset($noteComposantInitial['mef']) && $noteComposantInitial['mef'] < 10)) {
+                            $send_data['statut_s2'] = 19;
+                            $send_data['statut_def'] = 19;
+                            if ($enote->getStatutS1()->getId() == 12 || $enote->getStatutS1()->getId() == 13 || $enote->getStatutS1()->getId() == 11) {
+                                $send_data['statut_aff'] = 54;
+                            } else {
+                                $send_data['statut_aff'] = 21;
+                            }
+                        } else {
+                        if ($enote->getStatutS1()->getId() == 12 || $enote->getStatutS1()->getId() == 13) {
+                            $send_data['statut_s2'] = 54;
+                            $send_data['statut_def'] = 54;
+                            $send_data['statut_aff'] = 54;
+                        }
+                    }
+                }
+            }
+        }
+        }
+        return $send_data;
+    }
+    public function ElementGetStatutRachat_pratique($enote) {
+        $send_data = array();
+        if ($enote->getNoteRachat() > 0 && $enote->getNote() >= 10) {
+            $send_data['statut_s2'] = 20;
+            $send_data['statut_def'] = 20;
+            $send_data['statut_aff'] = 20;
+        }
+        return $send_data;
+    }
+    public function ElementGetStatutRachat($enote) {
+        $send_data = array();
+        if ($enote->getNoteRachat() > 0) {
+            if ($enote->getNote() < 10) {
+                $send_data['statut_rachat'] = 17;
+                $send_data['statut_def'] = 17;
+                $send_data['statut_aff'] = 17;
+            } else {
+                $send_data['statut_rachat'] = 20;
+                $send_data['statut_def'] = 20;
+                $send_data['statut_aff'] = 20;
+            }
+        }
+
+        return $send_data;
     }
 }

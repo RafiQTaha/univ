@@ -36,7 +36,28 @@ class TAdmissionRepository extends ServiceEntityRepository
     }
     
 
-    
+    public function findAdmssions($value)
+    {
+        return $this->createQueryBuilder('t')
+            ->select('t.id, t.code, etudiant.nom, etudiant.prenom')
+            ->innerJoin("t.preinscription","preinscription")
+            ->innerJoin("preinscription.etudiant","etudiant")
+            ->where('t.code like :val')
+            ->orWhere("etudiant.nom like :val")
+            ->orWhere("etudiant.prenom like :val")
+            ->setParameter('val', "%".$value."%")
+            ->orderBy('t.id', 'ASC')
+            ->setMaxResults(10)
+            ->getQuery()
+            ->getResult()
+        ;
+        // dd($admissions);
+        // $html = "";
+        // foreach ($admissions as $admission) {
+        //     dd($admission->getPreinscription()->getEtudiant()->getStatutDeliberation());
+        // }
+        // return $html;
+    }
     
     
 }
