@@ -24,12 +24,12 @@ class XBanque
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $designation;
 
-    #[ORM\OneToMany(mappedBy: 'banque', targetEntity: TRegelement::class)]
-    private $regelements;
+    #[ORM\OneToMany(mappedBy: 'banque', targetEntity: TReglement::class)]
+    private $reglements;
 
     public function __construct()
     {
-        $this->regelements = new ArrayCollection();
+        $this->reglements = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -74,29 +74,29 @@ class XBanque
     }
 
     /**
-     * @return Collection|TRegelement[]
+     * @return Collection|TReglement[]
      */
-    public function getRegelements(): Collection
+    public function getReglements(): Collection
     {
-        return $this->regelements;
+        return $this->reglements;
     }
 
-    public function addRegelement(TRegelement $regelement): self
+    public function addReglement(TReglement $reglement): self
     {
-        if (!$this->regelements->contains($regelement)) {
-            $this->regelements[] = $regelement;
-            $regelement->setBanque($this);
+        if (!$this->reglements->contains($reglement)) {
+            $this->reglements[] = $reglement;
+            $reglement->setBanque($this);
         }
 
         return $this;
     }
 
-    public function removeRegelement(TRegelement $regelement): self
+    public function removeReglement(TReglement $reglement): self
     {
-        if ($this->regelements->removeElement($regelement)) {
+        if ($this->reglements->removeElement($reglement)) {
             // set the owning side to null (unless already changed)
-            if ($regelement->getBanque() === $this) {
-                $regelement->setBanque(null);
+            if ($reglement->getBanque() === $this) {
+                $reglement->setBanque(null);
             }
         }
 

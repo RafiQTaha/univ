@@ -212,7 +212,8 @@ ol {
 .custom-select,
 .custom-file-label {
   background-color: #fdfdff;
-  border-color: #e4e6fc;
+  // border-color: #e4e6fc;
+  border-color: #696b7d;
 }
 .form-control:focus,
 .input-group-text:focus,
@@ -4617,7 +4618,7 @@ div.dataTables_wrapper div.dataTables_processing {
 }
 .fc-view > table tr,
 .fc-view > table td {
-  border-color: #f2f2f2;
+  // border-color: #f2f2f2;
 }
 .fc-view > table th {
   border-color: #f2f2f2;
@@ -5043,7 +5044,9 @@ tr:first-child > td > .fc-day-grid-event {
 .select2-container--default
   .select2-results__option--highlighted[aria-selected] {
   background-color: #6777ef;
-  color: #fff;
+  // color: #fff;
+  color: #000;
+  
 }
 
 .select2-results__option {
@@ -6267,9 +6270,9 @@ tr:first-child > td > .fc-day-grid-event {
 .sorting_1 {
   background: none !important;
 }
-
 .modal-dialog {
-  max-width: 620px !important;
+  min-width: 620px !important;
+  max-width: 660px !important;
 }
 .etat_bg_nf{
   background-color :#fde0e0 !important ;
@@ -6304,7 +6307,8 @@ tr:first-child > td > .fc-day-grid-event {
   margin-bottom:1rem;
   padding: 5px;
 }
-.modal .etudiant_info{
+.modal .etudiant_info,
+.modal .plannification_info{
   display:flex;
   flex-wrap: wrap;
 }
@@ -6314,11 +6318,13 @@ tr:first-child > td > .fc-day-grid-event {
   padding: 5px;
   border-radius: 6px;
 }
-.modal .etudiant_info p{
+.modal .etudiant_info p,
+.modal .plannification_info p{
   flex:48%;
   line-height: 1.5rem !important;
 }
-.modal .etudiant_info p span{
+.modal .etudiant_info p span,
+.modal .plannification_info p span{
   font-weight:900;
 }
 .title-article{
@@ -6326,32 +6332,6 @@ tr:first-child > td > .fc-day-grid-event {
   padding: 10px 0;
   font-size: 1.5rem;
 }
-// .article{
-//   display: flex;
-//   justify-content: space-between;
-//   // align-items: baseline;
-//   box-shadow : none !important;
-// }
-// .article .left{
-//   display: flex;
-//   justify-content: space-between;
-//   // align-items: center;
-//   flex : 0 60%;
-// }
-// .article .right{
-//   flex: 0 37%;
-// }
-// .article .left .field{
-//   display:flex;
-//   flex-direction:column;
-// }
-// .article .left .field.frais{
-//   flex: 0 55%;
-// }
-
-// .article .left .field.add{
-//   align-self: end;
-// }
 .modal .modal-preins .save{
   float:right;
 }
@@ -6378,17 +6358,33 @@ tr:first-child > td > .fc-day-grid-event {
 .modalnotes .obs_note:focus{
   border: 1px solid #6777ef;
 }
-// .modalnotes form{
-//   text-align:center;
-// }
 .tab-content .col-md-3,
 .tab-content .col-md-6{
   float:left;
+}
+#datables_reglement .check_reg,
+.detaille_clotured{
+  cursor : not-allowed;
 }
 .active_databales{
   background-color:#6777ef !important;
   color:#fff !important;
 }
+#calendar{
+  width:95%;
+  margin: 0 auto;
+}
 .main-sidebar .sidebar-menu li.nav-item {
   margin: 1rem 0;
+}
+//FUllCalendar Style
+.fc-highlight {
+  background: #0678F4 !important;
+  border-radius:5px !important;
+}
+.fc-title,
+.fc-ltr .fc-basic-view .fc-day-top .fc-day-number,
+.fc-time-grid .fc-slats td{
+  color:#000 !important;
+  text-align:left;
 }

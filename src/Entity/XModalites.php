@@ -21,15 +21,15 @@ class XModalites
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $designation;
 
-    #[ORM\OneToMany(mappedBy: 'paiement', targetEntity: TRegelement::class)]
-    private $regelements;
+    #[ORM\OneToMany(mappedBy: 'paiement', targetEntity: TReglement::class)]
+    private $reglements;
 
     #[ORM\OneToMany(mappedBy: 'modalite', targetEntity: TBrdpaiement::class)]
     private $bordereaux;
 
     public function __construct()
     {
-        $this->regelements = new ArrayCollection();
+        $this->reglements = new ArrayCollection();
         $this->bordereaux = new ArrayCollection();
     }
 
@@ -63,29 +63,29 @@ class XModalites
     }
 
     /**
-     * @return Collection|TRegelement[]
+     * @return Collection|TReglement[]
      */
-    public function getRegelements(): Collection
+    public function getReglements(): Collection
     {
-        return $this->regelements;
+        return $this->reglements;
     }
 
-    public function addRegelement(TRegelement $regelement): self
+    public function addReglement(TReglement $reglement): self
     {
-        if (!$this->regelements->contains($regelement)) {
-            $this->regelements[] = $regelement;
-            $regelement->setPaiement($this);
+        if (!$this->reglements->contains($reglement)) {
+            $this->reglements[] = $reglement;
+            $reglement->setPaiement($this);
         }
 
         return $this;
     }
 
-    public function removeRegelement(TRegelement $regelement): self
+    public function removeReglement(TReglement $reglement): self
     {
-        if ($this->regelements->removeElement($regelement)) {
+        if ($this->reglements->removeElement($reglement)) {
             // set the owning side to null (unless already changed)
-            if ($regelement->getPaiement() === $this) {
-                $regelement->setPaiement(null);
+            if ($reglement->getPaiement() === $this) {
+                $reglement->setPaiement(null);
             }
         }
 

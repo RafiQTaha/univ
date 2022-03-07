@@ -33,9 +33,13 @@ class PEnseignant
     #[ORM\OneToMany(mappedBy: 'enseignant', targetEntity: AcEpreuve::class)]
     private $epreuves;
 
+    #[ORM\ManyToMany(targetEntity: PrProgrammation::class, inversedBy: 'enseignants')]
+    private $programmations;
+
     public function __construct()
     {
         $this->epreuves = new ArrayCollection();
+        $this->programmations = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -129,6 +133,30 @@ class PEnseignant
                 $epreufe->setEnseignant(null);
             }
         }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|PrProgrammation[]
+     */
+    public function getProgrammations(): Collection
+    {
+        return $this->programmations;
+    }
+
+    public function addProgrammation(PrProgrammation $programmation): self
+    {
+        if (!$this->programmations->contains($programmation)) {
+            $this->programmations[] = $programmation;
+        }
+
+        return $this;
+    }
+
+    public function removeProgrammation(PrProgrammation $programmation): self
+    {
+        $this->programmations->removeElement($programmation);
 
         return $this;
     }

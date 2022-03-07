@@ -75,6 +75,9 @@ class TInscription
     #[ORM\OneToOne(mappedBy: 'inscription', targetEntity: ExAnotes::class, cascade: ['persist', 'remove'])]
     private $anotes;
 
+    #[ORM\ManyToOne(targetEntity: PGroupe::class, inversedBy: 'inscriptions')]
+    private $groupe;
+
     public function __construct()
     {
         $this->gnotes = new ArrayCollection();
@@ -407,6 +410,18 @@ class TInscription
         }
 
         $this->anotes = $anotes;
+
+        return $this;
+    }
+
+    public function getGroupe(): ?PGroupe
+    {
+        return $this->groupe;
+    }
+
+    public function setGroupe(?PGroupe $groupe): self
+    {
+        $this->groupe = $groupe;
 
         return $this;
     }

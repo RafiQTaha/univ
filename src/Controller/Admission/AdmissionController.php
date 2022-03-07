@@ -242,7 +242,7 @@ class AdmissionController extends AbstractController
                 $operationcab->setCategorie('admission');
                 $operationcab->setCreated(new DateTime('now'));
                 $operationcab->setUserCreated($this->getUser());
-                $operationcab->setActive(0);
+                $operationcab->setActive(1);
                 $this->em->persist($operationcab);
                 $this->em->flush();
                 $etab = $preinscription->getAnnee()->getFormation()->getEtablissement()->getAbreviation();

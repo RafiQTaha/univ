@@ -32,10 +32,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'UserCreated', targetEntity: TBrdpaiement::class)]
     private $bordereaux;
 
+    #[ORM\OneToMany(mappedBy: 'UserCreated', targetEntity: PrProgrammation::class)]
+    private $programmations;
+
+    #[ORM\OneToMany(mappedBy: 'UserCreated', targetEntity: PlEmptime::class)]
+    private $emptimes;
+
     public function __construct()
     {
         $this->operations = new ArrayCollection();
         $this->bordereaux = new ArrayCollection();
+        $this->programmations = new ArrayCollection();
+        $this->emptimes = new ArrayCollection();
     }
 
     
@@ -168,6 +176,66 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($bordereaux->getUserCreated() === $this) {
                 $bordereaux->setUserCreated(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|PrProgrammation[]
+     */
+    public function getProgrammations(): Collection
+    {
+        return $this->programmations;
+    }
+
+    public function addProgrammation(PrProgrammation $programmation): self
+    {
+        if (!$this->programmations->contains($programmation)) {
+            $this->programmations[] = $programmation;
+            $programmation->setUserCreated($this);
+        }
+
+        return $this;
+    }
+
+    public function removeProgrammation(PrProgrammation $programmation): self
+    {
+        if ($this->programmations->removeElement($programmation)) {
+            // set the owning side to null (unless already changed)
+            if ($programmation->getUserCreated() === $this) {
+                $programmation->setUserCreated(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|PlEmptime[]
+     */
+    public function getEmptimes(): Collection
+    {
+        return $this->emptimes;
+    }
+
+    public function addEmptime(PlEmptime $emptime): self
+    {
+        if (!$this->emptimes->contains($emptime)) {
+            $this->emptimes[] = $emptime;
+            $emptime->setUserCreated($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEmptime(PlEmptime $emptime): self
+    {
+        if ($this->emptimes->removeElement($emptime)) {
+            // set the owning side to null (unless already changed)
+            if ($emptime->getUserCreated() === $this) {
+                $emptime->setUserCreated(null);
             }
         }
 

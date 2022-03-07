@@ -333,7 +333,7 @@ class EtudiantController extends AbstractController
     #[Route('/etudiant_valider/{etudiant}', name: 'etudiant_valider')]
     public function etudiant_valider(Request $request,TEtudiant $etudiant): Response
     {   
-        $current_year = date('Y').'/'.date('Y')+1; 
+    $current_year = date('Y').'/'.date('Y')+1; 
         $id_formation = $request->get('formation');
         
         $formation = $this->em->getRepository(AcFormation::class)->find($id_formation);
@@ -372,7 +372,7 @@ class EtudiantController extends AbstractController
         $operationcab->setCategorie('pré-inscription');
         $operationcab->setCreated(new DateTime('now'));
         $operationcab->setUserCreated($this->getUser());
-        $operationcab->setActive(0);
+        $operationcab->setActive(1);
         $this->em->persist($operationcab);
         $this->em->flush();
         $etab = $preinscription->getAnnee()->getFormation()->getEtablissement()->getAbreviation();

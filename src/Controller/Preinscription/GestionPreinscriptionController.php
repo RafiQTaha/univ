@@ -9,7 +9,7 @@ use App\Entity\PStatut;
 use App\Entity\POrganisme;
 use App\Entity\TOperation;
 use App\Entity\TOperationcab;
-use App\Entity\TRegelement;
+use App\Entity\TReglement;
 use App\Entity\AcEtablissement;
 use App\Entity\TOperationdet;
 use App\Entity\PDocument;
@@ -74,11 +74,12 @@ class GestionPreinscriptionController extends AbstractController
             array( 'db' => 'pre.code','dt' => 1),
             array( 'db' => 'etu.nom','dt' => 2),
             array( 'db' => 'etu.prenom','dt' => 3),
-            array( 'db' => 'etab.abreviation','dt' => 4),
-            array( 'db' => 'UPPER(form.abreviation)','dt' => 5),
-            array( 'db' => 'UPPER(nat.designation)','dt' => 6),
-            array( 'db' => 'tbac.designation','dt' => 7),
-            array( 'db' => 'etu.moyenne_bac','dt' => 8),
+            array( 'db' => 'etu.cin','dt' => 4),
+            array( 'db' => 'etab.abreviation','dt' => 5),
+            array( 'db' => 'UPPER(form.abreviation)','dt' => 6),
+            array( 'db' => 'UPPER(nat.designation)','dt' => 7),
+            array( 'db' => 'tbac.designation','dt' => 8),
+            array( 'db' => 'etu.moyenne_bac','dt' => 9),
             array( 'db' => 'UPPER(stat.designation)','dt' => 10),
             array( 'db' => 'nbr.nbrIns','dt' => 11),
             array( 'db' => 'DATE_FORMAT(pre.created,"%Y-%m-%d")','dt' => 12),
@@ -129,7 +130,7 @@ class GestionPreinscriptionController extends AbstractController
             $etat_bg="";
             foreach (array_values($row) as $key => $value) {
                 if($k == 9) {
-                    $sqls="SELECT (CASE WHEN EXISTS (SELECT cab.code FROM toperationcab cab INNER JOIN tregelement reg ON reg.operation_id = cab.id WHERE cab.preinscription_id = ".$row['id'].") THEN 'Reglé' WHEN EXISTS (SELECT cab2.code FROM toperationcab cab2 LEFT JOIN tregelement reg2 ON reg2.operation_id = cab2.id WHERE cab2.preinscription_id = ".$row['id']." ANd reg2.operation_id IS NULL) THEN 'Facturé' ELSE 'N.Facturé' END ) AS facture";
+                    $sqls="SELECT (CASE WHEN EXISTS (SELECT cab.code FROM toperationcab cab INNER JOIN treglement reg ON reg.operation_id = cab.id WHERE cab.preinscription_id = ".$row['id'].") THEN 'Reglé' WHEN EXISTS (SELECT cab2.code FROM toperationcab cab2 LEFT JOIN treglement reg2 ON reg2.operation_id = cab2.id WHERE cab2.preinscription_id = ".$row['id']." ANd reg2.operation_id IS NULL) THEN 'Facturé' ELSE 'N.Facturé' END ) AS facture";
                     $stmts = $this->em->getConnection()->prepare($sqls);
                     $resultSets = $stmts->executeQuery();
                     $etat = $resultSets->fetchAll();
@@ -178,6 +179,7 @@ class GestionPreinscriptionController extends AbstractController
     {
         $ids = json_decode($request->get('idpreins'));
         foreach ($ids as $id) {
+
             $preinscription = $this->em->getRepository(TPreinscription::class)->find($id);
             $preinscription->setCategorieListe(
                 $this->em->getRepository(PStatut::class)->find(1)
@@ -186,6 +188,20 @@ class GestionPreinscriptionController extends AbstractController
                 $this->em->getRepository(PStatut::class)->find(5)
             );
             $this->em->flush();
+
+            $operationcab = new TOperationcab();
+            $operationcab->setPreinscription($preinscription);
+            $operationcab->setAnnee($preinscription->getAnnee());
+            $operationcab->setOrganisme($this->em->getRepository(POrganisme::class)->find(7));
+            $operationcab->setCategorie('inscription');
+            $operationcab->setCreated(new DateTime('now'));
+            $operationcab->setUserCreated($this->getUser());
+            $this->em->persist($operationcab);
+            $this->em->flush();
+            $etab = $preinscription->getAnnee()->getFormation()->getEtablissement()->getAbreviation();
+            $operationcab->setCode($etab.'-FAC'.str_pad($operationcab->getId(), 8, '0', STR_PAD_LEFT).'/'.date('Y'));
+            $this->em->flush();
+            
         }
         return new JsonResponse('Admission bien enregister', 200);
     }
@@ -243,7 +259,7 @@ class GestionPreinscriptionController extends AbstractController
             $operationdet->setFrais($this->em->getRepository(PFrais::class)->find($idfrais->id));
             $operationdet->setMontant($idfrais->montant);
             $operationdet->setRemise(0);
-            $operationDet->setActive(1);
+            $operationdet->setActive(1);
             $operationdet->setCreated(new DateTime('now'));
             $operationdet->setUpdated(new DateTime('now'));
             $this->em->persist($operationdet);
@@ -306,6 +322,7 @@ class GestionPreinscriptionController extends AbstractController
     #[Route('/attestation_preinscription/{preinscription}', name: 'attestation_preinscription')]
     public function attestationpreinscription(Request $request, TPreinscription $preinscription): Response
     {
+        // $preinscription
         $html = $this->render("attestaion/pdfs/preinscription.html.twig", [
             'preinscription' => $preinscription,
             'annee' => $preinscription->getAnnee(),
@@ -315,8 +332,8 @@ class GestionPreinscriptionController extends AbstractController
         ])->getContent();
         $mpdf = new Mpdf([
             'mode' => 'utf-8',
-            'margin_left' => '5',
-            'margin_right' => '5',
+            'margin_left' => '12',
+            'margin_right' => '12',
             ]);
         // $mpdf->SetTitle('Attestation de pré-inscription '.$preinscription->getEtudiant()->getNom().' '.$preinscription->getEtudiant()->getPrenom());
         $mpdf->SetTitle('Attestation de Pré-Inscription');
@@ -333,7 +350,7 @@ class GestionPreinscriptionController extends AbstractController
     #[Route('/facture/{operationcab}', name: 'preinscription_facture')]
     public function preinscriptionFacture(Request $request, TOperationcab $operationcab): Response
     {
-        $reglementTotal = $this->em->getRepository(TRegelement::class)->getSumMontantByCodeFacture($operationcab);
+        $reglementTotal = $this->em->getRepository(TReglement::class)->getSumMontantByCodeFacture($operationcab);
         $operationTotal = $this->em->getRepository(TOperationdet::class)->getSumMontantByCodeFacture($operationcab);
         // dd($reglement, $operationDetails);
         $html = $this->render("facture/pdfs/facture.html.twig", [

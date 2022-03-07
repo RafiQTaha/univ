@@ -16,6 +16,9 @@
             <link rel="stylesheet" href="//cdn.datatables.net/1.11.3/css/jquery.dataTables.min.css">
             <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
             <link rel="stylesheet" href="{{asset('assets/css/multi-select.css')}}">
+            {# Full Calendar Style #}
+            {# <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.2/main.min.css"> #}
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.css"/>
             
         {% endblock %}
 
@@ -27,16 +30,19 @@
             <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
             <script src="{{asset('assets/js/stisla.js')}}"></script>
             <script src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.24.0/axios.min.js" integrity="sha512-u9akINsQsAkG9xjc1cnGF4zw5TFDwkxuc9vUp5dltDWYCSmyd0meygbvgXrlc/z7/o4a19Fb5V0OUE58J7dcyw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.24.0/axios.min.js"></script>
             <script src="{{asset('assets/js/page/bootstrap-modal.js')}}"></script>
             <script src="{{asset('assets/js/sweetalert.min.js')}}"></script>
             <!-- JS Libraies -->
             <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+            {# Full Calendar Script #}
+            {# <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.2/main.min.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/bootstrap@4.3.0/main.min.js"></script> #}
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.js"></script>
             <!-- Template JS File -->
             <script src="{{asset('assets/js/scripts.js')}}"></script>
             <script src="{{asset('assets/js/custom.js')}}"></script>
             {{ encore_entry_script_tags('app') }}
-            
         {% endblock %}
     </head>
     <body>

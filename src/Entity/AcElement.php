@@ -66,11 +66,15 @@ class AcElement
     #[ORM\OneToMany(mappedBy: 'element', targetEntity: ExEnotes::class)]
     private $enotes;
 
+    #[ORM\OneToMany(mappedBy: 'element', targetEntity: PrProgrammation::class)]
+    private $programmations;
+
     public function __construct()
     {
         $this->epreuves = new ArrayCollection();
         $this->controles = new ArrayCollection();
         $this->enotes = new ArrayCollection();
+        $this->programmations = new ArrayCollection();
     }
     
 
@@ -331,6 +335,36 @@ class AcElement
             // set the owning side to null (unless already changed)
             if ($enote->getElement() === $this) {
                 $enote->setElement(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|PrProgrammation[]
+     */
+    public function getProgrammations(): Collection
+    {
+        return $this->programmations;
+    }
+
+    public function addProgrammation(PrProgrammation $programmation): self
+    {
+        if (!$this->programmations->contains($programmation)) {
+            $this->programmations[] = $programmation;
+            $programmation->setElement($this);
+        }
+
+        return $this;
+    }
+
+    public function removeProgrammation(PrProgrammation $programmation): self
+    {
+        if ($this->programmations->removeElement($programmation)) {
+            // set the owning side to null (unless already changed)
+            if ($programmation->getElement() === $this) {
+                $programmation->setElement(null);
             }
         }
 

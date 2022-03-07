@@ -23,6 +23,7 @@ $(document).ready(function  () {
     processing: true,
     serverSide: true,
     deferRender: true,
+    responsive: true,
     drawCallback: function () {
       if(id_etudiant) {
         $("body tr#" + id_etudiant).addClass('active_databales');
@@ -93,15 +94,11 @@ $(document).ready(function  () {
       },
       stateSave: true,
       bDestroy: true
-    });
-    
+    });    
     loadExistMatieres();
     loadEtudiantStatut();
-    
   })
-
   
-
   $('body').on('change','#etablissement',function () {
     let id_etab = $(this).val();
     axios.get('/api/formation/'+id_etab)

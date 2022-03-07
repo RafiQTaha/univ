@@ -15,7 +15,7 @@ use App\Entity\AcFormation;
 use App\Entity\TPreinscription;
 use App\Entity\TInscription;
 use App\Entity\TAdmission;
-use App\Entity\TRegelement;
+use App\Entity\TReglement;
 use App\Entity\AcPromotion;
 use App\Entity\POrganisme;
 use App\Entity\XBanque;
@@ -42,7 +42,7 @@ class GestionFactureController extends AbstractController
         $organismes = $this->em->getRepository(POrganisme::class)->findAll();
         $banques = $this->em->getRepository(XBanque::class)->findAll();
         $paiements = $this->em->getRepository(XModalites::class)->findAll();
-        $reglements = $this->em->getRepository(TRegelement::class)->findAll();
+        $reglements = $this->em->getRepository(TReglement::class)->findAll();
         // dd($reglements);
         $operations = ApiController::check($this->getUser(), 'gestion_facture', $this->em);
         if(!$operations) {
@@ -59,7 +59,7 @@ class GestionFactureController extends AbstractController
     }
     
     #[Route('/list', name: 'list_facture_factures')]
-    public function list_gestion_preinscription(Request $request): Response
+    public function list_facture_factures(Request $request): Response
     {   
          
         $params = $request->query;
@@ -95,14 +95,15 @@ class GestionFactureController extends AbstractController
             array( 'db' => 'Upper(pre.code)','dt' => 2),
             array( 'db' => 'etu.nom','dt' => 3),
             array( 'db' => 'etu.prenom','dt' => 4),
-            array( 'db' => 'etab.abreviation','dt' => 5),
-            array( 'db' => 'Upper(frma.abreviation)','dt' => 6),
-            array( 'db' => 'nat.designation','dt' => 7),
-            array( 'db' => 'opcab.categorie','dt' => 8),
-            array( 'db' => 'montant_facture','dt' => 9),
-            array( 'db' => 'montant_regle','dt' => 10),
-            array( 'db' => 'Upper(org.abreviation)','dt' => 11),
-            array( 'db' => 'opcab.active','dt' => 12),
+            array( 'db' => 'etu.cin','dt' => 5),
+            array( 'db' => 'etab.abreviation','dt' => 6),
+            array( 'db' => 'Upper(frma.abreviation)','dt' => 7),
+            array( 'db' => 'nat.designation','dt' => 8),
+            array( 'db' => 'opcab.categorie','dt' => 9),
+            array( 'db' => 'montant_facture','dt' => 10),
+            array( 'db' => 'montant_regle','dt' => 11),
+            array( 'db' => 'Upper(org.abreviation)','dt' => 12),
+            array( 'db' => 'opcab.active','dt' => 13),
         );
         $sql = "SELECT " . implode(", ", DatatablesController::Pluck($columns, 'db')) . "
         FROM `toperationcab` opcab
@@ -114,7 +115,7 @@ class GestionFactureController extends AbstractController
         LEFT JOIN porganisme org on org.id = opcab.organisme_id
         LEFT JOIN nature_demande nat on nat.id = etu.nature_demande_id 
         LEFT JOIN (select code ,operationcab_id, SUM(montant) as montant_facture from toperationdet) opdet on opdet.operationcab_id = opcab.id
-        LEFT JOIN (select code ,operation_id, SUM(montant) as montant_regle from tregelement) reg on reg.operation_id = opcab.id $filtre ";
+        LEFT JOIN (select code ,operation_id, SUM(montant) as montant_regle from treglement) reg on reg.operation_id = opcab.id $filtre ";
         // dd($sql);
         $totalRows .= $sql;
         $sqlRequest .= $sql;
@@ -143,14 +144,14 @@ class GestionFactureController extends AbstractController
             $etat_bg="";
             foreach (array_values($row) as $key => $value) { 
                 if($key > 0) {
-                    if ($key == 9 || $key == 10) {
+                    if ($key == 10 || $key == 11) {
                         $value = $value == NULL ? 0 : $value;
                     }
-                    if ($key == 7) {
+                    if ($key == 8) {
                         $value = $value == 'Payant' ? $value : 'Boursier';
                     }
-                    if($key == 12){
-                        $value = $value == 1 ? 'Cloturer' : 'Ouverte';
+                    if($key == 13){
+                        $value = $value == 0 ? 'Cloture' : 'Ouverte';
                     }
                     $nestedData[] = $value;
                 }
@@ -169,17 +170,19 @@ class GestionFactureController extends AbstractController
         return new Response(json_encode($json_data));
     }
     
-    #[Route('/ajouter_reglement/{id}', name: 'ajouter_reglement')]
+    #[Route('/ajouter_reglement/{id}', name: 'facture_ajouter_reglement')]
     public function ajouter_reglement(Request $request,TOperationcab $operationcab): Response
     { 
-        if (empty($request->get('d_reglement')) && empty($request->get('montant')) && empty($request->get('banque')) && empty($request->get('paiement')) && empty($request->get('reference')) ) {
+        if (empty($request->get('d_reglement')) || empty($request->get('montant')) || empty($request->get('banque')) || empty($request->get('paiement')) || empty($request->get('reference')) ) {
             return new JsonResponse('Veuillez renseigner tous les champs obligatoires!', 500);
         }
-        if ($request->get('montant') < $request->get('montant2')) {
-            return new JsonResponse('Le montant doit etre superieur du Remise', 500);
+        if ($request->get('montant') > $request->get('montant2')) {
+            return new JsonResponse('Le montant a réglé est '.$request->get('montant2').'DH', 500);
+        }elseif ($request->get('montant') == 0) {
+            return new JsonResponse('Le montant ne peut pas étre égale a 0', 500);
         }
         $etablissement = $operationcab->getPreinscription()->getAnnee()->getFormation()->getEtablissement()->getAbreviation();
-        $reglement = New TRegelement();
+        $reglement = New TReglement();
         $reglement->setOperation($operationcab);
         $reglement->setCreated(new DateTime('now'));
         $reglement->setMontant($request->get('montant'));
@@ -198,37 +201,30 @@ class GestionFactureController extends AbstractController
     #[Route('/getMontant/{id}', name: 'getMontant')]
     public function getMontant(Request $request,TOperationcab $operationcab): Response
     {   
-        if($this->em->getRepository(TOperationdet::class)->findBy(['operationcab'=>$operationcab]) == NULL){
+        $operationdet = $this->em->getRepository(TOperationdet::class)->findBy(['operationcab'=>$operationcab,'active'=>1]);
+        if($operationdet == NULL || $operationcab->getActive() == 0){
             return new JsonResponse('vide', 200);
         }
-        $reglementTotal = $this->em->getRepository(TRegelement::class)->getSumMontantByCodeFacture($operationcab);
+        $reglementTotal = $this->em->getRepository(TReglement::class)->getSumMontantByCodeFacture($operationcab);
         $operationTotal = $this->em->getRepository(TOperationdet::class)->getSumMontantByCodeFacture($operationcab);
-        $operationTotal = $operationTotal == Null ? 0 : $operationTotal;
-        $reglementTotal = $reglementTotal == Null ? 0 : $reglementTotal;
+        $operationTotal = $operationTotal == Null ? 0 : $operationTotal['total'];
+        $reglementTotal = $reglementTotal == Null ? 0 : $reglementTotal['total'];
         // dd($operationTotal['total'], $reglementTotal['total']);
-        $montant = $operationTotal['total'] - $reglementTotal['total'];
+        $montant = $operationTotal - $reglementTotal;
         return new JsonResponse($montant, 200);        
     }
-    #[Route('/facture/{operationcab}/{reglement}', name: 'facture_facture')]
-    public function facture_reglement(Request $request, TOperationcab $operationcab,TRegelement $reglement): Response
+    #[Route('/facture/{operationcab}/{reglement}', name: 'imprimer_facture_reglement')]
+    public function imprimer_facture_reglement(TOperationcab $operationcab,TReglement $reglement): Response
     {
-        $inscription = "";
-        $promotion = "";
         // dd($operationcab->getPreinscription()->getAnnee()->getFormation());
-        $reglementTotal = $this->em->getRepository(TRegelement::class)->getSumMontantByCodeFacture($operationcab);
+        $reglementTotal = $this->em->getRepository(TReglement::class)->getSumMontantByCodeFacture($operationcab);
         $operationTotal = $this->em->getRepository(TOperationdet::class)->getSumMontantByCodeFacture($operationcab);
         $inscription = $this->em->getRepository(TInscription::class)->findOneBy([
             'admission'=>$this->em->getRepository(TAdmission::class)->findBy([
                 'preinscription'=>$operationcab->getPreinscription()])]);
-        $promotion = $inscription->getPromotion();
-        // if () {
-        //     # code...
-        // }
-        // $reglement = $this->em->getRepository(TOperationdet::class)->findOneBy(['operation'=>$operationcab]);
-        // $promotion = $this->em->getRepository(AcPromotion::class)->findBy([
-        //     'formation'=>$operationcab->getPreinscription()->getAnnee()->getFormation(),
-        //     '']);    
-        // dd($promotion);
+                // dd($inscription);
+        $promotion = $inscription == NULL ? "" : $inscription->getPromotion()->getDesignation();
+        $inscription = $inscription == NULL ? "" : $inscription->getCode();
         $html = "";
         for ($i=0; $i < 3; $i++) { 
             $html .= $this->render("facture/pdfs/facture_reglement.html.twig", [
@@ -241,17 +237,13 @@ class GestionFactureController extends AbstractController
             ])->getContent();
         }
         $mpdf = new Mpdf([
-            'mode' =>'UTF8',
-            'format' =>'A4',
-            'orientation' =>'PORTRAIT',
-            'destination' =>'FILE',
+            'mode' => 'utf-8', 
+            'format' => [250, 350],
             'margin_left' => 5,
             'margin_right' => 5,
-            'margin_top' => 0,
-            'margin_bottom' => 0,
-            'margin_header' => 0,
-            'margin_footer' => 0,
+            'margin_top' => 10,
         ]);
+        $mpdf->SetTitle('Facture Reglée');
         $mpdf->WriteHTML($html);
         $mpdf->Output("facture.pdf", "I");
     }
@@ -266,17 +258,15 @@ class GestionFactureController extends AbstractController
         $this->em->flush();
         return new JsonResponse('Organisme Modifier', 200);        
     }
-
-    
-    #[Route('/printfacture/{operationcab}', name: 'printfacture')]
-    public function printfacture(Request $request, TOperationcab $operationcab): Response
+    #[Route('/printfacture/{operationcab}', name: 'imprimerfacture')]
+    public function imprimerfacture(TOperationcab $operationcab): Response
     {
-        $reglementTotal = $this->em->getRepository(TRegelement::class)->getSumMontantByCodeFacture($operationcab);
         $operationTotal = $this->em->getRepository(TOperationdet::class)->getSumMontantByCodeFacture($operationcab);
+        $reglementTotal = $this->em->getRepository(TReglement::class)->getSumMontantByCodeFacture($operationcab);
         $operationTotal = $operationTotal == Null ? 0 : $operationTotal['total'];
-        $reglementTotal = $reglementTotal == Null ? 0 : $reglementTotal;
-        // dd($operationTotal, $reglementTotal);
-        $total = $operationTotal - $reglementTotal['total'];
+        $reglementTotal = $reglementTotal == Null ? 0 : $reglementTotal['total'];
+        // dd($operationTotal,$reglementTotal);
+        $total = $operationTotal - $reglementTotal;
         $html = $this->render("facture/pdfs/facture_facture.html.twig", [
             'reglementTotal' => $reglementTotal,
             'operationTotal' => $operationTotal,
@@ -285,40 +275,64 @@ class GestionFactureController extends AbstractController
         ])->getContent();
         $mpdf = new Mpdf();
         $mpdf->showImageErrors = true;
-        $mpdf->SetHTMLHeader(
-            $this->render("facture/pdfs/header.html.twig")->getContent()
-        );
-        $mpdf->SetHTMLFooter(
-            $this->render("facture/pdfs/footer.html.twig")->getContent()
-        );
         $mpdf->WriteHTML($html);
         $mpdf->Output("facture.pdf", "I");
+    }
+    
+    #[Route('/article_frais/{id}', name: 'article_frais_facture')]
+    public function article_frais(Request $request,TOperationCab $operationcab): Response
+    {   
+        $formation = $operationcab->getPreinscription()->getAnnee()->getFormation();
+        $categorie = $operationcab->getCategorie();
+        if ($categorie == 'hors inscription') {
+            $frais = $this->em->getRepository(PFrais::class)->findBy(['formation'=>$formation]);
+        }else{
+            $frais = $this->em->getRepository(PFrais::class)->findBy(['formation'=>$formation,'categorie'=>$categorie]);
+        }
+        $data = "<option selected enabled>Choix Fraix</option>";
+        foreach ($frais as $frs) {
+            $data .="<option value=".$frs->getId()." data-id=".$frs->getmontant().">".$frs->getDesignation()."</option>";
+        }
+        return new JsonResponse($data, 200);
     }
 
     #[Route('/detaille_facture/{id}', name: 'detaille_facture')]
     public function detaille_facture(Request $request,TOperationcab $operationcab): Response
     { 
-        $operationdets=$this->em->getRepository(TOperationdet::class)->findBy(['operationcab'=>$operationcab]);
+        $operationdets = $this->em->getRepository(TOperationdet::class)->findBy(['operationcab'=>$operationcab]);
+        $cloture = $operationcab->getActive();
         $html = "";
         $i=1;
+        $active = "";
         foreach($operationdets as $operationdet){
-            if ($operationdet->getActive() == 0) {
-                $active = '<button class="detaille_cloture btn btn-danger" id='.$operationdet->getId().'><i class="fas fa-window-close"></i></button>';
-            }else{
-                $active = '<button class="detaille_clotured btn btn-secondary" id='.$operationdet->getId().'><i class="fas fa-window-close"></i></i></button>';
+            $tr = '';
+            if ($cloture == 1) {
+                if ($operationdet->getActive() == 1) {
+                    $active = '<button class="detaille_cloture btn btn-danger" id='.$operationdet->getId().'><i class="fas fa-window-close"></i></button>';
+                }else{
+                    $active = '<button class="detaille_clotured btn btn-secondary" id='.$operationdet->getId().'><i class="fas fa-window-close"></i></i></button>';
+                }
+                $tr = '<th scope="col">'.$active.'</th>';
             }
             $html .= '<tr><th scope="col">'.$i++.'</th>
             <th scope="col" style="width:25rem">'.$operationdet->getFrais()->getDesignation().'</th>
             <th scope="col">'.$operationdet->getMontant().'</th>
-            <th scope="col">'.$operationdet->getRemise().'</th>
-            <th scope="col">'.$active.'</th></tr>';
+            <th scope="col">'.$operationdet->getRemise().'</th>'.$tr.'</tr>';
         }
-        return new JsonResponse($html, 200);        
+        $data = [$cloture,$html];
+        return new JsonResponse($data, 200);        
     }
 
     #[Route('/add_detaille/{id}', name: 'add_detaille')]
     public function add_detaille(Request $request,TOperationcab $operationcab): Response
     {   
+        if($operationcab->getActive() == 0){
+            return new JsonResponse('Cette Facture Est Cloture', 500);  
+        }
+        // dd($request->get('montant'),$request->get('ice'),$request->get('frais'));
+        if(empty($request->get('montant'))  || $request->get('montant') == ' '|| empty($request->get('ice'))|| $request->get('montant') == ' ' || empty($request->get('frais')) ){
+            return new JsonResponse('Merci de renseigner tous les champs!', 500);            
+        }
         $frais =  $this->em->getRepository(PFrais::class)->find($request->get('frais'));
         $operationDet = new TOperationdet();
         $operationDet->setOperationcab($operationcab);
