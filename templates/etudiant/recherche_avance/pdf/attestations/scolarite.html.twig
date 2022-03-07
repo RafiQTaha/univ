@@ -1,0 +1,251 @@
+<link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro" rel="stylesheet">
+
+<style type="text/Css">
+    body{
+        font-family: 'Courier', Courier;
+        text-transform : uppercase;
+    }
+    footer {
+        font-family: 'Courier', Courier;
+
+    }
+    .titre-reb{
+        width: 100%;
+        background: #1f4f7a;
+        font-size: 9px ;
+        padding:3px 10px;
+        color: #f1f1f1;
+        font-weight: bold
+    }
+    div.zone_over
+    {
+        display: block;
+        width: 40%;
+        word-wrap:break-word !important;
+    }
+    .slh tr td {
+        border-bottom: 1px solid #292929;
+    }
+    
+    .txt {
+        width: 100%;
+        text-align: left;
+        line-height: 30px; 
+        padding-top: 0px ;  
+        padding-bottom:  0px ;
+        padding-left: 30px ;
+        padding-right:  30px ;
+        text-align: justify; 
+        font-size : 12px;
+        font-weight: normal ;
+    }
+    .txt span {
+        font-size:12px;
+        font-weight: bold;
+        color:black;
+        margin-left: 5px ; 
+        margin-right: 5px ; 
+    }
+</style>
+<br><br><br><br><br><br><br>
+<p style="text-align:center;font-size:20px;font-weight: bold;color:black;">ATTESTATION DE SCOLARITE </p>
+<br>
+<table style="width: 100%;"  cellspacing="0">
+    <tbody>
+        <tr>
+            <td class="txt">
+                Je soussigné Monsieur {{inscription.annee.formation.etablissement.doyen}}, {{inscription.annee.formation.etablissement.statut}} de l'établissement :
+                    
+                    
+                 <b>
+{% if inscription.annee.formation.etablissement.designation =='Centre de Simulation Médicale' %}
+Université Internationale Abulcasis des Sciences de la Santé
+{% else %} 
+{{inscription.annee.formation.etablissement.designation}}
+{% endif %}
+</b>, sise à Madinat Al Irfane, Bâtiment B, avenue Allal El Fassi, Rabat, atteste par la présente que:
+            </td>
+        </tr>
+    </tbody>
+</table>
+<br><br>
+
+
+<table style="width: 100%;font-size:12px;"  cellspacing="0">
+
+    <tbody>
+        <tr>
+            <td style="width: 10%; text-align: left;line-height: 18px">
+            </td>
+            <td style="width: 70%; text-align: left;line-height: 18px">
+                <span style="font-size:12px;font-weight: bold;color:black;">L’étudiant(e)</span> : {{inscription.admission.preinscription.etudiant.nom}} {{inscription.admission.preinscription.etudiant.prenom}}
+            </td>
+            <td style="width: 20%; text-align: left;line-height: 18px">
+            </td>
+        </tr>
+        
+        <tr>
+            <td style="width: 10%; text-align: left;line-height: 18px">
+
+            </td>
+            <td style="width: 70%; text-align: left;line-height: 18px">
+                <span style="font-size:12px;font-weight: bold;color:black;"> </span> 
+            </td>
+            <td style="width: 20%; text-align: left;line-height: 18px">
+                <span style="font-size:12px;font-weight: bold;color:black;"> </span>
+            </td> 
+        </tr>
+        
+        <tr>
+            <td style="width: 10%; text-align: left;line-height: 18px">
+
+            </td>
+            <td style="width: 70%; text-align: left;line-height: 18px">
+                <span style="font-size:12px;font-weight: bold;color:black;">Né(e) le </span> : {{inscription.admission.preinscription.etudiant.dateNaissance|date("d/m/Y")}}
+            </td>
+            <td style="width: 20%; text-align: left;line-height: 18px">
+                <span style="font-size:12px;font-weight: bold;color:black;"> </span>
+            </td> 
+        </tr>
+        
+        <tr>
+            <td style="width: 10%; text-align: left;line-height: 18px">
+
+            </td>
+            <td style="width: 70%; text-align: left;line-height: 18px">
+                <span style="font-size:12px;font-weight: bold;color:black;"> </span> 
+            </td>
+            <td style="width: 20%; text-align: left;line-height: 18px">
+                <span style="font-size:12px;font-weight: bold;color:black;"> </span>
+            </td> 
+        </tr>
+        
+        <tr>
+            <td style="width: 10%; text-align: left;line-height: 18px">
+
+            </td>
+            <td style="width: 70%; text-align: left;line-height: 18px">
+                <span style="font-size:12px;font-weight: bold;color:black;">Titulaire de la Carte d’Identité Nationale N° </span> : {{inscription.admission.preinscription.etudiant.cin}}
+            </td>
+            <td style="width: 20%; text-align: left;line-height: 18px">
+
+            </td>
+        </tr>
+        <tr>
+            <td style="width: 10%; text-align: left;line-height: 18px">
+
+            </td>
+            <td style="width: 70%; text-align: left;line-height: 18px">
+                <span style="font-size:12px;font-weight: bold;color:black;"> </span> 
+            </td>
+            <td style="width: 20%; text-align: left;line-height: 18px">
+                <span style="font-size:12px;font-weight: bold;color:black;"> </span>
+            </td> 
+        </tr>
+        
+        <tr>
+            <td style="width: 10%; text-align: left;line-height: 18px">
+
+            </td>
+            <td style="width: 70%; text-align: left;line-height: 18px">
+                <span style="font-size:12px;font-weight: bold;color:black;">Etablissement </span> : {{inscription.annee.formation.etablissement.designation}}
+            </td>
+            <td style="width: 20%; text-align: left;line-height: 18px">
+                <span style="font-size:12px;font-weight: bold;color:black;"> </span>
+            </td> 
+        </tr>
+        <tr>
+            <td style="width: 10%; text-align: left;line-height: 18px">
+
+            </td>
+            <td style="width: 70%; text-align: left;line-height: 18px">
+                <span style="font-size:12px;font-weight: bold;color:black;"> </span> 
+            </td>
+            <td style="width: 20%; text-align: left;line-height: 18px">
+                <span style="font-size:12px;font-weight: bold;color:black;"> </span>
+            </td> 
+        </tr>
+        
+        <tr>
+            <td style="width: 10%; text-align: left;line-height: 18px">
+
+            </td>
+            <td style="width: 70%; text-align: left;line-height: 18px">
+                <span style="font-size:12px;font-weight: bold;color:black;">Formation </span> :  {{inscription.annee.formation.designation}}          
+            </td>
+            <td style="width: 20%; text-align: left;line-height: 18px">
+                <span style="font-size:12px;font-weight: bold;color:black;"> </span>
+            </td> 
+        </tr>
+        <tr>
+            <td style="width: 10%; text-align: left;line-height: 18px">
+
+            </td>
+            <td style="width: 70%; text-align: left;line-height: 18px">
+                <span style="font-size:12px;font-weight: bold;color:black;"> </span> 
+            </td>
+            <td style="width: 20%; text-align: left;line-height: 18px">
+                <span style="font-size:12px;font-weight: bold;color:black;"> </span>
+            </td> 
+        </tr>
+        
+        <tr>
+            <td style="width: 10%; text-align: left;line-height: 18px">
+
+            </td>
+            <td style="width: 70%; text-align: left;line-height: 18px">
+                <span style="font-size:12px;font-weight: bold;color:black;">Promotion </span> : {{inscription.promotion.designation}}
+            </td> 
+            <td style="width: 20%; text-align: left;line-height: 18px">
+                <span style="font-size:12px;font-weight: bold;color:black;"> </span>
+            </td> 
+        </tr>               
+        
+    </tbody>
+
+</table>
+<br><br>
+<br><br>
+<table style="width: 100%;"  cellspacing="0">
+
+    <tbody>
+
+        <tr>
+
+            <td class="txt">  
+                Est inscrit(e) sous le n° <b >{{inscription.code}}</b>
+                                       
+                pour suivre l’enseignement de plein exercice durant l’année universitaire <b >{{inscription.annee.designation}}</b>. 
+                <br>
+               
+                Cette attestation est délivrée à l'intéressé(e) pour servir et valoir ce que de droit.
+            </td>
+
+        </tr>
+    </tbody>
+
+</table>
+
+<br><br>
+
+<table style="width: 100%;" align="center" cellspacing="0">
+    <thead>
+        <tr>
+            <th style="width: 30%; text-align: left;"></th>
+
+        </tr>
+    </thead>
+    <tbody>
+
+        <tr>
+
+            <td style="width: 89%; text-align: right;">
+                <br><br><br>
+                <span style="font-size:12px;font-weight: bold;color:black;"> Fait à Rabat, le {{"now"|date("d/m/Y")}}</span>
+
+            </td>
+
+        </tr>
+    </tbody>
+
+</table>

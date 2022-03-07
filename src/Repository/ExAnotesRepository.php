@@ -47,4 +47,33 @@ class ExAnotesRepository extends ServiceEntityRepository
         ;
     }
     */
+
+    public function getStatutByColumn($inscription, $statut)
+    {
+        // dd('e.'.$statut);
+        if($statut == "statutDef") {
+            $request = $this->createQueryBuilder('e')
+                ->select("statut.abreviation")
+                ->innerJoin("e.statutDef", "statut")
+                ->where('e.inscription = :inscription')
+                ->setParameter('inscription', $inscription)
+                ->getQuery()
+                ->getOneOrNullResult()
+            ;
+        } else {
+            $request = $this->createQueryBuilder('e')
+                ->select("statut.abreviation")
+                ->innerJoin("e.statutAff", "statut")
+                ->where('e.inscription = :inscription')
+                ->setParameter('inscription', $inscription)
+                ->getQuery()
+                ->getOneOrNullResult()
+            ;
+        }
+        if(!$request) {
+            return "";
+        } 
+
+        return $request;
+    }
 }

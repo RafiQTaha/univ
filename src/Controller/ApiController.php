@@ -158,7 +158,7 @@ class ApiController extends AbstractController
     public function getFraisByFormation(TAdmission $admission): Response
     {   
         $formation = $admission->getPreinscription()->getAnnee()->getFormation();
-        $frais = $this->em->getRepository(PFrais::class)->findBy(["formation" => $formation]);
+        $frais = $this->em->getRepository(PFrais::class)->findBy(["formation" => $formation, 'categorie' => "admission"]);
         $data = self::dropdownData($frais,'frais');
         return new JsonResponse($data);        
     }

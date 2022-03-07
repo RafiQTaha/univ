@@ -87,6 +87,27 @@ class ExControleRepository extends ServiceEntityRepository
             return null;
         }
     }
+    public function checkIfyoucanCalculAnnee($annee, $promotion)
+    {
+        $request = $this->createQueryBuilder('e')
+            ->innerJoin("e.element", "element")
+            ->innerJoin("element.module", "module")
+            ->innerJoin("module.semestre", "semestre")
+            ->where('semestre.promotion = :promotion')
+            ->andWhere('e.mannee = 0')
+            ->andWhere('e.annee = :annee')
+            ->setParameter('promotion', $promotion)
+            ->setParameter('annee', $annee)
+            ->getQuery()
+            ->getResult()
+        ;
+        if(count($request) > 0){
+            return $request;
+        }
+        else {
+            return null;
+        }
+    }
     public function checkIfAllElementValide($annee, $module)
     {
         $request = $this->createQueryBuilder('e')
@@ -154,6 +175,27 @@ class ExControleRepository extends ServiceEntityRepository
         }
         return null;
     }
+    public function canValidateAnnee($promotion, $annee)
+    {
+        $request =  $this->createQueryBuilder('e')
+            ->innerJoin("e.element", "element")
+            ->innerJoin("element.module", "module")
+            ->innerJoin("module.semestre", "semestre")
+            ->innerJoin("semestre.promotion", "promotion")
+            ->where('promotion = :promotion')
+            ->andWhere('e.annee = :annee')
+            ->andWhere('e.msemestre =  0')
+            ->setParameter('promotion', $promotion)
+            ->setParameter('annee', $annee)
+            ->getQuery()
+            ->getResult()
+        ;
+        // dd($request);
+        if(count($request) > 0) {
+            return $request;
+        }
+        return null;
+    }
     public function updateModuleByElement($module, $annee, $val)
     {
         $this->createQueryBuilder('e')
@@ -177,6 +219,24 @@ class ExControleRepository extends ServiceEntityRepository
         $this->createQueryBuilder('e')
             ->update()
             ->set("e.msemestre", ":val")
+            ->where('e.element in (:elements)')
+            ->andWhere('e.annee = :annee')
+            ->setParameter('elements', $elements)
+            ->setParameter('annee', $annee)
+            ->setParameter('val', $val)
+            ->getQuery()
+            ->execute()
+        ;
+    }
+    public function updateAnneeByElement($promotion, $annee, $val)
+    {
+        $elements = $this->getEntityManager()
+            ->getRepository(AcElement::class)
+            ->getElementsByPromotion($promotion);
+            
+        $this->createQueryBuilder('e')
+            ->update()
+            ->set("e.mannee", ":val")
             ->where('e.element in (:elements)')
             ->andWhere('e.annee = :annee')
             ->setParameter('elements', $elements)
@@ -214,6 +274,26 @@ class ExControleRepository extends ServiceEntityRepository
             ->andWhere('e.msemestre = 0')
             ->andWhere('e.annee = :annee')
             ->setParameter('semestre', $semestre)
+            ->setParameter('annee', $annee)
+            ->getQuery()
+            ->getResult()
+        ;
+        // dd($request);
+        if(count($request) > 0) {
+            return $request;
+        }
+        return null;
+    }
+    public function alreadyValidateAnnee($promotion, $annee)
+    {
+        $request =  $this->createQueryBuilder('e')
+            ->innerJoin("e.element", "element")
+            ->innerJoin("element.module", "module")
+            ->innerJoin("module.semestre", "semestre")
+            ->where('semestre.promotion = :promotion')
+            ->andWhere('e.mannee = 0')
+            ->andWhere('e.annee = :annee')
+            ->setParameter('promotion', $promotion)
             ->setParameter('annee', $annee)
             ->getQuery()
             ->getResult()

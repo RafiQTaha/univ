@@ -37,14 +37,33 @@ class AcModuleRepository extends ServiceEntityRepository
     */
 
     
-    public function findByPromotion($promotion)
+    public function findByPromotion($promotion, $annee)
     {
         return $this->createQueryBuilder('a')
             ->innerJoin("a.semestre", "semestre")
+            ->innerJoin("a.elements", "elements")
+            ->innerJoin("elements.controles", "controles")
             ->where("semestre.promotion = :promotion")
             ->andWhere('a.active = 1')
             ->andWhere('semestre.active = 1')
+            ->andWhere("controles.annee = :annee")
             ->setParameter('promotion', $promotion)
+            ->setParameter('annee', $annee)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+    public function getMdouleBySemestreAndExControle($semestre, $annee)
+    {
+        return $this->createQueryBuilder('a')
+            ->innerJoin("a.semestre", "semestre")
+            ->innerJoin("a.elements", "elements")
+            ->innerJoin("elements.controles", "controles")
+            ->where('a.active = 1')
+            ->andWhere("semestre = :semestre")
+            ->andWhere("controles.annee = :annee")
+            ->setParameter('semestre', $semestre)
+            ->setParameter('annee', $annee)
             ->getQuery()
             ->getResult()
         ;

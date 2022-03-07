@@ -12,7 +12,7 @@
               {% for operation in operations %}
                 <button class="{{operation.classTag}}" id="{{operation.idTag}}"><i class="{{operation.icon}}"></i>  {{operation.designation}}</button>
               {% endfor %}
-              <a href="#" class="btn btn-primary ml-1" id="get_list_etudiant"><i class="fas fa-search" ></i>  Recherche</a>
+              <button class="btn btn-primary ml-1" id="get_list_etudiant"><i class="fas fa-search" ></i>  Recherche</button>
 
           </div>
         </div>
@@ -92,8 +92,7 @@
 
 
 <!--Modal Import Group-->
-{% include 'evaluation/element/modals/affilier.html.twig' %}
-{% include 'evaluation/element/modals/import.html.twig' %}
+{% include 'evaluation/element/modals/statut.html.twig' %}
 {% include 'evaluation/element/modals/imprimer.html.twig' %}
 
 {% endblock %}

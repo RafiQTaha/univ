@@ -67,7 +67,7 @@
                     </div>
                 </div>
                 
-                <table id="list_epreuve_normal"  class="display" style="width:100%">
+                <table id="list_epreuve_normal"  class="display" style="width:100%; overflow:scroll">
                 </table>
                 
             </div>
@@ -81,6 +81,7 @@
 
 <!--Modal Import Group-->
 {% include 'evaluation/semestre/modals/imprimer.html.twig' %}
+{% include 'evaluation/semestre/modals/statut.html.twig' %}
 
 {% endblock %}
 

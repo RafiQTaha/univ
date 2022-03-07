@@ -1,0 +1,174 @@
+<div>
+    <h3>{{snote.semestre.designation}}</h3>
+    <table>
+        <tr>
+            <th>N.rachat</th>
+            <th>Note</th>
+        </tr>
+        <tr>
+            <td>
+                <input disabled value="{{snote.noteRachat}}" />
+            </td>
+            <td>
+                <input disabled value="{{snote.note}}" />
+            </td>
+        </tr>
+    </table>
+    {% set mod = 0 %}
+    {% set ele = 0 %}
+    {% set c = 0 %}
+    {% set i = 0 %}
+    {% for mnote in inscription.mnotes %}
+        {% if mnote.module.semestre.id == semestre.id %}
+            <div class="open mt-3">
+                <h3 style="background-color: #6777ef;padding: 0.5rem 1rem;color:white; margin-top: 2.5rem;">
+                    Module: {{mnote.module.designation}}
+                </h3>
+
+                <div class="elements" style="display: none;">
+                    <table>
+                        <tr>
+                            <th>N.rachat</th>
+                            <th>Note</th>
+                        </tr>
+                        <tr>
+                            <td>
+                                {% set max_module = 20 - mnote.note %}
+                                {% if mnote.noteRachat and max_module < mnote.noteRachat %}
+                                    {% set max_module = mnote.noteRachat %}
+                                {% endif %}
+                                                  
+                                <input class = "composante" type="hidden"  value="{{mnote.module.coefficient}}"/>
+                                <input type="hidden" value="{{mnote.module.type}}"/>
+                                <input type="hidden" value="{{mnote.module.id}}"/>
+
+                                <input disabled min="0" max="{{max_module}}" step="0.01"  id="mod{{mod}}Rachat" value="{{mnote.noteRachat}}" />
+                            </td>
+                            <td>
+                                <input disabled value="{{mnote.note}}" />
+                            </td>
+                        </tr>
+                    </table>
+
+                    {% for element in mnote.module.elements %}
+                        {% for enote in inscription.enotes %}
+                            {% if element.id == enote.element.id %}
+                            <div  style="margin-top: 2rem;">
+                                <input id ="coefficient" type="hidden"  value="{{element.coefficient}}"/>
+                                {% set coefficientepreuve = "" %}
+                                {% for cp in element.coefficientEpreuve  %}
+                                    {% set coefficientepreuve = coefficientepreuve ~ " " ~ cp %}
+                                {% endfor %}
+                                <input class = "composante" id ="coefficient_element" type="hidden" value='{{coefficientepreuve}}'/>
+                                <!-- <input type="hidden" name="semestres[modules][module<?php echo$value['id']; ?>][elements][element<?php echo$value2['id']; ?>][code_annee]" value="<?php echo$value2['code_annee']; ?>"/>
+                                <input type="hidden" name="semestres[modules][module<?php echo$value['id']; ?>][elements][element<?php echo$value2['id']; ?>][code_element]" value="<?php echo$value2['code_element']; ?>"/> -->
+                                <input type="hidden"  value="{{element.id}}" class="eleH"/>
+                                {% set max_element = 20 - enote.note %}
+                                {% if enote.noteRachat and max_element < enote.noteRachat %}
+                                    {% set max_element = enote.noteRachat %}
+                                {% endif %}
+                                                                  
+                                <h4>Element: element.desigation</h4>
+                                <table>
+                                    <tr>
+                                        <th>N.rachat</th>
+                                        <th>Note</th>
+                                        <th>mcc</th>
+                                        <th>ccr</th>
+                                        <th>ccRachat</th>
+                                        <th>mtp</th>
+                                        <th>tpr</th>
+                                        <th>tpRachat</th>
+                                        <th>mef</th>
+                                        <th>efr</th>
+                                        <th>efRachat</th>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <input hidden value="{{element.coefficient}}" id="Coefmod{{mod}}ele{{ele}}is" />
+                                            <input hidden value='{{coefficientepreuve}}' id="Coefmod{{mod}}ele{{ele}}isexamis" />
+                                            <input type="number" id="mod{{mod}}Rachat" class="element composante KU1" min="0"  max="{{max_element}}" step="0.01" value="{{enote.noteRachat}}" />
+                                        </td>
+                                        <td>
+                                            <input type="number" min="0" max="20" step="0.01" id="mod{{mod}}Note" disabled value="{{enote.note}}" />
+                                        </td>
+                                        <td>                                           
+                                            <input type="number" min="0" max="20" step="0.01" disabled value="{{enote.mcc}}" />
+                                        </td>
+                                        <td>
+                                            <input type="number" min="0" max="20" step="0.01" disabled value="{{enote.ccr}}" />
+                                        </td>
+                                        <td>
+                                            {% set max_cc = 0 %}
+                                            {% set cc_r = enote.ccr %}
+                                            {% set m_cc = enote.mcc %}
+                                            {% if cc_r is null %} {% set cc_r = 0 %} {% endif %}
+                                            {% if m_cc is null %} {% set m_cc = 0 %} {% endif %}
+
+                                            {% if cc_r >= m_cc %}
+                                                {% set max_cc = 20 - cc_r %}
+                                            {% endif %}
+                                            {% if cc_r < m_cc %}
+                                                {% set max_cc = 20 - m_cc %}
+                                            {% endif %}
+                                            <input type="number" min="0" class="composante KU3" id="mod{{mod}}ele{{ele}}cc" max="{{max_cc}}" step="0.01" value="{{enote.ccRachat}}" />
+                                        </td>
+                                        <td>
+                                            <input type="number" min="0" max="20" step="0.01" disabled value="{{enote.mtp}}" />
+                                        </td>
+                                        <td>
+                                            <input type="number" min="0" max="20" step="0.01" disabled value="{{enote.tpr}}" />
+                                        </td>
+                                        <td>
+                                            {% set max_tp = 0 %}
+                                            {% set tp_r = enote.tpr %}
+                                            {% set m_tp = enote.mtp %}
+                                            {% if tp_r is null %} {% set tp_r = 0 %} {% endif %}
+                                            {% if m_tp is null %} {% set m_tp = 0 %} {% endif %}
+
+                                            {% if tp_r >= m_tp %}
+                                                {% set max_tp = 20 - tp_r %}
+                                            {% endif %}
+                                            {% if tp_r < m_tp %}
+                                                {% set max_tp = 20 - m_tp %}
+                                            {% endif %}
+                                            <input type="number" class="composante KU3" id="mod{{mod}}ele{{ele}}tp" min="0" max="{{max_tp}}" step="0.01" value="{{enote.tpRachat}}" />
+                                        </td>
+                                        <td>
+                                            <input type="number" min="0" max="20" step="0.01" disabled value="{{enote.mef}}" />
+                                        </td>
+                                        <td>
+                                            <input type="number" min="0" max="20" step="0.01" disabled value="{{enote.efr}}" />
+                                        </td>
+                                        <td>
+                                            {% set m_ef = 0 %}
+                                            {% set ef_r = enote.efr %}
+                                            {% set m_ef = enote.mef %}
+                                            {% if ef_r is null %} {% set ef_r = 0 %} {% endif %}
+                                            {% if m_ef is null %} {% set m_ef = 0 %} {% endif %}
+
+                                            {% if ef_r >= m_ef %}
+                                                {% set max_ef = 20 - ef_r %}
+                                            {% endif %}
+                                            {% if ef_r < m_ef %}
+                                                {% set max_ef = 20 - m_ef %}
+                                            {% endif %}
+                                            <input type="number" min="0" class="composante KU3" id="mod{{mod}}ele{{ele}}ef"  max="{{m_ef}}" step="0.01"  value="{{enote.efRachat}}" />
+                                        </td>
+                                    </tr>
+                                </table>
+
+                            </div>
+                            {% set ele = ele + 1 %}
+                            {% endif %}
+                            {% set ele = 0 %}
+                        {% endfor %}
+
+                    {% endfor %}
+                </div>
+            </div>
+            {% set mod = mod + 1 %}
+        {% endif %}
+        {% set mod = 0 %}
+    {% endfor %}
+</div>

@@ -6388,3 +6388,70 @@ tr:first-child > td > .fc-day-grid-event {
   color:#000 !important;
   text-align:left;
 }
+
+.search-box li {
+  // padding-left: 5px;
+  padding: 5px 0 5px 5px;
+  cursor: pointer;
+}
+.search-box li:hover {
+  background: #6777ef;
+  color: white; 
+}
+.search-box li:not(:last-child) {
+  
+  border-bottom: 1px solid #333;
+}
+.search-box li p {
+  margin: 0;
+}
+.information p {
+  line-height: 1.5;
+  font-size: 1.3rem;
+  border-bottom: 1px solid black;
+}
+.image-information  {
+  text-align: center;
+  padding-top: 1rem;
+}
+.image-information img  {
+  width: 10rem;
+}
+.information p span {
+  font-weight: 900;
+  margin-right: 1rem;
+}
+#administratif p {
+  text-align: center;
+  // padding: rem;
+  border-bottom: 1px solid #6777ef;
+}
+#administratif h3 {
+  text-align: center;
+  padding: 1rem;
+  background-color: #6777ef;
+  color: white;
+  margin-bottom: 2rem;
+}
+#administratif ul {
+  list-style: none;
+  padding: 0;
+}
+#academique p {
+  text-align: center;
+  // padding: rem;
+  border-bottom: 1px solid #6777ef;
+}
+#academique h3 {
+  text-align: center;
+  padding: 1rem;
+  background-color: #6777ef;
+  color: white;
+  margin-bottom: 2rem;
+}
+#academique ul {
+  list-style: none;
+  padding: 0;
+}
+  
+

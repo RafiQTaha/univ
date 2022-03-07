@@ -35,6 +35,19 @@ class AcElementRepository extends ServiceEntityRepository
             ->getResult()
         ;
     }
+    public function getElementsByPromotion($promotion)
+    {
+        return $this->createQueryBuilder('a')
+            ->innerJoin("a.module", "module")
+            ->innerJoin("module.semestre", "semestre")
+            ->where('semestre.promotion = :promotion')
+            ->andWhere("module.active = 1")
+            ->andWhere("a.active = 1")
+            ->setParameter('promotion', $promotion)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
     
 
     /*
