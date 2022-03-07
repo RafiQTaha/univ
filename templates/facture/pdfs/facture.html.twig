@@ -262,16 +262,16 @@
         <table  cellspacing="0" style="margin-left: 50%; width: 100%; font-size: 10px !important;" >
             <tr>
                 <td style="background: rgb(23, 132, 112);; color: #fff ;height: 17px;padding: 4px ;padding-left: 25px;font-weight: bold;font-size: 11px ">Total </td> 
-                <td style="background: rgb(23, 132, 112);; color: #fff ;height: 17px;padding: 4px ;font-weight: bold;padding-left: 25px;font-size: 11px ">{{operationTotal.total|number_format(2, ',', ' ')}}</td> 
+                <td style="background: rgb(23, 132, 112);; color: #fff ;height: 17px;padding: 4px ;font-weight: bold;padding-left: 25px;font-size: 11px ">{{operationTotal|number_format(2, ',', ' ')}}</td> 
             </tr>
     
             <tr>
                 <td style="background: rgb(23, 132, 112);; color: #fff ;height: 17px;padding: 4px ;padding-left: 25px;font-weight: bold;font-size: 11px ">Total Encaissement </td> 
-                <td style="background: rgb(23, 132, 112);; color: #fff ;height: 17px;padding: 4px ;font-weight: bold;padding-left: 25px;font-size: 11px ">{{reglementTotal.total|number_format(2, ',', ' ')}}</td> 
+                <td style="background: rgb(23, 132, 112);; color: #fff ;height: 17px;padding: 4px ;font-weight: bold;padding-left: 25px;font-size: 11px ">{{reglementTotal|number_format(2, ',', ' ')}}</td> 
             </tr>
             <tr>
                 <td style="background: rgb(23, 132, 112);; color: #fff ;height: 17px;padding: 4px ;padding-left: 25px;font-weight: bold;font-size: 11px ">Solde </td> 
-                <td style="background: rgb(23, 132, 112);; color: #fff ;height: 17px;padding: 4px ;font-weight: bold;padding-left: 25px;font-size: 11px ">{{(operationTotal.total - reglementTotal.total)|number_format(2, ',', ' ')}}</td> 
+                <td style="background: rgb(23, 132, 112);; color: #fff ;height: 17px;padding: 4px ;font-weight: bold;padding-left: 25px;font-size: 11px ">{{total|number_format(2, ',', ' ')}}</td> 
             </tr>
     
         </table>

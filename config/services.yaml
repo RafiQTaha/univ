@@ -7,6 +7,9 @@ parameters:
     etudiant_directory: '%kernel.project_dir%/public/uploads/etudiant'
     epreuve_create_directory: '%kernel.project_dir%/public/uploads/epreuve/epreuve'
     note_epreuve_create_directory: '%kernel.project_dir%/public/uploads/epreuve/notes_epreuve'
+    planification_create_directory: '%kernel.project_dir%/public/uploads/planification'
+
+    
 
 services:
     # default configuration for services in *this* file

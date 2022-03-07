@@ -195,6 +195,7 @@ $(document).ready(function () {
         const request = await axios.post('/administration/note/note_update/'+id_exgnotes, formData);
         response = request.data
         const data = await request.data;
+        table_notes_epreuve.ajax.reload(null,false);
     })
     $('body').on('submit','.save_obs', async function (e){
         e.preventDefault();
@@ -212,10 +213,12 @@ $(document).ready(function () {
             formData.append('absence',true);
             const request = await axios.post('/administration/note/absence_update/'+id_exgnotes, formData);
             const data = await request.data;
+            table_notes_epreuve.ajax.reload(null,false);;
         }else{
             formData.append('absence',false);
             const request = await axios.post('/administration/note/absence_update/'+id_exgnotes, formData);
             const data = await request.data;
+            table_notes_epreuve.ajax.reload(null,false);;
         }
     })
     $("#import").on('click', async function (e){

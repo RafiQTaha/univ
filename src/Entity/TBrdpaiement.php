@@ -33,12 +33,12 @@ class TBrdpaiement
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'bordereaux')]
     private $UserCreated;
 
-    #[ORM\OneToMany(mappedBy: 'bordereau', targetEntity: TRegelement::class)]
-    private $regelements;
+    #[ORM\OneToMany(mappedBy: 'bordereau', targetEntity: TReglement::class)]
+    private $reglements;
 
     public function __construct()
     {
-        $this->regelements = new ArrayCollection();
+        $this->reglements = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -119,29 +119,29 @@ class TBrdpaiement
     }
 
     /**
-     * @return Collection|TRegelement[]
+     * @return Collection|TReglement[]
      */
-    public function getRegelements(): Collection
+    public function getReglements(): Collection
     {
-        return $this->regelements;
+        return $this->reglements;
     }
 
-    public function addRegelement(TRegelement $regelement): self
+    public function addReglement(TReglement $reglement): self
     {
-        if (!$this->regelements->contains($regelement)) {
-            $this->regelements[] = $regelement;
-            $regelement->setBordereau($this);
+        if (!$this->reglements->contains($reglement)) {
+            $this->reglements[] = $reglement;
+            $reglement->setBordereau($this);
         }
 
         return $this;
     }
 
-    public function removeRegelement(TRegelement $regelement): self
+    public function removeReglement(TReglement $reglement): self
     {
-        if ($this->regelements->removeElement($regelement)) {
+        if ($this->reglements->removeElement($reglement)) {
             // set the owning side to null (unless already changed)
-            if ($regelement->getBordereau() === $this) {
-                $regelement->setBordereau(null);
+            if ($reglement->getBordereau() === $this) {
+                $reglement->setBordereau(null);
             }
         }
 

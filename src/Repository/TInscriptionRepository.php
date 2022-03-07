@@ -126,4 +126,65 @@ class TInscriptionRepository extends ServiceEntityRepository
         ;
         return $request;
     }
+    
+    public function getInscriptionsByPreinsAndAnnee($preinscription)
+    {
+        return $this->createQueryBuilder('t')
+            ->innerJoin("t.admission", "admission")
+            ->innerJoin("admission.preinscription", "preinscription")
+            ->innerJoin("preinscription.annee", "annee")
+            ->where('preinscription = :preinscription')
+            ->andWhere("annee = :annee")
+            ->andWhere("t.code IS NOT NULL")
+            ->setParameter('preinscription', $preinscription)
+            ->setParameter('annee', $preinscription->getAnnee())
+            ->getQuery()
+            ->getResult()[0]
+        ;
+    }
+    
+    public function getCreance()
+    {
+        $org = ['PYT',null];
+        return $this->createQueryBuilder('inscription')
+            ->select("annee.designation as anndes, preinscription.code as code_pre , etudiant.nom as nom, etudiant.prenom as prenom,etablissement.abreviation as etab ,formation.designation as forma ,promotion.ordre as niveau,inscription.typeCand as type , organisme.abreviation as org,  SUM(operationdet.montant) as montant_det , sum(distinct reglement.montant) as montant_reg , ( SUM(operationdet.montant)  - sum(distinct reglement.montant)) as creance
+            ")
+            ->Join("inscription.admission", "admission")
+            ->Join("inscription.promotion", "promotion")
+            ->Join("admission.preinscription", "preinscription")
+            ->Join("preinscription.annee", "annee")
+            ->Join("annee.formation", "formation")
+            ->Join("formation.etablissement", "etablissement")
+            ->Join("preinscription.operationcabs", "operationcab")
+            ->Join("operationcab.operationdets", "operationdet")
+            ->Join("operationcab.reglements", "reglement")
+            ->leftJoin("operationcab.organisme", "organisme")
+            ->Join("preinscription.etudiant", "etudiant")
+            ->Join("etudiant.natureDemande", "naturedemande")
+            ->Where("annee.cloture_academique='non'")
+            ->andWhere('organisme.abreviation IN (:ids)')
+            ->setParameter('ids', $org)
+            ->groupBy('preinscription.code , annee.id')
+            ->orderBy('etablissement.abreviation', 'ASC')
+            ->getQuery()
+            ->getResult()
+        ;
+        // dd($return);
+    }
+
+    public function getNiveaux($promotion,$annee)
+    {
+        return $this->createQueryBuilder('inscription')
+            ->Where("inscription.promotion = :promotion")
+            ->AndWhere("inscription.annee = :annee")
+            ->AndWhere("inscription.groupe is not null")
+            ->setParameter('promotion', $promotion)
+            ->setParameter('annee', $annee)
+            ->groupBy('inscription.groupe')
+            ->orderBy('inscription.groupe', 'ASC')
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+    
 }

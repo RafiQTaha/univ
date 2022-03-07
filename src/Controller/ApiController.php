@@ -16,8 +16,11 @@ use App\Entity\UsOperation;
 use App\Entity\UsSousModule;
 use App\Entity\AcModule;
 use App\Entity\AcElement;
+use App\Entity\PGroupe;
 use App\Entity\TEtudiant;
+use App\Entity\TInscription;
 use App\Entity\PNatureEpreuve;
+use App\Entity\PrProgrammation;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\HttpFoundation\Response;
@@ -71,7 +74,7 @@ class ApiController extends AbstractController
     #[Route('/semestre/{id}', name: 'getSemestre')]
     public function getSemestre($id): Response
     {   
-        $semestre = $this->em->getRepository(AcSemestre::class)->findBy(['promotion'=>$id, 'active' => 1]);
+        $semestre = $this->em->getRepository(AcSemestre::class)->findBy(['promotion'=>$id, 'active' => 1],['designation'=>'ASC']);
         $data = self::dropdown($semestre,'Semestre');
         return new JsonResponse($data);
     }
@@ -79,7 +82,7 @@ class ApiController extends AbstractController
     #[Route('/module/{id}', name: 'getModule')]
     public function getModule($id): Response
     {   
-        $module = $this->em->getRepository(AcModule::class)->findBy(['semestre'=>$id, 'active' => 1]);
+        $module = $this->em->getRepository(AcModule::class)->findBy(['semestre'=>$id, 'active' => 1],['designation'=>'ASC']);
         $data = self::dropdown($module,'Module');
         return new JsonResponse($data);
     }
@@ -87,8 +90,24 @@ class ApiController extends AbstractController
     #[Route('/element/{id}', name: 'getElement')]
     public function getElement($id): Response
     {   
-        $element = $this->em->getRepository(AcElement::class)->findBy(['module'=>$id, 'active' => 1]);
+        $element = $this->em->getRepository(AcElement::class)->findBy(['module'=>$id, 'active' => 1],['designation'=>'ASC']);
         $data = self::dropdown($element,'Element');
+        return new JsonResponse($data);
+    }
+
+    #[Route('/enseignantsByProgramme/{element}/{nature_epreuve}', name: 'enseignantsByProgramme')]
+    public function enseignantsByProgramme(AcElement $element,PNatureEpreuve $nature_epreuve): Response
+    {   
+        $programmation = $this->em->getRepository(PrProgrammation::class)->findOneBy([
+            'element'=> $element,
+            'nature_epreuve' => $nature_epreuve]
+        );
+        $data = "<option enabled value='' disabled='disabled'>Choix Enseignants</option>";
+        if ($programmation->getEnseignants() != Null) {
+            foreach ($programmation->getEnseignants() as $enseignant) {
+                $data .="<option value=".$enseignant->getId().">".$enseignant->getNom()." ".$enseignant->getPrenom()."</option>";
+            }
+        }
         return new JsonResponse($data);
     }
 
@@ -165,6 +184,50 @@ class ApiController extends AbstractController
         $natrueEpreuves = $this->em->getRepository(PNatureEpreuve::class)->findBy(["nature" => $nature]);
         $data = self::dropdown($natrueEpreuves,'nature epreuve');
         return new JsonResponse($data);        
+    }
+    
+    #[Route('/niv1/{promotion}', name: 'getNiv1Bypromotion')]
+    public function getNiv1Bypromotion(AcPromotion $promotion): Response
+    {   
+        $annee = $this->em->getRepository(AcAnnee::class)->findOneBy([
+            'formation'=>$promotion->getFormation(),
+            'validation_academique'=>'non',
+            'cloture_academique'=>'non',
+        ]);
+
+        $inscriptions = $this->em->getRepository(TInscription::class)->getNiveaux($promotion,$annee);
+        $data = "<option selected enabled value=''>Choix Niveau 1</option>";
+        foreach ($inscriptions as $inscription) {
+            $groupe = $inscription->getGroupe();
+            // if ($groupe != Null) {
+                if ($groupe->getGroupe() == Null) {
+                    $data .="<option value=".$groupe->getId().">".$groupe->getNiveau()."</option>";
+                }
+            // }
+        }
+        return new JsonResponse($data);     
+    }
+
+    #[Route('/niv2/{niv1}', name: 'getNiv2ByNiv1')]
+    public function getNiv2ByNiv1(PGroupe $niv1): Response
+    {   
+        $niveaux2 = $this->em->getRepository(PGroupe::class)->findBy(['groupe'=>$niv1]);
+        $data = "<option selected enabled value=''>Choix Niveau 2</option>";
+        foreach ($niveaux2 as $niveau2) {
+                $data .="<option value=".$niveau2->getId().">".$niveau2->getNiveau()."</option>";
+        }
+        return new JsonResponse($data);     
+    }
+
+    #[Route('/niv3/{niv2}', name: 'getNiv2ByNiv3')]
+    public function getNiv2ByNiv3($niv2): Response
+    {   
+        $niveaux3 = $this->em->getRepository(PGroupe::class)->findBy(['groupe'=>$niv2]);
+        $data = "<option selected enabled value=''>Choix Niveau 2</option>";
+        foreach ($niveaux3 as $niveau3) {
+                $data .="<option value=".$niveau3->getId().">".$niveau3->getNiveau()."</option>"; 
+        }
+        return new JsonResponse($data);       
     }
 
     static function dropdown($objects,$choix)

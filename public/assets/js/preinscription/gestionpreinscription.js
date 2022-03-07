@@ -55,17 +55,17 @@ const load_etud_info = () => {
         const icon = $("#frais_preinscription i");
          icon.removeClass('fa-money-bill-alt').addClass("fa-spinner fa-spin");
         axios.get('/preinscription/gestion/frais_preins_modals/'+id_preinscription)
-      .then(success => {
-          $('.modal-preins .etudiant_info').html(success.data);
-          icon.removeClass("fa-spinner fa-spin").addClass('fa-money-bill-alt');
-        // success.data
-      })
-      .catch(err => {
-        console.log(err);
-        icon.removeClass("fa-spinner fa-spin").addClass('fa-money-bill-alt');
-      })
+        .then(success => {
+            $('.modal-preins .etudiant_info').html(success.data);
+            icon.removeClass("fa-spinner fa-spin").addClass('fa-money-bill-alt');
+            // success.data
+        })
+        .catch(err => {
+            console.log(err);
+            icon.removeClass("fa-spinner fa-spin").addClass('fa-money-bill-alt');
+        })
     }    
-  }
+}
 
 const load_frais_preins = () => {
     if(id_preinscription){
@@ -99,8 +99,6 @@ const getDocumentsPreins = async () => {
         icon.addClass('fa-check').removeClass('fa-spinner fa-spin')
     }
 }
-
-
 $("#etablissement").select2();
 $("#formation").select2();
 $("#nature").select2();
@@ -263,14 +261,14 @@ $("#annulation").on('click', async (e) => {
         })
         icon.addClass('fa-times-circle').removeClass("fa-spinner fa-spin");
         table_gestion_preins.ajax.reload(null,false);
-      } catch (error) {
+    } catch (error) {
         const message = error.response.data;
         console.log(error, error.response);
         Toast.fire({
             icon: 'error',
             title: 'Some Error',
         })
-      }
+    }
 })
 $("#admission").on('click', async (e) => {
     e.preventDefault();

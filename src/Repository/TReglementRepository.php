@@ -2,25 +2,25 @@
 
 namespace App\Repository;
 
-use App\Entity\TRegelement;
+use App\Entity\TReglement;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @method TRegelement|null find($id, $lockMode = null, $lockVersion = null)
- * @method TRegelement|null findOneBy(array $criteria, array $orderBy = null)
- * @method TRegelement[]    findAll()
- * @method TRegelement[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method TReglement|null find($id, $lockMode = null, $lockVersion = null)
+ * @method TReglement|null findOneBy(array $criteria, array $orderBy = null)
+ * @method TReglement[]    findAll()
+ * @method TReglement[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class TRegelementRepository extends ServiceEntityRepository
+class TReglementRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, TRegelement::class);
+        parent::__construct($registry, TReglement::class);
     }
 
     // /**
-    //  * @return TRegelement[] Returns an array of TRegelement objects
+    //  * @return TReglement[] Returns an array of TReglement objects
     //  */
     
     public function getSumMontantByCodeFacture($operation)
@@ -34,6 +34,7 @@ class TRegelementRepository extends ServiceEntityRepository
             ->getQuery()
             ->getOneOrNullResult()
         ;
+        // dd($request);
         if(!$request) {
             return ['total' => 0];
         } 
@@ -42,7 +43,7 @@ class TRegelementRepository extends ServiceEntityRepository
     
 
     /*
-    public function findOneBySomeField($value): ?TRegelement
+    public function findOneBySomeField($value): ?TReglement
     {
         return $this->createQueryBuilder('t')
             ->andWhere('t.exampleField = :val')

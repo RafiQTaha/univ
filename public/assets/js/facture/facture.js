@@ -21,6 +21,9 @@ $(document).ready(function () {
         processing: true,
         serverSide: true,
         deferRender: true,
+        drawCallback: function () {
+                $("body tr#" + id_facture).addClass('active_databales');
+        },
         language: {
         url: "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/French.json",
         },
@@ -99,13 +102,22 @@ $(document).ready(function () {
         })
     }
     const getFacture = () => {
-        const icon = $(".detail_facture_modal #facture i");
+        const icon = $("#facture i");
         icon.removeClass('fa-money-bill-alt').addClass("fa-spinner fa-spin");
         axios.get('/facture/factures/detaille_facture/'+id_facture)
         .then(success => {
-            $('.table_detaille_facture tbody').html(success.data)
+            if(success.data[0] == 0){
+                $('.modal-facture #add_detaille').css('display','none');
+                $('.modal-facture #add').css('display','none');
+                $('.modal-facture #detaille_active').css('display','none');
+            }else{
+                $('.modal-facture #add_detaille').css('display','block');
+                $('.modal-facture #add').css('display','flex');
+                $('.modal-facture #detaille_active').css('display','block');
+            }
+            $('.table_detaille_facture tbody').html(success.data[1])
             icon.removeClass('fa-spinner fa-spin').addClass("fa-money-bill-alt");
-            console.log(success.data);
+            // console.log(success.data[0]);
         })
         .catch(err => {
             console.log(err)
@@ -113,7 +125,7 @@ $(document).ready(function () {
     }
     const load_frais_preins = () => {
         if(id_facture){
-            axios.get('/preinscription/gestion/article_frais/'+id_facture)
+            axios.get('/facture/factures/article_frais/'+id_facture)
             .then(success => {
                 $('#detail_facture_modal #frais').html(success.data).select2();
             })
@@ -133,6 +145,7 @@ $(document).ready(function () {
             $("#datables_facture tbody tr").removeClass('active_databales');
             $(this).addClass('active_databales');
             id_facture = $(this).attr('id');
+            console.log(id_facture);
             getMontant();
             getFacture();
             load_frais_preins();
@@ -149,27 +162,56 @@ $(document).ready(function () {
         }
         $("#detail_facture_modal").modal('show');
     });
+    $('body').on('change','.modal-facture #frais',function (e) {
+        e.preventDefault();
+        let frais = $(this).find(':selected').attr('data-id');
+        if(frais != ""){
+            $('.modal-facture #montantt').val();
+        }
+        $('.modal-facture #montantt').val(frais);
+    });
     $('body').on('click','#add_detaille',async function (e) {
         e.preventDefault();
+        const icon = $(this).find('i');
+        icon.removeClass('fa-plus').addClass("fa-spinner fa-spin");
         let formData = new FormData();
         formData.append('frais', $('#frais').val());
-        formData.append('montant', $('#montant').val());
+        formData.append('montant', $('#montantt').val());
         formData.append('ice', $('#ice').val());
+        let modalAlert =  $(".modal-facture .modal-body .alert");
+        modalAlert.remove();
         try{
-            const request = await  axios.post('/facture/factures/add_detaille/'+id_facture,formData)
-            getFacture();
+            const request = await axios.post('/facture/factures/add_detaille/'+id_facture,formData)
+            getFacture();            
+            $(".modal-facture .modal-body").prepend(
+                `<div class="alert alert-success">Facture Bien Ajouter</div>`
+            );
+            icon.removeClass('fa-spinner fa-spin').addClass("fa-plus");
+            getMontant();
         }catch(error){
-            const message = error.response.data;
+            const message = error.response.data;            
+            $(".modal-facture .modal-body").prepend(
+                `<div class="alert alert-danger">${message}</div>`
+            );
+            icon.removeClass('fa-spinner fa-spin').addClass("fa-plus");
         }
+        setTimeout(() => {
+            $(".modal-facture .modal-body .alert").remove();
+        }, 4000);
     });
     $('body').on('click','.detaille_cloture',async function (e) {
         e.preventDefault();
+        const icon = $(this).find('i');
+        icon.removeClass('fa-window-close').addClass("fa-spinner fa-spin");
         let id_det = $(this).attr('id');
         try{
             const request = await  axios.post('/facture/factures/cloture_detaille/'+id_det)
+            getMontant()
             getFacture();
+            icon.removeClass('fa-spinner fa-spin').addClass("fa-window-close");
         }catch(error){
             const message = error.response.data;
+            icon.removeClass('fa-spinner fa-spin').addClass("fa-window-close");
         }
     });
     $('body').on('click','#ajouter',function (e) {
@@ -190,6 +232,7 @@ $(document).ready(function () {
         }
         $("#ajouter_modal").modal('show');
     });
+    
     $("body").on("submit", '.new_facture-form', async function (e) {
         e.preventDefault();
         let formdata = $(this).serialize()
@@ -203,6 +246,8 @@ $(document).ready(function () {
             $("#ajouter_modal .modal-body").prepend(
                 `<div class="alert alert-success">reglement Bien Ajouter</div>`
             ); 
+            $(this).trigger("reset");
+            getMontant();
             icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin");
             reglement = false;
             table_facture.ajax.reload(null, false);

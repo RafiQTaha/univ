@@ -6,7 +6,7 @@ use Mpdf\Mpdf;
 use App\Entity\PFrais;
 use App\Entity\PStatut;
 use App\Entity\POrganisme;
-use App\Entity\TRegelement;
+use App\Entity\TReglement;
 use App\Entity\TInscription;
 use App\Entity\TOperationcab;
 use App\Entity\TOperationdet;
@@ -240,13 +240,17 @@ class GestionInscriptionController extends AbstractController
     #[Route('/facture/{operationcab}', name: 'inscription_facture')]
     public function factureInscription(Request $request, TOperationcab $operationcab): Response
     {
-        $reglementTotal = $this->em->getRepository(TRegelement::class)->getSumMontantByCodeFacture($operationcab);
+        $reglementTotal = $this->em->getRepository(TReglement::class)->getSumMontantByCodeFacture($operationcab);
         $operationTotal = $this->em->getRepository(TOperationdet::class)->getSumMontantByCodeFacture($operationcab);
-        // dd($reglement, $operationDetails);
+        $operationTotal = $operationTotal == Null ? 0 : $operationTotal['total'];
+        $reglementTotal = $reglementTotal == Null ? 0 : $reglementTotal['total'];
+        $total = $operationTotal - $reglementTotal;
+        // dd($reglementTotal, $operationTotal);
         $html = $this->render("facture/pdfs/facture.html.twig", [
             'reglementTotal' => $reglementTotal,
             'operationTotal' => $operationTotal,
-            'operationcab' => $operationcab
+            'operationcab' => $operationcab,
+            'total' => $total
         ])->getContent();
         $mpdf = new Mpdf();
         $mpdf->showImageErrors = true;
