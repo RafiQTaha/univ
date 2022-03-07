@@ -13,9 +13,11 @@ const Toast = Swal.mixin({
 let check;
     
 $(document).ready(function  () {
-    $("#enregister, #valider, #devalider, #recalculer, #imprimer").attr('disabled', true)
+    $("#enregister, #valider, #devalider, #recalculer, #imprimer, #statut").attr('disabled', true)
     const enableButtons = () => {
         $("#imprimer").removeClass('btn-secondary').addClass('btn-info').attr('disabled', false)
+        $("#statut").removeClass('btn-secondary').addClass('btn-primary').attr('disabled', false)
+
         if(check == 0) {
             $("#enregister").removeClass('btn-secondary').addClass('btn-primary').attr('disabled', false)
             $("#valider").removeClass('btn-secondary').addClass('btn-danger').attr('disabled', false)
@@ -82,6 +84,8 @@ $(document).ready(function  () {
                 $('#list_epreuve_normal').DataTable().clear().destroy();
               }
             $("#list_epreuve_normal").html(response.html).DataTable({
+                scrollX: true,
+                scrollY: true,
                 language: {
                     url: "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/French.json",
                 },
@@ -204,6 +208,72 @@ $(document).ready(function  () {
         } catch (error) {
             console.log(error)
             icon.addClass('fa-redo-alt').removeClass("fa-spinner fa-spin");
+            const message = error.response.data;
+            Toast.fire({
+                icon: 'error',
+                title: message,
+            });
+        }
+    })
+    $("#statut").on("click", () => {  
+        $("#statut_modal").modal("show")
+    })
+    $("#statut_avant_rachat").on('click', async function() {
+        const icon = $("#statut_avant_rachat i");
+        icon.removeClass('fa-sync').addClass("fa-spinner fa-spin");
+        try {
+            const request = await axios.post('/evaluation/semestre/statut/avantrachat');
+            let response = request.data
+            icon.addClass('fa-sync').removeClass("fa-spinner fa-spin");
+            Toast.fire({
+                icon: 'success',
+                title: response,
+            });
+        } catch (error) {
+            console.log(error)
+            icon.addClass('fa-sync').removeClass("fa-spinner fa-spin");
+            const message = error.response.data;
+            Toast.fire({
+                icon: 'error',
+                title: message,
+            });
+        }
+    })
+    $("#statut_apres_rachat").on('click', async function() {
+        const icon = $("#statut_apres_rachat i");
+        icon.removeClass('fa-sync').addClass("fa-spinner fa-spin");
+        try {
+            const request = await axios.post('/evaluation/semestre/statut/apresrachat');
+            let response = request.data
+            icon.addClass('fa-sync').removeClass("fa-spinner fa-spin");
+            Toast.fire({
+                icon: 'success',
+                title: response,
+            });
+        } catch (error) {
+            console.log(error)
+            icon.addClass('fa-sync').removeClass("fa-spinner fa-spin");
+            const message = error.response.data;
+            Toast.fire({
+                icon: 'error',
+                title: message,
+            });
+        }
+    })
+    $("#statut_categorie").on('click', async function() {
+        const icon = $("#statut_categorie i");
+        icon.removeClass('fa-sync').addClass("fa-spinner fa-spin");
+        try {
+            const request = await axios.post('/evaluation/semestre/statut/statutsemestrecategorie');
+            let response = request.data
+            icon.addClass('fa-sync').removeClass("fa-spinner fa-spin");
+            Toast.fire({
+                icon: 'success',
+                title: response,
+            });
+        } catch (error) {
+            console.log(error)
+            icon.addClass('fa-sync').removeClass("fa-spinner fa-spin");
             const message = error.response.data;
             Toast.fire({
                 icon: 'error',

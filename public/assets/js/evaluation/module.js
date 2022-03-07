@@ -13,9 +13,11 @@ const Toast = Swal.mixin({
 let check;
     
 $(document).ready(function  () {
-    $("#enregister, #valider, #devalider, #recalculer, #imprimer").attr('disabled', true)
+    $("#enregister, #valider, #devalider, #recalculer, #imprimer, #statut").attr('disabled', true)
     const enableButtons = () => {
         $("#imprimer").removeClass('btn-secondary').addClass('btn-info').attr('disabled', false)
+        $("#statut").removeClass('btn-secondary').addClass('btn-primary').attr('disabled', false)
+        
         if(check == 0) {
             $("#enregister").removeClass('btn-secondary').addClass('btn-primary').attr('disabled', false)
             $("#valider").removeClass('btn-secondary').addClass('btn-danger').attr('disabled', false)
@@ -219,6 +221,52 @@ $(document).ready(function  () {
             });
         }
     })
+    $("#statut").on("click", () => {  
+        $("#statut_modal").modal("show")
+    })
+    $("#statut_avant_rachat").on('click', async function() {
+        const icon = $("#statut_avant_rachat i");
+        icon.removeClass('fa-sync').addClass("fa-spinner fa-spin");
+        try {
+            const request = await axios.post('/evaluation/module/statut/avantrachat');
+            let response = request.data
+            icon.addClass('fa-sync').removeClass("fa-spinner fa-spin");
+            Toast.fire({
+                icon: 'success',
+                title: response,
+            });
+        } catch (error) {
+            console.log(error)
+            icon.addClass('fa-sync').removeClass("fa-spinner fa-spin");
+            const message = error.response.data;
+            Toast.fire({
+                icon: 'error',
+                title: message,
+            });
+        }
+    })
+    $("#statut_apres_rachat").on('click', async function() {
+        const icon = $("#statut_apres_rachat i");
+        icon.removeClass('fa-sync').addClass("fa-spinner fa-spin");
+        try {
+            const request = await axios.post('/evaluation/module/statut/apresrachat');
+            let response = request.data
+            icon.addClass('fa-sync').removeClass("fa-spinner fa-spin");
+            Toast.fire({
+                icon: 'success',
+                title: response,
+            });
+        } catch (error) {
+            console.log(error)
+            icon.addClass('fa-sync').removeClass("fa-spinner fa-spin");
+            const message = error.response.data;
+            Toast.fire({
+                icon: 'error',
+                title: message,
+            });
+        }
+    })
+   
 })
 
 

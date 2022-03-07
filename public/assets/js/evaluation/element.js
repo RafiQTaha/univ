@@ -14,9 +14,11 @@ const Toast = Swal.mixin({
     
 $(document).ready(function  () {
     
-    $("#enregister, #valider, #devalider, #recalculer, #imprimer").attr('disabled', true)
+    $("#enregister, #valider, #devalider, #recalculer, #imprimer, #statut").attr('disabled', true)
     const enableButtons = () => {
         $("#imprimer").removeClass('btn-secondary').addClass('btn-info').attr('disabled', false)
+        $("#statut").removeClass('btn-secondary').addClass('btn-primary').attr('disabled', false)
+
         if(check == 0) {
             $("#enregister").removeClass('btn-secondary').addClass('btn-primary').attr('disabled', false)
             $("#valider").removeClass('btn-secondary').addClass('btn-danger').attr('disabled', false)
@@ -79,6 +81,8 @@ $(document).ready(function  () {
 
     $("#get_list_etudiant").on('click', async function(e){
         e.preventDefault();
+        let button = $(this);
+        button.attr("disabled", true)
         $("#list_epreuve_normal").empty()
         let element_id = $('#element').val();
         if(element_id == "" || !element_id) {
@@ -113,6 +117,7 @@ $(document).ready(function  () {
             }
             enableButtons();
             icon.addClass('fa-search').removeClass("fa-spinner fa-spin");
+            button.attr("disabled", false)
         } catch (error) {
             console.log(error)
             icon.addClass('fa-search').removeClass("fa-spinner fa-spin");
@@ -121,6 +126,7 @@ $(document).ready(function  () {
                 icon: 'error',
                 title: message,
             }) 
+            button.attr("disabled", false)
         }
 
     })
@@ -130,6 +136,8 @@ $(document).ready(function  () {
 
     $("#valider").on('click', async function(){
         const icon = $("#valider i");
+        let button = $(this);
+        button.attr("disabled", true)
         icon.removeClass('fa-lock').addClass("fa-spinner fa-spin");
         try {
             const request = await axios.post('/evaluation/element/valider');
@@ -141,6 +149,7 @@ $(document).ready(function  () {
                 title: response,
             });
             icon.addClass('fa-lock').removeClass("fa-spinner fa-spin");
+            // button.attr("disabled", false)
         } catch (error) {
             console.log(error)
             icon.addClass('fa-lock').removeClass("fa-spinner fa-spin");
@@ -149,10 +158,14 @@ $(document).ready(function  () {
                 icon: 'error',
                 title: message,
             });
+            // button.attr("disabled", false)
+
         }
     })
     $("#devalider").on('click', async function(){
         const icon = $("#devalider i");
+        let button = $(this);
+        button.attr("disabled", true)
         icon.removeClass('fa-lock-open').addClass("fa-spinner fa-spin");
         try {
             const request = await axios.post('/evaluation/element/devalider');
@@ -164,6 +177,8 @@ $(document).ready(function  () {
                 icon: 'success',
                 title: response,
             });
+            // button.attr("disabled", false)
+
         } catch (error) {
             console.log(error)
             icon.addClass('fa-lock-open').removeClass("fa-spinner fa-spin");
@@ -172,10 +187,14 @@ $(document).ready(function  () {
                 icon: 'error',
                 title: message,
             });
+            // button.attr("disabled", false)
+
         }
     })
     $("#enregister").on('click', async function(){
         const icon = $("#enregister i");
+        let button = $(this);
+        button.attr("disabled", true)
         icon.removeClass('fa-check').addClass("fa-spinner fa-spin");
         try {
             const request = await axios.post('/evaluation/element/enregistre');
@@ -187,6 +206,8 @@ $(document).ready(function  () {
                 icon: 'success',
                 title: response,
             });
+            // button.attr("disabled", false)
+
         } catch (error) {
             console.log(error)
             icon.addClass('fa-check').removeClass("fa-spinner fa-spin");
@@ -195,6 +216,8 @@ $(document).ready(function  () {
                 icon: 'error',
                 title: message,
             });
+            // button.attr("disabled", false)
+
         }
     })
     $("#imprimer").on("click", () => {  
@@ -210,6 +233,8 @@ $(document).ready(function  () {
     })
     $("#recalculer").on('click', async function(){
         const icon = $("#recalculer i");
+        let button = $(this);
+        button.attr("disabled", true)
         icon.removeClass('fa-redo-alt').addClass("fa-spinner fa-spin");
         try {
             const request = await axios.post('/evaluation/element/recalculer');
@@ -219,9 +244,79 @@ $(document).ready(function  () {
                 icon: 'success',
                 title: response,
             });
+            button.attr("disabled", false)
         } catch (error) {
             console.log(error)
             icon.addClass('fa-redo-alt').removeClass("fa-spinner fa-spin");
+            const message = error.response.data;
+            Toast.fire({
+                icon: 'error',
+                title: message,
+            });
+            button.attr("disabled", false)
+
+        }
+    })
+
+    $("#statut").on("click", () => {  
+        $("#statut_modal").modal("show")
+    })
+    $("#statut_s1").on('click', async function() {
+        const icon = $("#statut_s1 i");
+        icon.removeClass('fa-sync').addClass("fa-spinner fa-spin");
+        try {
+            const request = await axios.post('/evaluation/element/statut/s1');
+            let response = request.data
+            icon.addClass('fa-sync').removeClass("fa-spinner fa-spin");
+            Toast.fire({
+                icon: 'success',
+                title: response,
+            });
+        } catch (error) {
+            console.log(error)
+            icon.addClass('fa-sync').removeClass("fa-spinner fa-spin");
+            const message = error.response.data;
+            Toast.fire({
+                icon: 'error',
+                title: message,
+            });
+        }
+    })
+    $("#statut_s2").on('click', async function() {
+        const icon = $("#statut_s2 i");
+        icon.removeClass('fa-sync').addClass("fa-spinner fa-spin");
+        try {
+            const request = await axios.post('/evaluation/element/statut/s2');
+            let response = request.data
+            icon.addClass('fa-sync').removeClass("fa-spinner fa-spin");
+            Toast.fire({
+                icon: 'success',
+                title: response,
+            });
+        } catch (error) {
+            console.log(error)
+            icon.addClass('fa-sync').removeClass("fa-spinner fa-spin");
+            const message = error.response.data;
+            Toast.fire({
+                icon: 'error',
+                title: message,
+            });
+        }
+    })
+    $("#statut_rachat").on('click', async function() {
+        const icon = $("#statut_rachat i");
+        icon.removeClass('fa-sync').addClass("fa-spinner fa-spin");
+        try {
+            const request = await axios.post('/evaluation/element/statut/rachat');
+            let response = request.data
+            icon.addClass('fa-sync').removeClass("fa-spinner fa-spin");
+            Toast.fire({
+                icon: 'success',
+                title: response,
+            });
+        } catch (error) {
+            console.log(error)
+            icon.addClass('fa-sync').removeClass("fa-spinner fa-spin");
             const message = error.response.data;
             Toast.fire({
                 icon: 'error',

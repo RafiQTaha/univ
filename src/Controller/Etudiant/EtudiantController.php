@@ -47,7 +47,7 @@ class EtudiantController extends AbstractController
         if(!$operations) {
             return $this->render("errors/403.html.twig");
         }
-        return $this->render('etudiant/index.html.twig', [
+        return $this->render('etudiant/etudiant/index.html.twig', [
             'operations' => $operations
         ]);
     }

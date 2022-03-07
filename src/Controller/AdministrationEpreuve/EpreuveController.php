@@ -492,7 +492,7 @@ class EpreuveController extends AbstractController
         return new JsonResponse(['html' => $html,'id' => $epreuve->getId(), 'anonymat' => $anonymat], 200);
 
     }
-    #[Route('/impression/{epreuve}/{anonymat}', name: 'administration_epreuve_impression')]
+    #[Route('/impression/{epreuve}/{anonymat}', name: 'administration_epreuve_impression_c_a')]
     public function administrationEpreuveImpression(AcEpreuve $epreuve, $anonymat) {
         
             

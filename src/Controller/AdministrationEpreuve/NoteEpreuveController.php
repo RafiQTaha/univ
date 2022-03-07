@@ -55,7 +55,7 @@ class NoteEpreuveController extends AbstractController
          
         $params = $request->query;
         $where = $totalRows = $sqlRequest = "";
-        $filtre = " and mdl.active = 1 and ann.cloture_academique = 'non' and ann.validation_academique = 'non' and epv.statut_id = 29";
+        $filtre = " and mdl.active = 1 and ann.cloture_academique = 'non' and ann.validation_academique = 'non' and epv.statut_id = 29 ";
         
         if (!empty($params->get('columns')[0]['search']['value'])) {
             $filtre .= " and etab.id = '" . $params->get('columns')[0]['search']['value'] . "' ";
