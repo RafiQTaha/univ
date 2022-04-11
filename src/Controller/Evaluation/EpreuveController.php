@@ -31,9 +31,9 @@ class EpreuveController extends AbstractController
     }
 
     #[Route('/', name: 'evaluation_epreuve')]
-    public function index(): Response
+    public function index(Request $request): Response
     {
-        $operations = ApiController::check($this->getUser(), 'evaluation_epreuve', $this->em);
+        $operations = ApiController::check($this->getUser(), 'evaluation_epreuve', $this->em, $request);
         // dd($operations);
         if(!$operations) {
             return $this->render("errors/403.html.twig");

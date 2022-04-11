@@ -29,9 +29,9 @@ class ModuleController extends AbstractController
         $this->em = $doctrine->getManager();
     }
     #[Route('/', name: 'evaluation_module')]
-    public function index(): Response
+    public function index(Request $request): Response
     {
-        $operations = ApiController::check($this->getUser(), 'evaluation_module', $this->em);
+        $operations = ApiController::check($this->getUser(), 'evaluation_module', $this->em, $request);
         if(!$operations) {
             return $this->render("errors/403.html.twig");
         }

@@ -38,10 +38,10 @@ class EpreuveController extends AbstractController
         
     }
     #[Route('/', name: 'administration_epreuve')]
-    public function index(): Response
+    public function index(Request $request): Response
     {
         //check if user has access to this page
-        $operations = ApiController::check($this->getUser(), 'administration_epreuve', $this->em);
+        $operations = ApiController::check($this->getUser(), 'administration_epreuve', $this->em, $request);
         if(!$operations) {
             return $this->render("errors/403.html.twig");
 
@@ -297,7 +297,7 @@ class EpreuveController extends AbstractController
         $originalFilename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
         // this is needed to safely include the file name as part of the URL
         $safeFilename = $slugger->slug($originalFilename);
-        $newFilename = $safeFilename.'-'.uniqid().'_'.$this->getUser()->getUsername().'.'.$file->guessExtension();
+        $newFilename = $safeFilename.'-'.uniqid().'_'.$this->getUser()->getUserIdentifier().'.'.$file->guessExtension();
 
         // Move the file to the directory where brochures are stored
         try {

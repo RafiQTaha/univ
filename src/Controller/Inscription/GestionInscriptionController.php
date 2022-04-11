@@ -29,10 +29,10 @@ class GestionInscriptionController extends AbstractController
         $this->em = $doctrine->getManager();
     }
     #[Route('/', name: 'gestion_inscription')]
-    public function index(): Response
+    public function index(Request $request): Response
     {
          //check if user has access to this page
-        $operations = ApiController::check($this->getUser(), 'gestion_inscription', $this->em);
+        $operations = ApiController::check($this->getUser(), 'gestion_inscription', $this->em, $request);
         if(!$operations) {
             return $this->render("errors/403.html.twig");
 
@@ -47,6 +47,7 @@ class GestionInscriptionController extends AbstractController
     public function gestionInscriptionList(Request $request): Response
     {
         $params = $request->query;
+        // dd($params);
         $where = $totalRows = $sqlRequest = "";
         $filtre = "where 1 = 1";   
         // dd($params->get('columns')[0]);

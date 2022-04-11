@@ -72,4 +72,15 @@ class UsOperationRepository extends ServiceEntityRepository
         ;
         // dd($request);
     }
+    public function findByUser($user) {
+        return $this->createQueryBuilder('u')
+            ->select("u.id")
+            ->innerJoin("u.users", "user")
+            ->where('user = :user')
+            ->setParameter('user', $user)
+            ->getQuery()
+            ->getResult()
+        ;
+        // dd($request);
+    }
 }

@@ -186,5 +186,64 @@ class TInscriptionRepository extends ServiceEntityRepository
             ->getResult()
         ;
     }
+    public function getSalle($promotion,$annee)
+    {
+        return $this->createQueryBuilder('inscription')
+            ->select("inscription.salle")
+            ->distinct()
+            ->Where("inscription.promotion = :promotion")
+            ->AndWhere("inscription.annee = :annee")
+            ->AndWhere("inscription.salle is not null")
+            ->setParameter('promotion', $promotion)
+            ->setParameter('annee', $annee)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+    
+    public function getInscriptionsByAnneeAndPromoAndSalle($salle, $annee, $promotion, $order)
+    {
+        // dd($order);
+        if($order == 1) {
+            $type = "etudiant.nom";
+            $order = 'ASC';
+        } else if($order == 2) {
+            $type = "etudiant.nom";
+            $order = 'DESC';
+        
+        } else if($order == 3) {
+            $type = "etudiant.prenom";
+            $order = 'ASC';
+        }
+        else if($order == 4) {
+            $type = "etudiant.prenom";
+            $order = 'DESC';
+        }
+        else if($order == 5) {
+            $type = "t.id";
+            $order = 'ASC';
+        }
+        else  {
+            $type = "t.id";
+            $order = 'DESC';
+        }
+        $request =  $this->createQueryBuilder('t')
+            ->innerJoin("t.statut", "statut")
+            ->innerJoin("t.admission", "admission")
+            ->innerJoin("admission.preinscription", "preinscription")
+            ->innerJoin("preinscription.etudiant", "etudiant")
+            ->where('t.promotion = :promotion')
+            ->andWhere("t.annee = :annee")
+            ->andWhere("statut.id = 13")
+            ->andWhere("t.salle = :salle")
+            ->setParameter('promotion', $promotion)
+            ->setParameter('annee', $annee)
+            ->setParameter('salle', $salle)
+            ->orderBy($type, $order)
+            ->getQuery()
+            ->getResult()
+        ;
+        return $request;
+    }
     
 }

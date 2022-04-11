@@ -4,25 +4,27 @@ namespace App\Controller;
 
 use App\Entity\PFrais;
 use App\Entity\AcAnnee;
+use App\Entity\PGroupe;
+use App\Entity\XBanque;
+use App\Entity\AcModule;
+use App\Entity\UsModule;
+use App\Entity\AcElement;
+use App\Entity\TEtudiant;
+use App\Entity\AcSemestre;
 use App\Entity\POrganisme;
 use App\Entity\TAdmission;
 use App\Entity\AcFormation;
-use App\Entity\AcEtablissement;
 use App\Entity\AcPromotion;
-use App\Entity\AcSemestre;
-use App\Entity\XBanque;
-use App\Entity\NatureDemande;
 use App\Entity\UsOperation;
-use App\Entity\UsSousModule;
-use App\Entity\AcModule;
-use App\Entity\AcElement;
-use App\Entity\PGroupe;
-use App\Entity\TEtudiant;
 use App\Entity\TInscription;
+use App\Entity\UsSousModule;
+use App\Entity\NatureDemande;
 use App\Entity\PNatureEpreuve;
+use App\Entity\AcEtablissement;
 use App\Entity\PrProgrammation;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Serializer\Serializer;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -228,6 +230,20 @@ class ApiController extends AbstractController
                 $data .="<option value=".$niveau3->getId().">".$niveau3->getNiveau()."</option>"; 
         }
         return new JsonResponse($data);       
+    } 
+    #[Route('/salle/{promotion}', name: 'getSalle')]
+    public function getSalle(AcPromotion $promotion): Response
+    {   
+        $annee = $this->em->getRepository(AcAnnee::class)->getActiveAnneeByFormation($promotion->getFormation());
+        // dump($annee->getId(), $promotion->getId());
+        $salles = $this->em->getRepository(TInscription::class)->getSalle($promotion, $annee);
+        // dd($salles);
+        $data = "<option selected enabled value=''>Choix Salle</option>";
+        foreach ($salles as $salle) {
+            $sallearray = explode("-", $salle['salle']);
+            $data .="<option value=".$salle['salle'].">".$sallearray[0]." ". $sallearray[1] ."</option>";
+         }
+        return new JsonResponse($data);
     }
 
     static function dropdown($objects,$choix)
@@ -259,7 +275,34 @@ class ApiController extends AbstractController
          return $data;
     }
 
-    static function check($user, $link, $em) {
+    static function check($user, $link, $em, $request) {
+        if(!$request->getSession()->get("modules")){
+            if(in_array('ROLE_ADMIN', $user->getRoles())){
+                $sousModules = $em->getRepository(UsSousModule::class)->findAll();
+            } else {
+                $sousModules = $em->getRepository(UsSousModule::class)->findByUserOperations($user);
+            }
+            $modules = $em->getRepository(UsModule::class)->getModuleBySousModule($sousModules);
+            $data = [];
+            // dd($sousModules);
+            foreach($modules as $module) {
+                $sousModuleArray = [];
+                foreach ($sousModules as $sousModule) {
+                    if($sousModule->getModule()->getId() == $module->getId()) {
+                        // dd($sousModule);
+                        array_push($sousModuleArray,$sousModule);
+                    }
+                }
+                array_push($data, [
+                    'module' => $module,
+                    'sousModule' => $sousModuleArray
+                ]);
+                
+            }
+            // dd($data);
+            $request->getSession()->set('modules', $data);
+            
+        }
         if(in_array('ROLE_ADMIN', $user->getRoles())) {
             $operations = $em->getRepository(UsOperation::class)->findAllBySousModule($link);
             return $operations;

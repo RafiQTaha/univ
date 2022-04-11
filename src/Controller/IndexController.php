@@ -41,7 +41,9 @@ class IndexController extends AbstractController
         }
         // dd($data);
         $request->getSession()->set('modules', $data);
-
+        if(count($sousModules) < 1) {
+            die("Vous n'avez aucun prévilege pour continue cette operation. veuillez contacter votre chef !");
+        }
         return $this->redirectToRoute($sousModules[0]->getLink());
     }
 }

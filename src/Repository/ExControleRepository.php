@@ -87,6 +87,27 @@ class ExControleRepository extends ServiceEntityRepository
             return null;
         }
     }
+    public function checkIfyoucanDelibreSemestre($annee, $semestre)
+    {
+        $request = $this->createQueryBuilder('e')
+            ->innerJoin("e.element", "element")
+            ->innerJoin("element.module", "module")
+            ->innerJoin("module.semestre", "semestre")
+            ->where('semestre = :semestre')
+            ->andWhere('e.simulation = 0')
+            ->andWhere('e.annee = :annee')
+            ->setParameter('semestre', $semestre)
+            ->setParameter('annee', $annee)
+            ->getQuery()
+            ->getResult()
+        ;
+        if(count($request) > 0){
+            return $request;
+        }
+        else {
+            return null;
+        }
+    }
     public function checkIfyoucanCalculAnnee($annee, $promotion)
     {
         $request = $this->createQueryBuilder('e')
@@ -219,6 +240,24 @@ class ExControleRepository extends ServiceEntityRepository
         $this->createQueryBuilder('e')
             ->update()
             ->set("e.msemestre", ":val")
+            ->where('e.element in (:elements)')
+            ->andWhere('e.annee = :annee')
+            ->setParameter('elements', $elements)
+            ->setParameter('annee', $annee)
+            ->setParameter('val', $val)
+            ->getQuery()
+            ->execute()
+        ;
+    }
+    public function updateSemestreBySimulation($semestre, $annee, $val)
+    {
+        $elements = $this->getEntityManager()
+            ->getRepository(AcElement::class)
+            ->getElementsBySemestre($semestre);
+            
+        $this->createQueryBuilder('e')
+            ->update()
+            ->set("e.simulation", ":val")
             ->where('e.element in (:elements)')
             ->andWhere('e.annee = :annee')
             ->setParameter('elements', $elements)

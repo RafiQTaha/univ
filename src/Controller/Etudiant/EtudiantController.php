@@ -17,14 +17,15 @@ use App\Entity\PMatiere;
 use App\Entity\POrganisme;
 use App\Entity\TOperationcab;
 use App\Entity\TPreinscriptionReleveNote;
+use App\Entity\XFiliere;
 use Doctrine\Persistence\ManagerRegistry;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\Reader\Xlsx as Reader;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use PhpOffice\PhpSpreadsheet\Reader\Xlsx as Reader;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -39,10 +40,10 @@ class EtudiantController extends AbstractController
         $this->em = $doctrine->getManager();
     }
     #[Route('/', name: 'etudiant_index')]
-    public function index(): Response
+    public function index(Request $request): Response
     {
         //check if user has access to this page
-        $operations = ApiController::check($this->getUser(), 'etudiant_index', $this->em);
+        $operations = ApiController::check($this->getUser(), 'etudiant_index', $this->em, $request);
         // dd($operations);
         if(!$operations) {
             return $this->render("errors/403.html.twig");
@@ -154,7 +155,7 @@ class EtudiantController extends AbstractController
         $originalFilename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
         // this is needed to safely include the file name as part of the URL
         $safeFilename = $slugger->slug($originalFilename);
-        $newFilename = $safeFilename.'-'.uniqid().'_'.$this->getUser()->getUsername().'.'.$file->guessExtension();
+        $newFilename = $safeFilename.'-'.uniqid().'_'.$this->getUser()->getUserIdentifier().'.'.$file->guessExtension();
 
         // Move the file to the directory where brochures are stored
         try {
@@ -174,8 +175,9 @@ class EtudiantController extends AbstractController
         $exist = 0;
         $inserted = 0;
         $exist_array = [];
+        // dd($spreadSheetArys);
         foreach ($spreadSheetArys as $sheet) {
-            $etudiantExist = $this->em->getRepository(TEtudiant::class)->findOneBy(['cin' => $sheet[10]]);
+            $etudiantExist = $this->em->getRepository(TEtudiant::class)->findOneBy(['cin' => $sheet[8]]);
             if($etudiantExist) {
                 $exist++;
                 array_push($exist_array, [
@@ -192,92 +194,89 @@ class EtudiantController extends AbstractController
                 $etudiant->setTeleListe('Intéressé');
                 // $etudiant->setStFamille();
                 // $etudiant->setStFamilleParent();
-                $etudiant->setNationalite($sheet[9]);
-                $etudiant->setCin($sheet[10]);
-                $etudiant->setPasseport($sheet[11]);
-                $etudiant->setAdresse($sheet[12]);
-                $etudiant->setVille($sheet[13]);
-                $etudiant->setTel1($sheet[14]);
-                $etudiant->setTel2($sheet[15]);
-                $etudiant->setTel3($sheet[16]);
-                $etudiant->setMail1($sheet[17]);
-                $etudiant->setMail2($sheet[18]);
-                $etudiant->setNomPere($sheet[19]);
-                $etudiant->setPrenomPere($sheet[20]);
-                $etudiant->setNationalitePere($sheet[21]);
-                $etudiant->setProfessionPere($sheet[22]);
-                $etudiant->setEmployePere($sheet[23]);
-                $etudiant->setCategoriePere($sheet[24]);
-                $etudiant->setTelPere($sheet[25]);
-                $etudiant->setMailPere($sheet[26]);
-                $etudiant->setSalairePere($sheet[27]);
-                $etudiant->setNomMere($sheet[28]);
-                $etudiant->setPrenomMere($sheet[29]);
-                $etudiant->setNationaliteMere($sheet[30]);
-                $etudiant->setProfessionMere($sheet[31]);
-                $etudiant->setEmployeMere($sheet[32]);
-                $etudiant->setCategorieMere($sheet[33]);
-                $etudiant->setTelMere($sheet[34]);
-                $etudiant->setMailMere($sheet[35]);
-                $etudiant->setSalaireMere($sheet[36]);
-                $etudiant->setCne($sheet[37]);
+                $etudiant->setNationalite($sheet[7]);
+                $etudiant->setCin($sheet[8]);
+                $etudiant->setVille($sheet[9]);
+                $etudiant->setTel1($sheet[10]);
+                $etudiant->setMail1($sheet[11]);
+                // $etudiant->setPasseport($sheet[11]);
+                // $etudiant->setAdresse($sheet[12]);
+                $etudiant->setNomPere($sheet[12]);
+                $etudiant->setPrenomPere($sheet[13]);
+                $etudiant->setTelPere($sheet[14]);
+                $etudiant->setMailPere($sheet[15]);
+                // $etudiant->setNationalitePere($sheet[21]);
+                // $etudiant->setProfessionPere($sheet[22]);
+                // $etudiant->setEmployePere($sheet[23]);
+                // $etudiant->setCategoriePere($sheet[24]);
+                // $etudiant->setSalairePere($sheet[27]);
+                $etudiant->setNomMere($sheet[16]);
+                $etudiant->setPrenomMere($sheet[17]);
+                // $etudiant->setNationaliteMere($sheet[30]);
+                // $etudiant->setProfessionMere($sheet[31]);
+                // $etudiant->setEmployeMere($sheet[32]);
+                // $etudiant->setCategorieMere($sheet[33]);
+                $etudiant->setTelMere($sheet[18]);
+                $etudiant->setMailMere($sheet[19]);
+                // $etudiant->setSalaireMere($sheet[36]);
+                $etudiant->setCne($sheet[20]);
                 $etudiant->setAcademie(
-                    $this->em->getRepository(XAcademie::class)->findOneBy(['code' => $sheet[38]])
+                    $this->em->getRepository(XAcademie::class)->findOneBy(['code' => $sheet[21]])
                 );
-                $etudiant->setEtablissement($sheet[39]);
-                // $etudiant->setFiliere($sheet[40]);
+                $etudiant->setEtablissement($sheet[22]);
+                $etudiant->setFiliere(
+                    $this->em->getRepository(XFiliere::class)->findOneBy(["designation" => $sheet[23]])
+                );
                 $etudiant->setTypeBac(
-                    $this->em->getRepository(XTypeBac::class)->findOneBy(['code' => $sheet[41]])
+                    $this->em->getRepository(XTypeBac::class)->findOneBy(['code' => $sheet[24]])
                 );
-                $etudiant->setAnneeBac($sheet[42]);
-                $etudiant->setMoyenneBac(str_replace(',', '.', $sheet[43]));
+                $etudiant->setAnneeBac($sheet[25]);
+                $etudiant->setMoyenneBac(str_replace(',', '.', $sheet[26]));
                 // $etudiant->setLangueConcours($sheet[44]);
-                $etudiant->setNombreEnfants($sheet[45]);
+                // $etudiant->setNombreEnfants($sheet[45]);
                 $etudiant->setNatureDemande(
-                    $this->em->getRepository(NatureDemande::class)->findOneBy(['code' => $sheet[46]])
+                    $this->em->getRepository(NatureDemande::class)->findOneBy(['code' => $sheet[27]])
                 );
-                if ($sheet[47] == "oui") {
-                    $etudiant->setBourse(1);
-                }
-                if ($sheet[48] == "oui"){
-                    $etudiant->setLogement(1);
-                }
-                if ($sheet[49] == "oui") {
-                    $etudiant->setParking(1);
-                }                    
-                if ($sheet[50] == "oui") {
-                    $etudiant->setCpgem(1);
-                }
-                if ($sheet[51] == "oui") {
-                    $etudiant->setCpge1(1);
-                }
-                if ($sheet[52] == "oui") {
+                // if ($sheet[47] == "oui") {
+                //     $etudiant->setBourse(1);
+                // }
+                // if ($sheet[48] == "oui"){
+                //     $etudiant->setLogement(1);
+                // }
+                // if ($sheet[49] == "oui") {
+                //     $etudiant->setParking(1);
+                // }                    
+                // if ($sheet[50] == "oui") {
+                //     $etudiant->setCpgem(1);
+                // }
+                if ($sheet[29] == "oui") {
                     $etudiant->setCpge2(1);
                 }                    
-                if ($sheet[53] == "oui") {
-                    $etudiant->setVet(1);
+                if ($sheet[30] == "oui") {
+                    $etudiant->setCpge1(1);
                 }
-                if ($sheet[54] == "oui") {
+                // if ($sheet[53] == "oui") {
+                //     $etudiant->setVet(1);
+                // }
+                if ($sheet[31] == "oui") {
                     $etudiant->setCam(1);
                 }
-                if ($sheet[55] == "oui") {
+                if ($sheet[32] == "oui") {
                     $etudiant->setIst(1);
                 }
-                if ($sheet[56] == "oui") {
+                if ($sheet[33] == "oui") {
                     $etudiant->setIp(1);
                 }                    
-                if ($sheet[57] == "oui") {
+                if ($sheet[34] == "oui") {
                     $etudiant->setFpa(1);
                 }
-                if ($sheet[58] == "oui") {
-                    $etudiant->setFda(1);
-                }                   
-                if ($sheet[59] == "oui") {
+                if ($sheet[35] == "oui") {
                     $etudiant->setFma(1);
                 }
-                if ($sheet[60] == "oui") {
-                    $etudiant->setEia(1);
-                }
+                if ($sheet[36] == "oui") {
+                    $etudiant->setFda(1);
+                }                   
+               
                 $etudiant->setSourceSite(1);
                 $etudiant->setUserCreated($this->getUser());
                 $etudiant->setStatut(
@@ -311,6 +310,7 @@ class EtudiantController extends AbstractController
         $sheetExist->setCellValue('A1', 'code');
         $sheetExist->setCellValue('B1', 'nom');
         $sheetExist->setCellValue('C1', 'prenom');
+        $sheetExist->setCellValue('D1', 'cin');
         $i = 2;
         // dd($arraysOfEtudiant);
         foreach ($arraysOfEtudiant as $etudiant) {
@@ -318,6 +318,7 @@ class EtudiantController extends AbstractController
             $sheetExist->setCellValue('A'.$i , $etudiantExist->getCode());
             $sheetExist->setCellValue('B'.$i , $etudiantExist->getNom());
             $sheetExist->setCellValue('C'.$i , $etudiantExist->getPrenom());
+            $sheetExist->setCellValue('D'.$i , $etudiantExist->getCin());
             $i++;
         }
         
@@ -333,12 +334,16 @@ class EtudiantController extends AbstractController
     #[Route('/etudiant_valider/{etudiant}', name: 'etudiant_valider')]
     public function etudiant_valider(Request $request,TEtudiant $etudiant): Response
     {   
-    $current_year = date('Y').'/'.date('Y')+1; 
+        $currentMonth = date('m');
         $id_formation = $request->get('formation');
         
         $formation = $this->em->getRepository(AcFormation::class)->find($id_formation);
         if(strpos($formation->getDesignation(), 'Résidanat') === false){
-            $annee = $this->em->getRepository(AcAnnee::class)->findOneBy(['formation'=>$formation,'designation'=>'2021/2022']);
+            $currentYear = date('Y') - 1 .'/'.date('Y');  // means current college year
+            if($currentMonth >= 4) { // april and above
+                $currentYear = date('Y') . '/'.date('Y')+1; // means next college year
+            }
+            $annee = $this->em->getRepository(AcAnnee::class)->findOneBy(['formation'=>$formation,'designation'=>$currentYear]);
         }else{
             $id_annee = $request->get('annee');
             $annee = $this->em->getRepository(AcAnnee::class)->find($id_annee);
@@ -349,8 +354,9 @@ class EtudiantController extends AbstractController
         $exist = count($this->em->getRepository(TPreinscription::class)->findBy(['etudiant'=>$etudiant,'annee'=>$annee]));
         // dd($exist);
         if ($exist > 0) {
-            return new JsonResponse(1);
+            return new JsonResponse("Etudiant déja une preinscription dans cette année / formation", 500);
         }
+        // dd($etudiant->getStatut());
         $preinscription = new TPreinscription();
         $preinscription->setStatut($etudiant->getStatut());
         $preinscription->setEtudiant($etudiant);

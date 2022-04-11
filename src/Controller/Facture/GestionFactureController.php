@@ -36,7 +36,7 @@ class GestionFactureController extends AbstractController
         $this->em = $doctrine->getManager();
     }
     #[Route('/', name: 'gestion_facture')]
-    public function index(): Response
+    public function index(Request $request): Response
     {
         $etbalissements = $this->em->getRepository(AcEtablissement::class)->findAll();
         $organismes = $this->em->getRepository(POrganisme::class)->findAll();
@@ -44,7 +44,7 @@ class GestionFactureController extends AbstractController
         $paiements = $this->em->getRepository(XModalites::class)->findAll();
         $reglements = $this->em->getRepository(TReglement::class)->findAll();
         // dd($reglements);
-        $operations = ApiController::check($this->getUser(), 'gestion_facture', $this->em);
+        $operations = ApiController::check($this->getUser(), 'gestion_facture', $this->em, $request);
         if(!$operations) {
             return $this->render("errors/403.html.twig");
         }

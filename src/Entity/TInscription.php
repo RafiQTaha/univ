@@ -78,6 +78,9 @@ class TInscription
     #[ORM\ManyToOne(targetEntity: PGroupe::class, inversedBy: 'inscriptions')]
     private $groupe;
 
+    #[ORM\Column(type: 'string', nullable: true)]
+    private $salle;
+
     public function __construct()
     {
         $this->gnotes = new ArrayCollection();
@@ -422,6 +425,18 @@ class TInscription
     public function setGroupe(?PGroupe $groupe): self
     {
         $this->groupe = $groupe;
+
+        return $this;
+    }
+
+    public function getSalle(): ?string
+    {
+        return $this->salle;
+    }
+
+    public function setSalle(?string $salle): self
+    {
+        $this->salle = $salle;
 
         return $this;
     }

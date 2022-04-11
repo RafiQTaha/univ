@@ -32,9 +32,9 @@ class AnneeController extends AbstractController
     }
 
     #[Route('/', name: 'evaluation_annee')]
-    public function index(): Response
+    public function index(Request $request): Response
     {
-        $operations = ApiController::check($this->getUser(), 'evaluation_annee', $this->em);
+        $operations = ApiController::check($this->getUser(), 'evaluation_annee', $this->em, $request);
         if(!$operations) {
             return $this->render("errors/403.html.twig");
         }
