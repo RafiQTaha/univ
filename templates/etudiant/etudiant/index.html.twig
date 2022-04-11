@@ -10,10 +10,8 @@
           <h1>Compte Etudiant</h1>
           <div class="section-header-breadcrumb">
               {% for operation in operations %}
-              <a href="{{operation.link}}" class="{{operation.classTag}}" id="{{operation.idTag}}"><i class="{{operation.icon}}"></i>  {{operation.designation}}</a>
+                    <a href="{{operation.link}}" class="{{operation.classTag}}" id="{{operation.idTag}}"><i class="{{operation.icon}}"></i>  {{operation.designation}}</a>
               {% endfor %}
-             
-
           </div>
         </div>
 
@@ -84,6 +82,8 @@
 {% include 'etudiant/etudiant/modals/supprimer.html.twig' %}
 {% include 'etudiant/etudiant/modals/modifier.html.twig' %}
 {% include 'etudiant/etudiant/modals/ajouter.html.twig' %}
+{% include 'etudiant/etudiant/modals/modifier.html.twig' %}
+{% include 'etudiant/etudiant/modals/form_ajouter.html.twig' %}
 
 {% endblock %}
 

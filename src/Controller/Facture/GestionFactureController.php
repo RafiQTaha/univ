@@ -38,16 +38,16 @@ class GestionFactureController extends AbstractController
     #[Route('/', name: 'gestion_facture')]
     public function index(Request $request): Response
     {
+      
+        $operations = ApiController::check($this->getUser(), 'gestion_facture', $this->em, $request);
+        if(!$operations) {
+            return $this->render("errors/403.html.twig");
+        }
         $etbalissements = $this->em->getRepository(AcEtablissement::class)->findAll();
         $organismes = $this->em->getRepository(POrganisme::class)->findAll();
         $banques = $this->em->getRepository(XBanque::class)->findAll();
         $paiements = $this->em->getRepository(XModalites::class)->findAll();
         $reglements = $this->em->getRepository(TReglement::class)->findAll();
-        // dd($reglements);
-        $operations = ApiController::check($this->getUser(), 'gestion_facture', $this->em, $request);
-        if(!$operations) {
-            return $this->render("errors/403.html.twig");
-        }
         return $this->render('facture/gestion_facture.html.twig', [
             'etablissements' => $etbalissements,
             'reglements' => $reglements,
@@ -114,8 +114,8 @@ class GestionFactureController extends AbstractController
         INNER JOIN ac_etablissement etab on etab.id = frma.etablissement_id
         LEFT JOIN porganisme org on org.id = opcab.organisme_id
         LEFT JOIN nature_demande nat on nat.id = etu.nature_demande_id 
-        LEFT JOIN (select code ,operationcab_id, SUM(montant) as montant_facture from toperationdet) opdet on opdet.operationcab_id = opcab.id
-        LEFT JOIN (select code ,operation_id, SUM(montant) as montant_regle from treglement) reg on reg.operation_id = opcab.id $filtre ";
+        LEFT JOIN (select code ,operationcab_id, SUM(montant) as montant_facture from toperationdet where active = 1 group by operationcab_id ) opdet on opdet.operationcab_id = opcab.id
+        LEFT JOIN (select code ,operation_id, SUM(montant) as montant_regle from treglement group by operation_id ) reg on reg.operation_id = opcab.id $filtre ";
         // dd($sql);
         $totalRows .= $sql;
         $sqlRequest .= $sql;
@@ -173,7 +173,7 @@ class GestionFactureController extends AbstractController
     #[Route('/ajouter_reglement/{id}', name: 'facture_ajouter_reglement')]
     public function ajouter_reglement(Request $request,TOperationcab $operationcab): Response
     { 
-        if (empty($request->get('d_reglement')) || empty($request->get('montant')) || empty($request->get('banque')) || empty($request->get('paiement')) || empty($request->get('reference')) ) {
+        if (empty($request->get('d_reglement')) || empty($request->get('montant')) || empty($request->get('banque')) || empty($request->get('paiement')) ) {
             return new JsonResponse('Veuillez renseigner tous les champs obligatoires!', 500);
         }
         if ($request->get('montant') > $request->get('montant2')) {
@@ -241,7 +241,8 @@ class GestionFactureController extends AbstractController
             'format' => [250, 350],
             'margin_left' => 5,
             'margin_right' => 5,
-            'margin_top' => 10,
+            'margin_top' => 5,
+            'margin_bottom' => 5,
         ]);
         $mpdf->SetTitle('Facture Reglée');
         $mpdf->WriteHTML($html);

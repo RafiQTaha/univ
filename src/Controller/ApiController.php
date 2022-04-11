@@ -105,14 +105,13 @@ class ApiController extends AbstractController
             'nature_epreuve' => $nature_epreuve]
         );
         $data = "<option enabled value='' disabled='disabled'>Choix Enseignants</option>";
-        if ($programmation->getEnseignants() != Null) {
+        if ($programmation != NULL) {
             foreach ($programmation->getEnseignants() as $enseignant) {
                 $data .="<option value=".$enseignant->getId().">".$enseignant->getNom()." ".$enseignant->getPrenom()."</option>";
             }
         }
         return new JsonResponse($data);
     }
-
     
     #[Route('/nature_demande', name: 'nature_demande')]
     public function getnature_demande(): Response

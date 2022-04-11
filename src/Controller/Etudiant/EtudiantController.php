@@ -4,6 +4,7 @@ namespace App\Controller\Etudiant;
 
 use App\Controller\ApiController;
 use DateTime;
+
 use App\Entity\PStatut;
 use App\Entity\XTypeBac;
 use App\Entity\TEtudiant;
@@ -15,6 +16,9 @@ use App\Controller\DatatablesController;
 use App\Entity\AcFormation;
 use App\Entity\PMatiere;
 use App\Entity\POrganisme;
+use App\Entity\PSituation;
+use App\Entity\XFiliere;
+use App\Entity\XLangue;
 use App\Entity\TOperationcab;
 use App\Entity\TPreinscriptionReleveNote;
 use App\Entity\XFiliere;
@@ -48,8 +52,20 @@ class EtudiantController extends AbstractController
         if(!$operations) {
             return $this->render("errors/403.html.twig");
         }
+        $situations = $this->em->getRepository(PSituation::class)->findBy([],['designation' => 'ASC']);
+        $academies = $this->em->getRepository(XAcademie::class)->findBy([],['designation' => 'ASC']);
+        $filieres = $this->em->getRepository(XFiliere::class)->findBy([],['designation' => 'ASC']);
+        $typebacs = $this->em->getRepository(XTypeBac::class)->findBy([],['designation' => 'ASC']);
+        $langues = $this->em->getRepository(XLangue::class)->findBy([],['designation' => 'ASC']);
+        $natureDemandes = $this->em->getRepository(NatureDemande::class)->findBy([],['designation' => 'ASC']);
         return $this->render('etudiant/etudiant/index.html.twig', [
-            'operations' => $operations
+            'operations' => $operations,
+            'situations' => $situations,
+            'filieres' => $filieres,
+            'typebacs' => $typebacs,
+            'langues' => $langues,
+            'natureDemandes' => $natureDemandes,
+            'academies' => $academies,
         ]);
     }
     
@@ -62,7 +78,6 @@ class EtudiantController extends AbstractController
         if (!empty($params->get('columns')[0]['search']['value'])) {
             $filtre .= " and grp.id = '" . $params->get('columns')[0]['search']['value'] . "' ";
         }
-
         
         $columns = array(
             array( 'db' => 'etu.id','dt' => 0 ),
@@ -84,8 +99,7 @@ class EtudiantController extends AbstractController
                 FROM tetudiant etu
                 left join pstatut st on st.id = etu.statut_id
                 left join nature_demande nd on nd.id = etu.nature_demande_id
-                left join xtype_bac xtb on xtb.id = etu.type_bac_id              
-
+                left join xtype_bac xtb on xtb.id = etu.type_bac_id 
                 $filtre"
         ;
         // dd($sql);
@@ -107,10 +121,7 @@ class EtudiantController extends AbstractController
         $stmt = $this->em->getConnection()->prepare($sqlRequest);
         $resultSet = $stmt->executeQuery();
         $result = $resultSet->fetchAll();
-
-
         $data = array();
-
         foreach ($result as $key => $row) {
             // dump($row);
             $nestedData = array();
@@ -128,8 +139,6 @@ class EtudiantController extends AbstractController
             $nestedData["DT_RowId"] = $cd;
             $nestedData["DT_RowClass"] = $cd;
             $data[] = $nestedData;
-            // dd($nestedData);
-            
         }
         $json_data = array(
             "draw" => intval($params->get('draw')),
@@ -550,7 +559,195 @@ class EtudiantController extends AbstractController
         $this->em->flush();
         return new JsonResponse("Bien Enregistre");
     }
+    #[Route('/getEtudiantInfos/{etudiant}', name: 'getEtudiantInfos')]
+    public function getEtudiantInfos(Request $request, TEtudiant $etudiant) 
+    {
+        $situations = $this->em->getRepository(PSituation::class)->findBy([],['designation' => 'ASC']);
+        $academies = $this->em->getRepository(XAcademie::class)->findBy([],['designation' => 'ASC']);
+        $filieres = $this->em->getRepository(XFiliere::class)->findBy([],['designation' => 'ASC']);
+        $typebacs = $this->em->getRepository(XTypeBac::class)->findBy([],['designation' => 'ASC']);
+        $langues = $this->em->getRepository(XLangue::class)->findBy([],['designation' => 'ASC']);
+        $natureDemandes = $this->em->getRepository(NatureDemande::class)->findBy([],['designation' => 'ASC']);
+        
+        $candidats_infos = $this->render("etudiant/etudiant/pages/candidats_infos.html.twig", [
+            'etudiant' => $etudiant,
+            'situations' => $situations,
+        ])->getContent();
+        
+        $parents_infos = $this->render("etudiant/etudiant/pages/parents_infos.html.twig", [
+            'etudiant' => $etudiant,
+            'situations' => $situations,
+        ])->getContent();
+        
+        $academique_infos = $this->render("etudiant/etudiant/pages/academique_infos.html.twig", [
+            'etudiant' => $etudiant,
+            'academies' => $academies,
+            'filieres' => $filieres,
+            'typebacs' => $typebacs,
+            'langues' => $langues,
+        ])->getContent();
 
+        $divers = $this->render("etudiant/etudiant/pages/divers.html.twig", [
+            'etudiant' => $etudiant,
+            'situations' => $situations,
+            'natureDemandes' => $natureDemandes,
+        ])->getContent();
 
-   
+        $info_etudiant = [ 'candidats_infos' => $candidats_infos,
+            'parents_infos' => $parents_infos,
+            'academique_infos' => $academique_infos,
+            'divers' => $divers,
+        ];
+        return new JsonResponse($info_etudiant);
+    }
+
+    
+    #[Route('/add_infos', name: 'add_infos')]
+    public function add_infos(Request $request) 
+    {
+        if(empty($request->get('date_naissance')) || empty($request->get('st_famille')) || empty($request->get('situation_parents')) || empty($request->get('id_academie')) || empty($request->get('id_filiere')) || empty($request->get('id_type_bac')) || empty($request->get('langue_concours')) || empty($request->get('nat_demande')) ){
+            return new JsonResponse("Merci de remplir tout les champs obligatoire!!",500);
+        }
+        $etudiant = new TEtudiant();
+        $etudiant->setNom($request->get('nom'));
+        $etudiant->setPrenom($request->get('prenom'));
+        $etudiant->setTitre($request->get('titre'));
+        $etudiant->setDateNaissance(new \DateTime($request->get('date_naissance')));
+        $etudiant->setLieuNaissance($request->get('lieu_naissance'));
+        $etudiant->setSexe($request->get('sexe'));
+        $etudiant->setStFamille($this->em->getRepository(PSituation::class)->find($request->get('st_famille')));
+        $etudiant->setNationalite($request->get('nationalite'));
+        $etudiant->setCin($request->get('cin'));
+        $etudiant->setPasseport($request->get('passeport'));
+        $etudiant->setVille($request->get('ville'));
+        $etudiant->setTel1($request->get('tel1'));
+        $etudiant->setTel2($request->get('tel2'));
+        $etudiant->setTel3($request->get('tel3'));
+        $etudiant->setMail1($request->get('mail1'));
+        $etudiant->setMail2($request->get('mail2'));
+        $etudiant->setAdresse($request->get('adresse'));
+        
+        $etudiant->setStFamilleParent($this->em->getRepository(PSituation::class)->find($request->get('situation_parents')));
+        $etudiant->setNomPere($request->get('nom_p'));
+        $etudiant->setPrenomPere($request->get('prenom_p'));
+        $etudiant->setNationalitePere($request->get('nationalite_p'));
+        $etudiant->setProfessionPere($request->get('profession_p'));
+        $etudiant->setEmployePere($request->get('employe_p'));
+        $etudiant->setCategoriePere($request->get('categorie_p'));
+        $etudiant->setTelPere($request->get('tel_p'));
+        $etudiant->setMailPere($request->get('mail_p'));
+        $etudiant->setSalairePere($request->get('salaire_p'));
+
+        $etudiant->setNomMere($request->get('nom_m'));
+        $etudiant->setPrenomMere($request->get('prenom_m'));
+        $etudiant->setNationaliteMere($request->get('nationalite_m'));
+        $etudiant->setProfessionMere($request->get('profession_m'));
+        $etudiant->setEmployeMere($request->get('employe_m'));
+        $etudiant->setCategorieMere($request->get('categorie_m'));
+        $etudiant->setTelMere($request->get('tel_m'));
+        $etudiant->setMailMere($request->get('mail_m'));
+        $etudiant->setSalaireMere($request->get('salaire_m'));
+
+        $etudiant->setCne($request->get('cne'));
+        $etudiant->setAcademie($this->em->getRepository(XAcademie::class)->find($request->get('id_academie')));
+        $etudiant->setFiliere($this->em->getRepository(XFiliere::class)->find($request->get('id_filiere')));
+        $etudiant->setTypeBac($this->em->getRepository(XTypeBac::class)->find($request->get('id_type_bac')));
+        $etudiant->setAnneeBac($request->get('annee_bac'));
+        $etudiant->setMoyenneBac($request->get('moyenne_bac'));
+        $etudiant->setObs($request->get('obs'));
+        $etudiant->setCategoriePreinscription($request->get('categorie_preinscription'));
+        $etudiant->setFraisPreinscription($request->get('frais_preinscription'));
+        $etudiant->setLangueConcours($this->em->getRepository(XLangue::class)->find($request->get('langue_concours')));
+        $etudiant->setConcoursMedbup($request->get('concours_medbup'));
+
+        $etudiant->setBourse($request->get('bourse'));
+        $etudiant->setLogement($request->get('logement'));
+        $etudiant->setParking($request->get('parking'));
+        $etudiant->setNatureDemande($this->em->getRepository(NatureDemande::class)->find($request->get('nat_demande')));
+        $etudiant->setEtablissement($request->get('etablissement'));
+        
+        $etudiant->setUserCreated($this->getUser());
+        $etudiant->setCreated(new \DateTime('now'));
+        $etudiant->setSourceSite(1);
+        $etudiant->setStatut(
+            $this->em->getRepository(PStatut::class)->find(20)
+        );
+        $this->em->persist($etudiant);
+        $this->em->flush();
+
+        $etudiant->setCode('CND_UA'.str_pad($etudiant->getId(), 8, '0', STR_PAD_LEFT).'/'.date('Y'));
+        $this->em->flush();
+        return new JsonResponse("Bien Enregistre",200);
+    } 
+
+    #[Route('/edit_infos/{etudiant}', name: 'edit_infos')]
+    public function edit_infos(Request $request, TEtudiant $etudiant) 
+    {
+        if(!$etudiant){
+            return new JsonResponse("Etudiant Introuvable!!",500);
+        }
+        $etudiant->setNom($request->get('nom'));
+        $etudiant->setPrenom($request->get('prenom'));
+        $etudiant->setTitre($request->get('titre'));
+        $etudiant->setDateNaissance(new \DateTime($request->get('date_naissance')));
+        $etudiant->setLieuNaissance($request->get('lieu_naissance'));
+        $etudiant->setSexe($request->get('sexe'));
+        $etudiant->setStFamille($this->em->getRepository(PSituation::class)->find($request->get('st_famille')));
+        $etudiant->setNationalite($request->get('nationalite'));
+        $etudiant->setCin($request->get('cin'));
+        $etudiant->setPasseport($request->get('passeport'));
+        $etudiant->setVille($request->get('ville'));
+        $etudiant->setTel1($request->get('tel1'));
+        $etudiant->setTel2($request->get('tel2'));
+        $etudiant->setTel3($request->get('tel3'));
+        $etudiant->setMail1($request->get('mail1'));
+        $etudiant->setMail2($request->get('mail2'));
+        $etudiant->setAdresse($request->get('adresse'));
+
+        
+        $etudiant->setStFamilleParent($this->em->getRepository(PSituation::class)->find($request->get('situation_parents')));
+        $etudiant->setNomPere($request->get('nom_p'));
+        $etudiant->setPrenomPere($request->get('prenom_p'));
+        $etudiant->setNationalitePere($request->get('nationalite_p'));
+        $etudiant->setProfessionPere($request->get('profession_p'));
+        $etudiant->setEmployePere($request->get('employe_p'));
+        $etudiant->setCategoriePere($request->get('categorie_p'));
+        $etudiant->setTelPere($request->get('tel_p'));
+        $etudiant->setMailPere($request->get('mail_p'));
+        $etudiant->setSalairePere($request->get('salaire_p'));
+
+        $etudiant->setNomMere($request->get('nom_m'));
+        $etudiant->setPrenomMere($request->get('prenom_m'));
+        $etudiant->setNationaliteMere($request->get('nationalite_m'));
+        $etudiant->setProfessionMere($request->get('profession_m'));
+        $etudiant->setEmployeMere($request->get('employe_m'));
+        $etudiant->setCategorieMere($request->get('categorie_m'));
+        $etudiant->setTelMere($request->get('tel_m'));
+        $etudiant->setMailMere($request->get('mail_m'));
+        $etudiant->setSalaireMere($request->get('salaire_m'));
+
+        $etudiant->setCne($request->get('cne'));
+        $etudiant->setAcademie($this->em->getRepository(XAcademie::class)->find($request->get('id_academie')));
+        $etudiant->setFiliere($this->em->getRepository(XFiliere::class)->find($request->get('id_filiere')));
+        $etudiant->setTypeBac($this->em->getRepository(XTypeBac::class)->find($request->get('id_type_bac')));
+        $etudiant->setAnneeBac($request->get('annee_bac'));
+        $etudiant->setMoyenneBac($request->get('moyenne_bac'));
+        $etudiant->setObs($request->get('obs'));
+        $etudiant->setCategoriePreinscription($request->get('categorie_preinscription'));
+        $etudiant->setFraisPreinscription($request->get('frais_preinscription'));
+        $etudiant->setLangueConcours($this->em->getRepository(XLangue::class)->find($request->get('langue_concours')));
+        $etudiant->setConcoursMedbup($request->get('concours_medbup'));
+
+        $etudiant->setBourse($request->get('bourse'));
+        $etudiant->setLogement($request->get('logement'));
+        $etudiant->setParking($request->get('parking'));
+        $etudiant->setNatureDemande($this->em->getRepository(NatureDemande::class)->find($request->get('nat_demande')));
+        $etudiant->setEtablissement($request->get('etablissement'));
+        
+        $etudiant->setUserUpdated($this->getUser());
+        $etudiant->setUpdated(new \DateTime('now'));
+
+        $this->em->flush();
+        return new JsonResponse("Bien Enregistre",200);
+    } 
 }

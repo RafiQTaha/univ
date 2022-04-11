@@ -31,11 +31,14 @@ class AdmissionController extends AbstractController
     #[Route('/', name: 'admission_index')]
     public function index(Request $request): Response
     {   
+
         $organismes = $this->em->getRepository(POrganisme::class)->findAll();
         $operations = ApiController::check($this->getUser(), 'admission_index', $this->em, $request);
+
         if(!$operations) {
             return $this->render("errors/403.html.twig");
         }
+        $organismes = $this->em->getRepository(POrganisme::class)->findAll();
         return $this->render('admission/admissions.html.twig', [
             'operations' => $operations,
             'organismes' => $organismes
@@ -93,7 +96,9 @@ class AdmissionController extends AbstractController
         if (isset($where) && $where != '') {
             $sqlRequest .= $where;
         }
-        $sqlRequest .= DatatablesController::Order($request, $columns);
+        $changed_column = $params->get('order')[0]['column'] > 0 ? $params->get('order')[0]['column'] - 1 : 0;
+        $sqlRequest .= " ORDER BY " .DatatablesController::Pluck($columns, 'db')[$changed_column] . "   " . $params->get('order')[0]['dir'] . "  LIMIT " . $params->get('start') . " ," . $params->get('length') . " ";
+        // $sqlRequest .= DatatablesController::Order($request, $columns);
         // dd($sqlRequest);
         $stmt = $this->em->getConnection()->prepare($sqlRequest);
         $resultSet = $stmt->executeQuery();
@@ -175,9 +180,11 @@ class AdmissionController extends AbstractController
         if (isset($where) && $where != '') {
             $sqlRequest .= $where;
         }
-        $sqlRequest .= DatatablesController::Order($request, $columns);
-        // dd($sqlRequest);
-        // dd($sql);
+
+        $changed_column = $params->get('order')[0]['column'] > 0 ? $params->get('order')[0]['column'] - 1 : 0;
+        $sqlRequest .= " ORDER BY " .DatatablesController::Pluck($columns, 'db')[$changed_column] . "   " . $params->get('order')[0]['dir'] . "  LIMIT " . $params->get('start') . " ," . $params->get('length') . " ";
+        // $sqlRequest .= DatatablesController::Order($request, $columns);
+        
         $stmt = $this->em->getConnection()->prepare($sqlRequest);
         $resultSet = $stmt->executeQuery();
         $result = $resultSet->fetchAll();

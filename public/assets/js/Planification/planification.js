@@ -16,8 +16,7 @@ $(document).ready(function () {
         })
     }
     let id_semestre = false;
-    let niv = false;
-    var initialLocaleCode = "fr";
+    let niv = 0;
     let currentweek = false;
     let heur_debut = false;
     let heur_fin = false;
@@ -33,14 +32,18 @@ $(document).ready(function () {
                 click: function () {
                     var currentWeek = moment($('#calendar').fullCalendar('getDate'), "MMDDYYYY").isoWeek();
                     var currentDate = moment($('#calendar').fullCalendar('getDate')).format('YYYY-MM-DD');
-                    alert(currentWeek);
+                    if(id_semestre != ""){
+                        window.open('/planification/planifications/print_planning/'+id_semestre+'/'+niv+'/'+currentWeek+'/'+currentDate, '_blank');
+                    }else{
+                        Toast.fire({
+                            icon: 'error',
+                            title: 'Merci de Choisir une Semestre!!',
+                        }) 
+                    }
                 }
             }
         },
-        // dayClick: function(date, jsEvent, view) { 
-        //     currentDate = date.get;Date()+"/"+date.getMonth()+"/"+date.getFullYear()  
-        // },
-            events: alltime,
+        events: alltime,
         header: {
             left: 'prev,next today myCustomButton',
             center: 'title',
@@ -64,7 +67,7 @@ $(document).ready(function () {
                 currentweek = moment(start, "MMDDYYYY").isoWeek();
                 heur_debut= moment(start).format('HH:mm')
                 heur_fin= moment(end).format('HH:mm')
-                axios.get('/planification/planifications/planification_infos/'+79)
+                axios.get('/planification/planifications/planification_infos/'+107)
                 .then(success => {
                     $('.modal-addform_planif .add_planning').html(success.data);
                     $('.modal-addform_planif #h_debut').val(heur_debut);
@@ -108,14 +111,15 @@ $(document).ready(function () {
     $("#salle").select2();
     const alltimes = async () => {
         try{
-            // const request = await  axios.post('/planification/planifications/calendar/'+id_semestre+'/'+niv+'/')
-            const request = await axios.post('/planification/planifications/calendar/79/4/')
+            const request = await  axios.post('/planification/planifications/calendar/'+id_semestre+'/'+niv)
+            // const request = await axios.post('/planification/planifications/calendar/107/9')
             alltime = request.data;
-            console.log(request.data)
             $("#calendar").fullCalendar('removeEvents'); 
-            $("#calendar").fullCalendar('addEventSource', request.data); 
+            $("#calendar").fullCalendar('addEventSource', alltime); 
         }catch(error){
-            // alltime = [];
+            alltime = [];
+            $("#calendar").fullCalendar('removeEvents'); 
+            $("#calendar").fullCalendar('addEventSource', alltime); 
             // console.log(error)
             // Toast.fire({
             //     icon: 'error',
@@ -123,7 +127,7 @@ $(document).ready(function () {
             // })
         }
     }
-    alltimes()
+    // alltimes()
     const edit = async (event) => {
         start = event.start.format('YYYY-MM-DD HH:mm:ss');
         if (event.end) {
@@ -195,52 +199,70 @@ $(document).ready(function () {
     })
     $("#semestre").on('change', async function (){
         id_semestre = $(this).val();
-        if(niv != ""){
+        if(id_semestre != ""){
             alltimes()
+        }else{
+            alltime = [];
+            $("#calendar").fullCalendar('removeEvents'); 
+            $("#calendar").fullCalendar('addEventSource', alltime); 
         }
     })
     $("#niv1").on('change', async function (){
         const niv1 = $(this).val();
-        niv = $(this).val();
-        if(id_semestre != ""){
-            alltimes()
-        }
+        // niv = $(this).val();
         let response = ""
         if(niv1 != "") {
+            niv = niv1;
             const request = await axios.get('/api/niv2/'+niv1);
             response = request.data
         }else{
+            niv = 0;
+            // alltime = [];
+            // $('#calendar').fullCalendar('refetchEvents');
+        }
+        if(id_semestre != ""){
+            alltimes()
+        }else{
             alltime = [];
-            $('#calendar').fullCalendar('refetchEvents');
+            $("#calendar").fullCalendar('removeEvents'); 
+            $("#calendar").fullCalendar('addEventSource', alltime); 
         }
         $('#niv3').html("").select2();
         $('#niv2').html(response).select2();
     })
     $("#niv2").on('change', async function (){
         const niv2 = $(this).val();
-        niv = $(this).val();
-        if(id_semestre != ""){
-            alltimes()
-        }
-        let response = ""
         if(niv2 != "") {
+            niv = niv2;
             const request = await axios.get('/api/niv3/'+niv2);
             response = request.data
         }else{
+            niv = $('#niv1').val();
+        }
+        if(id_semestre != ""){
+            alltimes()
+        }else{
             alltime = [];
-            $('#calendar').fullCalendar('refetchEvents');
+            $("#calendar").fullCalendar('removeEvents'); 
+            $("#calendar").fullCalendar('addEventSource', alltime); 
         }
         $('#niv3').html(response).select2();
     })
     $("#niv3").on('change', async function (){
-        niv = $(this).val();
+        const niv3 = $(this).val();
+        if(niv3 != "") {
+            niv = niv3;
+        }else{
+            niv = $('#niv2').val();
+        }
         if(id_semestre != ""){
             alltimes()
-        }
-        if(niv2 == "") {
+        }else{
             alltime = [];
-            $('#calendar').fullCalendar('refetchEvents');
+            $("#calendar").fullCalendar('removeEvents'); 
+            $("#calendar").fullCalendar('addEventSource', alltime); 
         }
+        // $('#calendar').fullCalendar('refetchEvents');
     })
     $("body").on('change','#module', async function (){
         const id_module = $(this).val();
@@ -292,6 +314,10 @@ $(document).ready(function () {
             ); 
             icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin");
             alltimes()
+            setTimeout(() => {
+               $("#addform_planif-modal .modal-body .alert").remove();
+               $('#addform_planif-modal').modal("hide");
+            }, 4000);
         }catch(error){
             const message = error.response.data;
             // console.log(error, error.response);
@@ -301,15 +327,11 @@ $(document).ready(function () {
             );
             icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
         }
-        setTimeout(() => {
-           $("#addform_planif-modal .modal-body .alert").remove();
-        //    $('#addform_planif-modal').modal("hide");
-        }, 4000);
     })
     $("body").on('submit','.form_update_planning', async function (e){
         e.preventDefault();
         var formData = new FormData(this);
-        console.log(formData);
+        // console.log(formData);
         let modalAlert =  $("#updateform_planif-modal .modal-body .alert");
         modalAlert.remove();
         const icon = $(".form_update_planning .btn i");
@@ -333,7 +355,7 @@ $(document).ready(function () {
         }
         setTimeout(() => {
            $("#updateform_planif-modal .modal-body .alert").remove();
-        //    $('#updateform_planif-modal').modal("hide");
+           $('#updateform_planif-modal').modal("hide");
         }, 4000);
     })
 
@@ -368,7 +390,6 @@ $(document).ready(function () {
         }
     })
 
-
     $("body").on('click','#import', async function (e){
         e.preventDefault();
         $('#import_en_masse').modal("show");
@@ -386,26 +407,87 @@ $(document).ready(function () {
         const icon = $("#planning_enregistre i");
         icon.removeClass('fa-check-circle').addClass("fa-spinner fa-spin");
         try {
-          const request = await axios.post('/planification/planifications/import', formData);
-          const response = request.data;
-          $("#import_en_masse .modal-body").prepend(
-            `<div class="alert alert-success">
-                <p>${response}</p>
-             </div>`
-          );
-          icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
+            const request = await axios.post('/planification/planifications/import', formData);
+            const response = request.data;
+            $("#import_en_masse .modal-body").prepend(
+                `<div class="alert alert-success">
+                    <p>${response}</p>
+                </div>`
+            );
+            icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
         } catch (error) {
-          const message = error.response.data;
-          console.log(error, error.response);
-          modalAlert.remove();
-          $("#import_en_masse .modal-body").prepend(
-            `<div class="alert alert-danger">${message}</div>`
-          );
-          icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
+            const message = error.response.data;
+            console.log(error, error.response);
+            modalAlert.remove();
+            $("#import_en_masse .modal-body").prepend(
+                `<div class="alert alert-danger">${message}</div>`
+            );
+            icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
         }
         setTimeout(() => {
-           $("#import_en_masse .modal-body .alert").remove();
+            $("#import_en_masse .modal-body .alert").remove();
         }, 4000);
-    })  
+    })
+    
+    $("body").on('click','#generer', async function (e){
+        e.preventDefault();
+        if(!id_semestre || !niv){
+            Toast.fire({
+                icon: 'error',
+                title: 'Vous devez choisir Semestre et Niveau!!',
+            })
+            return
+        }
+        currentweek = moment($('#calendar').fullCalendar('getDate'), "MMDDYYYY").isoWeek();
+        let formData = new FormData();
+        formData.append('nsemaine',currentweek)
+        const icon = $("#generer i");
+        icon.removeClass('fa-check-circle').addClass("fa-spinner fa-spin");
+        try {
+            const request = await axios.post('/planification/planifications/generer_planning/'+id_semestre+'/'+niv, formData);
+            // const request = await axios.post('/planification/planifications/generer_planning/107/9', formData);
+            const response = request.data;
+            Toast.fire({
+                icon: 'success',
+                title: response,
+            })
+            icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
+        } catch (error) {
+            const message = error.response.data;
+            Toast.fire({
+                icon: 'error',
+                title: 'Some Error',
+            })
+            icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
+        }
+    })
+    
+    $("body").on("click", '#seance_absence', function (e) {
+        e.preventDefault();
+        if(!id_planning){
+            Toast.fire({
+                icon: 'error',
+                title: 'Merci de Selectionner une Seance',
+            })
+            return;
+        }
+        window.open('/planification/planifications/GetAbsenceByGroupe/'+id_planning, '_blank');
+    });
+    
+    $("body").on("click", '#fiche_sequence', function (e) {
+        e.preventDefault();
+        if(!id_planning){
+            Toast.fire({
+                icon: 'error',
+                title: 'Merci de Selectionner une Seance',
+            })
+            return;
+        }
+        window.open('/planification/planifications/Getsequence/'+id_planning, '_blank');
+    });
+    
+    
+
+    
     
 })

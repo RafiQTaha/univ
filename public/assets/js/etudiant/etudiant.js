@@ -24,6 +24,7 @@ $(document).ready(function  () {
     serverSide: true,
     deferRender: true,
     responsive: true,
+    scrollX: true,
     drawCallback: function () {
       if(id_etudiant) {
         $("body tr#" + id_etudiant).addClass('active_databales');
@@ -34,8 +35,27 @@ $(document).ready(function  () {
     },
   });
 
+  const getEtudiantInfos = async () => {
+      $('#modifier_modal #candidats_infos').html('');
+      $('#modifier_modal #parents_infos').html('');
+      $('#modifier_modal #academique_infos').html('');
+      $('#modifier_modal #divers').html('');
+    try {
+      const request = await axios.get('/etudiant/etudiants/getEtudiantInfos/'+id_etudiant);
+      const data = request.data;
+      $('#modifier_modal #candidats_infos').html(data['candidats_infos']);
+      $('#modifier_modal #parents_infos').html(data['parents_infos']);
+      $('#modifier_modal #academique_infos').html(data['academique_infos']);
+      $('#modifier_modal #divers').html(data['divers']);
+      $('select').select2();
+      console.log(data);
+
+    } catch (error) {
+      // console.log(error.response.data);
+    }  
+  }
+
   const getEtablissement = async () => {
-    console.log('amine')
     try {
       const request = await axios.get('/api/etablissement');
       const data = request.data;
@@ -97,6 +117,7 @@ $(document).ready(function  () {
     });    
     loadExistMatieres();
     loadEtudiantStatut();
+    getEtudiantInfos();
   })
   
   $('body').on('change','#etablissement',function () {
@@ -290,6 +311,9 @@ $(document).ready(function  () {
       );
       icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
     }
+    setTimeout(() => {
+      $(".modal-body .alert").remove();
+    }, 2500) 
   
     // $("#save_import")[0].reset();
   });
@@ -333,8 +357,10 @@ $(document).ready(function  () {
         `<div class="alert alert-danger">${message}</div>`
       );
       icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
-      
     }
+    setTimeout(() => {
+      $(".modal-body .alert").remove();
+    }, 2500) 
    
   })
 
@@ -356,7 +382,6 @@ $(document).ready(function  () {
     modalAlert.remove();
     const icon = $("#change_statut_save .btn i");
     icon.removeClass('fa-check-circle').addClass("fa-spinner fa-spin");
-    
     try {
       const request = await axios.post('/etudiant/etudiants/statut/persist/'+id_etudiant, formData);
       const response = request.data;
@@ -375,8 +400,108 @@ $(document).ready(function  () {
         `<div class="alert alert-danger">${message}</div>`
       );
       icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
-      
     }
-    
+    setTimeout(() => {
+      $(".modal-body .alert").remove();
+    }, 2500) 
+  })
+  $('.nav-pills a').on('click', function (e) {
+      $(this).tab('show');
+  })
+  $('body').on('click','#modifier',function () {
+    if(!id_etudiant){
+        Toast.fire({
+            icon: 'error',
+            title: 'Veuillez selection une ligne!',
+        })
+        return;
+    }
+    $('#modifier_modal').modal("show");
+  })
+  
+  $("body").on('submit', "#form_modifier", async (e) => {
+    e.preventDefault();
+    // alert('et');
+    if(!id_etudiant){
+        Toast.fire({
+          icon: 'error',
+          title: 'Merci de Choisir Un Etudiant!',
+        })
+        return;
+    }
+    var res = confirm('Vous voulez vraiment modifier cette enregistrement ?');
+    if(res == 1){
+      var formData = new FormData($('#form_modifier')[0]);
+      console.log(formData);
+      let modalAlert = $("#modifier_modal .modal-body .alert")
+      modalAlert.remove();
+      const icon = $("#modifier_modal button i");
+      icon.removeClass('fa-edit').addClass("fa-spinner fa-spin");
+      try {
+        const request = await axios.post('/etudiant/etudiants/edit_infos/'+id_etudiant, formData);
+        const response = request.data;
+        $("#modifier_modal .modal-body").prepend(
+          `<div class="alert alert-success" style="width: 98%;margin: 0 auto;">
+              <p>${response}</p>
+            </div>`
+        );
+        icon.addClass('fa-edit').removeClass("fa-spinner fa-spin ");
+        table.ajax.reload(null, false)
+      }catch (error) {
+        const message = error.response.data;
+        console.log(error, error.response);
+        modalAlert.remove();
+        $("#modifier_modal .modal-body").prepend(
+          `<div class="alert alert-danger" style="width: 98%;margin: 0 auto;">${message}</div>`
+        );
+        icon.addClass('fa-edit').removeClass("fa-spinner fa-spin ");
+      }
+    }
+    setTimeout(() => {
+      $(".modal-body .alert").remove();
+    }, 2500)  
+  })
+  $("body").on('click', "#ajouter", (e) => {
+    e.preventDefault();
+    // $('#ajouter_modal #candidats_infos').html('');
+    // $('#ajouter_modal #parents_infos').html('');
+    // $('#ajouter_modal #academique_infos').html('');
+    // $('#ajouter_modal #divers').html('');
+    $('#ajouter_modal').modal("show");
+  })
+  
+  $("body").on('submit', "#form_ajouter", async (e) => {
+    e.preventDefault();
+    var res = confirm('Vous voulez vraiment ajouter cette enregistrement ?');
+    if(res == 1){
+      var formData = new FormData($('#form_ajouter')[0]);
+      console.log(formData);
+      let modalAlert = $("#ajouter_modal .modal-body .alert")
+      modalAlert.remove();
+      const icon = $("#ajouter_modal button i");
+      icon.removeClass('fa-plus').addClass("fa-spinner fa-spin");
+      try {
+        const request = await axios.post('/etudiant/etudiants/add_infos', formData);
+        const response = request.data;
+        $("#ajouter_modal .modal-body").prepend(
+          `<div class="alert alert-success" style="width: 98%;margin: 0 auto;">
+              <p>${response}</p>
+            </div>`
+        );
+        icon.addClass('fa-plus').removeClass("fa-spinner fa-spin ");
+        table.ajax.reload(null, false)
+      }catch (error) {
+        const message = error.response.data;
+        console.log(error, error.response);
+        modalAlert.remove();
+        $("#ajouter_modal .modal-body").prepend(
+          `<div class="alert alert-danger" style="width: 98%;margin: 0 auto;">${message}</div>`
+        );
+        icon.addClass('fa-plus').removeClass("fa-spinner fa-spin ");
+      }
+    }
+    setTimeout(() => {
+      $(".modal-body .alert").remove();
+    }, 2500)  
   })
 })

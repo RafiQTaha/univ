@@ -21,6 +21,7 @@ $(document).ready(function () {
         processing: true,
         serverSide: true,
         deferRender: true,
+        scrollX: true,
         drawCallback: function () {
                 $("body tr#" + id_facture).addClass('active_databales');
         },
@@ -134,7 +135,7 @@ $(document).ready(function () {
             })
         }    
     }
-    $('body').on('dblclick','#datables_facture tbody tr',function (e) {
+    $('body').on('click','#datables_facture tbody tr',function (e) {
         e.preventDefault();
         if($(this).hasClass('active_databales')) {
             $(this).removeClass('active_databales');
@@ -188,6 +189,7 @@ $(document).ready(function () {
             );
             icon.removeClass('fa-spinner fa-spin').addClass("fa-plus");
             getMontant();
+            table_facture.ajax.reload(null, false);
         }catch(error){
             const message = error.response.data;            
             $(".modal-facture .modal-body").prepend(
@@ -208,6 +210,7 @@ $(document).ready(function () {
             const request = await  axios.post('/facture/factures/cloture_detaille/'+id_det)
             getMontant()
             getFacture();
+            table_facture.ajax.reload(null, false);
             icon.removeClass('fa-spinner fa-spin').addClass("fa-window-close");
         }catch(error){
             const message = error.response.data;

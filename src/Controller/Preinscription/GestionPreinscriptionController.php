@@ -37,12 +37,12 @@ class GestionPreinscriptionController extends AbstractController
     #[Route('/', name: 'gestion_preinscription')]
     public function gestion_preinscription(): Response
     {   
-        $etbalissements = $this->em->getRepository(AcEtablissement::class)->findAll();
-        $natures = $this->em->getRepository(NatureDemande::class)->findAll();
         $operations = ApiController::check($this->getUser(), 'gestion_preinscription', $this->em);
         if(!$operations) {
             return $this->render("errors/403.html.twig");
         }
+        $etbalissements = $this->em->getRepository(AcEtablissement::class)->findAll();
+        $natures = $this->em->getRepository(NatureDemande::class)->findAll();
         return $this->render('preinscription/gestion_preinscription.html.twig',[
             'etablissements' => $etbalissements,
             'natures' => $natures,
@@ -58,7 +58,6 @@ class GestionPreinscriptionController extends AbstractController
         $filtre = "where 1=1 AND inscription_valide = '1' ";
         
         if (!empty($params->get('columns')[0]['search']['value'])) {
-            // dd("in");
             $filtre .= " and etab.id = '" . $params->get('columns')[0]['search']['value'] . "' ";
         }
 
@@ -95,9 +94,9 @@ class GestionPreinscriptionController extends AbstractController
         left join nature_demande nat on nat.id = etu.nature_demande_id 
         inner join pstatut stat on stat.id = pre.statut_id
         LEFT JOIN (SELECT etudiant_id,COUNT(code) AS nbrIns FROM tpreinscription WHERE etudiant_id IS NOT NULL GROUP BY etudiant_id ) nbr ON nbr.etudiant_id = pre.etudiant_id 
-                $filtre"
-        ;
-        // dd($sql);
+                $filtre";
+        // $sql .= "";
+        // dd($sql);    
         $totalRows .= $sql;
         $sqlRequest .= $sql;
         $stmt = $this->em->getConnection()->prepare($sql);
@@ -110,26 +109,29 @@ class GestionPreinscriptionController extends AbstractController
         if (isset($where) && $where != '') {
             $sqlRequest .= $where;
         }
-        $sqlRequest .= DatatablesController::Order($request, $columns);
+        
+        $changed_column = $params->get('order')[0]['column'] > 0 ? $params->get('order')[0]['column'] - 1 : 0;
+        $sqlRequest .= " ORDER BY " .DatatablesController::Pluck($columns, 'db')[$changed_column] . "   " . $params->get('order')[0]['dir'] . "  LIMIT " . $params->get('start') . " ," . $params->get('length') . " ";
+        // $sqlRequest .= DatatablesController::Order($request, $columns);
         
         $stmt = $this->em->getConnection()->prepare($sqlRequest);
         $resultSet = $stmt->executeQuery();
         $result = $resultSet->fetchAll();
 
 
-        $data = array();
+        $data = [];
         
         $i = 1;
         foreach ($result as $key => $row) {
             // dump($row);
-            $nestedData = array();
+            $nestedData = [];
             $cd = $row['id'];
             // $nestedData[] = $cd;
             $nestedData[] = "<input type ='checkbox' class='check_preins' id ='$cd' >";
             $k = 0;
             $etat_bg="";
             foreach (array_values($row) as $key => $value) {
-                if($k == 9) {
+                if($k == 10) {
                     $sqls="SELECT (CASE WHEN EXISTS (SELECT cab.code FROM toperationcab cab INNER JOIN treglement reg ON reg.operation_id = cab.id WHERE cab.preinscription_id = ".$row['id'].") THEN 'Reglé' WHEN EXISTS (SELECT cab2.code FROM toperationcab cab2 LEFT JOIN treglement reg2 ON reg2.operation_id = cab2.id WHERE cab2.preinscription_id = ".$row['id']." ANd reg2.operation_id IS NULL) THEN 'Facturé' ELSE 'N.Facturé' END ) AS facture";
                     $stmts = $this->em->getConnection()->prepare($sqls);
                     $resultSets = $stmts->executeQuery();
@@ -140,7 +142,7 @@ class GestionPreinscriptionController extends AbstractController
                         $etat_bg = 'etat_bg_reg';
                     }
                     $nestedData[] = $etat[0]['facture'];
-                } 
+                }
                 $nestedData[] = $value;
                 $k++;
             }
@@ -189,18 +191,18 @@ class GestionPreinscriptionController extends AbstractController
             );
             $this->em->flush();
 
-            $operationcab = new TOperationcab();
-            $operationcab->setPreinscription($preinscription);
-            $operationcab->setAnnee($preinscription->getAnnee());
-            $operationcab->setOrganisme($this->em->getRepository(POrganisme::class)->find(7));
-            $operationcab->setCategorie('inscription');
-            $operationcab->setCreated(new DateTime('now'));
-            $operationcab->setUserCreated($this->getUser());
-            $this->em->persist($operationcab);
-            $this->em->flush();
-            $etab = $preinscription->getAnnee()->getFormation()->getEtablissement()->getAbreviation();
-            $operationcab->setCode($etab.'-FAC'.str_pad($operationcab->getId(), 8, '0', STR_PAD_LEFT).'/'.date('Y'));
-            $this->em->flush();
+            // $operationcab = new TOperationcab();
+            // $operationcab->setPreinscription($preinscription);
+            // $operationcab->setAnnee($preinscription->getAnnee());
+            // $operationcab->setOrganisme($this->em->getRepository(POrganisme::class)->find(7));
+            // $operationcab->setCategorie('inscription');
+            // $operationcab->setCreated(new DateTime('now'));
+            // $operationcab->setUserCreated($this->getUser());
+            // $this->em->persist($operationcab);
+            // $this->em->flush();
+            // $etab = $preinscription->getAnnee()->getFormation()->getEtablissement()->getAbreviation();
+            // $operationcab->setCode($etab.'-FAC'.str_pad($operationcab->getId(), 8, '0', STR_PAD_LEFT).'/'.date('Y'));
+            // $this->em->flush();
             
         }
         return new JsonResponse('Admission bien enregister', 200);
@@ -345,6 +347,34 @@ class GestionPreinscriptionController extends AbstractController
         );
         $mpdf->WriteHTML($html);
         $mpdf->Output("attestaion.pdf", "I");
+    }
+    
+
+    #[Route('/cfc_preinscription/{preinscription}', name: 'cfc_preinscription')]
+    public function cfc_preinscription(Request $request, TPreinscription $preinscription): Response
+    {
+        
+        $html = $this->render("preinscription/pdfs/preinscription.html.twig", [
+            'preinscription' => $preinscription
+        ])->getContent();
+        $mpdf = new Mpdf([
+            'mode' => 'utf-8', 
+            // 'format' => [200, 350],
+            'margin_left' => 5,
+            'margin_right' => 5,
+            'margin_top' => 5,
+            // 'margin_bottom' => 5,
+            ]);
+        // $mpdf->SetTitle('Attestation de pré-inscription '.$preinscription->getEtudiant()->getNom().' '.$preinscription->getEtudiant()->getPrenom());
+        $mpdf->SetTitle('CFC de Pré-Inscription');
+        // $mpdf->SetHTMLHeader(
+        //     $this->render("attestaion/pdfs/header.html.twig")->getContent()
+        // );
+        $mpdf->SetHTMLFooter(
+            $this->render("preinscription/pdfs/footer_preins.html.twig")->getContent()
+        );
+        $mpdf->WriteHTML($html);
+        $mpdf->Output("CFC Préinscription.pdf", "I");
     }
 
     #[Route('/facture/{operationcab}', name: 'preinscription_facture')]
