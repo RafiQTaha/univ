@@ -38,12 +38,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'UserCreated', targetEntity: PlEmptime::class)]
     private $emptimes;
 
+    #[ORM\Column(type: 'boolean')]
+    private $enable = false;
+
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $nom;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $prenom;
 
+
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private $email;
     #[ORM\OneToMany(mappedBy: 'userCreated', targetEntity: HHonens::class)]
     private $honenss;
 
@@ -55,6 +61,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\OneToMany(mappedBy: 'usercreated', targetEntity: PEnseignantExcept::class)]
     private $enseignantexcepts;
+
 
     public function __construct()
     {
@@ -264,6 +271,20 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+
+    public function getEnable(): ?bool
+    {
+        return $this->enable;
+    }
+
+    public function setEnable(bool $enable): self
+    {
+        $this->enable = $enable;
+
+        return $this;
+    }
+
+
     public function getNom(): ?string
     {
         return $this->nom;
@@ -288,6 +309,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+
+    public function getEmail(): ?string
+    {
+        return $this->email;
+    }
+
+    public function setEmail(?string $email): self
+    {
+        $this->email = $email;
+    }
     /**
      * @return Collection<int, HHonens>
      */

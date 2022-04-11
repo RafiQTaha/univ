@@ -133,6 +133,7 @@ $(document).ready(function  () {
             //     icon: 'success',
             //     title: response,
             // });
+            setColorRed();
         } catch (error) {
             console.log(error)
             const message = error.response.data;
@@ -145,20 +146,160 @@ $(document).ready(function  () {
     $("body").on("click", ".open h3", function(){
         $(this).parent().find(".elements").slideToggle("slow");
     })
-    $("#statut_avant_rachat").on('click', async function() {
-        const icon = $("#statut_avant_rachat i");
-        icon.removeClass('fa-sync').addClass("fa-spinner fa-spin");
+    
+    
+    $("body").on("keyup change", ".KU3", function () {
+        var value = $(this).attr('id');
+        // var elementCount = $(this).parent().parent().parent().parent().parent().parent().find(".elements_container");
+        var elements = $(this).parent().parent().parent().parent().parent().parent().find(".elements_container");
+        var modulex = $(this).parent().parent().parent().parent().parent().parent()
+        var modules =  $(this).parent().parent().parent().parent().parent().parent().parent().parent().find(".modules");
+        
+        var rachat = $(this).parent().parent();
+        var cc_rachat =  rachat.find(".cc_rachat").val() 
+        var tp_rachat =  rachat.find(".tp_rachat").val() 
+        var ef_rachat =  rachat.find(".ef_rachat").val() 
+        var element = rachat.find(".element_rachat");
+        
+        
+        var coeff_module =  Number($(this).parent().parent().parent().parent().parent().parent().find(".coefficcient_module").val()) ;
+        var coeff_exams =  $(this).parent().parent().parent().parent().parent().find(".coefficcient_element_epreuve").val() ;
+        var coefficcient_element_epreuve = coeff_exams.split(" ");
+        var coeff_cc =  Number(coefficcient_element_epreuve[0]);
+        var coeff_tp =  Number(coefficcient_element_epreuve[1]);
+        var coeff_ef =  Number(coefficcient_element_epreuve[2]);
+        console.log(elements)
+
+        var calculeNrachatElement = ( ( Number(cc_rachat) * coeff_cc ) + ( Number(tp_rachat) * coeff_tp ) + ( Number(ef_rachat) * coeff_ef ) ) / ( coeff_cc + coeff_tp + coeff_ef );
+        
+        element.val(Number((calculeNrachatElement).toFixed(2)));
+  
+  
+        var calculeNrachatModule=0;
+        var elementSomme=0;
+        elements.map(function() {
+            // console.log($(this).find(".element_rachat").val(), $(this).find(".coefficcient_element").val());
+            calculeNrachatModule += Number($(this).find(".element_rachat").val()) * Number($(this).find(".coefficcient_element").val());
+            elementSomme += Number($(this).find(".coefficcient_element").val())
+        })
+        var  calculeNrachatModulex = calculeNrachatModule / elementSomme ;
+        
+        
+        modulex.find(".module_rachat").val(Number((calculeNrachatModulex).toFixed(2)));
+        // console.log(Number(modulex.find(".noteModuleOG").val()) + Number((calculeNrachatModulex).toFixed(2)));
+        if((Number(modulex.find(".noteModuleOG").val()) + Number((calculeNrachatModulex).toFixed(2))) > 20){
+            // console.log(Number(modulex.find(".noteModuleOG").val()))
+            modulex.find(".noteModule").val(Number(modulex.find(".noteModuleOG").val()));
+        } else {
+            // console.log(Number(modulex.find(".noteModuleOG").val()) + Number((calculeNrachatModulex)))
+            modulex.find(".noteModule").val( (Number(modulex.find(".noteModuleOG").val()) + Number((calculeNrachatModulex))).toFixed(2));
+        }
+        
+        
+        var calculeNrachatSemestre=0;
+        var moduleSomme=0;
+        modules.map(function() {
+            // console.log($(this).find(".module_rachat").val(), $(this).find(".coefficcient_module").val());
+            calculeNrachatSemestre += Number($(this).find(".module_rachat").val()) * Number($(this).find(".coefficcient_module").val());
+            moduleSomme += Number($(this).find(".coefficcient_module").val())
+        })
+       
+        var  calculeNrachatSemestrex = Number((calculeNrachatSemestre / moduleSomme).toFixed(2));
+  
+  
+        $('.semestre_rachat').val(Number((calculeNrachatSemestrex).toFixed(2)));
+        if(Number($('.semestre_note').val()) + calculeNrachatSemestrex > 20){
+        $('.semestre_note').val( Number($('.semestre_noteOG').val()));
+        }else{
+        $('.semestre_note').val( Number($('.semestre_noteOG').val()) + Number((calculeNrachatSemestrex).toFixed(2)));
+        }
+  
+    });
+
+    const setColorRed = () => {
+        $("body .colorRed").map(function() {
+            // console.log(this, this.value, $(this), $(this).val())
+            if($(this).val() == 1){
+                // console.log($(this).parent().parent())
+                $(this).parent().find(".titleModule").css("color", "red");
+            }
+         });
+    }
+
+    $("body").on("click", "#save_rachat", async function(e) {
+        e.preventDefault();
+        const icon = $("#save_rachat i");
+        icon.removeClass('fa-check').addClass("fa-spinner fa-spin");
+        var data = [];
+        var noteSemestreRachat = {
+            'id': $(".semestre_rachat").attr("data-id"),
+            'note_rachat': $(".semestre_rachat").val(),
+        }
+        data.push({
+                'semestre': noteSemestreRachat
+        })
+        var noteModules = [];
+        var modules = $(".modules");
+        modules.map(function(){
+            noteModules.push({
+                'id': $(this).attr('data-id'),
+                'note_rachat': $(this).find(".module_rachat").val()
+            })
+        })
+        data.push({
+            'modules': noteModules
+        })
+        var noteElements = [];
+        var elements = $(".elements_container");
+        elements.map(function(){
+            noteElements.push({
+                'id': $(this).attr('data-id'),
+                'note_rachat': $(this).find(".element_rachat").val(),
+                'cc_rachat': $(this).find(".cc_rachat").val(),
+                'tp_rachat': $(this).find(".tp_rachat").val(),
+                'ef_rachat': $(this).find(".ef_rachat").val()
+            })
+        })
+        data.push({
+            'elements': noteElements
+        })
         try {
-            const request = await axios.post('/evaluation/semestre/statut/avantrachat');
+            var formData = new FormData();
+            formData.append("data",  JSON.stringify(data))
+            const request = await axios.post('/evaluation/simulationdeliberation/saverachat',formData);
             let response = request.data
-            icon.addClass('fa-sync').removeClass("fa-spinner fa-spin");
+            icon.addClass('fa-check').removeClass("fa-spinner fa-spin");
             Toast.fire({
                 icon: 'success',
                 title: response,
             });
+            $("#note_modal").modal("hide")
         } catch (error) {
             console.log(error)
-            icon.addClass('fa-sync').removeClass("fa-spinner fa-spin");
+            icon.addClass('fa-check').removeClass("fa-spinner fa-spin");
+            const message = error.response.data;
+            Toast.fire({
+                icon: 'error',
+                title: message,
+            });
+        }
+    }) 
+    $("#valider").on('click', async function(){
+        const icon = $("#valider i");
+        icon.removeClass('fa-lock').addClass("fa-spinner fa-spin");
+        try {
+            const request = await axios.post('/evaluation/simulationdeliberation/valider');
+            let response = request.data
+            check = 1;
+            enableButtons();
+            Toast.fire({
+                icon: 'success',
+                title: response,
+            });
+            icon.addClass('fa-lock').removeClass("fa-spinner fa-spin");
+        } catch (error) {
+            console.log(error)
+            icon.addClass('fa-lock').removeClass("fa-spinner fa-spin");
             const message = error.response.data;
             Toast.fire({
                 icon: 'error',
@@ -166,73 +307,29 @@ $(document).ready(function  () {
             });
         }
     })
-    
-    $("body").on("keyup change", ".KU3", function () {
-        var value = $(this).attr('id');
-        var element = value.substring(0, value.length - 2);
-        console.log(value, element);
-        var elementCount = $(this).closest('div').parent().children('div').length - 1;
-        // var modulex = element.substring(0, element.lastIndexOf('ele') );
-        // var modulexCount =  $(this).closest('div').parent().parent().parent().parent().children('p').length;
-        // var countexam = 1;
-        // var calculeNrachatModule=0;
-        // var calculeNrachatSemestre=0;
-        // var cc =  $('#'+element+'cc').val() ;
-        // var tp =  $('#'+element+'tp').val() ;
-        // var ef =  $('#'+element+'ef').val() ;
-  
-        // var elementSomme=0;
-        // var moduleSomme=0;
-        
-        // var coeff_module =  Number($('#Coef'+modulex+'is').val()) ;
-        // var coeff_exams =  $('#Coef'+element+'examis').val() ;
-        // var res = coeff_exams.split('"');
-        // var coeff_cc =  Number(res[3]);
-        // var coeff_tp =  Number(res[7]);
-        // var coeff_ef =  Number(res[11]);
-        // if( cc!='' && cc!='0' ){countexam+=1;}
-        // if( tp!='' && tp!='0' ){countexam+=1;}
-        // if( ef!='' && ef!='0' ){countexam+=1;}
-        // if( countexam > 1 ){countexam-=1;}
-        // var calculeNrachatElement = ( ( Number(cc) * coeff_cc ) + ( Number(tp) * coeff_tp ) + ( Number(ef) * coeff_ef ) ) / ( coeff_cc + coeff_tp + coeff_ef );
-  
-        // $('#'+element).val(Number((calculeNrachatElement).toFixed(2)));
-  
-  
-  
-        // for (let i = 0; i <= elementCount-1; i++) {
-        //   calculeNrachatModule+= Number($('#'+modulex+'ele'+i).val()) *  Number($('#Coef'+modulex+'ele'+i+'is').val());
-        //   elementSomme+= Number($('#Coef'+modulex+'ele'+i+'is').val());
-        //   }
-        // var  calculeNrachatModulex = calculeNrachatModule / elementSomme ;
-  
-  
-        // $('#'+modulex+'Rachat').val(Number((calculeNrachatModulex).toFixed(2)));
-        // if(Number($('#'+modulex+'NoteOG').val()) + Number((calculeNrachatModulex).toFixed(2)) > 20){
-        // $('#'+modulex+'Note').val( Number($('#'+modulex+'NoteOG').val()));
-        // }else{
-        // $('#'+modulex+'Note').val( Number($('#'+modulex+'NoteOG').val()) + Number((calculeNrachatModulex).toFixed(2)));
-        // }
-        
-  
-  
-  
-        // for (let i = 0; i <= modulexCount-1; i++) {
-        //   calculeNrachatSemestre+= Number($('#'+'mod'+i+'Rachat').val()) *  Number($('#Coef'+modulex+'is').val());
-        //   moduleSomme+= Number($('#Coef'+modulex+'is').val());
-        //   }
-        // var  calculeNrachatSemestrex = calculeNrachatSemestre / moduleSomme ;
-  
-  
-        // $('#sem_rachat').val(Number((calculeNrachatSemestrex).toFixed(2)));
-  
-        // if(Number($('#sem_note').val()) + calculeNrachatSemestrex > 20){
-        // $('#sem_note').val( Number($('#sem_noteOG').val()));
-        // }else{
-        // $('#sem_note').val( Number($('#sem_noteOG').val()) + Number((calculeNrachatSemestrex).toFixed(2)));
-        // }
-  
-    });
+    $("#devalider").on('click', async function(){
+        const icon = $("#devalider i");
+        icon.removeClass('fa-lock-open').addClass("fa-spinner fa-spin");
+        try {
+            const request = await axios.post('/evaluation/simulationdeliberation/devalider');
+            let response = request.data
+            check = 0;
+            enableButtons();
+            icon.addClass('fa-lock-open').removeClass("fa-spinner fa-spin");
+            Toast.fire({
+                icon: 'success',
+                title: response,
+            });
+        } catch (error) {
+            console.log(error)
+            icon.addClass('fa-lock-open').removeClass("fa-spinner fa-spin");
+            const message = error.response.data;
+            Toast.fire({
+                icon: 'error',
+                title: message,
+            });
+        }
+    })
 })
 
 

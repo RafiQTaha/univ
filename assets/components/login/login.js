@@ -32,7 +32,8 @@ $("#singup").on('submit', async (e) => {
             $(".singup__success").html("Veuillez contacter l'administrateur pour activer votre compte")
             
         } catch (error) {
-            console.log(error)
+            console.log(error.response.data);
+            $(".singup__error").html(error.response.data);
         }
     }
 });

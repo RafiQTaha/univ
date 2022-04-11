@@ -36,11 +36,11 @@ class GestionAdmissionController extends AbstractController
         
     }
     #[Route('/', name: 'gestion_admission')]
-    public function index(): Response
+    public function index(Request $request): Response
     {
      
         //check if user has access to this page
-        $operations = ApiController::check($this->getUser(), 'gestion_admission', $this->em);
+        $operations = ApiController::check($this->getUser(), 'gestion_admission', $this->em, $request);
         if(!$operations) {
             return $this->render("errors/403.html.twig");
         }

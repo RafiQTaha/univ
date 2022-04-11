@@ -29,9 +29,12 @@ class AdmissionController extends AbstractController
     }
 
     #[Route('/', name: 'admission_index')]
-    public function index(): Response
+    public function index(Request $request): Response
     {   
-        $operations = ApiController::check($this->getUser(), 'admission_index', $this->em);
+
+        $organismes = $this->em->getRepository(POrganisme::class)->findAll();
+        $operations = ApiController::check($this->getUser(), 'admission_index', $this->em, $request);
+
         if(!$operations) {
             return $this->render("errors/403.html.twig");
         }

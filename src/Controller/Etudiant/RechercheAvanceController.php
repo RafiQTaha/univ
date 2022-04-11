@@ -29,10 +29,10 @@ class RechercheAvanceController extends AbstractController
         $this->em = $doctrine->getManager();
     }
     #[Route('/', name: 'etudiant_recherche_avance')]
-    public function index(): Response
+    public function index(Request $request): Response
     {
         //check if user has access to this page
-        $operations = ApiController::check($this->getUser(), 'etudiant_recherche_avance', $this->em);
+        $operations = ApiController::check($this->getUser(), 'etudiant_recherche_avance', $this->em, $request);
         // dd($operations);
         if(!$operations) {
             return $this->render("errors/403.html.twig");

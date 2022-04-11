@@ -34,9 +34,13 @@ class NoteEpreuveController extends AbstractController
         
     }
     #[Route('/', name: 'administration_note')]
-    public function index(): Response
+    public function index(Request $request): Response
     {
-        $operations = ApiController::check($this->getUser(), 'administration_note', $this->em);
+
+        $etbalissements = $this->em->getRepository(AcEtablissement::class)->findAll();
+        $professeurs = $this->em->getRepository(PEnseignant::class)->findAll();
+        $operations = ApiController::check($this->getUser(), 'administration_note', $this->em,$request);
+
         if(!$operations) {
             return $this->render("errors/403.html.twig");
         }

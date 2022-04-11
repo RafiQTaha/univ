@@ -36,9 +36,10 @@ class GestionFactureController extends AbstractController
         $this->em = $doctrine->getManager();
     }
     #[Route('/', name: 'gestion_facture')]
-    public function index(): Response
+    public function index(Request $request): Response
     {
-        $operations = ApiController::check($this->getUser(), 'gestion_facture', $this->em);
+      
+        $operations = ApiController::check($this->getUser(), 'gestion_facture', $this->em, $request);
         if(!$operations) {
             return $this->render("errors/403.html.twig");
         }
