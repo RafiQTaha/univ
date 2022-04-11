@@ -41,16 +41,17 @@ class GestionReglementsController extends AbstractController
     #[Route('/', name: 'gestion_reglements')]
     public function index(): Response
     {
-        $etbalissements = $this->em->getRepository(AcEtablissement::class)->findAll();
-        $banques = $this->em->getRepository(XBanque::class)->findAll();
-        $paiements = $this->em->getRepository(XModalites::class)->findAll();
-        $bordereaux = $this->em->getRepository(TBrdpaiement::class)->findAll();
         $operations = ApiController::check($this->getUser(), 'gestion_reglements', $this->em);
         if(!$operations) {
             return $this->render("errors/403.html.twig");
         }
+        $etablissements = $this->em->getRepository(AcEtablissement::class)->findAll();
+        $banques = $this->em->getRepository(XBanque::class)->findAll();
+        $paiements = $this->em->getRepository(XModalites::class)->findAll();
+        $bordereaux = $this->em->getRepository(TBrdpaiement::class)->findAll();
+        
         return $this->render('facture/gestion_reglement.html.twig', [
-            'etablissements' => $etbalissements,
+            'etablissements' => $etablissements,
             'paiements' => $paiements,
             'bordereaux' => $bordereaux,
             'operations' => $operations,
@@ -157,6 +158,7 @@ class GestionReglementsController extends AbstractController
         );
         return new Response(json_encode($json_data));
     }
+    
     #[Route('/reglementprint/{reglement}', name: 'imprimer_reglement_reglement')]
     public function imprimer_reglement_reglement(TReglement $reglement)
     {
@@ -191,7 +193,7 @@ class GestionReglementsController extends AbstractController
     }
     
     #[Route('/borderaux/{formation}/{paiement}', name: 'reglement_borderaux')]
-    public function reglement_borderaux(Request $request, AcFormation $formation,XModalites $paiement): Response
+    public function reglement_borderaux(AcFormation $formation,XModalites $paiement,Request $request): Response
     {   
         $ids = json_decode($request->get('ids_reglement'));
         $etablissement = $formation->getEtablissement();
@@ -208,12 +210,10 @@ class GestionReglementsController extends AbstractController
         $this->em->flush();
         foreach ($ids as $id) {
             $reglement = $this->em->getRepository(TReglement::class)->find($id);
-            if ($reglement->getModalite()->getId() == $paiement->getId()) {
-                // dd('egal');
+            if ($reglement->getPaiement()->getId() == $paiement->getId()) {
+                $reglement->setBordereau($borderaux);
+                $this->em->flush();
             }
-            // dd('dont');
-            $reglement->setBordereau($borderaux);
-            $this->em->flush();
         }
         return new Response($borderaux->getId());
     }

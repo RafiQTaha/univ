@@ -22,6 +22,7 @@ $(document).ready(function () {
             processing: true,
             serverSide: true,
             deferRender: true,
+            scrollX: true,
             drawCallback: function () {
                 ids_reglement.forEach((e) => {
                     $("body tr#" + e)
@@ -130,7 +131,10 @@ $(document).ready(function () {
         window.open('/facture/reglements/reglementprint/'+id_reglement, '_blank');
     });
     $("body").on("click", '#borderaux', async function (e) {
-        e.preventDefault();
+        e.preventDefault();let modalAlert =  $("#modifier_org-modal .modal-body .alert");
+        modalAlert.remove();
+        const icon = $("#borderaux i");
+        icon.removeClass('fa-folder').addClass("fa-spinner fa-spin");
         if(ids_reglement.length === 0|| $("#etablissement").val() == "" || $('#formation').val() == "" || $("#paiement").val() == ""){
             Toast.fire({
             icon: 'error',
@@ -142,7 +146,8 @@ $(document).ready(function () {
         formData.append('ids_reglement', JSON.stringify(ids_reglement));
         try {
             const request = await axios.post("/facture/reglements/borderaux/"+$('#formation').val()+'/'+$("#paiement").val(), formData);
-            const data = await request.data;
+            const data = request.data;
+            icon.addClass('fa-folder').removeClass("fa-spinner fa-spin");
             Toast.fire({
                 icon: 'success',
                 title: 'Borderaux Bien Genere',
@@ -155,7 +160,7 @@ $(document).ready(function () {
             console.log(error, error.response);
             Toast.fire({
                 icon: 'error',
-                title: 'Some Error',
+                title: message,
             })
         }
     });

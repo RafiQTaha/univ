@@ -14,9 +14,11 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class PlEmptimeRepository extends ServiceEntityRepository
 {
+    private $em;
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, PlEmptime::class);
+        $this->em = $registry->getManager();
     }
 
     // /**
@@ -59,11 +61,142 @@ class PlEmptimeRepository extends ServiceEntityRepository
             ->innerJoin("module.semestre", "semestre")
             ->where('semestre.id = :semestre')
             ->andWhere("groupe = :groupe")
+            ->andWhere("e.active = 1")
             ->setParameter('semestre', $semestre)
             ->setParameter('groupe', $groupe)
             ->getQuery()
             ->getResult()
         ;
-        // dd($test);
     }
+    public function getEmptimeBySemestre($semestre)
+    {
+        return $this->createQueryBuilder('e')
+            ->innerJoin("e.programmation", "programmation")
+            ->innerJoin("programmation.element", "element")
+            ->innerJoin("element.module", "module")
+            ->innerJoin("module.semestre", "semestre")
+            ->where('semestre.id = :semestre')
+            ->andWhere("e.active = 1")
+            ->setParameter('semestre', $semestre)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
+    public function getEmptimeBySemestreAndGroupeAndSemaine($semestre,$groupe,$semaine)
+    {
+        return $this->createQueryBuilder('e')
+            ->innerJoin("e.groupe", "groupe")
+            ->innerJoin("e.semaine", "semaine")
+            ->innerJoin("e.programmation", "programmation")
+            ->innerJoin("programmation.element", "element")
+            ->innerJoin("element.module", "module")
+            ->innerJoin("module.semestre", "semestre")
+            ->where('semestre.id = :semestre')
+            ->andWhere("groupe = :groupe")
+            ->andWhere("semaine = :semaine")
+            ->andWhere("e.active = 1")
+            ->setParameter('semestre', $semestre)
+            ->setParameter('groupe', $groupe)
+            ->setParameter('semaine', $semaine)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+    public function getEmptimeBySemestreAndSemaine($semestre,$semaine)
+    {
+        return $this->createQueryBuilder('e')
+            ->innerJoin("e.semaine", "semaine")
+            ->innerJoin("e.programmation", "programmation")
+            ->innerJoin("programmation.element", "element")
+            ->innerJoin("element.module", "module")
+            ->innerJoin("module.semestre", "semestre")
+            ->where('semestre.id = :semestre')
+            ->andWhere("semaine = :semaine")
+            ->andWhere("e.active = 1")
+            ->setParameter('semestre', $semestre)
+            ->setParameter('semaine', $semaine)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+    public function getEmptimeBySemestreAndGroupeAndSemaineToGenerer($semestre,$groupe,$semaine)
+    {
+        return $this->createQueryBuilder('e')
+            ->innerJoin("e.groupe", "groupe")
+            ->innerJoin("e.semaine", "semaine")
+            ->innerJoin("e.programmation", "programmation")
+            ->innerJoin("programmation.element", "element")
+            ->innerJoin("element.module", "module")
+            ->innerJoin("module.semestre", "semestre")
+            ->where('semestre.id = :semestre')
+            ->andWhere("groupe = :groupe")
+            ->andWhere("semaine = :semaine")
+            ->andWhere("e.active = 1")
+            ->andWhere("e.valider = 1")
+            ->setParameter('semestre', $semestre)
+            ->setParameter('groupe', $groupe)
+            ->setParameter('semaine', $semaine)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
+    // public function GetEnsMontByIdSceance($seance)
+    // {
+    //     return $this->createQueryBuilder('pl')
+    //         ->select("pl.id as code_seance ,etab.code AS code_etablissement ,frm.code AS code_formation,prog.nature_epreuve_id , TIMESTAMPDIFF(MINUTE, pl.heur_db , pl.heur_fin)/60 AS nbr_heure,gr.montant, TIME_TO_SEC(TIMESTAMPDIFF(MINUTE, pl.heur_db , pl.heur_fin)/60)* gr.montant AS Mt_tot2 , 
+    //         (select count(*) from pr_programmation prog where prog.regroupe = (select prog.regroupe from pl_emptime emp inner join pr_programmation prog on emp.programmation_id = prog.id where emp.id = $seance group by prog.id)) as nbr_sc_regroupe , CASE WHEN prog.regroupe IS NOT NULL AND prog.categorie = 'S' THEN 0
+    //         ELSE (TIMESTAMPDIFF(MINUTE, emp.heur_db , emp.heur_fin)/60) * gr.montant END AS Mt_tot")
+    //         ->innerJoin("pl.programmation", "prog")
+    //         ->innerJoin("prog.element", "ele")
+    //         ->innerJoin("ele.module", "mdl")
+    //         ->innerJoin("mdl.semestre", "sem")
+    //         ->innerJoin("sem.promotion", "prom")
+    //         ->innerJoin("prom.formation", "frm")
+    //         ->innerJoin("frm.etablissement", "etab")
+    //         ->where('pl = :seance')
+    //         ->setParameter('seance', $seance)
+    //         ->getQuery()
+    //         ->getResult()
+    //     ;
+    //     // dd($test);
+    // }
+
+    public function getNbr_sc_regroupe($seance)
+    {
+        $sqls="select count(*) as nbr_sc_regroupe from pr_programmation prog where prog.regroupe = (select prog.regroupe from pl_emptime emp inner join pr_programmation prog on emp.programmation_id = prog.id where emp.id = '$seance' group by prog.id)";
+        $stmts = $this->em->getConnection()->prepare($sqls);
+        $resultSets = $stmts->executeQuery();
+        $nbr_sc_regroupe = $resultSets->fetch();
+        // dd($nbr_sc_regroupe['nbr_sc_regroupe']);
+        return $nbr_sc_regroupe['nbr_sc_regroupe'];
+    }
+
+    public function GetEnsMontByIdSceance($seance)
+    {
+        $sqls="SELECT pl.id as seance ,frm.id AS formation,ens.id AS enseignant,prog.nature_epreuve_id , TIMESTAMPDIFF(MINUTE, pl.heur_db , pl.heur_fin)/60 AS nbr_heure,gr.montant, (TIMESTAMPDIFF(MINUTE, pl.heur_db , pl.heur_fin)/60) * gr.montant AS Mt_tot2 , 
+        (select count(*) from pr_programmation prog where prog.regroupe = (select prog.regroupe from pl_emptime emp inner join pr_programmation prog on emp.programmation_id = prog.id where emp.id = $seance group by prog.id)) 
+        as nbr_sc_regroupe , CASE WHEN prog.regroupe IS NOT NULL AND prog.categorie = 'S' THEN 0
+        ELSE (TIMESTAMPDIFF(MINUTE, pl.heur_db , pl.heur_fin)/60) * gr.montant END AS Mt_tot
+        FROM pl_emptime pl
+        INNER JOIN pr_programmation prog on prog.id = pl.programmation_id 
+        INNER JOIN ac_element ele on ele.id = prog.element_id
+        INNER JOIN ac_module mdl on mdl.id = ele.module_id
+        INNER JOIN ac_semestre sem on sem.id = mdl.semestre_id
+        INNER JOIN ac_promotion prom on prom.id = sem.promotion_id
+        INNER JOIN ac_formation frm on frm.id = prom.formation_id
+        INNER JOIN ac_etablissement etab on etab.id = frm.etablissement_id
+        INNER join pl_emptimens pl_ens on pl.id = pl_ens.seance_id  and pl_ens.active = 1
+        INNER JOIN penseignant ens ON ens.id = pl_ens.enseignant_id
+        left join pensgrille gr on gr.grade_id = ens.grade_id AND gr.formation_id = frm.id aND prog.nature_epreuve_id  = gr.type_epreuve_id AND ele.nature = gr.nature
+        WHERE pl.id = $seance";
+        $stmts = $this->em->getConnection()->prepare($sqls);
+        $resultSets = $stmts->executeQuery();
+        $result = $resultSets->fetchAll();
+        return $result;
+    }
+    
+    
+    
 }
