@@ -43,7 +43,7 @@ $(document).ready(function () {
             bDestroy: true
         });
     }
-    $('body').on('dblclick','#datables_notes_epreuve tbody tr',function (e) {
+    $('body').on('click','#datables_notes_epreuve tbody tr',function (e) {
         e.preventDefault();
         if($(this).hasClass('active_databales')) {
             $(this).removeClass('active_databales');

@@ -38,12 +38,34 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'UserCreated', targetEntity: PlEmptime::class)]
     private $emptimes;
 
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private $nom;
+
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private $prenom;
+
+    #[ORM\OneToMany(mappedBy: 'userCreated', targetEntity: HHonens::class)]
+    private $honenss;
+
+    #[ORM\OneToMany(mappedBy: 'userCreated', targetEntity: HAlbhon::class)]
+    private $albhonss;
+
+    #[ORM\OneToMany(mappedBy: 'usercreated', targetEntity: PEnsgrille::class)]
+    private $ensgrilles;
+
+    #[ORM\OneToMany(mappedBy: 'usercreated', targetEntity: PEnseignantExcept::class)]
+    private $enseignantexcepts;
+
     public function __construct()
     {
         $this->operations = new ArrayCollection();
         $this->bordereaux = new ArrayCollection();
         $this->programmations = new ArrayCollection();
         $this->emptimes = new ArrayCollection();
+        $this->honenss = new ArrayCollection();
+        $this->albhonss = new ArrayCollection();
+        $this->ensgrilles = new ArrayCollection();
+        $this->enseignantexcepts = new ArrayCollection();
     }
 
     
@@ -236,6 +258,150 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($emptime->getUserCreated() === $this) {
                 $emptime->setUserCreated(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getNom(): ?string
+    {
+        return $this->nom;
+    }
+
+    public function setNom(?string $nom): self
+    {
+        $this->nom = $nom;
+
+        return $this;
+    }
+
+    public function getPrenom(): ?string
+    {
+        return $this->prenom;
+    }
+
+    public function setPrenom(?string $prenom): self
+    {
+        $this->prenom = $prenom;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, HHonens>
+     */
+    public function getHonenss(): Collection
+    {
+        return $this->honenss;
+    }
+
+    public function addHonenss(HHonens $honenss): self
+    {
+        if (!$this->honenss->contains($honenss)) {
+            $this->honenss[] = $honenss;
+            $honenss->setUserCreated($this);
+        }
+
+        return $this;
+    }
+
+    public function removeHonenss(HHonens $honenss): self
+    {
+        if ($this->honenss->removeElement($honenss)) {
+            // set the owning side to null (unless already changed)
+            if ($honenss->getUserCreated() === $this) {
+                $honenss->setUserCreated(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, HAlbhon>
+     */
+    public function getAlbhonss(): Collection
+    {
+        return $this->albhonss;
+    }
+
+    public function addAlbhonss(HAlbhon $albhonss): self
+    {
+        if (!$this->albhonss->contains($albhonss)) {
+            $this->albhonss[] = $albhonss;
+            $albhonss->setUserCreated($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAlbhonss(HAlbhon $albhonss): self
+    {
+        if ($this->albhonss->removeElement($albhonss)) {
+            // set the owning side to null (unless already changed)
+            if ($albhonss->getUserCreated() === $this) {
+                $albhonss->setUserCreated(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, PEnsgrille>
+     */
+    public function getEnsgrilles(): Collection
+    {
+        return $this->ensgrilles;
+    }
+
+    public function addEnsgrille(PEnsgrille $ensgrille): self
+    {
+        if (!$this->ensgrilles->contains($ensgrille)) {
+            $this->ensgrilles[] = $ensgrille;
+            $ensgrille->setUsercreated($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEnsgrille(PEnsgrille $ensgrille): self
+    {
+        if ($this->ensgrilles->removeElement($ensgrille)) {
+            // set the owning side to null (unless already changed)
+            if ($ensgrille->getUsercreated() === $this) {
+                $ensgrille->setUsercreated(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, PEnseignantExcept>
+     */
+    public function getEnseignantexcepts(): Collection
+    {
+        return $this->enseignantexcepts;
+    }
+
+    public function addEnseignantexcept(PEnseignantExcept $enseignantexcept): self
+    {
+        if (!$this->enseignantexcepts->contains($enseignantexcept)) {
+            $this->enseignantexcepts[] = $enseignantexcept;
+            $enseignantexcept->setUsercreated($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEnseignantexcept(PEnseignantExcept $enseignantexcept): self
+    {
+        if ($this->enseignantexcepts->removeElement($enseignantexcept)) {
+            // set the owning side to null (unless already changed)
+            if ($enseignantexcept->getUsercreated() === $this) {
+                $enseignantexcept->setUsercreated(null);
             }
         }
 

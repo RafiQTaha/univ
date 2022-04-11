@@ -36,10 +36,26 @@ class PEnseignant
     #[ORM\ManyToMany(targetEntity: PrProgrammation::class, inversedBy: 'enseignants')]
     private $programmations;
 
+    #[ORM\OneToMany(mappedBy: 'enseignant', targetEntity: ISeance::class)]
+    private $iSeances;
+
+    #[ORM\OneToMany(mappedBy: 'enseignant', targetEntity: PlEmptimens::class)]
+    private $emptimens;
+
+    #[ORM\OneToMany(mappedBy: 'enseignant', targetEntity: HHonens::class)]
+    private $honenss;
+
+    #[ORM\OneToMany(mappedBy: 'enseignant', targetEntity: PEnseignantExcept::class)]
+    private $enseignantexcepts;
+
     public function __construct()
     {
         $this->epreuves = new ArrayCollection();
         $this->programmations = new ArrayCollection();
+        $this->iSeances = new ArrayCollection();
+        $this->emptimens = new ArrayCollection();
+        $this->honenss = new ArrayCollection();
+        $this->enseignantexcepts = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -157,6 +173,126 @@ class PEnseignant
     public function removeProgrammation(PrProgrammation $programmation): self
     {
         $this->programmations->removeElement($programmation);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, ISeance>
+     */
+    public function getISeances(): Collection
+    {
+        return $this->iSeances;
+    }
+
+    public function addISeance(ISeance $iSeance): self
+    {
+        if (!$this->iSeances->contains($iSeance)) {
+            $this->iSeances[] = $iSeance;
+            $iSeance->setEnseignant($this);
+        }
+
+        return $this;
+    }
+
+    public function removeISeance(ISeance $iSeance): self
+    {
+        if ($this->iSeances->removeElement($iSeance)) {
+            // set the owning side to null (unless already changed)
+            if ($iSeance->getEnseignant() === $this) {
+                $iSeance->setEnseignant(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, PlEmptimens>
+     */
+    public function getEmptimens(): Collection
+    {
+        return $this->emptimens;
+    }
+
+    public function addEmptimen(PlEmptimens $emptimen): self
+    {
+        if (!$this->emptimens->contains($emptimen)) {
+            $this->emptimens[] = $emptimen;
+            $emptimen->setEnseignant($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEmptimen(PlEmptimens $emptimen): self
+    {
+        if ($this->emptimens->removeElement($emptimen)) {
+            // set the owning side to null (unless already changed)
+            if ($emptimen->getEnseignant() === $this) {
+                $emptimen->setEnseignant(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, HHonens>
+     */
+    public function getHonenss(): Collection
+    {
+        return $this->honenss;
+    }
+
+    public function addHonenss(HHonens $honenss): self
+    {
+        if (!$this->honenss->contains($honenss)) {
+            $this->honenss[] = $honenss;
+            $honenss->setUserCreated($this);
+        }
+
+        return $this;
+    }
+
+    public function removeHonenss(HHonens $honenss): self
+    {
+        if ($this->honenss->removeElement($honenss)) {
+            // set the owning side to null (unless already changed)
+            if ($honenss->getUserCreated() === $this) {
+                $honenss->setUserCreated(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, PEnseignantExcept>
+     */
+    public function getEnseignantexcepts(): Collection
+    {
+        return $this->enseignantexcepts;
+    }
+
+    public function addEnseignantexcept(PEnseignantExcept $enseignantexcept): self
+    {
+        if (!$this->enseignantexcepts->contains($enseignantexcept)) {
+            $this->enseignantexcepts[] = $enseignantexcept;
+            $enseignantexcept->setEnseignant($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEnseignantexcept(PEnseignantExcept $enseignantexcept): self
+    {
+        if ($this->enseignantexcepts->removeElement($enseignantexcept)) {
+            // set the owning side to null (unless already changed)
+            if ($enseignantexcept->getEnseignant() === $this) {
+                $enseignantexcept->setEnseignant(null);
+            }
+        }
 
         return $this;
     }

@@ -167,7 +167,7 @@ class TInscriptionRepository extends ServiceEntityRepository
             ->groupBy('preinscription.code , annee.id')
             ->orderBy('etablissement.abreviation', 'ASC')
             ->getQuery()
-            ->getResult()
+            // ->getResult()
         ;
         // dd($return);
     }
@@ -185,6 +185,25 @@ class TInscriptionRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult()
         ;
-    }
+    } 
     
+    public function getInscriptionsByAnneeAndPromoAndGroupe($promotion,$annee,$groupe)
+    {
+        // if ($groupe == Null) {
+        //     # code...
+        // }
+        return $this->createQueryBuilder('inscription')
+        ->innerJoin("inscription.annee", "annee")
+        ->innerJoin("inscription.promotion", "promotion")
+        ->leftJoin("inscription.groupe", "groupe")
+        ->where('promotion = :promotion')
+        ->andWhere("annee = :annee")
+        ->andWhere("groupe = :groupe")
+        ->setParameter('promotion', $promotion)
+        ->setParameter('groupe', $groupe)
+        ->setParameter('annee', $annee)
+        ->getQuery()
+        ->getResult()
+        ;
+    } 
 }

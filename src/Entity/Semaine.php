@@ -36,9 +36,13 @@ class Semaine
     #[ORM\OneToMany(mappedBy: 'semaine', targetEntity: PlEmptime::class)]
     private $emptimes;
 
+    #[ORM\OneToMany(mappedBy: 'semaine', targetEntity: HAlbhon::class)]
+    private $albhonss;
+
     public function __construct()
     {
         $this->emptimes = new ArrayCollection();
+        $this->albhonss = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -142,6 +146,36 @@ class Semaine
             // set the owning side to null (unless already changed)
             if ($emptime->getSemaine() === $this) {
                 $emptime->setSemaine(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, HAlbhon>
+     */
+    public function getAlbhonss(): Collection
+    {
+        return $this->albhonss;
+    }
+
+    public function addAlbhonss(HAlbhon $albhonss): self
+    {
+        if (!$this->albhonss->contains($albhonss)) {
+            $this->albhonss[] = $albhonss;
+            $albhonss->setSemaine($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAlbhonss(HAlbhon $albhonss): self
+    {
+        if ($this->albhonss->removeElement($albhonss)) {
+            // set the owning side to null (unless already changed)
+            if ($albhonss->getSemaine() === $this) {
+                $albhonss->setSemaine(null);
             }
         }
 

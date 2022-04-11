@@ -33,11 +33,12 @@ var table_gestion_preins = $("#datables_gestion_preinscription").DataTable({
         [10, 15, 25, 50, 100, 20000000000000],
         [10, 15, 25, 50, 100, "All"],
     ],
-    order: [[0, "desc"]],
+    order: [[1, "desc"]],
     ajax: "/preinscription/gestion/list/gestion_preinscription/",
     processing: true,
     serverSide: true,
     deferRender: true,
+    scrollX: true,
     drawCallback: function () {
         idpreins.forEach((e) => {
             $("body tr#" + e)
@@ -361,7 +362,7 @@ $('body').on('click','#att_preinscription',function () {
     window.open('/preinscription/gestion/attestation_preinscription/'+id_preinscription, '_blank');
 })
 
-$('body').on('click','#modifier',function () {
+$('body').on('click','#cfc_preinscription',function () {
     if(!id_preinscription){
         Toast.fire({
             icon: 'error',
@@ -369,8 +370,19 @@ $('body').on('click','#modifier',function () {
         })
         return;
     }
-    $('#modifier_modal').modal("show");
+    window.open('/preinscription/gestion/cfc_preinscription/'+id_preinscription, '_blank');
 })
+
+// $('body').on('click','#modifier',function () {
+//     if(!id_preinscription){
+//         Toast.fire({
+//             icon: 'error',
+//             title: 'Veuillez selection une ligne!',
+//         })
+//         return;
+//     }
+//     $('#modifier_modal').modal("show");
+// })
 
 $('.nav-pills a').on('click', function (e) {
     $(this).tab('show');

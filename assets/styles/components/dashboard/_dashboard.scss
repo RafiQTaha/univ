@@ -1305,20 +1305,27 @@ table tr:hover .table-links {
 
 /* 3.8 Modal */
 .modal-header,
-.modal-body,
+// .modal-body,
 .modal-footer {
   padding: 25px;
 }
 
 .modal-body {
-  padding-top: 15px;
+  // padding-top: 15px;
+  // modal body padding 
 }
-
+.modal-addform_planif .form-group,
+.modal-updateform_planif .form-group{
+  margin-bottom:0 !important;
+}
+.modal-modifier .form-group
+.modal-ajouter .form-group{
+  margin-bottom:1.2rem !important;
+}
 .modal-footer {
   padding-top: 15px;
   padding-bottom: 15px;
 }
-
 .modal-header {
   border-bottom: none;
   padding-bottom: 5px;
@@ -3367,7 +3374,8 @@ body.sidebar-mini .hide-sidebar-mini {
 body.sidebar-mini .main-sidebar {
   width: 65px;
   overflow: initial !important;
-  position: absolute;
+  // position: absolute;
+  position: fixed;
   box-shadow: none;
 }
 body.sidebar-mini .main-sidebar:after {
@@ -3413,7 +3421,8 @@ body.sidebar-mini .main-sidebar .sidebar-brand-sm {
   display: block;
 }
 body.sidebar-mini .main-sidebar .sidebar-menu > li {
-  padding: 1rem;
+  // padding: 1rem;
+  padding: .1rem;
 }
 body.sidebar-mini .main-sidebar .sidebar-menu > li.menu-header {
   padding: 0;
@@ -6288,7 +6297,8 @@ tr:first-child > td > .fc-day-grid-event {
 .modal .modalnotes{
   max-width: 45% !important;
 }
-.modal .modal-modifier{
+.modal .modal-modifier,
+.modal .modal-ajouter{
   max-width: 85% !important;
 }
 .modal .modal-facture{
@@ -6339,10 +6349,12 @@ tr:first-child > td > .fc-day-grid-event {
   padding: 0 1rem !important;
 
 }
-.modal .modal-modifier .modal-body {
+.modal .modal-modifier .modal-body ,
+.modal .modal-ajouter .modal-body {
   padding : 0 !important;
 }
-.modal .modal-modifier .modal-body .card-body{
+.modal .modal-modifier .modal-body .card-body,
+.modal .modal-ajouter .modal-body .card-body{
   padding : 0 !important;
 }
 .modalnotes .input_note{
@@ -6359,6 +6371,7 @@ tr:first-child > td > .fc-day-grid-event {
   border: 1px solid #6777ef;
 }
 .tab-content .col-md-3,
+.tab-content .col-md-2,
 .tab-content .col-md-6{
   float:left;
 }
@@ -6453,5 +6466,17 @@ tr:first-child > td > .fc-day-grid-event {
   list-style: none;
   padding: 0;
 }
-  
+#datables_generation_honoraires_processing{
+  z-index:1000 !important;
+  background-color: rgba(255,255,255,.5) !important;
+}
+.nbr_sc_regroupe {
+  color: white !important;
+  background: #3C8DBC !important;
+  padding: .1rem .5rem !important;
+  border-radius: 2rem !important;
+}
+.nbr_sc_regroupe_1 {
+  background: green !important;
+}
 

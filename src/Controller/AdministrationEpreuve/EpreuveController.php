@@ -120,7 +120,9 @@ class EpreuveController extends AbstractController
             $sqlRequest .= $where;
         }
         // dd($sql);
-        $sqlRequest .= DatatablesController::Order($request, $columns);
+        $changed_column = $params->get('order')[0]['column'] > 0 ? $params->get('order')[0]['column'] - 1 : 0;
+        $sqlRequest .= " ORDER BY " .DatatablesController::Pluck($columns, 'db')[$changed_column] . "   " . $params->get('order')[0]['dir'] . "  LIMIT " . $params->get('start') . " ," . $params->get('length') . " ";
+        // $sqlRequest .= DatatablesController::Order($request, $columns);
         $stmt = $this->em->getConnection()->prepare($sqlRequest);
         $resultSet = $stmt->executeQuery();
         $result = $resultSet->fetchAll();
@@ -224,7 +226,9 @@ class EpreuveController extends AbstractController
         if (isset($where) && $where != '') {
             $sqlRequest .= $where;
         }
-        $sqlRequest .= DatatablesController::Order($request, $columns);
+        $changed_column = $params->get('order')[0]['column'] > 0 ? $params->get('order')[0]['column'] - 1 : 0;
+        $sqlRequest .= " ORDER BY " .DatatablesController::Pluck($columns, 'db')[$changed_column] . "   " . $params->get('order')[0]['dir'] . "  LIMIT " . $params->get('start') . " ," . $params->get('length') . " ";
+        // $sqlRequest .= DatatablesController::Order($request, $columns);
         // dd($sqlRequest);
         $stmt = $this->em->getConnection()->prepare($sqlRequest);
         $resultSet = $stmt->executeQuery();

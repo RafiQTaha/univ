@@ -27,9 +27,13 @@ class PGrade
     #[ORM\OneToMany(mappedBy: 'grade', targetEntity: PEnseignant::class)]
     private $enseignants;
 
+    #[ORM\OneToMany(mappedBy: 'grade', targetEntity: PEnsgrille::class)]
+    private $ensgrilles;
+
     public function __construct()
     {
         $this->enseignants = new ArrayCollection();
+        $this->ensgrilles = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -97,6 +101,36 @@ class PGrade
             // set the owning side to null (unless already changed)
             if ($enseignant->getGrade() === $this) {
                 $enseignant->setGrade(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, PEnsgrille>
+     */
+    public function getEnsgrilles(): Collection
+    {
+        return $this->ensgrilles;
+    }
+
+    public function addEnsgrille(PEnsgrille $ensgrille): self
+    {
+        if (!$this->ensgrilles->contains($ensgrille)) {
+            $this->ensgrilles[] = $ensgrille;
+            $ensgrille->setGrade($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEnsgrille(PEnsgrille $ensgrille): self
+    {
+        if ($this->ensgrilles->removeElement($ensgrille)) {
+            // set the owning side to null (unless already changed)
+            if ($ensgrille->getGrade() === $this) {
+                $ensgrille->setGrade(null);
             }
         }
 

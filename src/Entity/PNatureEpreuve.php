@@ -45,10 +45,14 @@ class PNatureEpreuve
     #[ORM\OneToMany(mappedBy: 'nature_epreuve', targetEntity: PrProgrammation::class)]
     private $programmations;
 
+    #[ORM\OneToMany(mappedBy: 'type_epreuve', targetEntity: PEnsgrille::class)]
+    private $ensgrilles;
+
     public function __construct()
     {
         $this->epreuves = new ArrayCollection();
         $this->programmations = new ArrayCollection();
+        $this->ensgrilles = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -206,6 +210,36 @@ class PNatureEpreuve
             // set the owning side to null (unless already changed)
             if ($programmation->getNatureEpreuve() === $this) {
                 $programmation->setNatureEpreuve(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, PEnsgrille>
+     */
+    public function getEnsgrilles(): Collection
+    {
+        return $this->ensgrilles;
+    }
+
+    public function addEnsgrille(PEnsgrille $ensgrille): self
+    {
+        if (!$this->ensgrilles->contains($ensgrille)) {
+            $this->ensgrilles[] = $ensgrille;
+            $ensgrille->setTypeEpreuve($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEnsgrille(PEnsgrille $ensgrille): self
+    {
+        if ($this->ensgrilles->removeElement($ensgrille)) {
+            // set the owning side to null (unless already changed)
+            if ($ensgrille->getTypeEpreuve() === $this) {
+                $ensgrille->setTypeEpreuve(null);
             }
         }
 
