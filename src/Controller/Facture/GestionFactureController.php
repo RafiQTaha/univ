@@ -114,8 +114,8 @@ class GestionFactureController extends AbstractController
         INNER JOIN ac_etablissement etab on etab.id = frma.etablissement_id
         LEFT JOIN porganisme org on org.id = opcab.organisme_id
         LEFT JOIN nature_demande nat on nat.id = etu.nature_demande_id 
-        LEFT JOIN (select code ,operationcab_id, SUM(montant) as montant_facture from toperationdet where active = 1 group by operationcab_id ) opdet on opdet.operationcab_id = opcab.id
-        LEFT JOIN (select code ,operation_id, SUM(montant) as montant_regle from treglement group by operation_id ) reg on reg.operation_id = opcab.id $filtre ";
+        LEFT JOIN (select operationcab_id, SUM(montant) as montant_facture from toperationdet where active = 1 group by operationcab_id ) opdet on opdet.operationcab_id = opcab.id
+        LEFT JOIN (select operation_id, SUM(montant) as montant_regle from treglement group by operation_id ) reg on reg.operation_id = opcab.id $filtre ";
         // dd($sql);
         $totalRows .= $sql;
         $sqlRequest .= $sql;
