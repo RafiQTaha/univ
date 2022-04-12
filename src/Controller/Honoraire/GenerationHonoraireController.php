@@ -30,9 +30,9 @@ class GenerationHonoraireController extends AbstractController
     }
 
     #[Route('/', name: 'generation_honoraire')]
-    public function index(): Response
+    public function index(Request $request): Response
     {
-        $operations = ApiController::check($this->getUser(), 'generation_honoraire', $this->em);
+        $operations = ApiController::check($this->getUser(), 'generation_honoraire', $this->em, $request);
         if(!$operations) {
             return $this->render("errors/403.html.twig");
         }

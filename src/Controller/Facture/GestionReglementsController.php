@@ -39,9 +39,9 @@ class GestionReglementsController extends AbstractController
         
     }
     #[Route('/', name: 'gestion_reglements')]
-    public function index(): Response
+    public function index(Request $request): Response
     {
-        $operations = ApiController::check($this->getUser(), 'gestion_reglements', $this->em);
+        $operations = ApiController::check($this->getUser(), 'gestion_reglements', $this->em, $request);
         if(!$operations) {
             return $this->render("errors/403.html.twig");
         }

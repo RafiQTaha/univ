@@ -27,9 +27,9 @@ class GestionHonoraireController extends AbstractController
     }
 
     #[Route('/', name: 'gestion_honoraire')]
-    public function index(): Response
+    public function index(Request $request): Response
     {
-        $operations = ApiController::check($this->getUser(), 'gestion_honoraire', $this->em);
+        $operations = ApiController::check($this->getUser(), 'gestion_honoraire', $this->em, $request);
         if(!$operations) {
             return $this->render("errors/403.html.twig");
         }

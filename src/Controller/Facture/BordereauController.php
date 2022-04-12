@@ -26,9 +26,9 @@ class BordereauController extends AbstractController
     }
 
     #[Route('/', name: 'gestion_bordereaux')]
-    public function index(): Response
+    public function index(Request $request): Response
     {
-        $operations = ApiController::check($this->getUser(), 'gestion_bordereaux', $this->em);
+        $operations = ApiController::check($this->getUser(), 'gestion_bordereaux', $this->em, $request);
         if(!$operations) {
             return $this->render("errors/403.html.twig");
         }

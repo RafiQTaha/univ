@@ -48,9 +48,9 @@ class PlanificationController extends AbstractController
     }
 
     #[Route('/', name: 'planification_index')]
-    public function index(): Response
+    public function index(Request $request): Response
     {
-        $operations = ApiController::check($this->getUser(), 'planification_index', $this->em);
+        $operations = ApiController::check($this->getUser(), 'planification_index', $this->em, $request);
         if(!$operations) {
             return $this->render("errors/403.html.twig");
         }
