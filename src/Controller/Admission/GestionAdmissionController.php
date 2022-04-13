@@ -275,7 +275,7 @@ class GestionAdmissionController extends AbstractController
             $operationDet->setIce($fraisObject->ice);
             $operationDet->setCreated(new \DateTime("now"));
             $operationDet->setRemise(0);
-            $operationDet->setActive(0);
+            $operationDet->setActive(1);
             $this->em->persist($operationDet);
             $this->em->flush();
             $operationDet->setCode(
