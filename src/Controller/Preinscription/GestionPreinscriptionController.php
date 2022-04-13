@@ -35,9 +35,9 @@ class GestionPreinscriptionController extends AbstractController
     }
 
     #[Route('/', name: 'gestion_preinscription')]
-    public function gestion_preinscription(): Response
+    public function gestion_preinscription(Request $request): Response
     {   
-        $operations = ApiController::check($this->getUser(), 'gestion_preinscription', $this->em);
+        $operations = ApiController::check($this->getUser(), 'gestion_preinscription', $this->em, $request);
         if(!$operations) {
             return $this->render("errors/403.html.twig");
         }

@@ -29,9 +29,9 @@ class PreinscriptionController extends AbstractController
         $this->em = $doctrine->getManager();
     }
     #[Route('/', name: 'preinscription_index')]
-    public function index(): Response
+    public function index(Request $request): Response
     {   
-        $operations = ApiController::check($this->getUser(), 'preinscription_index', $this->em);
+        $operations = ApiController::check($this->getUser(), 'preinscription_index', $this->em, $request);
         if(!$operations) {
             return $this->render("errors/403.html.twig");
         }
