@@ -49,10 +49,9 @@ $(document).ready(function () {
     $('body').on('click','#datables_gestion_honoraires tbody tr',function (e) {
         e.preventDefault();
         const input = $(this).find("input");
-        if (input.hasClass('check_reg')) {
+        if (input.hasClass('check_seance')) {
             return;
-        }
-        else{
+        }else{
             if(input.is(":checked")){
                 input.prop("checked",false);
                 const index = ids_seances.indexOf(input.attr("data-id"));
@@ -69,7 +68,9 @@ $(document).ready(function () {
         table_gestion_honoraires.columns().search("");
         let response = ""
         if(id_etab != "") {
-            table_gestion_honoraires.columns(0).search(id_etab).draw();
+            if($("#statut").val() != ""){
+                table_gestion_honoraires.columns(4).search($("#statut").val())
+            }
             if($("#semaine").val() != ""){
                 table_gestion_honoraires.columns(5).search($("#semaine").val())
             }
@@ -79,18 +80,23 @@ $(document).ready(function () {
             if($("#grade").val() != ""){
                 table_gestion_honoraires.columns(7).search($("#grade").val())
             }
+            table_gestion_honoraires.columns(0).search(id_etab).draw();
             const request = await axios.get('/api/formation/'+id_etab);
             response = request.data
         }else{
+            // table_creation_borderaux.columns().search('').draw();
             table_gestion_honoraires.columns().search("").draw();
+            if($("#statut").val() != ""){
+                table_gestion_honoraires.columns(4).search($("#statut").val()).draw();
+            }
             if($("#semaine").val() != ""){
-                table_gestion_honoraires.columns(5).search($("#semaine").val())
+                table_gestion_honoraires.columns(5).search($("#semaine").val()).draw();
             }
             if($("#professeur").val() != ""){
-                table_gestion_honoraires.columns(6).search($("#professeur").val())
+                table_gestion_honoraires.columns(6).search($("#professeur").val()).draw();
             }
             if($("#grade").val() != ""){
-                table_gestion_honoraires.columns(7).search($("#grade").val())
+                table_gestion_honoraires.columns(7).search($("#grade").val()).draw();
             }
         }
         $('#semestre').html('').select2();
@@ -135,6 +141,7 @@ $(document).ready(function () {
         if(id_promotion != "") {
             table_gestion_honoraires.columns(2).search(id_promotion).draw();
             const request = await axios.get('/api/semestre/'+id_promotion);
+            response = request.data
         }else{
             table_gestion_honoraires.columns(1).search($("#formation").val()).draw();
         }
@@ -198,19 +205,23 @@ $(document).ready(function () {
         }
         table_gestion_honoraires.columns(5).search(id_element).draw();
     })
+    $("#statut").on('change', async function (){
+        const statut = $(this).val();
+        table_gestion_honoraires.columns(4).search(statut).draw();
+    })
     $("#semaine").on('change', async function (){
         const semaine = $(this).val();
-        table_gestion_honoraires.columns(6).search(semaine).draw();
+        table_gestion_honoraires.columns(5).search(semaine).draw();
     })
     $("#professeur").on('change', async function (){
         const id_prof = $(this).val();
-        table_gestion_honoraires.columns(7).search(id_prof).draw();
+        table_gestion_honoraires.columns(6).search(id_prof).draw();
     })
     $("#grade").on('change', async function (){
         const grade = $(this).val();
-        table_gestion_honoraires.columns(8).search(grade).draw();
+        table_gestion_honoraires.columns(7).search(grade).draw();
     })
-    $('body').on('click','#generer', async function (e) {
+    $('body').on('click','#annuler', async function (e) {
         e.preventDefault();
         if(ids_seances.length === 0 ){
             Toast.fire({
@@ -219,23 +230,52 @@ $(document).ready(function () {
             })
             return;
         }
-        const icon = $("#generer i");
-        icon.removeClass('fa-get-pocket').addClass("fa-spinner fa-spin");
+        const icon = $("#annuler i");
+        icon.removeClass('fa-times-circle').addClass("fa-spinner fa-spin");
         var formData = new FormData();
         formData.append('ids_seances', JSON.stringify(ids_seances)); 
         try {
-            const request = await axios.post('/honoraire/generation/generation_honoraire_generer',formData);
+            const request = await axios.post('/honoraire/gestion/annuler_honoraires',formData);
+            const response = request.data;
+            Toast.fire({
+                icon: 'success',
+                title: 'Honoraire Anullée Avec Succée',
+            })
+            table_gestion_honoraires.ajax.reload(null,false);
+            icon.addClass('fa-times-circle').removeClass("fa-spinner fa-spin");
+        } catch (error) {
+            const message = error.response.data;
+            icon.addClass('fa-times-circle').removeClass("fa-spinner fa-spin");
+        }
+    })
+
+    $('body').on('click','#regle', async function (e) {
+        e.preventDefault();
+        if(ids_seances.length === 0 ){
+            Toast.fire({
+            icon: 'error',
+            title: 'Merci de Choisir au moins une ligne',
+            })
+            return;
+        }
+        const icon = $("#regle i");
+        icon.removeClass('a-plus-circle').addClass("fa-spinner fa-spin");
+        var formData = new FormData();
+        formData.append('ids_seances', JSON.stringify(ids_seances)); 
+        try {
+            const request = await axios.post('/honoraire/gestion/regle_honoraires',formData);
             const response = request.data;
             Toast.fire({
                 icon: 'success',
                 title: response,
             })
             table_gestion_honoraires.ajax.reload(null,false);
-            icon.addClass('fa-get-pocket').removeClass("fa-spinner fa-spin");
+            icon.addClass('a-plus-circle').removeClass("fa-spinner fa-spin");
         } catch (error) {
             const message = error.response.data;
-            icon.addClass('fa-get-pocket').removeClass("fa-spinner fa-spin");
+            icon.addClass('a-plus-circle').removeClass("fa-spinner fa-spin");
         }
+        
     })
     
 })

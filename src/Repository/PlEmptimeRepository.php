@@ -141,35 +141,32 @@ class PlEmptimeRepository extends ServiceEntityRepository
             ->getResult()
         ;
     }
-
-    // public function GetEnsMontByIdSceance($seance)
-    // {
-    //     return $this->createQueryBuilder('pl')
-    //         ->select("pl.id as code_seance ,etab.code AS code_etablissement ,frm.code AS code_formation,prog.nature_epreuve_id , TIMESTAMPDIFF(MINUTE, pl.heur_db , pl.heur_fin)/60 AS nbr_heure,gr.montant, TIME_TO_SEC(TIMESTAMPDIFF(MINUTE, pl.heur_db , pl.heur_fin)/60)* gr.montant AS Mt_tot2 , 
-    //         (select count(*) from pr_programmation prog where prog.regroupe = (select prog.regroupe from pl_emptime emp inner join pr_programmation prog on emp.programmation_id = prog.id where emp.id = $seance group by prog.id)) as nbr_sc_regroupe , CASE WHEN prog.regroupe IS NOT NULL AND prog.categorie = 'S' THEN 0
-    //         ELSE (TIMESTAMPDIFF(MINUTE, emp.heur_db , emp.heur_fin)/60) * gr.montant END AS Mt_tot")
-    //         ->innerJoin("pl.programmation", "prog")
-    //         ->innerJoin("prog.element", "ele")
-    //         ->innerJoin("ele.module", "mdl")
-    //         ->innerJoin("mdl.semestre", "sem")
-    //         ->innerJoin("sem.promotion", "prom")
-    //         ->innerJoin("prom.formation", "frm")
-    //         ->innerJoin("frm.etablissement", "etab")
-    //         ->where('pl = :seance')
-    //         ->setParameter('seance', $seance)
-    //         ->getQuery()
-    //         ->getResult()
-    //     ;
-    //     // dd($test);
-    // }
-
+    
+    public function getEmptimeBySemestreAndSemaineToGenerer($semestre,$semaine)
+    {
+        return $this->createQueryBuilder('e')
+            ->innerJoin("e.programmation", "programmation")
+            ->innerJoin("programmation.element", "element")
+            ->innerJoin("element.module", "module")
+            ->innerJoin("module.semestre", "semestre")
+            ->innerJoin("e.semaine", "semaine")
+            ->where('semestre.id = :semestre')
+            ->andWhere("semaine.id = :semaine")
+            ->andWhere("e.active = 1")
+            ->andWhere("e.valider = 1")
+            ->setParameter('semestre', $semestre)
+            ->setParameter('semaine', $semaine)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+    
     public function getNbr_sc_regroupe($seance)
     {
         $sqls="select count(*) as nbr_sc_regroupe from pr_programmation prog where prog.regroupe = (select prog.regroupe from pl_emptime emp inner join pr_programmation prog on emp.programmation_id = prog.id where emp.id = '$seance' group by prog.id)";
         $stmts = $this->em->getConnection()->prepare($sqls);
         $resultSets = $stmts->executeQuery();
         $nbr_sc_regroupe = $resultSets->fetch();
-        // dd($nbr_sc_regroupe['nbr_sc_regroupe']);
         return $nbr_sc_regroupe['nbr_sc_regroupe'];
     }
 
@@ -193,7 +190,7 @@ class PlEmptimeRepository extends ServiceEntityRepository
         WHERE pl.id = $seance";
         $stmts = $this->em->getConnection()->prepare($sqls);
         $resultSets = $stmts->executeQuery();
-        $result = $resultSets->fetchAll();
+        $result = $resultSets->fetch();
         return $result;
     }
     

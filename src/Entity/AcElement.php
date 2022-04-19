@@ -45,8 +45,12 @@ class AcElement
     #[ORM\Column(type: 'json', nullable: true)]
     private $coefficient_epreuve;
 
-    #[ORM\Column(type: 'integer', nullable: true)]
-    private $type;
+    // #[ORM\Column(type: 'integer', nullable: true)]
+    // private $type;
+
+    // #[ORM\ManyToOne(targetEntity: TypeElement::class, inversedBy: 'elements')]
+    // private $type;
+
 
     #[ORM\Column(type: 'integer', nullable: true)]
     private $cours_document;
@@ -68,6 +72,9 @@ class AcElement
 
     #[ORM\OneToMany(mappedBy: 'element', targetEntity: PrProgrammation::class)]
     private $programmations;
+
+    #[ORM\ManyToOne(targetEntity: TypeElement::class, inversedBy: 'acElements')]
+    private $type;
 
     public function __construct()
     {
@@ -203,17 +210,29 @@ class AcElement
         return $this;
     }
 
-    public function getType(): ?int
-    {
-        return $this->type;
-    }
+    // public function getType(): ?int
+    // {
+    //     return $this->type;
+    // }
 
-    public function setType(?int $type): self
-    {
-        $this->type = $type;
+    // public function setType(?int $type): self
+    // {
+    //     $this->type = $type;
 
-        return $this;
-    }
+    //     return $this;
+    // }
+
+    // public function getType(): ?int
+    // {
+    //     return $this->type;
+    // }
+
+    // public function setType(?int $type): self
+    // {
+    //     $this->type = $type;
+
+    //     return $this;
+    // }
 
     public function getCoursDocument(): ?int
     {
@@ -367,6 +386,18 @@ class AcElement
                 $programmation->setElement(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getType(): ?TypeElement
+    {
+        return $this->type;
+    }
+
+    public function setType(?TypeElement $type): self
+    {
+        $this->type = $type;
 
         return $this;
     }

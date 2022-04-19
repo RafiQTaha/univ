@@ -6376,6 +6376,7 @@ tr:first-child > td > .fc-day-grid-event {
   float:left;
 }
 #datables_reglement .check_reg,
+.check_seance,
 .detaille_clotured{
   cursor : not-allowed;
 }
@@ -6466,7 +6467,7 @@ tr:first-child > td > .fc-day-grid-event {
   list-style: none;
   padding: 0;
 }
-#datables_generation_honoraires_processing{
+.dataTables_processing{
   z-index:1000 !important;
   background-color: rgba(255,255,255,.5) !important;
 }

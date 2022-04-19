@@ -55,7 +55,7 @@ class GenerationHonoraireController extends AbstractController
          
         $params = $request->query;
         $where = $totalRows = $sqlRequest = "";
-        $filtre = " where ann.validation_academique = 'non' and emp.valider = '1' and emp.active = '1' and emp.generer = '1' and emp.annuler = 0 and ( hon.id  is null or hon.annuler = 1) ";
+        $filtre = " where ann.validation_academique = 'non' and emp.valider = '1' and emp.active = '1' and emp.generer = '1' and emp.annuler = 0 and (hon.annuler != 0 or hon.id  is null or hon.annuler = 1) ";
         
         if (!empty($params->get('columns')[0]['search']['value'])) {
             $filtre .= " and etab.id = '" . $params->get('columns')[0]['search']['value'] . "' ";
@@ -85,13 +85,9 @@ class GenerationHonoraireController extends AbstractController
             $filtre .= " and grd.id = '" . $params->get('columns')[8]['search']['value'] . "' ";
         }    
         if (!empty($params->get('columns')[9]['search']['value'])) {
-            $annuler = $params->get('columns')[9]['search']['value'] == 'non' ? 0 : 1;
-            $filtre .= " and emp.annuler = '" . $annuler . "' ";
-        }    
-        if (!empty($params->get('columns')[10]['search']['value'])) {
-            $valider = $params->get('columns')[10]['search']['value'] == 'non' ? 0 : 1;
-            $filtre .= " and emp.valider = '" . $valider . "' ";
-        } 
+            $niv = $params->get('columns')[9]['search']['value'];
+            $filtre .= " and grp.id = '" . $niv . "' ";
+        }
         $columns = array(
             array( 'db' => 'emp.id','dt' => 0 ),
             array( 'db' => 'emp.code','dt' => 1),
@@ -124,6 +120,7 @@ class GenerationHonoraireController extends AbstractController
         left join hhonens hon on hon.seance_id = emp.id
         left join penseignant ens ON ens.id = emp_ens.enseignant_id
         left join pgrade grd ON grd.id = ens.grade_id
+        left join pgroupe grp ON grp.id = emp.groupe_id
         $filtre ";
         // dd($sql);
         $totalRows .= $sql;
@@ -156,7 +153,7 @@ class GenerationHonoraireController extends AbstractController
             foreach (array_values($row) as $key => $value) { 
                 $checked = "";
                 if ($key == 0) {
-                    $nestedData[] = "<input type ='checkbox' class='check_seance' data-id ='$cd' >";
+                    $nestedData[] = "<input type ='checkbox'  data-id ='$cd' >";
                 }elseif($key == 12){
                     $nestedData[] = $value;
                     $nbr_sc_regroupe = $this->em->getRepository(PlEmptime::class)->getNbr_sc_regroupe($cd);
@@ -192,9 +189,13 @@ class GenerationHonoraireController extends AbstractController
             return new JsonResponse('Merci de Choisir au moins une ligne',500);
         }
         foreach ($ids as $id) {
-            $EnsMontByIdSceances = $this->em->getRepository(PlEmptime::class)->GetEnsMontByIdSceance($id);
-            // dd($EnsMontByIdSceances);
-            foreach ($EnsMontByIdSceances as $EnsMontByIdSceance) {
+            // dd($id);
+            $EnsMontByIdSceance = $this->em->getRepository(PlEmptime::class)->GetEnsMontByIdSceance($id);
+            // dd($EnsMontByIdSceance);
+            // if ($EnsMontByIdSceance == false) {
+            //     return new JsonResponse('Merci de Choisir au moins une ligne',500);
+            // }
+            // foreach ($EnsMontByIdSceances as $EnsMontByIdSceance) {
                 $honens = new HHonens();
                 $honens->setEnseignant($this->em->getRepository(PEnseignant::class)->Find($EnsMontByIdSceance['enseignant']));
                 $honens->setSeance($this->em->getRepository(PLemptime::class)->Find($EnsMontByIdSceance['seance']));
@@ -216,7 +217,7 @@ class GenerationHonoraireController extends AbstractController
                 $honens->setCode('HON'.str_pad($honens->getId(), 8, '0', STR_PAD_LEFT));
                 $this->em->flush();
                 // dd($montant);
-            }
+            // }
         }
         return new JsonResponse('Seances Bien Generer',200);
     }

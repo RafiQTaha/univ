@@ -52,6 +52,9 @@ class HHonens
     #[ORM\Column(type: 'integer', nullable: true)]
     private $nbrScRegroupe = 1;
 
+    #[ORM\Column(type: 'datetime', nullable: true)]
+    private $dateReglement;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -209,6 +212,18 @@ class HHonens
     public function setNbrScRegroupe(?int $nbrScRegroupe): self
     {
         $this->nbrScRegroupe = $nbrScRegroupe;
+
+        return $this;
+    }
+
+    public function getDateReglement(): ?\DateTimeInterface
+    {
+        return $this->dateReglement;
+    }
+
+    public function setDateReglement(?\DateTimeInterface $dateReglement): self
+    {
+        $this->dateReglement = $dateReglement;
 
         return $this;
     }
