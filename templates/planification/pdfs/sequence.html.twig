@@ -215,7 +215,12 @@
     
     <tr>
         <td style="width: 25% ;border:1px solid gray;"> &nbsp;Classe/Groupe : </td> 
-        <td style="width: 33% ;border:1px solid gray;">{{seance.groupe.niveau}}</td> 
+        {% if seance.groupe != '' %}
+            <td style="width: 33% ;border:1px solid gray;">{{seance.groupe.niveau}}</td>
+        {% else %}
+            <td style="width: 33% ;border:1px solid gray;"></td>
+        {% endif %}
+        
         <td style="width: 25% ;border:1px solid gray;"> Effectif :</td> 
         <td style="width: 32.2% ;border:1px solid gray;"> {{effectife}}</td>
     </tr>

@@ -169,7 +169,6 @@ $(document).ready(function () {
         }else{
             table_gestion_planification.columns(2).search($("#promotion").val()).draw();
         }
-        $('#module').html('').select2();
         $('#element').html('').select2();
         $('#module').html(response).select2();
     })
@@ -292,6 +291,7 @@ $(document).ready(function () {
                     icon: 'success',
                     title: response,
                 })
+                ids_planning = []
                 table_gestion_planification.ajax.reload(null,false);
                 icon.addClass('fa-trash').removeClass("fa-spinner fa-spin");
             } catch (error) {
@@ -346,6 +346,7 @@ $(document).ready(function () {
                     icon: 'success',
                     title: response,
                 })
+                ids_planning = []
                 table_gestion_planification.ajax.reload(null,false);
                 icon.addClass('fa-times-circle').removeClass("fa-spinner fa-spin");
             } catch (error) {

@@ -87,6 +87,8 @@ const Toast = Swal.mixin({
     $("#etablissemnt_save").on("submit", async (e) => {
         e.preventDefault();
         var formData = new FormData($("#etablissemnt_save")[0])
+        // var formData = [...new FormData($("#etablissemnt_save")[0])]
+        // var data = Object.fromEntries(formData);
        
         const icon = $("#etablissemnt_save i");
 

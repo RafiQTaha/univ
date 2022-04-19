@@ -15,6 +15,12 @@ $(document).ready(function () {
             $(this).tab('show');
         })
     }
+    const getModuleBySemestre = async () => {
+        const request = await axios.get('/api/module/'+$('#semestre').val());
+        response = request.data
+        $('.modal-addform_planif #module').html(response).select2();
+    }
+    
     let id_semestre = false;
     let niv = 0;
     let currentweek = false;
@@ -62,7 +68,7 @@ $(document).ready(function () {
         minTime: "08:00:00",
         maxTime: "18:01:00",
         select: function (start, end,date) {
-            // if($('#semestre').val() != "" && $('#niv1').val() != "" ){
+            if($('#semestre').val() != ""){
                 currentDay = moment(start).format('YYYY-MM-DD');
                 currentweek = moment(start, "MMDDYYYY").isoWeek();
                 heur_debut= moment(start).format('HH:mm')
@@ -73,13 +79,14 @@ $(document).ready(function () {
                     $('.modal-addform_planif #h_debut').val(heur_debut);
                     $('.modal-addform_planif #h_fin').val(heur_fin);
                     $('.modal-addform_planif select').select2();
+                    getModuleBySemestre();
                     $('#addform_planif-modal').modal("show");
                     pills()
                 })
                 .catch(err => {
                     // console.log(err);
                 })
-            // }
+            }
         },
         eventRender: function (event, element) {
             element.bind('dblclick', function () {
@@ -431,34 +438,40 @@ $(document).ready(function () {
     
     $("body").on('click','#generer', async function (e){
         e.preventDefault();
-        if(!id_semestre || !niv){
+        if(!id_semestre){
             Toast.fire({
                 icon: 'error',
                 title: 'Vous devez choisir Semestre et Niveau!!',
             })
             return
         }
-        currentweek = moment($('#calendar').fullCalendar('getDate'), "MMDDYYYY").isoWeek();
-        let formData = new FormData();
-        formData.append('nsemaine',currentweek)
-        const icon = $("#generer i");
-        icon.removeClass('fa-check-circle').addClass("fa-spinner fa-spin");
-        try {
-            const request = await axios.post('/planification/planifications/generer_planning/'+id_semestre+'/'+niv, formData);
-            // const request = await axios.post('/planification/planifications/generer_planning/107/9', formData);
-            const response = request.data;
-            Toast.fire({
-                icon: 'success',
-                title: response,
-            })
-            icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
-        } catch (error) {
-            const message = error.response.data;
-            Toast.fire({
-                icon: 'error',
-                title: 'Some Error',
-            })
-            icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
+        //////
+        // let crntday = moment($('#calendar').fullCalendar('getDate')).format('YYYY-MM-DD')
+        var res = confirm('Vous voulez Vraiment Générer les planifications de cette semaine ?');
+        if (res == 1) {
+            currentweek = moment($('#calendar').fullCalendar('getDate'), "MMDDYYYY").isoWeek();
+            let formData = new FormData();
+            formData.append('nsemaine',currentweek)
+            // formData.append('crntday',crntday)
+            const icon = $("#generer i");
+            icon.removeClass('fab fa-get-pocket').addClass("fas fa-spinner fa-spin");
+            try {
+                const request = await axios.post('/planification/planifications/generer_planning/'+id_semestre+'/'+niv, formData);
+                // const request = await axios.post('/planification/planifications/generer_planning/107/9', formData);
+                const response = request.data;
+                Toast.fire({
+                    icon: 'success',
+                    title: response,
+                })
+                icon.addClass('fab fa-get-pocket').removeClass("fas fa-spinner fa-spin ");
+            } catch (error) {
+                const message = error.response.data;
+                Toast.fire({
+                    icon: 'error',
+                    title: message,
+                })
+                icon.addClass('fab fa-get-pocket').removeClass("fas fa-spinner fa-spin ");
+            }   
         }
     })
     

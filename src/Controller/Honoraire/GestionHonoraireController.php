@@ -16,6 +16,12 @@ use App\Entity\PGrade;
 use App\Entity\PlEmptime;
 use App\Entity\Semaine;
 use App\Entity\PEnseignantExcept;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
+use Symfony\Component\String\Slugger\SluggerInterface;
 
 #[Route('/honoraire/gestion')]
 class GestionHonoraireController extends AbstractController
@@ -52,7 +58,7 @@ class GestionHonoraireController extends AbstractController
          
         $params = $request->query;
         $where = $totalRows = $sqlRequest = "";
-        $filtre = " ";
+        $filtre = " where 1=1 and hon.annuler = 0";
         
         if (!empty($params->get('columns')[0]['search']['value'])) {
             $filtre .= " and etab.id = '" . $params->get('columns')[0]['search']['value'] . "' ";
@@ -65,35 +71,31 @@ class GestionHonoraireController extends AbstractController
         }   
         if (!empty($params->get('columns')[3]['search']['value'])) {
             $filtre .= " and sem.id = '" . $params->get('columns')[3]['search']['value'] . "' ";
-        }   
-        if (!empty($params->get('columns')[4]['search']['value'])) {
-            $filtre .= " and mdl.id = '" . $params->get('columns')[4]['search']['value'] . "' ";
-        }   
-        if (!empty($params->get('columns')[5]['search']['value'])) {
-            $filtre .= " and ele.id = '" . $params->get('columns')[5]['search']['value'] . "' ";
-        }    
-        if (!empty($params->get('columns')[6]['search']['value'])) {
-            $filtre .= " and sm.id = '" . $params->get('columns')[6]['search']['value'] . "' ";
-        }   
-        if (!empty($params->get('columns')[7]['search']['value'])) {
-            $filtre .= " and ens.id = '" . $params->get('columns')[7]['search']['value'] . "' ";
-        }   
-        if (!empty($params->get('columns')[8]['search']['value'])) {
-            $filtre .= " and grd.id = '" . $params->get('columns')[8]['search']['value'] . "' ";
-        }   
-        if (!empty($params->get('columns')[10]['search']['value'])) {
-            $valider = $params->get('columns')[10]['search']['value'] == 'non' ? 0 : 1;
-            $filtre .= " and emp.valider = '" . $valider . "' ";
         } 
+        
+        if (!empty($params->get('columns')[4]['search']['value'])) {
+            if ($params->get('columns')[4]['search']['value'] !== 'All') {
+                $filtre .= " and hon.statut = '" . $params->get('columns')[4]['search']['value'] . "' ";
+            }
+        }
+        if (!empty($params->get('columns')[5]['search']['value'])) {
+            $filtre .= " and sm.id = '" . $params->get('columns')[5]['search']['value'] . "' ";
+        }   
+        if (!empty($params->get('columns')[6]['search']['value'])) {
+            $filtre .= " and ens.id = '" . $params->get('columns')[6]['search']['value'] . "' ";
+        }  
+        if (!empty($params->get('columns')[7]['search']['value'])) {
+            $filtre .= " and gr.id = '" . $params->get('columns')[7]['search']['value'] . "' ";
+        }
+        
         $columns = array(
-            array( 'db' => 'emp.id','dt' => 0 ),
+            array( 'db' => 'hon.id','dt' => 0 ),
             array( 'db' => 'emp.code','dt' => 1),
             array( 'db' => 'Concat(date(emp.start)," ", DATE_FORMAT(emp.heur_db, "%H:%i"),"-",DATE_FORMAT(emp.heur_fin, "%H:%i"))','dt' => 2),
             array( 'db' => 'ens.nom','dt' => 3),
             array( 'db' => 'ens.prenom','dt' => 4),
             array( 'db' => 'lower(gr.designation)','dt' => 5),
             array( 'db' => 'Hour(SUBTIME(emp.heur_fin,emp.heur_db))','dt' => 6),
-            // array( 'db' => 'Upper(hon.code)','dt' => 7),
             array( 'db' => 'hon.montant','dt' => 7),
             array( 'db' => 'etab.abreviation','dt' => 8),
             array( 'db' => 'Upper(frm.abreviation)','dt' => 9),
@@ -102,13 +104,14 @@ class GestionHonoraireController extends AbstractController
             array( 'db' => 'Upper(sem.designation)','dt' => 12),
             array( 'db' => 'Upper(mdl.designation)','dt' => 13),
             array( 'db' => 'lower(ele.designation)','dt' => 14),
-            array( 'db' => 'Upper(nat.abreviation)','dt' => 15),
+            array( 'db' => 'hon.statut','dt' => 15),
         );
         $sql = "SELECT " . implode(", ", DatatablesController::Pluck($columns, 'db')) . "
         FROM hhonens hon
         INNER JOIN penseignant ens ON ens.id = hon.enseignant_id
         INNER JOIN pgrade gr ON gr.id = ens.grade_id
         INNER JOIN pl_emptime emp  ON hon.seance_id = emp.id
+        INNER JOIN semaine sm  ON sm.id = emp.semaine_id
         INNER JOIN pr_programmation prog ON prog.id = emp.programmation_id
         INNER join pnature_epreuve nat on nat.id = prog.nature_epreuve_id
         INNER JOIN ac_element ele ON ele.id = prog.element_id 
@@ -150,7 +153,10 @@ class GestionHonoraireController extends AbstractController
             foreach (array_values($row) as $key => $value) { 
                 $checked = "";
                 if ($key == 0) {
-                    $nestedData[] = "<input type ='checkbox' class='check_seance' data-id ='$cd' >";
+                    if ($row['statut'] == 'A' || $row['statut'] == 'R') {
+                        $checked = "checked='' disabled='' class='check_seance'";
+                    }
+                    $nestedData[] = "<input $checked type ='checkbox' data-id ='$cd' >";
                 }
                 
                 // elseif($key == 12){
@@ -176,5 +182,83 @@ class GestionHonoraireController extends AbstractController
             "data" => $data   
         );
         return new Response(json_encode($json_data));
+    }
+    
+    #[Route('/annuler_honoraires', name: 'annuler_honoraires')]
+    public function annuler_honoraires(Request $request): Response
+    {
+        $ids = json_decode($request->get('ids_seances'));
+        // dd($ids);
+        if($ids == NULL){
+            return new JsonResponse('Merci de Choisir au moins une ligne',500);
+        }
+        foreach ($ids as $id) {
+            $honens = $this->em->getRepository(HHonens::class)->find($id);
+            $honens->setAnnuler(1);
+            $honens->setAnnulated(new \DateTime('now'));
+            $honens->setStatut('A');
+            $this->em->flush();
+        }
+        return new JsonResponse('Toutes les seances sont annuler',200);
+    }
+
+    #[Route('/regle_honoraires', name: 'regle_honoraires')]
+    public function regle_honoraires(Request $request): Response
+    {
+        $ids = json_decode($request->get('ids_seances'));
+        // dd($ids);
+        if($ids == NULL){
+            return new JsonResponse('Merci de Choisir au moins une ligne',500);
+        }
+        foreach ($ids as $id) {
+            $honens = $this->em->getRepository(HHonens::class)->find($id);
+            $honens->setDateReglement(new \DateTime('now'));
+            $honens->setStatut('R');
+            $this->em->flush();
+        }
+        return new JsonResponse('Toutes les seances sont Réglées',200);
+    }
+
+    
+    #[Route('/reporting_honoraire', name: 'reporting_honoraire')]
+    public function epreuveEnMasse(Request $request, SluggerInterface $slugger) 
+    {   
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        $sheet->setCellValue('A1', 'Cours');
+        $sheet->setCellValue('B1', 'D.Heure');
+        $sheet->setCellValue('C1', 'Nom');
+        $sheet->setCellValue('D1', 'Prenom');
+        $sheet->setCellValue('E1', 'Grade');
+        $sheet->setCellValue('F1', 'N.Heure');
+        $sheet->setCellValue('G1', 'Montant');
+        $sheet->setCellValue('H1', 'Etab');
+        $sheet->setCellValue('I1', 'Form');
+        $sheet->setCellValue('J1', 'Annee');
+        $sheet->setCellValue('K1', 'Promo');
+        $sheet->setCellValue('L1', 'Semes');
+        $sheet->setCellValue('M1', 'Mdle');
+        $sheet->setCellValue('N1', 'Elem');
+        $sheet->setCellValue('O1', 'ST');
+        // $gnotes = $this->em->getRepository(ExGnotes::class)->ExgnotesOrderByNom($epreuve);
+        // foreach($gnotes as $gnote) {
+        //     $sheet->setCellValue('A'.$i, $gnote->getInscription()->getId());
+        //     $sheet->setCellValue('B'.$i, $gnote->getInscription()->getAdmission()->getPreinscription()->getEtudiant()->getNom());
+        //     $sheet->setCellValue('C'.$i, $gnote->getInscription()->getAdmission()->getPreinscription()->getEtudiant()->getPrenom());
+        //     $sheet->setCellValue('D'.$i, $gnote->getNote());
+        //     $sheet->setCellValue('E'.$i, $gnote->getAbsence() ? '1' : '');
+        //     $sheet->setCellValue('F'.$i, $gnote->getObservation());
+        //     if($epreuve->getAnonymat() == 1){
+        //         $sheet->setCellValue('G'.$i, $gnote->getAnonymat());
+        //     }
+        //     $i++;
+        // }
+
+        // $writer = new Xlsx($spreadsheet);
+        // $fileName = 'epreuves_'.$epreuve->getId().'.xlsx';
+        // $temp_file = tempnam(sys_get_temp_dir(), $fileName);
+        // $writer->save($temp_file);
+
+        // return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);
     }
 }

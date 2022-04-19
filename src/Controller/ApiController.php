@@ -22,6 +22,7 @@ use App\Entity\NatureDemande;
 use App\Entity\PNatureEpreuve;
 use App\Entity\AcEtablissement;
 use App\Entity\PrProgrammation;
+use App\Entity\TOperationcab;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\HttpFoundation\Request;
@@ -104,9 +105,11 @@ class ApiController extends AbstractController
             'element'=> $element,
             'nature_epreuve' => $nature_epreuve]
         );
+        
         $data = "<option enabled value='' disabled='disabled'>Choix Enseignants</option>";
         if ($programmation != NULL) {
             foreach ($programmation->getEnseignants() as $enseignant) {
+                dd($enseignant);
                 $data .="<option value=".$enseignant->getId().">".$enseignant->getNom()." ".$enseignant->getPrenom()."</option>";
             }
         }
@@ -139,6 +142,21 @@ class ApiController extends AbstractController
     {   
         $organisme = $this->em->getRepository(POrganisme::class)->findAll();
         $data = self::dropdown($organisme,'organisme');
+        return new JsonResponse($data);        
+    }
+
+    #[Route('/organisme/{operationcab}', name: 'getOrganismeByoperation')]
+    public function getOrganismeByoperation(TOperationcab $operationcab): Response
+    {   
+        $organismes = $this->em->getRepository(POrganisme::class)->findAll();
+        $data = "<option selected disabled value=''>Choix Organisme</option>";
+        foreach ($organismes as $organisme) {
+            if ($organisme === $operationcab->getOrganisme()) {
+                $data .="<option selected value=".$organisme->getId().">".$organisme->getDesignation()."</option>";
+            }else{
+                $data .="<option value=".$organisme->getId().">".$organisme->getDesignation()."</option>";
+            }
+        }
         return new JsonResponse($data);        
     }
     

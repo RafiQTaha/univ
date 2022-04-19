@@ -47,4 +47,18 @@ class SemaineRepository extends ServiceEntityRepository
         ;
     }
     */
+    
+    // public function findweek($semaine,$crntday): ?Semaine
+    // {
+    //     return $this->createQueryBuilder('s')
+    //         ->andWhere('s.nsemaine = :semaine')
+    //         ->andWhere('s.date_debut >= :crntday')
+    //         ->andWhere('s.date_fin <= :crntday')
+    //         ->setParameter('semaine', $semaine)
+    //         ->setParameter('crntday', $crntday)
+    //         ->getQuery()
+    //         ->getOneOrNullResult()
+    //     ;
+    // }
+    
 }

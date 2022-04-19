@@ -29,11 +29,14 @@ $(document).ready(function () {
         url: "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/French.json",
         },
     });
-    $("#banque").select2();
-    $("#paiement").select2();
-    $("#etablissement").select2();
-    $("#modifier_org-modal #org").select2();
-    $("#organisme").select2();
+    // $("#banque").select2();
+    // $("#paiement").select2();
+    // $("#etablissement").select2();
+    // $("#modifier_org-modal #org").select2();
+    // $("#organisme").select2();
+    // $("#reglement").select2();
+    $("select").select2();
+    
     $("#etablissement").on('change', async function (){
         const id_etab = $(this).val();
         table_facture.columns(1).search("");
@@ -124,6 +127,14 @@ $(document).ready(function () {
             console.log(err)
         })
     }
+    const getOrganismeByFacture = async () => {
+        if(id_facture){
+            const request = await axios.get('/api/organisme/'+id_facture);
+            response = request.data
+            $('#org').html(response).select2();
+        }    
+    }
+    
     const load_frais_preins = () => {
         if(id_facture){
             axios.get('/facture/factures/article_frais/'+id_facture)
@@ -147,9 +158,11 @@ $(document).ready(function () {
             $(this).addClass('active_databales');
             id_facture = $(this).attr('id');
             console.log(id_facture);
+            getOrganismeByFacture()
             getMontant();
             getFacture();
             load_frais_preins();
+
         }
     })
     $('body').on('click','#facture',function (e) {
@@ -268,7 +281,7 @@ $(document).ready(function () {
            $("#ajouter_modal .modal-body .alert").remove();
         }, 4000);
     });
-    $('body').on('click','#modifier',function (e) {
+    $('body').on('click','#modifier',async function (e) {
         e.preventDefault();
         if(!id_facture){
             Toast.fire({

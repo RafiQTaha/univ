@@ -69,7 +69,6 @@ $(document).ready(function () {
         table_generation_honoraires.columns().search("");
         let response = ""
         if(id_etab != "") {
-            table_generation_honoraires.columns(0).search(id_etab).draw();
             if($("#semaine").val() != ""){
                 table_generation_honoraires.columns(6).search($("#semaine").val())
             }
@@ -82,18 +81,19 @@ $(document).ready(function () {
             if($("#annuler").val() != ""){
                 table_generation_honoraires.columns(9).search($("#niv").val())
             }
+            table_generation_honoraires.columns(0).search(id_etab).draw();
             const request = await axios.get('/api/formation/'+id_etab);
             response = request.data
         }else{
             table_generation_honoraires.columns().search("").draw();
             if($("#semaine").val() != ""){
-                table_generation_honoraires.columns(6).search($("#semaine").val())
+                table_generation_honoraires.columns(6).search($("#semaine").val()).draw();
             }
             if($("#professeur").val() != ""){
-                table_generation_honoraires.columns(7).search($("#professeur").val())
+                table_generation_honoraires.columns(7).search($("#professeur").val()).draw();
             }
             if($("#grade").val() != ""){
-                table_generation_honoraires.columns(8).search($("#grade").val())
+                table_generation_honoraires.columns(8).search($("#grade").val()).draw();
             }
         }
         $('#niv1').html('').select2();
@@ -305,7 +305,7 @@ $(document).ready(function () {
             return;
         }
         const icon = $("#generer i");
-        icon.removeClass('fa-get-pocket').addClass("fa-spinner fa-spin");
+        icon.removeClass('fab fa-get-pocket').addClass("fas fa-spinner fa-spin");
         var formData = new FormData();
         formData.append('ids_seances', JSON.stringify(ids_seances)); 
         try {
@@ -316,10 +316,11 @@ $(document).ready(function () {
                 title: response,
             })
             table_generation_honoraires.ajax.reload(null,false);
-            icon.addClass('fa-get-pocket').removeClass("fa-spinner fa-spin");
+            ids_seances = [];
+            icon.addClass('fab fa-get-pocket').removeClass("fas fa-spinner fa-spin");
         } catch (error) {
             const message = error.response.data;
-            icon.addClass('fa-get-pocket').removeClass("fa-spinner fa-spin");
+            icon.addClass('fab fa-get-pocket').removeClass("fas fa-spinner fa-spin");
         }
     })
     

@@ -273,17 +273,24 @@ class PlanificationController extends AbstractController
     }
 
     #[Route('/generer_planning/{semestre}/{groupe}', name: 'generer_planning')]
-    public function generer_planning(AcSemestre $semestre,PGroupe $groupe,Request $request): Response
+    public function generer_planning(AcSemestre $semestre,$groupe,Request $request): Response
     {   
-        if ($request->get('nsemaine') && $semestre && $groupe) {
+        // dd($request->get('nsemaine'),$request->get('crntday') , $semestre ,$groupe);
+        if ($request->get('nsemaine') != "" && $semestre) {
             $annee = $this->em->getRepository(AcAnnee::class)->getActiveAnneeByFormation($semestre->getPromotion()->getFormation());
             // $annee = $this->em->getRepository(AcAnnee::class)->findOneBy([
-            //     'formation'=>$semestre->getPromotion()->getFormation(),
-            //     'validation_academique'=>'non',
-            //     'cloture_academique'=>'non',
-            //     ])->getDesignation();
+                //     'formation'=>$semestre->getPromotion()->getFormation(),
+                //     'validation_academique'=>'non',
+                //     'cloture_academique'=>'non',
+                //     ])->getDesignation();
             $semaine = $this->em->getRepository(Semaine::class)->findOneBy(['nsemaine'=>$request->get('nsemaine'),'anneeS'=>$annee->getDesignation()]);
-            $emptimes = $this->em->getRepository(PlEmptime::class)->getEmptimeBySemestreAndGroupeAndSemaineToGenerer($semestre,$groupe,$semaine);
+            // $semaine = $this->em->getRepository(Semaine::class)->findsemaine($request->get('nsemaine'),$request->get('crntday'));
+            if ($groupe == 0) {
+                $emptimes = $this->em->getRepository(PlEmptime::class)->getEmptimeBySemestreAndSemaineToGenerer($semestre,$semaine);
+            }else{
+                $emptimes = $this->em->getRepository(PlEmptime::class)->getEmptimeBySemestreAndGroupeAndSemaineToGenerer($semestre,$groupe,$semaine);
+            }
+            // dd($emptimes);
             if($emptimes != NULL){
                 foreach($emptimes as $emptime){
                     $emptime->setGenerer(1);
