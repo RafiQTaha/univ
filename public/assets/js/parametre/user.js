@@ -57,7 +57,7 @@ const Toast = Swal.mixin({
             $(this).removeClass('active_databales');
             id_user = null;
         } else {
-            $("#datatables_gestion_inscription tbody tr").removeClass('active_databales');
+            $("#datatables_gestion_users tbody tr").removeClass('active_databales');
             $(this).addClass('active_databales');
             id_user = $(this).attr('id');
         }
@@ -104,17 +104,17 @@ const Toast = Swal.mixin({
         let url;
         let sous_module = $(this).attr("data-module");
         if($(this).is(":checked")){
-            $(".inputSousModule").parent().parent().find(".inputOperation").prop("checked", true);
+            $(this).parent().parent().find(".inputOperation").prop("checked", true);
             url = "/parametre/user/sousmodule/"+sous_module+"/"+id_user+"/add";
         }else{
-            $(".inputSousModule").parent().parent().find(".inputOperation").prop("checked", false);
+            $(this).parent().parent().find(".inputOperation").prop("checked", false);
             url = "/parametre/user/sousmodule/"+sous_module+"/"+id_user+"/remove";
-            
+
         }
+        checkInputIfAllChildAreChecked()
         try {
             const request = await axios.post(url);
             const response = request.data;
-            // checkInputIfAllChildAreChecked()
         } catch (error) {
             const message = error.response.data;
             Toast.fire({
@@ -127,17 +127,17 @@ const Toast = Swal.mixin({
         let url;
         let module = $(this).attr("data-id");
         if($(this).is(":checked")){
-            $(".inputModule").parent().parent().find("input:checkbox").prop("checked", true);
+            $(this).parent().parent().find("input:checkbox").prop("checked", true);
             url = "/parametre/user/module/"+module+"/"+id_user+"/add";
         }else{
-            $(".inputModule").parent().parent().find("input:checkbox").prop("checked", false);
+            $(this).parent().parent().find("input:checkbox").prop("checked", false);
             url = "/parametre/user/module/"+module+"/"+id_user+"/remove";
-            
+
         }
+        checkInputIfAllChildAreChecked();
         try {
             const request = await axios.post(url);
             const response = request.data;
-            // checkInputIfAllChildAreChecked();
         } catch (error) {
             const message = error.response.data;
             Toast.fire({
@@ -155,12 +155,12 @@ const Toast = Swal.mixin({
         }else{
             // $(".inputOperation").parent().parent().find("input:checkbox").prop("checked", false);
             url = "/parametre/user/operation/"+operation+"/"+id_user+"/remove";
-            
+
         }
+        checkInputIfAllChildAreChecked();
         try {
             const request = await axios.post(url);
             const response = request.data;
-            // checkInputIfAllChildAreChecked();
         } catch (error) {
             const message = error.response.data;
             Toast.fire({
@@ -179,10 +179,10 @@ const Toast = Swal.mixin({
             // $(".inputOperation").parent().parent().find("input:checkbox").prop("checked", false);
             url = "/parametre/user/all/"+id_user+"/remove";
         }
+        checkInputIfAllChildAreChecked();
         try {
             const request = await axios.post(url);
             const response = request.data;
-            // checkInputIfAllChildAreChecked();
         } catch (error) {
             const message = error.response.data;
             Toast.fire({
