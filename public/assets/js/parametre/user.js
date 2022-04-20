@@ -191,6 +191,35 @@ const Toast = Swal.mixin({
             }) 
         }
     })
+
+    $("body").on("click", ".disable",async function(){
+        var id = $(this).attr("id");
+        try {
+            const request = await axios.post("/parametre/user/active/"+id+"/0");
+            const response = request.data;
+            table.ajax.reload();
+        } catch (error) {
+            const message = error.response.data;
+            Toast.fire({
+                icon: 'error',
+                title: message,
+            }) 
+        }
+    })
+    $("body").on("click", ".enable", async function(){
+        var id = $(this).attr("id");
+        try {
+            const request = await axios.post("/parametre/user/active/"+id+"/1");
+            const response = request.data;
+            table.ajax.reload();
+        } catch (error) {
+            const message = error.response.data;
+            Toast.fire({
+                icon: 'error',
+                title: message,
+            }) 
+        }
+    })
 })
 
 

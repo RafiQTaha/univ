@@ -191,5 +191,12 @@ class UserController extends AbstractController
         $this->em->flush();
         return new JsonResponse(1);
     }
+    #[Route('/active/{user}/{type}', name: 'parametre_user_active')]
+    public function active(User $user, $type): Response
+    {
+        $user->setEnable($type);
+        $this->em->flush();
+        return new JsonResponse(1);
+    }
 }
 
