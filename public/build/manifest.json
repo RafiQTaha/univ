@@ -1,8 +1,8 @@
 {
-  "build/app.css": "/build/app.css",
-  "build/app.js": "/build/app.js",
-  "build/login.css": "/build/login.css",
-  "build/login.js": "/build/login.js",
-  "build/runtime.js": "/build/runtime.js",
-  "build/vendors-node_modules_core-js_modules_es_object_to-string_js-node_modules_core-js_modules_es_p-60cad2.js": "/build/vendors-node_modules_core-js_modules_es_object_to-string_js-node_modules_core-js_modules_es_p-60cad2.js"
+  "build/app.css": "/build/app.6c614b39.css",
+  "build/app.js": "/build/app.aa1bf742.js",
+  "build/login.css": "/build/login.b0135c94.css",
+  "build/login.js": "/build/login.3dee5e4b.js",
+  "build/runtime.js": "/build/runtime.4970d835.js",
+  "build/469.fee73c17.js": "/build/469.fee73c17.js"
 }
