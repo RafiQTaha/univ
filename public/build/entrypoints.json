@@ -2,21 +2,18 @@
   "entrypoints": {
     "app": {
       "js": [
-        "/build/runtime.js",
-        "/build/app.js"
+        "/build/runtime.7c62a932.js",
+        "/build/app.aa1bf742.js"
       ],
       "css": [
-        "/build/app.css"
+        "/build/app.6c614b39.css"
       ]
     },
     "login": {
       "js": [
-        "/build/runtime.js",
-        "/build/vendors-node_modules_axios_index_js-node_modules_core-js_modules_es_object_to-string_js-node_-35ff06.js",
-        "/build/login.js"
-      ],
-      "css": [
-        "/build/login.css"
+        "/build/runtime.7c62a932.js",
+        "/build/469.fee73c17.js",
+        "/build/login.2cb1b6a1.js"
       ]
     }
   }
