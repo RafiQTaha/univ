@@ -163,7 +163,9 @@ class PlEmptimeRepository extends ServiceEntityRepository
     
     public function getNbr_sc_regroupe($seance)
     {
-        $sqls="select count(*) as nbr_sc_regroupe from pr_programmation prog where prog.regroupe = (select prog.regroupe from pl_emptime emp inner join pr_programmation prog on emp.programmation_id = prog.id where emp.id = '$seance' group by prog.id)";
+        $sqls="select count(*) as nbr_sc_regroupe 
+        from pr_programmation prog 
+        where prog.regroupe = (select prog.regroupe from pl_emptime emp inner join pr_programmation prog on emp.programmation_id = prog.id where emp.id = '$seance' group by prog.id)";
         $stmts = $this->em->getConnection()->prepare($sqls);
         $resultSets = $stmts->executeQuery();
         $nbr_sc_regroupe = $resultSets->fetch();

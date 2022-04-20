@@ -14,6 +14,12 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class SecurityController extends AbstractController
 {
+    private UserPasswordHasherInterface $passwordEncoder;
+
+    public function __construct(UserPasswordHasherInterface $passwordEncoder)
+    {
+        $this->passwordEncoder = $passwordEncoder;
+    }
     /**
      * @Route("/login", name="app_login")
      */
@@ -58,6 +64,24 @@ class SecurityController extends AbstractController
         return new JsonResponse('good');
     }
 
+    /**
+     * @Route("/passwordchange", name="app_passwordchange")
+     */
+    public function passwordchange(Request $request, ManagerRegistry $doctrine)
+    {
+        $em = $doctrine->getManager();
+        $user = $em->getRepository(User::class)->find($this->getUser()->getId());
+        if(!$this->passwordEncoder->isPasswordValid($user, $request->get("an_password"))) {
+            return new JsonResponse("Votre mot de passe est incorrect !", 500);
+        }
+        $user->setPassword($this->passwordEncoder->hashPassword(
+            $user,
+            $request->get('nv_password')
+        ));
+
+        $em->flush();
+        return new JsonResponse("Bien Enregistre!", 200);
+    }
     /**
      * @Route("/logout", name="app_logout")
      */
