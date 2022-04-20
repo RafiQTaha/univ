@@ -10,6 +10,7 @@ parameters:
     planification_create_directory: '%kernel.project_dir%/public/uploads/planification'
     affilier_impression_salle_directory: '%kernel.project_dir%/public/uploads/salle_et_anonymat'
     honoraire_export_directory: '%kernel.project_dir%/public/uploads/honoraire'
+    inscription_groupes_directory: '%kernel.project_dir%/public/uploads/inscription_groupes'
 
     
 
