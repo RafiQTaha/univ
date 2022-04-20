@@ -22,6 +22,8 @@ $("#singup").on('submit', async (e) => {
         data.append('email', $('#singup_email').val())
         data.append('username', $('#singup_username').val())
         data.append('password', $('#singup_password').val())
+        data.append('nom', $('#singup_nom').val())
+        data.append('prenom', $('#singup_prenom').val())
         try {
             const request = await axios.post('/register', data)
             $(".singup__error").html('');

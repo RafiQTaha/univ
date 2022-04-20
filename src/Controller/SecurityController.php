@@ -42,6 +42,8 @@ class SecurityController extends AbstractController
         }
         $user = new User();
         $user->setEmail($request->get('email'));
+        $user->setNom($request->get('nom'));
+        $user->setPrenom($request->get('prenom'));
         $user->setUsername($request->get('username'));
         $user->setEnable(0);
         $user->setPassword($passwordHasher->hashPassword(
