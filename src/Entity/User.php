@@ -47,9 +47,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $prenom;
 
-
-    #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private $email;
     #[ORM\OneToMany(mappedBy: 'userCreated', targetEntity: HHonens::class)]
     private $honenss;
 
@@ -61,6 +58,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\OneToMany(mappedBy: 'usercreated', targetEntity: PEnseignantExcept::class)]
     private $enseignantexcepts;
+
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private $email;
 
 
     public function __construct()
@@ -310,15 +310,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
 
-    public function getEmail(): ?string
-    {
-        return $this->email;
-    }
-
-    public function setEmail(?string $email): self
-    {
-        $this->email = $email;
-    }
     /**
      * @return Collection<int, HHonens>
      */
@@ -435,6 +426,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $enseignantexcept->setUsercreated(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getEmail(): ?string
+    {
+        return $this->email;
+    }
+
+    public function setEmail(?string $email): self
+    {
+        $this->email = $email;
 
         return $this;
     }
