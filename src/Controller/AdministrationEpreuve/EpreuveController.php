@@ -12,6 +12,7 @@ use App\Entity\TInscription;
 use App\Entity\PNatureEpreuve;
 use App\Controller\ApiController;
 use App\Controller\DatatablesController;
+use App\Entity\AcEtablissement;
 use Doctrine\Persistence\ManagerRegistry;
 use Mpdf\Mpdf;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
@@ -46,8 +47,14 @@ class EpreuveController extends AbstractController
             return $this->render("errors/403.html.twig");
 
         }
+        $etablissements = $this->em->getRepository(AcEtablissement::class)->findAll();
+        $natureEpreuves = $this->em->getRepository(PNatureEpreuve::class)->findAll();
+        $enseignants = $this->em->getRepository(PEnseignant::class)->findAll();
         return $this->render('administration_epreuve/epreuve.html.twig', [
             'operations' => $operations,
+            'etablissements' => $etablissements,
+            'natureEpreuves' => $natureEpreuves,
+            'enseignants' => $enseignants,
         ]);
         
     }
@@ -526,5 +533,33 @@ class EpreuveController extends AbstractController
         // );
         $mpdf->WriteHTML($html);
         $mpdf->Output("epreuve_".$epreuve->getId().".pdf", "I");
+    }
+    #[Route('/add_epreuve', name: 'administration_epreuve_add_epreuve')]
+    public function administrationEpreuveaddepreuve(Request $request) 
+    {
+        // dd($request);
+        if (empty($request->get('id_element')) || empty($request->get('id_Nature')) || empty($request->get('id_enseignant')) || empty($request->get('d_epreuve'))) {
+            return new JsonResponse('Merci de remplir tout les champs!', 500);
+        }
+        $epreuve = new AcEpreuve();
+        $epreuve->setCoefficient(1);
+        $epreuve->setStatut($this->em->getRepository(PStatut::class)->find(28));
+        $epreuve->setAnonymat(1);
+        $epreuve->setCreated(new \DateTime('now'));
+        $epreuve->setDateEpreuve(new \DateTime($request->get('d_epreuve')));
+        $epreuve->setElement($this->em->getRepository(AcElement::class)->find($request->get('id_element')));
+        $epreuve->setEnseignant($this->em->getRepository(PEnseignant::class)->find($request->get('id_enseignant')));
+        $epreuve->setNature($request->get('nature'));
+        $epreuve->setNatureEpreuve($this->em->getRepository(PNatureEpreuve::class)->find($request->get('id_Nature')));
+        $epreuve->setObservation($request->get('obs') == '' ? Null : $request->get('obs'));
+        $epreuve->setAnnee($this->em->getRepository(AcAnnee::class)->findOneBy(['formation'=>$request->get('id_formation'),'validation_academique'=>'non']));
+        $epreuve->setUserCreated($this->getUser());
+        $this->em->persist($epreuve);
+        $this->em->flush();
+        $etablissement = $this->em->getRepository(AcEtablissement::class)->find($request->get('id_etablissement'));
+        $epreuve->setCode('EPV-'.$etablissement->getAbreviation().str_pad($epreuve->getId(), 8, '0', STR_PAD_LEFT).'/'.date('Y'));     
+        $this->em->flush();
+
+        return new JsonResponse('Epreuve Bien Ajouter',200);
     }
 }
