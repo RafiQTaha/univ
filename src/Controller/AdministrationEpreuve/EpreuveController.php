@@ -106,6 +106,7 @@ class EpreuveController extends AbstractController
     
         $filtre "
         ;
+        // dd($sql);
         $totalRows .= $sql;
         $sqlRequest .= $sql;
         $stmt = $this->em->getConnection()->prepare($sql);
@@ -206,7 +207,7 @@ class EpreuveController extends AbstractController
         INNER JOIN ac_formation frm ON frm.id = prm.formation_id
         INNER JOIN ac_etablissement etab ON etab.id = frm.etablissement_id
         INNER JOIN ac_annee an ON an.id = epv.annee_id
-        INNER JOIN penseignant ens ON ens.id = epv.enseignant_id
+        left JOIN penseignant ens ON ens.id = epv.enseignant_id
         INNER JOIN pnature_epreuve nepv ON nepv.id = epv.nature_epreuve_id  
         INNER JOIN pstatut st on st.id = epv.statut_id
     
@@ -501,13 +502,16 @@ class EpreuveController extends AbstractController
         
             
         $html = $this->render("administration_epreuve/pdfs/header.html.twig")->getContent();
+        // dd($epreuve->getStatut());
         if($epreuve->getAnonymat() == 1 && $anonymat == 1){
             $html .= $this->render("administration_epreuve/pdfs/anonymat.html.twig", [
-                'epreuve' => $epreuve
+                'epreuve' => $epreuve,
+                'statutId' => $epreuve->getStatut()->getId()
             ])->getContent();
         } else {
             $html .= $this->render("administration_epreuve/pdfs/clair.html.twig", [
-                'epreuve' => $epreuve
+                'epreuve' => $epreuve,
+                'statutId' => $epreuve->getStatut()->getId()
             ])->getContent();
             
         }

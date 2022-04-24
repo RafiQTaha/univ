@@ -6481,3 +6481,21 @@ tr:first-child > td > .fc-day-grid-event {
   background: green !important;
 }
 
+table.dataTable tfoot th, table.dataTable tfoot td {
+    border-top:.5px solid #cecece !important;
+}
+.dataTables_wrapper .dataTables_length select {
+ width: 50px !important;
+}
+.dataTables_wrapper .dataTables_paginate .paginate_button:hover, .dataTables_wrapper .dataTables_paginate .paginate_button:active {
+  border: none !important;
+  background: none !important;
+  box-shadow: none !important;
+  
+}
+.dataTables_wrapper > .row {
+  align-items: baseline !important;
+}
+table.dataTable th.dt-center, table.dataTable td.dt-center, table.dataTable td.dataTables_empty {
+  text-align: center !important;
+}

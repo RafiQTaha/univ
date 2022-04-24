@@ -18,11 +18,11 @@ $(document).ready(function  () {
     const enableButtons = () => {
         if(check == 0) {
             // $("#valider").removeClass('btn-secondary').addClass('btn-danger').attr('disabled', false)
-            $("#import").addClass('btn-secondary').removeClass('btn-success').attr('disabled', true)
+            // $("#import").addClass('btn-secondary').removeClass('btn-success').attr('disabled', true)
             $("#imprimer").addClass('btn-secondary').removeClass('btn-info').attr('disabled', true)
         } else {
             // $("#valider").addClass('btn-secondary').removeClass('btn-danger').attr('disabled', true)
-            $("#import").removeClass('btn-secondary').addClass('btn-success').attr('disabled', false)
+            // $("#import").removeClass('btn-secondary').addClass('btn-success').attr('disabled', false)
             $("#imprimer").removeClass('btn-secondary').addClass('btn-info').attr('disabled', false)
         }
     }

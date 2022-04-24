@@ -16,7 +16,16 @@
 </head>
 <body>
 	<div class="login">
-		<h2>Bonjour !</h2>
+		<h2>
+			{% set currentHour = 'now'|date('H') %}
+
+			{# {{dump(currentHour)}} #}
+			{% if currentHour in range(8,17) %} 
+				Bonjour !
+			{% else %}
+				Bonsoir !
+			{% endif %}
+		</h2>
 		<div class="container" id="container">
 			<div class="form-container sign-up-container">
 				<form id="singup">
