@@ -56,7 +56,7 @@
                         </div>
                     </div>
                 </div>
-            <table id="datables_gestion_borderaux" class="display" style="width:100%">
+            <table id="datables_gestion_borderaux" class="table table-striped" style="width:100%">
                 <thead>
                     <tr>
                         <th style="width:50px">Ord</th>
@@ -91,7 +91,9 @@
 
 {% block javascripts %}
 {{parent()}}
-<script src="/assets/js/honoraire/gestion_borderaux.js"></script>
+{{ encore_entry_script_tags('gestionBorderaux') }}
+
+{# <script src="/assets/js/honoraire/gestion_borderaux.js"></script> #}
 
 {% endblock %}
 

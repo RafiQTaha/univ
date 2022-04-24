@@ -96,7 +96,7 @@
                         </div>
                     </div>
                 </div>
-                <table id="list_epreuve_normal"  class="display" style="width:100%">
+                <table id="list_epreuve_normal"  class="table table-striped" style="width:100%">
                 </table>
             </div>
             
@@ -117,7 +117,8 @@
 {% block javascripts %}
 {{parent()}}
 
-<script src="/assets/js/evaluation/epreuve.js"></script>
+{# <script src="/assets/js/evaluation/epreuve.js"></script> #}
+{{ encore_entry_script_tags('evaluationEpreuve') }}
 
 {% endblock %}
 

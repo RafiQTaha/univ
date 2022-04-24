@@ -49,10 +49,10 @@
                     </div>
                 </div>
             </div>
-            <table id="datatables_gestion_inscription" class="display" style="width:100%">
+            <table id="datatables_gestion_inscription" class="table table-striped" style="width:100%">
                 <thead>
                     <tr>
-                        <th>Option</th>
+                        <th width="1">#</th>
                         <th>id</th>
                         <th>C.Ins</th>
                         <th>Nom</th>
@@ -72,7 +72,7 @@
                 </tbody>
                 <tfoot>
                     <tr>
-                        <th>Option</th>
+                        <th width="1">#</th>
                         <th>id</th>
                         <th>C.Ins</th>
                         <th>Nom</th>
@@ -104,8 +104,9 @@
 
 {% block javascripts %}
 {{parent()}}
+{{ encore_entry_script_tags('gestionGroupe') }}
 
-<script src="/assets/js/inscription/gestiongroupe.js"></script>
+{# <script src="/assets/js/inscription/gestiongroupe.js"></script> #}
 
 {% endblock %}
 

@@ -57,35 +57,35 @@ class GenerationHonoraireController extends AbstractController
         $where = $totalRows = $sqlRequest = "";
         $filtre = " where ann.validation_academique = 'non' and emp.valider = '1' and emp.active = '1' and emp.generer = '1' and emp.annuler = 0 and (hon.annuler != 0 or hon.id  is null ) ";
         
-        if (!empty($params->get('columns')[0]['search']['value'])) {
-            $filtre .= " and etab.id = '" . $params->get('columns')[0]['search']['value'] . "' ";
+        if (!empty($params->all('columns')[0]['search']['value'])) {
+            $filtre .= " and etab.id = '" . $params->all('columns')[0]['search']['value'] . "' ";
         }
-        if (!empty($params->get('columns')[1]['search']['value'])) {
-            $filtre .= " and frm.id = '" . $params->get('columns')[1]['search']['value'] . "' ";
+        if (!empty($params->all('columns')[1]['search']['value'])) {
+            $filtre .= " and frm.id = '" . $params->all('columns')[1]['search']['value'] . "' ";
         }   
-        if (!empty($params->get('columns')[2]['search']['value'])) {
-            $filtre .= " and prm.id = '" . $params->get('columns')[2]['search']['value'] . "' ";
+        if (!empty($params->all('columns')[2]['search']['value'])) {
+            $filtre .= " and prm.id = '" . $params->all('columns')[2]['search']['value'] . "' ";
         }   
-        if (!empty($params->get('columns')[3]['search']['value'])) {
-            $filtre .= " and sem.id = '" . $params->get('columns')[3]['search']['value'] . "' ";
+        if (!empty($params->all('columns')[3]['search']['value'])) {
+            $filtre .= " and sem.id = '" . $params->all('columns')[3]['search']['value'] . "' ";
         }   
-        if (!empty($params->get('columns')[4]['search']['value'])) {
-            $filtre .= " and mdl.id = '" . $params->get('columns')[4]['search']['value'] . "' ";
+        if (!empty($params->all('columns')[4]['search']['value'])) {
+            $filtre .= " and mdl.id = '" . $params->all('columns')[4]['search']['value'] . "' ";
         }   
-        if (!empty($params->get('columns')[5]['search']['value'])) {
-            $filtre .= " and ele.id = '" . $params->get('columns')[5]['search']['value'] . "' ";
+        if (!empty($params->all('columns')[5]['search']['value'])) {
+            $filtre .= " and ele.id = '" . $params->all('columns')[5]['search']['value'] . "' ";
         }    
-        if (!empty($params->get('columns')[6]['search']['value'])) {
-            $filtre .= " and sm.id = '" . $params->get('columns')[6]['search']['value'] . "' ";
+        if (!empty($params->all('columns')[6]['search']['value'])) {
+            $filtre .= " and sm.id = '" . $params->all('columns')[6]['search']['value'] . "' ";
         }   
-        if (!empty($params->get('columns')[7]['search']['value'])) {
-            $filtre .= " and ens.id = '" . $params->get('columns')[7]['search']['value'] . "' ";
+        if (!empty($params->all('columns')[7]['search']['value'])) {
+            $filtre .= " and ens.id = '" . $params->all('columns')[7]['search']['value'] . "' ";
         }   
-        if (!empty($params->get('columns')[8]['search']['value'])) {
-            $filtre .= " and grd.id = '" . $params->get('columns')[8]['search']['value'] . "' ";
+        if (!empty($params->all('columns')[8]['search']['value'])) {
+            $filtre .= " and grd.id = '" . $params->all('columns')[8]['search']['value'] . "' ";
         }    
-        if (!empty($params->get('columns')[9]['search']['value'])) {
-            $niv = $params->get('columns')[9]['search']['value'];
+        if (!empty($params->all('columns')[9]['search']['value'])) {
+            $niv = $params->all('columns')[9]['search']['value'];
             $filtre .= " and grp.id = '" . $niv . "' ";
         }
         $columns = array(
@@ -122,7 +122,7 @@ class GenerationHonoraireController extends AbstractController
         left join pgrade grd ON grd.id = ens.grade_id
         left join pgroupe grp ON grp.id = emp.groupe_id
         $filtre ";
-        dd($sql);
+        // dd($sql);
         $totalRows .= $sql;
         $sqlRequest .= $sql;
         $stmt = $this->em->getConnection()->prepare($sql);
@@ -136,8 +136,8 @@ class GenerationHonoraireController extends AbstractController
             $sqlRequest .= $where;
         }
         // $sqlRequest .= DatatablesController::Order($request, $columns);
-        $changed_column = $params->get('order')[0]['column'] > 0 ? $params->get('order')[0]['column'] -1 : 0;
-        $sqlRequest .= " ORDER BY " .DatatablesController::Pluck($columns, 'db')[$changed_column] . "   " . $params->get('order')[0]['dir'] . "  LIMIT " . $params->get('start') . " ," . $params->get('length') . " ";
+        $changed_column = $params->all('order')[0]['column'] > 0 ? $params->all('order')[0]['column'] -1 : 0;
+        $sqlRequest .= " ORDER BY " .DatatablesController::Pluck($columns, 'db')[$changed_column] . "   " . $params->all('order')[0]['dir'] . "  LIMIT " . $params->get('start') . " ," . $params->get('length') . " ";
 
         $stmt = $this->em->getConnection()->prepare($sqlRequest);
         $resultSet = $stmt->executeQuery();

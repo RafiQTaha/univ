@@ -36,7 +36,7 @@
                 </div>
             </div>
             
-            <table id="datatables_gestion_formation" class="display" style="width:100%">
+            <table id="datatables_gestion_formation" class="table table-striped" style="width:100%">
                 <thead>
                     <tr>
                         <th>id</th>
@@ -77,8 +77,9 @@
 
 {% block javascripts %}
 {{parent()}}
+{{ encore_entry_script_tags('formation') }}
 
-<script src="/assets/js/parametre/formation.js"></script>
+{# <script src="/assets/js/parametre/formation.js"></script> #}
 
 {% endblock %}
 

@@ -58,20 +58,20 @@ class EpreuveController extends AbstractController
         $params = $request->query;
         $where = $totalRows = $sqlRequest = "";
         $filtre = "where 1 = 1 and an.validation_academique = 'non' and nepv.nature = 'normale'";   
-        // dd($params->get('columns')[0]);
+        // dd($params->all('columns')[0]);
         
-        // if (!empty($params->get('columns')[0]['search']['value'])) {
+        // if (!empty($params->all('columns')[0]['search']['value'])) {
         //     // dd("in");
-        //     $filtre .= " and etab.id = '" . $params->get('columns')[0]['search']['value'] . "' ";
+        //     $filtre .= " and etab.id = '" . $params->all('columns')[0]['search']['value'] . "' ";
         // } 
-        // if (!empty($params->get('columns')[1]['search']['value'])) {
-        //         $filtre .= " and form.id = '" . $params->get('columns')[1]['search']['value'] . "' ";
+        // if (!empty($params->all('columns')[1]['search']['value'])) {
+        //         $filtre .= " and form.id = '" . $params->all('columns')[1]['search']['value'] . "' ";
         // }    
-        // if (!empty($params->get('columns')[2]['search']['value'])) {
-        //     $filtre .= " and prom.id = '" . $params->get('columns')[2]['search']['value'] . "' ";
+        // if (!empty($params->all('columns')[2]['search']['value'])) {
+        //     $filtre .= " and prom.id = '" . $params->all('columns')[2]['search']['value'] . "' ";
         // }    
-        // if (!empty($params->get('columns')[3]['search']['value'])) {
-        //     $filtre .= " and an.id = '" . $params->get('columns')[3]['search']['value'] . "' ";
+        // if (!empty($params->all('columns')[3]['search']['value'])) {
+        //     $filtre .= " and an.id = '" . $params->all('columns')[3]['search']['value'] . "' ";
         // }    
         $columns = array(
             array( 'db' => 'epv.id','dt' => 0),
@@ -121,8 +121,8 @@ class EpreuveController extends AbstractController
             $sqlRequest .= $where;
         }
         // dd($sql);
-        $changed_column = $params->get('order')[0]['column'] > 0 ? $params->get('order')[0]['column'] - 1 : 0;
-        $sqlRequest .= " ORDER BY " .DatatablesController::Pluck($columns, 'db')[$changed_column] . "   " . $params->get('order')[0]['dir'] . "  LIMIT " . $params->get('start') . " ," . $params->get('length') . " ";
+        $changed_column = $params->all('order')[0]['column'] > 0 ? $params->all('order')[0]['column'] - 1 : 0;
+        $sqlRequest .= " ORDER BY " .DatatablesController::Pluck($columns, 'db')[$changed_column] . "   " . $params->all('order')[0]['dir'] . "  LIMIT " . $params->get('start') . " ," . $params->get('length') . " ";
         // $sqlRequest .= DatatablesController::Order($request, $columns);
         $stmt = $this->em->getConnection()->prepare($sqlRequest);
         $resultSet = $stmt->executeQuery();
@@ -165,20 +165,20 @@ class EpreuveController extends AbstractController
         $params = $request->query;
         $where = $totalRows = $sqlRequest = "";
         $filtre = "where 1 = 1 and an.validation_academique = 'non' and nepv.nature = 'rattrapage'";   
-        // dd($params->get('columns')[0]);
+        // dd($params->all('columns')[0]);
         
-        // if (!empty($params->get('columns')[0]['search']['value'])) {
+        // if (!empty($params->all('columns')[0]['search']['value'])) {
         //     // dd("in");
-        //     $filtre .= " and etab.id = '" . $params->get('columns')[0]['search']['value'] . "' ";
+        //     $filtre .= " and etab.id = '" . $params->all('columns')[0]['search']['value'] . "' ";
         // } 
-        // if (!empty($params->get('columns')[1]['search']['value'])) {
-        //         $filtre .= " and form.id = '" . $params->get('columns')[1]['search']['value'] . "' ";
+        // if (!empty($params->all('columns')[1]['search']['value'])) {
+        //         $filtre .= " and form.id = '" . $params->all('columns')[1]['search']['value'] . "' ";
         // }    
-        // if (!empty($params->get('columns')[2]['search']['value'])) {
-        //     $filtre .= " and prom.id = '" . $params->get('columns')[2]['search']['value'] . "' ";
+        // if (!empty($params->all('columns')[2]['search']['value'])) {
+        //     $filtre .= " and prom.id = '" . $params->all('columns')[2]['search']['value'] . "' ";
         // }    
-        // if (!empty($params->get('columns')[3]['search']['value'])) {
-        //     $filtre .= " and an.id = '" . $params->get('columns')[3]['search']['value'] . "' ";
+        // if (!empty($params->all('columns')[3]['search']['value'])) {
+        //     $filtre .= " and an.id = '" . $params->all('columns')[3]['search']['value'] . "' ";
         // }    
         $columns = array(
             array( 'db' => 'epv.id','dt' => 0),
@@ -227,8 +227,8 @@ class EpreuveController extends AbstractController
         if (isset($where) && $where != '') {
             $sqlRequest .= $where;
         }
-        $changed_column = $params->get('order')[0]['column'] > 0 ? $params->get('order')[0]['column'] - 1 : 0;
-        $sqlRequest .= " ORDER BY " .DatatablesController::Pluck($columns, 'db')[$changed_column] . "   " . $params->get('order')[0]['dir'] . "  LIMIT " . $params->get('start') . " ," . $params->get('length') . " ";
+        $changed_column = $params->all('order')[0]['column'] > 0 ? $params->all('order')[0]['column'] - 1 : 0;
+        $sqlRequest .= " ORDER BY " .DatatablesController::Pluck($columns, 'db')[$changed_column] . "   " . $params->all('order')[0]['dir'] . "  LIMIT " . $params->get('start') . " ," . $params->get('length') . " ";
         // $sqlRequest .= DatatablesController::Order($request, $columns);
         // dd($sqlRequest);
         $stmt = $this->em->getConnection()->prepare($sqlRequest);

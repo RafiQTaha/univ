@@ -60,7 +60,7 @@
                         </div>
                     </div>
                 </div>
-            <table id="datables_reglement" class="display" style="width:100%">
+            <table id="datables_reglement" class="table table-striped" style="width:100%">
                 <thead>
                     <tr>
                         <th>Ord</th>
@@ -118,7 +118,8 @@
 
 {% block javascripts %}
 {{parent()}}
-<script src="/assets/js/facture/reglement.js"></script>
+{# <script src="/assets/js/facture/reglement.js"></script> #}
+{{ encore_entry_script_tags('reglement') }}
 
 {% endblock %}
 

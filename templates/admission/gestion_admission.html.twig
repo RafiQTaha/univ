@@ -48,10 +48,10 @@
                     </div>
                 </div>
             </div>
-            <table id="datatables_gestion_admission" class="display" style="width:100%">
+            <table id="datatables_gestion_admission" class="table table-striped" style="width:100%">
                 <thead>
                     <tr>
-                        <th>Option</th>
+                        <th width="1">#</th>
                         <th>id</th>
                         <th>C.ADM</th>
                         <th>C.PRE</th>
@@ -69,7 +69,7 @@
                 </tbody>
                 <tfoot>
                     <tr>
-                        <th>Option</th>
+                        <th width="1">#</th>
                         <th>id</th>
                         <th>C.ADM</th>
                         <th>C.PRE</th>
@@ -101,8 +101,9 @@
 
 {% block javascripts %}
 {{parent()}}
+{{ encore_entry_script_tags('gestionadmission') }}
 
-<script src="/assets/js/admission/gestionadmission.js"></script>
+{# <script src="/assets/js/admission/gestionadmission.js"></script> #}
 
 {% endblock %}
 

@@ -24,11 +24,7 @@ use Symfony\Component\HttpKernel\Event\ResponseEvent;
  */
 class FirePHPHandler extends BaseFirePHPHandler
 {
-    private $headers = [];
-
-    /**
-     * @var Response
-     */
+    private array $headers = [];
     private $response;
 
     /**

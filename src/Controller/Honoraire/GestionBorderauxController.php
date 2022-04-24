@@ -56,17 +56,17 @@ class GestionBorderauxController extends AbstractController
         $where = $totalRows = $sqlRequest = "";
         $filtre = " where emp.annuler = 0 ";
         
-        if (!empty($params->get('columns')[0]['search']['value'])) {
-            $filtre .= " and etab.id = '" . $params->get('columns')[0]['search']['value'] . "' ";
+        if (!empty($params->all('columns')[0]['search']['value'])) {
+            $filtre .= " and etab.id = '" . $params->all('columns')[0]['search']['value'] . "' ";
         }
-        if (!empty($params->get('columns')[1]['search']['value'])) {
-            $filtre .= " and frm.id = '" . $params->get('columns')[1]['search']['value'] . "' ";
+        if (!empty($params->all('columns')[1]['search']['value'])) {
+            $filtre .= " and frm.id = '" . $params->all('columns')[1]['search']['value'] . "' ";
         }   
-        if (!empty($params->get('columns')[2]['search']['value'])) {
-            $filtre .= " and prm.id = '" . $params->get('columns')[2]['search']['value'] . "' ";
+        if (!empty($params->all('columns')[2]['search']['value'])) {
+            $filtre .= " and prm.id = '" . $params->all('columns')[2]['search']['value'] . "' ";
         }   
-        if (!empty($params->get('columns')[3]['search']['value'])) {
-            $filtre .= " and sm.id = '" . $params->get('columns')[3]['search']['value'] . "' ";
+        if (!empty($params->all('columns')[3]['search']['value'])) {
+            $filtre .= " and sm.id = '" . $params->all('columns')[3]['search']['value'] . "' ";
         } 
         
         $columns = array(
@@ -102,8 +102,8 @@ class GestionBorderauxController extends AbstractController
             $sqlRequest .= $where;
         }
         // $sqlRequest .= DatatablesController::Order($request, $columns);
-        $changed_column = $params->get('order')[0]['column'] > 0 ? $params->get('order')[0]['column'] -1 : 0;
-        $sqlRequest .= " ORDER BY " .DatatablesController::Pluck($columns, 'db')[$changed_column] . "   " . $params->get('order')[0]['dir'] . "  LIMIT " . $params->get('start') . " ," . $params->get('length') . " ";
+        $changed_column = $params->all('order')[0]['column'] > 0 ? $params->all('order')[0]['column'] -1 : 0;
+        $sqlRequest .= " ORDER BY " .DatatablesController::Pluck($columns, 'db')[$changed_column] . "   " . $params->all('order')[0]['dir'] . "  LIMIT " . $params->get('start') . " ," . $params->get('length') . " ";
 
         $stmt = $this->em->getConnection()->prepare($sqlRequest);
         $resultSet = $stmt->executeQuery();

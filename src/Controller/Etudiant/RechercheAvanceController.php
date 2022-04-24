@@ -199,8 +199,8 @@ class RechercheAvanceController extends AbstractController
     public function attestationReleveAnnee(TInscription $inscription, $assiduite): Response
     {
         $semestres = $this->em->getRepository(ExSnotes::class)->findBy(['inscription' => $inscription]);
-        $noteSemestre1 = $semestres[0];
-        $noteSemestre2 = $semestres[1];
+        $noteSemestre1 = $semestres ? $semestres[0] : die("Note semestre introuvable");
+        $noteSemestre2 = $semestres ? $semestres[1] : die("Note semestre introuvable");
         if($assiduite == 0){
             $noteModulesBySemestre1 = $this->em->getRepository(ExMnotes::class)->getNotesModuleSansAssiduiteBySemestre($noteSemestre1->getSemestre(), $inscription);
             $noteModulesBySemestre2 = $this->em->getRepository(ExMnotes::class)->getNotesModuleSansAssiduiteBySemestre($noteSemestre2->getSemestre(), $inscription);

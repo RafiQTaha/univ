@@ -46,7 +46,7 @@
                         </div>
                     </div>
                 </div>
-            <table id="datables_borderaux" class="display" style="width:100%">
+            <table id="datables_borderaux" class="table table-striped" style="width:100%">
                 <thead>
                     <tr>
                         <th>Ord</th>
@@ -91,7 +91,9 @@
 
 {% block javascripts %}
 {{parent()}}
-<script src="/assets/js/facture/bordereau.js"></script>
+{{ encore_entry_script_tags('bordereau') }}
+
+{# <script src="/assets/js/facture/bordereau.js"></script> #}
 
 {% endblock %}
 

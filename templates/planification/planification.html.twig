@@ -86,8 +86,9 @@
 
 {% block javascripts %}
 {{parent()}}
+{{ encore_entry_script_tags('planification') }}
 
-<script src="/assets/js/planification/planification.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/locale-all.js"></script>
+{# <script src="/assets/js/planification/planification.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/locale-all.js"></script> #}
 {% endblock %}
 
