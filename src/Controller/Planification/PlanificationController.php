@@ -297,6 +297,8 @@ class PlanificationController extends AbstractController
                     $this->em->flush();
                 }
                 return new Response('Géneration bien Effectuée',200);
+            }else {
+                return new Response('Merci de Valider les seances pour les générer!',500);
             }
         }
         return new Response('Generation Echouée',500);
@@ -306,7 +308,7 @@ class PlanificationController extends AbstractController
     #[Route('/planifications_calendar_edit/{id}', name: 'planifications_calendar_edit')]
     public function planifications_calendar_edit(PlEmptime $emptime,Request $request): Response
     {
-        // dd($request);
+        // dd($request->get('n_semaine'));
         if ($request->get('nature_seance') == "" || $request->get('element') =="" || $request->get('salle') =="") {
             return new Response('Merci de renseignez tout les champs',500);
         }
@@ -322,11 +324,11 @@ class PlanificationController extends AbstractController
             //     'validation_academique'=>'non',
             //     'cloture_academique'=>'non',
             // ])->getDesignation();
-            $semaine = $this->em->getRepository(Semaine::class)->findOneBy(['nsemaine'=>$request->get('n_semaine'),'anneeS'=>$annee->getDesignation()]);
+            // $semaine = $this->em->getRepository(Semaine::class)->findOneBy(['nsemaine'=>$request->get('n_semaine'),'anneeS'=>$annee->getDesignation()]);
             $emptime->setProgrammation($programmation);
             $emptime->setDescription($request->get('description'));
             $emptime->setSalle($this->em->getRepository(PSalles::class)->find($request->get('salle')));
-            $emptime->setSemaine($semaine);
+            // $emptime->setSemaine($semaine);
             $emptime->setUserUpdated($this->getUser());
             $emptime->setUpdated(new \DateTime('now'));
             $this->em->flush();

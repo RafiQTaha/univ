@@ -11,11 +11,13 @@ use App\Controller\DatatablesController;
 use Doctrine\Persistence\ManagerRegistry;
 use App\Entity\AcEtablissement;
 use App\Entity\HHonens;
+use App\Entity\HHonensAnnuler;
 use App\Entity\PEnseignant;
 use App\Entity\PGrade;
 use App\Entity\PlEmptime;
 use App\Entity\Semaine;
 use App\Entity\PEnseignantExcept;
+use DateTime;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
@@ -58,7 +60,7 @@ class GestionHonoraireController extends AbstractController
          
         $params = $request->query;
         $where = $totalRows = $sqlRequest = "";
-        $filtre = " where 1=1 and hon.annuler = 0";
+        $filtre = " where 1=1 and hon.annuler = 0 and  ann.validation_academique = 'non' ";
         
         if (!empty($params->get('columns')[0]['search']['value'])) {
             $filtre .= " and etab.id = '" . $params->get('columns')[0]['search']['value'] . "' ";
@@ -71,8 +73,7 @@ class GestionHonoraireController extends AbstractController
         }   
         if (!empty($params->get('columns')[3]['search']['value'])) {
             $filtre .= " and sem.id = '" . $params->get('columns')[3]['search']['value'] . "' ";
-        } 
-        
+        }
         if (!empty($params->get('columns')[4]['search']['value'])) {
             if ($params->get('columns')[4]['search']['value'] !== 'All') {
                 $filtre .= " and hon.statut = '" . $params->get('columns')[4]['search']['value'] . "' ";
@@ -119,7 +120,7 @@ class GestionHonoraireController extends AbstractController
         INNER JOIN ac_semestre sem ON sem.id =  mdl.semestre_id
         INNER JOIN ac_promotion prm ON prm.id = sem.promotion_id
         INNER JOIN ac_formation frm ON frm.id = prm.formation_id
-        INNER JOIN ac_annee ann ON ann.formation_id = frm.id
+        INNER JOIN ac_annee ann ON ann.id = prog.annee_id
         INNER JOIN ac_etablissement etab ON etab.id = frm.etablissement_id
         $filtre ";
         // dd($sql);
@@ -188,16 +189,34 @@ class GestionHonoraireController extends AbstractController
     public function annuler_honoraires(Request $request): Response
     {
         $ids = json_decode($request->get('ids_seances'));
-        // dd($ids);
         if($ids == NULL){
             return new JsonResponse('Merci de Choisir au moins une ligne',500);
         }
         foreach ($ids as $id) {
             $honens = $this->em->getRepository(HHonens::class)->find($id);
-            $honens->setAnnuler(1);
-            $honens->setAnnulated(new \DateTime('now'));
-            $honens->setStatut('A');
-            $this->em->flush();
+            $user = $honens->getUserCreated() == Null ? Null : $honens->getUserCreated()->getId();
+            if ($honens->getStatut() == 'E') {
+                $honensAnnuler = new HHonensAnnuler();
+                $honensAnnuler->setEnseignant($honens->getEnseignant()->getId());
+                $honensAnnuler->setSeance($honens->getSeance()->getId());
+                $brd = $honens->getBordereau() == Null ? Null : $honens->getBordereau()->getId(); 
+                $honensAnnuler->setBordereau($brd);
+                $honensAnnuler->setCode($honens->getCode());
+                $user = $honens->getUserCreated() == Null ? Null : $honens->getUserCreated()->getId();
+                $honensAnnuler->setUserAnnuled($user);
+                $honensAnnuler->setUserCreated($this->getUser()->getId());
+                $honensAnnuler->setDateReglement($honens->getDateReglement());
+                $honensAnnuler->setCreated(new \DateTime('now'));
+                $honensAnnuler->setNbrHeur($honens->getNbrHeur());
+                $honensAnnuler->setMontant($honens->getMontant());
+                $honensAnnuler->setStatut('A');
+                $honensAnnuler->setAnnuler(1);
+                $honensAnnuler->setExept($honens->getExept());
+                
+                $this->em->remove($honens);
+                $this->em->persist($honensAnnuler);
+                $this->em->flush();
+            }
         }
         return new JsonResponse('Toutes les seances sont annuler',200);
     }
@@ -206,15 +225,16 @@ class GestionHonoraireController extends AbstractController
     public function regle_honoraires(Request $request): Response
     {
         $ids = json_decode($request->get('ids_seances'));
-        // dd($ids);
         if($ids == NULL){
             return new JsonResponse('Merci de Choisir au moins une ligne',500);
         }
         foreach ($ids as $id) {
             $honens = $this->em->getRepository(HHonens::class)->find($id);
-            $honens->setDateReglement(new \DateTime('now'));
-            $honens->setStatut('R');
-            $this->em->flush();
+            if ($honens->getStatut() == 'E') {
+                $honens->setDateReglement(new \DateTime('now'));
+                $honens->setStatut('R');
+                $this->em->flush();
+            }
         }
         return new JsonResponse('Toutes les seances sont Réglées',200);
     }
@@ -243,14 +263,6 @@ class GestionHonoraireController extends AbstractController
         // $gnotes = $this->em->getRepository(ExGnotes::class)->ExgnotesOrderByNom($epreuve);
         // foreach($gnotes as $gnote) {
         //     $sheet->setCellValue('A'.$i, $gnote->getInscription()->getId());
-        //     $sheet->setCellValue('B'.$i, $gnote->getInscription()->getAdmission()->getPreinscription()->getEtudiant()->getNom());
-        //     $sheet->setCellValue('C'.$i, $gnote->getInscription()->getAdmission()->getPreinscription()->getEtudiant()->getPrenom());
-        //     $sheet->setCellValue('D'.$i, $gnote->getNote());
-        //     $sheet->setCellValue('E'.$i, $gnote->getAbsence() ? '1' : '');
-        //     $sheet->setCellValue('F'.$i, $gnote->getObservation());
-        //     if($epreuve->getAnonymat() == 1){
-        //         $sheet->setCellValue('G'.$i, $gnote->getAnonymat());
-        //     }
         //     $i++;
         // }
 

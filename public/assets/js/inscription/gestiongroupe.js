@@ -1,13 +1,13 @@
-const Toast = Swal.mixin({
-    toast: true,
-    position: 'top-end',
-    showConfirmButton: false,
-    timer: 3000,
-    timerProgressBar: true,
-    didOpen: (toast) => {
-        toast.addEventListener('mouseenter', Swal.stopTimer)
-        toast.addEventListener('mouseleave', Swal.resumeTimer)
-    },
+    const Toast = Swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+            toast.addEventListener('mouseenter', Swal.stopTimer)
+            toast.addEventListener('mouseleave', Swal.resumeTimer)
+        },
     })
     let id_inscription = false;
     let idInscription = [];
@@ -24,6 +24,7 @@ const Toast = Swal.mixin({
         processing: true,
         serverSide: true,
         deferRender: true,
+        scrollX: true,
         drawCallback: function () {
             idInscription.forEach((e) => {
                 $("body tr#" + e)
@@ -159,6 +160,18 @@ const Toast = Swal.mixin({
         setTimeout(() => {
             $("#import_affectation .modal-body .alert").remove();
         }, 4000);
+    })
+    
+    $("#export").on("click", function(e) {
+        e.preventDefault();
+        if($("#promotion").val() == "" || $("#promotion").val() == ""){
+            Toast.fire({
+                icon: 'error',
+                title: 'Merci de Choisir une Promotion, Une Année!',
+            })
+            return;
+        }
+        window.open('/inscription/groupes/exportbypromotion/'+$("#promotion").val()+'/'+$("#annee").val(), '_blank');
     })
 
 })

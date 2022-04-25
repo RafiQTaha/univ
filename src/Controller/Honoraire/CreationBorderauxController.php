@@ -111,7 +111,7 @@ class CreationBorderauxController extends AbstractController
         INNER JOIN ac_semestre sem ON sem.id =  mdl.semestre_id
         INNER JOIN ac_promotion prm ON prm.id = sem.promotion_id
         INNER JOIN ac_formation frm ON frm.id = prm.formation_id
-        INNER JOIN ac_annee ann ON ann.formation_id = frm.id
+        INNER JOIN ac_annee ann ON ann.id = prog.annee_id
         INNER JOIN ac_etablissement etab ON etab.id = frm.etablissement_id
         $filtre ";
         // dd($sql);
@@ -217,6 +217,22 @@ class CreationBorderauxController extends AbstractController
         );
         $mpdf->WriteHTML($html);
         $mpdf->Output("Borderaux.pdf", "I");
+    }
+    
+    
+    #[Route('/findSemaine', name: 'findSemaine')]
+    public function findSemaine(Request $request): Response
+    {
+        // dd($request->query->get("search"));
+        $semaine = $this->em->getRepository(Semaine::class)->findSemaine($request->query->get("search"));
+        // $html = '<option value="">Choix semaine</option>';
+        $list['id'] = $semaine->getId();
+        $list['nsemaine'] = $semaine->getNsemaine();
+        $list['debut'] = $semaine->getDateDebut()->format('j/m');
+        $list['fin'] = $semaine->getDateFin()->format('j/m');
+        // dd($semaine);
+        // dd($list);
+        return new JsonResponse($list);
     }
     
 }

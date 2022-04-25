@@ -11,7 +11,7 @@ $(document).ready(function () {
         },
     })
     const pills = () => {
-        $('.nav-pills a').on('click', function (e) {
+        $('body').on('click','.nav-pills a', function (e) {
             $(this).tab('show');
         })
     }
@@ -278,7 +278,7 @@ $(document).ready(function () {
             const request = await axios.get('/api/element/'+id_module);
             response = request.data
         }
-        $('body #element').html(response).select2();
+        $('#element').html(response).select2();
     })
     $("body").on('change','#nature_seance', async function (){
         const id_nature_seance = $(this).val();
@@ -338,7 +338,8 @@ $(document).ready(function () {
     $("body").on('submit','.form_update_planning', async function (e){
         e.preventDefault();
         var formData = new FormData(this);
-        // console.log(formData);
+        // formData.append('n_semaine', currentweek);
+        ////////////
         let modalAlert =  $("#updateform_planif-modal .modal-body .alert");
         modalAlert.remove();
         const icon = $(".form_update_planning .btn i");
@@ -351,6 +352,10 @@ $(document).ready(function () {
             ); 
             icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin");
             alltimes()
+            setTimeout(() => {
+                $("#updateform_planif-modal .modal-body .alert").remove();
+                $('#updateform_planif-modal').modal("hide");
+            }, 4000);
         }catch(error){
             const message = error.response.data;
             // console.log(error, error.response);
@@ -360,10 +365,6 @@ $(document).ready(function () {
             );
             icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
         }
-        setTimeout(() => {
-           $("#updateform_planif-modal .modal-body .alert").remove();
-           $('#updateform_planif-modal').modal("hide");
-        }, 4000);
     })
 
     $('body').on('click','#planning_delete', async function(e) {
