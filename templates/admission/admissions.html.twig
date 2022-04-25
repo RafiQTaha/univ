@@ -80,8 +80,9 @@
 
 {% block javascripts %}
 {{parent()}}
+{{ encore_entry_script_tags('admission') }}
 
-<script src="/assets/js/admission/admissions.js"></script>
+{# <script src="/assets/js/admission/admissions.js"></script> #}
 
 {% endblock %}
 

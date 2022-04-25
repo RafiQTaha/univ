@@ -67,17 +67,17 @@ class GestionReglementsController extends AbstractController
         $where = $totalRows = $sqlRequest = "";
         $filtre = " where 1=1 ";
         
-        if (!empty($params->get('columns')[0]['search']['value'])) {
-            $filtre .= " and etab.id = '" . $params->get('columns')[0]['search']['value'] . "' ";
+        if (!empty($params->all('columns')[0]['search']['value'])) {
+            $filtre .= " and etab.id = '" . $params->all('columns')[0]['search']['value'] . "' ";
         }
-        if (!empty($params->get('columns')[1]['search']['value'])) {
-            $filtre .= " and frm.id = '" . $params->get('columns')[1]['search']['value'] . "' ";
+        if (!empty($params->all('columns')[1]['search']['value'])) {
+            $filtre .= " and frm.id = '" . $params->all('columns')[1]['search']['value'] . "' ";
         }
-        if (!empty($params->get('columns')[2]['search']['value'])) {
-            $filtre .= " and pae.id = '" . $params->get('columns')[2]['search']['value'] . "' ";
+        if (!empty($params->all('columns')[2]['search']['value'])) {
+            $filtre .= " and pae.id = '" . $params->all('columns')[2]['search']['value'] . "' ";
         }
-        if (!empty($params->get('columns')[3]['search']['value'])) {
-            if ($params->get('columns')[3]['search']['value'] == 'non') {
+        if (!empty($params->all('columns')[3]['search']['value'])) {
+            if ($params->all('columns')[3]['search']['value'] == 'non') {
                 $filtre .= " and (brd.code is NULL OR brd.code = 'NULL' OR brd.code = '' OR brd.code = ' ')";
             } else {
                 $filtre .= " and (brd.code is NOT NULL OR brd.code <> 'NULL' OR brd.code <> '' OR brd.code <> ' '  )";

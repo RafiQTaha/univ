@@ -34,8 +34,8 @@ class DatatablesController extends AbstractController {
     static function Search($request, $columns) {
         $where = "";
         $params = $request->query;
-        if (!empty($params->get('search')['value'])) {
-            $search = trim($params->get('search')['value']);
+        if (!empty($params->all('search')['value'])) {
+            $search = trim($params->all('search')['value']);
             foreach ($columns as $key => $value) {
                 if ($key == 0) {
                     $where = "and (" . $value['db'] . " LIKE '%$search%' ";
@@ -57,7 +57,7 @@ class DatatablesController extends AbstractController {
         $params = $request->query;
         // dd($params);
         $sqlRequest = "";
-        $sqlRequest = " ORDER BY " . self::Pluck($columns, 'db')[$params->get('order')[0]['column']] . "   " . $params->get('order')[0]['dir'] . "  LIMIT " . $params->get('start') . " ," . $params->get('length') . " ";
+        $sqlRequest = " ORDER BY " . self::Pluck($columns, 'db')[$params->all('order')[0]['column']] . "   " . $params->all('order')[0]['dir'] . "  LIMIT " . $params->get('start') . " ," . $params->get('length') . " ";
         return $sqlRequest;
     }
     

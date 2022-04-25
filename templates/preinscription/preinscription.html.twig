@@ -22,10 +22,10 @@
             </div>
             <div class="card-body">
 
-            <table id="datables_preinscription" class="display" style="width:100%">
+            <table id="datables_preinscription" class="table table-striped" style="width:100%">
                 <thead>
                     <tr>
-                        <th>Option</th>
+                        <th width="1">#</th>
                         <th>Id</th>
                         <th>Code</th>
                         <th>Nom</th>
@@ -43,7 +43,7 @@
                 </tbody>
                 <tfoot>
                     <tr>
-                        <th>Option</th>
+                        <th width="1">#</th>
                         <th>Id</th>
                         <th>Code</th>
                         <th>Nom</th>
@@ -76,8 +76,9 @@
 
 {% block javascripts %}
 {{parent()}}
+{{ encore_entry_script_tags('preinscription') }}
 
-<script src="/assets/js/preinscription/preinscription.js"></script>
+{# <script src="/assets/js/preinscription/preinscription.js"></script> #}
 
 {% endblock %}
 

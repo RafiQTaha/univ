@@ -23,7 +23,7 @@
             </div>
             <div class="card-body">
             
-            <table id="datatables_gestion_etablissement" class="display" style="width:100%">
+            <table id="datatables_gestion_etablissement" class="table table-striped" style="width:100%">
                 <thead>
                     <tr>
                         <th>id</th>
@@ -64,8 +64,9 @@
 
 {% block javascripts %}
 {{parent()}}
+{{ encore_entry_script_tags('etablissement') }}
 
-<script src="/assets/js/parametre/etablissement.js"></script>
+{# <script src="/assets/js/parametre/etablissement.js"></script> #}
 
 {% endblock %}
 

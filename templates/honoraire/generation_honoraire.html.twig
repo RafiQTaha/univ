@@ -110,7 +110,7 @@
                         </div>
                     </div>
                 </div>
-            <table id="datables_generation_honoraires" class="display" style="width:100%">
+            <table id="datables_generation_honoraires" class="table table-striped" style="width:100%">
                 <thead>
                     <tr>
                         <th>Ord</th>
@@ -169,7 +169,9 @@
 
 {% block javascripts %}
 {{parent()}}
-<script src="/assets/js/honoraire/generation_honoraire.js"></script>
+{{ encore_entry_script_tags('generationHonoraire') }}
+
+{# <script src="/assets/js/honoraire/generation_honoraire.js"></script> #}
 
 {% endblock %}
 

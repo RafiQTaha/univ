@@ -56,8 +56,9 @@
 
 {% block javascripts %}
 {{parent()}}
+{{ encore_entry_script_tags('epreuve') }}
 
-<script src="/assets/js/administration/epreuve.js"></script>
+{# <script src="/assets/js/administration/epreuve.js"></script> #}
 
 {% endblock %}
 

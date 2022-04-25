@@ -62,7 +62,7 @@
                     </div>
                 </div>
                 
-                <table id="list_etudiants"  class="display" style="width:100%; overflow:scroll">
+                <table id="list_etudiants"  class="table table-striped" style="width:100%; overflow:scroll">
                 </table>
                 
             </div>
@@ -82,8 +82,9 @@
 
 {% block javascripts %}
 {{parent()}}
+{{ encore_entry_script_tags('impression') }}
 
-<script src="/assets/js/administration/impression.js"></script>
+{# <script src="/assets/js/administration/impression.js"></script> #}
 
 {% endblock %}
 

@@ -35,10 +35,10 @@ class FormationController extends AbstractController
         // dd($params);
         $where = $totalRows = $sqlRequest = "";
         $filtre = "where 1 = 1";   
-        // dd($params->get('columns')[0]);
-        if (!empty($params->get('columns')[0]['search']['value'])) {
+        // dd($params->all('columns')[0]);
+        if (!empty($params->all('columns')[0]['search']['value'])) {
             // dd("in");
-            $filtre .= " and etab.id = '" . $params->get('columns')[0]['search']['value'] . "' ";
+            $filtre .= " and etab.id = '" . $params->all('columns')[0]['search']['value'] . "' ";
         }
         $columns = array(
             array( 'db' => 'form.id','dt' => 0),

@@ -375,8 +375,8 @@ class PlanificationController extends AbstractController
         $writer->save($temp_file);
         return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);
     }
-    #[Route('/import', name: 'administration_note_import')]
-    public function epreuveEnMasse(Request $request, SluggerInterface $slugger) 
+    #[Route('/import', name: 'planning_canvas_import')]
+    public function planningEnMasse(Request $request, SluggerInterface $slugger) 
     {
         $file = $request->files->get('file');
         if(!$file){

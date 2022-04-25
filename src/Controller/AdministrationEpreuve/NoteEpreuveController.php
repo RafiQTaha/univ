@@ -61,26 +61,26 @@ class NoteEpreuveController extends AbstractController
         $where = $totalRows = $sqlRequest = "";
         $filtre = " and mdl.active = 1 and ann.cloture_academique = 'non' and ann.validation_academique = 'non' and epv.statut_id = 29 ";
         
-        if (!empty($params->get('columns')[0]['search']['value'])) {
-            $filtre .= " and etab.id = '" . $params->get('columns')[0]['search']['value'] . "' ";
+        if (!empty($params->all('columns')[0]['search']['value'])) {
+            $filtre .= " and etab.id = '" . $params->all('columns')[0]['search']['value'] . "' ";
         }
-        if (!empty($params->get('columns')[1]['search']['value'])) {
-            $filtre .= " and forma.id = '" . $params->get('columns')[1]['search']['value'] . "' ";
+        if (!empty($params->all('columns')[1]['search']['value'])) {
+            $filtre .= " and forma.id = '" . $params->all('columns')[1]['search']['value'] . "' ";
         }   
-        if (!empty($params->get('columns')[2]['search']['value'])) {
-            $filtre .= " and prm.id = '" . $params->get('columns')[2]['search']['value'] . "' ";
+        if (!empty($params->all('columns')[2]['search']['value'])) {
+            $filtre .= " and prm.id = '" . $params->all('columns')[2]['search']['value'] . "' ";
         }   
-        if (!empty($params->get('columns')[3]['search']['value'])) {
-            $filtre .= " and sem.id = '" . $params->get('columns')[3]['search']['value'] . "' ";
+        if (!empty($params->all('columns')[3]['search']['value'])) {
+            $filtre .= " and sem.id = '" . $params->all('columns')[3]['search']['value'] . "' ";
         }   
-        if (!empty($params->get('columns')[4]['search']['value'])) {
-            $filtre .= " and mdl.id = '" . $params->get('columns')[4]['search']['value'] . "' ";
+        if (!empty($params->all('columns')[4]['search']['value'])) {
+            $filtre .= " and mdl.id = '" . $params->all('columns')[4]['search']['value'] . "' ";
         }   
-        if (!empty($params->get('columns')[5]['search']['value'])) {
-            $filtre .= " and ele.id = '" . $params->get('columns')[5]['search']['value'] . "' ";
+        if (!empty($params->all('columns')[5]['search']['value'])) {
+            $filtre .= " and ele.id = '" . $params->all('columns')[5]['search']['value'] . "' ";
         }   
-        if (!empty($params->get('columns')[6]['search']['value'])) {
-            $filtre .= " and ens.id = '" . $params->get('columns')[6]['search']['value'] . "' ";
+        if (!empty($params->all('columns')[6]['search']['value'])) {
+            $filtre .= " and ens.id = '" . $params->all('columns')[6]['search']['value'] . "' ";
         } 
 
         $columns = array(

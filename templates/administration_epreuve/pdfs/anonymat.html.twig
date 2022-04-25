@@ -25,7 +25,7 @@
 
 </style>
 <br/>
-<br/>
+
 <table style="width: 100% ;text-align: center;border: 1px solid #292929; border-bottom: none;" cellspacing="0">        <tr>
     <tr>
     <td style="width: 30% ; border-bottom: 1px solid #292929 ;">
@@ -68,7 +68,10 @@
 </table>
 
 
-<br/>
+
+<h2 style="text-align: center;">
+    ETAT DES NOTES {% if epreuve.statut.id == 30 %} DÉFINITIF {% endif %}
+</h2>
 <!--End III-  Détails commande-->
 <table cellspacing="0" style="width: 100%; text-align: left; font-size: 12px" >
     <tr>
@@ -245,7 +248,7 @@
         </tr>
     </thead>
     <tbody>
-        {% for gnote in epreuve.gnotes %}
+        {% for gnote in epreuve.gnotes|sort((a, b) => a.anonymat <=> b.anonymat) %}
         <tr>
             <td style="padding:6px;border-right:1px solid white;text-align: left;">{{loop.index}}</td>
             <td style="padding:6px;border-right:1px solid white;text-align: left;">{{gnote.anonymat}}</td>
