@@ -430,6 +430,99 @@ $(document).ready(function  () {
         e.preventDefault();
         window.open("/administration/epreuve/impression/"+id_epreuve+"/1", '_blank');
     })
+    $('select').select2();
+    $("#etablissement").on('change', async function (){
+        const id_etab = $(this).val();
+        let response = ""
+        if(id_etab != "") {
+            const request = await axios.get('/api/formation/'+id_etab);
+            response = request.data
+        }
+        $('#element').html('').select2();
+        $('#module').html('').select2();
+        $('#semestre').html('').select2();
+        $('#promotion').html('').select2();
+        $('#formation').html(response).select2();
+    })
+    $("#formation").on('change', async function (){
+        const id_formation = $(this).val();
+        let response = ""
+        if(id_formation != "") {
+            const request = await axios.get('/api/promotion/'+id_formation);
+            response = request.data
+        }
+        $('#element').html('').select2();
+        $('#module').html('').select2();
+        $('#semestre').html('').select2();
+        $('#promotion').html(response).select2();
+    })
+    $("#promotion").on('change', async function (){
+        const id_promotion = $(this).val();
+        if(id_promotion != "") {
+            const request = await axios.get('/api/semestre/'+id_promotion);
+            response = request.data
+            const requestt = await axios.get('/api/niv1/'+id_promotion);
+            niv1 = requestt.data 
+        }
+        $('#element').html('').select2();
+        $('#module').html('').select2();
+        $('#semestre').html(response).select2();
+    })
+    $("#semestre").on('change', async function (){
+        const id_semestre = $(this).val();
+        if(id_semestre != "") {
+            const request = await axios.get('/api/module/'+id_semestre);
+            response = request.data
+        }
+        $('#element').html('').select2();
+        $('#module').html(response).select2();
+    })
+    $("#module").on('change', async function (){
+        const id_module = $(this).val();
+        if(id_module != "") {
+            const request = await axios.get('/api/element/'+id_module);
+            response = request.data
+        }
+        $('#element').html(response).select2();
+    })
+    
+    $("#ajouter_epreuve").on("click", function(e){  
+        e.preventDefault();
+        $("#ajouter_epreuve-modal").modal("show")
+    })
+    $("body").on('submit', "#add_epreuve", async (e) => {
+        e.preventDefault();
+        // var res = confirm('Vous voulez vraiment ajouter cette enregistrement ?');
+        // if(res == 1){
+          var formData = new FormData($('#add_epreuve')[0]);
+          let modalAlert = $("#ajouter_epreuve-modal .modal-body .alert")
+          modalAlert.remove();
+          const icon = $("#ajouter_epreuve-modal button i");
+          icon.removeClass('fa-check').addClass("fa-spinner fa-spin");
+          try {
+            const request = await axios.post('/administration/epreuve/add_epreuve', formData);
+            const response = request.data;
+            $("#ajouter_epreuve-modal .modal-body").prepend(
+              `<div class="alert alert-success" style="width: 98%;margin: 0 auto;">
+                  <p>${response}</p>
+                </div>`
+            );
+            icon.addClass('fa-check').removeClass("fa-spinner fa-spin ");
+            tableEpreuveNormal.ajax.reload(null, false)
+          }catch (error) {
+            const message = error.response.data;
+            modalAlert.remove();
+            $("#ajouter_epreuve-modal .modal-body").prepend(
+              `<div class="alert alert-danger" style="width: 98%;margin: 0 auto;">${message}</div>`
+            );
+            icon.addClass('fa-check').removeClass("fa-spinner fa-spin ");
+          }
+        // }
+        setTimeout(() => {
+          $(".modal-body .alert").remove();
+        }, 2500)  
+      })
+    
 })
     
 
