@@ -109,7 +109,6 @@ class ApiController extends AbstractController
         $data = "<option enabled value='' disabled='disabled'>Choix Enseignants</option>";
         if ($programmation != NULL) {
             foreach ($programmation->getEnseignants() as $enseignant) {
-                dd($enseignant);
                 $data .="<option value=".$enseignant->getId().">".$enseignant->getNom()." ".$enseignant->getPrenom()."</option>";
             }
         }
@@ -262,6 +261,21 @@ class ApiController extends AbstractController
          }
         return new JsonResponse($data);
     }
+    
+    // #[Route('/findSemaine', name: 'findSemaine')]
+    // public function findSemaine(Request $request): Response
+    // {
+    //     dd($request->query->get("search"));
+    //     $semaines = $this->em->getRepository(Semaine::class)->findSemaine($request->query->get("search"));
+    //     $html = '<option value="">Choix semaine</option>';
+    //     foreach ($semaines as $semaine) {
+    //         // $html .= '<option value='.$semaine->getId().'>Semaine '.$semaine->getNsemaine().' de: '..' à '..{{semaine.datefin | date('j/m')}} {{semaine.datefin | date('Y')}}</option>'
+    //         $html .= '<option value='.$semaine->getId().'>Semaine '.$semaine->getNsemaine().' de: '.$semaine->getDateDebut()->format('j/m').' à '.$semaine->getDateFin()->format('j/m').'</option>';
+    //     }
+    //     dd($html);
+    //     // dd($admissions);
+    //     // return new Response(json_encode($admissions));
+    // }
 
     static function dropdown($objects,$choix)
     {

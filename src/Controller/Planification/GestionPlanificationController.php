@@ -118,9 +118,10 @@ class GestionPlanificationController extends AbstractController
         INNER join ac_semestre sem on sem.id = mdl.semestre_id
         INNER join ac_promotion prom on prom.id = sem.promotion_id
         inner join ac_formation frm on frm.id = prom.formation_id
-        INNER join ac_annee ann on ann.formation_id = frm.id
+        -- INNER JOIN ac_annee ann ON ann.formation_id = frm.id
+        INNER JOIN ac_annee ann ON ann.id = prg.annee_id
         INNER join ac_etablissement etab on etab.id = frm.etablissement_id
-        LEFT join pl_emptimens emen on emen.seance_id = emp.id
+        INNER join pl_emptimens emen on emen.seance_id = emp.id
         LEFT join penseignant ens on ens.id = emen.enseignant_id
         LEFT join pgrade grd on grd.id = ens.grade_id
         INNER join semaine sm on sm.id = emp.semaine_id $filtre ";

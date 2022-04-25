@@ -85,7 +85,6 @@ class GestionBorderauxController extends AbstractController
         INNER JOIN ac_semestre sem ON sem.id =  mdl.semestre_id
         INNER JOIN ac_promotion prm ON prm.id = sem.promotion_id
         INNER JOIN ac_formation frm ON frm.id = prm.formation_id
-        INNER JOIN ac_annee ann ON ann.formation_id = frm.id
         INNER JOIN ac_etablissement etab ON etab.id = frm.etablissement_id
         $filtre GROUP BY alb.id";
         // dd($sql);

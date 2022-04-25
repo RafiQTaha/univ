@@ -60,5 +60,18 @@ class SemaineRepository extends ServiceEntityRepository
     //         ->getOneOrNullResult()
     //     ;
     // }
+
+    public function findSemaine($day): ?Semaine
+    {
+        return $this->createQueryBuilder('s')
+            ->andWhere('s.date_debut <= :day')
+            ->andWhere('s.date_fin >= :day')
+            ->setParameter('day', $day)
+            ->getQuery()
+            // ->getResult()
+            ->getOneOrNullResult()
+        ;
+        // dd($return);
+    }
     
 }

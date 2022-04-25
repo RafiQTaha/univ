@@ -165,7 +165,7 @@ $(document).ready(function () {
             return;
         }
         const icon = $("#exporter i");
-        icon.removeClass('fa-telegram-plane').addClass("fa-spinner fa-spin");
+        icon.removeClass('fab fa-telegram-plane').addClass("fas fa-spinner fa-spin");
         var formData = new FormData();
         formData.append('ids_borderaux', JSON.stringify(ids_borderaux));
         try {
@@ -175,11 +175,11 @@ $(document).ready(function () {
                 icon: 'success',
                 title: 'Rapprt Bien Générer',
             })
-            icon.addClass('fa-telegram-plane').removeClass("fa-spinner fa-spin");
+            icon.addClass('fab fa-telegram-plane').removeClass("fas fa-spinner fa-spin");
             window.open('/uploads/honoraire/'+response,'_blank');
         } catch (error) {
             const message = error.response.data;
-            icon.addClass('fa-telegram-plane').removeClass("fa-spinner fa-spin");
+            icon.addClass('fab fa-telegram-plane').removeClass("fas fa-spinner fa-spin");
         }
     })
     

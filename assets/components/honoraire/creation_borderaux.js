@@ -165,6 +165,34 @@ $(document).ready(function () {
         const semaine = $(this).val();
         table_creation_borderaux.columns(5).search(semaine).draw();
     })
+    $("#semaine").select2({
+        minimumInputLength: 10,  // required enter 3 characters or more
+        allowClear: true,
+        placeholder: '2022-10-10',
+        language: "fr",
+        ajax: {
+           dataType: 'json',
+           url: '/honoraire/creation_borderaux/findSemaine',  
+           delay: 5,  // ini bebas mau di pake atau tidak
+           data: function(params) {
+             return {
+               search: params.term
+             }
+           },
+           processResults: function (data, page) {
+            console.log(data)
+           
+            var list = {
+                text: "Semaine " +data.nsemaine +" de: "+data.debut + " à " +data.fin,
+                id: data.id
+            }
+
+            return {
+                results:  [list]
+            };
+         },
+       }
+    })
     $("#professeur").on('change', async function (){
         const id_prof = $(this).val();
         table_creation_borderaux.columns(6).search(id_prof).draw();
