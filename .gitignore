@@ -21,6 +21,7 @@
 /phpunit.xml
 .phpunit.result.cache
 ###< phpunit/phpunit ###
+/public/build
 
 ###> symfony/webpack-encore-bundle ###
 npm-debug.log
