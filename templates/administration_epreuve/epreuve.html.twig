@@ -50,13 +50,15 @@
 {% include 'administration_epreuve/modals/affilier.html.twig' %}
 {% include 'administration_epreuve/modals/import.html.twig' %}
 {% include 'administration_epreuve/modals/imprimer.html.twig' %}
+{% include 'administration_epreuve/modals/ajouter_epreuve.html.twig' %}
 
 {% endblock %}
 
 {% block javascripts %}
 {{parent()}}
+{{ encore_entry_script_tags('epreuve') }}
 
-<script src="/assets/js/administration/epreuve.js"></script>
+{# <script src="/assets/js/administration/epreuve.js"></script> #}
 
 {% endblock %}
 

@@ -1,6 +1,7 @@
 {
     "devDependencies": {
         "@hotwired/stimulus": "^3.0.0",
+        "@popperjs/core": "^2.11.5",
         "@symfony/stimulus-bridge": "^3.0.0",
         "@symfony/webpack-encore": "^1.7.0",
         "core-js": "^3.0.0",
@@ -18,9 +19,15 @@
         "build": "encore production --progress"
     },
     "dependencies": {
-        "axios": "^0.24.0",
-        "bootstrap": "4.3.1",
-        "fullcalendar": "^5.10.2",
-        "jquery": "^3.6.0"
+        "@fortawesome/fontawesome-free": "^5.7.2",
+        "axios": "^0.26.1",
+        "bootstrap": "4.5.2",
+        "datatables": "^1.10.18",
+        "datatables.net-bs4": "^1.11.5",
+        "fullcalendar": "^3.10.2",
+        "jquery": "^3.6.0",
+        "moment": "^2.29.3",
+        "select2": "^4.1.0-rc.0",
+        "sweetalert2": "^11.4.9"
     }
 }

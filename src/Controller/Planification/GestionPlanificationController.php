@@ -58,39 +58,39 @@ class GestionPlanificationController extends AbstractController
         $where = $totalRows = $sqlRequest = "";
         $filtre = " where ann.validation_academique = 'non' and emp.active = 1 and emp.annuler = 0";
         
-        if (!empty($params->get('columns')[0]['search']['value'])) {
-            $filtre .= " and etab.id = '" . $params->get('columns')[0]['search']['value'] . "' ";
+        if (!empty($params->all('columns')[0]['search']['value'])) {
+            $filtre .= " and etab.id = '" . $params->all('columns')[0]['search']['value'] . "' ";
         }
-        if (!empty($params->get('columns')[1]['search']['value'])) {
-            $filtre .= " and frm.id = '" . $params->get('columns')[1]['search']['value'] . "' ";
+        if (!empty($params->all('columns')[1]['search']['value'])) {
+            $filtre .= " and frm.id = '" . $params->all('columns')[1]['search']['value'] . "' ";
         }   
-        if (!empty($params->get('columns')[2]['search']['value'])) {
-            $filtre .= " and prom.id = '" . $params->get('columns')[2]['search']['value'] . "' ";
+        if (!empty($params->all('columns')[2]['search']['value'])) {
+            $filtre .= " and prom.id = '" . $params->all('columns')[2]['search']['value'] . "' ";
         }   
-        if (!empty($params->get('columns')[3]['search']['value'])) {
-            $filtre .= " and sem.id = '" . $params->get('columns')[3]['search']['value'] . "' ";
+        if (!empty($params->all('columns')[3]['search']['value'])) {
+            $filtre .= " and sem.id = '" . $params->all('columns')[3]['search']['value'] . "' ";
         }   
-        if (!empty($params->get('columns')[4]['search']['value'])) {
-            $filtre .= " and mdl.id = '" . $params->get('columns')[4]['search']['value'] . "' ";
+        if (!empty($params->all('columns')[4]['search']['value'])) {
+            $filtre .= " and mdl.id = '" . $params->all('columns')[4]['search']['value'] . "' ";
         }   
-        if (!empty($params->get('columns')[5]['search']['value'])) {
-            $filtre .= " and elm.id = '" . $params->get('columns')[5]['search']['value'] . "' ";
+        if (!empty($params->all('columns')[5]['search']['value'])) {
+            $filtre .= " and elm.id = '" . $params->all('columns')[5]['search']['value'] . "' ";
         }    
-        if (!empty($params->get('columns')[6]['search']['value'])) {
-            $filtre .= " and sm.id = '" . $params->get('columns')[6]['search']['value'] . "' ";
+        if (!empty($params->all('columns')[6]['search']['value'])) {
+            $filtre .= " and sm.id = '" . $params->all('columns')[6]['search']['value'] . "' ";
         }   
-        if (!empty($params->get('columns')[7]['search']['value'])) {
-            $filtre .= " and ens.id = '" . $params->get('columns')[7]['search']['value'] . "' ";
+        if (!empty($params->all('columns')[7]['search']['value'])) {
+            $filtre .= " and ens.id = '" . $params->all('columns')[7]['search']['value'] . "' ";
         }   
-        if (!empty($params->get('columns')[8]['search']['value'])) {
-            $filtre .= " and grd.id = '" . $params->get('columns')[8]['search']['value'] . "' ";
+        if (!empty($params->all('columns')[8]['search']['value'])) {
+            $filtre .= " and grd.id = '" . $params->all('columns')[8]['search']['value'] . "' ";
         }    
-        if (!empty($params->get('columns')[9]['search']['value'])) {
-            $annuler = $params->get('columns')[9]['search']['value'] == 'non' ? 0 : 1;
+        if (!empty($params->all('columns')[9]['search']['value'])) {
+            $annuler = $params->all('columns')[9]['search']['value'] == 'non' ? 0 : 1;
             $filtre .= " and emp.annuler = '" . $annuler . "' ";
         }    
-        if (!empty($params->get('columns')[10]['search']['value'])) {
-            $valider = $params->get('columns')[10]['search']['value'] == 'non' ? 0 : 1;
+        if (!empty($params->all('columns')[10]['search']['value'])) {
+            $valider = $params->all('columns')[10]['search']['value'] == 'non' ? 0 : 1;
             $filtre .= " and emp.valider = '" . $valider . "' ";
         } 
         $columns = array(

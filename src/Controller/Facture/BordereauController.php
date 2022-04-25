@@ -49,11 +49,11 @@ class BordereauController extends AbstractController
         $where = $totalRows = $sqlRequest = "";
         $filtre = "where 1=1 ";
         
-        if (!empty($params->get('columns')[0]['search']['value'])) {
-            $filtre .= " and etab.id = '" . $params->get('columns')[0]['search']['value'] . "' ";
+        if (!empty($params->all('columns')[0]['search']['value'])) {
+            $filtre .= " and etab.id = '" . $params->all('columns')[0]['search']['value'] . "' ";
         }
-        if (!empty($params->get('columns')[1]['search']['value'])) {
-            $filtre .= " and pae.id = '" . $params->get('columns')[1]['search']['value'] . "' ";
+        if (!empty($params->all('columns')[1]['search']['value'])) {
+            $filtre .= " and pae.id = '" . $params->all('columns')[1]['search']['value'] . "' ";
         }
         $columns = array(
             array( 'db' => 'brd.id','dt' => 0 ),

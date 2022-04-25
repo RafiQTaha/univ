@@ -50,11 +50,11 @@ class AnneeController extends AbstractController
     {
         $order = $request->get('order');
         $annee = $this->em->getRepository(AcAnnee::class)->getActiveAnneeByFormation($promotion->getFormation());
-        // $verify = $this->em->getRepository(ExControle::class)->checkIfyoucanCalculSemestre($annee, $semestre);
+        $verify = $this->em->getRepository(ExControle::class)->alreadyValidateAnnee($promotion, $annee);
         $check = 0; //valider cette opération
-        // if(!$verify){
-        //     $check = 1; //opération déja validé
-        // }
+        if(!$verify){
+            $check = 1; //opération déja validé
+        }
         
         $inscriptions = $this->em->getRepository(TInscription::class)->getInscriptionsByAnneeAndPromo($annee, $promotion, $order);
         $data_saved = [];
@@ -207,7 +207,7 @@ class AnneeController extends AbstractController
         $exControle = $this->em->getRepository(ExControle::class)->alreadyValidateAnnee($promotion, $annee);
         $verify = $this->em->getRepository(ExControle::class)->checkIfyoucanCalculAnnee($annee, $promotion);
         if(!$exControle) {
-            return new JsonResponse("Semestre deja valide", 500);
+            return new JsonResponse("Année deja valide", 500);
         }
         if(!$verify){
             return new JsonResponse("Operation déja valider", 500);

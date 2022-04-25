@@ -3,9 +3,12 @@
     "app": {
       "js": [
         "/build/runtime.js",
+        "/build/vendors-node_modules_core-js_modules_es_object_to-string_js-node_modules_core-js_modules_es_p-60cad2.js",
+        "/build/vendors-node_modules_symfony_stimulus-bridge_dist_index_js-node_modules_axios_index_js-node_m-21e902.js",
         "/build/app.js"
       ],
       "css": [
+        "/build/vendors-node_modules_symfony_stimulus-bridge_dist_index_js-node_modules_axios_index_js-node_m-21e902.css",
         "/build/app.css"
       ]
     },

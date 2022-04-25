@@ -32,7 +32,7 @@ class EtablissementController extends AbstractController
         // dd($params);
         $where = $totalRows = $sqlRequest = "";
         $filtre = "where 1 = 1";   
-        // dd($params->get('columns')[0]);
+        // dd($params->all('columns')[0]);
             
         $columns = array(
             array( 'db' => 'etab.id','dt' => 0),

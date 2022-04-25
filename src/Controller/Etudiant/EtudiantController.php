@@ -74,9 +74,9 @@ class EtudiantController extends AbstractController
         $params = $request->query;
         $where = $totalRows = $sqlRequest = "";
         $filtre = "where 1 = 1 ";
-        if (!empty($params->get('columns')[0]['search']['value'])) {
-            $filtre .= " and grp.id = '" . $params->get('columns')[0]['search']['value'] . "' ";
-        }
+        // if (!empty($params->all('columns')[0]['search']['value'])) {
+        //     $filtre .= " and grp.id = '" . $params->all('columns')[0]['search']['value'] . "' ";
+        // }
         
         $columns = array(
             array( 'db' => 'etu.id','dt' => 0 ),

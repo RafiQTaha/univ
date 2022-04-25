@@ -50,7 +50,7 @@
                     </div>
                 </div>
                 
-                <table id="list_epreuve_normal"  class="display" style="width:100%; overflow:scroll">
+                <table id="list_epreuve_normal"  class="table table-striped" style="width:100%; overflow:scroll">
                 </table>
                 
             </div>
@@ -69,6 +69,7 @@
 
 {% block javascripts %}
 {{parent()}}
+{{ encore_entry_script_tags('evaluationSimulationDeliberation') }}
 
 <script src="/assets/js/evaluation/simulationdeliberation.js"></script>
 

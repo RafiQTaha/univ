@@ -22,7 +22,7 @@
             </div>
             <div class="card-body">
 
-            <table id="datables_etudiant" class="display" style="width:100%">
+            <table id="datables_etudiant" class="table table-striped" style="width:100%">
                 <thead>
                     <tr>
                         <th>id</th>
@@ -89,8 +89,8 @@
 
 {% block javascripts %}
 {{parent()}}
-
-<script src="/assets/js/etudiant/etudiant.js"></script>
+{{ encore_entry_script_tags('etudiant') }}
+{# <script src="/assets/js/etudiant/etudiant.js"></script> #}
 
 {% endblock %}
 

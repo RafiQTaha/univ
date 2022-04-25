@@ -66,18 +66,18 @@ class GestionFactureController extends AbstractController
         $where = $totalRows = $sqlRequest = "";
         $filtre = " where 1=1 ";
         
-        if (!empty($params->get('columns')[0]['search']['value'])) {
-            $filtre .= " and etab.id = '" . $params->get('columns')[0]['search']['value'] . "' ";
+        if (!empty($params->all('columns')[0]['search']['value'])) {
+            $filtre .= " and etab.id = '" . $params->all('columns')[0]['search']['value'] . "' ";
         }
-        if (!empty($params->get('columns')[1]['search']['value'])) {
-            $filtre .= " and frma.id = '" . $params->get('columns')[1]['search']['value'] . "' ";
+        if (!empty($params->all('columns')[1]['search']['value'])) {
+            $filtre .= " and frma.id = '" . $params->all('columns')[1]['search']['value'] . "' ";
         }
-        if (!empty($params->get('columns')[2]['search']['value'])) {
-            if ($params->get('columns')[2]['search']['value'] == 'SD')
+        if (!empty($params->all('columns')[2]['search']['value'])) {
+            if ($params->all('columns')[2]['search']['value'] == 'SD')
             {
                 $filtre .= " and opdet.montant_facture = reg.montant_regle ";
             }
-            else if($params->get('columns')[2]['search']['value'] == 'SE')
+            else if($params->all('columns')[2]['search']['value'] == 'SE')
             {
                 $filtre .= " and opdet.montant_facture < reg.montant_regle ";
             }
@@ -85,8 +85,8 @@ class GestionFactureController extends AbstractController
                 $filtre .= " and opdet.montant_facture > reg.montant_regle ";
             }
         }  
-        if (!empty($params->get('columns')[3]['search']['value'])) {
-            $filtre .= " and org.id = '" . $params->get('columns')[3]['search']['value'] . "' ";
+        if (!empty($params->all('columns')[3]['search']['value'])) {
+            $filtre .= " and org.id = '" . $params->all('columns')[3]['search']['value'] . "' ";
         }
 
         $columns = array(

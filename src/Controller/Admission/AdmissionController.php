@@ -96,8 +96,8 @@ class AdmissionController extends AbstractController
         if (isset($where) && $where != '') {
             $sqlRequest .= $where;
         }
-        $changed_column = $params->get('order')[0]['column'] > 0 ? $params->get('order')[0]['column'] - 1 : 0;
-        $sqlRequest .= " ORDER BY " .DatatablesController::Pluck($columns, 'db')[$changed_column] . "   " . $params->get('order')[0]['dir'] . "  LIMIT " . $params->get('start') . " ," . $params->get('length') . " ";
+        $changed_column = $params->all('order')[0]['column'] > 0 ? $params->all('order')[0]['column'] - 1 : 0;
+        $sqlRequest .= " ORDER BY " .DatatablesController::Pluck($columns, 'db')[$changed_column] . "   " . $params->all('order')[0]['dir'] . "  LIMIT " . $params->get('start') . " ," . $params->get('length') . " ";
         // $sqlRequest .= DatatablesController::Order($request, $columns);
         // dd($sqlRequest);
         $stmt = $this->em->getConnection()->prepare($sqlRequest);
@@ -181,8 +181,8 @@ class AdmissionController extends AbstractController
             $sqlRequest .= $where;
         }
 
-        $changed_column = $params->get('order')[0]['column'] > 0 ? $params->get('order')[0]['column'] - 1 : 0;
-        $sqlRequest .= " ORDER BY " .DatatablesController::Pluck($columns, 'db')[$changed_column] . "   " . $params->get('order')[0]['dir'] . "  LIMIT " . $params->get('start') . " ," . $params->get('length') . " ";
+        $changed_column = $params->all('order')[0]['column'] > 0 ? $params->all('order')[0]['column'] - 1 : 0;
+        $sqlRequest .= " ORDER BY " .DatatablesController::Pluck($columns, 'db')[$changed_column] . "   " . $params->all('order')[0]['dir'] . "  LIMIT " . $params->get('start') . " ," . $params->get('length') . " ";
         // $sqlRequest .= DatatablesController::Order($request, $columns);
         
         $stmt = $this->em->getConnection()->prepare($sqlRequest);

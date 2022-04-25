@@ -62,31 +62,41 @@ class GestionHonoraireController extends AbstractController
         $where = $totalRows = $sqlRequest = "";
         $filtre = " where 1=1 and hon.annuler = 0 and  ann.validation_academique = 'non' ";
         
-        if (!empty($params->get('columns')[0]['search']['value'])) {
-            $filtre .= " and etab.id = '" . $params->get('columns')[0]['search']['value'] . "' ";
+        if (!empty($params->all('columns')[0]['search']['value'])) {
+            $filtre .= " and etab.id = '" . $params->all('columns')[0]['search']['value'] . "' ";
         }
-        if (!empty($params->get('columns')[1]['search']['value'])) {
-            $filtre .= " and frm.id = '" . $params->get('columns')[1]['search']['value'] . "' ";
+        if (!empty($params->all('columns')[1]['search']['value'])) {
+            $filtre .= " and frm.id = '" . $params->all('columns')[1]['search']['value'] . "' ";
         }   
-        if (!empty($params->get('columns')[2]['search']['value'])) {
-            $filtre .= " and prm.id = '" . $params->get('columns')[2]['search']['value'] . "' ";
+        if (!empty($params->all('columns')[2]['search']['value'])) {
+            $filtre .= " and prm.id = '" . $params->all('columns')[2]['search']['value'] . "' ";
         }   
+<<<<<<< HEAD
         if (!empty($params->get('columns')[3]['search']['value'])) {
             $filtre .= " and sem.id = '" . $params->get('columns')[3]['search']['value'] . "' ";
         }
         if (!empty($params->get('columns')[4]['search']['value'])) {
             if ($params->get('columns')[4]['search']['value'] !== 'All') {
                 $filtre .= " and hon.statut = '" . $params->get('columns')[4]['search']['value'] . "' ";
+=======
+        if (!empty($params->all('columns')[3]['search']['value'])) {
+            $filtre .= " and sem.id = '" . $params->all('columns')[3]['search']['value'] . "' ";
+        } 
+        
+        if (!empty($params->all('columns')[4]['search']['value'])) {
+            if ($params->all('columns')[4]['search']['value'] !== 'All') {
+                $filtre .= " and hon.statut = '" . $params->all('columns')[4]['search']['value'] . "' ";
+>>>>>>> 69941a97214b091097bca9e2dfda3fbac2777c70
             }
         }
-        if (!empty($params->get('columns')[5]['search']['value'])) {
-            $filtre .= " and sm.id = '" . $params->get('columns')[5]['search']['value'] . "' ";
+        if (!empty($params->all('columns')[5]['search']['value'])) {
+            $filtre .= " and sm.id = '" . $params->all('columns')[5]['search']['value'] . "' ";
         }   
-        if (!empty($params->get('columns')[6]['search']['value'])) {
-            $filtre .= " and ens.id = '" . $params->get('columns')[6]['search']['value'] . "' ";
+        if (!empty($params->all('columns')[6]['search']['value'])) {
+            $filtre .= " and ens.id = '" . $params->all('columns')[6]['search']['value'] . "' ";
         }  
-        if (!empty($params->get('columns')[7]['search']['value'])) {
-            $filtre .= " and gr.id = '" . $params->get('columns')[7]['search']['value'] . "' ";
+        if (!empty($params->all('columns')[7]['search']['value'])) {
+            $filtre .= " and gr.id = '" . $params->all('columns')[7]['search']['value'] . "' ";
         }
         
         $columns = array(
@@ -137,8 +147,8 @@ class GestionHonoraireController extends AbstractController
             $sqlRequest .= $where;
         }
         // $sqlRequest .= DatatablesController::Order($request, $columns);
-        $changed_column = $params->get('order')[0]['column'] > 0 ? $params->get('order')[0]['column'] -1 : 0;
-        $sqlRequest .= " ORDER BY " .DatatablesController::Pluck($columns, 'db')[$changed_column] . "   " . $params->get('order')[0]['dir'] . "  LIMIT " . $params->get('start') . " ," . $params->get('length') . " ";
+        $changed_column = $params->all('order')[0]['column'] > 0 ? $params->all('order')[0]['column'] -1 : 0;
+        $sqlRequest .= " ORDER BY " .DatatablesController::Pluck($columns, 'db')[$changed_column] . "   " . $params->all('order')[0]['dir'] . "  LIMIT " . $params->get('start') . " ," . $params->get('length') . " ";
 
         $stmt = $this->em->getConnection()->prepare($sqlRequest);
         $resultSet = $stmt->executeQuery();

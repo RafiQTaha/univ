@@ -72,7 +72,7 @@
                         </div>
                     </div>
                 </div>
-            <table id="datables_notes_epreuve" class="display" style="width:100%">
+            <table id="datables_notes_epreuve" class="table table-striped" style="width:100%">
                 <thead>
                     <tr>
                         <th>Ord</th>
@@ -132,8 +132,9 @@
 
 {% block javascripts %}
 {{parent()}}
+{{ encore_entry_script_tags('note') }}
 
-<script src="/assets/js/administration/note.js"></script>
+{# <script src="/assets/js/administration/note.js"></script> #}
 
 {% endblock %}
 
