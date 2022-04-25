@@ -54,10 +54,22 @@ class AcAnnee
     #[ORM\OneToMany(mappedBy: 'annee', targetEntity: TInscription::class)]
     private $inscriptions;
 
+    #[ORM\OneToMany(mappedBy: 'annee', targetEntity: TOperationcab::class)]
+    private $operationcabs;
+
+    #[ORM\OneToMany(mappedBy: 'annee', targetEntity: AcEpreuve::class)]
+    private $epreuves;
+
+    #[ORM\OneToMany(mappedBy: 'annee', targetEntity: ExControle::class)]
+    private $controles;
+
     public function __construct()
     {
         $this->preinscriptions = new ArrayCollection();
         $this->inscriptions = new ArrayCollection();
+        $this->operationcabs = new ArrayCollection();
+        $this->epreuves = new ArrayCollection();
+        $this->controles = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -251,6 +263,96 @@ class AcAnnee
             // set the owning side to null (unless already changed)
             if ($inscription->getAnnee() === $this) {
                 $inscription->setAnnee(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|TOperationcab[]
+     */
+    public function getOperationcabs(): Collection
+    {
+        return $this->operationcabs;
+    }
+
+    public function addOperationcab(TOperationcab $operationcab): self
+    {
+        if (!$this->operationcabs->contains($operationcab)) {
+            $this->operationcabs[] = $operationcab;
+            $operationcab->setAnnee($this);
+        }
+
+        return $this;
+    }
+
+    public function removeOperationcab(TOperationcab $operationcab): self
+    {
+        if ($this->operationcabs->removeElement($operationcab)) {
+            // set the owning side to null (unless already changed)
+            if ($operationcab->getAnnee() === $this) {
+                $operationcab->setAnnee(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|AcEpreuve[]
+     */
+    public function getEpreuves(): Collection
+    {
+        return $this->epreuves;
+    }
+
+    public function addEpreufe(AcEpreuve $epreufe): self
+    {
+        if (!$this->epreuves->contains($epreufe)) {
+            $this->epreuves[] = $epreufe;
+            $epreufe->setAnnee($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEpreufe(AcEpreuve $epreufe): self
+    {
+        if ($this->epreuves->removeElement($epreufe)) {
+            // set the owning side to null (unless already changed)
+            if ($epreufe->getAnnee() === $this) {
+                $epreufe->setAnnee(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|ExControle[]
+     */
+    public function getControles(): Collection
+    {
+        return $this->controles;
+    }
+
+    public function addControle(ExControle $controle): self
+    {
+        if (!$this->controles->contains($controle)) {
+            $this->controles[] = $controle;
+            $controle->setAnnee($this);
+        }
+
+        return $this;
+    }
+
+    public function removeControle(ExControle $controle): self
+    {
+        if ($this->controles->removeElement($controle)) {
+            // set the owning side to null (unless already changed)
+            if ($controle->getAnnee() === $this) {
+                $controle->setAnnee(null);
             }
         }
 

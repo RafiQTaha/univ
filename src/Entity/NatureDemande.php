@@ -39,9 +39,13 @@ class NatureDemande
     #[ORM\OneToMany(mappedBy: 'natureDemande', targetEntity: TEtudiant::class)]
     private $etudiants;
 
+    #[ORM\OneToMany(mappedBy: 'natureDemande', targetEntity: PDocument::class)]
+    private $documents;
+
     public function __construct()
     {
         $this->etudiants = new ArrayCollection();
+        $this->documents = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -157,6 +161,36 @@ class NatureDemande
             // set the owning side to null (unless already changed)
             if ($etudiant->getNatureDemande() === $this) {
                 $etudiant->setNatureDemande(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|PDocument[]
+     */
+    public function getDocuments(): Collection
+    {
+        return $this->documents;
+    }
+
+    public function addDocument(PDocument $document): self
+    {
+        if (!$this->documents->contains($document)) {
+            $this->documents[] = $document;
+            $document->setNatureDemande($this);
+        }
+
+        return $this;
+    }
+
+    public function removeDocument(PDocument $document): self
+    {
+        if ($this->documents->removeElement($document)) {
+            // set the owning side to null (unless already changed)
+            if ($document->getNatureDemande() === $this) {
+                $document->setNatureDemande(null);
             }
         }
 

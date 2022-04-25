@@ -27,7 +27,7 @@ class PMatiere
     #[ORM\Column(type: 'boolean', nullable: true)]
     private $active;
 
-    #[ORM\OneToMany(mappedBy: 'matiere', targetEntity: TPreinscritionReleveNote::class)]
+    #[ORM\OneToMany(mappedBy: 'matiere', targetEntity: TPreinscriptionReleveNote::class)]
     private $tPreinscritionReleveNotes;
 
     public function __construct()
@@ -89,14 +89,14 @@ class PMatiere
     }
 
     /**
-     * @return Collection|TPreinscritionReleveNote[]
+     * @return Collection|TPreinscriptionReleveNote[]
      */
     public function getTPreinscritionReleveNotes(): Collection
     {
         return $this->tPreinscritionReleveNotes;
     }
 
-    public function addTPreinscritionReleveNote(TPreinscritionReleveNote $tPreinscritionReleveNote): self
+    public function addTPreinscritionReleveNote(TPreinscriptionReleveNote $tPreinscritionReleveNote): self
     {
         if (!$this->tPreinscritionReleveNotes->contains($tPreinscritionReleveNote)) {
             $this->tPreinscritionReleveNotes[] = $tPreinscritionReleveNote;
@@ -106,7 +106,7 @@ class PMatiere
         return $this;
     }
 
-    public function removeTPreinscritionReleveNote(TPreinscritionReleveNote $tPreinscritionReleveNote): self
+    public function removeTPreinscritionReleveNote(TPreinscriptionReleveNote $tPreinscritionReleveNote): self
     {
         if ($this->tPreinscritionReleveNotes->removeElement($tPreinscritionReleveNote)) {
             // set the owning side to null (unless already changed)

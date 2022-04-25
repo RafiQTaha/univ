@@ -22,9 +22,6 @@ class TPreinscription
     #[ORM\JoinColumn(nullable: false)]
     private $etudiant;
 
-    #[ORM\ManyToOne(targetEntity: PStatut::class, inversedBy: 'preinscriptions')]
-    private $statutDeliberation;
-
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $code;
 
@@ -36,15 +33,6 @@ class TPreinscription
 
     #[ORM\Column(type: 'integer')]
     private $rangS;
-
-    #[ORM\Column(type: 'string', length: 100, nullable: true)]
-    private $categorieListe;
-
-    #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private $admissionListe;
-
-    #[ORM\Column(type: 'string', length: 100, nullable: true)]
-    private $teleListe;
 
     #[ORM\Column(type: 'smallint', nullable: true)]
     private $active;
@@ -64,9 +52,27 @@ class TPreinscription
     #[ORM\ManyToOne(targetEntity: AcAnnee::class, inversedBy: 'preinscriptions')]
     private $annee;
 
+    #[ORM\ManyToOne(targetEntity: PStatut::class)]
+    private $categorieListe;
+
+    #[ORM\ManyToOne(targetEntity: PStatut::class)]
+    private $admissionListe;
+    #[ORM\OneToMany(mappedBy: 'preinscription', targetEntity: TOperationcab::class)]
+    private $operationcabs;
+    #[ORM\OneToMany(mappedBy: 'preinscription', targetEntity: TAdmissionDocument::class)]
+    private $admissionDocuments;
+
+    #[ORM\ManyToMany(targetEntity: PDocument::class, inversedBy: 'preinscriptions')]
+    private $documents;
+
+
     public function __construct()
     {
         $this->admissions = new ArrayCollection();
+        $this->operationcabs = new ArrayCollection();
+        $this->admissionDocuments = new ArrayCollection();
+        $this->Documents = new ArrayCollection();
+        $this->documents = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -98,17 +104,6 @@ class TPreinscription
         return $this;
     }
 
-    public function getStatutDeliberation(): ?PStatut
-    {
-        return $this->statutDeliberation;
-    }
-
-    public function setStatutDeliberation(?PStatut $statutDeliberation): self
-    {
-        $this->statutDeliberation = $statutDeliberation;
-
-        return $this;
-    }
 
     public function getCode(): ?string
     {
@@ -154,42 +149,6 @@ class TPreinscription
     public function setRangS(int $rangS): self
     {
         $this->rangS = $rangS;
-
-        return $this;
-    }
-
-    public function getCategorieListe(): ?string
-    {
-        return $this->categorieListe;
-    }
-
-    public function setCategorieListe(?string $categorieListe): self
-    {
-        $this->categorieListe = $categorieListe;
-
-        return $this;
-    }
-
-    public function getAdmissionListe(): ?string
-    {
-        return $this->admissionListe;
-    }
-
-    public function setAdmissionListe(?string $admissionListe): self
-    {
-        $this->admissionListe = $admissionListe;
-
-        return $this;
-    }
-
-    public function getTeleListe(): ?string
-    {
-        return $this->teleListe;
-    }
-
-    public function setTeleListe(?string $teleListe): self
-    {
-        $this->teleListe = $teleListe;
 
         return $this;
     }
@@ -280,6 +239,109 @@ class TPreinscription
     public function setAnnee(?AcAnnee $annee): self
     {
         $this->annee = $annee;
+
+        return $this;
+    }
+
+    public function getCategorieListe(): ?PStatut
+    {
+        return $this->categorieListe;
+    }
+
+    public function setCategorieListe(?PStatut $categorieListe)
+    {
+        $this->categorieListe = $categorieListe;
+    }
+    /**
+     * @return Collection|TOperationcab[]
+     */
+    public function getOperationcabs(): Collection
+    {
+        return $this->operationcabs;
+    }
+
+    public function addOperationcab(TOperationcab $operationcab): self
+    {
+        if (!$this->operationcabs->contains($operationcab)) {
+            $this->operationcabs[] = $operationcab;
+            $operationcab->setPreinscription($this);
+        }
+
+
+        return $this;
+    }
+
+    public function getAdmissionListe(): ?PStatut
+    {
+        return $this->admissionListe;
+    }
+
+    public function setAdmissionListe(?PStatut $admissionListe)
+    {
+        $this->admissionListe = $admissionListe;
+    }
+    public function removeOperationcab(TOperationcab $operationcab): self
+    {
+        if ($this->operationcabs->removeElement($operationcab)) {
+            // set the owning side to null (unless already changed)
+            if ($operationcab->getPreinscription() === $this) {
+                $operationcab->setPreinscription(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|TAdmissionDocument[]
+     */
+    public function getAdmissionDocuments(): Collection
+    {
+        return $this->admissionDocuments;
+    }
+
+    public function addAdmissionDocument(TAdmissionDocument $admissionDocument): self
+    {
+        if (!$this->admissionDocuments->contains($admissionDocument)) {
+            $this->admissionDocuments[] = $admissionDocument;
+            $admissionDocument->setPreinscription($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAdmissionDocument(TAdmissionDocument $admissionDocument): self
+    {
+        if ($this->admissionDocuments->removeElement($admissionDocument)) {
+            // set the owning side to null (unless already changed)
+            if ($admissionDocument->getPreinscription() === $this) {
+                $admissionDocument->setPreinscription(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|PDocument[]
+     */
+    public function getDocuments(): Collection
+    {
+        return $this->documents;
+    }
+
+    public function addDocument(PDocument $document): self
+    {
+        if (!$this->documents->contains($document)) {
+            $this->documents[] = $document;
+        }
+
+        return $this;
+    }
+
+    public function removeDocument(PDocument $document): self
+    {
+        $this->documents->removeElement($document);
 
         return $this;
     }

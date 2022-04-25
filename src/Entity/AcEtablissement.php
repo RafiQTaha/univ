@@ -63,10 +63,18 @@ class AcEtablissement
     #[ORM\OneToMany(mappedBy: 'etablissement', targetEntity: AcDepartement::class)]
     private $acDepartements;
 
+    #[ORM\OneToMany(mappedBy: 'etablissement', targetEntity: PDocument::class)]
+    private $documents;
+
+    #[ORM\OneToMany(mappedBy: 'etablissement', targetEntity: TBrdpaiement::class)]
+    private $bordereaux;
+
     public function __construct()
     {
         $this->acFormations = new ArrayCollection();
         $this->acDepartements = new ArrayCollection();
+        $this->documents = new ArrayCollection();
+        $this->bordereaux = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -296,6 +304,66 @@ class AcEtablissement
             // set the owning side to null (unless already changed)
             if ($acDepartement->getEtablissement() === $this) {
                 $acDepartement->setEtablissement(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|PDocument[]
+     */
+    public function getDocuments(): Collection
+    {
+        return $this->documents;
+    }
+
+    public function addDocument(PDocument $document): self
+    {
+        if (!$this->documents->contains($document)) {
+            $this->documents[] = $document;
+            $document->setEtablissement($this);
+        }
+
+        return $this;
+    }
+
+    public function removeDocument(PDocument $document): self
+    {
+        if ($this->documents->removeElement($document)) {
+            // set the owning side to null (unless already changed)
+            if ($document->getEtablissement() === $this) {
+                $document->setEtablissement(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|TBrdpaiement[]
+     */
+    public function getBordereaux(): Collection
+    {
+        return $this->bordereaux;
+    }
+
+    public function addBordereaux(TBrdpaiement $bordereaux): self
+    {
+        if (!$this->bordereaux->contains($bordereaux)) {
+            $this->bordereaux[] = $bordereaux;
+            $bordereaux->setEtablissement($this);
+        }
+
+        return $this;
+    }
+
+    public function removeBordereaux(TBrdpaiement $bordereaux): self
+    {
+        if ($this->bordereaux->removeElement($bordereaux)) {
+            // set the owning side to null (unless already changed)
+            if ($bordereaux->getEtablissement() === $this) {
+                $bordereaux->setEtablissement(null);
             }
         }
 

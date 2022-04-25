@@ -51,10 +51,22 @@ class AcFormation
     #[ORM\OneToMany(mappedBy: 'formation', targetEntity: AcAnnee::class)]
     private $acAnnees;
 
+    #[ORM\OneToMany(mappedBy: 'formation', targetEntity: PFrais::class)]
+    private $frais;
+
+    #[ORM\OneToMany(mappedBy: 'formation', targetEntity: PEnsgrille::class)]
+    private $ensgrilles;
+
+    #[ORM\OneToMany(mappedBy: 'formation', targetEntity: PEnseignantExcept::class)]
+    private $enseignantexcepts;
+
     public function __construct()
     {
         $this->acPromotions = new ArrayCollection();
         $this->acAnnees = new ArrayCollection();
+        $this->frais = new ArrayCollection();
+        $this->ensgrilles = new ArrayCollection();
+        $this->enseignantexcepts = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -241,4 +253,95 @@ class AcFormation
 
         return $this;
     }
+
+    /**
+     * @return Collection|PFrais[]
+     */
+    public function getFrais(): Collection
+    {
+        return $this->frais;
+    }
+
+    public function addFrai(PFrais $frai): self
+    {
+        if (!$this->frais->contains($frai)) {
+            $this->frais[] = $frai;
+            $frai->setFormation($this);
+        }
+
+        return $this;
+    }
+
+    public function removeFrai(PFrais $frai): self
+    {
+        if ($this->frais->removeElement($frai)) {
+            // set the owning side to null (unless already changed)
+            if ($frai->getFormation() === $this) {
+                $frai->setFormation(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, PEnsgrille>
+     */
+    public function getEnsgrilles(): Collection
+    {
+        return $this->ensgrilles;
+    }
+
+    public function addEnsgrille(PEnsgrille $ensgrille): self
+    {
+        if (!$this->ensgrilles->contains($ensgrille)) {
+            $this->ensgrilles[] = $ensgrille;
+            $ensgrille->setFormation($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEnsgrille(PEnsgrille $ensgrille): self
+    {
+        if ($this->ensgrilles->removeElement($ensgrille)) {
+            // set the owning side to null (unless already changed)
+            if ($ensgrille->getFormation() === $this) {
+                $ensgrille->setFormation(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, PEnseignantExcept>
+     */
+    public function getEnseignantexcepts(): Collection
+    {
+        return $this->enseignantexcepts;
+    }
+
+    public function addEnseignantexcept(PEnseignantExcept $enseignantexcept): self
+    {
+        if (!$this->enseignantexcepts->contains($enseignantexcept)) {
+            $this->enseignantexcepts[] = $enseignantexcept;
+            $enseignantexcept->setFormation($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEnseignantexcept(PEnseignantExcept $enseignantexcept): self
+    {
+        if ($this->enseignantexcepts->removeElement($enseignantexcept)) {
+            // set the owning side to null (unless already changed)
+            if ($enseignantexcept->getFormation() === $this) {
+                $enseignantexcept->setFormation(null);
+            }
+        }
+
+        return $this;
+    }
+
 }

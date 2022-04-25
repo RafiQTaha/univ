@@ -22,29 +22,42 @@ class TAdmissionRepository extends ServiceEntityRepository
     // /**
     //  * @return TAdmission[] Returns an array of TAdmission objects
     //  */
-    /*
-    public function findByExampleField($value)
+    
+    public function getAdmissionByAnnee($annee)
     {
         return $this->createQueryBuilder('t')
-            ->andWhere('t.exampleField = :val')
-            ->setParameter('val', $value)
+            ->innerJoin("t.preinscription", "preinscription")
+            ->where("preinscription.annee = :annee")
+            ->setParameter('annee', $annee)
+            ->orderBy('t.id', 'DESC')
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+    
+
+    public function findAdmssions($value)
+    {
+        return $this->createQueryBuilder('t')
+            ->select('t.id, t.code, etudiant.nom, etudiant.prenom')
+            ->innerJoin("t.preinscription","preinscription")
+            ->innerJoin("preinscription.etudiant","etudiant")
+            ->where('t.code like :val')
+            ->orWhere("etudiant.nom like :val")
+            ->orWhere("etudiant.prenom like :val")
+            ->setParameter('val', "%".$value."%")
             ->orderBy('t.id', 'ASC')
             ->setMaxResults(10)
             ->getQuery()
             ->getResult()
         ;
+        // dd($admissions);
+        // $html = "";
+        // foreach ($admissions as $admission) {
+        //     dd($admission->getPreinscription()->getEtudiant()->getStatutDeliberation());
+        // }
+        // return $html;
     }
-    */
-
-    /*
-    public function findOneBySomeField($value): ?TAdmission
-    {
-        return $this->createQueryBuilder('t')
-            ->andWhere('t.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
+    
+    
 }

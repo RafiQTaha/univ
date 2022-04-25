@@ -91,21 +91,6 @@
     "friendsofphp/proxy-manager-lts": {
         "version": "v1.0.5"
     },
-    "jms/metadata": {
-        "version": "2.6.1"
-    },
-    "jms/serializer": {
-        "version": "3.17.1"
-    },
-    "jms/serializer-bundle": {
-        "version": "4.0",
-        "recipe": {
-            "repo": "github.com/symfony/recipes-contrib",
-            "branch": "master",
-            "version": "3.0",
-            "ref": "384cec52df45f3bfd46a09930d6960a58872b268"
-        }
-    },
     "laminas/laminas-code": {
         "version": "4.5.1"
     },
@@ -121,6 +106,9 @@
     "monolog/monolog": {
         "version": "2.3.5"
     },
+    "mpdf/mpdf": {
+        "version": "v8.0.15"
+    },
     "myclabs/deep-copy": {
         "version": "1.10.2"
     },
@@ -129,6 +117,9 @@
     },
     "nikic/php-parser": {
         "version": "v4.13.2"
+    },
+    "paragonie/random_compat": {
+        "version": "v9.99.100"
     },
     "phar-io/manifest": {
         "version": "2.0.3"
@@ -269,6 +260,9 @@
         "files": [
             "./config/packages/sensio_framework_extra.yaml"
         ]
+    },
+    "setasign/fpdi": {
+        "version": "v2.3.6"
     },
     "symfony/asset": {
         "version": "v6.0.1"
@@ -537,7 +531,7 @@
         "version": "v6.0.2"
     },
     "symfony/serializer": {
-        "version": "v6.0.2"
+        "version": "v5.4.3"
     },
     "symfony/service-contracts": {
         "version": "v3.0.0"

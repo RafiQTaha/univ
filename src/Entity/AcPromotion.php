@@ -43,15 +43,19 @@ class AcPromotion
     private $updated;
 
     #[ORM\OneToMany(mappedBy: 'promotion', targetEntity: AcSemestre::class)]
-    private $acSemestres;
+    private $semestres;
 
     #[ORM\OneToMany(mappedBy: 'promotion', targetEntity: TInscription::class)]
     private $inscriptions;
 
+    #[ORM\OneToMany(mappedBy: 'promotion', targetEntity: HAlbhon::class)]
+    private $albhonss;
+
     public function __construct()
     {
-        $this->acSemestres = new ArrayCollection();
+        $this->semestres = new ArrayCollection();
         $this->inscriptions = new ArrayCollection();
+        $this->albhonss = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -170,27 +174,27 @@ class AcPromotion
     /**
      * @return Collection|AcSemestre[]
      */
-    public function getAcSemestres(): Collection
+    public function getSemestres(): Collection
     {
-        return $this->acSemestres;
+        return $this->semestres;
     }
 
-    public function addAcSemestre(AcSemestre $acSemestre): self
+    public function addSemestre(AcSemestre $semestre): self
     {
-        if (!$this->acSemestres->contains($acSemestre)) {
-            $this->acSemestres[] = $acSemestre;
-            $acSemestre->setPromotion($this);
+        if (!$this->semestres->contains($semestre)) {
+            $this->semestres[] = $semestre;
+            $semestre->setPromotion($this);
         }
 
         return $this;
     }
 
-    public function removeAcSemestre(AcSemestre $acSemestre): self
+    public function removeSemestre(AcSemestre $semestre): self
     {
-        if ($this->acSemestres->removeElement($acSemestre)) {
+        if ($this->semestres->removeElement($semestre)) {
             // set the owning side to null (unless already changed)
-            if ($acSemestre->getPromotion() === $this) {
-                $acSemestre->setPromotion(null);
+            if ($semestre->getPromotion() === $this) {
+                $semestre->setPromotion(null);
             }
         }
 
@@ -221,6 +225,36 @@ class AcPromotion
             // set the owning side to null (unless already changed)
             if ($inscription->getPromotion() === $this) {
                 $inscription->setPromotion(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, HAlbhon>
+     */
+    public function getAlbhonss(): Collection
+    {
+        return $this->albhonss;
+    }
+
+    public function addAlbhonss(HAlbhon $albhonss): self
+    {
+        if (!$this->albhonss->contains($albhonss)) {
+            $this->albhonss[] = $albhonss;
+            $albhonss->setPromotion($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAlbhonss(HAlbhon $albhonss): self
+    {
+        if ($this->albhonss->removeElement($albhonss)) {
+            // set the owning side to null (unless already changed)
+            if ($albhonss->getPromotion() === $this) {
+                $albhonss->setPromotion(null);
             }
         }
 

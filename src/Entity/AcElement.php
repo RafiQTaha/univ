@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\AcElementRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: AcElementRepository::class)]
@@ -22,7 +24,7 @@ class AcElement
     #[ORM\ManyToOne(targetEntity: AcModule::class, inversedBy: 'acElements')]
     private $module;
 
-    #[ORM\Column(type: 'integer', nullable: true)]
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $nature;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
@@ -43,8 +45,12 @@ class AcElement
     #[ORM\Column(type: 'json', nullable: true)]
     private $coefficient_epreuve;
 
-    #[ORM\Column(type: 'integer', nullable: true)]
-    private $type;
+    // #[ORM\Column(type: 'integer', nullable: true)]
+    // private $type;
+
+    // #[ORM\ManyToOne(targetEntity: TypeElement::class, inversedBy: 'elements')]
+    // private $type;
+
 
     #[ORM\Column(type: 'integer', nullable: true)]
     private $cours_document;
@@ -54,6 +60,29 @@ class AcElement
 
     #[ORM\Column(type: 'datetime', nullable: true)]
     private $updated;
+
+    #[ORM\OneToMany(mappedBy: 'element', targetEntity: AcEpreuve::class)]
+    private $epreuves;
+
+    #[ORM\OneToMany(mappedBy: 'element', targetEntity: ExControle::class)]
+    private $controles;
+
+    #[ORM\OneToMany(mappedBy: 'element', targetEntity: ExEnotes::class)]
+    private $enotes;
+
+    #[ORM\OneToMany(mappedBy: 'element', targetEntity: PrProgrammation::class)]
+    private $programmations;
+
+    #[ORM\ManyToOne(targetEntity: TypeElement::class, inversedBy: 'acElements')]
+    private $type;
+
+    public function __construct()
+    {
+        $this->epreuves = new ArrayCollection();
+        $this->controles = new ArrayCollection();
+        $this->enotes = new ArrayCollection();
+        $this->programmations = new ArrayCollection();
+    }
     
 
     public function getId(): ?int
@@ -97,12 +126,12 @@ class AcElement
         return $this;
     }
 
-    public function getNature(): ?int
+    public function getNature(): ?string
     {
         return $this->nature;
     }
 
-    public function setNature(?int $nature): self
+    public function setNature(?string $nature): self
     {
         $this->nature = $nature;
 
@@ -181,17 +210,29 @@ class AcElement
         return $this;
     }
 
-    public function getType(): ?int
-    {
-        return $this->type;
-    }
+    // public function getType(): ?int
+    // {
+    //     return $this->type;
+    // }
 
-    public function setType(?int $type): self
-    {
-        $this->type = $type;
+    // public function setType(?int $type): self
+    // {
+    //     $this->type = $type;
 
-        return $this;
-    }
+    //     return $this;
+    // }
+
+    // public function getType(): ?int
+    // {
+    //     return $this->type;
+    // }
+
+    // public function setType(?int $type): self
+    // {
+    //     $this->type = $type;
+
+    //     return $this;
+    // }
 
     public function getCoursDocument(): ?int
     {
@@ -225,6 +266,138 @@ class AcElement
     public function setUpdated(?\DateTimeInterface $updated): self
     {
         $this->updated = $updated;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|AcEpreuve[]
+     */
+    public function getEpreuves(): Collection
+    {
+        return $this->epreuves;
+    }
+
+    public function addEpreufe(AcEpreuve $epreufe): self
+    {
+        if (!$this->epreuves->contains($epreufe)) {
+            $this->epreuves[] = $epreufe;
+            $epreufe->setElement($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEpreufe(AcEpreuve $epreufe): self
+    {
+        if ($this->epreuves->removeElement($epreufe)) {
+            // set the owning side to null (unless already changed)
+            if ($epreufe->getElement() === $this) {
+                $epreufe->setElement(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|ExControle[]
+     */
+    public function getControles(): Collection
+    {
+        return $this->controles;
+    }
+
+    public function addControle(ExControle $controle): self
+    {
+        if (!$this->controles->contains($controle)) {
+            $this->controles[] = $controle;
+            $controle->setElement($this);
+        }
+
+        return $this;
+    }
+
+    public function removeControle(ExControle $controle): self
+    {
+        if ($this->controles->removeElement($controle)) {
+            // set the owning side to null (unless already changed)
+            if ($controle->getElement() === $this) {
+                $controle->setElement(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|ExEnotes[]
+     */
+    public function getEnotes(): Collection
+    {
+        return $this->enotes;
+    }
+
+    public function addEnote(ExEnotes $enote): self
+    {
+        if (!$this->enotes->contains($enote)) {
+            $this->enotes[] = $enote;
+            $enote->setElement($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEnote(ExEnotes $enote): self
+    {
+        if ($this->enotes->removeElement($enote)) {
+            // set the owning side to null (unless already changed)
+            if ($enote->getElement() === $this) {
+                $enote->setElement(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|PrProgrammation[]
+     */
+    public function getProgrammations(): Collection
+    {
+        return $this->programmations;
+    }
+
+    public function addProgrammation(PrProgrammation $programmation): self
+    {
+        if (!$this->programmations->contains($programmation)) {
+            $this->programmations[] = $programmation;
+            $programmation->setElement($this);
+        }
+
+        return $this;
+    }
+
+    public function removeProgrammation(PrProgrammation $programmation): self
+    {
+        if ($this->programmations->removeElement($programmation)) {
+            // set the owning side to null (unless already changed)
+            if ($programmation->getElement() === $this) {
+                $programmation->setElement(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getType(): ?TypeElement
+    {
+        return $this->type;
+    }
+
+    public function setType(?TypeElement $type): self
+    {
+        $this->type = $type;
 
         return $this;
     }

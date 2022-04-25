@@ -252,8 +252,11 @@ class TEtudiant
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $etablissement;
 
-    #[ORM\OneToMany(mappedBy: 'etudiant', targetEntity: TPreinscritionReleveNote::class)]
+    #[ORM\OneToMany(mappedBy: 'etudiant', targetEntity: TPreinscriptionReleveNote::class)]
     private $tPreinscritionReleveNotes;
+
+    #[ORM\ManyToOne(targetEntity: POrganisme::class, inversedBy: 'etudiants')]
+    private $organisme;
 
     public function __construct()
     {
@@ -1233,14 +1236,14 @@ class TEtudiant
     }
 
     /**
-     * @return Collection|TPreinscritionReleveNote[]
+     * @return Collection|TPreinscriptionReleveNote[]
      */
     public function getTPreinscritionReleveNotes(): Collection
     {
         return $this->tPreinscritionReleveNotes;
     }
 
-    public function addTPreinscritionReleveNote(TPreinscritionReleveNote $tPreinscritionReleveNote): self
+    public function addTPreinscritionReleveNote(TPreinscriptionReleveNote $tPreinscritionReleveNote): self
     {
         if (!$this->tPreinscritionReleveNotes->contains($tPreinscritionReleveNote)) {
             $this->tPreinscritionReleveNotes[] = $tPreinscritionReleveNote;
@@ -1250,7 +1253,7 @@ class TEtudiant
         return $this;
     }
 
-    public function removeTPreinscritionReleveNote(TPreinscritionReleveNote $tPreinscritionReleveNote): self
+    public function removeTPreinscritionReleveNote(TPreinscriptionReleveNote $tPreinscritionReleveNote): self
     {
         if ($this->tPreinscritionReleveNotes->removeElement($tPreinscritionReleveNote)) {
             // set the owning side to null (unless already changed)
@@ -1258,6 +1261,18 @@ class TEtudiant
                 $tPreinscritionReleveNote->setEtudiant(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getOrganisme(): ?POrganisme
+    {
+        return $this->organisme;
+    }
+
+    public function setOrganisme(?POrganisme $organisme): self
+    {
+        $this->organisme = $organisme;
 
         return $this;
     }
