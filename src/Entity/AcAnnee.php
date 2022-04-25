@@ -63,6 +63,9 @@ class AcAnnee
     #[ORM\OneToMany(mappedBy: 'annee', targetEntity: ExControle::class)]
     private $controles;
 
+    #[ORM\OneToMany(mappedBy: 'annee', targetEntity: PrProgrammation::class)]
+    private $programmations;
+
     public function __construct()
     {
         $this->preinscriptions = new ArrayCollection();
@@ -70,6 +73,7 @@ class AcAnnee
         $this->operationcabs = new ArrayCollection();
         $this->epreuves = new ArrayCollection();
         $this->controles = new ArrayCollection();
+        $this->programmations = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -353,6 +357,36 @@ class AcAnnee
             // set the owning side to null (unless already changed)
             if ($controle->getAnnee() === $this) {
                 $controle->setAnnee(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, PrProgrammation>
+     */
+    public function getProgrammations(): Collection
+    {
+        return $this->programmations;
+    }
+
+    public function addProgrammation(PrProgrammation $programmation): self
+    {
+        if (!$this->programmations->contains($programmation)) {
+            $this->programmations[] = $programmation;
+            $programmation->setAnnee($this);
+        }
+
+        return $this;
+    }
+
+    public function removeProgrammation(PrProgrammation $programmation): self
+    {
+        if ($this->programmations->removeElement($programmation)) {
+            // set the owning side to null (unless already changed)
+            if ($programmation->getAnnee() === $this) {
+                $programmation->setAnnee(null);
             }
         }
 

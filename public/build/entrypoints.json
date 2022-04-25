@@ -3,6 +3,7 @@
     "app": {
       "js": [
         "/build/runtime.js",
+<<<<<<< HEAD
         "/build/vendors-node_modules_jquery_dist_jquery_js.js",
         "/build/vendors-node_modules_core-js_modules_es_object_to-string_js-node_modules_core-js_modules_es_p-2de272.js",
         "/build/vendors-node_modules_core-js_internals_fix-regexp-well-known-symbol-logic_js-node_modules_cor-b8bfb8.js",
@@ -14,18 +15,31 @@
       ],
       "css": [
         "/build/vendors-node_modules_symfony_stimulus-bridge_dist_index_js-node_modules_axios_index_js-node_m-6d441b.css",
+=======
+        "/build/vendors-node_modules_core-js_modules_es_object_to-string_js-node_modules_core-js_modules_es_p-60cad2.js",
+        "/build/vendors-node_modules_symfony_stimulus-bridge_dist_index_js-node_modules_axios_index_js-node_m-21e902.js",
+        "/build/app.js"
+      ],
+      "css": [
+        "/build/vendors-node_modules_symfony_stimulus-bridge_dist_index_js-node_modules_axios_index_js-node_m-21e902.css",
+>>>>>>> 7b2841bb6c7b4b9f11127d03f8ed87c87fdddd10
         "/build/app.css"
       ]
     },
     "login": {
       "js": [
         "/build/runtime.js",
+<<<<<<< HEAD
         "/build/vendors-node_modules_jquery_dist_jquery_js.js",
         "/build/vendors-node_modules_core-js_modules_es_object_to-string_js-node_modules_core-js_modules_es_p-2de272.js",
+=======
+        "/build/vendors-node_modules_core-js_modules_es_object_to-string_js-node_modules_core-js_modules_es_p-60cad2.js",
+>>>>>>> 7b2841bb6c7b4b9f11127d03f8ed87c87fdddd10
         "/build/login.js"
       ],
       "css": [
         "/build/login.css"
+<<<<<<< HEAD
       ]
     },
     "etudiant": {
@@ -289,6 +303,8 @@
         "/build/vendors-node_modules_core-js_internals_fix-regexp-well-known-symbol-logic_js-node_modules_cor-b8bfb8.js",
         "/build/vendors-node_modules_core-js_modules_es_array_find_js-node_modules_core-js_modules_es_array_f-37f3ea.js",
         "/build/gestionPreinscription.js"
+=======
+>>>>>>> 7b2841bb6c7b4b9f11127d03f8ed87c87fdddd10
       ]
     }
   }

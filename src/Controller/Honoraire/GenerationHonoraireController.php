@@ -116,7 +116,7 @@ class GenerationHonoraireController extends AbstractController
         INNER JOIN ac_promotion prm ON prm.id = sem.promotion_id 
         INNER JOIN ac_formation frm ON frm.id = prm.formation_id
         INNER JOIN ac_etablissement etab ON etab.id = frm.etablissement_id
-        INNER JOIN ac_annee ann ON ann.formation_id = frm.id
+        INNER JOIN ac_annee ann ON ann.id = prog.annee_id
         left join hhonens hon on hon.seance_id = emp.id
         left join penseignant ens ON ens.id = emp_ens.enseignant_id
         left join pgrade grd ON grd.id = ens.grade_id

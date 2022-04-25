@@ -51,6 +51,9 @@ class PrProgrammation
     #[ORM\ManyToMany(targetEntity: PEnseignant::class, mappedBy: 'programmations')]
     private $enseignants;
 
+    #[ORM\ManyToOne(targetEntity: AcAnnee::class, inversedBy: 'programmations')]
+    private $annee;
+
     public function __construct()
     {
         $this->emtimes = new ArrayCollection();
@@ -235,6 +238,18 @@ class PrProgrammation
         if ($this->enseignants->removeElement($enseignant)) {
             $enseignant->removeProgrammation($this);
         }
+
+        return $this;
+    }
+
+    public function getAnnee(): ?AcAnnee
+    {
+        return $this->annee;
+    }
+
+    public function setAnnee(?AcAnnee $annee): self
+    {
+        $this->annee = $annee;
 
         return $this;
     }

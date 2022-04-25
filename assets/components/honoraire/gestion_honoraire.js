@@ -241,6 +241,7 @@ $(document).ready(function () {
                 icon: 'success',
                 title: 'Honoraire Anullée Avec Succée',
             })
+            ids_seances=[];
             table_gestion_honoraires.ajax.reload(null,false);
             icon.addClass('fa-times-circle').removeClass("fa-spinner fa-spin");
         } catch (error) {
@@ -269,6 +270,7 @@ $(document).ready(function () {
                 icon: 'success',
                 title: response,
             })
+            ids_seances = []
             table_gestion_honoraires.ajax.reload(null,false);
             icon.addClass('a-plus-circle').removeClass("fa-spinner fa-spin");
         } catch (error) {

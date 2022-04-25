@@ -5,6 +5,7 @@ namespace App\Controller\Inscription;
 use App\Controller\ApiController;
 use App\Controller\DatatablesController;
 use App\Entity\AcEtablissement;
+use App\Entity\AcPromotion;
 use App\Entity\PGroupe;
 use App\Entity\TInscription;
 use Doctrine\Persistence\ManagerRegistry;
@@ -230,4 +231,57 @@ class GestionGroupesController extends AbstractController
         $this->em->flush();
         return new Response('Inscription Bien Modifier!',200);
     }
+    
+    #[Route('/exportbypromotion/{promotion}/{annee}', name: 'exportbypromotion')]
+    public function exportbypromotion($promotion,$annee): Response
+    {   
+        $inscriptions = $this->em->getRepository(TInscription::class)->findBy(['promotion'=>$promotion,'annee'=>$annee]);
+        if ($inscriptions == Null) {
+            return new Response('Inscriptions Introuvable!!',500);
+        }
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        $sheet->setCellValue('A1', 'Id');
+        $sheet->setCellValue('B1', 'Code Inscription');
+        $sheet->setCellValue('C1', 'Nom');
+        $sheet->setCellValue('D1', 'Prenom');
+        $sheet->setCellValue('E1', 'Etablissement');
+        $sheet->setCellValue('F1', 'Formation');
+        $sheet->setCellValue('G1', 'Promotion');
+        $sheet->setCellValue('H1', 'Année');
+        $sheet->setCellValue('I1', 'Niveau1');
+        $sheet->setCellValue('J1', 'Niveau2');
+        $sheet->setCellValue('K1', 'Niveau3');
+        $i=2;
+        foreach ($inscriptions as $inscription) {
+            $sheet->setCellValue('A'.$i, $inscription->getId());
+            $sheet->setCellValue('B'.$i, $inscription->getCode());
+            $sheet->setCellValue('C'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getNom());
+            $sheet->setCellValue('D'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getPrenom());
+            $sheet->setCellValue('E'.$i, $inscription->getPromotion()->getFormation()->getEtablissement()->getDesignation());
+            $sheet->setCellValue('F'.$i, $inscription->getPromotion()->getFormation()->getDesignation());
+            $sheet->setCellValue('G'.$i, $inscription->getPromotion()->getDesignation());
+            $sheet->setCellValue('H'.$i, $inscription->getAnnee()->getDesignation());
+            if ($inscription->getGroupe() != Null) {
+                if ($inscription->getGroupe()->getGroupe() == Null) {
+                    $sheet->setCellValue('I'.$i, $inscription->getGroupe()->getNiveau());
+                }elseif ($inscription->getGroupe()->getGroupe()->getGroupe() == Null) {
+                    $sheet->setCellValue('I'.$i, $inscription->getGroupe()->getGroupe()->getNiveau());
+                    $sheet->setCellValue('J'.$i, $inscription->getGroupe()->getNiveau());
+                }else {
+                    $sheet->setCellValue('I'.$i, $inscription->getGroupe()->getGroupe()->getGroupe()->getNiveau());
+                    $sheet->setCellValue('J'.$i, $inscription->getGroupe()->getGroupe()->getNiveau());
+                    $sheet->setCellValue('K'.$i, $inscription->getGroupe()->getNiveau());
+                }
+            }
+            $i++;
+        }
+        $writer = new Xlsx($spreadsheet);
+        $fileName = 'Inscriptions.xlsx';
+        $temp_file = tempnam(sys_get_temp_dir(), $fileName);
+        $writer->save($temp_file);
+        return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);
+    }
+
+    
 }
