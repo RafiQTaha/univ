@@ -262,7 +262,7 @@
             <td style="padding:6px;border-right:1px solid white;text-align: left;">{{gnote.inscription.admission.preinscription.etudiant.nom}}</td>
             <td style="padding:6px;border-right:1px solid white;text-align: left;">{{gnote.inscription.admission.preinscription.etudiant.prenom}}</td>
             <td style="padding:6px;border-right:1px solid white;text-align: left;">{{gnote.note}}</td>
-            <td style="padding:6px;border-right:1px solid white;text-align: left;">{{gnote.absence}}</td>
+            <td style="padding:6px;border-right:1px solid white;text-align: left;">{% if gnote.absence == 1 %} Absent {% endif %}</td>
             <td style="padding:6px;border-right:1px solid white;text-align: left;">{{gnote.observation}}</td>
         </tr>
         {% endfor %}
