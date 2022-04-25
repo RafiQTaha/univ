@@ -71,14 +71,6 @@ class GestionHonoraireController extends AbstractController
         if (!empty($params->all('columns')[2]['search']['value'])) {
             $filtre .= " and prm.id = '" . $params->all('columns')[2]['search']['value'] . "' ";
         }   
-<<<<<<< HEAD
-        if (!empty($params->get('columns')[3]['search']['value'])) {
-            $filtre .= " and sem.id = '" . $params->get('columns')[3]['search']['value'] . "' ";
-        }
-        if (!empty($params->get('columns')[4]['search']['value'])) {
-            if ($params->get('columns')[4]['search']['value'] !== 'All') {
-                $filtre .= " and hon.statut = '" . $params->get('columns')[4]['search']['value'] . "' ";
-=======
         if (!empty($params->all('columns')[3]['search']['value'])) {
             $filtre .= " and sem.id = '" . $params->all('columns')[3]['search']['value'] . "' ";
         } 
@@ -86,7 +78,6 @@ class GestionHonoraireController extends AbstractController
         if (!empty($params->all('columns')[4]['search']['value'])) {
             if ($params->all('columns')[4]['search']['value'] !== 'All') {
                 $filtre .= " and hon.statut = '" . $params->all('columns')[4]['search']['value'] . "' ";
->>>>>>> 69941a97214b091097bca9e2dfda3fbac2777c70
             }
         }
         if (!empty($params->all('columns')[5]['search']['value'])) {
