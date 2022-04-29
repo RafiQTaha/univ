@@ -173,10 +173,9 @@ class GestionFactureController extends AbstractController
     #[Route('/ajouter_reglement/{id}', name: 'facture_ajouter_reglement')]
     public function ajouter_reglement(Request $request,TOperationcab $operationcab): Response
     { 
-        if (empty($request->get('d_reglement')) || empty($request->get('montant')) || empty($request->get('banque')) || empty($request->get('paiement')) ) {
-            return new JsonResponse('Veuillez renseigner tous les champs obligatoires!', 500);
-        }
-        if ($request->get('montant') > $request->get('montant2')) {
+        if (empty($request->get('d_reglement')) || $request->get('montant') == "" || empty($request->get('paiement')) ) {
+            return new JsonResponse('Veuillez renseigner tous les champs!', 500);
+        }elseif ($request->get('montant') > $request->get('montant2')) {
             return new JsonResponse('Le montant a réglé est '.$request->get('montant2').'DH', 500);
         }elseif ($request->get('montant') == 0) {
             return new JsonResponse('Le montant ne peut pas étre égale a 0', 500);
@@ -187,10 +186,11 @@ class GestionFactureController extends AbstractController
         $reglement->setCreated(new DateTime('now'));
         $reglement->setMontant($request->get('montant'));
         $reglement->setRemise(0);
-        $reglement->setBanque($this->em->getRepository(XBanque::class)->find($request->get('banque')));
+        $reglement->setBanque($request->get('banque') == "" ? Null : $this->em->getRepository(XBanque::class)->find($request->get('banque')));
         $reglement->setPaiement($this->em->getRepository(XModalites::class)->find($request->get('paiement')));
         $reglement->setDateReglement(new DateTime($request->get('d_reglement')));
         $reglement->setReference($request->get('reference'));
+        $reglement->setPayant($request->get('organisme'));
         $this->em->persist($reglement);
         $this->em->flush();
         $reglement->setCode($etablissement.'-REG'.str_pad($reglement->getId(), 8, '0', STR_PAD_LEFT).'/'.date('Y'));
@@ -260,21 +260,60 @@ class GestionFactureController extends AbstractController
         return new JsonResponse('Organisme Modifier', 200);        
     }
     #[Route('/printfacture/{operationcab}', name: 'imprimerfacture')]
-    public function imprimerfacture(TOperationcab $operationcab): Response
+    public function imprimerfacture(TOperationcab $operationcab)
     {
-        $operationTotal = $this->em->getRepository(TOperationdet::class)->getSumMontantByCodeFacture($operationcab);
-        $reglementTotal = $this->em->getRepository(TReglement::class)->getSumMontantByCodeFacture($operationcab);
-        $operationTotal = $operationTotal == Null ? 0 : $operationTotal['total'];
-        $reglementTotal = $reglementTotal == Null ? 0 : $reglementTotal['total'];
-        // dd($operationTotal,$reglementTotal);
-        $total = $operationTotal - $reglementTotal;
+        $operationdets = $this->em->getRepository(TOperationdet::class)->FindDetGroupByFrais($operationcab);
+        $operationdetslist = [];
+        foreach ($operationdets as $operationdet) {
+            $frais = $operationdet->getFrais();
+            // dd($frais);
+            $SumByOrg = $this->em->getRepository(TOperationdet::class)->getSumMontantByCodeFactureAndOrganisme($operationcab,$frais);
+            $SumByPayant = $this->em->getRepository(TOperationdet::class)->getSumMontantByCodeFactureAndPayant($operationcab,$frais);
+            $list['dateOperation'] = $this->em->getRepository(TOperationdet::class)->findOneBy(['operationcab'=>$operationcab,'frais'=>$frais],['created'=>'DESC'])->getCreated()->format('d/m/Y');
+            // $list['dateOperation'] = $operationdet->getCreated()->format('d/m/Y h:m:s');
+            $list['designation'] = $operationdet->getFrais()->getDesignation();
+            $list['SumByOrg'] = $SumByOrg;
+            $list['SumByPayant'] = $SumByPayant;
+            $list['total'] = $SumByPayant + $SumByOrg;
+            array_push($operationdetslist,$list);
+        }
+        $inscription = $this->em->getRepository(TInscription::class)->findOneBy([
+            'admission'=>$this->em->getRepository(TAdmission::class)->findBy([
+                'preinscription'=>$operationcab->getPreinscription()]),
+            'annee' => $operationcab->getAnnee()]);
+                // dd($inscription);
+        $promotion = $inscription == NULL ? "" : $inscription->getPromotion()->getDesignation();
+        // dd($inscription);
+        // $operationTotal = $this->em->getRepository(TOperationdet::class)->getSumMontantByCodeFacture($operationcab);
+        // $reglementTotal = $this->em->getRepository(TReglement::class)->getSumMontantByCodeFacture($operationcab);
+        // $operationTotal = $operationTotal == Null ? 0 : $operationTotal['total'];
+        // $reglementTotal = $reglementTotal == Null ? 0 : $reglementTotal['total'];
+        // $total = $operationTotal - $reglementTotal;
+
+        
+        $reglementOrg = $this->em->getRepository(TReglement::class)->getReglementSumMontantByCodeFactureByOrganisme($operationcab)['total'];
+        $reglementPyt = $this->em->getRepository(TReglement::class)->getReglementSumMontantByCodeFactureByPayant($operationcab)['total'];
+        // dd($reglementOrg,$reglementPyt);
+        
+        
         $html = $this->render("facture/pdfs/facture_facture.html.twig", [
-            'reglementTotal' => $reglementTotal,
-            'operationTotal' => $operationTotal,
+            'reglementOrg' => $reglementOrg,
+            'reglementPyt' => $reglementPyt,
+            // 'reglementTotal' => $reglementTotal,
+            // 'operationTotal' => $operationTotal,
             'operationcab' => $operationcab,
-            'total' => $total
+            'promotion' => $promotion,
+            // 'total' => $total,
+            'operationdets' => $operationdetslist
         ])->getContent();
-        $mpdf = new Mpdf();
+        $mpdf = new Mpdf([
+            'mode' => 'utf-8',
+            'margin_top' => 5,
+        ]);        
+        $mpdf->SetTitle('Facture');
+        $mpdf->SetHTMLFooter(
+            $this->render("facture/pdfs/footer.html.twig")->getContent()
+        );
         $mpdf->showImageErrors = true;
         $mpdf->WriteHTML($html);
         $mpdf->Output("facture.pdf", "I");
@@ -317,6 +356,7 @@ class GestionFactureController extends AbstractController
             }
             $html .= '<tr><th scope="col">'.$i++.'</th>
             <th scope="col" style="width:25rem">'.$operationdet->getFrais()->getDesignation().'</th>
+            <th scope="col">'.$operationdet->getOrganisme()->getDesignation().'</th>
             <th scope="col">'.$operationdet->getMontant().'</th>
             <th scope="col">'.$operationdet->getRemise().'</th>'.$tr.'</tr>';
         }
@@ -327,12 +367,15 @@ class GestionFactureController extends AbstractController
     #[Route('/add_detaille/{id}', name: 'add_detaille')]
     public function add_detaille(Request $request,TOperationcab $operationcab): Response
     {   
+        // dd($request);
         if($operationcab->getActive() == 0){
             return new JsonResponse('Cette Facture Est Cloture', 500);  
         }
-        // dd($request->get('montant'),$request->get('ice'),$request->get('frais'));
-        if(empty($request->get('montant'))  || $request->get('montant') == ' '|| empty($request->get('ice'))|| $request->get('montant') == ' ' || empty($request->get('frais')) ){
+        if(empty($request->get('montant'))  || $request->get('montant') == ' ' || empty($request->get('frais')) ){
             return new JsonResponse('Merci de renseigner tous les champs!', 500);            
+        }
+        if (empty($request->get('organisme_id'))) {
+            return new JsonResponse('Merci de choisir une Organisme!', 500);
         }
         $frais =  $this->em->getRepository(PFrais::class)->find($request->get('frais'));
         $operationDet = new TOperationdet();
@@ -344,6 +387,7 @@ class GestionFactureController extends AbstractController
         $operationDet->setUpdated(new \DateTime("now"));
         $operationDet->setRemise(0);
         $operationDet->setActive(1);
+        $operationDet->setOrganisme($this->em->getRepository(POrganisme::class)->find($request->get('organisme_id')));
         $this->em->persist($operationDet);
         $this->em->flush();
         $operationDet->setCode(

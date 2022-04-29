@@ -70,9 +70,11 @@ const load_etud_info = () => {
 
 const load_frais_preins = () => {
     if(id_preinscription){
+        // icon.addClass('fa-spinner fa-spin').removeClass('fa-money-bill-alt')
         axios.get('/preinscription/gestion/article_frais/'+id_preinscription)
         .then(success => {
-            $('.modal-preins .article #frais').html(success.data).select2();
+            $('.modal-preins .article #frais').html(success.data.list).select2();
+            $('.modal-preins #code-facture').html(success.data.codefacture);
             // success.data
         })
         .catch(err => {
@@ -140,19 +142,43 @@ $('body').on('change','.modal-preins .article #frais',function (e) {
     let frais = $(this).find(':selected').attr('data-id');
     $('.modal-preins .article #montant').val(frais);
 });
+$('input[type=radio][name=organ]').on('change', async function (e){
+    e.preventDefault();
+    if (this.value == 0) {
+        const request = await axios.get('/api/getorganismepasPayant');
+        response = request.data
+        $('.select-organ #org').html(response).select2();
+        $('.select-organ').css('display','block');
+    }else{
+        $('.select-organ #org').html("");
+        $('.select-organ').css('display','none');
+    }
+})
 $('body').on('click','.modal #add-btn',function () {
     let fraisId  = $('.modal-preins .article #frais').val();
     let fraisText  = $('.modal-preins .article #frais').find(':selected').text();
     let prix  = $('.modal-preins .article #montant').val();
-    const index = frais.findIndex(frais => frais.id == fraisId );
-    if(index == -1) {
-        frais.push({
-            id: fraisId ,
-            designation: fraisText,
-            montant: prix
-        });
-        rawFrais();
+    let organ  = $('.select-organ #org').find(':selected').text();
+    let organisme_id  = $('.select-organ #org').val();
+    // console.log(fraisId)
+    if (!$.isNumeric(fraisId) || prix == "") {
+        return
     }
+    if ($("input[name='organ']:checked").val() == 1) {
+        organisme_id = 7
+        organ = "Payant"
+    }else if(organisme_id == ""){
+        return
+    }
+    frais.push({
+        index : Math.floor((Math.random() * 1000) + 1),
+        id: fraisId ,
+        designation: fraisText,
+        montant: prix,
+        organisme_id: organisme_id,
+        organisme: organ
+    });
+    rawFrais();
 })
 const rawFrais = () => {
     let html = "";
@@ -162,14 +188,15 @@ const rawFrais = () => {
             <td>${i + 1}</td>
             <td>${f.designation}</td>
             <td>${f.montant}</td>
-            <td><button class='delete_frais btn btn-danger'  id='${f.id}'><i class='fa fa-trash'></i></button></td>
+            <td>${f.organisme}</td>
+            <td><button class='delete_frais btn btn-danger' id='${f.index}'><i class='fa fa-trash'></i></button></td>
         </tr>
     `
     })
     $(".modal-preins .table-fee tbody").html(html)
 }
 $("body").on("click", '.delete_frais', function () {
-    const index = frais.findIndex(frais => frais.id == $(this).attr("id"));
+    const index = frais.findIndex(frais => frais.index == $(this).attr("id"));
     frais.splice(index,1);
     rawFrais();
 })
@@ -179,34 +206,40 @@ $("body").on("click", '.modal .save', async function (e) {
     if(frais.length < 1){
         Toast.fire({
           icon: 'error',
-          title: 'Veuillez Ajouter Des Lignes!',
+          title: 'Veuillez Ajouter Des Frais!',
         })
         return;
     }
+    console.log(frais)
+    // return
     const icon = $(".modal .save i");
-    icon.removeClass('fa-trash').addClass("fa-spinner fa-spin");
+    icon.removeClass('fa-check-circle').addClass("fa-spinner fa-spin");
     var formData = new FormData();
     formData.append('frais', JSON.stringify(frais));
     try {
         const request = await axios.post("/preinscription/gestion/addfrais/"+id_preinscription, formData);
         const data = await request.data;
-        Toast.fire({
-            icon: 'success',
-            title: 'Frais Bien Ajouter',
-        })
-        icon.addClass('fa-trash').removeClass("fa-spinner fa-spin");
+        $("#frais_preinscription-modal .modal-body").prepend(
+            `<div class="alert alert-success">
+                <p>Bien Enregistre</p>
+              </div>`
+          );
+        icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin");
         $(".modal-preins .table-fee tbody").empty();
         table_gestion_preins.ajax.reload(null,false);
         frais = [];
         window.open('/preinscription/gestion/facture/'+data, '_blank');
-      } catch (error) {
+    } catch (error) {
         const message = error.response.data;
         console.log(error, error.response);
-        Toast.fire({
-            icon: 'error',
-            title: 'Some Error',
-        })
-      }
+        $("#frais_preinscription-modal .modal-body").prepend(
+            `<div class="alert alert-danger">${message}</div>`
+        );
+        icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin");
+    }
+    setTimeout(() => {
+        $("#frais_preinscription-modal .modal-body .alert").remove();
+    }, 3000);
 })
 
 $('body').on('click','#datables_gestion_preinscription tbody tr',function (e) {

@@ -34,12 +34,16 @@ class POrganisme
     #[ORM\OneToMany(mappedBy: 'organisme', targetEntity: TEtudiant::class)]
     private $etudiants;
 
+    #[ORM\OneToMany(mappedBy: 'organisme', targetEntity: TOperationdet::class)]
+    private $operationdets;
+
     
 
     public function __construct()
     {
         $this->operationcabs = new ArrayCollection();
         $this->etudiants = new ArrayCollection();
+        $this->operationdets = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -149,6 +153,36 @@ class POrganisme
             // set the owning side to null (unless already changed)
             if ($etudiant->getOrganisme() === $this) {
                 $etudiant->setOrganisme(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, TOperationdet>
+     */
+    public function getOperationdets(): Collection
+    {
+        return $this->operationdets;
+    }
+
+    public function addOperationdet(TOperationdet $operationdet): self
+    {
+        if (!$this->operationdets->contains($operationdet)) {
+            $this->operationdets[] = $operationdet;
+            $operationdet->setOrganisme($this);
+        }
+
+        return $this;
+    }
+
+    public function removeOperationdet(TOperationdet $operationdet): self
+    {
+        if ($this->operationdets->removeElement($operationdet)) {
+            // set the owning side to null (unless already changed)
+            if ($operationdet->getOrganisme() === $this) {
+                $operationdet->setOrganisme(null);
             }
         }
 
