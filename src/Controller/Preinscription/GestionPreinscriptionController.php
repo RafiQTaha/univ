@@ -18,6 +18,8 @@ use App\Entity\NatureDemande;
 use App\Entity\User;
 use App\Controller\ApiController;
 use App\Controller\DatatablesController;
+use App\Entity\TAdmission;
+use App\Entity\TInscription;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -229,32 +231,26 @@ class GestionPreinscriptionController extends AbstractController
     #[Route('/article_frais/{id}', name: 'article_frais')]
     public function article_frais(Request $request,TPreinscription $preinscription): Response
     {   
+        $operationcab = $this->em->getRepository(TOperationcab::class)->findOneBy(['preinscription'=>$preinscription,'categorie'=>'pré-inscription']);
         $formation = $preinscription->getAnnee()->getFormation();
         $frais = $this->em->getRepository(PFrais::class)->findBy(['formation'=>$formation,'categorie'=>'Pré-inscription']);
         $data = "<option selected enabled>Choix Fraix</option>";
         foreach ($frais as $frs) {
             $data .="<option value=".$frs->getId()." data-id=".$frs->getmontant().">".$frs->getDesignation()."</option>";
         }
-        return new JsonResponse($data, 200);
+        return new JsonResponse(['list' => $data, 'codefacture' => $operationcab->getCode()], 200); 
+        // return new JsonResponse($data, 200);
     }
 
     #[Route('/addfrais/{id}', name: 'addfrais')]
     public function addfrais(Request $request,TPreinscription $preinscription): Response
     {   
         $ids = json_decode($request->get('frais'));
-        // $operationcab = new TOperationcab();
-        // $operationcab->setPreinscription($preinscription);
-        // $operationcab->setAnnee($preinscription->getAnnee());
-        // $operationcab->setOrganisme($this->em->getRepository(POrganisme::class)->find(7));
-        // $operationcab->setCategorie('inscription');
-        // $operationcab->setCreated(new DateTime('now'));
-        // $operationcab->setUserCreated($this->getUser());
-        // $this->em->persist($operationcab);
-        // $this->em->flush();
-        // $etab = $preinscription->getAnnee()->getFormation()->getEtablissement()->getAbreviation();
-        // $operationcab->setCode($etab.'-FAC'.str_pad($operationcab->getId(), 8, '0', STR_PAD_LEFT).'/'.date('Y'));
-        // $this->em->flush();
+        // dd($request);
         $operationcab = $this->em->getRepository(TOperationcab::class)->findOneBy(['preinscription'=>$preinscription,'categorie'=>'pré-inscription']);
+        if ($operationcab->getActive() == 0) {
+            return new JsonResponse('Facture Cloturée', 500);
+        }
         foreach($ids as $idfrais){
             $operationdet = new TOperationdet();
             $operationdet->setOperationcab($operationcab);
@@ -264,6 +260,7 @@ class GestionPreinscriptionController extends AbstractController
             $operationdet->setActive(1);
             $operationdet->setCreated(new DateTime('now'));
             $operationdet->setUpdated(new DateTime('now'));
+            $operationdet->setOrganisme($this->em->getRepository(POrganisme::class)->find($idfrais->organisme_id));
             $this->em->persist($operationdet);
             $this->em->flush();
             $operationdet->setCode('OPD'.str_pad($operationdet->getId(), 8, '0', STR_PAD_LEFT));
@@ -380,24 +377,65 @@ class GestionPreinscriptionController extends AbstractController
     #[Route('/facture/{operationcab}', name: 'preinscription_facture')]
     public function preinscriptionFacture(Request $request, TOperationcab $operationcab): Response
     {
-        $reglementTotal = $this->em->getRepository(TReglement::class)->getSumMontantByCodeFacture($operationcab);
-        $operationTotal = $this->em->getRepository(TOperationdet::class)->getSumMontantByCodeFacture($operationcab);
-        // dd($reglement, $operationDetails);
-        $html = $this->render("facture/pdfs/facture.html.twig", [
-            'reglementTotal' => $reglementTotal,
-            'operationTotal' => $operationTotal,
-            'operationcab' => $operationcab
+        $operationdets = $this->em->getRepository(TOperationdet::class)->FindDetGroupByFrais($operationcab);
+        $operationdetslist = [];
+        foreach ($operationdets as $operationdet) {
+            $frais = $operationdet->getFrais();
+            $SumByOrg = $this->em->getRepository(TOperationdet::class)->getSumMontantByCodeFactureAndOrganisme($operationcab,$frais);
+            $SumByPayant = $this->em->getRepository(TOperationdet::class)->getSumMontantByCodeFactureAndPayant($operationcab,$frais);
+            $list['dateOperation'] = $this->em->getRepository(TOperationdet::class)->findOneBy(['operationcab'=>$operationcab,'frais'=>$frais],['created'=>'DESC'])->getCreated()->format('d/m/Y');
+            $list['designation'] = $operationdet->getFrais()->getDesignation();
+            $list['SumByOrg'] = $SumByOrg;
+            $list['SumByPayant'] = $SumByPayant;
+            $list['total'] = $SumByPayant + $SumByOrg;
+            array_push($operationdetslist,$list);
+        }
+        $inscription = $this->em->getRepository(TInscription::class)->findOneBy([
+            'admission'=>$this->em->getRepository(TAdmission::class)->findBy([
+                'preinscription'=>$operationcab->getPreinscription()]),
+            'annee' => $operationcab->getAnnee()]);
+        $promotion = $inscription == NULL ? "" : $inscription->getPromotion()->getDesignation();
+        
+        $reglementOrg = $this->em->getRepository(TReglement::class)->getReglementSumMontantByCodeFactureByOrganisme($operationcab)['total'];
+        $reglementPyt = $this->em->getRepository(TReglement::class)->getReglementSumMontantByCodeFactureByPayant($operationcab)['total'];
+        
+        $html = $this->render("facture/pdfs/facture_facture.html.twig", [
+            'reglementOrg' => $reglementOrg,
+            'reglementPyt' => $reglementPyt,
+            'operationcab' => $operationcab,
+            'promotion' => $promotion,
+            'operationdets' => $operationdetslist
         ])->getContent();
-        $mpdf = new Mpdf();
+        $mpdf = new Mpdf([
+            'mode' => 'utf-8',
+            'margin_top' => 5,
+        ]);        
         $mpdf->SetTitle('Facture');
-        $mpdf->SetHTMLHeader(
-            $this->render("facture/pdfs/header.html.twig")->getContent()
-        );
         $mpdf->SetHTMLFooter(
             $this->render("facture/pdfs/footer.html.twig")->getContent()
         );
+        $mpdf->showImageErrors = true;
         $mpdf->WriteHTML($html);
         $mpdf->Output("facture.pdf", "I");
+        
+        // $reglementTotal = $this->em->getRepository(TReglement::class)->getSumMontantByCodeFacture($operationcab);
+        // $operationTotal = $this->em->getRepository(TOperationdet::class)->getSumMontantByCodeFacture($operationcab);
+        // // dd($reglement, $operationDetails);
+        // $html = $this->render("facture/pdfs/facture.html.twig", [
+        //     'reglementTotal' => $reglementTotal,
+        //     'operationTotal' => $operationTotal,
+        //     'operationcab' => $operationcab
+        // ])->getContent();
+        // $mpdf = new Mpdf();
+        // $mpdf->SetTitle('Facture');
+        // $mpdf->SetHTMLHeader(
+        //     $this->render("facture/pdfs/header.html.twig")->getContent()
+        // );
+        // $mpdf->SetHTMLFooter(
+        //     $this->render("facture/pdfs/footer.html.twig")->getContent()
+        // );
+        // $mpdf->WriteHTML($html);
+        // $mpdf->Output("facture.pdf", "I");
     }
     
     #[Route('/test/{id}', name: 'test')]

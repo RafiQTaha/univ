@@ -541,14 +541,13 @@ class EpreuveController extends AbstractController
     #[Route('/add_epreuve', name: 'administration_epreuve_add_epreuve')]
     public function administrationEpreuveaddepreuve(Request $request) 
     {
-        // dd($request);
         if (empty($request->get('id_element')) || empty($request->get('id_Nature')) || empty($request->get('id_enseignant')) || empty($request->get('d_epreuve'))) {
             return new JsonResponse('Merci de remplir tout les champs!', 500);
         }
         $epreuve = new AcEpreuve();
         $epreuve->setCoefficient(1);
         $epreuve->setStatut($this->em->getRepository(PStatut::class)->find(28));
-        $epreuve->setAnonymat(1);
+        $epreuve->setAnonymat($request->get('anonymat'));
         $epreuve->setCreated(new \DateTime('now'));
         $epreuve->setDateEpreuve(new \DateTime($request->get('d_epreuve')));
         $epreuve->setElement($this->em->getRepository(AcElement::class)->find($request->get('id_element')));

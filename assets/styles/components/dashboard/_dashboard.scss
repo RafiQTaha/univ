@@ -6304,10 +6304,10 @@ tr:first-child > td > .fc-day-grid-event {
 .modal .modal-facture{
   max-width: 50% !important;
 }
-.modal .modal-facture input{
- width: 100%;
- line-height: 24px !important; 
-}
+// .modal .modal-facture input{
+//  width: 100%;
+//  line-height: 24px !important; 
+// }
 .modal .modal-box{
   width:100%;
   flex-wrap: wrap;
@@ -6504,4 +6504,7 @@ table.dataTable th.dt-center, table.dataTable td.dt-center, table.dataTable td.d
 }
 .dataTables_filter input {
   font-size: 12px;
+}
+.select-organ{
+  display: none;
 }

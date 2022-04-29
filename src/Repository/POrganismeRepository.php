@@ -47,4 +47,14 @@ class POrganismeRepository extends ServiceEntityRepository
         ;
     }
     */
+
+    public function getorganismepasPayant()
+    {
+        return $this->createQueryBuilder('p')
+            ->andWhere('p.id != 7')
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
 }

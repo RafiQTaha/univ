@@ -25,9 +25,6 @@ class AcElement
     private $module;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private $nature;
-
-    #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $code;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
@@ -45,12 +42,8 @@ class AcElement
     #[ORM\Column(type: 'json', nullable: true)]
     private $coefficient_epreuve;
 
-    // #[ORM\Column(type: 'integer', nullable: true)]
-    // private $type;
-
-    // #[ORM\ManyToOne(targetEntity: TypeElement::class, inversedBy: 'elements')]
-    // private $type;
-
+    #[ORM\Column(type: 'integer', nullable: true)]
+    private $type;
 
     #[ORM\Column(type: 'integer', nullable: true)]
     private $cours_document;
@@ -73,8 +66,11 @@ class AcElement
     #[ORM\OneToMany(mappedBy: 'element', targetEntity: PrProgrammation::class)]
     private $programmations;
 
-    #[ORM\ManyToOne(targetEntity: TypeElement::class, inversedBy: 'acElements')]
-    private $type;
+    #[ORM\ManyToOne(targetEntity: TypeElement::class, inversedBy: 'elements')]
+    private $nature;
+
+    // #[ORM\ManyToOne(targetEntity: TypeElement::class, inversedBy: 'acElements')]
+    // private $nature;
 
     public function __construct()
     {
@@ -122,18 +118,6 @@ class AcElement
     public function setModule(?AcModule $module): self
     {
         $this->module = $module;
-
-        return $this;
-    }
-
-    public function getNature(): ?string
-    {
-        return $this->nature;
-    }
-
-    public function setNature(?string $nature): self
-    {
-        $this->nature = $nature;
 
         return $this;
     }
@@ -210,29 +194,17 @@ class AcElement
         return $this;
     }
 
-    // public function getType(): ?int
-    // {
-    //     return $this->type;
-    // }
+    public function getType(): ?int
+    {
+        return $this->type;
+    }
 
-    // public function setType(?int $type): self
-    // {
-    //     $this->type = $type;
+    public function setType(?int $type): self
+    {
+        $this->type = $type;
 
-    //     return $this;
-    // }
-
-    // public function getType(): ?int
-    // {
-    //     return $this->type;
-    // }
-
-    // public function setType(?int $type): self
-    // {
-    //     $this->type = $type;
-
-    //     return $this;
-    // }
+        return $this;
+    }
 
     public function getCoursDocument(): ?int
     {
@@ -390,14 +362,14 @@ class AcElement
         return $this;
     }
 
-    public function getType(): ?TypeElement
+    public function getNature(): ?TypeElement
     {
-        return $this->type;
+        return $this->nature;
     }
 
-    public function setType(?TypeElement $type): self
+    public function setNature(?TypeElement $nature): self
     {
-        $this->type = $type;
+        $this->nature = $nature;
 
         return $this;
     }

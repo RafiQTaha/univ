@@ -24,16 +24,12 @@ class TypeElement
     #[ORM\Column(type: 'datetime', nullable: true)]
     private $created;
 
-    #[ORM\OneToMany(mappedBy: 'Type', targetEntity: AcElement::class)]
+    #[ORM\OneToMany(mappedBy: 'nature', targetEntity: AcElement::class)]
     private $elements;
-
-    #[ORM\OneToMany(mappedBy: 'type', targetEntity: AcElement::class)]
-    private $acElements;
 
     public function __construct()
     {
-        $this->elements = new ArrayCollection();
-        $this->acElements = new ArrayCollection();
+        // $this->elements = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -89,7 +85,7 @@ class TypeElement
     {
         if (!$this->elements->contains($element)) {
             $this->elements[] = $element;
-            $element->setType($this);
+            $element->setNature($this);
         }
 
         return $this;
@@ -99,38 +95,8 @@ class TypeElement
     {
         if ($this->elements->removeElement($element)) {
             // set the owning side to null (unless already changed)
-            if ($element->getType() === $this) {
-                $element->setType(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, AcElement>
-     */
-    public function getAcElements(): Collection
-    {
-        return $this->acElements;
-    }
-
-    public function addAcElement(AcElement $acElement): self
-    {
-        if (!$this->acElements->contains($acElement)) {
-            $this->acElements[] = $acElement;
-            $acElement->setType($this);
-        }
-
-        return $this;
-    }
-
-    public function removeAcElement(AcElement $acElement): self
-    {
-        if ($this->acElements->removeElement($acElement)) {
-            // set the owning side to null (unless already changed)
-            if ($acElement->getType() === $this) {
-                $acElement->setType(null);
+            if ($element->getNature() === $this) {
+                $element->setNature(null);
             }
         }
 

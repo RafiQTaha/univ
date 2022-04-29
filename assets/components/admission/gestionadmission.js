@@ -73,7 +73,9 @@ const Toast = Swal.mixin({
         try {
             const request = await axios.get("/api/frais/"+id_admission);
             const data = await request.data;
-            $('#frais').html(data).select2();
+            $('#frais').html(data.list).select2();
+            $('#code-facture').html(data.codefacture);
+            
           } catch (error) {
             const message = error.response.data;
             console.log(error, error.response);
@@ -258,7 +260,18 @@ const Toast = Swal.mixin({
   
         $("#frais_inscription-modal").modal("show")
     })
-
+    $('input[type=radio][name=organ]').on('change', async function (e){
+        e.preventDefault();
+        if (this.value == 0) {
+            const request = await axios.get('/api/getorganismepasPayant');
+            response = request.data
+            $('.select-organ #org').html(response).select2();
+            $('.select-organ').css('display','block');
+        }else{
+            $('.select-organ #org').html("");
+            $('.select-organ').css('display','none');
+        }
+    })
     $("#add_frais_gestion").on("click", () => {
 
         let fraisId = $("#frais").find(":selected").val();
@@ -266,21 +279,30 @@ const Toast = Swal.mixin({
             let fraisText = $("#frais").find(":selected").text();
             let prix = $("#montant").val();
             let ice = $("#ice").val();
-            const index = frais.findIndex(frais => frais.id == fraisId);
-            // console.log(index)
-            if(index === -1) {
+            let organ  = $('.select-organ #org').find(':selected').text();
+            let organisme_id  = $('.select-organ #org').val();
+            if (!$.isNumeric(fraisId) || prix == "") {
+                return
+            }
+            if ($("input[name='organ']:checked").val() == 1) {
+                organisme_id = 7
+                organ = "Payant"
+            }else if(organisme_id == ""){
+                return
+            }
+            console.log($("input[name='organ']:checked").val());
                 frais.push({
+                    index : Math.floor((Math.random() * 1000) + 1),
                     id: fraisId,
                     designation: fraisText,
                     montant: prix,
-                    ice: ice
+                    ice: ice,
+                    organisme_id: organisme_id,
+                    organisme: organ
                 });
                 rawFrais();
-            }
         }
     })
-    
-
     const rawFrais = () => {
         let html = "";
         frais.map((f, i) => {
@@ -290,7 +312,8 @@ const Toast = Swal.mixin({
                 <td>${f.designation}</td>
                 <td>${f.montant}</td>
                 <td>${f.ice}</td>
-                <td><button class='delete_frais btn btn-danger'  id='${f.id}'><i class='fa fa-trash' ></i></button></td>
+                <td>${f.organisme}</td>
+                <td><button class='delete_frais btn btn-danger'  id='${f.index}'><i class='fa fa-trash' ></i></button></td>
             </tr>
         `
         })
@@ -298,14 +321,14 @@ const Toast = Swal.mixin({
         $(".table_frais_admission").html(html)
     }
     $("body").on("click", '.delete_frais', function () {
-        const index = frais.findIndex(frais => frais.id == $(this).attr("id"));
+        const index = frais.findIndex(frais => frais.index == $(this).attr("id"));
         frais.splice(index,1);
         rawFrais();
     })
     $("#save_frais_gestion").on("click", async () => {
         let formData = new FormData();
         formData.append("frais", JSON.stringify(frais))
-        formData.append("organisme", $("#organisme").val())
+        // formData.append("organisme", $("#organisme").val())
         let modalAlert = $("#frais_inscription-modal .modal-body .alert")
     
         modalAlert.remove();
@@ -333,8 +356,10 @@ const Toast = Swal.mixin({
             `<div class="alert alert-danger">${message}</div>`
           );
           icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
-          
         }
+        setTimeout(() => {
+            $("#frais_inscription-modal .modal-body .alert").remove();
+        }, 3000);
     })
 
     $("#inscription-modal").on("click", () => {
@@ -348,6 +373,7 @@ const Toast = Swal.mixin({
         $("#inscription_modal .modal-body .alert").remove()
         $("#inscription_modal").modal("show")
     })
+
     $("#inscription_save").on("submit", async function (e){
         e.preventDefault();
         let formData = new FormData($(this)[0]);
@@ -376,7 +402,6 @@ const Toast = Swal.mixin({
             `<div class="alert alert-danger">${message}</div>`
           );
           icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
-          
         }
     })
 
