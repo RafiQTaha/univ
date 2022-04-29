@@ -20,10 +20,10 @@
     $(".password_change").on("click", function(){
         $("#password_modal").modal("show")
     })
-    $("#password_modal #save").on("submit", async function(e) {
+    $("#password_modal #save_password_change").on("submit", async function(e) {
         e.preventDefault();
         var formData = new FormData($(this)[0])
-        const icon = $("#password_modal #save i");
+        const icon = $("#password_modal #save_password_change i");
 
         try {
             icon.remove('fa-check-circle').addClass("fa-spinner fa-spin ");

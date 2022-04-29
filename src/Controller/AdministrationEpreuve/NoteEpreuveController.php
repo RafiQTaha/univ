@@ -2,26 +2,27 @@
 
 namespace App\Controller\AdministrationEpreuve;
 
-use Doctrine\Persistence\ManagerRegistry;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
-use App\Controller\ApiController;
-use App\Entity\AcEtablissement;
-use App\Entity\PEnseignant;
 use DateTime;
 use Mpdf\Mpdf;
-use App\Controller\DatatablesController;
-use App\Entity\AcEpreuve;
+use App\Entity\PStatut;
 use App\Entity\ExGnotes;
+use App\Entity\AcEpreuve;
+use App\Entity\PEnseignant;
 use App\Entity\TInscription;
+use App\Entity\AcEtablissement;
+use App\Controller\ApiController;
+use App\Controller\DatatablesController;
+use Doctrine\Persistence\ManagerRegistry;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
-use PhpOffice\PhpSpreadsheet\Reader\Xlsx as reader;
-use Symfony\Component\HttpFoundation\ResponseHeaderBag;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use PhpOffice\PhpSpreadsheet\Reader\Xlsx as reader;
 use Symfony\Component\String\Slugger\SluggerInterface;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 
 #[Route('/administration/note')]
@@ -59,7 +60,7 @@ class NoteEpreuveController extends AbstractController
          
         $params = $request->query;
         $where = $totalRows = $sqlRequest = "";
-        $filtre = " and mdl.active = 1 and ann.cloture_academique = 'non' and ann.validation_academique = 'non' and epv.statut_id = 29 ";
+        $filtre = " and mdl.active = 1 and ann.cloture_academique = 'non' and ann.validation_academique = 'non' and epv.statut_id in (29,30) ";
         
         if (!empty($params->all('columns')[0]['search']['value'])) {
             $filtre .= " and etab.id = '" . $params->all('columns')[0]['search']['value'] . "' ";
@@ -143,12 +144,11 @@ class NoteEpreuveController extends AbstractController
             // dump($row);die;
             $nestedData = array();
             $cd = $row['id'];
-            $nestedData[] = $i;
+            $nestedData[] = "<input type ='checkbox' class='check_admissible' id ='$cd' >";
+            // $nestedData[] = $i;
             $etat_bg="";
             foreach (array_values($row) as $key => $value) { 
-                if($key > 0) {
-                    $nestedData[] = $value;
-                }
+                $nestedData[] = $value;
             }
             ///lst add*
 
@@ -385,5 +385,82 @@ class NoteEpreuveController extends AbstractController
             $this->em->flush();
         }
         return new JsonResponse("Total des epreuves crée est ".$sheetCount);
+    }
+
+    #[Route('/cloturer', name: 'administration_epreuve_cloturer')]
+    public function administrationNoteCloturer(Request $request) {
+        $idEpreuves = json_decode($request->get("epreuves"));
+        foreach ($idEpreuves as $idEpreuve) {
+            $epreuve = $this->em->getRepository(AcEpreuve::class)->find($idEpreuve);
+            $epreuve->setStatut(
+                $this->em->getRepository(PStatut::class)->find(30)
+            );
+            $this->em->flush();
+        }
+        return new JsonResponse("Bien clôturer", 200);
+
+    }
+    #[Route('/decloturer', name: 'administration_note_decloturer')]
+    public function administrationNoteDeloturer(Request $request) {
+        $idEpreuves = json_decode($request->get("epreuves"));
+        foreach ($idEpreuves as $idEpreuve) {
+            $epreuve = $this->em->getRepository(AcEpreuve::class)->find($idEpreuve);
+            $epreuve->setStatut(
+                $this->em->getRepository(PStatut::class)->find(29)
+            );
+            $this->em->flush();
+        }
+        return new JsonResponse("Bien delôturer", 200);
+
+    }
+    #[Route('/checkifanonymat/{epreuve}', name: 'administration_note_checkifanonymat')]
+    public function administrationNoteCheckifanonymat(AcEpreuve $epreuve) {
+        $html = "<p><span>Etablissement</span> : ".$epreuve->getAnnee()->getFormation()->getEtablissement()->getDesignation()."</p>
+          <p><span>Formation</span> : ".$epreuve->getAnnee()->getFormation()->getDesignation()."</p>
+          <p><span>Promotion</span> : ".$epreuve->getElement()->getModule()->getSemestre()->getPromotion()->getDesignation()."</p>
+          <p><span>Module</span> : ".$epreuve->getElement()->getModule()->getDesignation()."</p>
+          <p><span>Element</span> : ".$epreuve->getElement()->getDesignation()."</p>";
+        if($epreuve->getAnonymat() == 1) {
+            $anonymat = "oui";
+        } else {
+            $anonymat = "non";
+        }
+        return new JsonResponse(['html' => $html,'id' => $epreuve->getId(), 'anonymat' => $anonymat], 200);
+
+    }
+    #[Route('/impression/{epreuve}/{anonymat}', name: 'administration_note_impression_c_a')]
+    public function administrationNoteImpression(AcEpreuve $epreuve, $anonymat) {
+        
+            
+        $html = $this->render("administration_epreuve/pdfs/header.html.twig")->getContent();
+        // dd($epreuve->getStatut());
+        if($epreuve->getAnonymat() == 1 && $anonymat == 1){
+            $html .= $this->render("administration_epreuve/pdfs/anonymat.html.twig", [
+                'epreuve' => $epreuve,
+                'statutId' => $epreuve->getStatut()->getId()
+            ])->getContent();
+        } else {
+            $html .= $this->render("administration_epreuve/pdfs/clair.html.twig", [
+                'epreuve' => $epreuve,
+                'statutId' => $epreuve->getStatut()->getId()
+            ])->getContent();
+            
+        }
+        $html .= $this->render("administration_epreuve/pdfs/footer.html.twig")->getContent();
+        $mpdf = new Mpdf([
+            'mode' => 'utf-8',
+            'margin_left' => '5',
+            'margin_right' => '5',
+            'margin_top' => '5',
+            'margin_bottom' => '5',
+        ]);
+        // $mpdf->showImageErrors = true;
+        // $mpdf->SetHTMLHeader(
+        // );
+        // $mpdf->SetHTMLFooter(
+        //     $this->render("administration_epreuve/pdfs/footer.html.twig")->getContent()
+        // );
+        $mpdf->WriteHTML($html);
+        $mpdf->Output("epreuve_".$epreuve->getId().".pdf", "I");
     }
 }

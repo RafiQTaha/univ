@@ -110,7 +110,9 @@ class EtablissementController extends AbstractController
        $etablissement->setDate(new \DateTime($request->get('date')));
        $this->em->persist($etablissement);
        $this->em->flush();
-
+       $etablissement->setCode("ETA".str_pad($etablissement->getId(), 8, '0', STR_PAD_LEFT));
+       $this->em->flush();
+       
        return new JsonResponse(1);
     }
     #[Route('/details/{etablissement}', name: 'parametre_etablissement_details')]

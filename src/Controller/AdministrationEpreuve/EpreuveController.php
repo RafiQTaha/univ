@@ -328,6 +328,20 @@ class EpreuveController extends AbstractController
         unset($spreadSheetArys[0]);
         $sheetCount = count($spreadSheetArys);
 
+        $spreadsheetGenerer = new Spreadsheet();
+        $sheetGenerer = $spreadsheetGenerer->getActiveSheet();
+        $sheetGenerer->setCellValue('A1', 'id');
+        $sheetGenerer->setCellValue('B1', 'code');
+        $sheetGenerer->setCellValue('C1', 'coefficient');
+        $sheetGenerer->setCellValue('D1', 'id_annee');
+        $sheetGenerer->setCellValue('E1', 'id_element');
+        $sheetGenerer->setCellValue('F1', 'id_nature_epreuve');
+        $sheetGenerer->setCellValue('G1', 'id_enseignant');
+        $sheetGenerer->setCellValue('H1', 'date_epreuve');
+        $sheetGenerer->setCellValue('I1', 'anonymat');
+        $sheetGenerer->setCellValue('J1', 'Observation');
+        $sheetGenerer->setCellValue('K1', 'Nature');
+        $i = 2;
         foreach ($spreadSheetArys as $sheet) {
             $annee = $this->em->getRepository(AcAnnee::class)->find($sheet[1]);
             $element = $this->em->getRepository(AcElement::class)->find($sheet[2]);
@@ -356,8 +370,25 @@ class EpreuveController extends AbstractController
             $this->em->flush();
             $epreuve->setCode('EPV-'.$annee->getFormation()->getEtablissement()->getAbreviation().str_pad($epreuve->getId(), 8, '0', STR_PAD_LEFT).'/'.date('Y'));     
             $this->em->flush();
+            // dump( $epreuve->getId());
+            $sheetGenerer->setCellValue('A'.$i, $epreuve->getId());
+            $sheetGenerer->setCellValue('B'.$i, $epreuve->getCode());
+            $sheetGenerer->setCellValue('C'.$i, $epreuve->getCoefficient());
+            $sheetGenerer->setCellValue('D'.$i, $element->getId());
+            $sheetGenerer->setCellValue('E'.$i, $annee->getId());
+            $sheetGenerer->setCellValue('F'.$i, $sheet[3]);
+            $sheetGenerer->setCellValue('G'.$i, $sheet[4]);
+            $sheetGenerer->setCellValue('H'.$i, date_format($epreuve->getDateEpreuve(), 'Y-m-d'));
+            $sheetGenerer->setCellValue('I'.$i, $epreuve->getAnonymat());
+            $sheetGenerer->setCellValue('J'.$i, $epreuve->getObservation());
+            $sheetGenerer->setCellValue('K'.$i, $epreuve->getNature());
+            $i++;
         }
-        return new JsonResponse("Total des epreuves crée est ".$sheetCount);
+        // die;
+        $writer = new Xlsx($spreadsheetGenerer);
+        $fileName = 'epreuve'.uniqid().'.xlsx';
+        $writer->save($fileName);
+        return new JsonResponse(['message' => "Total des epreuves crée est ".$sheetCount, 'file' => $fileName]);
     }
     #[Route('/affiliation_normale', name: 'administration_epreuve_affiliation_normal')]
     public function administrationEpreuveAffiliationNormal(Request $request) {
@@ -463,81 +494,7 @@ class EpreuveController extends AbstractController
         return new JsonResponse("Bien Enregistre", 200);
 
     }
-    #[Route('/cloturer', name: 'administration_epreuve_cloturer')]
-    public function administrationEpreuveCloturer(Request $request) {
-        $idEpreuves = json_decode($request->get("epreuves"));
-        foreach ($idEpreuves as $idEpreuve) {
-            $epreuve = $this->em->getRepository(AcEpreuve::class)->find($idEpreuve);
-            $epreuve->setStatut(
-                $this->em->getRepository(PStatut::class)->find(30)
-            );
-            $this->em->flush();
-        }
-        return new JsonResponse("Bien clôturer", 200);
-
-    }
-    #[Route('/decloturer', name: 'administration_epreuve_decloturer')]
-    public function administrationEpreuveDeloturer(Request $request) {
-        $idEpreuves = json_decode($request->get("epreuves"));
-        foreach ($idEpreuves as $idEpreuve) {
-            $epreuve = $this->em->getRepository(AcEpreuve::class)->find($idEpreuve);
-            $epreuve->setStatut(
-                $this->em->getRepository(PStatut::class)->find(29)
-            );
-            $this->em->flush();
-        }
-        return new JsonResponse("Bien delôturer", 200);
-
-    }
-    #[Route('/checkifanonymat/{epreuve}', name: 'administration_epreuve_checkifanonymat')]
-    public function administrationEpreuveCheckifanonymat(AcEpreuve $epreuve) {
-        $html = "<p><span>Etablissement</span> : ".$epreuve->getAnnee()->getFormation()->getEtablissement()->getDesignation()."</p>
-          <p><span>Formation</span> : ".$epreuve->getAnnee()->getFormation()->getDesignation()."</p>
-          <p><span>Promotion</span> : ".$epreuve->getElement()->getModule()->getSemestre()->getPromotion()->getDesignation()."</p>
-          <p><span>Module</span> : ".$epreuve->getElement()->getModule()->getDesignation()."</p>
-          <p><span>Element</span> : ".$epreuve->getElement()->getDesignation()."</p>";
-        if($epreuve->getAnonymat() == 1) {
-            $anonymat = "oui";
-        } else {
-            $anonymat = "non";
-        }
-        return new JsonResponse(['html' => $html,'id' => $epreuve->getId(), 'anonymat' => $anonymat], 200);
-
-    }
-    #[Route('/impression/{epreuve}/{anonymat}', name: 'administration_epreuve_impression_c_a')]
-    public function administrationEpreuveImpression(AcEpreuve $epreuve, $anonymat) {
-        
-            
-        $html = $this->render("administration_epreuve/pdfs/header.html.twig")->getContent();
-        // dd($epreuve->getStatut());
-        if($epreuve->getAnonymat() == 1 && $anonymat == 1){
-            $html .= $this->render("administration_epreuve/pdfs/anonymat.html.twig", [
-                'epreuve' => $epreuve,
-                'statutId' => $epreuve->getStatut()->getId()
-            ])->getContent();
-        } else {
-            $html .= $this->render("administration_epreuve/pdfs/clair.html.twig", [
-                'epreuve' => $epreuve,
-                'statutId' => $epreuve->getStatut()->getId()
-            ])->getContent();
-            
-        }
-        $html .= $this->render("administration_epreuve/pdfs/footer.html.twig")->getContent();
-        $mpdf = new Mpdf([
-            'mode' => 'utf-8',
-            'margin_left' => '5',
-            'margin_right' => '5',
-            'margin_top' => '5',
-            'margin_bottom' => '5',
-            ]);
-        // $mpdf->SetHTMLHeader(
-        // );
-        // $mpdf->SetHTMLFooter(
-        //     $this->render("administration_epreuve/pdfs/footer.html.twig")->getContent()
-        // );
-        $mpdf->WriteHTML($html);
-        $mpdf->Output("epreuve_".$epreuve->getId().".pdf", "I");
-    }
+   
     #[Route('/add_epreuve', name: 'administration_epreuve_add_epreuve')]
     public function administrationEpreuveaddepreuve(Request $request) 
     {

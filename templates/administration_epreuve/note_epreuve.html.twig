@@ -75,7 +75,8 @@
             <table id="datables_notes_epreuve" class="table table-striped" style="width:100%">
                 <thead>
                     <tr>
-                        <th>Ord</th>
+                        <th>#</th>
+                        <th>Id</th>
                         <th>Epreuve</th>
                         <th>Date</th>
                         <th>Module</th>
@@ -97,7 +98,8 @@
                 </tbody>
                 <tfoot>
                     <tr>
-                        <th>Ord</th>
+                        <th>#</th>
+                        <th>Id</th>
                         <th>Epreuve</th>
                         <th>Date</th>
                         <th>Module</th>
@@ -127,6 +129,7 @@
 <!--Modal Import Group-->
 {% include 'administration_epreuve/modals/notes.html.twig' %}
 {% include 'administration_epreuve/modals/import.html.twig' %}
+{% include 'administration_epreuve/modals/imprimer.html.twig' %}
 
 {% endblock %}
 
