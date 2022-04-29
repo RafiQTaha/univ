@@ -165,6 +165,7 @@ $(document).ready(function () {
 
         }
     })
+    
     $('body').on('click','#facture',function (e) {
         e.preventDefault();
         if(!id_facture){
@@ -176,6 +177,18 @@ $(document).ready(function () {
         }
         $("#detail_facture_modal").modal('show');
     });
+    $('input[type=radio][name=organ]').on('change', async function (e){
+        e.preventDefault();
+        if (this.value == 0) {
+            const request = await axios.get('/api/getorganismepasPayant');
+            response = request.data
+            $('.select-organ #org').html(response).select2();
+            $('.select-organ').css('display','block');
+        }else{
+            $('.select-organ #org').html("");
+            $('.select-organ').css('display','none');
+        }
+    })
     $('body').on('change','.modal-facture #frais',function (e) {
         e.preventDefault();
         let frais = $(this).find(':selected').attr('data-id');
@@ -188,10 +201,17 @@ $(document).ready(function () {
         e.preventDefault();
         const icon = $(this).find('i');
         icon.removeClass('fa-plus').addClass("fa-spinner fa-spin");
+        let organisme_id  = $('.select-organ #org').val();
+        if ($("input[name='organ']:checked").val() == 1) {
+            organisme_id = 7
+        }
+        
         let formData = new FormData();
         formData.append('frais', $('#frais').val());
         formData.append('montant', $('#montantt').val());
         formData.append('ice', $('#ice').val());
+        formData.append('organisme_id', organisme_id);
+
         let modalAlert =  $(".modal-facture .modal-body .alert");
         modalAlert.remove();
         try{
@@ -260,7 +280,7 @@ $(document).ready(function () {
             const request = await  axios.post('/facture/factures/ajouter_reglement/'+id_facture,formdata)
             const data = request.data;
             $("#ajouter_modal .modal-body").prepend(
-                `<div class="alert alert-success">reglement Bien Ajouter</div>`
+                `<div class="alert alert-success">Reglement Bien Ajouter</div>`
             ); 
             $(this).trigger("reset");
             getMontant();

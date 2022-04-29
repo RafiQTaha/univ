@@ -46,6 +46,9 @@ class TReglement
     #[ORM\Column(type: 'float', nullable: true)]
     private $impayer;
 
+    #[ORM\Column(type: 'float')]
+    private $payant;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -179,6 +182,18 @@ class TReglement
     public function setImpayer(?float $impayer): self
     {
         $this->impayer = $impayer;
+
+        return $this;
+    }
+
+    public function getPayant(): ?float
+    {
+        return $this->payant;
+    }
+
+    public function setPayant(float $payant): self
+    {
+        $this->payant = $payant;
 
         return $this;
     }

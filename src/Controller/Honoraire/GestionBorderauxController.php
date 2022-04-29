@@ -209,7 +209,7 @@ class GestionBorderauxController extends AbstractController
                 $sheet->setCellValue('N'.$i, '');
                 $sheet->setCellValue('O'.$i, $element->getModule()->getDesignation());
                 $sheet->setCellValue('P'.$i, $honens->getSeance()->getProgrammation()->getNatureEpreuve()->getDesignation());
-                $sheet->setCellValue('Q'.$i, $element->getType()->getDesignation());
+                $sheet->setCellValue('Q'.$i, $element->getNature()->getDesignation());
                 $sheet->setCellValue('R'.$i, '');
                 $sheet->setCellValue('S'.$i, number_format($honens->getMontant(), 2, ',', ' '));
                 $i++;

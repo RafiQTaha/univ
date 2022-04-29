@@ -35,9 +35,8 @@ $(document).ready(function () {
             url: "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/French.json",
         },
     });
+    $("select").select2();
     $("#paiement").select2();
-    $("#etablissement").select2();
-    $("#bordereaux").select2();
     $("#etablissement").on('change', async function (){
         const id_etab = $(this).val();
         table_reglement.columns(1).search("");
@@ -134,7 +133,6 @@ $(document).ready(function () {
         e.preventDefault();let modalAlert =  $("#modifier_org-modal .modal-body .alert");
         modalAlert.remove();
         const icon = $("#borderaux i");
-        icon.removeClass('fa-folder').addClass("fa-spinner fa-spin");
         if(ids_reglement.length === 0|| $("#etablissement").val() == "" || $('#formation').val() == "" || $("#paiement").val() == ""){
             Toast.fire({
             icon: 'error',
@@ -142,6 +140,7 @@ $(document).ready(function () {
             })
             return;
         }
+        icon.removeClass('fa-folder').addClass("fa-spinner fa-spin");
         var formData = new FormData();
         formData.append('ids_reglement', JSON.stringify(ids_reglement));
         try {
@@ -158,6 +157,7 @@ $(document).ready(function () {
         } catch (error) {
             const message = error.response.data;
             console.log(error, error.response);
+            icon.addClass('fa-folder').removeClass("fa-spinner fa-spin");
             Toast.fire({
                 icon: 'error',
                 title: message,

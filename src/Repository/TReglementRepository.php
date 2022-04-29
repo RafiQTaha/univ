@@ -40,6 +40,42 @@ class TReglementRepository extends ServiceEntityRepository
         } 
         return $request;
     }
+    public function getReglementSumMontantByCodeFactureByOrganisme($operation)
+    {
+        $request = $this->createQueryBuilder('t')
+            ->select("SUM(t.montant) as total")
+            // ->Where('t.impayer = 0')
+            ->andWhere('t.operation = :operation')
+            ->andWhere('t.payant = 0')
+            ->setParameter('operation', $operation)
+            ->groupBy('t.operation')
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
+        // dd($request);
+        if(!$request) {
+            return ['total' => 0];
+        } 
+        return $request;
+    }
+    public function getReglementSumMontantByCodeFactureByPayant($operation)
+    {
+        $request = $this->createQueryBuilder('t')
+            ->select("SUM(t.montant) as total")
+            // ->Where('t.impayer = 0')
+            ->andWhere('t.operation = :operation')
+            ->andWhere('t.payant = 1')
+            ->setParameter('operation', $operation)
+            ->groupBy('t.operation')
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
+        // dd($request);
+        if(!$request) {
+            return ['total' => 0];
+        } 
+        return $request;
+    }
     
 
     /*

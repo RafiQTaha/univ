@@ -40,6 +40,9 @@ class TOperationdet
     #[ORM\Column(type: 'float', nullable: true)]
     private $active;
 
+    #[ORM\ManyToOne(targetEntity: POrganisme::class, inversedBy: 'operationdets')]
+    private $organisme;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -149,6 +152,18 @@ class TOperationdet
     public function setActive(?float $active): self
     {
         $this->active = $active;
+
+        return $this;
+    }
+
+    public function getOrganisme(): ?POrganisme
+    {
+        return $this->organisme;
+    }
+
+    public function setOrganisme(?POrganisme $organisme): self
+    {
+        $this->organisme = $organisme;
 
         return $this;
     }

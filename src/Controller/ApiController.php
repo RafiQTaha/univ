@@ -143,6 +143,16 @@ class ApiController extends AbstractController
         $data = self::dropdown($organisme,'organisme');
         return new JsonResponse($data);        
     }
+    
+    #[Route('/getorganismepasPayant', name: 'getorganismepasPayant')]
+    public function getOrganismepasPayant(): Response
+    {  
+        //  dd('test');
+        $organisme = $this->em->getRepository(POrganisme::class)->getorganismepasPayant();
+        // dd($organisme);
+        $data = self::dropdown($organisme,'organisme');
+        return new JsonResponse($data);        
+    }
 
     #[Route('/organisme/{operationcab}', name: 'getOrganismeByoperation')]
     public function getOrganismeByoperation(TOperationcab $operationcab): Response
@@ -176,9 +186,11 @@ class ApiController extends AbstractController
     public function getFraisByFormation(TAdmission $admission): Response
     {   
         $formation = $admission->getPreinscription()->getAnnee()->getFormation();
+        $operationcab = $this->em->getRepository(TOperationcab::class)->findOneBy(['preinscription'=>$admission->getPreinscription(),'categorie'=>'admission']);
         $frais = $this->em->getRepository(PFrais::class)->findBy(["formation" => $formation, 'categorie' => "admission"]);
         $data = self::dropdownData($frais,'frais');
-        return new JsonResponse($data);        
+                
+        return new JsonResponse(['list' => $data, 'codefacture' => $operationcab->getCode()]);        
     }
   
     #[Route('/banque', name: 'getbanque')]

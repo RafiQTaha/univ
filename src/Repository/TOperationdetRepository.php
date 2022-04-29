@@ -59,4 +59,48 @@ class TOperationdetRepository extends ServiceEntityRepository
             ->getOneOrNullResult()
         ;
     }
+    public function getSumMontantByCodeFactureAndOrganisme($operation,$frais)
+    {
+        $query =  $this->createQueryBuilder('t')
+            ->select("SUM(t.montant) as somme")
+            ->Where('t.operationcab = :operation')
+            ->andWhere('t.frais = :frais')
+            ->andWhere('t.active = 1')
+            ->andWhere('t.organisme != 7')
+            ->setParameter('operation', $operation)
+            ->setParameter('frais', $frais)
+            ->groupBy('t.frais')
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
+        return $query ? $query['somme'] : 0;
+    }
+    public function getSumMontantByCodeFactureAndPayant($operation,$frais)
+    {
+        $query =  $this->createQueryBuilder('t')
+            ->select("SUM(t.montant) as somme")
+            ->Where('t.operationcab = :operation')
+            ->andWhere('t.frais = :frais')
+            ->andWhere('t.active = 1')
+            ->andWhere('t.organisme = 7')
+            ->setParameter('operation', $operation)
+            ->setParameter('frais', $frais)
+            ->groupBy('t.frais')
+            ->getQuery()
+            ->getOneOrNullResult()
+        ; 
+        return $query ? $query['somme'] : 0;
+    }
+    public function FindDetGroupByFrais($operation)
+    {
+        return $this->createQueryBuilder('t')
+            ->Where('t.operationcab = :operation')
+            ->andWhere('t.active = 1')
+            // ->andWhere('t.organisme = 7')
+            ->setParameter('operation', $operation)
+            ->groupBy('t.frais')
+            ->getQuery()
+            ->getResult()
+        ; 
+    }
 }
