@@ -253,7 +253,7 @@
         </tr>
     </thead>
     <tbody>
-        {% for gnote in epreuve.gnotes %}
+        {% for gnote in epreuve.gnotes|sort((a, b) => a.inscription.admission.preinscription.etudiant.nom <=> b.inscription.admission.preinscription.etudiant.nom) %}
         <tr>
             <td style="padding:6px;border-right:1px solid white;text-align: left;">{{loop.index}}</td>
             {% if epreuve.anonymat == 1 %}

@@ -120,6 +120,8 @@ class FormationController extends AbstractController
        );
        $this->em->persist($formation);
        $this->em->flush();
+       $formation->setCode("FOR".str_pad($formation->getId(), 8, '0', STR_PAD_LEFT));
+       $this->em->flush();
 
        return new JsonResponse(1);
     }

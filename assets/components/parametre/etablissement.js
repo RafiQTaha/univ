@@ -69,7 +69,7 @@ const Toast = Swal.mixin({
             if(response.active == 1){
                 $("#modifier_modal #active").prop("checked", true)
             }else {
-                $("#modifier_modal #active").prop("checked", fale)
+                $("#modifier_modal #active").prop("checked", false)
             }
             $("#modifier_modal").modal("show")
         } catch (error) {
