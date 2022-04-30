@@ -379,7 +379,15 @@ class NoteEpreuveController extends AbstractController
             $inscription = $this->em->getRepository(TInscription::class)->find($sheet[0]);
             $exgnote = $this->em->getRepository(ExGnotes::class)->findOneBy(['epreuve'=>$epreuve,'inscription'=>$inscription]);
             
-            $exgnote->setNote($sheet[3] = "" ? NULL : $sheet[3]);
+            if($sheet[3] == "" ) {
+                $exgnote->setNote(NULL);
+            } else if($sheet[3] > 20) {
+                $exgnote->setNote(20);
+            } else if ($sheet[3] < 0) {
+                $exgnote->setNote(0);
+            } else {
+                $exgnote->setNote($sheet[3]);
+            }
             $exgnote->setAbsence($sheet[4]);
             $exgnote->setObservation($sheet[5]);
             $this->em->flush();
