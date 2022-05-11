@@ -267,4 +267,19 @@ class TInscriptionRepository extends ServiceEntityRepository
         ->getResult()
         ;
     } 
+    public function getPreviousInsription($inscription)
+    {
+        return $this->createQueryBuilder('i')
+        ->innerJoin("i.statut", "statut")
+        ->where('i.admission = :admission')
+        ->andWhere("i.id < :id")
+        ->andWhere("statut.id = 13")
+        ->setParameter('admission', $inscription->getAdmission())
+        ->setParameter('id', $inscription->getId())
+        ->setMaxResults(1)
+        ->orderBy("i.id", "desc")
+        ->getQuery()
+        ->getOneOrNullResult()
+        ;
+    } 
 }
