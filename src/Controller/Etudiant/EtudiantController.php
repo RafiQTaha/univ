@@ -22,6 +22,7 @@ use App\Entity\XLangue;
 use App\Entity\TOperationcab;
 use App\Entity\TPreinscriptionReleveNote;
 use Doctrine\Persistence\ManagerRegistry;
+use phpDocumentor\Reflection\Types\Null_;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use PhpOffice\PhpSpreadsheet\Reader\Xlsx as Reader;
@@ -528,10 +529,24 @@ class EtudiantController extends AbstractController
         return new JsonResponse("Bien enregistre");
     }
 
+    
+    #[Route('/getAppelRdv/{etudiant}', name: 'getAppelRdv')]
+    public function getAppelRdv(Request $request, TEtudiant $etudiant) 
+    {
+        $rdv1 = $etudiant->getRdv1() == Null ? "" : $etudiant->getRdv1()->format('Y-m-j');
+        $rdv2 = $etudiant->getRdv2() == Null ? "" : $etudiant->getRdv2()->format('Y-m-j');
+        $appelrdv = [ 'rdv1' => $rdv1,
+            'rdv2' => $rdv2,
+        ];
+        return new JsonResponse($appelrdv);
+    }
+
     #[Route('/datedernierappel/{etudiant}', name: 'etudiant_dernier_appele')]
     public function dateDernierAppele(Request $request, TEtudiant $etudiant) 
     {
         $etudiant->setTeleListe($request->get('dateappelle'));
+        $etudiant->setRdv1(new \DateTime($request->get('rdv1')));
+        $etudiant->setRdv2(new \DateTime($request->get('rdv2')));
         $this->em->flush();
         return new JsonResponse("Bien enregistre");
     }
@@ -648,14 +663,17 @@ class EtudiantController extends AbstractController
         $etudiant->setSalaireMere($request->get('salaire_m'));
 
         $etudiant->setCne($request->get('cne'));
-        $etudiant->setAcademie($this->em->getRepository(XAcademie::class)->find($request->get('id_academie')));
-        $etudiant->setFiliere($this->em->getRepository(XFiliere::class)->find($request->get('id_filiere')));
+        $academie = $request->get('id_academie') == "" ? Null : $this->em->getRepository(XAcademie::class)->find($request->get('id_academie'));
+        $etudiant->setAcademie($academie);
+        $filiere = $request->get('id_filiere') == "" ? Null : $this->em->getRepository(XFiliere::class)->find($request->get('id_filiere'));
+        $etudiant->setFiliere($filiere);
+        $typebacs = $request->get('id_type_bac') == "" ? Null : $this->em->getRepository(XTypeBac::class)->find($request->get('id_type_bac'));
         $etudiant->setTypeBac($this->em->getRepository(XTypeBac::class)->find($request->get('id_type_bac')));
         $etudiant->setAnneeBac($request->get('annee_bac'));
         $etudiant->setMoyenneBac($request->get('moyenne_bac'));
         $etudiant->setObs($request->get('obs'));
-        $etudiant->setCategoriePreinscription($request->get('categorie_preinscription'));
-        $etudiant->setFraisPreinscription($request->get('frais_preinscription'));
+        // $etudiant->setCategoriePreinscription($request->get('categorie_preinscription'));
+        // $etudiant->setFraisPreinscription($request->get('frais_preinscription'));
         $etudiant->setLangueConcours($this->em->getRepository(XLangue::class)->find($request->get('langue_concours')));
         $etudiant->setConcoursMedbup($request->get('concours_medbup'));
 
@@ -747,6 +765,6 @@ class EtudiantController extends AbstractController
         $etudiant->setUpdated(new \DateTime('now'));
 
         $this->em->flush();
-        return new JsonResponse("Bien Enregistre",200);
+        return new JsonResponse("Bien Modifier",200);
     } 
 }
