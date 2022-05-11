@@ -258,6 +258,12 @@ class TEtudiant
     #[ORM\ManyToOne(targetEntity: POrganisme::class, inversedBy: 'etudiants')]
     private $organisme;
 
+    #[ORM\Column(type: 'date', nullable: true)]
+    private $rdv1;
+
+    #[ORM\Column(type: 'date', nullable: true)]
+    private $rdv2;
+
     public function __construct()
     {
         $this->preinscriptions = new ArrayCollection();
@@ -1273,6 +1279,30 @@ class TEtudiant
     public function setOrganisme(?POrganisme $organisme): self
     {
         $this->organisme = $organisme;
+
+        return $this;
+    }
+
+    public function getRdv1(): ?\DateTimeInterface
+    {
+        return $this->rdv1;
+    }
+
+    public function setRdv1(?\DateTimeInterface $rdv1): self
+    {
+        $this->rdv1 = $rdv1;
+
+        return $this;
+    }
+
+    public function getRdv2(): ?\DateTimeInterface
+    {
+        return $this->rdv2;
+    }
+
+    public function setRdv2(?\DateTimeInterface $rdv2): self
+    {
+        $this->rdv2 = $rdv2;
 
         return $this;
     }

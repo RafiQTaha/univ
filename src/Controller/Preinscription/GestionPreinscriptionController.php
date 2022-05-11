@@ -18,8 +18,13 @@ use App\Entity\NatureDemande;
 use App\Entity\User;
 use App\Controller\ApiController;
 use App\Controller\DatatablesController;
+use App\Entity\PSituation;
 use App\Entity\TAdmission;
 use App\Entity\TInscription;
+use App\Entity\XAcademie;
+use App\Entity\XFiliere;
+use App\Entity\XLangue;
+use App\Entity\XTypeBac;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -437,7 +442,134 @@ class GestionPreinscriptionController extends AbstractController
         // $mpdf->WriteHTML($html);
         // $mpdf->Output("facture.pdf", "I");
     }
+
+    #[Route('/getEtudiantInfospreins/{preinscription}', name: 'getEtudiantInfospreins')]
+    public function getEtudiantInfospreins(Request $request, TPreinscription $preinscription) 
+    {
+        // dd($preinscription);
+        $situations = $this->em->getRepository(PSituation::class)->findBy([],['designation' => 'ASC']);
+        $academies = $this->em->getRepository(XAcademie::class)->findBy([],['designation' => 'ASC']);
+        $filieres = $this->em->getRepository(XFiliere::class)->findBy([],['designation' => 'ASC']);
+        $typebacs = $this->em->getRepository(XTypeBac::class)->findBy([],['designation' => 'ASC']);
+        $langues = $this->em->getRepository(XLangue::class)->findBy([],['designation' => 'ASC']);
+        $natureDemandes = $this->em->getRepository(NatureDemande::class)->findBy([],['designation' => 'ASC']);
+        
+        $candidats_infos = $this->render("preinscription/pages/candidats_infos.html.twig", [
+            'etudiant' => $preinscription->getEtudiant(),
+            'situations' => $situations,
+        ])->getContent();
+        // dd($candidats_infos);
+        $parents_infos = $this->render("preinscription/pages/parents_infos.html.twig", [
+            'etudiant' => $preinscription->getEtudiant(),
+            'situations' => $situations,
+        ])->getContent();
+        
+        $academique_infos = $this->render("preinscription/pages/academique_infos.html.twig", [
+            'etudiant' => $preinscription->getEtudiant(),
+            'academies' => $academies,
+            'filieres' => $filieres,
+            'typebacs' => $typebacs,
+            'langues' => $langues,
+        ])->getContent();
+
+        $divers = $this->render("preinscription/pages/divers.html.twig", [
+            'etudiant' => $preinscription->getEtudiant(),
+            'situations' => $situations,
+            'natureDemandes' => $natureDemandes,
+        ])->getContent();
+
+        $info_etudiant = [ 'candidats_infos' => $candidats_infos,
+            'parents_infos' => $parents_infos,
+            'academique_infos' => $academique_infos,
+            'divers' => $divers,
+        ];
+        return new JsonResponse($info_etudiant);
+    }
+
     
+    #[Route('/edit_infos_preins/{preinscription}', name: 'edit_infos_preins')]
+    public function edit_infos_preins(Request $request, TPreinscription $preinscription) 
+    {
+        if(!$preinscription){
+            return new JsonResponse("Etudiant Introuvable!!",500);
+        }
+        $preinscription->getEtudiant()->setNom($request->get('nom'));
+        $preinscription->getEtudiant()->setPrenom($request->get('prenom'));
+        $preinscription->getEtudiant()->setTitre($request->get('titre'));
+        if ($request->get('date_naissance') != "") {
+            $preinscription->getEtudiant()->setDateNaissance(new \DateTime($request->get('date_naissance')));
+        }
+        $preinscription->getEtudiant()->setLieuNaissance($request->get('lieu_naissance'));
+        $preinscription->getEtudiant()->setSexe($request->get('sexe'));
+        if ($request->get('st_famille') != "") {
+            $preinscription->getEtudiant()->setStFamille($this->em->getRepository(PSituation::class)->find($request->get('st_famille')));
+        }
+        $preinscription->getEtudiant()->setNationalite($request->get('nationalite'));
+        $preinscription->getEtudiant()->setCin($request->get('cin'));
+        $preinscription->getEtudiant()->setPasseport($request->get('passeport'));
+        $preinscription->getEtudiant()->setVille($request->get('ville'));
+        $preinscription->getEtudiant()->setTel1($request->get('tel1'));
+        $preinscription->getEtudiant()->setTel2($request->get('tel2'));
+        $preinscription->getEtudiant()->setTel3($request->get('tel3'));
+        $preinscription->getEtudiant()->setMail1($request->get('mail1'));
+        $preinscription->getEtudiant()->setMail2($request->get('mail2'));
+        $preinscription->getEtudiant()->setAdresse($request->get('adresse'));
+
+        if ($request->get('situation_parents') != "") {
+            $preinscription->getEtudiant()->setStFamilleParent($this->em->getRepository(PSituation::class)->find($request->get('situation_parents')));
+        }
+        $preinscription->getEtudiant()->setNomPere($request->get('nom_p'));
+        $preinscription->getEtudiant()->setPrenomPere($request->get('prenom_p'));
+        $preinscription->getEtudiant()->setNationalitePere($request->get('nationalite_p'));
+        $preinscription->getEtudiant()->setProfessionPere($request->get('profession_p'));
+        $preinscription->getEtudiant()->setEmployePere($request->get('employe_p'));
+        $preinscription->getEtudiant()->setCategoriePere($request->get('categorie_p'));
+        $preinscription->getEtudiant()->setTelPere($request->get('tel_p'));
+        $preinscription->getEtudiant()->setMailPere($request->get('mail_p'));
+        $preinscription->getEtudiant()->setSalairePere($request->get('salaire_p'));
+
+        $preinscription->getEtudiant()->setNomMere($request->get('nom_m'));
+        $preinscription->getEtudiant()->setPrenomMere($request->get('prenom_m'));
+        $preinscription->getEtudiant()->setNationaliteMere($request->get('nationalite_m'));
+        $preinscription->getEtudiant()->setProfessionMere($request->get('profession_m'));
+        $preinscription->getEtudiant()->setEmployeMere($request->get('employe_m'));
+        $preinscription->getEtudiant()->setCategorieMere($request->get('categorie_m'));
+        $preinscription->getEtudiant()->setTelMere($request->get('tel_m'));
+        $preinscription->getEtudiant()->setMailMere($request->get('mail_m'));
+        $preinscription->getEtudiant()->setSalaireMere($request->get('salaire_m'));
+
+        $preinscription->getEtudiant()->setCne($request->get('cne'));
+        $preinscription->getEtudiant()->setAcademie($this->em->getRepository(XAcademie::class)->find($request->get('id_academie')));
+        $preinscription->getEtudiant()->setFiliere($this->em->getRepository(XFiliere::class)->find($request->get('id_filiere')));
+        $preinscription->getEtudiant()->setTypeBac($this->em->getRepository(XTypeBac::class)->find($request->get('id_type_bac')));
+        $preinscription->getEtudiant()->setAnneeBac($request->get('annee_bac'));
+        $preinscription->getEtudiant()->setMoyenneBac($request->get('moyenne_bac'));
+        $preinscription->getEtudiant()->setObs($request->get('obs'));
+        $preinscription->getEtudiant()->setCategoriePreinscription($request->get('categorie_preinscription'));
+        $preinscription->getEtudiant()->setFraisPreinscription($request->get('frais_preinscription'));
+        if ($request->get('langue_concours') != "") {
+            $preinscription->getEtudiant()->setLangueConcours($this->em->getRepository(XLangue::class)->find($request->get('langue_concours')));
+        }
+        if ($request->get('concours_medbup') != "") {
+            $preinscription->getEtudiant()->setConcoursMedbup($request->get('concours_medbup'));
+        }
+        
+
+        $preinscription->getEtudiant()->setBourse($request->get('bourse'));
+        $preinscription->getEtudiant()->setLogement($request->get('logement'));
+        $preinscription->getEtudiant()->setParking($request->get('parking'));
+        if ($request->get('nat_demande') != "") {
+            $preinscription->getEtudiant()->setNatureDemande($this->em->getRepository(NatureDemande::class)->find($request->get('nat_demande')));
+        }
+        $preinscription->getEtudiant()->setEtablissement($request->get('etablissement'));
+        
+        $preinscription->getEtudiant()->setUserUpdated($this->getUser());
+        $preinscription->getEtudiant()->setUpdated(new \DateTime('now'));
+
+        $this->em->flush();
+        return new JsonResponse("Bien Modifier",200);
+    } 
+
     #[Route('/test/{id}', name: 'test')]
     public function test(Request $request): Response
     {

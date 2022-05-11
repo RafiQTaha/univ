@@ -35,11 +35,31 @@ $(document).ready(function  () {
     },
   });
 
+  const getAppelRdv = async () => {
+    $('#rdv1').val("");
+    $('#rdv2').val("");
+      const icon = $("#date-d-appel i");
+      icon.removeClass('fa-edit').addClass("fa-spinner fa-spin");
+  try {
+    const request = await axios.get('/etudiant/etudiants/getAppelRdv/'+id_etudiant);
+    const data = request.data;
+    $('#rdv1').val(data['rdv1']);
+    $('#rdv2').val(data['rdv2']);
+      icon.addClass('fa-edit').removeClass("fa-spinner fa-spin");
+    console.log(data);
+
+  } catch (error) {
+    // console.log(error.response.data);
+  }  
+}
+
   const getEtudiantInfos = async () => {
       $('#modifier_modal #candidats_infos').html('');
       $('#modifier_modal #parents_infos').html('');
       $('#modifier_modal #academique_infos').html('');
       $('#modifier_modal #divers').html('');
+      const icon = $("#modifier i");
+      icon.removeClass('fa-edit').addClass("fa-spinner fa-spin");
     try {
       const request = await axios.get('/etudiant/etudiants/getEtudiantInfos/'+id_etudiant);
       const data = request.data;
@@ -48,6 +68,7 @@ $(document).ready(function  () {
       $('#modifier_modal #academique_infos').html(data['academique_infos']);
       $('#modifier_modal #divers').html(data['divers']);
       $('select').select2();
+      icon.addClass('fa-edit').removeClass("fa-spinner fa-spin");
       console.log(data);
 
     } catch (error) {
@@ -118,6 +139,7 @@ $(document).ready(function  () {
     loadExistMatieres();
     loadEtudiantStatut();
     getEtudiantInfos();
+    getAppelRdv()
   })
   
   let cancelToken;

@@ -180,98 +180,120 @@ $('body').on('click','.modal #add-btn',function () {
     });
     rawFrais();
 })
-const rawFrais = () => {
-    let html = "";
-    frais.map((f, i) => {
-        html += `
-        <tr>
-            <td>${i + 1}</td>
-            <td>${f.designation}</td>
-            <td>${f.montant}</td>
-            <td>${f.organisme}</td>
-            <td><button class='delete_frais btn btn-danger' id='${f.index}'><i class='fa fa-trash'></i></button></td>
-        </tr>
-    `
-    })
-    $(".modal-preins .table-fee tbody").html(html)
-}
-$("body").on("click", '.delete_frais', function () {
-    const index = frais.findIndex(frais => frais.index == $(this).attr("id"));
-    frais.splice(index,1);
-    rawFrais();
-})
-
-$("body").on("click", '.modal .save', async function (e) {
-    e.preventDefault();
-    if(frais.length < 1){
-        Toast.fire({
-          icon: 'error',
-          title: 'Veuillez Ajouter Des Frais!',
+    const rawFrais = () => {
+        let html = "";
+        frais.map((f, i) => {
+            html += `
+            <tr>
+                <td>${i + 1}</td>
+                <td>${f.designation}</td>
+                <td>${f.montant}</td>
+                <td>${f.organisme}</td>
+                <td><button class='delete_frais btn btn-danger' id='${f.index}'><i class='fa fa-trash'></i></button></td>
+            </tr>
+        `
         })
-        return;
+        $(".modal-preins .table-fee tbody").html(html)
     }
-    console.log(frais)
-    // return
-    const icon = $(".modal .save i");
-    icon.removeClass('fa-check-circle').addClass("fa-spinner fa-spin");
-    var formData = new FormData();
-    formData.append('frais', JSON.stringify(frais));
-    try {
-        const request = await axios.post("/preinscription/gestion/addfrais/"+id_preinscription, formData);
-        const data = await request.data;
-        $("#frais_preinscription-modal .modal-body").prepend(
-            `<div class="alert alert-success">
-                <p>Bien Enregistre</p>
-              </div>`
-          );
-        icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin");
-        $(".modal-preins .table-fee tbody").empty();
-        table_gestion_preins.ajax.reload(null,false);
-        frais = [];
-        window.open('/preinscription/gestion/facture/'+data, '_blank');
-    } catch (error) {
-        const message = error.response.data;
-        console.log(error, error.response);
-        $("#frais_preinscription-modal .modal-body").prepend(
-            `<div class="alert alert-danger">${message}</div>`
-        );
-        icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin");
-    }
-    setTimeout(() => {
-        $("#frais_preinscription-modal .modal-body .alert").remove();
-    }, 3000);
-})
+    $("body").on("click", '.delete_frais', function () {
+        const index = frais.findIndex(frais => frais.index == $(this).attr("id"));
+        frais.splice(index,1);
+        rawFrais();
+    })
 
-$('body').on('click','#datables_gestion_preinscription tbody tr',function (e) {
-    e.preventDefault();
-    const input = $(this).find("input");
-    if(input.is(":checked")){
-        input.prop("checked",false);
-        const index = idpreins.indexOf(input.attr("id"));
-        idpreins.splice(index,1);
-    }else{
-        input.prop("checked",true);
-        idpreins.push(input.attr("id"));
-    }
-    console.log(idpreins);
-})
+    $("body").on("click", '.modal .save', async function (e) {
+        e.preventDefault();
+        if(frais.length < 1){
+            Toast.fire({
+            icon: 'error',
+            title: 'Veuillez Ajouter Des Frais!',
+            })
+            return;
+        }
+        console.log(frais)
+        // return
+        const icon = $(".modal .save i");
+        icon.removeClass('fa-check-circle').addClass("fa-spinner fa-spin");
+        var formData = new FormData();
+        formData.append('frais', JSON.stringify(frais));
+        try {
+            const request = await axios.post("/preinscription/gestion/addfrais/"+id_preinscription, formData);
+            const data = await request.data;
+            $("#frais_preinscription-modal .modal-body").prepend(
+                `<div class="alert alert-success">
+                    <p>Bien Enregistre</p>
+                </div>`
+            );
+            icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin");
+            $(".modal-preins .table-fee tbody").empty();
+            table_gestion_preins.ajax.reload(null,false);
+            frais = [];
+            window.open('/preinscription/gestion/facture/'+data, '_blank');
+        } catch (error) {
+            const message = error.response.data;
+            console.log(error, error.response);
+            $("#frais_preinscription-modal .modal-body").prepend(
+                `<div class="alert alert-danger">${message}</div>`
+            );
+            icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin");
+        }
+        setTimeout(() => {
+            $("#frais_preinscription-modal .modal-body .alert").remove();
+        }, 3000);
+    })
 
+    $('body').on('click','#datables_gestion_preinscription tbody tr',function (e) {
+        e.preventDefault();
+        const input = $(this).find("input");
+        if(input.is(":checked")){
+            input.prop("checked",false);
+            const index = idpreins.indexOf(input.attr("id"));
+            idpreins.splice(index,1);
+        }else{
+            input.prop("checked",true);
+            idpreins.push(input.attr("id"));
+        }
+        console.log(idpreins);
+    })
+    const getEtudiantInfos = async () => {
+        $('#modifier_modal #candidats_infos').html('');
+        $('#modifier_modal #parents_infos').html('');
+        $('#modifier_modal #academique_infos').html('');
+        $('#modifier_modal #divers').html('');
+        const icon = $("#modifier i");
+        icon.removeClass('fa-edit').addClass("fa-spinner fa-spin");
+      try {
+        const request = await axios.get('/preinscription/gestion/getEtudiantInfospreins/'+id_preinscription);
+        const data = request.data;
+        $('#modifier_modal #candidats_infos').html(data['candidats_infos']);
+        $('#modifier_modal #parents_infos').html(data['parents_infos']);
+        $('#modifier_modal #academique_infos').html(data['academique_infos']);
+        $('#modifier_modal #divers').html(data['divers']);
+        $('select').select2();
+        icon.addClass('fa-edit').removeClass("fa-spinner fa-spin");
+        // console.log(data);
+  
+      } catch (error) {
+        // console.log(error.response.data);
+      }  
+    }
     $('body').on('dblclick','#datables_gestion_preinscription tbody tr',function (e) {
-    e.preventDefault();
-    // const input = $(this).find("input");
-    if($(this).hasClass('active_databales')) {
-        $(this).removeClass('active_databales');
-        id_preinscription = null;
-    } else {
-        $("#datables_gestion_preinscription tbody tr").removeClass('active_databales');
-        $(this).addClass('active_databales');
-        id_preinscription = $(this).attr('id');
-        load_etud_info();
-        load_frais_preins();
-        getDocumentsPreins();
-    }
-    console.log(id_preinscription);
-})
+        e.preventDefault();
+        // const input = $(this).find("input");
+        if($(this).hasClass('active_databales')) {
+            $(this).removeClass('active_databales');
+            id_preinscription = null;
+        } else {
+            $("#datables_gestion_preinscription tbody tr").removeClass('active_databales');
+            $(this).addClass('active_databales');
+            id_preinscription = $(this).attr('id');
+            load_etud_info();
+            load_frais_preins();
+            getDocumentsPreins();
+            getEtudiantInfos();
+        }
+        console.log(id_preinscription);
+    })
 
 $("#annulation").on('click', async (e) => {
     e.preventDefault();
@@ -406,19 +428,64 @@ $('body').on('click','#cfc_preinscription',function () {
     window.open('/preinscription/gestion/cfc_preinscription/'+id_preinscription, '_blank');
 })
 
-// $('body').on('click','#modifier',function () {
-//     if(!id_preinscription){
-//         Toast.fire({
-//             icon: 'error',
-//             title: 'Veuillez selection une ligne!',
-//         })
-//         return;
-//     }
-//     $('#modifier_modal').modal("show");
-// })
+$('body').on('click','#modifier',function () {
+    if(!id_preinscription){
+        Toast.fire({
+            icon: 'error',
+            title: 'Veuillez selection une ligne!',
+        })
+        return;
+    }
+    $('#modifier_modal').modal("show");
+})
+
+$("body").on('submit', "#form_modifier", async (e) => {
+    e.preventDefault();
+    // alert('et');
+    if(!id_preinscription){
+        Toast.fire({
+          icon: 'error',
+          title: 'Merci de Choisir Un Etudiant!',
+        })
+        return;
+    }
+    var res = confirm('Vous voulez vraiment modifier cette enregistrement ?');
+    if(res == 1){
+      var formData = new FormData($('#form_modifier')[0]);
+    //   console.log(formData);
+      let modalAlert = $("#modifier_modal .modal-body .alert")
+      modalAlert.remove();
+      const icon = $("#modifier_modal button i");
+      icon.removeClass('fa-edit').addClass("fa-spinner fa-spin");
+      try {
+        const request = await axios.post('/preinscription/gestion/edit_infos_preins/'+id_preinscription, formData);
+        const response = request.data;
+        $("#modifier_modal .modal-body").prepend(
+          `<div class="alert alert-success" style="width: 98%;margin: 0 auto;">
+              <p>${response}</p>
+            </div>`
+        );
+        icon.addClass('fa-edit').removeClass("fa-spinner fa-spin ");
+        table_gestion_preins.ajax.reload(null, false)
+      }catch (error) {
+        // console.log(error, error.response);
+        const message = error.response.data;
+        modalAlert.remove();
+        $("#modifier_modal .modal-body").prepend(
+          `<div class="alert alert-danger" style="width: 98%;margin: 0 auto;">${message}</div>`
+        );
+        icon.addClass('fa-edit').removeClass("fa-spinner fa-spin ");
+      }
+      setTimeout(() => {
+        $(".modal-body .alert").remove();
+        // modalAlert.remove();
+      }, 2500)  
+    }
+  })
 
 $('.nav-pills a').on('click', function (e) {
     $(this).tab('show');
 })
+
 })
 

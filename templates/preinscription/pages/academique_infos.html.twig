@@ -4,16 +4,21 @@
             <div class="col-md-6">
                 <div class="form-group">
                     <label>  C.N.E (*) :</label>
-                    <input class="form-control" type="text" name="cne" placeholder="C.N.E" value=""> 
+                    <input class="form-control" type="text" name="cne" placeholder="C.N.E" value="{{etudiant.cne}}"> 
                 </div>
             </div> 
             <div class="col-md-6">
                 <div class="form-group">
                     <label>Académie  :</label>
-                    <select class="form-control chosen-select" name="id_academie">
-                        <option value="">Choix Académie</option>
-                        <option selected="" value="aca00000012">Rabat-Salé-Zemmour-Zaër</option>
-                        <option value="aca00000013">Souss-Massa-Dra</option>
+                    <select class="form-control " style="width: 100%" name="id_academie">
+                        <option value=""  disabled selected>Choix de académie</option>
+                        {% for academie in academies %}
+                            {% if etudiant.academie == academie  %}
+                                <option value="{{academie.id}}" selected>{{academie.designation}}</option>
+                            {% else %}
+                                <option value="{{academie.id}}">{{academie.designation}}</option>
+                            {% endif %}
+                        {% endfor %}
                     </select>
                 </div>
             </div>
@@ -21,16 +26,23 @@
         <div class="col-md-12 row">
             <div class="col-md-6">
                 <div class="form-group">
-                    <label>filière  :</label>
-                    <select class="form-control chosen-select" name="id_filiere">
-                        <option value="">Choix Filière</option>
+                    <label>Filière  :</label>
+                    <select class="form-control " style="width: 100%" name="id_filiere">
+                        <option value=""  disabled selected>Choix de filière</option>
+                        {% for filiere in filieres %}
+                            {% if etudiant.filiere == filiere  %}
+                                <option value="{{filiere.id}}" selected>{{filiere.designation}}</option>
+                            {% else %}
+                                <option value="{{filiere.id}}">{{filiere.designation}}</option>
+                            {% endif %}
+                        {% endfor %}
                     </select>
                 </div>
             </div>
             <div class="col-md-6">
                 <div class="form-group">
                     <label>établissement  :</label>
-                    <input class="form-control" type="text" name="etablissement" placeholder="Etablissement" value=""> 
+                    <input class="form-control" type="text" name="etablissement" placeholder="Etablissement" value="{{etudiant.etablissement}}"> 
                 </div>
             </div>
         </div>
@@ -38,29 +50,22 @@
             <div class="col-md-6">
                 <div class="form-group">
                     <label>Type de Bac :</label>
-                    <select class="form-control chosen-select" name="id_type_bac">
-                        <option value="">Choix Type</option>
+                    <select class="form-control " style="width: 100%" name="id_type_bac">
+                        <option value=""  disabled selected>Choix de Type de Bac</option>
+                        {% for typebac in typebacs %}
+                            {% if etudiant.typeBac == typebac  %}
+                                <option value="{{typebac.id}}" selected>{{typebac.designation}}</option>
+                            {% else %}
+                                <option value="{{typebac.id}}">{{typebac.designation}}</option>
+                            {% endif %}
+                        {% endfor %}
                     </select>
                 </div>
             </div>
             <div class="col-md-6">
                 <div class="form-group">
                     <label>  Année Bac  :</label>
-                    <input class="form-control" type="text" name="annee_bac" placeholder="Année Bac" value="2015"> 
-                </div>
-            </div>
-        </div>
-        <div class="col-md-12 row">
-            <div class="col-md-6">
-                <div class="form-group">
-                    <label>  moyenne_bac  :</label>
-                    <input class="form-control" type="text" name="moyenne_bac" placeholder="Moyen Bac" value="15.4"> 
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="form-group">
-                    <label>  Observation :</label>
-                    <textarea class="form-control" name="obs" style="width: 100%; height: 32px;"></textarea>
+                    <input class="form-control" type="text" name="annee_bac" placeholder="Année Bac" value="{{etudiant.anneeBac}}"> 
                 </div>
             </div>
         </div>  
@@ -71,30 +76,52 @@
         <div class="col-md-12 row">
             <div class="col-md-6">
                 <div class="form-group">
+                    <label>  moyenne_bac  :</label>
+                    <input class="form-control" type="text" name="moyenne_bac" placeholder="Moyen Bac" value="{{etudiant.moyenneBac}}"> 
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>  Observation :</label>
+                    <textarea class="form-control" name="obs" style="width: 100%; height: 32px;">{{etudiant.obs}}</textarea>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-12 row">
+            <div class="col-md-6">
+                <div class="form-group">
                     <label> catégorie préinscription  :</label>
-                    <input class="form-control" type="text" name="categorie_preinscription" placeholder="Catégorie Préinscription" value=""> 
+                    <input class="form-control" type="text" name="categorie_preinscription" placeholder="Catégorie Préinscription" value="{{etudiant.categoriePreinscription}}"> 
                 </div>
             </div>
             <div class="col-md-6">
                 <div class="form-group">
                     <label> frais préinscription :</label>
-                    <input class="form-control" type="text" name="frais_preinscription" placeholder="Rrais préinscription" value="0"> 
+                    <input class="form-control" type="text" name="frais_preinscription" placeholder="Rrais préinscription" value="{{etudiant.fraisPreinscription}}"> 
                 </div>
             </div> 
         </div>
-        <div class="col-md-12 row">  
-            <div class="col-md-6">
-                <div class="form-group">
-                    <label>  Concours  :</label>
-                    <input class="form-control" type="text" name="concours_medbup" placeholder="Concours" value=""> 
-                </div>
-            </div>       
+        
+        <div class="col-md-12 row">         
             <div class="col-md-6">
                 <div class="form-group">
                     <label>  langue concours  :</label>
                     <select class="form-control chosen-select" name="langue_concours">
-                        <option value="">Choix Établissement</option>
+                        <option value="" disabled selected>Choix langue</option>
+                        {% for langues in langues %}
+                            {% if etudiant.langueConcours == langues  %}
+                                <option value="{{langues.id}}" selected>{{langues.designation}}</option>
+                            {% else %}
+                                <option value="{{langues.id}}">{{langues.designation}}</option>
+                            {% endif %}
+                        {% endfor %}
                     </select>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>  Concours  :</label>
+                    <input class="form-control" type="text" name="concours_medbup" placeholder="Concours" value="{{etudiant.concoursMedbup}}">
                 </div>
             </div>
         </div>
