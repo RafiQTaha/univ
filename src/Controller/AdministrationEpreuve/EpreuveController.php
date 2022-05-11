@@ -417,9 +417,8 @@ class EpreuveController extends AbstractController
                     $gnote->setCreated(new \DateTime("now"));
                     if($epreuve->getAnonymat() == 1) {                        
                         if($epreuve->getNatureEpreuve()->getNature() == 'normale') {
-                            $gnote->setAnonymat($inscription->getCodeAnonymat());     
-                            $sheet->setCellValue('C'.$i, $inscription->getCodeAnonymat());
-
+                            $gnote->setAnonymat($inscription->getCodeAnonymat() ? $inscription->getCodeAnonymat() : null);     
+                            $sheet->setCellValue('C'.$i, $inscription->getCodeAnonymat() ? $inscription->getCodeAnonymat() : null);
                         } else {
                             $gnote->setAnonymat($inscription->getCodeAnonymatRat());
                             $sheet->setCellValue('C'.$i, $inscription->getCodeAnonymatRat());

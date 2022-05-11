@@ -54,6 +54,7 @@ $(document).ready(function () {
             input.prop("checked",true);
             idEpreuves.push(input.attr("id"));
         }
+        console.log(idEpreuves);
     })
     $('body').on('dblclick','#datables_notes_epreuve tbody tr',function (e) {
         e.preventDefault();
@@ -402,6 +403,40 @@ $(document).ready(function () {
     $('body').on('click', '#impression_anonymat', function(e){
         e.preventDefault();
         window.open("/administration/note/impression/"+id_epreuve+"/1", '_blank');
+    })
+
+    $("#capitaliser_etudiant").on('click', async function(e) {
+        e.preventDefault();
+        if(idEpreuves.length ==0) {
+            Toast.fire({
+                icon: 'error',
+                title: 'Veuillez cochez une ou plusieurs ligne!',
+            })
+            return;
+        }
+        const icon = $("#capitaliser_etudiant i");
+        icon.removeClass('fa-archive').addClass("fa-spinner fa-spin");
+        
+        try {
+            let formData = new FormData();
+            formData.append("epreuves", JSON.stringify(idEpreuves))
+            const request = await axios.post('/administration/note/capitaliser', formData);
+            const response = request.data;
+            icon.addClass('fa-archive').removeClass("fa-spinner fa-spin ");
+            if(response.count>0) {
+                window.open("/"+response.fileName ,"_blank");
+            }
+            idEpreuves =  []
+        } catch (error) {
+            console.log(error)
+            const message = error.response.data;
+            Toast.fire({
+                icon: 'error',
+                title: message,
+            }) 
+            icon.addClass('fa-archive').removeClass("fa-spinner fa-spin ");
+            
+        }
     })
     
 });
