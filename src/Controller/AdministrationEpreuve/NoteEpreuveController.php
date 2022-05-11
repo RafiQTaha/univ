@@ -12,6 +12,7 @@ use App\Entity\TInscription;
 use App\Entity\AcEtablissement;
 use App\Controller\ApiController;
 use App\Controller\DatatablesController;
+use App\Entity\ExMnotes;
 use Doctrine\Persistence\ManagerRegistry;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
@@ -379,12 +380,20 @@ class NoteEpreuveController extends AbstractController
             $inscription = $this->em->getRepository(TInscription::class)->find($sheet[0]);
             $exgnote = $this->em->getRepository(ExGnotes::class)->findOneBy(['epreuve'=>$epreuve,'inscription'=>$inscription]);
             
-            $exgnote->setNote($sheet[3] = "" ? NULL : $sheet[3]);
+            if($sheet[3] == "" ) {
+                $exgnote->setNote(NULL);
+            } else if($sheet[3] > 20) {
+                $exgnote->setNote(20);
+            } else if ($sheet[3] < 0) {
+                $exgnote->setNote(0);
+            } else {
+                $exgnote->setNote($sheet[3]);
+            }
             $exgnote->setAbsence($sheet[4]);
             $exgnote->setObservation($sheet[5]);
             $this->em->flush();
         }
-        return new JsonResponse("Total des epreuves crée est ".$sheetCount);
+        return new JsonResponse("Total des notes associé est ".$sheetCount);
     }
 
     #[Route('/cloturer', name: 'administration_epreuve_cloturer')]
@@ -462,5 +471,49 @@ class NoteEpreuveController extends AbstractController
         // );
         $mpdf->WriteHTML($html);
         $mpdf->Output("epreuve_".$epreuve->getId().".pdf", "I");
+    }
+    #[Route('/capitaliser', name: 'administration_note_capitaliser')]
+    public function administrationNoteCapitaliser(Request $request) {
+        $idEpreuves = json_decode($request->get('epreuves'));
+        $count = 0;
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        $sheet->setCellValue('A1', 'inscription');
+        $sheet->setCellValue('B1', 'nom');
+        $sheet->setCellValue('C1', 'prenom');
+        $sheet->setCellValue('D1', 'epreuve');
+        $sheet->setCellValue('E1', 'note');
+        $i=2;
+       
+        foreach ($idEpreuves as $idEpreuve) {
+            $epreuve = $this->em->getRepository(AcEpreuve::class)->find($idEpreuve);
+            foreach ($epreuve->getGnotes() as $gnote) {
+                $inscription = $gnote->getInscription();
+                $previousInscription = $this->em->getRepository(TInscription::class)->getPreviousInsription($inscription);
+                if($previousInscription && ($inscription->getPromotion()->getId() === $previousInscription->getPromotion()->getId() )) {
+                    $previousNoteModule = $this->em->getRepository(ExMnotes::class)->findOneBy(['module' => $epreuve->getElement()->getModule(), 'inscription' => $previousInscription]);
+                    if($previousNoteModule->getNote() >= 13) {
+                        $gnote->setNote($previousNoteModule->getNote());
+                        $sheet->setCellValue('A'.$i, $inscription->getId());
+                        $sheet->setCellValue('B'.$i, $gnote->getInscription()->getAdmission()->getPreinscription()->getEtudiant()->getNom());
+                        $sheet->setCellValue('C'.$i, $gnote->getInscription()->getAdmission()->getPreinscription()->getEtudiant()->getPrenom());
+                        $sheet->setCellValue('D'.$i, $epreuve->getId());
+                        $sheet->setCellValue('E'.$i, $previousNoteModule->getNote());
+                        $i++;
+                        $count++;
+                    }
+                }
+            }
+        }
+        $this->em->flush();
+        $fileName = null;
+        if($count > 0) {
+            $writer = new Xlsx($spreadsheet);
+            $fileName = 'epreuves_capitaliser_'.uniqid().'.xlsx';
+            $writer->save($fileName);
+        }
+
+        return new JsonResponse(['fileName' => $fileName, 'count' => $count]);
+
     }
 }

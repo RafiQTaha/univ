@@ -65,12 +65,13 @@
     },
     "note": {
       "js": [
-        "/build/runtime.js",
-        "/build/vendors-node_modules_jquery_dist_jquery_js.js",
-        "/build/vendors-node_modules_core-js_modules_es_object_to-string_js-node_modules_core-js_modules_es_p-2de272.js",
-        "/build/vendors-node_modules_core-js_internals_fix-regexp-well-known-symbol-logic_js-node_modules_cor-b8bfb8.js",
-        "/build/vendors-node_modules_core-js_modules_es_array_find_js-node_modules_core-js_modules_es_array_i-c7a83c.js",
-        "/build/note.js"
+
+        "/build/runtime.c3e9a731.js",
+        "/build/755.5a8586e9.js",
+        "/build/29.ac17dd24.js",
+        "/build/375.0b5848d1.js",
+        "/build/note.a7028ee1.js"
+
       ]
     },
     "admission": {
