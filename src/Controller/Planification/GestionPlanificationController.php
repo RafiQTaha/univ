@@ -86,12 +86,9 @@ class GestionPlanificationController extends AbstractController
             $filtre .= " and grd.id = '" . $params->all('columns')[8]['search']['value'] . "' ";
         }    
         if (!empty($params->all('columns')[9]['search']['value']) || $params->all('columns')[9]['search']['value'] == 0) {
-            // $annuler = $params->all('columns')[9]['search']['value'] == 'non' ? 0 : 1;
             $filtre .= " and emp.annuler = '" . $params->all('columns')[9]['search']['value'] . "' ";
         }    
         if (!empty($params->all('columns')[10]['search']['value']) || $params->all('columns')[10]['search']['value'] == 0) {
-            // dd($params->all('columns')[10]['search']['value']);
-            // $valider = $params->all('columns')[10]['search']['value'] == 'non' ? 0 : 1;
             $filtre .= " and emp.valider = '" . $params->all('columns')[10]['search']['value'] . "' ";
         } 
         $columns = array(
