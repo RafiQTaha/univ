@@ -188,8 +188,11 @@ class PlEmptimeRepository extends ServiceEntityRepository
         INNER JOIN ac_etablissement etab on etab.id = frm.etablissement_id
         INNER join pl_emptimens pl_ens on pl.id = pl_ens.seance_id  and pl_ens.active = 1
         INNER JOIN penseignant ens ON ens.id = pl_ens.enseignant_id
-        left join pensgrille gr on gr.grade_id = ens.grade_id AND gr.formation_id = frm.id aND prog.nature_epreuve_id  = gr.type_epreuve_id AND ele.nature = gr.nature
+        INNER JOIN type_element tele ON tele.id = ele.nature_id
+        left join pensgrille gr on gr.grade_id = ens.grade_id AND gr.formation_id = frm.id aND prog.nature_epreuve_id  = gr.type_epreuve_id 
+        -- AND ele.nature = gr.nature
         WHERE pl.id = $seance";
+        // dd($sqls);
         $stmts = $this->em->getConnection()->prepare($sqls);
         $resultSets = $stmts->executeQuery();
         $result = $resultSets->fetch();

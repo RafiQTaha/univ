@@ -85,13 +85,14 @@ class GestionPlanificationController extends AbstractController
         if (!empty($params->all('columns')[8]['search']['value'])) {
             $filtre .= " and grd.id = '" . $params->all('columns')[8]['search']['value'] . "' ";
         }    
-        if (!empty($params->all('columns')[9]['search']['value'])) {
-            $annuler = $params->all('columns')[9]['search']['value'] == 'non' ? 0 : 1;
-            $filtre .= " and emp.annuler = '" . $annuler . "' ";
+        if (!empty($params->all('columns')[9]['search']['value']) || $params->all('columns')[9]['search']['value'] == 0) {
+            // $annuler = $params->all('columns')[9]['search']['value'] == 'non' ? 0 : 1;
+            $filtre .= " and emp.annuler = '" . $params->all('columns')[9]['search']['value'] . "' ";
         }    
-        if (!empty($params->all('columns')[10]['search']['value'])) {
-            $valider = $params->all('columns')[10]['search']['value'] == 'non' ? 0 : 1;
-            $filtre .= " and emp.valider = '" . $valider . "' ";
+        if (!empty($params->all('columns')[10]['search']['value']) || $params->all('columns')[10]['search']['value'] == 0) {
+            // dd($params->all('columns')[10]['search']['value']);
+            // $valider = $params->all('columns')[10]['search']['value'] == 'non' ? 0 : 1;
+            $filtre .= " and emp.valider = '" . $params->all('columns')[10]['search']['value'] . "' ";
         } 
         $columns = array(
             array( 'db' => 'emp.id','dt' => 0 ),
@@ -121,10 +122,10 @@ class GestionPlanificationController extends AbstractController
         -- INNER JOIN ac_annee ann ON ann.formation_id = frm.id
         INNER JOIN ac_annee ann ON ann.id = prg.annee_id
         INNER join ac_etablissement etab on etab.id = frm.etablissement_id
+        INNER join semaine sm on sm.id = emp.semaine_id
         INNER join pl_emptimens emen on emen.seance_id = emp.id
-        LEFT join penseignant ens on ens.id = emen.enseignant_id
-        LEFT join pgrade grd on grd.id = ens.grade_id
-        INNER join semaine sm on sm.id = emp.semaine_id $filtre ";
+        INNER join penseignant ens on ens.id = emen.enseignant_id
+        INNER join pgrade grd on grd.id = ens.grade_id $filtre ";
         // dd($sql);
         $totalRows .= $sql;
         $sqlRequest .= $sql;

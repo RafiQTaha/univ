@@ -300,7 +300,7 @@ $(document).ready(function () {
             }
         }  
     })
-    $('body').on('click','#annuler', async function (e) {
+    $('body').on('click','#annulation', async function (e) {
         e.preventDefault();
         if(ids_planning.length === 0 ){
             Toast.fire({
@@ -377,16 +377,16 @@ $(document).ready(function () {
         }
         window.open('/planification/gestions/Getsequence_gestion/'+id_planning, '_blank');
     });
-    $('body').on('click','#valider', async function (e) {
+    $('body').on('click','#validation', async function (e) {
         e.preventDefault();
         if(ids_planning.length === 0 ){
             Toast.fire({
-            icon: 'error',
-            title: 'Merci de Choisir au moins une ligne',
+                icon: 'error',
+                title: 'Merci de Choisir au moins une ligne',
             })
             return;
         }
-        const icon = $("#Annuler_planning i");
+        const icon = $("#validation i");
         icon.removeClass('fa-check').addClass("fa-spinner fa-spin");
         var formData = new FormData();
         formData.append('ids_planning', JSON.stringify(ids_planning));

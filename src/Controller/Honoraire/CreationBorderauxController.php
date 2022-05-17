@@ -200,6 +200,7 @@ class CreationBorderauxController extends AbstractController
     public function honoraireborderaux(HAlbhon $borderaux)
     {  
         $honenss = $borderaux->getHonenss();
+        // dd($borderaux->getHonenss()[0]->getSeance()->getProgrammation()->getElement()->getNature()->getDesignation());
         $html = $this->render("honoraire/pdfs/borderaux.html.twig", [
             'borderaux' => $borderaux,
             'honenss' => $honenss
