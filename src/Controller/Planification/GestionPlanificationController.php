@@ -122,7 +122,7 @@ class GestionPlanificationController extends AbstractController
         INNER join semaine sm on sm.id = emp.semaine_id
         left join pl_emptimens emen on emen.seance_id = emp.id
         left join penseignant ens on ens.id = emen.enseignant_id
-        INNER join pgrade grd on grd.id = ens.grade_id $filtre ";
+        left join pgrade grd on grd.id = ens.grade_id $filtre ";
         // dd($sql);
         $totalRows .= $sql;
         $sqlRequest .= $sql;
