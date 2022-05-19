@@ -71,16 +71,24 @@ class PlanificationController extends AbstractController
         }
         $times = [];
         foreach($emptimes as $emptime){
+            // dd($emptime);
+            $emptimens = $this->em->getRepository(PlEmptimens::class)->findBy(['seance'=>$emptime]);
+            // dd($enseignants[0]->getEnseignant()->getNom().' '.$emptime->getEmptimens()[0]->getPrenom(););
             $enseingant = "";
+            foreach ($emptimens as $emptimen) {
+                $enseingant .= $emptimen->getEnseignant()->getNom()." ".$emptimen->getEnseignant()->getPrenom() ."\n";
+            }
+            // dd(count($emptimens));
             $element = $emptime->getProgrammation()->getElement();
             $natureEpreuve = $emptime->getProgrammation()->getNatureEpreuve();
-            $epreuve = $this->em->getRepository(AcEpreuve::class)->findOneBy(['id'=>2]);
-            if($emptime->getProgrammation()->getEnseignants() != Null){
-                if($emptime->getProgrammation()->getEnseignants()[0] != Null){
-                    $enseingant .= $enseingant != "" ? ", " : ""; 
-                    $enseingant .= $emptime->getProgrammation()->getEnseignants()[0]->getNom().' '.$emptime->getProgrammation()->getEnseignants()[0]->getPrenom();
-                }
-            }
+            // $epreuve = $this->em->getRepository(AcEpreuve::class)->findOneBy(['id'=>2]);
+            // if($emptime->getProgrammation()->getEnseignants() != Null){
+            //     if($emptime->getProgrammation()->getEnseignants()[0] != Null){
+            //         $enseingant .= $enseingant != "" ? ", " : ""; 
+            //         // $enseingant .= $emptime->getProgrammation()->getEnseignants()[0]->getNom().' '.$emptime->getProgrammation()->getEnseignants()[0]->getPrenom();
+            //         $enseingant .= $emptime->getEmptimens()[0]->getNom().' '.$emptime->getEmptimens()[0]->getPrenom();
+            //     }
+            // }
             $times[] = [
                 'id' => $emptime->getId(),
                 'title' => $emptime->getCode() . "\n".

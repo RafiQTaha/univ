@@ -76,7 +76,7 @@ $(document).ready(function () {
                 currentweek = moment(start, "MMDDYYYY").isoWeek();
                 heur_debut= moment(start).format('HH:mm')
                 heur_fin= moment(end).format('HH:mm')
-                axios.get('/planification/planifications/planification_infos/'+107)
+                axios.get('/planification/planifications/planification_infos/'+$('#semestre').val())
                 .then(success => {
                     $('.modal-addform_planif .add_planning').html(success.data);
                     $('.modal-addform_planif #h_debut').val(heur_debut);
