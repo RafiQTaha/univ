@@ -122,7 +122,7 @@ class GestionPlanificationController extends AbstractController
         INNER join semaine sm on sm.id = emp.semaine_id
         left join pl_emptimens emen on emen.seance_id = emp.id
         left join penseignant ens on ens.id = emen.enseignant_id
-        left join pgrade grd on grd.id = ens.grade_id $filtre ";
+        left join pgrade grd on grd.id = ens.grade_id $filtre GROUP BY emp.id";
         // dd($sql);
         $totalRows .= $sql;
         $sqlRequest .= $sql;
@@ -244,7 +244,13 @@ class GestionPlanificationController extends AbstractController
             'validation_academique'=>'non',
             'cloture_academique'=>'non',
         ]);
-        $inscriptions = $this->em->getRepository(TInscription::class)->getInscriptionsByAnneeAndPromoAndGroupe($promotion,$annee,$emptime->getGroupe());
+        if( $emptime->getGroupe() != NULL){
+            $inscriptions = $this->em->getRepository(TInscription::class)->getInscriptionsByAnneeAndPromoAndGroupe($promotion,$annee,$emptime->getGroupe());
+            
+        }else{
+            $inscriptions = $this->em->getRepository(TInscription::class)->getInscriptionsByAnneeAndPromoNoGroup($promotion,$annee);
+        }
+        // $inscriptions = $this->em->getRepository(TInscription::class)->getInscriptionsByAnneeAndPromoAndGroupe($promotion,$annee,$emptime->getGroupe());
         $emptimenss = $this->em->getRepository(PlEmptimens::class)->findBy(['seance'=>$emptime]);
         $html = $this->render("planification/pdfs/absence.html.twig", [
             'inscriptions' => $inscriptions,

@@ -267,6 +267,25 @@ class TInscriptionRepository extends ServiceEntityRepository
         ->getResult()
         ;
     } 
+
+    
+    public function getInscriptionsByAnneeAndPromoNoGroup($promotion,$annee)
+    {
+        // if ($groupe == Null) {
+        //     # code...
+        // }
+        return $this->createQueryBuilder('inscription')
+        ->innerJoin("inscription.annee", "annee")
+        ->innerJoin("inscription.promotion", "promotion")
+        ->where('promotion = :promotion')
+        ->andWhere("annee = :annee")
+        ->setParameter('promotion', $promotion)
+        ->setParameter('annee', $annee)
+        ->getQuery()
+        ->getResult()
+        ;
+    }
+
     public function getPreviousInsription($inscription)
     {
         return $this->createQueryBuilder('i')
