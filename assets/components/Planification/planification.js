@@ -151,22 +151,17 @@ $(document).ready(function () {
         formData.append('end',end)
         try{
             const request = await  axios.post('/planification/planifications/planifications_editEventDate/'+id_emptime,formData)
-            if (request.data == 'ok') {
-                Toast.fire({
-                    icon: 'success',
-                    title: 'Planification bien Modifier!!',
-                })  
-            }else{
-                Toast.fire({
-                    icon: 'error',
-                    title: 'Planification a echoué!!',
-                })
-            }
+            Toast.fire({
+                icon: 'success',
+                title: request.data,
+            }) 
         }catch(error){
             Toast.fire({
                 icon: 'error',
-                title: 'Some Error!!',
+                title: error.response.data,
             })
+            $("#calendar").fullCalendar('removeEvents'); 
+            $("#calendar").fullCalendar('addEventSource', alltime); 
         }
     }
     $("#etablissement").select2();
@@ -325,9 +320,9 @@ $(document).ready(function () {
             icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin");
             alltimes()
             setTimeout(() => {
-               $("#addform_planif-modal .modal-body .alert").remove();
+            //    $("#addform_planif-modal .modal-body .alert").remove();
                $('#addform_planif-modal').modal("hide");
-            }, 4000);
+            }, 3000);
         }catch(error){
             const message = error.response.data;
             // console.log(error, error.response);
@@ -337,6 +332,9 @@ $(document).ready(function () {
             );
             icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
         }
+        setTimeout(() => {
+            $("#addform_planif-modal .modal-body .alert").remove();
+         }, 3000);
     })
     $("body").on('submit','.form_update_planning', async function (e){
         e.preventDefault();

@@ -55,7 +55,7 @@ class GenerationHonoraireController extends AbstractController
          
         $params = $request->query;
         $where = $totalRows = $sqlRequest = "";
-        $filtre = " where ann.validation_academique = 'non' and emp.valider = '1' and emp.active = '1' and emp.generer = '1' and emp.annuler = 0 and (hon.annuler != 0 or hon.id  is null ) ";
+        $filtre = " where ann.validation_academique = 'non' and emp.valider = '1' and emp.active = '1' and emp.generer = '1' and emp.annuler = 0 and (hon.annuler != 0 or hon.id  is null or (select count(seance_id) from hhonens where seance_id = emp.id and statut ='E') > 0) ";
         
         if (!empty($params->all('columns')[0]['search']['value'])) {
             $filtre .= " and etab.id = '" . $params->all('columns')[0]['search']['value'] . "' ";
@@ -116,14 +116,14 @@ class GenerationHonoraireController extends AbstractController
         INNER JOIN ac_promotion prm ON prm.id = sem.promotion_id 
         INNER JOIN ac_formation frm ON frm.id = prm.formation_id
         INNER JOIN ac_etablissement etab ON etab.id = frm.etablissement_id
-        INNER JOIN ac_annee ann ON ann.formation_id = frm.id
-        -- INNER JOIN ac_annee ann ON ann.id = prog.annee_id
+        -- INNER JOIN ac_annee ann ON ann.formation_id = frm.id
+        INNER JOIN ac_annee ann ON ann.id = prog.annee_id
         left join hhonens hon on hon.seance_id = emp.id
         -- left join penseignant ens ON ens.id = emp_ens.enseignant_id
         inner join penseignant ens ON ens.id = emp_ens.enseignant_id
         left join pgrade grd ON grd.id = ens.grade_id
         left join pgroupe grp ON grp.id = emp.groupe_id
-        $filtre ";
+        $filtre Group BY emp.id";
         // dd($sql);
         $totalRows .= $sql;
         $sqlRequest .= $sql;
@@ -192,13 +192,13 @@ class GenerationHonoraireController extends AbstractController
         }
         foreach ($ids as $id) {
             // dd($id);
-            $EnsMontByIdSceance = $this->em->getRepository(PlEmptime::class)->GetEnsMontByIdSceance($id);
+            $EnsMontByIdSceances = $this->em->getRepository(PlEmptime::class)->GetEnsMontByIdSceance($id);
             // dd($EnsMontByIdSceance);
             // dd($EnsMontByIdSceance);
             // if ($EnsMontByIdSceance == false) {
             //     return new JsonResponse('Merci de Choisir au moins une ligne',500);
             // }
-            // foreach ($EnsMontByIdSceances as $EnsMontByIdSceance) {
+            foreach ($EnsMontByIdSceances as $EnsMontByIdSceance) {
                 $honens = new HHonens();
                 $honens->setEnseignant($this->em->getRepository(PEnseignant::class)->Find($EnsMontByIdSceance['enseignant']));
                 $honens->setSeance($this->em->getRepository(PLemptime::class)->Find($EnsMontByIdSceance['seance']));
@@ -207,6 +207,7 @@ class GenerationHonoraireController extends AbstractController
                 $honens->setNbrHeur((int) $EnsMontByIdSceance['nbr_heure']);
                 if ($EnsMontByIdSceance['nbr_sc_regroupe'] != 0) {
                     $honens->setNbrScRegroupe($EnsMontByIdSceance['nbr_sc_regroupe']);
+                    // $honens->setNbrScRegroupe(1);
                 }
                 $montant = $EnsMontByIdSceance['Mt_tot'];
                 $exist_enseignant = $this->em->getRepository(PEnseignantExcept::class)->FindOneBy(['enseignant'=>$EnsMontByIdSceance['enseignant'],'formation'=>$EnsMontByIdSceance['formation']]);
@@ -220,7 +221,7 @@ class GenerationHonoraireController extends AbstractController
                 $honens->setCode('HON'.str_pad($honens->getId(), 8, '0', STR_PAD_LEFT));
                 $this->em->flush();
                 // dd($montant);
-            // }
+            }
         }
         return new JsonResponse('Seances Bien Generer',200);
     }

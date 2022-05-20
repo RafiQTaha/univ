@@ -175,7 +175,10 @@ class PlEmptimeRepository extends ServiceEntityRepository
     public function GetEnsMontByIdSceance($seance)
     {
         $sqls="SELECT pl.id as seance ,frm.id AS formation,ens.id AS enseignant,prog.nature_epreuve_id , TIMESTAMPDIFF(MINUTE, pl.heur_db , pl.heur_fin)/60 AS nbr_heure,gr.montant, (TIMESTAMPDIFF(MINUTE, pl.heur_db , pl.heur_fin)/60) * gr.montant AS Mt_tot2 , 
-        (select count(*) from pr_programmation prog where prog.regroupe = (select prog.regroupe from pl_emptime emp inner join pr_programmation prog on emp.programmation_id = prog.id where emp.id = $seance group by prog.id)) 
+        (select count(*) from pr_programmation prog 
+        where prog.regroupe = (select prog.regroupe from pl_emptime emp 
+        inner join pr_programmation prog on emp.programmation_id = prog.id 
+        where emp.id = $seance group by prog.id)) 
         as nbr_sc_regroupe , CASE WHEN prog.regroupe IS NOT NULL AND prog.categorie = 'S' THEN 0
         ELSE (TIMESTAMPDIFF(MINUTE, pl.heur_db , pl.heur_fin)/60) * gr.montant END AS Mt_tot
         FROM pl_emptime pl
@@ -190,12 +193,13 @@ class PlEmptimeRepository extends ServiceEntityRepository
         INNER JOIN penseignant ens ON ens.id = pl_ens.enseignant_id
         INNER JOIN type_element tele ON tele.id = ele.nature_id
         left join pensgrille gr on gr.grade_id = ens.grade_id AND gr.formation_id = frm.id aND prog.nature_epreuve_id  = gr.type_epreuve_id 
+        AND gr.nature = tele.code 
         -- AND ele.nature = gr.nature
         WHERE pl.id = $seance";
         // dd($sqls);
         $stmts = $this->em->getConnection()->prepare($sqls);
         $resultSets = $stmts->executeQuery();
-        $result = $resultSets->fetch();
+        $result = $resultSets->fetchAll();
         return $result;
     }
     

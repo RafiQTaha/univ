@@ -211,6 +211,9 @@ class PlanificationController extends AbstractController
         if ($request->get('nature_seance') == "" || $request->get('element') =="" || $request->get('salle') =="") {
             return new Response('Merci de renseignez tout les champs',500);
         }
+        if ($request->get('enseignant') == NULL) {
+            return new Response('Merci de Choisir Au Moins Un Enseignant!!',500);
+        }
         $programmation = $this->em->getRepository(PrProgrammation::class)->findOneBy(['element'=>$request->get('element'),'nature_epreuve'=>$request->get('nature_seance')]);
         // $programmation = $this->em->getRepository(PrProgrammation::class)->findOneBy(['element'=>107,'nature_epreuve'=>9]);
         if($programmation != Null){
@@ -353,6 +356,9 @@ class PlanificationController extends AbstractController
     #[Route('/planifications_editEventDate/{id}', name: 'planifications_editEventDate')]
     public function planifications_editEventDate(PlEmptime $emptime,Request $request): Response
     {   
+        if ($emptime->getGenerer() ==1 || $emptime->getAnnuler() == 1) {
+            return new Response('Seance déja générer',500);
+        }
         if ($request->get('start') != "" && $request->get('start') != "") {
             $start = new \DateTime($request->get('start'));
             $end = new \DateTime($request->get('end'));
@@ -362,7 +368,7 @@ class PlanificationController extends AbstractController
             $emptime->setHeurDb($start);
             $emptime->setHeurFin($end);
             $this->em->flush();
-            return new Response('ok',200);
+            return new Response('Planification bien Modifier!!',200);
         }
     }
 
