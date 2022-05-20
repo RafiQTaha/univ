@@ -123,7 +123,7 @@ class GenerationHonoraireController extends AbstractController
         inner join penseignant ens ON ens.id = emp_ens.enseignant_id
         left join pgrade grd ON grd.id = ens.grade_id
         left join pgroupe grp ON grp.id = emp.groupe_id
-        $filtre Group BY emp.id";
+        $filtre Group BY emp.id ";
         // dd($sql);
         $totalRows .= $sql;
         $sqlRequest .= $sql;
