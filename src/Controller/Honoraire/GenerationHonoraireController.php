@@ -55,8 +55,8 @@ class GenerationHonoraireController extends AbstractController
          
         $params = $request->query;
         $where = $totalRows = $sqlRequest = "";
-        $filtre = " where ann.validation_academique = 'non' and emp.valider = '1' and emp.active = '1' and emp.generer = '1' and emp.annuler = 0 and (hon.annuler != 0 or hon.id  is null or (select count(seance_id) from hhonens where seance_id = emp.id and statut ='E') > 0) ";
-        
+        $filtre = " where ann.validation_academique = 'non' and emp.valider = '1' and emp.active = '1' and emp.generer = '1' and emp.annuler = 0 and (hon.annuler != 0 or hon.id is null or (select count(seance_id) from hhonens where seance_id = emp.id and statut ='E') < (SELECT count(seance_id) FROM `pl_emptimens` where seance_id = emp.id)) ";
+        // or (select count(seance_id) from hhonens where seance_id = emp.id and statut ='E') > 0
         if (!empty($params->all('columns')[0]['search']['value'])) {
             $filtre .= " and etab.id = '" . $params->all('columns')[0]['search']['value'] . "' ";
         }
@@ -193,34 +193,36 @@ class GenerationHonoraireController extends AbstractController
         foreach ($ids as $id) {
             // dd($id);
             $EnsMontByIdSceances = $this->em->getRepository(PlEmptime::class)->GetEnsMontByIdSceance($id);
-            // dd($EnsMontByIdSceance);
-            // dd($EnsMontByIdSceance);
+            // dd($EnsMontByIdSceances);
             // if ($EnsMontByIdSceance == false) {
             //     return new JsonResponse('Merci de Choisir au moins une ligne',500);
             // }
             foreach ($EnsMontByIdSceances as $EnsMontByIdSceance) {
-                $honens = new HHonens();
-                $honens->setEnseignant($this->em->getRepository(PEnseignant::class)->Find($EnsMontByIdSceance['enseignant']));
-                $honens->setSeance($this->em->getRepository(PLemptime::class)->Find($EnsMontByIdSceance['seance']));
-                $honens->setUserCreated($this->getUser());
-                $honens->setCreated(new \DateTime('now'));
-                $honens->setNbrHeur((int) $EnsMontByIdSceance['nbr_heure']);
-                if ($EnsMontByIdSceance['nbr_sc_regroupe'] != 0) {
-                    $honens->setNbrScRegroupe($EnsMontByIdSceance['nbr_sc_regroupe']);
-                    // $honens->setNbrScRegroupe(1);
+                $honn = $this->em->getRepository(HHonens::class)->findOneBy(['seance'=>$EnsMontByIdSceance['seance'],'enseignant'=>$EnsMontByIdSceance['enseignant']]);
+                // dd($honn);
+                if ($honn == NULL) {
+                    $honens = new HHonens();
+                    $honens->setEnseignant($this->em->getRepository(PEnseignant::class)->Find($EnsMontByIdSceance['enseignant']));
+                    $honens->setSeance($this->em->getRepository(PLemptime::class)->Find($EnsMontByIdSceance['seance']));
+                    $honens->setUserCreated($this->getUser());
+                    $honens->setCreated(new \DateTime('now'));
+                    $honens->setNbrHeur((int) $EnsMontByIdSceance['nbr_heure']);
+                    if ($EnsMontByIdSceance['nbr_sc_regroupe'] != 0) {
+                        $honens->setNbrScRegroupe($EnsMontByIdSceance['nbr_sc_regroupe']);
+                        // $honens->setNbrScRegroupe(1);
+                    }
+                    $montant = $EnsMontByIdSceance['Mt_tot'];
+                    $exist_enseignant = $this->em->getRepository(PEnseignantExcept::class)->FindOneBy(['enseignant'=>$EnsMontByIdSceance['enseignant'],'formation'=>$EnsMontByIdSceance['formation']]);
+                    if($exist_enseignant != Null){
+                        $honens->setExept(1);
+                        $montant = 0;
+                    }
+                    $honens->setMontant($montant);
+                    $this->em->persist($honens);
+                    $this->em->flush();
+                    $honens->setCode('HON'.str_pad($honens->getId(), 8, '0', STR_PAD_LEFT));
+                    $this->em->flush();
                 }
-                $montant = $EnsMontByIdSceance['Mt_tot'];
-                $exist_enseignant = $this->em->getRepository(PEnseignantExcept::class)->FindOneBy(['enseignant'=>$EnsMontByIdSceance['enseignant'],'formation'=>$EnsMontByIdSceance['formation']]);
-                if($exist_enseignant != Null){
-                    $honens->setExept(1);
-                    $montant = 0;
-                }
-                $honens->setMontant($montant);
-                $this->em->persist($honens);
-                $this->em->flush();
-                $honens->setCode('HON'.str_pad($honens->getId(), 8, '0', STR_PAD_LEFT));
-                $this->em->flush();
-                // dd($montant);
             }
         }
         return new JsonResponse('Seances Bien Generer',200);
