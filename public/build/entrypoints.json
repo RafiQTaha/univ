@@ -239,6 +239,15 @@
         "/build/etablissement.js"
       ]
     },
+    "module": {
+      "js": [
+        "/build/runtime.js",
+        "/build/vendors-node_modules_jquery_dist_jquery_js.js",
+        "/build/vendors-node_modules_core-js_modules_es_object_to-string_js-node_modules_core-js_modules_es_p-2de272.js",
+        "/build/vendors-node_modules_core-js_internals_fix-regexp-well-known-symbol-logic_js-node_modules_cor-b8bfb8.js",
+        "/build/module.js"
+      ]
+    },
     "formation": {
       "js": [
         "/build/runtime.js",

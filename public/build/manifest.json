@@ -26,6 +26,7 @@
   "build/gestionGroupe.js": "/build/gestionGroupe.js",
   "build/inscription.js": "/build/inscription.js",
   "build/etablissement.js": "/build/etablissement.js",
+  "build/module.js": "/build/module.js",
   "build/formation.js": "/build/formation.js",
   "build/promotion.js": "/build/promotion.js",
   "build/semestre.js": "/build/semestre.js",

@@ -54,20 +54,14 @@ class SemestreController extends AbstractController
             array( 'db' => 'LOWER(etab.designation)','dt' => 1),
             array( 'db' => 'LOWER(form.designation)','dt' => 2),
             array( 'db' => 'LOWER(prm.designation)','dt' => 3),
-            array( 'db' => 'sem.designation','dt' => 4),
-           
-           
-            
+            array( 'db' => 'sem.designation','dt' => 4), 
         );
         $sql = "SELECT " . implode(", ", DatatablesController::Pluck($columns, 'db')) . "
         from ac_semestre sem
         inner join ac_promotion prm on prm.id = sem.promotion_id
         inner join ac_formation form on form.id = prm.formation_id
         inner join ac_etablissement etab on etab.id = form.etablissement_id
-        
-        
-        $filtre "
-        ;
+        $filtre ";
         // dd($sql);
         $totalRows .= $sql;
         $sqlRequest .= $sql;
@@ -95,9 +89,7 @@ class SemestreController extends AbstractController
             $nestedData = array();
             $cd = $row['id'];
             // dd($row);
-            
             foreach (array_values($row) as $key => $value) {
-               
                 $nestedData[] = $value;
                 
             }
