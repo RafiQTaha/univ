@@ -10,7 +10,7 @@ const Toast = Swal.mixin({
   },
 })
 let id_etudiant = false;
-
+// $('select').select2();
 $(document).ready(function  () {
 
   var table = $("#datables_etudiant").DataTable({
@@ -46,7 +46,7 @@ $(document).ready(function  () {
     $('#rdv1').val(data['rdv1']);
     $('#rdv2').val(data['rdv2']);
       icon.addClass('fa-edit').removeClass("fa-spinner fa-spin");
-    console.log(data);
+    // console.log(data);
 
   } catch (error) {
     // console.log(error.response.data);
@@ -69,7 +69,7 @@ $(document).ready(function  () {
       $('#modifier_modal #divers').html(data['divers']);
       $('select').select2();
       icon.addClass('fa-edit').removeClass("fa-spinner fa-spin");
-      console.log(data);
+      // console.log(data);
 
     } catch (error) {
       // console.log(error.response.data);
@@ -83,7 +83,7 @@ $(document).ready(function  () {
       $('#etablissement').html(data).select2();
 
     } catch (error) {
-      console.log(error.response.data);
+      // console.log(error.response.data);
     }  
   }
   const loadExistMatieres = () => {
@@ -95,7 +95,7 @@ $(document).ready(function  () {
         // console.log(success)
       })
       .catch(err => {
-        console.log(err)
+        // console.log(err)
       })
   }
   const loadEtudiantStatut = () => {
@@ -104,7 +104,7 @@ $(document).ready(function  () {
         $("#statut").html(success.data)
       })
       .catch(err => {
-        console.log(err)
+        // console.log(err)
       })
   }
   getEtablissement();
@@ -179,7 +179,7 @@ $(document).ready(function  () {
   })
   
   $("#valider-modal").on('click', () => {
-    console.log(id_etudiant);
+    // console.log(id_etudiant);
     if(!id_etudiant){
       Toast.fire({
         icon: 'error',
@@ -221,7 +221,7 @@ $(document).ready(function  () {
       }
     }catch(error){
       const message = error.response.data;
-      console.log(error, error.response);
+      // console.log(error, error.response);
       modalAlert.remove();
       $("#validermodal .modal-body").prepend(
         `<div class="alert alert-danger">${message}</div>`
@@ -256,7 +256,7 @@ $(document).ready(function  () {
     let modalAlert =  $("#releves-notes-modal .modal-body .alert");
     formdata.append('matiere', $("#matiereDispo").val())
     formdata.append('note', $("#matiereNote").val())
-    console.log(formdata);
+    // console.log(formdata);
     $(".modal-body .alert").remove();
     const icon = $("#relevenote_save .btn i");
     icon.removeClass('fa-check-circle').addClass("fa-spinner fa-spin");
@@ -273,7 +273,7 @@ $(document).ready(function  () {
        
     }catch(error){
       const message = error.response.data;
-      console.log(error, error.response);
+      // console.log(error, error.response);
       modalAlert.remove();
       $("#releves-notes-modal .modal-body").prepend(
         `<div class="alert alert-danger">${message}</div>`
@@ -295,7 +295,7 @@ $(document).ready(function  () {
       loadExistMatieres();
       
     } catch (error) {
-      console.log(error.response.data)
+      // console.log(error.response.data)
     }
   })
 
@@ -311,7 +311,7 @@ $(document).ready(function  () {
     icon.removeClass('fa-check-circle').addClass("fa-spinner fa-spin");
     var formData = new FormData();
     formData.append('file', $('.myfile').prop('files')[0]);
-    console.log(formData);
+    // console.log(formData);
     try {
       const request = await axios.post("/etudiant/etudiants/import", formData, {
         headers: {
@@ -325,7 +325,7 @@ $(document).ready(function  () {
             <p<b>${data.existed}</b> étudiants exist</p>
           </div>`
       );
-      console.log(data.existed);
+      // console.log(data.existed);
       if(data.existed > 0) {
         window.open("/etudiant/etudiants/download", '_blank');
       }
@@ -333,7 +333,7 @@ $(document).ready(function  () {
       table.ajax.reload(null, false);
     } catch (error) {
       const message = error.response.data;
-      console.log(error, error.response);
+      // console.log(error, error.response);
       modalAlert.remove();
       $("#importer-modal .modal-body").prepend(
         `<div class="alert alert-danger">${message}</div>`
@@ -380,7 +380,7 @@ $(document).ready(function  () {
       table.ajax.reload(null, false)
     } catch (error) {
       const message = error.response.data;
-      console.log(error, error.response);
+      // console.log(error, error.response);
       modalAlert.remove();
       $("#date-d-appel-modal .modal-body").prepend(
         `<div class="alert alert-danger">${message}</div>`
@@ -423,7 +423,7 @@ $(document).ready(function  () {
       table.ajax.reload(null, false)
     } catch (error) {
       const message = error.response.data;
-      console.log(error, error.response);
+      // console.log(error, error.response);
       modalAlert.remove();
       $("#statut-modal .modal-body").prepend(
         `<div class="alert alert-danger">${message}</div>`
@@ -461,7 +461,7 @@ $(document).ready(function  () {
     var res = confirm('Vous voulez vraiment modifier cette enregistrement ?');
     if(res == 1){
       var formData = new FormData($('#form_modifier')[0]);
-      console.log(formData);
+      // console.log(formData);
       let modalAlert = $("#modifier_modal .modal-body .alert")
       modalAlert.remove();
       const icon = $("#modifier_modal button i");
@@ -478,7 +478,7 @@ $(document).ready(function  () {
         table.ajax.reload(null, false)
       }catch (error) {
         const message = error.response.data;
-        console.log(error, error.response);
+        // console.log(error, error.response);
         modalAlert.remove();
         $("#modifier_modal .modal-body").prepend(
           `<div class="alert alert-danger" style="width: 98%;margin: 0 auto;">${message}</div>`
@@ -497,6 +497,7 @@ $(document).ready(function  () {
     // $('#ajouter_modal #academique_infos').html('');
     // $('#ajouter_modal #divers').html('');
     $('#ajouter_modal').modal("show");
+    $('select').select2();
   })
   
   $("body").on('submit', "#form_ajouter", async (e) => {
@@ -504,7 +505,7 @@ $(document).ready(function  () {
     var res = confirm('Vous voulez vraiment ajouter cette enregistrement ?');
     if(res == 1){
       var formData = new FormData($('#form_ajouter')[0]);
-      console.log(formData);
+      // console.log(formData);
       let modalAlert = $("#ajouter_modal .modal-body .alert")
       modalAlert.remove();
       const icon = $("#ajouter_modal button i");
@@ -521,7 +522,7 @@ $(document).ready(function  () {
         table.ajax.reload(null, false)
       }catch (error) {
         const message = error.response.data;
-        console.log(error, error.response);
+        // console.log(error, error.response);
         modalAlert.remove();
         $("#ajouter_modal .modal-body").prepend(
           `<div class="alert alert-danger" style="width: 98%;margin: 0 auto;">${message}</div>`

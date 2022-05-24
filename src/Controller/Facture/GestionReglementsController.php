@@ -186,7 +186,7 @@ class GestionReglementsController extends AbstractController
             'format' => [250, 350],
             'margin_left' => 5,
             'margin_right' => 5,
-            'margin_top' => 10,
+            'margin_top' => 3,
         ]);
         $mpdf->WriteHTML($html);
         $mpdf->Output("Regleemnt.pdf", "I");

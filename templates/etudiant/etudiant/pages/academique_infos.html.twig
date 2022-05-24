@@ -96,8 +96,8 @@
             </div>
             <div class="col-md-6">
                 <div class="form-group">
-                    <label>  Observation :</label>
-                    <textarea class="form-control" name="obs" style="width: 100%; height: 32px;">{{etudiant.obs}}</textarea>
+                    <label>  Moyen Regional  :</label>
+                    <input class="form-control" type="text" name="moyenne_regional" placeholder="Moyen Regional" value="{{etudiant.moyenneRegional}}"> 
                 </div>
             </div>
         </div>
@@ -121,6 +121,15 @@
                 <div class="form-group">
                     <label>  Concours  :</label>
                     <input class="form-control" type="text" name="concours_medbup" placeholder="Concours" value="{{etudiant.concoursMedbup}}">
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-12 row">    
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label>  Observation :</label>
+                    <textarea class="form-control" name="obs" style="width: 100%; height: 32px;">{{etudiant.obs}}</textarea>
                 </div>
             </div>
         </div>

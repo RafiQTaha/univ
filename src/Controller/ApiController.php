@@ -118,11 +118,10 @@ class ApiController extends AbstractController
     #[Route('/nature_demande', name: 'nature_demande')]
     public function getnature_demande(): Response
     {
-        $nature = $this->em->getRepository(NatureDemande::class)->findAll();
+        $nature = $this->em->getRepository(NatureDemande::class)->findBy(['active' => 1]);
         $data = self::dropdown($nature,'Nature De Demande');
         return new JsonResponse($data);
     }
-
 
     #[Route('/anneeresidanat/{id}', name: 'anneeResidanat')]
     public function anneeResidanat(AcFormation $formation): Response

@@ -116,7 +116,7 @@ const Toast = Swal.mixin({
 
         try {
             icon.remove('fa-edit').addClass("fa-spinner fa-spin ");
-            const request = await axios.get('/parametre/semestre/details/'+id_module);
+            const request = await axios.get('/parametre/module/details/'+id_module);
             const response = request.data;
             console.log(response)
             icon.addClass('fa-edit').removeClass("fa-spinner fa-spin ");
@@ -142,12 +142,12 @@ const Toast = Swal.mixin({
     $("#save").on("submit", async (e) => {
         e.preventDefault();
         var formData = new FormData($("#save")[0])
-        formData.append("promotion_id", $("#promotion").val());
+        formData.append("semestre_id", $("#semestre").val());
         const icon = $("#save i");
 
         try {
             icon.remove('fa-check-circle').addClass("fa-spinner fa-spin ");
-            const request = await axios.post('/parametre/semestre/new', formData);
+            const request = await axios.post('/parametre/module/new', formData);
             const response = request.data;
             icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
             $('#save')[0].reset();
@@ -172,7 +172,7 @@ const Toast = Swal.mixin({
 
         try {
             icon.remove('fa-check-circle').addClass("fa-spinner fa-spin ");
-            const request = await axios.post('/parametre/semestre/update/'+id_module, formData);
+            const request = await axios.post('/parametre/module/update/'+id_module, formData);
             const response = request.data;
             icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
             table.ajax.reload();

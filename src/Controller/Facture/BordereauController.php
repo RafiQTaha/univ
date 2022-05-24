@@ -69,7 +69,8 @@ class BordereauController extends AbstractController
         FROM tbrdpaiement brd 
         INNER JOIN xmodalites pae on pae.id = brd.modalite_id
         INNER join ac_etablissement etab on etab.id = brd.etablissement_id
-        INNER join user user on  user.id = brd.user_created_id $filtre ";
+        INNER join users user on  user.id = brd.user_created_id $filtre ";
+        // dd($sql);
         $totalRows .= $sql;
         $sqlRequest .= $sql;
         $stmt = $this->em->getConnection()->prepare($sql);

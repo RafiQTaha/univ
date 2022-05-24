@@ -264,6 +264,9 @@ class TEtudiant
     #[ORM\Column(type: 'date', nullable: true)]
     private $rdv2;
 
+    #[ORM\Column(type: 'string', length: 10, nullable: true)]
+    private $moyenne_regional;
+
     public function __construct()
     {
         $this->preinscriptions = new ArrayCollection();
@@ -1303,6 +1306,18 @@ class TEtudiant
     public function setRdv2(?\DateTimeInterface $rdv2): self
     {
         $this->rdv2 = $rdv2;
+
+        return $this;
+    }
+
+    public function getMoyenneRegional(): ?string
+    {
+        return $this->moyenne_regional;
+    }
+
+    public function setMoyenneRegional(?string $moyenne_regional): self
+    {
+        $this->moyenne_regional = $moyenne_regional;
 
         return $this;
     }

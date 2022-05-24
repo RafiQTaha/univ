@@ -82,8 +82,29 @@
             </div>
             <div class="col-md-6">
                 <div class="form-group">
-                    <label>  Observation :</label>
-                    <textarea class="form-control" name="obs" style="width: 100%; height: 32px;">{{etudiant.obs}}</textarea>
+                    <label>  Moyen Regional  :</label>
+                    <input class="form-control" type="text" name="moyenne_regional" placeholder="Moyen Bac" value="{{etudiant.moyenneRegional}}"> 
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>  Concours  :</label>
+                    <input class="form-control" type="text" name="concours_medbup" placeholder="Concours" value="{{etudiant.concoursMedbup}}">
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>  langue concours  :</label>
+                    <select class="form-control chosen-select" name="langue_concours">
+                        <option value="" disabled selected>Choix langue</option>
+                        {% for langues in langues %}
+                            {% if etudiant.langueConcours == langues  %}
+                                <option value="{{langues.id}}" selected>{{langues.designation}}</option>
+                            {% else %}
+                                <option value="{{langues.id}}">{{langues.designation}}</option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
                 </div>
             </div>
         </div>
@@ -102,26 +123,11 @@
             </div> 
         </div>
         
-        <div class="col-md-12 row">         
+        <div class="col-md-12 row">  
             <div class="col-md-6">
                 <div class="form-group">
-                    <label>  langue concours  :</label>
-                    <select class="form-control chosen-select" name="langue_concours">
-                        <option value="" disabled selected>Choix langue</option>
-                        {% for langues in langues %}
-                            {% if etudiant.langueConcours == langues  %}
-                                <option value="{{langues.id}}" selected>{{langues.designation}}</option>
-                            {% else %}
-                                <option value="{{langues.id}}">{{langues.designation}}</option>
-                            {% endif %}
-                        {% endfor %}
-                    </select>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="form-group">
-                    <label>  Concours  :</label>
-                    <input class="form-control" type="text" name="concours_medbup" placeholder="Concours" value="{{etudiant.concoursMedbup}}">
+                    <label>  Observation :</label>
+                    <textarea class="form-control" name="obs" style="width: 100%; height: 32px;">{{etudiant.obs}}</textarea>
                 </div>
             </div>
         </div>

@@ -49,7 +49,7 @@ class GestionPreinscriptionController extends AbstractController
             return $this->render("errors/403.html.twig");
         }
         $etbalissements = $this->em->getRepository(AcEtablissement::class)->findAll();
-        $natures = $this->em->getRepository(NatureDemande::class)->findAll();
+        $natures = $this->em->getRepository(NatureDemande::class)->findBy(['active'=>1]);
         return $this->render('preinscription/gestion_preinscription.html.twig',[
             'etablissements' => $etbalissements,
             'natures' => $natures,
@@ -450,9 +450,9 @@ class GestionPreinscriptionController extends AbstractController
         $situations = $this->em->getRepository(PSituation::class)->findBy([],['designation' => 'ASC']);
         $academies = $this->em->getRepository(XAcademie::class)->findBy([],['designation' => 'ASC']);
         $filieres = $this->em->getRepository(XFiliere::class)->findBy([],['designation' => 'ASC']);
-        $typebacs = $this->em->getRepository(XTypeBac::class)->findBy([],['designation' => 'ASC']);
-        $langues = $this->em->getRepository(XLangue::class)->findBy([],['designation' => 'ASC']);
-        $natureDemandes = $this->em->getRepository(NatureDemande::class)->findBy([],['designation' => 'ASC']);
+        $typebacs = $this->em->getRepository(XTypeBac::class)->findBy(['active'=>1],['designation' => 'ASC']);
+        $langues = $this->em->getRepository(XLangue::class)->findBy(['active'=>1],['designation' => 'ASC']);
+        $natureDemandes = $this->em->getRepository(NatureDemande::class)->findBy(['active'=>1],['designation' => 'ASC']);
         
         $candidats_infos = $this->render("preinscription/pages/candidats_infos.html.twig", [
             'etudiant' => $preinscription->getEtudiant(),
@@ -493,9 +493,9 @@ class GestionPreinscriptionController extends AbstractController
         if(!$preinscription){
             return new JsonResponse("Etudiant Introuvable!!",500);
         }
-        $preinscription->getEtudiant()->setNom($request->get('nom'));
-        $preinscription->getEtudiant()->setPrenom($request->get('prenom'));
-        $preinscription->getEtudiant()->setTitre($request->get('titre'));
+        $preinscription->getEtudiant()->setNom(strtoupper($request->get('nom')));
+        $preinscription->getEtudiant()->setPrenom(ucfirst(strtolower($request->get('prenom'))));
+        // $preinscription->getEtudiant()->setTitre($request->get('titre'));
         if ($request->get('date_naissance') != "") {
             $preinscription->getEtudiant()->setDateNaissance(new \DateTime($request->get('date_naissance')));
         }
@@ -539,11 +539,18 @@ class GestionPreinscriptionController extends AbstractController
         $preinscription->getEtudiant()->setSalaireMere($request->get('salaire_m'));
 
         $preinscription->getEtudiant()->setCne($request->get('cne'));
-        $preinscription->getEtudiant()->setAcademie($this->em->getRepository(XAcademie::class)->find($request->get('id_academie')));
-        $preinscription->getEtudiant()->setFiliere($this->em->getRepository(XFiliere::class)->find($request->get('id_filiere')));
-        $preinscription->getEtudiant()->setTypeBac($this->em->getRepository(XTypeBac::class)->find($request->get('id_type_bac')));
+        if ($request->get('id_academie') != "") {
+            $preinscription->getEtudiant()->setAcademie($this->em->getRepository(XAcademie::class)->find($request->get('id_academie')));
+        }
+        if ($request->get('id_filiere') != "") {
+            $preinscription->getEtudiant()->setFiliere($this->em->getRepository(XFiliere::class)->find($request->get('id_filiere')));
+        }
+        if ($request->get('id_type_bac') != "") {
+            $preinscription->getEtudiant()->setTypeBac($this->em->getRepository(XTypeBac::class)->find($request->get('id_type_bac')));
+        }
         $preinscription->getEtudiant()->setAnneeBac($request->get('annee_bac'));
         $preinscription->getEtudiant()->setMoyenneBac($request->get('moyenne_bac'));
+        $preinscription->getEtudiant()->setMoyenneRegional($request->get('moyenne_regional'));
         $preinscription->getEtudiant()->setObs($request->get('obs'));
         $preinscription->getEtudiant()->setCategoriePreinscription($request->get('categorie_preinscription'));
         $preinscription->getEtudiant()->setFraisPreinscription($request->get('frais_preinscription'));
@@ -553,8 +560,6 @@ class GestionPreinscriptionController extends AbstractController
         if ($request->get('concours_medbup') != "") {
             $preinscription->getEtudiant()->setConcoursMedbup($request->get('concours_medbup'));
         }
-        
-
         $preinscription->getEtudiant()->setBourse($request->get('bourse'));
         $preinscription->getEtudiant()->setLogement($request->get('logement'));
         $preinscription->getEtudiant()->setParking($request->get('parking'));
@@ -568,13 +573,6 @@ class GestionPreinscriptionController extends AbstractController
 
         $this->em->flush();
         return new JsonResponse("Bien Modifier",200);
-    } 
-
-    #[Route('/test/{id}', name: 'test')]
-    public function test(Request $request): Response
-    {
-        
-            dd('');
     }
 
     
