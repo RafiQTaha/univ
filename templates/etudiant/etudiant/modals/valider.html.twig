@@ -13,6 +13,10 @@
             <div class="naturedemande">
               <label for="naturedemande">Nature De Demande:</label>
               <select class="form-control" name="naturedemande" id="naturedemande">
+                <option value="" disabled selected>Choix Nature De Demande</option>
+                {% for natureDemande in natureDemandes %}
+                    <option value="{{natureDemande.id}}">{{natureDemande.designation}}</option>
+                {% endfor %}
               </select>
             </div>
             <div class="etablissement">

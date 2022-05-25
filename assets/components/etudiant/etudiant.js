@@ -86,16 +86,19 @@ $(document).ready(function  () {
       // console.log(error.response.data);
     }  
   }
-  const getNatureDemande = async () => {
-    try {
-      const request = await axios.get('/api/nature_demande');
-      const data = request.data;
-      $('#naturedemande').html(data).select2();
+  // const getNatureDemande = async () => {
+  //   try {
+  //     const request = await axios.get('/api/nature_demande');
+  //     const data = request.data;
+  //     $('#naturedemande').html(data).select2();
 
-    } catch (error) {
-      // console.log(error.response.data);
-    }  
-  }
+  //   } catch (error) {
+  //     // console.log(error.response.data);
+  //   }  
+  // }
+  getEtablissement();
+  // getNatureDemande();
+
   const loadExistMatieres = () => {
     $(".matiereExist tbody").html('<i class="fas fa-spinner fa-spin"></i>')
     axios.get('/etudiant/etudiants/matiere/'+id_etudiant)
@@ -117,8 +120,6 @@ $(document).ready(function  () {
         // console.log(err)
       })
   }
-  getEtablissement();
-  getNatureDemande();
   
   let tableListPreinscription;
 
