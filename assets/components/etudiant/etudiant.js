@@ -86,6 +86,16 @@ $(document).ready(function  () {
       // console.log(error.response.data);
     }  
   }
+  const getNatureDemande = async () => {
+    try {
+      const request = await axios.get('/api/nature_demande');
+      const data = request.data;
+      $('#naturedemande').html(data).select2();
+
+    } catch (error) {
+      // console.log(error.response.data);
+    }  
+  }
   const loadExistMatieres = () => {
     $(".matiereExist tbody").html('<i class="fas fa-spinner fa-spin"></i>')
     axios.get('/etudiant/etudiants/matiere/'+id_etudiant)
@@ -108,7 +118,8 @@ $(document).ready(function  () {
       })
   }
   getEtablissement();
-
+  getNatureDemande();
+  
   let tableListPreinscription;
 
   $('body').on('click','#datables_etudiant tbody tr',function () {

@@ -347,7 +347,7 @@ class EtudiantController extends AbstractController
     {   
         $currentMonth = date('m');
         $id_formation = $request->get('formation');
-        
+        $nature = $this->em->getRepository(NatureDemande::class)->find($request->get('naturedemande'));
         $formation = $this->em->getRepository(AcFormation::class)->find($id_formation);
         if(strpos($formation->getDesignation(), 'Résidanat') === false){
             $currentYear = date('Y') - 1 .'/'.date('Y');  // means current college year
@@ -375,6 +375,7 @@ class EtudiantController extends AbstractController
         $preinscription->setRangP(0);
         $preinscription->setRangS(0);
         $preinscription->setActive(1);
+        $preinscription->setNature($nature);
         $preinscription->setCreated(new DateTime('now'));
         $preinscription->setAnnee($annee);
         $this->em->persist($preinscription);
