@@ -102,8 +102,9 @@ class GestionFactureController extends AbstractController
             array( 'db' => 'opcab.categorie','dt' => 9),
             array( 'db' => 'montant_facture','dt' => 10),
             array( 'db' => 'montant_regle','dt' => 11),
-            array( 'db' => 'Upper(org.abreviation)','dt' => 12),
-            array( 'db' => 'opcab.active','dt' => 13),
+            array( 'db' => '(IFNULL(montant_facture,0)-IFNULL(montant_regle,0)) as diff','dt' => 12),
+            array( 'db' => 'Upper(org.abreviation)','dt' => 13),
+            array( 'db' => 'opcab.active','dt' => 14),
         );
         $sql = "SELECT " . implode(", ", DatatablesController::Pluck($columns, 'db')) . "
         FROM `toperationcab` opcab
@@ -129,6 +130,7 @@ class GestionFactureController extends AbstractController
         if (isset($where) && $where != '') {
             $sqlRequest .= $where;
         }
+        $columns[12]['db'] = 'diff';
         $sqlRequest .= DatatablesController::Order($request, $columns);
         
         $stmt = $this->em->getConnection()->prepare($sqlRequest);
@@ -150,7 +152,7 @@ class GestionFactureController extends AbstractController
                     if ($key == 8) {
                         $value = $value == 'Payant' ? $value : 'Boursier';
                     }
-                    if($key == 13){
+                    if($key == 14){
                         $value = $value == 0 ? 'Cloture' : 'Ouverte';
                     }
                     $nestedData[] = $value;
@@ -175,11 +177,13 @@ class GestionFactureController extends AbstractController
     { 
         if (empty($request->get('d_reglement')) || $request->get('montant') == "" || empty($request->get('paiement')) ) {
             return new JsonResponse('Veuillez renseigner tous les champs!', 500);
-        }elseif ($request->get('montant') > $request->get('montant2')) {
-            return new JsonResponse('Le montant a réglé est '.$request->get('montant2').'DH', 500);
         }elseif ($request->get('montant') == 0) {
-            return new JsonResponse('Le montant ne peut pas étre égale a 0', 500);
+            return new JsonResponse('Le montant ne peut pas étre égale à 0', 500);
         }
+        // elseif ($request->get('montant') > $request->get('montant2')) {
+        //     return new JsonResponse('Le montant a réglé est '.$request->get('montant2').'DH', 500);
+        // }
+        
         $etablissement = $operationcab->getPreinscription()->getAnnee()->getFormation()->getEtablissement()->getAbreviation();
         $reglement = New TReglement();
         $reglement->setOperation($operationcab);

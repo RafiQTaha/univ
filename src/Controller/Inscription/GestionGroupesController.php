@@ -92,8 +92,7 @@ class GestionGroupesController extends AbstractController
         inner join ac_etablissement etab on etab.id = form.etablissement_id 
         INNER JOIN pstatut st ON st.id = ins.statut_id
         inner join ac_promotion prom on prom.id = ins.promotion_id
-        left join pgroupe grp on grp.id = ins.groupe_id
-        
+        left join pgroupe grp on grp.id = ins.groupe_id 
         $filtre ";
         // dd($sql);
         $totalRows .= $sql;
@@ -219,13 +218,17 @@ class GestionGroupesController extends AbstractController
 
         unset($spreadSheetArys[0]);
         $sheetCount = count($spreadSheetArys);
-        
+        if ($sheetCount == 0){
+            return new Response('Inscription ou Niveau Introuvable!',500);
+        }
         foreach ($spreadSheetArys as $sheet) {
             if($sheet[0] != Null){
                 $inscription = $this->em->getRepository(TInscription::class)->find($sheet[0]);
                 if ($inscription != Null) {
                     $inscription->setGroupe($this->em->getRepository(PGroupe::class)->find($sheet[1]));
                 }
+            }else {
+                return new Response('Inscription ou Niveau Introuvable!',200);
             }
         }
         $this->em->flush();

@@ -42,10 +42,14 @@ class NatureDemande
     #[ORM\OneToMany(mappedBy: 'natureDemande', targetEntity: PDocument::class)]
     private $documents;
 
+    #[ORM\OneToMany(mappedBy: 'nature', targetEntity: TPreinscription::class)]
+    private $preinscriptions;
+
     public function __construct()
     {
         $this->etudiants = new ArrayCollection();
         $this->documents = new ArrayCollection();
+        $this->preinscriptions = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -191,6 +195,36 @@ class NatureDemande
             // set the owning side to null (unless already changed)
             if ($document->getNatureDemande() === $this) {
                 $document->setNatureDemande(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, TPreinscription>
+     */
+    public function getPreinscriptions(): Collection
+    {
+        return $this->preinscriptions;
+    }
+
+    public function addPreinscription(TPreinscription $preinscription): self
+    {
+        if (!$this->preinscriptions->contains($preinscription)) {
+            $this->preinscriptions[] = $preinscription;
+            $preinscription->setNature($this);
+        }
+
+        return $this;
+    }
+
+    public function removePreinscription(TPreinscription $preinscription): self
+    {
+        if ($this->preinscriptions->removeElement($preinscription)) {
+            // set the owning side to null (unless already changed)
+            if ($preinscription->getNature() === $this) {
+                $preinscription->setNature(null);
             }
         }
 

@@ -98,10 +98,10 @@ class GestionPreinscriptionController extends AbstractController
         inner join ac_formation form on form.id = an.formation_id
         inner join ac_etablissement etab on etab.id = form.etablissement_id
         left join xtype_bac tbac on tbac.id = etu.type_bac_id 
-        left join nature_demande nat on nat.id = etu.nature_demande_id 
+        left join nature_demande nat on nat.id = pre.nature_id 
         inner join pstatut stat on stat.id = pre.statut_id
         LEFT JOIN (SELECT etudiant_id,COUNT(code) AS nbrIns FROM tpreinscription WHERE etudiant_id IS NOT NULL GROUP BY etudiant_id ) nbr ON nbr.etudiant_id = pre.etudiant_id 
-                $filtre";
+         $filtre";
         // $sql .= "";
         // dd($sql);    
         $totalRows .= $sql;
@@ -493,6 +493,7 @@ class GestionPreinscriptionController extends AbstractController
         if(!$preinscription){
             return new JsonResponse("Etudiant Introuvable!!",500);
         }
+        
         $preinscription->getEtudiant()->setNom(strtoupper($request->get('nom')));
         $preinscription->getEtudiant()->setPrenom(ucfirst(strtolower($request->get('prenom'))));
         // $preinscription->getEtudiant()->setTitre($request->get('titre'));
@@ -564,7 +565,8 @@ class GestionPreinscriptionController extends AbstractController
         $preinscription->getEtudiant()->setLogement($request->get('logement'));
         $preinscription->getEtudiant()->setParking($request->get('parking'));
         if ($request->get('nat_demande') != "") {
-            $preinscription->getEtudiant()->setNatureDemande($this->em->getRepository(NatureDemande::class)->find($request->get('nat_demande')));
+            // $preinscription->getEtudiant()->setNatureDemande($this->em->getRepository(NatureDemande::class)->find($request->get('nat_demande')));
+            $preinscription->setNature($this->em->getRepository(NatureDemande::class)->find($request->get('nat_demande')));
         }
         $preinscription->getEtudiant()->setEtablissement($request->get('etablissement'));
         

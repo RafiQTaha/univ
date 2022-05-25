@@ -65,6 +65,9 @@ class TPreinscription
     #[ORM\ManyToMany(targetEntity: PDocument::class, inversedBy: 'preinscriptions')]
     private $documents;
 
+    #[ORM\ManyToOne(targetEntity: NatureDemande::class, inversedBy: 'preinscriptions')]
+    private $nature;
+
 
     public function __construct()
     {
@@ -342,6 +345,18 @@ class TPreinscription
     public function removeDocument(PDocument $document): self
     {
         $this->documents->removeElement($document);
+
+        return $this;
+    }
+
+    public function getNature(): ?NatureDemande
+    {
+        return $this->nature;
+    }
+
+    public function setNature(?NatureDemande $nature): self
+    {
+        $this->nature = $nature;
 
         return $this;
     }
