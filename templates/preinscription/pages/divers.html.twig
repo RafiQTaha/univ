@@ -61,7 +61,7 @@
             <select class="form-control chosen-select" name="nat_demande">
                 <option value="" disabled selected>Choix Nature</option>
                 {% for natureDemande in natureDemandes %}
-                    {% if etudiant.natureDemande == natureDemande  %}
+                    {% if preinscription.nature == natureDemande  %}
                         <option value="{{natureDemande.id}}" selected>{{natureDemande.designation}}</option>
                     {% else %}
                         <option value="{{natureDemande.id}}">{{natureDemande.designation}}</option>

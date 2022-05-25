@@ -473,6 +473,7 @@ class GestionPreinscriptionController extends AbstractController
         ])->getContent();
 
         $divers = $this->render("preinscription/pages/divers.html.twig", [
+            'preinscription' => $preinscription,
             'etudiant' => $preinscription->getEtudiant(),
             'situations' => $situations,
             'natureDemandes' => $natureDemandes,
