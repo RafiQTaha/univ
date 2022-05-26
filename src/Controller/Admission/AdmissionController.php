@@ -79,7 +79,6 @@ class AdmissionController extends AbstractController
                 INNER JOIN pstatut st ON st.id = pre.categorie_liste_id
                 LEFT JOIN pstatut st2 ON st2.id = pre.admission_liste_id
                 LEFT JOIN tadmission adm on adm.preinscription_id = pre.id
-
                 $filtre"
         ;
         // dd($sql);
@@ -145,14 +144,23 @@ class AdmissionController extends AbstractController
         $where = $totalRows = $sqlRequest = "";
         $filtre = " where 1 = 1 ";       
         $columns = array(
-            array( 'db' => 'ad.code','dt' => 0),
-            array( 'db' => 'UPPER(pre.code)','dt' => 1),
-            array( 'db' => 'etu.nom','dt' => 2),
-            array( 'db' => 'etu.prenom','dt' => 3),
-            array( 'db' => 'etab.abreviation','dt' => 4),
-            array( 'db' => 'UPPER(form.abreviation)','dt' => 5),
-            array( 'db' => 'nd.designation','dt' => 6),
-            array( 'db' => 'ad.id','dt' => 7)
+            array( 'db' => 'ad.id','dt' => 0),
+            array( 'db' => 'ad.code','dt' => 1),
+            array( 'db' => 'UPPER(pre.code)','dt' => 2),
+            array( 'db' => 'etu.nom','dt' => 3),
+            array( 'db' => 'etu.prenom','dt' => 4),
+            array( 'db' => 'etab.abreviation','dt' => 5),
+            array( 'db' => 'UPPER(form.abreviation)','dt' => 6),
+            array( 'db' => 'nd.designation','dt' => 7),
+
+            // array( 'db' => 'ad.code','dt' => 0),
+            // array( 'db' => 'UPPER(pre.code)','dt' => 1),
+            // array( 'db' => 'etu.nom','dt' => 2),
+            // array( 'db' => 'etu.prenom','dt' => 3),
+            // array( 'db' => 'etab.abreviation','dt' => 4),
+            // array( 'db' => 'UPPER(form.abreviation)','dt' => 5),
+            // array( 'db' => 'nd.designation','dt' => 6),
+            // array( 'db' => 'ad.id','dt' => 7)
 
         );
 
@@ -180,11 +188,12 @@ class AdmissionController extends AbstractController
         if (isset($where) && $where != '') {
             $sqlRequest .= $where;
         }
-
+        
+        // dd($params->all('order')[0]['column']);
         $changed_column = $params->all('order')[0]['column'] > 0 ? $params->all('order')[0]['column'] - 1 : 0;
         $sqlRequest .= " ORDER BY " .DatatablesController::Pluck($columns, 'db')[$changed_column] . "   " . $params->all('order')[0]['dir'] . "  LIMIT " . $params->get('start') . " ," . $params->get('length') . " ";
         // $sqlRequest .= DatatablesController::Order($request, $columns);
-        
+        // dd($sqlRequest);
         $stmt = $this->em->getConnection()->prepare($sqlRequest);
         $resultSet = $stmt->executeQuery();
         $result = $resultSet->fetchAll();
@@ -197,13 +206,13 @@ class AdmissionController extends AbstractController
             $nestedData = array();
             $cd = $row['id'];
             $nestedData[] = "<input type ='checkbox' class='check_admissible' id ='$cd' >";
-            $nestedData[] = $cd;
+            // $nestedData[] = $cd;
             // dd($row);
 
             foreach (array_values($row) as $key => $value) {
-                if($key < 7) {
+                // if($key < 0) {
                     $nestedData[] = $value;
-                }
+                // }
             }
             $nestedData["DT_RowId"] = $cd;
             $nestedData["DT_RowClass"] = $cd;
