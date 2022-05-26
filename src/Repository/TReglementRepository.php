@@ -77,6 +77,22 @@ class TReglementRepository extends ServiceEntityRepository
         return $request;
     }
     
+    
+    public function getReglementsSumMontant($borderaux)
+    {
+        $request = $this->createQueryBuilder('reg')
+            ->select("SUM(reg.montant) as total")
+            ->innerJoin("reg.bordereau", "bordereau")
+            ->Where('bordereau = :bordereau')
+            ->setParameter('bordereau', $borderaux)
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
+        if(!$request) {
+            return ['total' => 0];
+        } 
+        return $request;
+    }
 
     /*
     public function findOneBySomeField($value): ?TReglement

@@ -15,6 +15,8 @@ use App\Entity\TBrdpaiement;
 use App\Controller\ApiController;
 use App\Controller\DatatablesController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use App\Entity\nuts;
+use App\Entity\TReglement;
 
 #[Route('/facture/bordereau')]
 class BordereauController extends AbstractController
@@ -120,9 +122,15 @@ class BordereauController extends AbstractController
     public function printborderaux(TBrdpaiement $borderaux)
     {  
         $reglements = $borderaux->getReglements();
+        
+        $reglementTotal = $this->em->getRepository(TReglement::class)->getReglementsSumMontant($borderaux);
+        $reglementTotal = $reglementTotal['total'] < 0 ? $reglementTotal['total'] * -1 : $reglementTotal['total'];
+        $obj = new nuts( $reglementTotal, "MAD");
+        $text = $obj->convert("fr-FR");
         $html = $this->render("facture/pdfs/borderaux.html.twig", [
             'borderaux' => $borderaux,
             'reglements' => $reglements,
+            'text' => $text
         ])->getContent();
         $mpdf = new Mpdf([
             'mode' => 'utf-8',
