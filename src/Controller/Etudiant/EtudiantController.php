@@ -96,12 +96,11 @@ class EtudiantController extends AbstractController
         );
         // dd($columns);
         $sql = "SELECT " . implode(", ", DatatablesController::Pluck($columns, 'db')) . "
-                      
                 FROM tetudiant etu
                 left join pstatut st on st.id = etu.statut_id
                 left join nature_demande nd on nd.id = etu.nature_demande_id
                 left join xtype_bac xtb on xtb.id = etu.type_bac_id 
-                $filtre"
+                $filtre "
         ;
         // dd($sql);
         $totalRows .= $sql;
@@ -622,9 +621,9 @@ class EtudiantController extends AbstractController
     #[Route('/add_infos', name: 'add_infos')]
     public function add_infos(Request $request) 
     {
-        if(empty($request->get('date_naissance')) || empty($request->get('st_famille')) || empty($request->get('id_academie')) || empty($request->get('id_filiere')) || empty($request->get('id_type_bac')) || empty($request->get('langue_concours')) || empty($request->get('nat_demande')) ){
-            return new JsonResponse("Merci de remplir tout les champs obligatoire!!",500);
-        }
+        // if(empty($request->get('date_naissance')) || empty($request->get('st_famille')) || empty($request->get('id_academie')) || empty($request->get('id_filiere')) || empty($request->get('id_type_bac')) || empty($request->get('langue_concours')) || empty($request->get('nat_demande')) ){
+        //     return new JsonResponse("Merci de remplir tout les champs obligatoire!!",500);
+        // }
         $etudiant = new TEtudiant();
         $etudiant->setNom(strtoupper($request->get('nom')));
         $etudiant->setPrenom(ucfirst(strtolower($request->get('prenom'))));
@@ -675,8 +674,8 @@ class EtudiantController extends AbstractController
         $typebacs = $request->get('id_type_bac') == "" ? Null : $this->em->getRepository(XTypeBac::class)->find($request->get('id_type_bac'));
         $etudiant->setTypeBac($this->em->getRepository(XTypeBac::class)->find($request->get('id_type_bac')));
         $etudiant->setAnneeBac($request->get('annee_bac'));
-        $etudiant->setMoyenneBac($request->get('moyenne_bac'));
-        $etudiant->setMoyenneRegional($request->get('moyenne_regional'));
+        $etudiant->setMoyenBac($request->get('moyen_bac'));
+        $etudiant->setMoyenRegional($request->get('moyen_regional'));
         $etudiant->setObs($request->get('obs'));
         // $etudiant->setCategoriePreinscription($request->get('categorie_preinscription'));
         // $etudiant->setFraisPreinscription($request->get('frais_preinscription'));
@@ -758,8 +757,8 @@ class EtudiantController extends AbstractController
         $id_type_bac = $request->get('id_type_bac') == "" ? Null : $this->em->getRepository(XTypeBac::class)->find($request->get('id_type_bac'));
         $etudiant->setTypeBac($id_type_bac);
         $etudiant->setAnneeBac($request->get('annee_bac'));
-        $etudiant->setMoyenneBac($request->get('moyenne_bac'));
-        $etudiant->setMoyenneRegional($request->get('moyenne_regional'));
+        $etudiant->setMoyenBac($request->get('moyen_bac'));
+        $etudiant->setMoyenRegional($request->get('moyen_regional'));
         $etudiant->setObs($request->get('obs'));
         $etudiant->setCategoriePreinscription($request->get('categorie_preinscription'));
         $etudiant->setFraisPreinscription($request->get('frais_preinscription'));

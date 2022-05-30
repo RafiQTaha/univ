@@ -241,37 +241,37 @@ class GestionHonoraireController extends AbstractController
     }
 
     
-    #[Route('/reporting_honoraire', name: 'reporting_honoraire')]
-    public function epreuveEnMasse(Request $request, SluggerInterface $slugger) 
-    {   
-        $spreadsheet = new Spreadsheet();
-        $sheet = $spreadsheet->getActiveSheet();
-        $sheet->setCellValue('A1', 'Cours');
-        $sheet->setCellValue('B1', 'D.Heure');
-        $sheet->setCellValue('C1', 'Nom');
-        $sheet->setCellValue('D1', 'Prenom');
-        $sheet->setCellValue('E1', 'Grade');
-        $sheet->setCellValue('F1', 'N.Heure');
-        $sheet->setCellValue('G1', 'Montant');
-        $sheet->setCellValue('H1', 'Etab');
-        $sheet->setCellValue('I1', 'Form');
-        $sheet->setCellValue('J1', 'Annee');
-        $sheet->setCellValue('K1', 'Promo');
-        $sheet->setCellValue('L1', 'Semes');
-        $sheet->setCellValue('M1', 'Mdle');
-        $sheet->setCellValue('N1', 'Elem');
-        $sheet->setCellValue('O1', 'ST');
-        // $gnotes = $this->em->getRepository(ExGnotes::class)->ExgnotesOrderByNom($epreuve);
-        // foreach($gnotes as $gnote) {
-        //     $sheet->setCellValue('A'.$i, $gnote->getInscription()->getId());
-        //     $i++;
-        // }
+    // #[Route('/reporting_honoraire', name: 'reporting_honoraire')]
+    // public function epreuveEnMasse(Request $request, SluggerInterface $slugger) 
+    // {   
+    //     $spreadsheet = new Spreadsheet();
+    //     $sheet = $spreadsheet->getActiveSheet();
+    //     $sheet->setCellValue('A1', 'Cours');
+    //     $sheet->setCellValue('B1', 'D.Heure');
+    //     $sheet->setCellValue('C1', 'Nom');
+    //     $sheet->setCellValue('D1', 'Prenom');
+    //     $sheet->setCellValue('E1', 'Grade');
+    //     $sheet->setCellValue('F1', 'N.Heure');
+    //     $sheet->setCellValue('G1', 'Montant');
+    //     $sheet->setCellValue('H1', 'Etab');
+    //     $sheet->setCellValue('I1', 'Form');
+    //     $sheet->setCellValue('J1', 'Annee');
+    //     $sheet->setCellValue('K1', 'Promo');
+    //     $sheet->setCellValue('L1', 'Semes');
+    //     $sheet->setCellValue('M1', 'Mdle');
+    //     $sheet->setCellValue('N1', 'Elem');
+    //     $sheet->setCellValue('O1', 'ST');
+    //     // $gnotes = $this->em->getRepository(ExGnotes::class)->ExgnotesOrderByNom($epreuve);
+    //     // foreach($gnotes as $gnote) {
+    //     //     $sheet->setCellValue('A'.$i, $gnote->getInscription()->getId());
+    //     //     $i++;
+    //     // }
 
-        // $writer = new Xlsx($spreadsheet);
-        // $fileName = 'epreuves_'.$epreuve->getId().'.xlsx';
-        // $temp_file = tempnam(sys_get_temp_dir(), $fileName);
-        // $writer->save($temp_file);
+    //     // $writer = new Xlsx($spreadsheet);
+    //     // $fileName = 'epreuves_'.$epreuve->getId().'.xlsx';
+    //     // $temp_file = tempnam(sys_get_temp_dir(), $fileName);
+    //     // $writer->save($temp_file);
 
-        // return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);
-    }
+    //     // return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);
+    // }
 }

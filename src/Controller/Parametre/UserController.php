@@ -54,7 +54,7 @@ class UserController extends AbstractController
         );
         $sql = "SELECT " . implode(", ", DatatablesController::Pluck($columns, 'db')) . "
         
-        FROM user u 
+        FROM users u 
         
         $filtre "
         ;

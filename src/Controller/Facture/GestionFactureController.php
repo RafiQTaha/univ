@@ -98,7 +98,8 @@ class GestionFactureController extends AbstractController
             array( 'db' => 'etu.cin','dt' => 5),
             array( 'db' => 'etab.abreviation','dt' => 6),
             array( 'db' => 'Upper(frma.abreviation)','dt' => 7),
-            array( 'db' => 'nat.designation','dt' => 8),
+            // array( 'db' => 'nat.designation','dt' => 8),
+            array( 'db' => 'org.designation','dt' => 8),
             array( 'db' => 'opcab.categorie','dt' => 9),
             array( 'db' => 'montant_facture','dt' => 10),
             array( 'db' => 'montant_regle','dt' => 11),
@@ -114,7 +115,7 @@ class GestionFactureController extends AbstractController
         INNER JOIN ac_formation frma on frma.id = an.formation_id
         INNER JOIN ac_etablissement etab on etab.id = frma.etablissement_id
         LEFT JOIN porganisme org on org.id = opcab.organisme_id
-        LEFT JOIN nature_demande nat on nat.id = etu.nature_demande_id 
+        LEFT JOIN nature_demande nat on nat.id = pre.nature_id 
         LEFT JOIN (select operationcab_id, SUM(montant) as montant_facture from toperationdet where active = 1 group by operationcab_id ) opdet on opdet.operationcab_id = opcab.id
         LEFT JOIN (select operation_id, SUM(montant) as montant_regle from treglement group by operation_id ) reg on reg.operation_id = opcab.id $filtre ";
         // dd($sql);
@@ -125,11 +126,12 @@ class GestionFactureController extends AbstractController
         $totalRecords = count($newstmt->fetchAll());
         
         $my_columns = DatatablesController::Pluck($columns, 'db');
-        
+        unset($columns[12]);
         $where = DatatablesController::Search($request, $columns);
         if (isset($where) && $where != '') {
             $sqlRequest .= $where;
         }
+        
         $columns[12]['db'] = 'diff';
         $sqlRequest .= DatatablesController::Order($request, $columns);
         

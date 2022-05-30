@@ -1,20 +1,112 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello ElementController!{% endblock %}
+{% block title %}Univ - Paramétre - Elements{% endblock %}
+
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
+<div class="main-content">
+    <section class="section">
+        <div class="section-header">
+          <h1>Module</h1>
+          <div class="section-header-breadcrumb">
+              <a href="#" class="btn btn-success ml-1" id="modifier"><i class="fas fa-edit"></i>  Modifier</a>
+              <a href="#" class="btn btn-success ml-1" id="ajouter"><i class="fas fa-plus"></i>  Ajouter</a>
+              {# <a href="#" class="btn btn-success ml-1" id="ajouter"><i class="fas fa-plus"></i>  Aouter</a> #}
+              
+          </div>
+        </div>
 
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
-
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code><a href="{{ 'C:/xampp/htdocs/univ/src/Controller/Parametre/ElementController.php'|file_link(0) }}">src/Controller/Parametre/ElementController.php</a></code></li>
-        <li>Your template at <code><a href="{{ 'C:/xampp/htdocs/univ/templates/parametre/element/index.html.twig'|file_link(0) }}">templates/parametre/element/index.html.twig</a></code></li>
-    </ul>
+        <div class="section-body">
+        <div class="card">
+            <div class="card-header">
+            <h4>Tableau des Elements</h4>
+            </div>
+            <div class="card-body">
+            <div class="card-search" style="margin-bottom: 1.5rem;">
+                <div class="row">
+                    <div class="col-md-2">
+                        <label for="etablissement">Etablissement:</label>
+                        <select class="form-control" name="etablissement" id="etablissement">
+                            <option value="">Choix etablissement</option>
+                            {% for etablissement in etablissements %}
+                                <option value="{{etablissement.id}}">{{etablissement.designation}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label for="formation">Formation:</label>
+                        <select class="form-control" name="formation" id="formation">
+                           
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label for="promotion">Promotion:</label>
+                        <select class="form-control" name="promotion" id="promotion">
+                           
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label for="semestre">Semestre:</label>
+                        <select class="form-control" name="semestre" id="semestre">
+                           
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label for="module">Module:</label>
+                        <select class="form-control" name="module" id="module">
+                           
+                        </select>
+                    </div>
+                </div>
+            </div>
+            
+            <table id="datatables_gestion_element" class="table table-striped" style="width:100%">
+                <thead>
+                    <tr>
+                         <th>id</th>
+                        <th>etablissement</th>
+                        <th>formation</th>
+                        <th>Promotion</th>
+                        <th>Semestre</th>
+                        <th>Module</th>
+                        <th>Element</th>
+                    </tr>
+                </thead>
+                <tbody>
+                   
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <th>id</th>
+                        <th>etablissement</th>
+                        <th>formation</th>
+                        <th>Promotion</th>
+                        <th>Semestre</th>
+                        <th>Module</th>
+                        <th>Element</th>
+                    </tr>
+                </tfoot>
+            </table>
+            </div>
+            
+        </div>
+        </div>
+    </section>
 </div>
+
+
+
+<!--Modal Import Group-->
+{% include 'parametre/element/modals/ajouter.html.twig' %}
+{% include 'parametre/element/modals/modifier.html.twig' %}
+
 {% endblock %}
+
+{% block javascripts %}
+{{parent()}}
+{{ encore_entry_script_tags('element') }}
+
+{# <script src="/assets/js/parametre/formation.js"></script> #}
+
+{% endblock %}
+

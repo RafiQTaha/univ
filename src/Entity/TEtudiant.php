@@ -265,7 +265,10 @@ class TEtudiant
     private $rdv2;
 
     #[ORM\Column(type: 'string', length: 10, nullable: true)]
-    private $moyenne_regional;
+    private $moyen_regional;
+
+    #[ORM\Column(type: 'string', length: 10, nullable: true)]
+    private $moyen_national;
 
     public function __construct()
     {
@@ -1310,14 +1313,26 @@ class TEtudiant
         return $this;
     }
 
-    public function getMoyenneRegional(): ?string
+    public function getMoyenRegional(): ?string
     {
-        return $this->moyenne_regional;
+        return $this->moyen_regional;
     }
 
-    public function setMoyenneRegional(?string $moyenne_regional): self
+    public function setMoyenRegional(?string $moyen_regional): self
     {
-        $this->moyenne_regional = $moyenne_regional;
+        $this->moyen_regional = $moyen_regional;
+
+        return $this;
+    }
+
+    public function getMoyenNational(): ?string
+    {
+        return $this->moyen_national;
+    }
+
+    public function setMoyenNational(?string $moyen_national): self
+    {
+        $this->moyen_national = $moyen_national;
 
         return $this;
     }

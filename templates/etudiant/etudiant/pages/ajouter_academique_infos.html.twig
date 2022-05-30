@@ -9,7 +9,7 @@
             </div> 
             <div class="col-md-6">
                 <div class="form-group">
-                    <label>Académie  :</label>
+                    <label>Académie (*) :</label>
                     <select class="form-control " style="width: 100%" name="id_academie">
                         <option value=""  disabled selected>Choix de académie</option>
                         {% for academie in academies %}
@@ -22,7 +22,7 @@
         <div class="col-md-12 row">
             <div class="col-md-6">
                 <div class="form-group">
-                    <label>Filière  :</label>
+                    <label>Filière (*) :</label>
                     <select class="form-control " style="width: 100%" name="id_filiere">
                         <option value=""  disabled selected>Choix de filière</option>
                         {% for filiere in filieres %}
@@ -33,7 +33,7 @@
             </div>
             <div class="col-md-6">
                 <div class="form-group">
-                    <label>établissement  :</label>
+                    <label>Etablissement (*) :</label>
                     <input class="form-control" type="text" name="etablissement" placeholder="Etablissement" value=""> 
                 </div>
             </div>
@@ -41,7 +41,7 @@
         <div class="col-md-12 row">
             <div class="col-md-6">
                 <div class="form-group">
-                    <label>Type de Bac :</label>
+                    <label>Type de Bac (*) </label>
                     <select class="form-control " style="width: 100%" name="id_type_bac">
                         <option value=""  disabled selected>Choix de Type de Bac</option>
                         {% for typebac in typebacs %}
@@ -52,7 +52,7 @@
             </div>
             <div class="col-md-6">
                 <div class="form-group">
-                    <label>  Année Bac  :</label>
+                    <label>  Année Bac (*) :</label>
                     <input class="form-control" type="text" name="annee_bac" placeholder="Année Bac" value=""> 
                 </div>
             </div>
@@ -78,21 +78,27 @@
         <div class="col-md-12 row">
             <div class="col-md-6">
                 <div class="form-group">
-                    <label>  Moyen Bac :</label>
-                    <input class="form-control" type="text" name="moyenne_bac" placeholder="Moyen Bac" value=""> 
+                    <label>  Moyen Regional (*) :</label>
+                    <input class="form-control" type="text" name="moyen_regional" placeholder="Moyen Regional" value=""> 
                 </div>
             </div>
             <div class="col-md-6">
                 <div class="form-group">
-                    <label>  Moyenne Regional  :</label>
-                    <input class="form-control" type="text" name="moyenne_regional" placeholder="Moyen Regional" value=""> 
+                    <label>  Moyen National (*) :</label>
+                    <input class="form-control" type="text" name="moyen_national" placeholder="Moyen national" value=""> 
                 </div>
             </div>
         </div>
         <div class="col-md-12 row">   
             <div class="col-md-6">
                 <div class="form-group">
-                    <label>  langue concours  :</label>
+                    <label>  Moyen Bac (*) :</label>
+                    <input class="form-control" type="text" name="moyenne_bac" placeholder="Moyen Bac" value=""> 
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>  Langue concours (*) :</label>
                     <select class="form-control chosen-select" name="langue_concours">
                         <option value="" disabled selected>Choix langue</option>
                         {% for langues in langues %}
@@ -103,7 +109,7 @@
             </div>
             <div class="col-md-6">
                 <div class="form-group">
-                    <label>  Concours  :</label>
+                    <label>  Concours (*) :</label>
                     <input class="form-control" type="text" name="concours_medbup" placeholder="Concours" value="">
                 </div>
             </div>
