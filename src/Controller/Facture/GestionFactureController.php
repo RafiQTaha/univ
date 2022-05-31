@@ -289,14 +289,6 @@ class GestionFactureController extends AbstractController
             'annee' => $operationcab->getAnnee()]);
                 // dd($inscription);
         $promotion = $inscription == NULL ? "" : $inscription->getPromotion()->getDesignation();
-        // dd($inscription);
-        // $operationTotal = $this->em->getRepository(TOperationdet::class)->getSumMontantByCodeFacture($operationcab);
-        // $reglementTotal = $this->em->getRepository(TReglement::class)->getSumMontantByCodeFacture($operationcab);
-        // $operationTotal = $operationTotal == Null ? 0 : $operationTotal['total'];
-        // $reglementTotal = $reglementTotal == Null ? 0 : $reglementTotal['total'];
-        // $total = $operationTotal - $reglementTotal;
-
-        
         $reglementOrg = $this->em->getRepository(TReglement::class)->getReglementSumMontantByCodeFactureByOrganisme($operationcab)['total'];
         $reglementPyt = $this->em->getRepository(TReglement::class)->getReglementSumMontantByCodeFactureByPayant($operationcab)['total'];
         // dd($reglementOrg,$reglementPyt);

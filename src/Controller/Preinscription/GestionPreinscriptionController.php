@@ -26,11 +26,14 @@ use App\Entity\XFiliere;
 use App\Entity\XLangue;
 use App\Entity\XTypeBac;
 use Doctrine\Persistence\ManagerRegistry;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 
 #[Route('/preinscription/gestion')]
 class GestionPreinscriptionController extends AbstractController
@@ -494,7 +497,20 @@ class GestionPreinscriptionController extends AbstractController
         if(!$preinscription){
             return new JsonResponse("Etudiant Introuvable!!",500);
         }
-        
+        if(
+            empty($request->get('nom')) || empty($request->get('prenom')) || 
+            empty($request->get('date_naissance')) || empty($request->get('lieu_naissance')) ||
+            empty($request->get('nat_demande'))  || empty($request->get('st_famille')) ||
+            empty($request->get('cin')) ||  empty($request->get('ville')) || 
+            empty($request->get('tel1')) || empty($request->get('tel2')) || 
+            empty($request->get('tel3')) || empty($request->get('mail1')) || 
+            empty($request->get('adresse')) || empty($request->get('id_academie')) || 
+            empty($request->get('id_filiere')) || empty($request->get('id_type_bac')) || 
+            empty($request->get('annee_bac')) || empty($request->get('moyenne_bac')) || 
+            empty($request->get('moyen_regional')) || empty($request->get('moyen_national'))|| 
+            empty($request->get('langue_concours'))
+        )
+        {return new JsonResponse("Merci de remplir tout les champs obligatoire!!",500); }
         $preinscription->getEtudiant()->setNom(strtoupper($request->get('nom')));
         $preinscription->getEtudiant()->setPrenom(ucfirst(strtolower($request->get('prenom'))));
         // $preinscription->getEtudiant()->setTitre($request->get('titre'));
@@ -506,39 +522,40 @@ class GestionPreinscriptionController extends AbstractController
         if ($request->get('st_famille') != "") {
             $preinscription->getEtudiant()->setStFamille($this->em->getRepository(PSituation::class)->find($request->get('st_famille')));
         }
-        $preinscription->getEtudiant()->setNationalite($request->get('nationalite'));
-        $preinscription->getEtudiant()->setCin($request->get('cin'));
-        $preinscription->getEtudiant()->setPasseport($request->get('passeport'));
-        $preinscription->getEtudiant()->setVille($request->get('ville'));
+        $preinscription->getEtudiant()->setNationalite(strtoupper($request->get('nationalite')));
+        $preinscription->getEtudiant()->setCin(strtoupper($request->get('cin')));
+        $preinscription->getEtudiant()->setPasseport(strtoupper($request->get('passeport')));
+        $preinscription->getEtudiant()->setVille(strtoupper($request->get('ville')));
         $preinscription->getEtudiant()->setTel1($request->get('tel1'));
-        $preinscription->getEtudiant()->setTel2($request->get('tel2'));
-        $preinscription->getEtudiant()->setTel3($request->get('tel3'));
-        $preinscription->getEtudiant()->setMail1($request->get('mail1'));
-        $preinscription->getEtudiant()->setMail2($request->get('mail2'));
-        $preinscription->getEtudiant()->setAdresse($request->get('adresse'));
+        $preinscription->getEtudiant()->setTelPere($request->get('tel2'));
+        $preinscription->getEtudiant()->setTelMere($request->get('tel3'));
+        
+        $preinscription->getEtudiant()->setMail1(strtoupper($request->get('mail1')));
+        $preinscription->getEtudiant()->setMail2(strtoupper($request->get('mail2')));
+        $preinscription->getEtudiant()->setAdresse(strtoupper($request->get('adresse')));
 
         if ($request->get('situation_parents') != "") {
             $preinscription->getEtudiant()->setStFamilleParent($this->em->getRepository(PSituation::class)->find($request->get('situation_parents')));
         }
-        $preinscription->getEtudiant()->setNomPere($request->get('nom_p'));
-        $preinscription->getEtudiant()->setPrenomPere($request->get('prenom_p'));
-        $preinscription->getEtudiant()->setNationalitePere($request->get('nationalite_p'));
-        $preinscription->getEtudiant()->setProfessionPere($request->get('profession_p'));
-        $preinscription->getEtudiant()->setEmployePere($request->get('employe_p'));
-        $preinscription->getEtudiant()->setCategoriePere($request->get('categorie_p'));
+        $preinscription->getEtudiant()->setNomPere(strtoupper($request->get('nom_p')));
+        $preinscription->getEtudiant()->setPrenomPere(ucfirst(strtolower($request->get('prenom_p'))));
+        $preinscription->getEtudiant()->setNationalitePere(strtoupper($request->get('nationalite_p')));
+        $preinscription->getEtudiant()->setProfessionPere(strtoupper($request->get('profession_p')));
+        $preinscription->getEtudiant()->setEmployePere(strtoupper($request->get('employe_p')));
+        $preinscription->getEtudiant()->setCategoriePere(strtoupper($request->get('categorie_p')));
         $preinscription->getEtudiant()->setTelPere($request->get('tel_p'));
-        $preinscription->getEtudiant()->setMailPere($request->get('mail_p'));
+        $preinscription->getEtudiant()->setMailPere(strtoupper($request->get('mail_p')));
         $preinscription->getEtudiant()->setSalairePere($request->get('salaire_p'));
 
-        $preinscription->getEtudiant()->setNomMere($request->get('nom_m'));
-        $preinscription->getEtudiant()->setPrenomMere($request->get('prenom_m'));
-        $preinscription->getEtudiant()->setNationaliteMere($request->get('nationalite_m'));
-        $preinscription->getEtudiant()->setProfessionMere($request->get('profession_m'));
-        $preinscription->getEtudiant()->setEmployeMere($request->get('employe_m'));
-        $preinscription->getEtudiant()->setCategorieMere($request->get('categorie_m'));
+        $preinscription->getEtudiant()->setNomMere(strtoupper($request->get('nom_m')));
+        $preinscription->getEtudiant()->setPrenomMere(ucfirst(strtolower($request->get('prenom_m'))));
+        $preinscription->getEtudiant()->setNationaliteMere(strtoupper($request->get('nationalite_m')));
+        $preinscription->getEtudiant()->setProfessionMere(strtoupper($request->get('profession_m')));
+        $preinscription->getEtudiant()->setEmployeMere(strtoupper($request->get('employe_m')));
+        $preinscription->getEtudiant()->setCategorieMere(strtoupper($request->get('categorie_m')));
         $preinscription->getEtudiant()->setTelMere($request->get('tel_m'));
-        $preinscription->getEtudiant()->setMailMere($request->get('mail_m'));
-        $preinscription->getEtudiant()->setSalaireMere($request->get('salaire_m'));
+        $preinscription->getEtudiant()->setMailMere(strtoupper($request->get('mail_m')));
+        $preinscription->getEtudiant()->setSalaireMere(strtoupper($request->get('salaire_m')));
 
         $preinscription->getEtudiant()->setCne($request->get('cne'));
         if ($request->get('id_academie') != "") {
@@ -552,10 +569,10 @@ class GestionPreinscriptionController extends AbstractController
         }
         $preinscription->getEtudiant()->setAnneeBac($request->get('annee_bac'));
         $preinscription->getEtudiant()->setMoyenneBac($request->get('moyenne_bac'));
-        $preinscription->getEtudiant()->setMoyenneRegional($request->get('moyenne_regional'));
+        $preinscription->getEtudiant()->setMoyenRegional($request->get('moyen_regional'));
+        $preinscription->getEtudiant()->setMoyenNational($request->get('moyen_national'));
         $preinscription->getEtudiant()->setObs($request->get('obs'));
-        $preinscription->getEtudiant()->setCategoriePreinscription($request->get('categorie_preinscription'));
-        $preinscription->getEtudiant()->setFraisPreinscription($request->get('frais_preinscription'));
+        $preinscription->getEtudiant()->setCategoriePreinscription(strtoupper($request->get('categorie_preinscription') == "" ? $preinscription->getEtudiant()->getCategoriePreinscription() : $request->get('categorie_preinscription')));
         if ($request->get('langue_concours') != "") {
             $preinscription->getEtudiant()->setLangueConcours($this->em->getRepository(XLangue::class)->find($request->get('langue_concours')));
         }
@@ -576,6 +593,28 @@ class GestionPreinscriptionController extends AbstractController
 
         $this->em->flush();
         return new JsonResponse("Bien Modifier",200);
+    }
+    
+
+    #[Route('/extraction_preins', name: 'extraction_preins')]
+    public function extraction_preins()
+    {   
+        $preinscription = $this->em->getRepository(TPreinscription::class)->findAll();
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        $sheet->setCellValue('A1', 'Id');
+        $sheet->setCellValue('B1', 'Niveau');
+        $i=2;
+        // foreach ($groupes as $groupe) {
+        //     $sheet->setCellValue('A'.$i, $groupe->getId());
+        //     $sheet->setCellValue('B'.$i, $groupe->getNiveau());
+        //     $i++;
+        // }
+        $writer = new Xlsx($spreadsheet);
+        $fileName = 'Extraction Preinscription.xlsx';
+        $temp_file = tempnam(sys_get_temp_dir(), $fileName);
+        $writer->save($temp_file);
+        return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);
     }
 
     

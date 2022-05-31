@@ -8,17 +8,10 @@
 
     <div class="col-md-3">
         <div class="form-group">
-            <label>  Prénom (*) :</label>
-            <input class="form-control" type="text" name="prenom" placeholder="Prénom" value=""> 
+            <label>  Prenom (*) :</label>
+            <input class="form-control" type="text" name="prenom" placeholder="Prenom" value=""> 
         </div>
     </div>
-    
-    {# <div class="col-md-3">
-        <div class="form-group">
-            <label>  Titre (*) :</label>
-            <input class="form-control" type="text" name="titre" placeholder="Titre" value=""> 
-        </div>
-    </div>  #}
 
     <div class="col-md-3">
         <div class="form-group">
@@ -46,7 +39,7 @@
     
     <div class="col-md-3">
         <div class="form-group">
-            <label>  Situation Familiale (*) :</label>
+            <label>  Situation familiale (*) :</label>
             <select class="form-control " style="width: 100%" name="st_famille">
                 <option value="" disabled selected>Choix de situation</option>
                     {% for situation in situations %}
@@ -56,17 +49,11 @@
         </div>
     </div> 
     
-    {# <div class="col-md-3">
-        <div class="form-group">
-            <label>  Situation Familiale  Parents (*) :</label>
-            <input class="form-control" type="text" name="st_famille_parent" placeholder="Situation Familiale  Parents" value="{{etudiant.stFamilleParent}}"> 
-        </div>
-    </div>  #}
-    
     <div class="col-md-3">
         <div class="form-group">
             <label>  Nationalite (*) :</label>
-            <input class="form-control" type="text" name="nationalite" placeholder="Nationalite" value=""> 
+            {% include 'inc/nationalite.html.twig' %} 
+            {# <input class="form-control" type="text" name="nationalite" placeholder="Nationalite" value="">  #}
         </div>
     </div> 
     
@@ -93,22 +80,22 @@
     
     <div class="col-md-3">
         <div class="form-group">
-            <label>  Téléphone Etudiant (*) :</label>
-            <input class="form-control" type="text" name="tel1" placeholder="Téléphone 1" value=""> 
+            <label>  Telephone Etudiant (*) :</label>
+            <input class="form-control" type="text" name="tel1" placeholder="Telephone Etudiant" value=""> 
         </div>
     </div> 
     
     <div class="col-md-3">
         <div class="form-group">
-            <label>  Téléphone Père (*) :</label>
-            <input class="form-control" type="text" name="tel2" placeholder="Téléphone 2" value=""> 
+            <label>  Telephone pere (*) :</label>
+            <input class="form-control" type="text" name="tel2" placeholder="Telephone Pere" value=""> 
         </div>
     </div> 
     
     <div class="col-md-3">
         <div class="form-group">
-            <label>  Téléphone Mère (*) :</label>
-            <input class="form-control" type="text" name="tel3" placeholder="Téléphone 3" value=""> 
+            <label>  Telephone Mere (*) :</label>
+            <input class="form-control" type="text" name="tel3" placeholder="Telephone Mere" value=""> 
         </div>
     </div> 
     

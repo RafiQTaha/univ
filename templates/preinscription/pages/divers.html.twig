@@ -50,14 +50,22 @@
     </div>
     <div class="col-md-3">
         <div class="form-group">
-            <label>Nombre des frères : </label>
-            <input class="form-control" type="nombre" name="freres" placeholder="Nombre des frères" value="{{etudiant.nombreEnfants}}"> 
+            <label> catégorie préinscription (*) :</label>
+            <select class="form-control chosen-select" name="categorie_preinscription">
+                <option value="" selected>Choix Categorie Preins</option>
+                <option value="NOUVELLE PRE-INSCRIPTION">NOUVELLE PRE-INSCRIPTION</option>
+                <option value="TRANSFERT">TRANSFERT</option>
+                <option value="PASSERELLE">PASSERELLE</option>
+                <option value="RESIDANAT">RESIDANAT</option>
+            </select>
+
+            {# <input class="form-control" type="text" name="categorie_preinscription" placeholder="Catégorie Préinscription" value="{{etudiant.categoriePreinscription}}">  #}
         </div>
     </div> 
 
     <div class="col-md-3">
         <div class="form-group">
-            <label>Nature De Demande  :</label>
+            <label>Nature De Demande (*) :</label>
             <select class="form-control chosen-select" name="nat_demande">
                 <option value="" disabled selected>Choix Nature</option>
                 {% for natureDemande in natureDemandes %}

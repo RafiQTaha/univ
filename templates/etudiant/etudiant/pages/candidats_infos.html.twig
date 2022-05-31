@@ -12,18 +12,11 @@
             <input class="form-control" type="text" name="prenom" placeholder="Prénom" value="{{etudiant.prenom}}"> 
         </div>
     </div>
-    
-    {# <div class="col-md-3">
-        <div class="form-group">
-            <label>  Titre (*) :</label>
-            <input class="form-control" type="text" name="titre" placeholder="Titre" value="{{etudiant.titre}}"> 
-        </div>
-    </div>  #}
 
     <div class="col-md-3">
         <div class="form-group">
-            <label>  date Naissance (*) :</label>
-            <input class="form-control datepicker" type="date" name="date_naissance" placeholder="Date Naissance" value="{{etudiant.dateNaissance | date('Y-m-j')}}">
+            <label>  Date de Naissance (*) :</label>
+            <input class="form-control datepicker" type="date" name="date_naissance" placeholder="Date de Naissance" value="{{etudiant.dateNaissance | date('Y-m-j')}}">
         </div>
     </div> 
     
@@ -52,10 +45,6 @@
     </div>
     
     <div class="col-md-3">
-        {# <div class="form-group">
-            <label>  Situation Familiale  (*) :</label>
-            <input class="form-control" type="text" name="st_famille" placeholder="Situation Familiale" value="{{etudiant.stFamille}}"> 
-        </div> #}
         <div class="form-group">
             <label>  Situation Familiale  (*) :</label>
             <select class="form-control " style="width: 100%" name="st_famille">
@@ -69,19 +58,13 @@
                     {% endfor %}
             </select>
         </div>
-    </div> 
-    
-    {# <div class="col-md-3">
-        <div class="form-group">
-            <label>  Situation Familiale  Parents (*) :</label>
-            <input class="form-control" type="text" name="st_famille_parent" placeholder="Situation Familiale  Parents" value="{{etudiant.stFamilleParent}}"> 
-        </div>
-    </div>  #}
+    </div>
     
     <div class="col-md-3">
         <div class="form-group">
-            <label>  nationalite (*) :</label>
-            <input class="form-control" type="text" name="nationalite" placeholder="Nationalite" value="{{etudiant.nationalite}}"> 
+            <label>  Nationalite (*) :</label>
+            {# <input class="form-control" type="text" name="nationalite" placeholder="Nationalite" value="{{etudiant.nationalite}}">  #}
+            {% include 'inc/nationalite.html.twig' %} 
         </div>
     </div> 
     
@@ -94,7 +77,7 @@
 
     <div class="col-md-3">
         <div class="form-group">
-            <label>  passeport (*) :</label>
+            <label>  Passeport :</label>
             <input class="form-control" type="text" name="passeport" placeholder="Passeport" value="{{etudiant.passeport}}"> 
         </div>
     </div> 
@@ -108,28 +91,28 @@
     
     <div class="col-md-3">
         <div class="form-group">
-            <label>  Téléphone 1  :</label>
-            <input class="form-control" type="text" name="tel1" placeholder="Téléphone 1" value="{{etudiant.tel1}}"> 
+            <label>  Téléphone Etudiant (*) :</label>
+            <input class="form-control" type="text" name="tel1" placeholder="Téléphone Etudiant" value="{{etudiant.tel1}}"> 
         </div>
     </div> 
     
     <div class="col-md-3">
         <div class="form-group">
-            <label>  Téléphone 2  :</label>
-            <input class="form-control" type="text" name="tel2" placeholder="Téléphone 2" value="{{etudiant.tel2}}"> 
+            <label>  Téléphone Pere (*) :</label>
+            <input class="form-control" type="text" name="tel2" placeholder="Téléphone Pere" value="{{etudiant.telPere}}"> 
         </div>
     </div> 
     
     <div class="col-md-3">
         <div class="form-group">
-            <label>  Téléphone 3  :</label>
-            <input class="form-control" type="text" name="tel3" placeholder="Téléphone 3" value="{{etudiant.tel3}}"> 
+            <label>  Téléphone Mere (*) :</label>
+            <input class="form-control" type="text" name="tel3" placeholder="Téléphone Mere" value="{{etudiant.telmere}}"> 
         </div>
     </div> 
     
     <div class="col-md-3">
         <div class="form-group">
-            <label>  Mail 1 :</label>
+            <label>  Mail 1 (*) :</label>
             <input class="form-control" type="text" name="mail1" placeholder="Mail 1" value="{{etudiant.mail1}}"> 
         </div>
     </div> 

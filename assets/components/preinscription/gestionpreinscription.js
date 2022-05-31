@@ -466,6 +466,7 @@ $("body").on('submit', "#form_modifier", async (e) => {
             </div>`
         );
         icon.addClass('fa-edit').removeClass("fa-spinner fa-spin ");
+        id_preinscription = false;
         table_gestion_preins.ajax.reload(null, false)
       }catch (error) {
         // console.log(error, error.response);
@@ -481,6 +482,10 @@ $("body").on('submit', "#form_modifier", async (e) => {
         // modalAlert.remove();
       }, 2500)  
     }
+  })
+  
+  $('body').on('click','#extraction', function (){
+    window.open('/preinscription/gestion/extraction_preins', '_blank');
   })
 
 $('.nav-pills a').on('click', function (e) {

@@ -320,18 +320,16 @@ class ApiController extends AbstractController
     static function check($user, $link, $em, $request) {
         if(!$request->getSession()->get("modules")){
             if(in_array('ROLE_ADMIN', $user->getRoles())){
-                $sousModules = $em->getRepository(UsSousModule::class)->findAll();
+                $sousModules = $em->getRepository(UsSousModule::class)->findBy([],['ordre'=>'ASC']);
             } else {
                 $sousModules = $em->getRepository(UsSousModule::class)->findByUserOperations($user);
             }
             $modules = $em->getRepository(UsModule::class)->getModuleBySousModule($sousModules);
             $data = [];
-            // dd($sousModules);
             foreach($modules as $module) {
                 $sousModuleArray = [];
                 foreach ($sousModules as $sousModule) {
                     if($sousModule->getModule()->getId() == $module->getId()) {
-                        // dd($sousModule);
                         array_push($sousModuleArray,$sousModule);
                     }
                 }
@@ -339,7 +337,6 @@ class ApiController extends AbstractController
                     'module' => $module,
                     'sousModule' => $sousModuleArray
                 ]);
-                
             }
             // dd($data);
             $request->getSession()->set('modules', $data);

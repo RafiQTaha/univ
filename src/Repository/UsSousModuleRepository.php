@@ -53,6 +53,7 @@ class UsSousModuleRepository extends ServiceEntityRepository
             ->innerJoin('usOperation.users', "user")
             ->where('user = :user')
             ->setParameter('user', $user)
+            ->orderBy('u.ordre', 'ASC')
             ->getQuery()
             ->getResult()
         ;
