@@ -217,7 +217,8 @@ class GestionFactureController extends AbstractController
         $reglementTotal = $reglementTotal == Null ? 0 : $reglementTotal['total'];
         // dd($operationTotal['total'], $reglementTotal['total']);
         $montant = $operationTotal - $reglementTotal;
-        return new JsonResponse($montant, 200);        
+        
+        return new JsonResponse(['montant'=>$montant,'montant_facture'=>$operationTotal], 200);        
     }
     #[Route('/facture/{operationcab}/{reglement}', name: 'imprimer_facture_reglement')]
     public function imprimer_facture_reglement(TOperationcab $operationcab,TReglement $reglement): Response

@@ -15,11 +15,13 @@ use App\Controller\ApiController;
 use App\Controller\DatatablesController;
 use App\Entity\TAdmission;
 use Doctrine\Persistence\ManagerRegistry;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 
 #[Route('/inscription/gestion')]
 class GestionInscriptionController extends AbstractController
@@ -266,28 +268,100 @@ class GestionInscriptionController extends AbstractController
         $mpdf->showImageErrors = true;
         $mpdf->WriteHTML($html);
         $mpdf->Output("facture.pdf", "I");
-
-        // $reglementTotal = $this->em->getRepository(TReglement::class)->getSumMontantByCodeFacture($operationcab);
-        // $operationTotal = $this->em->getRepository(TOperationdet::class)->getSumMontantByCodeFacture($operationcab);
-        // $operationTotal = $operationTotal == Null ? 0 : $operationTotal['total'];
-        // $reglementTotal = $reglementTotal == Null ? 0 : $reglementTotal['total'];
-        // $total = $operationTotal - $reglementTotal;
-        // // dd($reglementTotal, $operationTotal);
-        // $html = $this->render("facture/pdfs/facture.html.twig", [
-        //     'reglementTotal' => $reglementTotal,
-        //     'operationTotal' => $operationTotal,
-        //     'operationcab' => $operationcab,
-        //     'total' => $total
-        // ])->getContent();
-        // $mpdf = new Mpdf();
-        // $mpdf->showImageErrors = true;
-        // $mpdf->SetHTMLHeader(
-        //     $this->render("facture/pdfs/header.html.twig")->getContent()
-        // );
-        // $mpdf->SetHTMLFooter(
-        //     $this->render("facture/pdfs/footer.html.twig")->getContent()
-        // );
-        // $mpdf->WriteHTML($html);
-        // $mpdf->Output("facture.pdf", "I");
     }
+    
+    #[Route('/extraction_ins', name: 'extraction_ins')]
+    public function extraction_ins()
+    {   
+        echo('Cration en cours!!');die;
+        // $spreadsheet = new Spreadsheet();
+        // $sheet = $spreadsheet->getActiveSheet();
+        // $sheet->setCellValue('A1', 'ORD');
+        // $sheet->setCellValue('B1', 'CODE ADMISSION');
+        // $sheet->setCellValue('C1', 'CODE PREINSCRIPTION');
+        // $sheet->setCellValue('D1', 'CODE INSCRIPTION');
+        // $sheet->setCellValue('E1', 'NOM');
+        // $sheet->setCellValue('F1', 'PRENOM');
+        // $sheet->setCellValue('G1', 'DATE NAISSANCE');
+        // $sheet->setCellValue('H1', 'CIN');
+        // $sheet->setCellValue('I1', 'VILLE');
+        // $sheet->setCellValue('J1', 'TEL CANDIDAT');
+        // $sheet->setCellValue('K1', 'MAIL CANDIDAT');
+        // $sheet->setCellValue('L1', 'ETABLISSEMENT');
+        // $sheet->setCellValue('M1', 'FORMATION');
+        // $sheet->setCellValue('N1', "NIVEAU D'ETUDES");
+        // $sheet->setCellValue('O1', 'CATEGORIE');
+        // $sheet->setCellValue('P1', 'TYPE DE BAC');
+        // $sheet->setCellValue('Q1', 'ANNEE BAC');
+        // $sheet->setCellValue('R1', 'MOYENNE GENERALE');
+        // $sheet->setCellValue('S1', 'MOYENNE NATIONALE');
+        // $sheet->setCellValue('T1', 'MOYENNE REGIONALE');
+        // $sheet->setCellValue('V1', 'N°FACTURE');
+        // $sheet->setCellValue('W1', 'MONTANT FACTURE');
+        // $sheet->setCellValue('X1', 'MONTANT REGLE');
+        // $sheet->setCellValue('Y1', 'RESTE');
+        // $sheet->setCellValue('Z1', 'TYPE REGLEMENT');
+        // $sheet->setCellValue('Y1', 'REFERENCE REGLEMENT');
+        // $sheet->setCellValue('AA1', 'DATE FACTURE');
+        // $sheet->setCellValue('AB1', 'DATE REGLEMENT');
+        // $i=2;
+        // $j=1;
+        // $current_year = date('m') > 7 ? $current_year = date('Y').'/'.date('Y')+1 : $current_year = date('Y') - 1 .'/' .date('Y');
+        // $preinscriptions = $this->em->getRepository(TPreinscription::class)->getPreinsByCurrentYear($current_year);
+        // foreach ($preinscriptions as $preinscription) {
+        //     $etudiant = $preinscription->getEtudiant();
+        //     $natutre = $etudiant->getNatureDemande();
+        //     $annee = $preinscription->getAnnee();
+        //     $formation = $annee->getFormation();
+        //     $sheet->setCellValue('A'.$i, $j);
+        //     $sheet->setCellValue('B'.$i, $preinscription->getEtudiant()->getCode());
+        //     $sheet->setCellValue('C'.$i, $preinscription->getCode());
+        //     $sheet->setCellValue('D'.$i, $preinscription->getEtudiant()->getNom());
+        //     $sheet->setCellValue('E'.$i, $preinscription->getEtudiant()->getPrenom());
+        //     $sheet->setCellValue('F'.$i, $preinscription->getEtudiant()->getDateNaissance());
+        //     $sheet->setCellValue('G'.$i, $preinscription->getEtudiant()->getCin());
+        //     $sheet->setCellValue('H'.$i, $preinscription->getEtudiant()->getTel1());
+        //     $sheet->setCellValue('I'.$i, $preinscription->getEtudiant()->getMail1());
+        //     $sheet->setCellValue('J'.$i, $formation->getEtablissement()->getDesignation());
+        //     $sheet->setCellValue('K'.$i, $formation->getDesignation());
+        //     $sheet->setCellValue('L'.$i, 'CATEGORIE DEMANDE');
+        //     if ($etudiant->getNatureDemande()) {
+        //         $sheet->setCellValue('M'.$i, $etudiant->getNatureDemande()->getDesignation());
+        //     }
+        //     $sheet->setCellValue('N'.$i, $etudiant->getTypeBac() == Null ? "" : $etudiant->getTypeBac()->getDesignation());
+        //     $sheet->setCellValue('O'.$i, $etudiant->getAnneeBac());
+        //     $sheet->setCellValue('P'.$i, $etudiant->getMoyenneBac());
+        //     $sheet->setCellValue('Q'.$i, $etudiant->getMoyenNational());
+        //     $sheet->setCellValue('R'.$i, $etudiant->getMoyenRegional());
+        //     $facture = $this->em->getRepository(TOperationcab::class)->findOneBy(['categorie'=>'pré-inscription','preinscription'=>$preinscription,'active'=>1]);
+        //     if ($facture) {
+        //         $sheet->setCellValue('S'.$i, $facture->getCode());
+        //         $sommefacture = $this->em->getRepository(TOperationdet::class)->getSumMontantByCodeFacture($facture);
+        //         $sommefacture = $sommefacture == Null ? 0 : $sommefacture['total'];
+        //         $sheet->setCellValue('T'.$i, $sommefacture);
+        //         $sommereglement = $this->em->getRepository(TReglement::class)->getSumMontantByCodeFacture($facture);
+        //         $sommereglement = $sommereglement == Null ? 0 : $sommereglement['total'];
+        //         $sheet->setCellValue('V'.$i, $sommereglement);
+        //         $reste = $sommefacture - $sommereglement;
+        //         $sheet->setCellValue('W'.$i, $reste);
+        //         $reglement = $this->em->getRepository(TReglement::class)->findOneBy(['operation'=>$facture],['id'=>'DESC']);
+        //         if ($reglement) {
+        //             $sheet->setCellValue('X'.$i, $reglement->getPaiement()->getDesignation());
+        //             $sheet->setCellValue('Y'.$i, $reglement->getCode());
+        //         }
+        //         $sheet->setCellValue('Z'.$i, $facture->getCreated());
+        //         if ($reglement) {
+        //             $sheet->setCellValue('AA'.$i, $reglement->getCreated());
+        //         }
+        //     }
+        //     $i++;
+        //     $j++;
+        // }
+        // $writer = new Xlsx($spreadsheet);
+        // $fileName = 'Extraction Preinscription.xlsx';
+        // $temp_file = tempnam(sys_get_temp_dir(), $fileName);
+        // $writer->save($temp_file);
+        // return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);
+    }
+
 }

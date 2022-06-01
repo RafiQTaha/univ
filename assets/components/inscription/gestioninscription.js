@@ -344,7 +344,7 @@ const Toast = Swal.mixin({
         }
     })
     $('body').on('click','#extraction', function (){
-      window.open('/preinscription/gestion/extraction_preins', '_blank');
+        window.open('/inscription/gestion/extraction_ins', '_blank');
     })
 })
 

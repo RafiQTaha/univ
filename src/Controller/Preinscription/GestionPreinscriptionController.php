@@ -595,7 +595,6 @@ class GestionPreinscriptionController extends AbstractController
         return new JsonResponse("Bien Modifier",200);
     }
     
-
     #[Route('/extraction_preins', name: 'extraction_preins')]
     public function extraction_preins()
     {   
@@ -631,17 +630,14 @@ class GestionPreinscriptionController extends AbstractController
         $j=1;
         $current_year = date('m') > 7 ? $current_year = date('Y').'/'.date('Y')+1 : $current_year = date('Y') - 1 .'/' .date('Y');
         $preinscriptions = $this->em->getRepository(TPreinscription::class)->getPreinsByCurrentYear($current_year);
-        // dd($preinscriptions);
         foreach ($preinscriptions as $preinscription) {
-            // dd($preinscription);
             $etudiant = $preinscription->getEtudiant();
             $natutre = $etudiant->getNatureDemande();
             $annee = $preinscription->getAnnee();
             $formation = $annee->getFormation();
-            // dump($annee); 
             $sheet->setCellValue('A'.$i, $j);
             $sheet->setCellValue('B'.$i, $preinscription->getEtudiant()->getCode());
-            $sheet->setCellValue('B'.$i, $preinscription->getCode());
+            $sheet->setCellValue('C'.$i, $preinscription->getCode());
             $sheet->setCellValue('D'.$i, $preinscription->getEtudiant()->getNom());
             $sheet->setCellValue('E'.$i, $preinscription->getEtudiant()->getPrenom());
             $sheet->setCellValue('F'.$i, $preinscription->getEtudiant()->getDateNaissance());

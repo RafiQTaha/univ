@@ -96,8 +96,9 @@ $(document).ready(function () {
             $("#ajouter").removeClass('btn-primary').addClass('btn-secondary').attr('disabled', false);
             if (success.data != 'vide') {
                 reglement = 12;
-                $("#montant").val(success.data);
-                $("#montant2").val(success.data);
+                $("#montant").val(success.data['montant']);
+                $("#montant2").val(success.data['montant']);
+                $("#montant_facture").val(success.data['montant_facture']);
                 $("#ajouter").removeClass('btn-secondary').addClass('btn-primary').attr('disabled', true);
             }
         })
