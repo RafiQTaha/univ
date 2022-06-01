@@ -24,6 +24,8 @@ const Toast = Swal.mixin({
         processing: true,
         serverSide: true,
         deferRender: true,
+        responsive: true,
+        scrollX: true,
         drawCallback: function () {
             idAdmissions.forEach((e) => {
                 $("body tr#" + e)

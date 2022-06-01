@@ -47,6 +47,22 @@ class TInscriptionRepository extends ServiceEntityRepository
         ;
     }
     */
+    public function getActiveInscriptionByCurrentAnnee()
+    {
+        return $this->createQueryBuilder('t')
+            ->innerJoin("t.annee", "annee")
+            // ->innerJoin("t.admission", "admission")
+            // ->innerJoin("admission.preinscription", "preinscription")
+            ->Where("annee.validation_academique = 'non'")
+            ->andWhere("annee.cloture_academique = 'non'")
+            ->andWhere("t.statut = 13")
+            // ->andWhere("admission.statut = 7")
+            // ->andWhere("preinscription.statut = 17")
+            ->getQuery()
+            ->getResult()
+        ;
+        // dd($return);
+    }
     public function getActiveInscriptionByAnnee($admission, $annee)
     {
         return $this->createQueryBuilder('t')

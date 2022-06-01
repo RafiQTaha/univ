@@ -360,9 +360,9 @@ class GestionAdmissionController extends AbstractController
         $annee = $this->em->getRepository(AcAnnee::class)->find($request->get('annee_inscription'));
         $promotion = $this->em->getRepository(AcPromotion::class)->find($request->get('promotion_inscription'));
         if ($promotion->getLimite() != Null) {
-            $inss = $this->em->getRepository(TInscription::class)->findBy(['promotion'=>$promotion,'annee'=>$annee]);
+            $inss = $this->em->getRepository(TInscription::class)->findBy(['promotion'=>$promotion,'annee'=>$annee,'statut'=>13]);
             if (count($inss) >= $promotion->getLimite()) {
-                return new JsonResponse("No Place!!", 500);
+                return new JsonResponse("Liste Complete!!", 500);
             }
         }
         $inscription = new TInscription();

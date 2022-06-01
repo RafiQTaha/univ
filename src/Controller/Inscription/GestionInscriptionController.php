@@ -16,6 +16,7 @@ use App\Controller\DatatablesController;
 use App\Entity\TAdmission;
 use Doctrine\Persistence\ManagerRegistry;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -161,6 +162,9 @@ class GestionInscriptionController extends AbstractController
     #[Route('/updatestatut/{inscription}', name: 'gestion_statut_update')]
     public function inscriptionStatutUpdate(Request $request, TInscription $inscription): Response
     {
+        if ($request->get('statut_inscription') == "") {
+            return new JsonResponse("Merci de choisir un statut!", 500);
+        }
         $inscription->setStatut(
             $this->em->getRepository(PStatut::class)->find($request->get("statut_inscription"))
         );
@@ -171,7 +175,8 @@ class GestionInscriptionController extends AbstractController
     #[Route('/frais/{inscription}', name: 'getFraisByInscription')]
     public function getFraisByInscription(TInscription $inscription): Response
     {   
-        $operationcab = $this->em->getRepository(TOperationcab::class)->findOneBy(['preinscription'=>$inscription->getAdmission()->getPreinscription(),'categorie'=>'admission']);
+        $operationcab = $this->em->getRepository(TOperationcab::class)->findOneBy(['preinscription'=>$inscription->getAdmission()->getPreinscription(),'categorie'=>'inscription']);
+        // dd($operationcab);
         $frais = $this->em->getRepository(PFrais::class)->findBy(["formation" => $inscription->getAnnee()->getFormation(), "categorie" => "inscription"]);
         $data = ApiController::dropdownData($frais,'frais');
         return new JsonResponse(['list' => $data, 'codefacture' => $operationcab->getCode()], 200); 
@@ -273,95 +278,90 @@ class GestionInscriptionController extends AbstractController
     #[Route('/extraction_ins', name: 'extraction_ins')]
     public function extraction_ins()
     {   
-        echo('Cration en cours!!');die;
-        // $spreadsheet = new Spreadsheet();
-        // $sheet = $spreadsheet->getActiveSheet();
-        // $sheet->setCellValue('A1', 'ORD');
-        // $sheet->setCellValue('B1', 'CODE ADMISSION');
-        // $sheet->setCellValue('C1', 'CODE PREINSCRIPTION');
-        // $sheet->setCellValue('D1', 'CODE INSCRIPTION');
-        // $sheet->setCellValue('E1', 'NOM');
-        // $sheet->setCellValue('F1', 'PRENOM');
-        // $sheet->setCellValue('G1', 'DATE NAISSANCE');
-        // $sheet->setCellValue('H1', 'CIN');
-        // $sheet->setCellValue('I1', 'VILLE');
-        // $sheet->setCellValue('J1', 'TEL CANDIDAT');
-        // $sheet->setCellValue('K1', 'MAIL CANDIDAT');
-        // $sheet->setCellValue('L1', 'ETABLISSEMENT');
-        // $sheet->setCellValue('M1', 'FORMATION');
-        // $sheet->setCellValue('N1', "NIVEAU D'ETUDES");
-        // $sheet->setCellValue('O1', 'CATEGORIE');
-        // $sheet->setCellValue('P1', 'TYPE DE BAC');
-        // $sheet->setCellValue('Q1', 'ANNEE BAC');
-        // $sheet->setCellValue('R1', 'MOYENNE GENERALE');
-        // $sheet->setCellValue('S1', 'MOYENNE NATIONALE');
-        // $sheet->setCellValue('T1', 'MOYENNE REGIONALE');
-        // $sheet->setCellValue('V1', 'N°FACTURE');
-        // $sheet->setCellValue('W1', 'MONTANT FACTURE');
-        // $sheet->setCellValue('X1', 'MONTANT REGLE');
-        // $sheet->setCellValue('Y1', 'RESTE');
-        // $sheet->setCellValue('Z1', 'TYPE REGLEMENT');
-        // $sheet->setCellValue('Y1', 'REFERENCE REGLEMENT');
-        // $sheet->setCellValue('AA1', 'DATE FACTURE');
-        // $sheet->setCellValue('AB1', 'DATE REGLEMENT');
-        // $i=2;
-        // $j=1;
-        // $current_year = date('m') > 7 ? $current_year = date('Y').'/'.date('Y')+1 : $current_year = date('Y') - 1 .'/' .date('Y');
-        // $preinscriptions = $this->em->getRepository(TPreinscription::class)->getPreinsByCurrentYear($current_year);
-        // foreach ($preinscriptions as $preinscription) {
-        //     $etudiant = $preinscription->getEtudiant();
-        //     $natutre = $etudiant->getNatureDemande();
-        //     $annee = $preinscription->getAnnee();
-        //     $formation = $annee->getFormation();
-        //     $sheet->setCellValue('A'.$i, $j);
-        //     $sheet->setCellValue('B'.$i, $preinscription->getEtudiant()->getCode());
-        //     $sheet->setCellValue('C'.$i, $preinscription->getCode());
-        //     $sheet->setCellValue('D'.$i, $preinscription->getEtudiant()->getNom());
-        //     $sheet->setCellValue('E'.$i, $preinscription->getEtudiant()->getPrenom());
-        //     $sheet->setCellValue('F'.$i, $preinscription->getEtudiant()->getDateNaissance());
-        //     $sheet->setCellValue('G'.$i, $preinscription->getEtudiant()->getCin());
-        //     $sheet->setCellValue('H'.$i, $preinscription->getEtudiant()->getTel1());
-        //     $sheet->setCellValue('I'.$i, $preinscription->getEtudiant()->getMail1());
-        //     $sheet->setCellValue('J'.$i, $formation->getEtablissement()->getDesignation());
-        //     $sheet->setCellValue('K'.$i, $formation->getDesignation());
-        //     $sheet->setCellValue('L'.$i, 'CATEGORIE DEMANDE');
-        //     if ($etudiant->getNatureDemande()) {
-        //         $sheet->setCellValue('M'.$i, $etudiant->getNatureDemande()->getDesignation());
-        //     }
-        //     $sheet->setCellValue('N'.$i, $etudiant->getTypeBac() == Null ? "" : $etudiant->getTypeBac()->getDesignation());
-        //     $sheet->setCellValue('O'.$i, $etudiant->getAnneeBac());
-        //     $sheet->setCellValue('P'.$i, $etudiant->getMoyenneBac());
-        //     $sheet->setCellValue('Q'.$i, $etudiant->getMoyenNational());
-        //     $sheet->setCellValue('R'.$i, $etudiant->getMoyenRegional());
-        //     $facture = $this->em->getRepository(TOperationcab::class)->findOneBy(['categorie'=>'pré-inscription','preinscription'=>$preinscription,'active'=>1]);
-        //     if ($facture) {
-        //         $sheet->setCellValue('S'.$i, $facture->getCode());
-        //         $sommefacture = $this->em->getRepository(TOperationdet::class)->getSumMontantByCodeFacture($facture);
-        //         $sommefacture = $sommefacture == Null ? 0 : $sommefacture['total'];
-        //         $sheet->setCellValue('T'.$i, $sommefacture);
-        //         $sommereglement = $this->em->getRepository(TReglement::class)->getSumMontantByCodeFacture($facture);
-        //         $sommereglement = $sommereglement == Null ? 0 : $sommereglement['total'];
-        //         $sheet->setCellValue('V'.$i, $sommereglement);
-        //         $reste = $sommefacture - $sommereglement;
-        //         $sheet->setCellValue('W'.$i, $reste);
-        //         $reglement = $this->em->getRepository(TReglement::class)->findOneBy(['operation'=>$facture],['id'=>'DESC']);
-        //         if ($reglement) {
-        //             $sheet->setCellValue('X'.$i, $reglement->getPaiement()->getDesignation());
-        //             $sheet->setCellValue('Y'.$i, $reglement->getCode());
-        //         }
-        //         $sheet->setCellValue('Z'.$i, $facture->getCreated());
-        //         if ($reglement) {
-        //             $sheet->setCellValue('AA'.$i, $reglement->getCreated());
-        //         }
-        //     }
-        //     $i++;
-        //     $j++;
-        // }
-        // $writer = new Xlsx($spreadsheet);
-        // $fileName = 'Extraction Preinscription.xlsx';
-        // $temp_file = tempnam(sys_get_temp_dir(), $fileName);
-        // $writer->save($temp_file);
-        // return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);
+        // echo('Cration en cours!!');die;
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        $sheet->setCellValue('A1', 'ORD');
+        $sheet->setCellValue('B1', 'CODE ADMISSION');
+        $sheet->setCellValue('C1', 'CODE PREINSCRIPTION');
+        $sheet->setCellValue('D1', 'CODE INSCRIPTION');
+        $sheet->setCellValue('E1', 'NOM');
+        $sheet->setCellValue('F1', 'PRENOM');
+        $sheet->setCellValue('G1', 'DATE NAISSANCE');
+        $sheet->setCellValue('H1', 'CIN');
+        $sheet->setCellValue('I1', 'VILLE');
+        $sheet->setCellValue('J1', 'TEL CANDIDAT');
+        $sheet->setCellValue('K1', 'MAIL CANDIDAT');
+        $sheet->setCellValue('L1', 'ETABLISSEMENT');
+        $sheet->setCellValue('M1', 'FORMATION');
+        $sheet->setCellValue('N1', "NIVEAU D'ETUDES");
+        $sheet->setCellValue('O1', 'CATEGORIE');
+        $sheet->setCellValue('P1', 'TYPE DE BAC');
+        $sheet->setCellValue('Q1', 'ANNEE BAC');
+        $sheet->setCellValue('R1', 'MOYENNE GENERALE');
+        $sheet->setCellValue('S1', 'MOYENNE NATIONALE');
+        $sheet->setCellValue('T1', 'MOYENNE REGIONALE');
+        $sheet->setCellValue('U1', 'N°FACTURE');
+        $sheet->setCellValue('V1', 'MONTANT FACTURE');
+        $sheet->setCellValue('W1', 'MONTANT REGLE');
+        $sheet->setCellValue('X1', 'RESTE');
+        $sheet->setCellValue('Y1', 'TYPE REGLEMENT');
+        $sheet->setCellValue('Z1', 'REFERENCE REGLEMENT');
+        $sheet->setCellValue('AA1', 'DATE FACTURE');
+        $sheet->setCellValue('AB1', 'DATE REGLEMENT');
+        $i=2;
+        $j=1;
+        $inscriptions = $this->em->getRepository(TInscription::class)->getActiveInscriptionByCurrentAnnee();
+        foreach ($inscriptions as $inscription) {
+            $sheet->setCellValue('A'.$i, $j);
+            $sheet->setCellValue('B'.$i, $inscription->getAdmission()->getCode());
+            $sheet->setCellValue('C'.$i, $inscription->getAdmission()->getPreinscription()->getCode());
+            $sheet->setCellValue('D'.$i, $inscription->getCode());
+            $sheet->setCellValue('E'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getNom());
+            $sheet->setCellValue('F'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getPrenom());
+            $sheet->setCellValue('G'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getDateNaissance());
+            $sheet->setCellValue('H'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getCin());
+            $sheet->setCellValue('I'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getVille());
+            $sheet->setCellValue('J'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getTel1());
+            $sheet->setCellValue('K'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getMail1());
+            $sheet->setCellValue('L'.$i, $inscription->getAnnee()->getFormation()->getEtablissement()->getDesignation());
+            $sheet->setCellValue('M'.$i, $inscription->getAnnee()->getFormation()->getDesignation());
+            $sheet->setCellValue('N'.$i, $inscription->getPromotion()->getDesignation());
+            $sheet->setCellValue('O'.$i, 'CATEGORIE');
+            $sheet->setCellValue('P'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getTypeBac() == Null ? "" : $inscription->getAdmission()->getPreinscription()->getEtudiant()->getTypeBac()->getDesignation());
+            $sheet->setCellValue('Q'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getAnneeBac());
+            $sheet->setCellValue('R'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getMoyenneBac());
+            $sheet->setCellValue('S'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getMoyenNational());
+            $sheet->setCellValue('T'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getMoyenRegional());
+            $facture = $this->em->getRepository(TOperationcab::class)->findOneBy(['categorie'=>'inscription','preinscription'=>$inscription->getAdmission()->getPreinscription(),'active'=>1]);
+            if ($facture) {
+                $sheet->setCellValue('U'.$i, $facture->getCode());
+                $sommefacture = $this->em->getRepository(TOperationdet::class)->getSumMontantByCodeFacture($facture);
+                $sommefacture = $sommefacture == Null ? 0 : $sommefacture['total'];
+                $sheet->setCellValue('V'.$i, $sommefacture);
+                $sommereglement = $this->em->getRepository(TReglement::class)->getSumMontantByCodeFacture($facture);
+                $sommereglement = $sommereglement == Null ? 0 : $sommereglement['total'];
+                $sheet->setCellValue('W'.$i, $sommereglement);
+                $reste = $sommefacture - $sommereglement;
+                $sheet->setCellValue('X'.$i, $reste);
+                $reglement = $this->em->getRepository(TReglement::class)->findOneBy(['operation'=>$facture],['id'=>'DESC']);
+                if ($reglement) {
+                    $sheet->setCellValue('Y'.$i, $reglement->getPaiement()->getDesignation());
+                    $sheet->setCellValue('Z'.$i, $reglement->getCode());
+                }
+                $sheet->setCellValue('AA'.$i, $facture->getCreated());
+                if ($reglement) {
+                    $sheet->setCellValue('AB'.$i, $reglement->getCreated());
+                }
+            }
+            $i++;
+            $j++;
+        }
+        $writer = new Xlsx($spreadsheet);
+        $fileName = 'Extraction Inscription.xlsx';
+        $temp_file = tempnam(sys_get_temp_dir(), $fileName);
+        $writer->save($temp_file);
+        return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);
     }
 
 }

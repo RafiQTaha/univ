@@ -24,6 +24,7 @@
         processing: true,
         serverSide: true,
         deferRender: true,
+        responsive: true,
         scrollX: true,
         drawCallback: function () {
             idInscription.forEach((e) => {
