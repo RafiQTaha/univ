@@ -47,4 +47,15 @@ class TPreinscriptionRepository extends ServiceEntityRepository
         ;
     }
     */
+    public function getPreinsByCurrentYear($annee)
+    {
+        return $this->createQueryBuilder('preins')
+            ->innerJoin("preins.annee", "annee")
+            ->Where('annee.designation = :annee')
+            ->andWhere('preins.active = 1')
+            ->setParameter('annee', $annee)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
 }

@@ -343,5 +343,8 @@ const Toast = Swal.mixin({
           icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
         }
     })
+    $('body').on('click','#extraction', function (){
+      window.open('/preinscription/gestion/extraction_preins', '_blank');
+    })
 })
 

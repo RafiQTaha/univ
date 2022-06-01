@@ -599,17 +599,90 @@ class GestionPreinscriptionController extends AbstractController
     #[Route('/extraction_preins', name: 'extraction_preins')]
     public function extraction_preins()
     {   
-        $preinscription = $this->em->getRepository(TPreinscription::class)->findAll();
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
-        $sheet->setCellValue('A1', 'Id');
-        $sheet->setCellValue('B1', 'Niveau');
+        $sheet->setCellValue('A1', 'ORD');
+        $sheet->setCellValue('B1', 'CODE CANDIDAT');
+        $sheet->setCellValue('C1', 'CODE PREINSCRIPTION');
+        $sheet->setCellValue('D1', 'NOM');
+        $sheet->setCellValue('E1', 'PRENOM');
+        $sheet->setCellValue('F1', 'DATE NAISSANCE');
+        $sheet->setCellValue('G1', 'CIN');
+        $sheet->setCellValue('H1', 'TEL CANDIDAT');
+        $sheet->setCellValue('I1', 'MAIL CANDIDAT');
+        $sheet->setCellValue('J1', 'ETABLISSEMENT');
+        $sheet->setCellValue('K1', 'FORMATION');
+        $sheet->setCellValue('L1', 'CATEGORIE DEMANDE');
+        $sheet->setCellValue('M1', 'NATURE DEMANDE');
+        $sheet->setCellValue('N1', 'TYPE DE BAC');
+        $sheet->setCellValue('O1', 'ANNEE BAC');
+        $sheet->setCellValue('P1', 'MOYENNE GENERALE');
+        $sheet->setCellValue('Q1', 'MOYENNE NATIONALE');
+        $sheet->setCellValue('R1', 'MOYENNE REGIONALE');
+        $sheet->setCellValue('S1', 'N°FACTURE');
+        $sheet->setCellValue('T1', 'MONTANT FACTURE');
+        $sheet->setCellValue('V1', 'MONTANT REGLE');
+        $sheet->setCellValue('W1', 'RESTE');
+        $sheet->setCellValue('X1', 'TYPE REGLEMENT');
+        $sheet->setCellValue('Y1', 'REFERENCE REGLEMENT');
+        $sheet->setCellValue('Z1', 'DATE FACTURE');
+        $sheet->setCellValue('AA1', 'DATE REGLEMENT');
         $i=2;
-        // foreach ($groupes as $groupe) {
-        //     $sheet->setCellValue('A'.$i, $groupe->getId());
-        //     $sheet->setCellValue('B'.$i, $groupe->getNiveau());
-        //     $i++;
-        // }
+        $j=1;
+        $current_year = date('m') > 7 ? $current_year = date('Y').'/'.date('Y')+1 : $current_year = date('Y') - 1 .'/' .date('Y');
+        $preinscriptions = $this->em->getRepository(TPreinscription::class)->getPreinsByCurrentYear($current_year);
+        // dd($preinscriptions);
+        foreach ($preinscriptions as $preinscription) {
+            // dd($preinscription);
+            $etudiant = $preinscription->getEtudiant();
+            $natutre = $etudiant->getNatureDemande();
+            $annee = $preinscription->getAnnee();
+            $formation = $annee->getFormation();
+            // dump($annee); 
+            $sheet->setCellValue('A'.$i, $j);
+            $sheet->setCellValue('B'.$i, $preinscription->getEtudiant()->getCode());
+            $sheet->setCellValue('B'.$i, $preinscription->getCode());
+            $sheet->setCellValue('D'.$i, $preinscription->getEtudiant()->getNom());
+            $sheet->setCellValue('E'.$i, $preinscription->getEtudiant()->getPrenom());
+            $sheet->setCellValue('F'.$i, $preinscription->getEtudiant()->getDateNaissance());
+            $sheet->setCellValue('G'.$i, $preinscription->getEtudiant()->getCin());
+            $sheet->setCellValue('H'.$i, $preinscription->getEtudiant()->getTel1());
+            $sheet->setCellValue('I'.$i, $preinscription->getEtudiant()->getMail1());
+            $sheet->setCellValue('J'.$i, $formation->getEtablissement()->getDesignation());
+            $sheet->setCellValue('K'.$i, $formation->getDesignation());
+            $sheet->setCellValue('L'.$i, 'CATEGORIE DEMANDE');
+            if ($etudiant->getNatureDemande()) {
+                $sheet->setCellValue('M'.$i, $etudiant->getNatureDemande()->getDesignation());
+            }
+            $sheet->setCellValue('N'.$i, $etudiant->getTypeBac() == Null ? "" : $etudiant->getTypeBac()->getDesignation());
+            $sheet->setCellValue('O'.$i, $etudiant->getAnneeBac());
+            $sheet->setCellValue('P'.$i, $etudiant->getMoyenneBac());
+            $sheet->setCellValue('Q'.$i, $etudiant->getMoyenNational());
+            $sheet->setCellValue('R'.$i, $etudiant->getMoyenRegional());
+            $facture = $this->em->getRepository(TOperationcab::class)->findOneBy(['categorie'=>'pré-inscription','preinscription'=>$preinscription,'active'=>1]);
+            if ($facture) {
+                $sheet->setCellValue('S'.$i, $facture->getCode());
+                $sommefacture = $this->em->getRepository(TOperationdet::class)->getSumMontantByCodeFacture($facture);
+                $sommefacture = $sommefacture == Null ? 0 : $sommefacture['total'];
+                $sheet->setCellValue('T'.$i, $sommefacture);
+                $sommereglement = $this->em->getRepository(TReglement::class)->getSumMontantByCodeFacture($facture);
+                $sommereglement = $sommereglement == Null ? 0 : $sommereglement['total'];
+                $sheet->setCellValue('V'.$i, $sommereglement);
+                $reste = $sommefacture - $sommereglement;
+                $sheet->setCellValue('W'.$i, $reste);
+                $reglement = $this->em->getRepository(TReglement::class)->findOneBy(['operation'=>$facture],['id'=>'DESC']);
+                if ($reglement) {
+                    $sheet->setCellValue('X'.$i, $reglement->getPaiement()->getDesignation());
+                    $sheet->setCellValue('Y'.$i, $reglement->getCode());
+                }
+                $sheet->setCellValue('Z'.$i, $facture->getCreated());
+                if ($reglement) {
+                    $sheet->setCellValue('AA'.$i, $reglement->getCreated());
+                }
+            }
+            $i++;
+            $j++;
+        }
         $writer = new Xlsx($spreadsheet);
         $fileName = 'Extraction Preinscription.xlsx';
         $temp_file = tempnam(sys_get_temp_dir(), $fileName);
