@@ -51,6 +51,9 @@ class AcPromotion
     #[ORM\OneToMany(mappedBy: 'promotion', targetEntity: HAlbhon::class)]
     private $albhonss;
 
+    #[ORM\Column(type: 'integer', nullable: true)]
+    private $limite;
+
     public function __construct()
     {
         $this->semestres = new ArrayCollection();
@@ -257,6 +260,18 @@ class AcPromotion
                 $albhonss->setPromotion(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getLimite(): ?int
+    {
+        return $this->limite;
+    }
+
+    public function setLimite(int $limite): self
+    {
+        $this->limite = $limite;
 
         return $this;
     }

@@ -355,10 +355,16 @@ class GestionAdmissionController extends AbstractController
         return new JsonResponse("Etudiant deja inscrit à l'année courant!", 500);
     }
     #[Route('/inscription/{admission}', name: 'admission_inscription')]
-    public function inscriptionAction(Request $request, TAdmission $admission): Response
+    public function inscriptionAction(Request $request, TAdmission $admission)
     {
         $annee = $this->em->getRepository(AcAnnee::class)->find($request->get('annee_inscription'));
         $promotion = $this->em->getRepository(AcPromotion::class)->find($request->get('promotion_inscription'));
+        if ($promotion->getLimite() != Null) {
+            $inss = $this->em->getRepository(TInscription::class)->findBy(['promotion'=>$promotion,'annee'=>$annee]);
+            if (count($inss) >= $promotion->getLimite()) {
+                return new JsonResponse("No Place!!", 500);
+            }
+        }
         $inscription = new TInscription();
         $inscription->setStatut(
             $this->em->getRepository(PStatut::class)->find(13)

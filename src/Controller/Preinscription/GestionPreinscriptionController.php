@@ -191,7 +191,6 @@ class GestionPreinscriptionController extends AbstractController
     {
         $ids = json_decode($request->get('idpreins'));
         foreach ($ids as $id) {
-
             $preinscription = $this->em->getRepository(TPreinscription::class)->find($id);
             $preinscription->setCategorieListe(
                 $this->em->getRepository(PStatut::class)->find(1)
