@@ -12,7 +12,7 @@ const Toast = Swal.mixin({
     let id_inscription = false;
     let idInscription = [];
     let frais = [];
-    
+    let facture_exist = false;
     $(document).ready(function  () {
     var table = $("#datatables_gestion_inscription").DataTable({
         lengthMenu: [
@@ -60,15 +60,18 @@ const Toast = Swal.mixin({
         try {
             const request = await axios.get("/inscription/gestion/frais/"+id_inscription);
             const data = await request.data;
+            facture_exist = 1;
             $('#frais').html(data.list).select2();
             $('#code-facture').html(data.codefacture);
           } catch (error) {
             const message = error.response.data;
-            console.log(error, error.response);
+            facture_exist = false;
+            // console.log(error, error.response);
             Toast.fire({
                 icon: 'error',
-                title: 'Some Error',
-            })    
+                title: message,
+            })
+
         }
     }
     $("#frais").on("change", () => {
@@ -194,6 +197,13 @@ const Toast = Swal.mixin({
             title: 'Veuillez selection une ligne!',
           })
           return;
+        }
+        if(!facture_exist){
+            Toast.fire({
+              icon: 'error',
+              title: 'Facture Introuvable!',
+            })
+            return;
         }
   
         $("#frais_inscription-modal").modal("show")

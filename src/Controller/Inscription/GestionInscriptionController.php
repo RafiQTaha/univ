@@ -177,7 +177,10 @@ class GestionInscriptionController extends AbstractController
     {   
         $operationcab = $this->em->getRepository(TOperationcab::class)->findOneBy(['preinscription'=>$inscription->getAdmission()->getPreinscription(),'categorie'=>'inscription']);
         // dd($operationcab);
-        $frais = $this->em->getRepository(PFrais::class)->findBy(["formation" => $inscription->getAnnee()->getFormation(), "categorie" => "inscription"]);
+        if (!$operationcab) {
+            return new JsonResponse('Facture Introuvable!', 500); 
+        }
+        $frais = $this->em->getRepository(PFrais::class)->findBy(["formation" => $inscription->getAnnee()->getFormation(), "categorie" => "inscription",'active'=>1]);
         $data = ApiController::dropdownData($frais,'frais');
         return new JsonResponse(['list' => $data, 'codefacture' => $operationcab->getCode()], 200); 
     }

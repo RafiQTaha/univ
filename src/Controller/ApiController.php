@@ -156,7 +156,7 @@ class ApiController extends AbstractController
     #[Route('/organisme/{operationcab}', name: 'getOrganismeByoperation')]
     public function getOrganismeByoperation(TOperationcab $operationcab): Response
     {   
-        $organismes = $this->em->getRepository(POrganisme::class)->findAll();
+        $organismes = $this->em->getRepository(POrganisme::class)->findBy(['active'=>1]);
         $data = "<option selected disabled value=''>Choix Organisme</option>";
         foreach ($organismes as $organisme) {
             if ($organisme === $operationcab->getOrganisme()) {
@@ -186,7 +186,7 @@ class ApiController extends AbstractController
     {   
         $formation = $admission->getPreinscription()->getAnnee()->getFormation();
         $operationcab = $this->em->getRepository(TOperationcab::class)->findOneBy(['preinscription'=>$admission->getPreinscription(),'categorie'=>'admission']);
-        $frais = $this->em->getRepository(PFrais::class)->findBy(["formation" => $formation, 'categorie' => "admission"]);
+        $frais = $this->em->getRepository(PFrais::class)->findBy(["formation" => $formation, 'categorie' => "admission",'active'=>1]);
         $data = self::dropdownData($frais,'frais');
                 
         return new JsonResponse(['list' => $data, 'codefacture' => $operationcab->getCode()]);        

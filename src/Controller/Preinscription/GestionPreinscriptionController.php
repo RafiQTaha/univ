@@ -240,7 +240,7 @@ class GestionPreinscriptionController extends AbstractController
     {   
         $operationcab = $this->em->getRepository(TOperationcab::class)->findOneBy(['preinscription'=>$preinscription,'categorie'=>'pré-inscription']);
         $formation = $preinscription->getAnnee()->getFormation();
-        $frais = $this->em->getRepository(PFrais::class)->findBy(['formation'=>$formation,'categorie'=>'Pré-inscription']);
+        $frais = $this->em->getRepository(PFrais::class)->findBy(['formation'=>$formation,'categorie'=>'Pré-inscription','active'=>1]);
         $data = "<option selected enabled>Choix Fraix</option>";
         foreach ($frais as $frs) {
             $data .="<option value=".$frs->getId()." data-id=".$frs->getmontant().">".$frs->getDesignation()."</option>";
@@ -615,6 +615,8 @@ class GestionPreinscriptionController extends AbstractController
         $sheet->setCellValue('N1', 'TYPE DE BAC');
         $sheet->setCellValue('O1', 'ANNEE BAC');
         $sheet->setCellValue('P1', 'MOYENNE GENERALE');
+        // $spreadsheet->getActiveSheet()->getStyle('P1')->getFill()
+        // ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('ff0000');
         $sheet->setCellValue('Q1', 'MOYENNE NATIONALE');
         $sheet->setCellValue('R1', 'MOYENNE REGIONALE');
         $sheet->setCellValue('S1', 'N°FACTURE');
@@ -645,13 +647,15 @@ class GestionPreinscriptionController extends AbstractController
             $sheet->setCellValue('I'.$i, $preinscription->getEtudiant()->getMail1());
             $sheet->setCellValue('J'.$i, $formation->getEtablissement()->getDesignation());
             $sheet->setCellValue('K'.$i, $formation->getDesignation());
-            $sheet->setCellValue('L'.$i, 'CATEGORIE DEMANDE');
+            $sheet->setCellValue('L'.$i, $preinscription->getEtudiant()->getCategoriePreinscription());
             if ($etudiant->getNatureDemande()) {
                 $sheet->setCellValue('M'.$i, $etudiant->getNatureDemande()->getDesignation());
             }
             $sheet->setCellValue('N'.$i, $etudiant->getTypeBac() == Null ? "" : $etudiant->getTypeBac()->getDesignation());
             $sheet->setCellValue('O'.$i, $etudiant->getAnneeBac());
             $sheet->setCellValue('P'.$i, $etudiant->getMoyenneBac());
+            // $spreadsheet->getActiveSheet()->getStyle('P'.$i)->getFill()
+            // ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('ff0000');
             $sheet->setCellValue('Q'.$i, $etudiant->getMoyenNational());
             $sheet->setCellValue('R'.$i, $etudiant->getMoyenRegional());
             $facture = $this->em->getRepository(TOperationcab::class)->findOneBy(['categorie'=>'pré-inscription','preinscription'=>$preinscription,'active'=>1]);

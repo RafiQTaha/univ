@@ -324,9 +324,9 @@ class GestionFactureController extends AbstractController
         $formation = $operationcab->getPreinscription()->getAnnee()->getFormation();
         $categorie = $operationcab->getCategorie();
         if ($categorie == 'hors inscription') {
-            $frais = $this->em->getRepository(PFrais::class)->findBy(['formation'=>$formation]);
+            $frais = $this->em->getRepository(PFrais::class)->findBy(['formation'=>$formation,'active'=>1]);
         }else{
-            $frais = $this->em->getRepository(PFrais::class)->findBy(['formation'=>$formation,'categorie'=>$categorie]);
+            $frais = $this->em->getRepository(PFrais::class)->findBy(['formation'=>$formation,'categorie'=>$categorie,'active'=>1]);
         }
         $data = "<option selected enabled>Choix Fraix</option>";
         foreach ($frais as $frs) {
