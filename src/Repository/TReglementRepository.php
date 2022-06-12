@@ -96,7 +96,29 @@ class TReglementRepository extends ServiceEntityRepository
         } 
         return $request;
     }
-
+    
+    public function getReglementsByCurrentYear()
+    {
+        return $this->createQueryBuilder('reg')
+            ->select("pre.code as code_preins, cab.code as code_facture, ann.designation as annee, etu.nom as nom, etu.prenom as prenom,etu.nationalite as nationalite, etab.designation as etablissement, frm.designation as formation, prm.designation as promotion,reg.code as code_reglement,reg.montant as montant_regle, reg.date_reglement as date_reglement, reg.reference as reference,pai.code as mode_paiement,brd.code num_brd ")
+            ->innerJoin("reg.operation","cab")
+            ->innerJoin("cab.preinscription","pre")
+            ->innerJoin("pre.etudiant","etu")
+            ->leftJoin("pre.admissions","adm")
+            ->leftJoin("adm.inscriptions","ins")
+            ->leftJoin("ins.promotion","prm")
+            ->leftJoin("ins.statut","stat")
+            ->innerJoin("cab.annee","ann")
+            ->leftJoin("ann.formation","frm")
+            ->leftJoin("frm.etablissement","etab")
+            ->leftJoin("reg.paiement","pai")
+            ->leftJoin("reg.bordereau","brd")
+            ->Where("ann.cloture_academique = 'non'")
+            ->Where("reg.annuler = 0")
+            ->getQuery()
+            ->getResult()
+        ;
+    }
     /*
     public function findOneBySomeField($value): ?TReglement
     {

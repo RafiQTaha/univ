@@ -29,6 +29,9 @@ use App\Controller\DatatablesController;
 use phpDocumentor\Reflection\Types\Null_;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use App\Entity\nuts;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 
 #[Route('/facture/reglements')]
 class GestionReglementsController extends AbstractController
@@ -318,5 +321,57 @@ class GestionReglementsController extends AbstractController
         $this->em->flush();
         return new JsonResponse('Reglement bien modifier', 200);        
     }
+    
+    #[Route('/extraction_reglement', name: 'extraction_reglement')]
+    public function extraction_reglement()
+    {   
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        $sheet->setCellValue('A1', 'ORD');
+        $sheet->setCellValue('B1', 'CODE PRE-INSCRIPTION');
+        $sheet->setCellValue('C1', 'CODE FACTURE');
+        $sheet->setCellValue('D1', 'ANNEE UNIVERSITAIRE');
+        $sheet->setCellValue('E1', 'NOM');
+        $sheet->setCellValue('F1', 'PRENOM');
+        $sheet->setCellValue('G1', 'NATIONALITE');
+        $sheet->setCellValue('H1', 'ETABLISSEMENT');
+        $sheet->setCellValue('I1', 'FORMATION');
+        $sheet->setCellValue('J1', 'PROMOTION');
+        $sheet->setCellValue('K1', 'CODE REGLEMENT');
+        $sheet->setCellValue('L1', 'MT REGLE');
+        $sheet->setCellValue('M1', 'DATE REGLEMENT');
+        $sheet->setCellValue('N1', 'REFERENCE DOC');
+        $sheet->setCellValue('O1', 'MODE PAIEMENT');
+        $sheet->setCellValue('P1', 'N° BRD');
+        $i=2;
+        $j=1;
+        $reglements = $this->em->getRepository(TReglement::class)->getReglementsByCurrentYear();
+        foreach ($reglements as $reglement) {
+            $sheet->setCellValue('A'.$i, $j);
+            $sheet->setCellValue('B'.$i, $reglement['code_preins']);
+            $sheet->setCellValue('C'.$i, $reglement['code_facture']);
+            $sheet->setCellValue('D'.$i, $reglement['annee']);
+            $sheet->setCellValue('E'.$i, $reglement['nom']);
+            $sheet->setCellValue('F'.$i, $reglement['prenom']);
+            $sheet->setCellValue('G'.$i, $reglement['nationalite']);
+            $sheet->setCellValue('H'.$i, $reglement['etablissement']);
+            $sheet->setCellValue('I'.$i, $reglement['formation']);
+            $sheet->setCellValue('J'.$i, $reglement['promotion']);
+            $sheet->setCellValue('K'.$i, $reglement['code_reglement']);
+            $sheet->setCellValue('L'.$i, $reglement['montant_regle']);
+            $sheet->setCellValue('M'.$i, $reglement['date_reglement']->format('Y-m-d H:m:s'));
+            $sheet->setCellValue('N'.$i, $reglement['reference']);
+            $sheet->setCellValue('O'.$i, $reglement['mode_paiement']);
+            $sheet->setCellValue('P'.$i, $reglement['num_brd']);
+            $i++;
+            $j++;
+        }
+        $writer = new Xlsx($spreadsheet);
+        $fileName = 'Extraction Reglement.xlsx';
+        $temp_file = tempnam(sys_get_temp_dir(), $fileName);
+        $writer->save($temp_file);
+        return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);
+    }
+
     
 }
