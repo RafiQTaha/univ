@@ -187,7 +187,7 @@ class GestionFactureController extends AbstractController
     #[Route('/ajouter_reglement/{id}', name: 'facture_ajouter_reglement')]
     public function ajouter_reglement(Request $request,TOperationcab $operationcab): Response
     { 
-        if (empty($request->get('d_reglement')) || $request->get('montant') == "" ||
+        if (empty($request->get('d_reglement')) || $request->get('montant') == "" || empty($request->get('banque')) ||
          empty($request->get('paiement'))  ||  empty($request->get('reference'))) {
             return new JsonResponse('Veuillez renseigner tous les champs!', 500);
         }elseif ($request->get('montant') == 0) {
