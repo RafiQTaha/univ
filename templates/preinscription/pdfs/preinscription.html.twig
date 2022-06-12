@@ -215,8 +215,11 @@
 <table cellspacing="4px" style="width: 88%;margin-top:6px;margin-left:-4px;font-size:10px;font-weight: bold;" class="mo">
     <tr>
         <td style="width: 25% ;background:rgb(194, 194, 194);"> &nbsp;Langue du Concours </td> 
-
-        <td style="width: 33% ;border:1px solid gray;">{{ preinscription.etudiant.langueConcours.designation }}</td> 
+            {% if preinscription.etudiant.langueConcours is null %}
+                <td style="width: 33% ;border:1px solid gray;"></td> 
+            {% else %}
+                <td style="width: 33% ;border:1px solid gray;">{{ preinscription.etudiant.langueConcours.designation }}</td> 
+            {% endif %}
 
         <td style="width: 25% ;background:rgb(194, 194, 194);"> &nbsp;Filière Choisie:</td> 
 
