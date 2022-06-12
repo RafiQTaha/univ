@@ -50,7 +50,7 @@ class TReglement
     private $payant;
 
     #[ORM\Column(type: 'float', nullable: true)]
-    private $annuler;
+    private $annuler = 0;
 
     #[ORM\Column(type: 'string', length: 20, nullable: true)]
     private $annuler_motif;
