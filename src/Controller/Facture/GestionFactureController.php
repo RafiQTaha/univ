@@ -25,7 +25,10 @@ use App\Entity\TOperationdet;
 use App\Entity\XModalites;
 use App\Controller\ApiController;
 use App\Controller\DatatablesController;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 
 #[Route('/facture/factures')]
 class GestionFactureController extends AbstractController
@@ -97,9 +100,10 @@ class GestionFactureController extends AbstractController
             array( 'db' => 'etu.prenom','dt' => 4),
             array( 'db' => 'etu.cin','dt' => 5),
             array( 'db' => 'etab.abreviation','dt' => 6),
-            array( 'db' => 'Upper(frma.abreviation)','dt' => 7),
+            // array( 'db' => 'Upper(frma.abreviation)','dt' => 7),
+            array( 'db' => 'Upper(stat.designation)','dt' => 7),
             // array( 'db' => 'nat.designation','dt' => 8),
-            array( 'db' => 'org.designation','dt' => 8),
+            array( 'db' => 'upper(etu.nationalite)','dt' => 8),
             array( 'db' => 'opcab.categorie','dt' => 9),
             array( 'db' => 'montant_facture','dt' => 10),
             array( 'db' => 'montant_regle','dt' => 11),
@@ -111,6 +115,9 @@ class GestionFactureController extends AbstractController
         FROM `toperationcab` opcab
         INNER JOIN ac_annee an on an.id = opcab.annee_id
         INNER JOIN tpreinscription pre on pre.id = opcab.preinscription_id
+        LEFT JOIN tadmission adm on pre.id = adm.preinscription_id
+        LEFT JOIN tinscription ins on adm.id = ins.admission_id
+        LEFT JOIN pstatut stat on stat.id = ins.statut_id
         INNER JOIN tetudiant etu on etu.id = pre.etudiant_id
         INNER JOIN ac_formation frma on frma.id = an.formation_id
         INNER JOIN ac_etablissement etab on etab.id = frma.etablissement_id
@@ -134,6 +141,7 @@ class GestionFactureController extends AbstractController
         
         $columns[12]['db'] = 'diff';
         $sqlRequest .= DatatablesController::Order($request, $columns);
+        // dd($sqlRequest);
         
         $stmt = $this->em->getConnection()->prepare($sqlRequest);
         $resultSet = $stmt->executeQuery();
@@ -151,8 +159,10 @@ class GestionFactureController extends AbstractController
                     if ($key == 10 || $key == 11) {
                         $value = $value == NULL ? 0 : $value;
                     }
-                    if ($key == 8) {
-                        $value = $value == 'Payant' ? $value : 'Boursier';
+                    if ($key == 13) {
+                        if (!in_array($value,['PYT','FCZ-PYT'])) {
+                            $value = 'ORG';
+                        }
                     }
                     if($key == 14){
                         $value = $value == 0 ? 'Cloture' : 'Ouverte';
@@ -177,7 +187,8 @@ class GestionFactureController extends AbstractController
     #[Route('/ajouter_reglement/{id}', name: 'facture_ajouter_reglement')]
     public function ajouter_reglement(Request $request,TOperationcab $operationcab): Response
     { 
-        if (empty($request->get('d_reglement')) || $request->get('montant') == "" || empty($request->get('paiement')) ) {
+        if (empty($request->get('d_reglement')) || $request->get('montant') == "" ||
+         empty($request->get('paiement'))  ||  empty($request->get('reference'))) {
             return new JsonResponse('Veuillez renseigner tous les champs!', 500);
         }elseif ($request->get('montant') == 0) {
             return new JsonResponse('Le montant ne peut pas étre égale à 0', 500);
@@ -275,13 +286,16 @@ class GestionFactureController extends AbstractController
             $frais = $operationdet->getFrais();
             // dd($frais);
             $SumByOrg = $this->em->getRepository(TOperationdet::class)->getSumMontantByCodeFactureAndOrganisme($operationcab,$frais);
+            $SumByOrgPyt = $this->em->getRepository(TOperationdet::class)->getSumMontantByCodeFactureAndOrganismePayant($operationcab,$frais);
             $SumByPayant = $this->em->getRepository(TOperationdet::class)->getSumMontantByCodeFactureAndPayant($operationcab,$frais);
+            // dd($SumByOrgPyt);
             $list['dateOperation'] = $this->em->getRepository(TOperationdet::class)->findOneBy(['operationcab'=>$operationcab,'frais'=>$frais],['created'=>'DESC'])->getCreated()->format('d/m/Y');
             // $list['dateOperation'] = $operationdet->getCreated()->format('d/m/Y h:m:s');
             $list['designation'] = $operationdet->getFrais()->getDesignation();
             $list['SumByOrg'] = $SumByOrg;
+            $list['SumByOrgPyt'] = $SumByOrgPyt;
             $list['SumByPayant'] = $SumByPayant;
-            $list['total'] = $SumByPayant + $SumByOrg;
+            $list['total'] = $SumByPayant + $SumByOrg + $SumByOrgPyt;
             array_push($operationdetslist,$list);
         }
         $inscription = $this->em->getRepository(TInscription::class)->findOneBy([
@@ -293,8 +307,6 @@ class GestionFactureController extends AbstractController
         $reglementOrg = $this->em->getRepository(TReglement::class)->getReglementSumMontantByCodeFactureByOrganisme($operationcab)['total'];
         $reglementPyt = $this->em->getRepository(TReglement::class)->getReglementSumMontantByCodeFactureByPayant($operationcab)['total'];
         // dd($reglementOrg,$reglementPyt);
-        
-        
         $html = $this->render("facture/pdfs/facture_facture.html.twig", [
             'reglementOrg' => $reglementOrg,
             'reglementPyt' => $reglementPyt,
@@ -353,9 +365,13 @@ class GestionFactureController extends AbstractController
                 }
                 $tr = '<th scope="col">'.$active.'</th>';
             }
+            $organisme = $operationdet->getOrganisme()->getAbreviation();
+            if (!in_array($operationdet->getOrganisme()->getAbreviation(),['PYT','FCZ-PYT'])) {
+                $organisme = 'ORG';
+            }
             $html .= '<tr><th scope="col">'.$i++.'</th>
             <th scope="col" style="width:25rem">'.$operationdet->getFrais()->getDesignation().'</th>
-            <th scope="col">'.$operationdet->getOrganisme()->getDesignation().'</th>
+            <th scope="col">'.$organisme.'</th>
             <th scope="col">'.$operationdet->getMontant().'</th>
             <th scope="col">'.$operationdet->getRemise().'</th>'.$tr.'</tr>';
         }
@@ -405,5 +421,60 @@ class GestionFactureController extends AbstractController
         return new JsonResponse(1, 200);    
     }
     
+    #[Route('/extraction_factures', name: 'extraction_factures')]
+    public function extraction_factures()
+    {   
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        $sheet->setCellValue('A1', 'ORD');
+        $sheet->setCellValue('B1', 'CODE PRE-INSCRIPTION');
+        $sheet->setCellValue('C1', 'CODE FACTURE');
+        $sheet->setCellValue('D1', 'ANNEE UNIVERSITAIRE');
+        $sheet->setCellValue('E1', 'NOM');
+        $sheet->setCellValue('F1', 'PRENOM');
+        $sheet->setCellValue('G1', 'NATIONALITE');
+        $sheet->setCellValue('H1', 'ETABLISSEMENT');
+        $sheet->setCellValue('I1', 'FORMATION');
+        $sheet->setCellValue('J1', 'PROMOTION');
+        $sheet->setCellValue('K1', 'SOURCE');
+        $sheet->setCellValue('L1', 'FRAIS');
+        $sheet->setCellValue('M1', 'MT FACTURE');
+        $sheet->setCellValue('N1', 'MT REGLE');
+        $sheet->setCellValue('O1', 'REST');
+        $sheet->setCellValue('P1', 'ORG');
+        $sheet->setCellValue('Q1', 'statut');
+        $i=2;
+        $j=1;
+        $operationcabs = $this->em->getRepository(TOperationcab::class)->getFacturesByCurrentYear();
+        // dd($operationcabs);
+        foreach ($operationcabs as $operationcab) {
+            $montant = $this->em->getRepository(TOperationdet::class)->getSumMontantByCodeFacture($operationcab['id']);
+            $montant_reglement = $this->em->getRepository(TReglement::class)->getSumMontantByCodeFacture($operationcab['id']);
+            $sheet->setCellValue('A'.$i, $j);
+            $sheet->setCellValue('B'.$i, $operationcab['code_preins']);
+            $sheet->setCellValue('C'.$i, $operationcab['code_facture']);
+            $sheet->setCellValue('D'.$i, $operationcab['annee']);
+            $sheet->setCellValue('E'.$i, $operationcab['nom']);
+            $sheet->setCellValue('F'.$i, $operationcab['prenom']);
+            $sheet->setCellValue('G'.$i, $operationcab['nationalite']);
+            $sheet->setCellValue('H'.$i, $operationcab['etablissement']);
+            $sheet->setCellValue('I'.$i, $operationcab['formation']);
+            $sheet->setCellValue('J'.$i, $operationcab['promotion']);
+            $sheet->setCellValue('K'.$i, $operationcab['categorie']);
+            $sheet->setCellValue('L'.$i, '');
+            $sheet->setCellValue('M'.$i, $montant['total']);
+            $sheet->setCellValue('N'.$i, $montant_reglement['total']);
+            $sheet->setCellValue('O'.$i, $montant['total'] - $montant_reglement['total']);
+            $sheet->setCellValue('P'.$i, '');
+            $sheet->setCellValue('Q'.$i, $operationcab['statut']);
+            $i++;
+            $j++;
+        }
+        $writer = new Xlsx($spreadsheet);
+        $fileName = 'Extraction Facture.xlsx';
+        $temp_file = tempnam(sys_get_temp_dir(), $fileName);
+        $writer->save($temp_file);
+        return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);
+    }
 
 }

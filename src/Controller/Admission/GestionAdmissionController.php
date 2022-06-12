@@ -276,10 +276,12 @@ class GestionAdmissionController extends AbstractController
         foreach ($operationdets as $operationdet) {
             $frais = $operationdet->getFrais();
             $SumByOrg = $this->em->getRepository(TOperationdet::class)->getSumMontantByCodeFactureAndOrganisme($operationcab,$frais);
+            $SumByOrgPyt = $this->em->getRepository(TOperationdet::class)->getSumMontantByCodeFactureAndOrganismePayant($operationcab,$frais);
             $SumByPayant = $this->em->getRepository(TOperationdet::class)->getSumMontantByCodeFactureAndPayant($operationcab,$frais);
             $list['dateOperation'] = $this->em->getRepository(TOperationdet::class)->findOneBy(['operationcab'=>$operationcab,'frais'=>$frais],['created'=>'DESC'])->getCreated()->format('d/m/Y');
             $list['designation'] = $operationdet->getFrais()->getDesignation();
             $list['SumByOrg'] = $SumByOrg;
+            $list['SumByOrgPyt'] = $SumByOrgPyt;
             $list['SumByPayant'] = $SumByPayant;
             $list['total'] = $SumByPayant + $SumByOrg;
             array_push($operationdetslist,$list);
@@ -359,10 +361,14 @@ class GestionAdmissionController extends AbstractController
     {
         $annee = $this->em->getRepository(AcAnnee::class)->find($request->get('annee_inscription'));
         $promotion = $this->em->getRepository(AcPromotion::class)->find($request->get('promotion_inscription'));
-        if ($promotion->getLimite() != Null) {
-            $inss = $this->em->getRepository(TInscription::class)->findBy(['promotion'=>$promotion,'annee'=>$annee,'statut'=>13]);
-            if (count($inss) >= $promotion->getLimite()) {
-                return new JsonResponse("Liste Complete!!", 500);
+        // dd($admission->getPreinscription()->getEtudiant()->getCategoriePreinscription());
+        $etudiant = $admission->getPreinscription()->getEtudiant();
+        if ($etudiant->getNationalite() == 'MOROCCO' || $etudiant->getCategoriePreinscription() == 'NOUVELLE PRE-INSCRIPTION') {
+            if ($promotion->getLimite() != Null) {
+                $inss = $this->em->getRepository(TInscription::class)->findBy(['promotion'=>$promotion,'annee'=>$annee,'statut'=>13]);
+                if (count($inss) >= $promotion->getLimite()) {
+                    return new JsonResponse("La liste est Complete!!", 500);
+                }
             }
         }
         $inscription = new TInscription();

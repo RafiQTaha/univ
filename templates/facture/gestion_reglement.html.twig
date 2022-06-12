@@ -51,7 +51,7 @@
                             </select>
                         </div>
                         <div class="col-md-2">
-                            <label for="bordereaux">bordereaux:</label>
+                            <label for="bordereaux">Bordereaux:</label>
                             <select class="form-control" name="bordereaux" id="bordereaux">
                                 <option value="">Choix bordereaux</option>
                                 <option value="oui">Avec bordereau</option>
@@ -73,6 +73,7 @@
                         <th>Cin</th>
                         <th>Formation</th>
                         <th>Montant</th>
+                        <th>Reference</th>
                         <th>Date Reglement</th>
                         <th>Mode Paiement</th>
                         <th>Banque</th>
@@ -94,6 +95,7 @@
                         <th>Cin</th>
                         <th>Formation</th>
                         <th>Montant</th>
+                        <th>Reference</th>
                         <th>Date Reglement</th>
                         <th>Mode Paiement</th>
                         <th>Banque</th>
@@ -111,7 +113,8 @@
 
 
 <!--Modal Import Group-->
-{% include 'facture/modals/add_reglement.html.twig' %}
+{% include 'facture/modals/edit_reglement.html.twig' %}
+{% include 'facture/modals/annuler_reglement.html.twig' %}
 {# {% include 'facture/modals/modifier_organisme.html.twig' %} #}
 
 {% endblock %}

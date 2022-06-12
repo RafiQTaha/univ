@@ -138,7 +138,7 @@ class ApiController extends AbstractController
     #[Route('/organisme', name: 'getorganisme')]
     public function getOrganisme(): Response
     {   
-        $organisme = $this->em->getRepository(POrganisme::class)->findAll();
+        $organisme = $this->em->getRepository(POrganisme::class)->findBy(['active'=>1]);
         $data = self::dropdown($organisme,'organisme');
         return new JsonResponse($data);        
     }

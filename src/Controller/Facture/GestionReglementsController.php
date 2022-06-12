@@ -66,7 +66,7 @@ class GestionReglementsController extends AbstractController
          
         $params = $request->query;
         $where = $totalRows = $sqlRequest = "";
-        $filtre = " where 1=1 ";
+        $filtre = " where 1=1 and (reg.annuler != 1 or reg.annuler is null) ";
         
         if (!empty($params->all('columns')[0]['search']['value'])) {
             $filtre .= " and etab.id = '" . $params->all('columns')[0]['search']['value'] . "' ";
@@ -94,10 +94,11 @@ class GestionReglementsController extends AbstractController
             array( 'db' => 'etu.cin','dt' => 6),
             array( 'db' => 'upper(frm.abreviation)','dt' => 7),
             array( 'db' => 'reg.montant','dt' => 8),
-            array( 'db' => 'DATE_FORMAT(reg.date_reglement,"%Y-%m-%d")','dt' => 9),
-            array( 'db' => 'pae.designation','dt' => 10),
-            array( 'db' => 'upper(ban.designation)','dt' => 11),
-            array( 'db' => 'lower(brd.code)','dt' => 12),
+            array( 'db' => 'reg.reference','dt' => 9),
+            array( 'db' => 'DATE_FORMAT(reg.date_reglement,"%Y-%m-%d")','dt' => 10),
+            array( 'db' => 'pae.designation','dt' => 11),
+            array( 'db' => 'upper(ban.designation)','dt' => 12),
+            array( 'db' => 'lower(brd.code)','dt' => 13),
         );
         $sql = "SELECT " . implode(", ", DatatablesController::Pluck($columns, 'db')) . "
         FROM treglement reg 
@@ -269,6 +270,53 @@ class GestionReglementsController extends AbstractController
         $mpdf->WriteHTML($html);
         $mpdf->Output("Creance.pdf", "I");
 
+    }
+    
+    #[Route('/annuler_reglement/{reglement}', name: 'annuler_reglement')]
+    public function annuler_reglement(Request $request,TReglement $reglement)
+    {  
+        // dd($request->get('motif_annuler'));
+        if ($reglement) {
+            $reglement->setAnnuler(1);
+            $reglement->setAnnulerMotif($request->get('motif_annuler'));
+            $this->em->flush();
+            return new JsonResponse('Reglement Bien Annuler',200);
+        }
+    }
+    
+    #[Route('/getReglementInfos/{reglement}', name: 'getReglementInfos')]
+    public function getReglementInfos(TReglement $reglement)
+    {  
+        // dd($reglement->getDateReglement()->format('d/m/Y'));
+        $banques = $this->em->getRepository(XBanque::class)->findAll();
+        $paiements = $this->em->getRepository(XModalites::class)->findAll();
+        $html = $this->render('facture/pages/edit_reglement.html.twig', [
+            'paiements' => $paiements,
+            'banques' => $banques,
+            'reglement' => $reglement
+        ])->getContent();
+        // dd($html);
+        return new JsonResponse($html, 200); 
+    }
+    
+    #[Route('/modifier_reglement/{id}', name: 'modifier_reglement')]
+    public function ajouter_reglement(Request $request,TReglement $reglement): Response
+    { 
+        if (empty($request->get('d_reglement')) || $request->get('montant') == "" ||
+        empty($request->get('paiement')) ||  empty($request->get('reference')) ) {
+            return new JsonResponse('Veuillez renseigner tous les champs!', 500);
+        }elseif ($request->get('montant') == 0) {
+            return new JsonResponse('Le montant ne peut pas étre égale à 0', 500);
+        }
+        $reglement->setUpdated(new DateTime('now'));
+        $reglement->setMontant($request->get('montant'));
+        $reglement->setBanque($request->get('banque') == "" ? Null : $this->em->getRepository(XBanque::class)->find($request->get('banque')));
+        $reglement->setPaiement($this->em->getRepository(XModalites::class)->find($request->get('paiement')));
+        $reglement->setDateReglement(new DateTime($request->get('d_reglement')));
+        $reglement->setReference($request->get('reference'));
+        $reglement->setPayant($request->get('organisme'));
+        $this->em->flush();
+        return new JsonResponse('Reglement bien modifier', 200);        
     }
     
 }

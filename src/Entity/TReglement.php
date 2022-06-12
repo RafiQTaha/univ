@@ -49,6 +49,15 @@ class TReglement
     #[ORM\Column(type: 'float')]
     private $payant;
 
+    #[ORM\Column(type: 'float', nullable: true)]
+    private $annuler;
+
+    #[ORM\Column(type: 'string', length: 20, nullable: true)]
+    private $annuler_motif;
+
+    #[ORM\Column(type: 'datetime', nullable: true)]
+    private $updated;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -194,6 +203,42 @@ class TReglement
     public function setPayant(float $payant): self
     {
         $this->payant = $payant;
+
+        return $this;
+    }
+
+    public function getAnnuler(): ?float
+    {
+        return $this->annuler;
+    }
+
+    public function setAnnuler(?float $annuler): self
+    {
+        $this->annuler = $annuler;
+
+        return $this;
+    }
+
+    public function getAnnulerMotif(): ?string
+    {
+        return $this->annuler_motif;
+    }
+
+    public function setAnnulerMotif(?string $annuler_motif): self
+    {
+        $this->annuler_motif = $annuler_motif;
+
+        return $this;
+    }
+
+    public function getUpdated(): ?\DateTimeInterface
+    {
+        return $this->updated;
+    }
+
+    public function setUpdated(?\DateTimeInterface $updated): self
+    {
+        $this->updated = $updated;
 
         return $this;
     }

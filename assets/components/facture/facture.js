@@ -96,8 +96,8 @@ $(document).ready(function () {
             $("#ajouter").removeClass('btn-primary').addClass('btn-secondary').attr('disabled', false);
             if (success.data != 'vide') {
                 reglement = 12;
-                $("#montant").val(success.data['montant']);
-                $("#montant2").val(success.data['montant']);
+                // $("#montant").val(success.data['montant']);
+                // $("#montant2").val(success.data['montant']);
                 $("#montant_facture").val(success.data['montant_facture']);
                 $("#ajouter").removeClass('btn-secondary').addClass('btn-primary').attr('disabled', true);
             }
@@ -163,7 +163,6 @@ $(document).ready(function () {
             getMontant();
             getFacture();
             load_frais_preins();
-
         }
     })
     
@@ -304,14 +303,14 @@ $(document).ready(function () {
     });
     $('body').on('click','#modifier',async function (e) {
         e.preventDefault();
-        if(!id_facture){
-            Toast.fire({
-            icon: 'error',
-            title: 'Veuillez selection une ligne!',
-            })
-            return;
-        }
-        $("#modifier_org-modal").modal('show');
+        // if(!id_facture){
+        //     Toast.fire({
+        //     icon: 'error',
+        //     title: 'Veuillez selection une ligne!',
+        //     })
+        //     return;
+        // }
+        // $("#modifier_org-modal").modal('show');
     });
     
     $('body').on('click','#modifier_org', async function(e){
@@ -355,5 +354,9 @@ $(document).ready(function () {
         }
         window.open('/facture/factures/printfacture/'+id_facture, '_blank');
     });
+  
+    $('body').on('click','#extraction', function (){
+      window.open('/facture/factures/extraction_factures', '_blank');
+    })
     
 });

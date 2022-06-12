@@ -52,6 +52,7 @@ class POrganismeRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('p')
             ->andWhere('p.id != 7')
+            ->andWhere('p.active = 1')
             ->getQuery()
             ->getResult()
         ;

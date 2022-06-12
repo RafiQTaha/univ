@@ -142,23 +142,24 @@ class ElementController extends AbstractController
 
        return new JsonResponse(1);
     }
-    #[Route('/details/{module}', name: 'parametre_module_details')]
-    public function details(AcElement $element): Response
-    {
-       return new JsonResponse([
-           'designation' => $module->getDesignation(),
-           'active' => $module->getActive()
-       ]);
-    }
-    #[Route('/update/{module}', name: 'parametre_module_update')]
-    public function update(Request $request, AcElement $element): Response
-    {
-        $module->setDesignation($request->get('designation'));
-        $module->setCoefficient($request->get("coefficient"));
-        $module->setActive($request->get('active') == "on" ? true : false);
-        $module->setUpdated(new \DateTime("now"));
-        $this->em->flush();
+    // #[Route('/details/{module}', name: 'parametre_module_details')]
+    // public function details(AcElement $element): Response
+    // {
+    //    return new JsonResponse([
+    //        'designation' => $module->getDesignation(),
+    //        'active' => $module->getActive()
+    //    ]);
+    // }
+    // #[Route('/update/{module}', name: 'parametre_module_update')]
+    // public function update(Request $request, AcElement $element): Response
+    // {
+
+    //     $module->setDesignation($request->get('designation'));
+    //     $module->setCoefficient($request->get("coefficient"));
+    //     $module->setActive($request->get('active') == "on" ? true : false);
+    //     $module->setUpdated(new \DateTime("now"));
+    //     $this->em->flush();
  
-        return new JsonResponse(1);
-    }
+    //     return new JsonResponse(1);
+    // }
 }

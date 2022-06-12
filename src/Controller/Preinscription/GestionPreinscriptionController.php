@@ -389,10 +389,12 @@ class GestionPreinscriptionController extends AbstractController
         foreach ($operationdets as $operationdet) {
             $frais = $operationdet->getFrais();
             $SumByOrg = $this->em->getRepository(TOperationdet::class)->getSumMontantByCodeFactureAndOrganisme($operationcab,$frais);
+            $SumByOrgPyt = $this->em->getRepository(TOperationdet::class)->getSumMontantByCodeFactureAndOrganismePayant($operationcab,$frais);
             $SumByPayant = $this->em->getRepository(TOperationdet::class)->getSumMontantByCodeFactureAndPayant($operationcab,$frais);
             $list['dateOperation'] = $this->em->getRepository(TOperationdet::class)->findOneBy(['operationcab'=>$operationcab,'frais'=>$frais],['created'=>'DESC'])->getCreated()->format('d/m/Y');
             $list['designation'] = $operationdet->getFrais()->getDesignation();
             $list['SumByOrg'] = $SumByOrg;
+            $list['SumByOrgPyt'] = $SumByOrgPyt;
             $list['SumByPayant'] = $SumByPayant;
             $list['total'] = $SumByPayant + $SumByOrg;
             array_push($operationdetslist,$list);
@@ -502,12 +504,10 @@ class GestionPreinscriptionController extends AbstractController
             empty($request->get('nat_demande'))  || empty($request->get('st_famille')) ||
             empty($request->get('cin')) ||  empty($request->get('ville')) || 
             empty($request->get('tel1')) || empty($request->get('tel2')) || 
-            empty($request->get('tel3')) || empty($request->get('mail1')) || 
-            empty($request->get('adresse')) || empty($request->get('id_academie')) || 
+            empty($request->get('tel3')) || empty($request->get('mail1')) || empty($request->get('id_academie')) || 
             empty($request->get('id_filiere')) || empty($request->get('id_type_bac')) || 
             empty($request->get('annee_bac')) || empty($request->get('moyenne_bac')) || 
-            empty($request->get('moyen_regional')) || empty($request->get('moyen_national'))|| 
-            empty($request->get('langue_concours'))
+            empty($request->get('moyen_regional')) || empty($request->get('moyen_national'))
         )
         {return new JsonResponse("Merci de remplir tout les champs obligatoire!!",500); }
         $preinscription->getEtudiant()->setNom(strtoupper($request->get('nom')));
