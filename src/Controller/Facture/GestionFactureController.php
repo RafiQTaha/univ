@@ -67,7 +67,7 @@ class GestionFactureController extends AbstractController
          
         $params = $request->query;
         $where = $totalRows = $sqlRequest = "";
-        $filtre = " where 1=1 reg.annuler != 1 ";
+        $filtre = " where 1=1 ";
         
         if (!empty($params->all('columns')[0]['search']['value'])) {
             $filtre .= " and etab.id = '" . $params->all('columns')[0]['search']['value'] . "' ";
@@ -124,7 +124,7 @@ class GestionFactureController extends AbstractController
         LEFT JOIN porganisme org on org.id = opcab.organisme_id
         LEFT JOIN nature_demande nat on nat.id = pre.nature_id 
         LEFT JOIN (select operationcab_id, SUM(montant) as montant_facture from toperationdet where active = 1 group by operationcab_id ) opdet on opdet.operationcab_id = opcab.id
-        LEFT JOIN (select operation_id, SUM(montant) as montant_regle from treglement group by operation_id ) reg on reg.operation_id = opcab.id $filtre ";
+        LEFT JOIN (select operation_id, SUM(montant) as montant_regle from treglement where treglement.annuler != 1 group by operation_id ) reg on reg.operation_id = opcab.id $filtre ";
         // dd($sql);
         $totalRows .= $sql;
         $sqlRequest .= $sql;
