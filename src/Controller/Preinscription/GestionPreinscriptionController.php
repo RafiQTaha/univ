@@ -285,7 +285,11 @@ class GestionPreinscriptionController extends AbstractController
         if(count($documentsExists) > 0) {
             $documents = $this->em->getRepository(PDocument::class)->getDocumentDoesNotExistPreisncriptions($preinscription, $etablissement);
         } else {
-            $documents = $this->em->getRepository(PDocument::class)->findBy(['etablissement'=>$etablissement,'attribution'=>'PREINSCRIPTION','active'=>1]);
+            $documents = $this->em->getRepository(PDocument::class)->findBy([
+                'etablissement'=>$etablissement,'attribution'=>'PREINSCRIPTION',
+                'active'=>1,
+                'natureDemande' => $preinscription->getNature()
+            ]);
         }
         // dd($documentsExists);
         $documentHtml = "";
@@ -389,12 +393,12 @@ class GestionPreinscriptionController extends AbstractController
         foreach ($operationdets as $operationdet) {
             $frais = $operationdet->getFrais();
             $SumByOrg = $this->em->getRepository(TOperationdet::class)->getSumMontantByCodeFactureAndOrganisme($operationcab,$frais);
-            $SumByOrgPyt = $this->em->getRepository(TOperationdet::class)->getSumMontantByCodeFactureAndOrganismePayant($operationcab,$frais);
+            // $SumByOrgPyt = $this->em->getRepository(TOperationdet::class)->getSumMontantByCodeFactureAndOrganismePayant($operationcab,$frais);
             $SumByPayant = $this->em->getRepository(TOperationdet::class)->getSumMontantByCodeFactureAndPayant($operationcab,$frais);
             $list['dateOperation'] = $this->em->getRepository(TOperationdet::class)->findOneBy(['operationcab'=>$operationcab,'frais'=>$frais],['created'=>'DESC'])->getCreated()->format('d/m/Y');
             $list['designation'] = $operationdet->getFrais()->getDesignation();
             $list['SumByOrg'] = $SumByOrg;
-            $list['SumByOrgPyt'] = $SumByOrgPyt;
+            // $list['SumByOrgPyt'] = $SumByOrgPyt;
             $list['SumByPayant'] = $SumByPayant;
             $list['total'] = $SumByPayant + $SumByOrg;
             array_push($operationdetslist,$list);
@@ -688,6 +692,36 @@ class GestionPreinscriptionController extends AbstractController
         $writer->save($temp_file);
         return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);
     }
-
     
+    #[Route('/print_documents_preinscription/{preinscription}', name: 'print_documents_preinscription')]
+    public function print_documents_preinscription(TPreinscription $preinscription)
+    {
+        // dd($preinscription->getDocuments()[0]);
+        // dd($preinscription->getNature());
+        $documents = $this->em->getRepository(PDocument::class)->findBy([
+            'attribution' => 'PREINSCRIPTION',
+            'etablissement' => $preinscription->getAnnee()->getFormation()->getEtablissement(),
+            'active' => 1,
+            'natureDemande' => $preinscription->getNature()
+        ]);
+        // dd($documents);
+        $html = $this->render("preinscription/pdfs/documents_preins.html.twig", [
+            'preinscription' => $preinscription,
+            'documents' => $documents,
+        ])->getContent();
+        $mpdf = new Mpdf([
+            'mode' => 'utf-8',
+            'margin_left' => '12',
+            'margin_right' => '12',
+        ]);
+        $mpdf->SetTitle('Documents de Pré-Inscription');
+        $mpdf->SetHTMLHeader(
+            $this->render("attestaion/pdfs/header.html.twig")->getContent()
+        );
+        $mpdf->SetHTMLFooter(
+            $this->render("attestaion/pdfs/footer.html.twig")->getContent()
+        );
+        $mpdf->WriteHTML($html);
+        $mpdf->Output("attestaion.pdf", "I");
+    } 
 }

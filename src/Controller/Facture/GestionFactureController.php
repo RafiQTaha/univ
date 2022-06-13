@@ -160,9 +160,25 @@ class GestionFactureController extends AbstractController
                         $value = $value == NULL ? 0 : $value;
                     }
                     if ($key == 13) {
-                        if (!in_array($value,['PYT','FCZ-PYT'])) {
-                            $value = 'ORG';
+                        // dd($cd);
+                        $orgpyt = $this->em->getRepository(TOperationdet::class)->findBy(['operationcab'=>$cd,'active'=>1,'organisme'=>103]);
+                        if (count($orgpyt)) {
+                            $value = 'O/P';
+                        }else{
+                            $pyt = $this->em->getRepository(TOperationdet::class)->findBy(['operationcab'=>$cd,'active'=>1,'organisme'=>7]);
+                            $org = $this->em->getRepository(TOperationdet::class)->FindDetNotPayant($cd);
+                            // dd($pyt);
+                            if (count($pyt) && count($org)) {
+                                $value = 'O/P';
+                            }elseif (!count($pyt) && count($org)) {
+                                $value = 'ORG';
+                            }else {
+                                $value = 'PYT';
+                            }
                         }
+                        // if (!in_array($value,['PYT','FCZ-PYT'])) {
+                        //     $value = 'ORG';
+                        // }
                     }
                     if($key == 14){
                         $value = $value == 0 ? 'Cloture' : 'Ouverte';
@@ -190,8 +206,8 @@ class GestionFactureController extends AbstractController
         if (empty($request->get('d_reglement')) || $request->get('montant') == "" || empty($request->get('banque')) ||
          empty($request->get('paiement'))  ||  empty($request->get('reference'))) {
             return new JsonResponse('Veuillez renseigner tous les champs!', 500);
-        }elseif ($request->get('montant') == 0) {
-            return new JsonResponse('Le montant ne peut pas étre égale à 0', 500);
+        }elseif ($request->get('montant') <= 0) {
+            return new JsonResponse('Le montant ne peut pas étre égale ou inferieur à 0', 500);
         }
         // elseif ($request->get('montant') > $request->get('montant2')) {
         //     return new JsonResponse('Le montant a réglé est '.$request->get('montant2').'DH', 500);
@@ -280,24 +296,28 @@ class GestionFactureController extends AbstractController
     #[Route('/printfacture/{operationcab}', name: 'imprimerfacture')]
     public function imprimerfacture(TOperationcab $operationcab)
     {
+
         $operationdets = $this->em->getRepository(TOperationdet::class)->FindDetGroupByFrais($operationcab);
         $operationdetslist = [];
+        $source = "";
         foreach ($operationdets as $operationdet) {
+            if ($source != "") {
+                $source .= " - ";
+            }
+            $source .= $operationdet->getOrganisme()->getDesignation();
             $frais = $operationdet->getFrais();
             // dd($frais);
             $SumByOrg = $this->em->getRepository(TOperationdet::class)->getSumMontantByCodeFactureAndOrganisme($operationcab,$frais);
-            $SumByOrgPyt = $this->em->getRepository(TOperationdet::class)->getSumMontantByCodeFactureAndOrganismePayant($operationcab,$frais);
             $SumByPayant = $this->em->getRepository(TOperationdet::class)->getSumMontantByCodeFactureAndPayant($operationcab,$frais);
-            // dd($SumByOrgPyt);
             $list['dateOperation'] = $this->em->getRepository(TOperationdet::class)->findOneBy(['operationcab'=>$operationcab,'frais'=>$frais],['created'=>'DESC'])->getCreated()->format('d/m/Y');
             // $list['dateOperation'] = $operationdet->getCreated()->format('d/m/Y h:m:s');
             $list['designation'] = $operationdet->getFrais()->getDesignation();
             $list['SumByOrg'] = $SumByOrg;
-            $list['SumByOrgPyt'] = $SumByOrgPyt;
             $list['SumByPayant'] = $SumByPayant;
-            $list['total'] = $SumByPayant + $SumByOrg + $SumByOrgPyt;
+            $list['total'] = $SumByPayant + $SumByOrg;
             array_push($operationdetslist,$list);
         }
+        // dd($source);
         $inscription = $this->em->getRepository(TInscription::class)->findOneBy([
             'admission'=>$this->em->getRepository(TAdmission::class)->findBy([
                 'preinscription'=>$operationcab->getPreinscription()]),
@@ -310,6 +330,7 @@ class GestionFactureController extends AbstractController
         $html = $this->render("facture/pdfs/facture_facture.html.twig", [
             'reglementOrg' => $reglementOrg,
             'reglementPyt' => $reglementPyt,
+            'source' => $source,
             // 'reglementTotal' => $reglementTotal,
             // 'operationTotal' => $operationTotal,
             'operationcab' => $operationcab,

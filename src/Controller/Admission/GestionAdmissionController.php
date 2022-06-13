@@ -276,12 +276,12 @@ class GestionAdmissionController extends AbstractController
         foreach ($operationdets as $operationdet) {
             $frais = $operationdet->getFrais();
             $SumByOrg = $this->em->getRepository(TOperationdet::class)->getSumMontantByCodeFactureAndOrganisme($operationcab,$frais);
-            $SumByOrgPyt = $this->em->getRepository(TOperationdet::class)->getSumMontantByCodeFactureAndOrganismePayant($operationcab,$frais);
+            // $SumByOrgPyt = $this->em->getRepository(TOperationdet::class)->getSumMontantByCodeFactureAndOrganismePayant($operationcab,$frais);
             $SumByPayant = $this->em->getRepository(TOperationdet::class)->getSumMontantByCodeFactureAndPayant($operationcab,$frais);
             $list['dateOperation'] = $this->em->getRepository(TOperationdet::class)->findOneBy(['operationcab'=>$operationcab,'frais'=>$frais],['created'=>'DESC'])->getCreated()->format('d/m/Y');
             $list['designation'] = $operationdet->getFrais()->getDesignation();
             $list['SumByOrg'] = $SumByOrg;
-            $list['SumByOrgPyt'] = $SumByOrgPyt;
+            // $list['SumByOrgPyt'] = $SumByOrgPyt;
             $list['SumByPayant'] = $SumByPayant;
             $list['total'] = $SumByPayant + $SumByOrg;
             array_push($operationdetslist,$list);

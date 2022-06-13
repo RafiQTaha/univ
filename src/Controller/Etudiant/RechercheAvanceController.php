@@ -116,9 +116,17 @@ class RechercheAvanceController extends AbstractController
         
         $mpdf->Output("scolarite.pdf", "I");
     }
+    
     #[Route('/attestation/reussite/{inscription}', name: 'etudiant_recherche_attestation_reussite')]
     public function attestationReussite(TInscription $inscription): Response
     {
+        $prm = $this->em->getRepository(TInscription::class)->findBy([
+            'admission' => $inscription->getAdmission(),
+            'promotion' => $inscription->getPromotion()
+        ]);
+        if (count($prm) > 1) {
+            return new JsonResponse('Redoublant!!',500);
+        }
         $html = $this->render("etudiant/recherche_avance/pdf/attestations/reussite.html.twig", [
             'inscription' => $inscription
         ])->getContent();
@@ -136,9 +144,8 @@ class RechercheAvanceController extends AbstractController
         $mpdf->WriteHTML($html);
         
         $mpdf->Output("reussite.pdf", "I");
-       
-       
     }
+
     #[Route('/attestation/reussitenote/{inscription}', name: 'etudiant_recherche_attestation_reussite_note')]
     public function attestationReussiteNote(TInscription $inscription): Response
     {

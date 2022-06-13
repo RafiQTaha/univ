@@ -70,7 +70,7 @@ class TOperationdetRepository extends ServiceEntityRepository
             ->Where('t.operationcab = :operation')
             ->andWhere('t.frais = :frais')
             ->andWhere('t.active = 1')
-            ->andWhere('t.organisme not in(7,103)')
+            ->andWhere('t.organisme != 7')
             ->setParameter('operation', $operation)
             ->setParameter('frais', $frais)
             ->groupBy('t.frais')
@@ -79,22 +79,22 @@ class TOperationdetRepository extends ServiceEntityRepository
         ;
         return $query ? $query['somme'] : 0;
     }
-    public function getSumMontantByCodeFactureAndOrganismePayant($operation,$frais)
-    {
-        $query =  $this->createQueryBuilder('t')
-            ->select("SUM(t.montant) as somme")
-            ->Where('t.operationcab = :operation')
-            ->andWhere('t.frais = :frais')
-            ->andWhere('t.active = 1')
-            ->andWhere('t.organisme = 103')
-            ->setParameter('operation', $operation)
-            ->setParameter('frais', $frais)
-            ->groupBy('t.frais')
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-        return $query ? $query['somme'] : 0;
-    }
+    // public function getSumMontantByCodeFactureAndOrganismePayant($operation,$frais)
+    // {
+    //     $query =  $this->createQueryBuilder('t')
+    //         ->select("SUM(t.montant) as somme")
+    //         ->Where('t.operationcab = :operation')
+    //         ->andWhere('t.frais = :frais')
+    //         ->andWhere('t.active = 1')
+    //         ->andWhere('t.organisme = 103')
+    //         ->setParameter('operation', $operation)
+    //         ->setParameter('frais', $frais)
+    //         ->groupBy('t.frais')
+    //         ->getQuery()
+    //         ->getOneOrNullResult()
+    //     ;
+    //     return $query ? $query['somme'] : 0;
+    // }
     public function getSumMontantByCodeFactureAndPayant($operation,$frais)
     {
         $query =  $this->createQueryBuilder('t')
@@ -111,6 +111,7 @@ class TOperationdetRepository extends ServiceEntityRepository
         ; 
         return $query ? $query['somme'] : 0;
     }
+
     public function FindDetGroupByFrais($operation)
     {
         return $this->createQueryBuilder('t')
@@ -119,6 +120,18 @@ class TOperationdetRepository extends ServiceEntityRepository
             // ->andWhere('t.organisme = 7')
             ->setParameter('operation', $operation)
             ->groupBy('t.frais')
+            ->getQuery()
+            ->getResult()
+        ; 
+    }
+    
+    public function FindDetNotPayant($operation)
+    {
+        return $this->createQueryBuilder('t')
+            ->Where('t.operationcab = :operation')
+            ->andWhere('t.active = 1')
+            ->andWhere('t.organisme != 7')
+            ->setParameter('operation', $operation)
             ->getQuery()
             ->getResult()
         ; 
