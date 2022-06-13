@@ -417,6 +417,16 @@ const Toast = Swal.mixin({
         }
         window.open("/admission/gestion/attestation/"+id_admission, '_blank');
     })
+    $('body').on('click','#imprimer_docs', function (){
+      if(!id_admission){
+          Toast.fire({
+            icon: 'error',
+            title: 'Merci de Choisir Une ligne!',
+          })
+          return;
+      }
+      window.open('/admission/gestion/print_documents_admission/'+id_admission, '_blank');
+    })
 })
     
     

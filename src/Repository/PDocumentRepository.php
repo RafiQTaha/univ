@@ -78,7 +78,9 @@ class PDocumentRepository extends ServiceEntityRepository
             ->from('App:TPreinscription', 'p')
             ->innerJoin('p.documents', 'd')
             ->where('p.id = :preinscription')
+            // ->Andwhere('d.natureDemande = :nat')
             ->setParameter('preinscription', $preinscription)
+            // ->setParameter('nat', $preinscription->getNature())
             ->getQuery()
             ->getArrayResult()
         ;

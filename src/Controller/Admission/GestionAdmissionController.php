@@ -455,5 +455,43 @@ class GestionAdmissionController extends AbstractController
         $mpdf->WriteHTML($html);
         $mpdf->Output("attestaion.pdf", "I");
     }
+
+    #[Route('/print_documents_admission/{admission}', name: 'print_documents_admission')]
+    public function print_documents_admission(TAdmission $admission)
+    {
+        // dd($preinscription->getDocuments()[0]);
+        // dd($preinscription->getNature());
+        $documentsExists = $this->em->getRepository(TAdmissionDocument::class)->findBy(['preinscription' => $admission->getPreinscription()]);
+        $admdocs = [];
+        foreach ($documentsExists as $documentsExist) {
+            array_push($admdocs,$documentsExist->getDocument());
+        }
+        // dd($admdocs);
+        $documents = $this->em->getRepository(PDocument::class)->findBy([
+            'attribution' => 'INSCRIPTION',
+            'etablissement' => $admission->getPreinscription()->getAnnee()->getFormation()->getEtablissement(),
+            'active' => 1,
+        ]);
+        // dd($documents);
+        $html = $this->render("admission/pdfs/documents_admission.html.twig", [
+            'preinscription' => $admission->getPreinscription(),
+            'documents' => $documents,
+            'admdocs' => $admdocs
+        ])->getContent();
+        $mpdf = new Mpdf([
+            'mode' => 'utf-8',
+            'margin_left' => '12',
+            'margin_right' => '12',
+        ]);
+        $mpdf->SetTitle('Documents de Pré-Inscription');
+        $mpdf->SetHTMLHeader(
+            $this->render("attestaion/pdfs/header.html.twig")->getContent()
+        );
+        $mpdf->SetHTMLFooter(
+            $this->render("attestaion/pdfs/footer.html.twig")->getContent()
+        );
+        $mpdf->WriteHTML($html);
+        $mpdf->Output("attestaion.pdf", "I");
+    } 
     
 }

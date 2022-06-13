@@ -487,7 +487,17 @@ $("body").on('submit', "#form_modifier", async (e) => {
   $('body').on('click','#extraction', function (){
     window.open('/preinscription/gestion/extraction_preins', '_blank');
   })
-
+  $('body').on('click','#imprimer_docs', function (){
+    if(!id_preinscription){
+        Toast.fire({
+          icon: 'error',
+          title: 'Merci de Choisir Un Etudiant!',
+        })
+        return;
+    }
+    window.open('/preinscription/gestion/print_documents_preinscription/'+id_preinscription, '_blank');
+  })
+  
 $('.nav-pills a').on('click', function (e) {
     $(this).tab('show');
 })
