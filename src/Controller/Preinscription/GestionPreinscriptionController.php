@@ -288,7 +288,6 @@ class GestionPreinscriptionController extends AbstractController
             $documents = $this->em->getRepository(PDocument::class)->findBy([
                 'etablissement'=>$etablissement,'attribution'=>'PREINSCRIPTION',
                 'active'=>1,
-                'natureDemande' => $preinscription->getNature()
             ]);
         }
         // dd($documentsExists);
@@ -702,7 +701,6 @@ class GestionPreinscriptionController extends AbstractController
             'attribution' => 'PREINSCRIPTION',
             'etablissement' => $preinscription->getAnnee()->getFormation()->getEtablissement(),
             'active' => 1,
-            'natureDemande' => $preinscription->getNature()
         ]);
         // dd($documents);
         $html = $this->render("preinscription/pdfs/documents_preins.html.twig", [
