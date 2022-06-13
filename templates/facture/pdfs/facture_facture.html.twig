@@ -91,6 +91,9 @@
             <td style="font-size:10px;padding:2px 0px 5px 2px;width:70%">ANNEE UNIVERSITAIRE :  {{operationcab.annee.designation}}</td>
             <td style="font-size:10px;padding:2px 0px 5px 2px;">NIVEAU   :   {{promotion}}</td>
         </tr>  
+        <tr>
+            <td style="font-size:10px;padding:2px 0px 5px 2px;width:70%">Source :  {{source}}</td>
+        </tr>  
     </table>
     <br/>
 
@@ -99,13 +102,11 @@
             <td style="font-weight: bold;padding:3px 0px 3px 2px;width:20%;text-align:center;font-size: 10px"> DATE OPERATION </td> 
             <td style="font-weight: bold;padding:3px 0px 3px 2px;width:30%;text-align:center;font-size: 10px"> DESIGNATION</td> 
             <td style="font-weight: bold;padding:3px 0px 3px 2px;width:20%;text-align:center;font-size: 10px"> ORGANISME </td> 
-            <td style="font-weight: bold;padding:3px 0px 3px 2px;width:20%;text-align:center;font-size: 10px"> ORGANISME-PAYANT </td> 
-            <td style="font-weight: bold;padding:3px 0px 3px 2px;width:15%;text-align:center;font-size: 10px"> PART PAYANT</td> 
+            <td style="font-weight: bold;padding:3px 0px 3px 2px;width:20%;text-align:center;font-size: 10px"> PART PAYANT</td> 
             <td style="font-weight: bold;padding:3px 0px 3px 2px;width:15%;text-align:center;font-size: 10px"> MONTANT TOTAL</td> 
         </tr> 
         {% set i = 1 %}
         {% set SommeOrganisme = 0 %}
-        {% set SommeOrganismePayant = 0 %}
         {% set SommePayant = 0 %}
         {% set SommeToTal = 0 %}
         {% for operationdet in operationdets %}
@@ -113,13 +114,11 @@
                     <td style="font-size:10px;padding:2px 0px 5px 2px;width:20%;text-align:center">{{operationdet.dateOperation}}</td>
                     <td style="font-size:10px;padding:2px 0px 5px 2px;width:30%;text-align:center">{{operationdet.designation}}</td>
                     <td style="font-size:10px;padding:2px 0px 5px 2px;width:20%;text-align:center">{{operationdet.SumByOrg|number_format(2, ',', ' ')}}</td>
-                    <td style="font-size:10px;padding:2px 0px 5px 2px;width:20%;text-align:center">{{operationdet.SumByOrgPyt|number_format(2, ',', ' ')}}</td>
                     <td style="font-size:10px;padding:2px 0px 5px 2px;width:15%;text-align:center">{{operationdet.SumByPayant|number_format(2, ',', ' ')}}</td>
                     <td style="font-size:10px;padding:2px 0px 5px 2px;width:15%;text-align:center">{{operationdet.total|number_format(2, ',', ' ')}}</td>
                 </tr>
             {% set i = i + 1 %}
             {% set SommeOrganisme = SommeOrganisme + operationdet.SumByOrg  %}
-            {% set SommeOrganismePayant = SommeOrganismePayant + operationdet.SumByOrgPyt %}
             {% set SommePayant = SommePayant + operationdet.SumByPayant %}
             {% set SommeToTal = SommeToTal + operationdet.total %}
         {% endfor %} 
@@ -132,8 +131,7 @@
             <tr>
                 <td style="color: #000;height: 15px;padding: 2px ;padding-left: 25px;font-weight: bold;font-size: 11px;width:20%"> </td>
                 <td style="background: #DBDBDB; color: #000;height: 15px;padding: 2px ;padding-left: 25px;font-weight: bold;font-size: 11px;width:30%">Total </td>
-                <td style="background: #DBDBDB; color: #000;height: 15px;padding: 2px ;padding-left: 45px;font-size: 11px;width:20% ">{{SommeOrganisme|number_format(2, ',', ' ')}}</td> 
-                <td style="background: #DBDBDB; color: #000;height: 15px;padding: 2px ;padding-left: 45px;font-size: 11px;width:20% ">{{SommeOrganismePayant|number_format(2, ',', ' ')}}</td> 
+                <td style="background: #DBDBDB; color: #000;height: 15px;padding: 2px ;padding-left: 25px;font-size: 11px;width:20% ">{{SommeOrganisme|number_format(2, ',', ' ')}}</td> 
                 <td style="background: #DBDBDB; color: #000;height: 15px;padding: 2px ;padding-left: 25px;font-size: 11px;width:15% ">{{SommePayant|number_format(2, ',', ' ')}}</td> 
                 <td style="background: #5F5A58; color: #fff;height: 15px;padding: 2px ;padding-left: 25px;font-size: 11px;width:15% ">{{SommeToTal|number_format(2, ',', ' ')}}</td> 
             </tr>
@@ -141,16 +139,14 @@
             <tr>
                 <td style="color: #000;height: 15px;padding: 2px ;padding-left: 25px;font-weight: bold;font-size: 11px;width:20%"> </td> 
                 <td style="background: #DBDBDB; color: #000;height: 15px;padding: 2px ;padding-left: 25px;font-weight: bold;font-size: 11px;width:30%">Total Encaissement </td> 
-                <td style="background: #DBDBDB; color: #000;height: 15px;padding: 2px ;padding-left: 45px;font-size: 11px;width:20% ">{{reglementOrg|number_format(2, ',', ' ')}}</td> 
-                <td style="background: #DBDBDB; color: #000;height: 15px;padding: 2px ;padding-left: 45px;font-size: 11px;width:20% ">{{0|number_format(2, ',', ' ')}}</td> 
+                <td style="background: #DBDBDB; color: #000;height: 15px;padding: 2px ;padding-left: 25px;font-size: 11px;width:20% ">{{reglementOrg|number_format(2, ',', ' ')}}</td> 
                 <td style="background: #DBDBDB; color: #000;height: 15px;padding: 2px ;padding-left: 25px;font-size: 11px;width:15% ">{{reglementPyt|number_format(2, ',', ' ')}}</td> 
                 <td style="background: #5F5A58; color: #fff;height: 15px;padding: 2px ;padding-left: 25px;font-size: 11px;width:15% ">{{(reglementOrg + reglementPyt)|number_format(2, ',', ' ')}}</td> 
             </tr>
             <tr>
                 <td style="color: #000;height: 15px;padding: 2px ;padding-left: 25px;font-weight: bold;font-size: 11px;width:20%"> </td> 
                 <td style="background: #DBDBDB; color: #000;height: 15px;padding: 2px ;padding-left: 25px;font-weight: bold;font-size: 11px;width:30%">Solde </td> 
-                <td style="background: #DBDBDB; color: #000;height: 15px;padding: 2px ;padding-left: 45px;font-size: 11px;width:20% "></td> 
-                <td style="background: #DBDBDB; color: #000;height: 15px;padding: 2px ;padding-left: 45px;font-size: 11px;width:20% "></td> 
+                <td style="background: #DBDBDB; color: #000;height: 15px;padding: 2px ;padding-left: 25px;font-size: 11px;width:20% "></td> 
                 <td style="background: #DBDBDB; color: #000;height: 15px;padding: 2px ;padding-left: 25px;font-size: 11px;width:15% "></td> 
                 <td style="background: #5F5A58; color: #fff;height: 15px;padding: 2px ;padding-left: 25px;font-size: 11px;width:15% ">{{(SommeToTal - (reglementOrg + reglementPyt ))|number_format(2, ',', ' ')}}</td> 
             </tr>
