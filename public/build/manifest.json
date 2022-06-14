@@ -5,6 +5,7 @@
   "build/login.js": "/build/login.js",
   "build/etudiant.js": "/build/etudiant.js",
   "build/rechercheavance.js": "/build/rechercheavance.js",
+  "build/centreappel.js": "/build/centreappel.js",
   "build/epreuve.js": "/build/epreuve.js",
   "build/impression.js": "/build/impression.js",
   "build/note.js": "/build/note.js",

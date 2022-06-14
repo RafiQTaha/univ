@@ -160,14 +160,12 @@ class GestionFactureController extends AbstractController
                         $value = $value == NULL ? 0 : $value;
                     }
                     if ($key == 13) {
-                        // dd($cd);
                         $orgpyt = $this->em->getRepository(TOperationdet::class)->findBy(['operationcab'=>$cd,'active'=>1,'organisme'=>103]);
                         if (count($orgpyt)) {
                             $value = 'O/P';
                         }else{
                             $pyt = $this->em->getRepository(TOperationdet::class)->findBy(['operationcab'=>$cd,'active'=>1,'organisme'=>7]);
                             $org = $this->em->getRepository(TOperationdet::class)->FindDetNotPayant($cd);
-                            // dd($pyt);
                             if (count($pyt) && count($org)) {
                                 $value = 'O/P';
                             }elseif (!count($pyt) && count($org)) {
@@ -176,9 +174,6 @@ class GestionFactureController extends AbstractController
                                 $value = 'PYT';
                             }
                         }
-                        // if (!in_array($value,['PYT','FCZ-PYT'])) {
-                        //     $value = 'ORG';
-                        // }
                     }
                     if($key == 14){
                         $value = $value == 0 ? 'Cloture' : 'Ouverte';
@@ -486,7 +481,22 @@ class GestionFactureController extends AbstractController
             $sheet->setCellValue('M'.$i, $montant['total']);
             $sheet->setCellValue('N'.$i, $montant_reglement['total']);
             $sheet->setCellValue('O'.$i, $montant['total'] - $montant_reglement['total']);
-            $sheet->setCellValue('P'.$i, '');
+            $value ="";
+            $orgpyt = $this->em->getRepository(TOperationdet::class)->findBy(['operationcab'=>$operationcab['id'],'active'=>1,'organisme'=>103]);
+            if (count($orgpyt)) {
+                $value = 'O/P';
+            }else{
+                $pyt = $this->em->getRepository(TOperationdet::class)->findBy(['operationcab'=>$operationcab['id'],'active'=>1,'organisme'=>7]);
+                $org = $this->em->getRepository(TOperationdet::class)->FindDetNotPayant($operationcab['id']);
+                if (count($pyt) && count($org)) {
+                    $value = 'O/P';
+                }elseif (!count($pyt) && count($org)) {
+                    $value = 'ORG';
+                }else {
+                    $value = 'PYT';
+                }
+            }
+            $sheet->setCellValue('P'.$i, $value);
             $sheet->setCellValue('Q'.$i, $operationcab['statut']);
             $i++;
             $j++;

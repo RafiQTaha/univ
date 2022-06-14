@@ -46,6 +46,14 @@
         "/build/rechercheavance.js"
       ]
     },
+    "centreappel": {
+      "js": [
+        "/build/runtime.js",
+        "/build/vendors-node_modules_jquery_dist_jquery_js.js",
+        "/build/vendors-node_modules_core-js_modules_es_object_to-string_js-node_modules_core-js_modules_es_p-2de272.js",
+        "/build/centreappel.js"
+      ]
+    },
     "epreuve": {
       "js": [
         "/build/runtime.js",
