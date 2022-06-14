@@ -24,6 +24,7 @@ Encore
     .addEntry('login', './assets/components/login/login.js')
     .addEntry('etudiant', './assets/components/etudiant/etudiant.js')
     .addEntry('rechercheavance', './assets/components/etudiant/rechercheavance.js')
+    .addEntry('centreappel', './assets/components/etudiant/centre_appel.js')
     .addEntry('epreuve', './assets/components/administration/epreuve.js')
     .addEntry('impression', './assets/components/administration/impression.js')
     .addEntry('note', './assets/components/administration/note.js')
