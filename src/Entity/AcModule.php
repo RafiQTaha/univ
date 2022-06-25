@@ -20,7 +20,6 @@ class AcModule
 
     #[ORM\ManyToOne(targetEntity: User::class)]
     private $user_updated;
-
     
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $code;

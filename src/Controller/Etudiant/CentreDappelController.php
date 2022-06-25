@@ -12,14 +12,6 @@ use App\Entity\XAcademie;
 use App\Entity\NatureDemande;
 use App\Entity\AcAnnee;
 use App\Controller\DatatablesController;
-use App\Entity\AcFormation;
-use App\Entity\PMatiere;
-use App\Entity\POrganisme;
-use App\Entity\PSituation;
-use App\Entity\XFiliere;
-use App\Entity\XLangue;
-use App\Entity\TOperationcab;
-use App\Entity\TPreinscriptionReleveNote;
 use Doctrine\Persistence\ManagerRegistry;
 use phpDocumentor\Reflection\Types\Null_;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
@@ -163,8 +155,64 @@ class CentreDappelController extends AbstractController
         $etudiant->setRdv2($rdv2);
         $etudiant->setTeleListe($request->get('statut_appel'));
         $etudiant->setObs($request->get('Observation'));
+        $etudiant->setOperateur($this->getUser());
         $this->em->flush();
         return new JsonResponse("Bien enregistre");
+    }
+    
+    
+    #[Route('/extraction_appels', name: 'extraction_appels')]
+    public function extraction_appels()
+    {   
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        $sheet->setCellValue('A1', 'ORD');
+        $sheet->setCellValue('B1', 'NOM');
+        $sheet->setCellValue('C1', 'PRENOM');
+        $sheet->setCellValue('D1', 'TEL1');
+        $sheet->setCellValue('E1', 'TEL2');
+        $sheet->setCellValue('F1', 'TEL3');
+        $sheet->setCellValue('G1', 'ANNEE BAC');
+        $sheet->setCellValue('H1', 'NOTE');
+        $sheet->setCellValue('I1', 'TYPE DE BAC');
+        $sheet->setCellValue('J1', 'FILIERE');
+        $sheet->setCellValue('K1', 'STATUT');
+        $sheet->setCellValue('L1', 'OBSERVATION');
+        $sheet->setCellValue('M1', 'RDV1');
+        $sheet->setCellValue('N1', 'RDV2');
+        $sheet->setCellValue('O1', 'OPERATEUR');
+        $i=2;
+        $j=1;
+        // $current_year = date('m') > 7 ? $current_year = date('Y').'/'.date('Y')+1 : $current_year = date('Y') - 1 .'/' .date('Y');
+        $current_year = "2022/2023";
+        $etudiants = $this->em->getRepository(TEtudiant::class)->getEtudiantByCurrentYear($current_year);
+        // dd($etudiants);
+        foreach ($etudiants as $etudiant) {
+            $sheet->setCellValue('A'.$i, $j);
+            $sheet->setCellValue('B'.$i, $etudiant->getNom());
+            $sheet->setCellValue('C'.$i, $etudiant->getPrenom());
+            $sheet->setCellValue('D'.$i, $etudiant->getTel1());
+            $sheet->setCellValue('E'.$i, $etudiant->getTelPere());
+            $sheet->setCellValue('F'.$i, $etudiant->getTelMere());
+            $sheet->setCellValue('G'.$i, $etudiant->getAnneeBac());
+            $sheet->setCellValue('H'.$i, $etudiant->getMoyenneBac());
+            $sheet->setCellValue('I'.$i, $etudiant->getTypeBac()->getDesignation());
+            $sheet->setCellValue('J'.$i, $etudiant->getFiliere()->getDesignation());
+            $sheet->setCellValue('K'.$i, $etudiant->getTeleListe());
+            $sheet->setCellValue('L'.$i, $etudiant->getObs());
+            $sheet->setCellValue('M'.$i, $etudiant->getRdv1());
+            $sheet->setCellValue('N'.$i, $etudiant->getRdv2());
+            if ($etudiant->getOperateur() != NULL) {
+                $sheet->setCellValue('O'.$i, $etudiant->getOperateur()->getUserName());
+            }
+            $i++;
+            $j++;
+        }
+        $writer = new Xlsx($spreadsheet);
+        $fileName = 'Extraction Etudiants.xlsx';
+        $temp_file = tempnam(sys_get_temp_dir(), $fileName);
+        $writer->save($temp_file);
+        return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);
     }
     
 }

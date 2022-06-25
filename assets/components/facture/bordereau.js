@@ -22,6 +22,16 @@ $(document).ready(function () {
             serverSide: true,
             deferRender: true,
             scrollX: true,
+            preDrawCallback: function(settings) {
+                if ($.fn.DataTable.isDataTable('#datables_borderaux')) {
+                    var dt = $('#datables_borderaux').DataTable();
+                    //Abort previous ajax request if it is still in process.
+                    var settings = dt.settings();
+                    if (settings[0].jqXHR) {
+                        settings[0].jqXHR.abort();
+                    }
+                }
+            },
             // drawCallback: function () {
                 // ids_reglement.forEach((e) => {
                 //     $("body tr#" + e)
