@@ -485,7 +485,7 @@ $("body").on('submit', "#form_modifier", async (e) => {
   })
   
   $('body').on('click','#extraction', function (){
-    window.open('/preinscription/gestion/extraction_preins', '_blank');
+        window.open('/preinscription/gestion/extraction_preins', '_blank');
   })
   $('body').on('click','#imprimer_docs', function (){
     if(!id_preinscription){

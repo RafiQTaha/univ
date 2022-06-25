@@ -64,6 +64,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $email;
 
+    #[ORM\OneToMany(mappedBy: 'operateur', targetEntity: TEtudiant::class)]
+    private $tEtudiants;
+
 
     public function __construct()
     {
@@ -75,6 +78,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->albhonss = new ArrayCollection();
         $this->ensgrilles = new ArrayCollection();
         $this->enseignantexcepts = new ArrayCollection();
+        $this->tEtudiants = new ArrayCollection();
     }
 
     
@@ -440,6 +444,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setEmail(?string $email): self
     {
         $this->email = $email;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, TEtudiant>
+     */
+    public function getTEtudiants(): Collection
+    {
+        return $this->tEtudiants;
+    }
+
+    public function addTEtudiant(TEtudiant $tEtudiant): self
+    {
+        if (!$this->tEtudiants->contains($tEtudiant)) {
+            $this->tEtudiants[] = $tEtudiant;
+            $tEtudiant->setOperateur($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTEtudiant(TEtudiant $tEtudiant): self
+    {
+        if ($this->tEtudiants->removeElement($tEtudiant)) {
+            // set the owning side to null (unless already changed)
+            if ($tEtudiant->getOperateur() === $this) {
+                $tEtudiant->setOperateur(null);
+            }
+        }
 
         return $this;
     }

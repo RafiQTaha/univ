@@ -624,15 +624,17 @@ class GestionPreinscriptionController extends AbstractController
         $sheet->setCellValue('R1', 'MOYENNE REGIONALE');
         $sheet->setCellValue('S1', 'N°FACTURE');
         $sheet->setCellValue('T1', 'MONTANT FACTURE');
-        $sheet->setCellValue('V1', 'MONTANT REGLE');
-        $sheet->setCellValue('W1', 'RESTE');
-        $sheet->setCellValue('X1', 'TYPE REGLEMENT');
-        $sheet->setCellValue('Y1', 'REFERENCE REGLEMENT');
-        $sheet->setCellValue('Z1', 'DATE FACTURE');
+        $sheet->setCellValue('U1', 'MONTANT REGLE');
+        $sheet->setCellValue('V1', 'RESTE');
+        $sheet->setCellValue('W1', 'TYPE REGLEMENT');
+        $sheet->setCellValue('X1', 'REFERENCE REGLEMENT');
+        $sheet->setCellValue('Y1', 'DATE FACTURE');
+        $sheet->setCellValue('Z1', 'D-CREATION REGLEMENT');
         $sheet->setCellValue('AA1', 'DATE REGLEMENT');
         $i=2;
         $j=1;
         $current_year = date('m') > 7 ? $current_year = date('Y').'/'.date('Y')+1 : $current_year = date('Y') - 1 .'/' .date('Y');
+        $current_year = "2022/2023";
         $preinscriptions = $this->em->getRepository(TPreinscription::class)->getPreinsByCurrentYear($current_year);
         foreach ($preinscriptions as $preinscription) {
             $etudiant = $preinscription->getEtudiant();
@@ -669,17 +671,18 @@ class GestionPreinscriptionController extends AbstractController
                 $sheet->setCellValue('T'.$i, $sommefacture);
                 $sommereglement = $this->em->getRepository(TReglement::class)->getSumMontantByCodeFacture($facture);
                 $sommereglement = $sommereglement == Null ? 0 : $sommereglement['total'];
-                $sheet->setCellValue('V'.$i, $sommereglement);
+                $sheet->setCellValue('U'.$i, $sommereglement);
                 $reste = $sommefacture - $sommereglement;
-                $sheet->setCellValue('W'.$i, $reste);
+                $sheet->setCellValue('V'.$i, $reste);
                 $reglement = $this->em->getRepository(TReglement::class)->findOneBy(['operation'=>$facture],['id'=>'DESC']);
                 if ($reglement) {
-                    $sheet->setCellValue('X'.$i, $reglement->getPaiement()->getDesignation());
-                    $sheet->setCellValue('Y'.$i, $reglement->getCode());
+                    $sheet->setCellValue('W'.$i, $reglement->getPaiement()->getDesignation());
+                    $sheet->setCellValue('X'.$i, $reglement->getCode());
                 }
-                $sheet->setCellValue('Z'.$i, $facture->getCreated());
+                $sheet->setCellValue('Y'.$i, $facture->getCreated());
                 if ($reglement) {
-                    $sheet->setCellValue('AA'.$i, $reglement->getCreated());
+                    $sheet->setCellValue('Z'.$i, $reglement->getCreated());
+                    $sheet->setCellValue('AA'.$i, $reglement->getDateReglement());
                 }
             }
             $i++;

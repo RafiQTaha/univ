@@ -194,7 +194,7 @@ class GestionReglementsController extends AbstractController
             'margin_top' => 3,
         ]);
         $mpdf->WriteHTML($html);
-        $mpdf->Output("Regleemnt.pdf", "I");
+        $mpdf->Output("Reglement-".$reglement->getCode().".pdf", "I");
     }
     
     #[Route('/borderaux/{formation}/{paiement}', name: 'reglement_borderaux')]
@@ -211,15 +211,18 @@ class GestionReglementsController extends AbstractController
         $borderaux->setUserCreated($this->getUser());
         $this->em->persist($borderaux);
         $this->em->flush();
-        $borderaux->setCode($etablissement->getAbreviation().'-BER'.str_pad($borderaux->getId(), 6, '0', STR_PAD_LEFT).'/'.date('Y'));
-        $this->em->flush();
+        $total = 0;
         foreach ($ids as $id) {
             $reglement = $this->em->getRepository(TReglement::class)->find($id);
+            $total = $total + $reglement->getMontant();
             if ($reglement->getPaiement()->getId() == $paiement->getId()) {
                 $reglement->setBordereau($borderaux);
                 $this->em->flush();
             }
         }
+        $borderaux->setCode($etablissement->getAbreviation().'-BER'.str_pad($borderaux->getId(), 6, '0', STR_PAD_LEFT).'/'.date('Y'));
+        $borderaux->setMontant($total);
+        $this->em->flush();
         return new Response($borderaux->getId());
     }
     
@@ -237,6 +240,7 @@ class GestionReglementsController extends AbstractController
             'text' => $text
         ])->getContent();
         $mpdf = new Mpdf([
+            'format' => 'A4-L',
             'mode' => 'utf-8',
             'margin_left' => '5',
             'margin_right' => '5',

@@ -108,4 +108,7 @@ $(document).ready(function  () {
     }, 2500) 
 
     })
+    $('body').on('click','#extraction', function (){
+          window.open('/etudiant/appel/extraction_appels', '_blank');
+    })
 })
