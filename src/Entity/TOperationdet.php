@@ -22,7 +22,7 @@ class TOperationdet
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $code;
 
-    #[ORM\Column(type: 'smallint', nullable: true)]
+    #[ORM\Column(type: 'float', nullable: true)]
     private $montant;
 
     #[ORM\Column(type: 'float', nullable: true)]

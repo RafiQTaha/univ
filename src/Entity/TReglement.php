@@ -19,7 +19,7 @@ class TReglement
     #[ORM\ManyToOne(targetEntity: TOperationcab::class, inversedBy: 'Reglements')]
     private $operation;
 
-    #[ORM\Column(type: 'smallint', nullable: true)]
+    #[ORM\Column(type: 'float', nullable: true)]
     private $montant;
 
     #[ORM\Column(type: 'smallint', nullable: true)]
