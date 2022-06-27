@@ -270,6 +270,9 @@ class TEtudiant
     #[ORM\Column(type: 'string', length: 10, nullable: true)]
     private $moyen_national;
 
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'tEtudiants')]
+    private $operateur;
+
     public function __construct()
     {
         $this->preinscriptions = new ArrayCollection();
@@ -1333,6 +1336,18 @@ class TEtudiant
     public function setMoyenNational(?string $moyen_national): self
     {
         $this->moyen_national = $moyen_national;
+
+        return $this;
+    }
+
+    public function getOperateur(): ?User
+    {
+        return $this->operateur;
+    }
+
+    public function setOperateur(?User $operateur): self
+    {
+        $this->operateur = $operateur;
 
         return $this;
     }

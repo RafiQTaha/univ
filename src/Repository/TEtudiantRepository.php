@@ -47,4 +47,15 @@ class TEtudiantRepository extends ServiceEntityRepository
         ;
     }
     */
+    
+    public function getEtudiantByCurrentYear($annee)
+    {
+        return $this->createQueryBuilder('etu')
+            ->where('etu.created LIKE :date')
+            ->setParameter('date', '2022-06%')
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
 }

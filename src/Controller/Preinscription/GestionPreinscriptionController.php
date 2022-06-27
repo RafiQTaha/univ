@@ -629,8 +629,8 @@ class GestionPreinscriptionController extends AbstractController
         $sheet->setCellValue('W1', 'TYPE REGLEMENT');
         $sheet->setCellValue('X1', 'REFERENCE REGLEMENT');
         $sheet->setCellValue('Y1', 'DATE FACTURE');
-        $sheet->setCellValue('Z1', 'DATE REGLEMENT');
-        // $sheet->setCellValue('AA1', 'DATE REGLEMENT');
+        $sheet->setCellValue('Z1', 'D-CREATION REGLEMENT');
+        $sheet->setCellValue('AA1', 'DATE REGLEMENT');
         $i=2;
         $j=1;
         $current_year = date('m') > 7 ? $current_year = date('Y').'/'.date('Y')+1 : $current_year = date('Y') - 1 .'/' .date('Y');
@@ -682,6 +682,7 @@ class GestionPreinscriptionController extends AbstractController
                 $sheet->setCellValue('Y'.$i, $facture->getCreated());
                 if ($reglement) {
                     $sheet->setCellValue('Z'.$i, $reglement->getCreated());
+                    $sheet->setCellValue('AA'.$i, $reglement->getDateReglement());
                 }
             }
             $i++;

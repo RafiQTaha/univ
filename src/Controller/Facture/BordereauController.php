@@ -71,7 +71,7 @@ class BordereauController extends AbstractController
         FROM tbrdpaiement brd 
         INNER JOIN xmodalites pae on pae.id = brd.modalite_id
         INNER join ac_etablissement etab on etab.id = brd.etablissement_id
-        INNER join users user on  user.id = brd.user_created_id $filtre ";
+        LEFT join users user on  user.id = brd.user_created_id $filtre ";
         // dd($sql);
         $totalRows .= $sql;
         $sqlRequest .= $sql;
@@ -133,6 +133,7 @@ class BordereauController extends AbstractController
             'text' => $text
         ])->getContent();
         $mpdf = new Mpdf([
+            'format' => 'A4-L',
             'mode' => 'utf-8',
             'margin_left' => '5',
             'margin_right' => '5',
