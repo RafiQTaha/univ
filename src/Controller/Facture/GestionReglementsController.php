@@ -343,13 +343,15 @@ class GestionReglementsController extends AbstractController
         $sheet->setCellValue('J1', 'PROMOTION');
         $sheet->setCellValue('K1', 'CODE REGLEMENT');
         $sheet->setCellValue('L1', 'MT REGLE');
-        $sheet->setCellValue('M1', 'DATE REGLEMENT');
-        $sheet->setCellValue('N1', 'REFERENCE DOC');
-        $sheet->setCellValue('O1', 'MODE PAIEMENT');
-        $sheet->setCellValue('P1', 'N° BRD');
+        $sheet->setCellValue('M1', 'REFERENCE DOC');
+        $sheet->setCellValue('N1', 'MODE PAIEMENT');
+        $sheet->setCellValue('O1', 'DATE REGLEMENT');
+        $sheet->setCellValue('P1', 'D-CREATION REGLEMENT');
+        $sheet->setCellValue('Q1', 'N° BRD');
         $i=2;
         $j=1;
-        $reglements = $this->em->getRepository(TReglement::class)->getReglementsByCurrentYear();
+        $currentyear = '2022/2023';
+        $reglements = $this->em->getRepository(TReglement::class)->getReglementsByCurrentYear($currentyear);
         foreach ($reglements as $reglement) {
             $sheet->setCellValue('A'.$i, $j);
             $sheet->setCellValue('B'.$i, $reglement['code_preins']);
@@ -363,10 +365,16 @@ class GestionReglementsController extends AbstractController
             $sheet->setCellValue('J'.$i, $reglement['promotion']);
             $sheet->setCellValue('K'.$i, $reglement['code_reglement']);
             $sheet->setCellValue('L'.$i, $reglement['montant_regle']);
-            $sheet->setCellValue('M'.$i, $reglement['date_reglement']->format('Y-m-d H:m:s'));
-            $sheet->setCellValue('N'.$i, $reglement['reference']);
-            $sheet->setCellValue('O'.$i, $reglement['mode_paiement']);
-            $sheet->setCellValue('P'.$i, $reglement['num_brd']);
+            $sheet->setCellValue('M'.$i, $reglement['reference']);
+            $sheet->setCellValue('N'.$i, $reglement['mode_paiement']);
+
+            if ($reglement['date_reglement'] != null) {
+                $sheet->setCellValue('O'.$i, $reglement['date_reglement']->format('Y-m-d'));
+            }
+            if ($reglement['created'] != null) {
+                $sheet->setCellValue('P'.$i, $reglement['created']->format('Y-m-d H:m:s'));
+            }
+            $sheet->setCellValue('Q'.$i, $reglement['num_brd']);
             $i++;
             $j++;
         }
