@@ -196,8 +196,12 @@ class CentreDappelController extends AbstractController
             $sheet->setCellValue('F'.$i, $etudiant->getTelMere());
             $sheet->setCellValue('G'.$i, $etudiant->getAnneeBac());
             $sheet->setCellValue('H'.$i, $etudiant->getMoyenneBac());
-            $sheet->setCellValue('I'.$i, $etudiant->getTypeBac()->getDesignation());
-            $sheet->setCellValue('J'.$i, $etudiant->getFiliere()->getDesignation());
+            if ($etudiant->getTypeBac() != null) {
+                $sheet->setCellValue('I'.$i, $etudiant->getTypeBac()->getDesignation());
+            }
+            if ($etudiant->getFiliere() != null) {
+                $sheet->setCellValue('J'.$i, $etudiant->getFiliere()->getDesignation());
+            }
             $sheet->setCellValue('K'.$i, $etudiant->getTeleListe());
             $sheet->setCellValue('L'.$i, $etudiant->getObs());
             $sheet->setCellValue('M'.$i, $etudiant->getRdv1());

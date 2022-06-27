@@ -289,6 +289,7 @@ class EtudiantController extends AbstractController
                
                 $etudiant->setSourceSite(1);
                 $etudiant->setUserCreated($this->getUser());
+                $etudiant->setCreated(new DateTime('now'));
                 $etudiant->setStatut(
                     $this->em->getRepository(PStatut::class)->find(20)
                 );

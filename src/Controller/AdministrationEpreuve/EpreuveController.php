@@ -92,14 +92,14 @@ class EpreuveController extends AbstractController
             array( 'db' => 'UPPER(prm.designation)','dt' => 8),
             array( 'db' => 'CONCAT(ens.nom," ",ens.prenom)','dt' => 9),
             array( 'db' => 'st.designation','dt' => 10),
-            array( 'db' => 'user.username','dt' => 11),
+            array( 'db' => 'users.username','dt' => 11),
            
             
         );
         $sql = "SELECT " . implode(", ", DatatablesController::Pluck($columns, 'db')) . "
         
         FROM ac_epreuve epv 
-        left join user on user.id = epv.user_created_id
+        left join users on users.id = epv.user_created_id
         INNER JOIN ac_element ele ON ele.id = epv.element_id
         INNER JOIN ac_module mdl ON mdl.id = ele.module_id
         INNER JOIN ac_semestre sem ON sem.id = mdl.semestre_id
@@ -199,14 +199,14 @@ class EpreuveController extends AbstractController
             array( 'db' => 'UPPER(prm.designation)','dt' => 8),
             array( 'db' => 'CONCAT(ens.nom," ",ens.prenom)','dt' => 9),
             array( 'db' => 'st.designation','dt' => 10),
-            array( 'db' => 'user.username','dt' => 11),
+            array( 'db' => 'users.username','dt' => 11),
            
             
         );
         $sql = "SELECT " . implode(", ", DatatablesController::Pluck($columns, 'db')) . "
         
         FROM ac_epreuve epv 
-        left join user on user.id = epv.user_created_id
+        left join users on users.id = epv.user_created_id
         INNER JOIN ac_element ele ON ele.id = epv.element_id
         INNER JOIN ac_module mdl ON mdl.id = ele.module_id
         INNER JOIN ac_semestre sem ON sem.id = mdl.semestre_id

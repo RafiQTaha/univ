@@ -230,7 +230,8 @@ class GestionFactureController extends AbstractController
     public function getMontant(Request $request,TOperationcab $operationcab): Response
     {   
         $operationdet = $this->em->getRepository(TOperationdet::class)->findBy(['operationcab'=>$operationcab,'active'=>1]);
-        if($operationdet == NULL || $operationcab->getActive() == 0){
+        if($operationdet == NULL){
+        // if($operationdet == NULL || $operationcab->getActive() == 0){
             return new JsonResponse('vide', 200);
         }
         $reglementTotal = $this->em->getRepository(TReglement::class)->getSumMontantByCodeFacture($operationcab);
@@ -304,7 +305,11 @@ class GestionFactureController extends AbstractController
             // dd($frais);
             $SumByOrg = $this->em->getRepository(TOperationdet::class)->getSumMontantByCodeFactureAndOrganisme($operationcab,$frais);
             $SumByPayant = $this->em->getRepository(TOperationdet::class)->getSumMontantByCodeFactureAndPayant($operationcab,$frais);
-            $list['dateOperation'] = $this->em->getRepository(TOperationdet::class)->findOneBy(['operationcab'=>$operationcab,'frais'=>$frais],['created'=>'DESC'])->getCreated()->format('d/m/Y');
+            $list['dateOperation'] = "";
+            $created = $this->em->getRepository(TOperationdet::class)->findOneBy(['operationcab'=>$operationcab,'frais'=>$frais],['created'=>'DESC'])->getCreated();
+            if ($created != null) {
+                $list['dateOperation'] = $this->em->getRepository(TOperationdet::class)->findOneBy(['operationcab'=>$operationcab,'frais'=>$frais],['created'=>'DESC'])->getCreated()->format('d/m/Y');
+            }            
             // $list['dateOperation'] = $operationdet->getCreated()->format('d/m/Y h:m:s');
             $list['designation'] = $operationdet->getFrais()->getDesignation();
             $list['SumByOrg'] = $SumByOrg;
@@ -367,7 +372,7 @@ class GestionFactureController extends AbstractController
     public function detaille_facture(Request $request,TOperationcab $operationcab): Response
     { 
         $operationdets = $this->em->getRepository(TOperationdet::class)->findBy(['operationcab'=>$operationcab]);
-        
+
         $cloture = $operationcab->getActive();
         $html = "";
         $i=1;
@@ -462,7 +467,8 @@ class GestionFactureController extends AbstractController
         $sheet->setCellValue('Q1', 'statut');
         $i=2;
         $j=1;
-        $operationcabs = $this->em->getRepository(TOperationcab::class)->getFacturesByCurrentYear();
+        $currentyear = '2022/2023';
+        $operationcabs = $this->em->getRepository(TOperationcab::class)->getFacturesByCurrentYear($currentyear);
         // dd($operationcabs);
         foreach ($operationcabs as $operationcab) {
             $montant = $this->em->getRepository(TOperationdet::class)->getSumMontantByCodeFacture($operationcab['id']);
