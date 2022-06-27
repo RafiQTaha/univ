@@ -298,9 +298,13 @@ class GestionFactureController extends AbstractController
         $source = "";
         foreach ($operationdets as $operationdet) {
             if ($source != "") {
-                $source .= " - ";
+                if (!str_contains($source, $operationdet->getOrganisme()->getDesignation())) { 
+                    $source .= " - ";
+                    $source .= $operationdet->getOrganisme()->getDesignation();
+                }
+            }else{  
+                $source .= $operationdet->getOrganisme()->getDesignation();
             }
-            $source .= $operationdet->getOrganisme()->getDesignation();
             $frais = $operationdet->getFrais();
             // dd($frais);
             $SumByOrg = $this->em->getRepository(TOperationdet::class)->getSumMontantByCodeFactureAndOrganisme($operationcab,$frais);

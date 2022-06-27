@@ -690,7 +690,9 @@ class EtudiantController extends AbstractController
         $etudiant->setMoyenRegional($request->get('moyen_regional'));
         $etudiant->setMoyenNational($request->get('moyen_national'));
         $etudiant->setObs(strtoupper($request->get('obs')));
-        $etudiant->setLangueConcours($this->em->getRepository(XLangue::class)->find($request->get('langue_concours')));
+        if ($request->get('langue_concours') != "") {
+            $etudiant->setLangueConcours($this->em->getRepository(XLangue::class)->find($request->get('langue_concours')));
+        }
         $etudiant->setConcoursMedbup($request->get('concours_medbup'));
 
         $etudiant->setBourse($request->get('bourse'));
