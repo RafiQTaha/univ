@@ -352,7 +352,6 @@ class GestionReglementsController extends AbstractController
         $j=1;
         $currentyear = '2022/2023';
         $reglements = $this->em->getRepository(TReglement::class)->getReglementsByCurrentYear($currentyear);
-        dd($reglements);
         foreach ($reglements as $reglement) {
             $sheet->setCellValue('A'.$i, $j);
             $sheet->setCellValue('B'.$i, $reglement['code_preins']);
