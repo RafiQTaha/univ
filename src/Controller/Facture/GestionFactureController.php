@@ -111,7 +111,7 @@ class GestionFactureController extends AbstractController
             array( 'db' => 'Upper(org.abreviation)','dt' => 13),
             array( 'db' => 'opcab.active','dt' => 14),
         );
-        $sql = "SELECT " . implode(", ", DatatablesController::Pluck($columns, 'db')) . "
+        $sql = "SELECT DISTINCT " . implode(", ", DatatablesController::Pluck($columns, 'db')) . "
         FROM `toperationcab` opcab
         INNER JOIN ac_annee an on an.id = opcab.annee_id
         INNER JOIN tpreinscription pre on pre.id = opcab.preinscription_id
@@ -367,6 +367,7 @@ class GestionFactureController extends AbstractController
     public function detaille_facture(Request $request,TOperationcab $operationcab): Response
     { 
         $operationdets = $this->em->getRepository(TOperationdet::class)->findBy(['operationcab'=>$operationcab]);
+        
         $cloture = $operationcab->getActive();
         $html = "";
         $i=1;
@@ -402,7 +403,7 @@ class GestionFactureController extends AbstractController
         if($operationcab->getActive() == 0){
             return new JsonResponse('Cette Facture Est Cloture', 500);  
         }
-        if(empty($request->get('montant'))  || $request->get('montant') == ' ' || empty($request->get('frais')) ){
+        if(empty($request->get('montant'))  || $request->get('montant') == ' ' || empty($request->get('frais')) || $request->get('frais') == "" ){
             return new JsonResponse('Merci de renseigner tous les champs!', 500);            
         }
         if (empty($request->get('organisme_id'))) {
