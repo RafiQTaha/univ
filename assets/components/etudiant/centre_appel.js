@@ -92,6 +92,8 @@ $(document).ready(function  () {
             <p>${response}</p>
             </div>`
         );
+        document.getElementById("date_appele_save").reset();
+        $('select').val("");
         icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
         table.ajax.reload(null, false)
     } catch (error) {
