@@ -368,10 +368,10 @@ class GestionReglementsController extends AbstractController
             $sheet->setCellValue('M'.$i, $reglement['mode_paiement']);
 
             if ($reglement['date_reglement'] != null) {
-                $sheet->setCellValue('N'.$i, $reglement['date_reglement']->format('Y-m-d'));
+                $sheet->setCellValue('N'.$i, $reglement['date_reglement']->format('d-m-Y'));
             }
             if ($reglement['created'] != null) {
-                $sheet->setCellValue('O'.$i, $reglement['created']->format('Y-m-d H:m:s'));
+                $sheet->setCellValue('O'.$i, $reglement['created']->format('d-m-Y H:m:s'));
             }
             $sheet->setCellValue('P'.$i, $reglement['num_brd']);
             $i++;
