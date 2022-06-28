@@ -12,6 +12,7 @@ use App\Entity\XAcademie;
 use App\Entity\NatureDemande;
 use App\Entity\AcAnnee;
 use App\Controller\DatatablesController;
+use App\Entity\XFiliere;
 use Doctrine\Persistence\ManagerRegistry;
 use phpDocumentor\Reflection\Types\Null_;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
@@ -44,8 +45,12 @@ class CentreDappelController extends AbstractController
         if(!$operations) {
             return $this->render("errors/403.html.twig");
         }
+        $filieres = $this->em->getRepository(XFiliere::class)->findBy(['active'=>1]);
+        $typebacs = $this->em->getRepository(XTypeBac::class)->findBy(['active'=>1]);
         return $this->render('etudiant/centre_appel/index.html.twig', [
             'operations' => $operations,
+            'filieres' => $filieres,
+            'typebacs' => $typebacs,
         ]);
     }
     
@@ -69,7 +74,7 @@ class CentreDappelController extends AbstractController
             array( 'db' => 'etu.annee_bac','dt' => 6),
             array( 'db' => 'etu.moyenne_bac','dt' => 7),
             array( 'db' => 'LOWER(xtb.designation)','dt' => 8),
-            array( 'db' => 'LOWER(fil.designation)','dt' => 9),
+            array( 'db' => 'UPPER(fil.abreviation)','dt' => 9),
             array( 'db' => 'etu.tele_liste','dt' => 10),
             array( 'db' => 'etu.obs','dt' => 11),
             array( 'db' => 'etu.rdv1','dt' => 12),
@@ -155,6 +160,20 @@ class CentreDappelController extends AbstractController
         $etudiant->setRdv2($rdv2);
         $etudiant->setTeleListe($request->get('statut_appel'));
         $etudiant->setObs($request->get('Observation'));
+
+        if ($request->get('annee_bac') != "") {
+            $etudiant->setAnneeBac($request->get('annee_bac'));
+        }
+        if ($request->get('note_bac') != "") {
+            $etudiant->setMoyenneBac($request->get('note_bac'));
+        }
+        if ($request->get('type_bac') != "") {
+            $etudiant->setTypeBac($this->em->getRepository(XTypeBac::class)->find($request->get('type_bac')));
+        }
+        if ($request->get('filiere') != "") {
+            $etudiant->setFiliere($this->em->getRepository(XFiliere::class)->find($request->get('filiere')));
+        }
+
         $etudiant->setOperateur($this->getUser());
         $this->em->flush();
         return new JsonResponse("Bien enregistre");

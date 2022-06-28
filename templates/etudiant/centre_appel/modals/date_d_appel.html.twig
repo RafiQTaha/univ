@@ -36,6 +36,24 @@
               <option value="NON INTERESSE">NON INTERESSE</option>
               <option value="A RELANCER">A RELANCER</option>
           </select>
+          <label> Annee Bac :</label>
+          <input class="form-control" type="text" name="annee_bac" id="annee_bac">
+          <label> Note Bac :</label>
+          <input class="form-control" type="text" name="note_bac" id="note_bac">
+          <label> Type Bac :</label>
+          <select class="form-control chosen-select" name="type_bac" id ='type_bac'>
+              <option value="" selected>Choix Type Bac</option>
+              {% for typebac in typebacs %}
+                  <option value="{{typebac.id}}">{{typebac.designation}}</option>
+              {% endfor %}
+          </select>
+          <label> Filiere :</label>
+          <select class="form-control chosen-select" name="filiere" id ='filiere'>
+              <option value="" selected>Choix Filiere</option>
+              {% for filiere in filieres %}
+                  <option value="{{filiere.id}}">{{filiere.abreviation}}</option>  
+              {% endfor %}
+          </select>
           <button type="submit" class="btn btn-success mt-2"><i class="fas fa-check-circle"></i> Enregistrer</button>
         </form>
       </div>

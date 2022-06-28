@@ -114,6 +114,7 @@ class GestionReglementsController extends AbstractController
         left join  xmodalites pae on pae.id = reg.paiement_id 
         left join  xbanque ban on ban.id = reg.banque_id
         left join  tbrdpaiement brd on brd.id = reg.bordereau_id $filtre ";
+        // dd($sql);
         $totalRows .= $sql;
         $sqlRequest .= $sql;
         $stmt = $this->em->getConnection()->prepare($sql);
