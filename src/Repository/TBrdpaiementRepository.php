@@ -48,4 +48,17 @@ class TBrdpaiementRepository extends ServiceEntityRepository
         ;
     }
     */
+    
+    public function getMontantReglementsParBrd($brd)
+    {
+        return $this->createQueryBuilder('brd')
+            ->select("sum(reg.montant) as montant")
+            ->innerJoin("brd.reglements","reg")
+            ->Where("reg.annuler = 0")
+            ->Where("brd.id = :id")
+            ->setParameter('id', $brd)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
 }

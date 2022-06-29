@@ -469,6 +469,7 @@ class GestionFactureController extends AbstractController
         $sheet->setCellValue('O1', 'REST');
         $sheet->setCellValue('P1', 'ORG');
         $sheet->setCellValue('Q1', 'statut');
+        $sheet->setCellValue('R1', 'D-CREATION');
         $i=2;
         $j=1;
         $currentyear = '2022/2023';
@@ -509,6 +510,9 @@ class GestionFactureController extends AbstractController
             }
             $sheet->setCellValue('P'.$i, $value);
             $sheet->setCellValue('Q'.$i, $operationcab['statut']);
+            if ($operationcab['created'] != "") {
+                $sheet->setCellValue('R'.$i, $operationcab['created']->format('d-m-Y'));
+            }
             $i++;
             $j++;
         }

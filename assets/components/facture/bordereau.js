@@ -116,4 +116,7 @@ $(document).ready(function () {
                 }
           })
     });
+    $('body').on('click','#extraction', function (){
+      window.open('/facture/bordereau/extraction_borderaux', '_blank');
+    })
 })
