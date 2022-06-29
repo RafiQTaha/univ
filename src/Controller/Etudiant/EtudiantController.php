@@ -186,121 +186,125 @@ class EtudiantController extends AbstractController
         $exist_array = [];
         // dd($spreadSheetArys);
         foreach ($spreadSheetArys as $sheet) {
-            $etudiantExist = $this->em->getRepository(TEtudiant::class)->findOneBy(['cin' => $sheet[8]]);
-            if($etudiantExist) {
-                $exist++;
-                array_push($exist_array, [
-                    $etudiantExist->getId()
-                ]);
-            } else {
-                $etudiant = new TEtudiant();
-                $etudiant->setNom(strtoupper($sheet[2]));
-                $etudiant->setPrenom(ucfirst(strtolower($sheet[3])));
-                $date = new DateTime();
-                $etudiant->setDateNaissance($date->setTimestamp(strtotime($sheet[4])));
-                $etudiant->setLieuNaissance($sheet[5]);
-                $etudiant->setSexe($sheet[6]);
-                $etudiant->setTeleListe('Intéressé');
-                // $etudiant->setStFamille();
-                // $etudiant->setStFamilleParent();
-                $etudiant->setNationalite($sheet[7]);
-                $etudiant->setCin($sheet[8]);
-                $etudiant->setVille($sheet[9]);
-                $etudiant->setTel1($sheet[10]);
-                $etudiant->setMail1($sheet[11]);
-                // $etudiant->setPasseport($sheet[11]);
-                // $etudiant->setAdresse($sheet[12]);
-                $etudiant->setNomPere($sheet[12]);
-                $etudiant->setPrenomPere($sheet[13]);
-                $etudiant->setTelPere($sheet[14]);
-                $etudiant->setMailPere($sheet[15]);
-                // $etudiant->setNationalitePere($sheet[21]);
-                // $etudiant->setProfessionPere($sheet[22]);
-                // $etudiant->setEmployePere($sheet[23]);
-                // $etudiant->setCategoriePere($sheet[24]);
-                // $etudiant->setSalairePere($sheet[27]);
-                $etudiant->setNomMere($sheet[16]);
-                $etudiant->setPrenomMere($sheet[17]);
-                // $etudiant->setNationaliteMere($sheet[30]);
-                // $etudiant->setProfessionMere($sheet[31]);
-                // $etudiant->setEmployeMere($sheet[32]);
-                // $etudiant->setCategorieMere($sheet[33]);
-                $etudiant->setTelMere($sheet[18]);
-                $etudiant->setMailMere($sheet[19]);
-                // $etudiant->setSalaireMere($sheet[36]);
-                $etudiant->setCne($sheet[20]);
-                $etudiant->setAcademie(
-                    $this->em->getRepository(XAcademie::class)->findOneBy(['code' => $sheet[21]])
-                );
-                $etudiant->setEtablissement($sheet[22]);
-                $etudiant->setFiliere(
-                    $this->em->getRepository(XFiliere::class)->findOneBy(["designation" => $sheet[23]])
-                );
-                $etudiant->setTypeBac(
-                    $this->em->getRepository(XTypeBac::class)->findOneBy(['code' => $sheet[24]])
-                );
-                $etudiant->setAnneeBac($sheet[25]);
-                $etudiant->setMoyenneBac(str_replace(',', '.', $sheet[26]));
-                // $etudiant->setMoyenneRegional(str_replace(',', '.', $sheet[27]));
-                // $etudiant->setLangueConcours($sheet[44]);
-                // $etudiant->setNombreEnfants($sheet[45]);
-                $etudiant->setNatureDemande(
-                    $this->em->getRepository(NatureDemande::class)->findOneBy(['code' => $sheet[27]])
-                );
-                // if ($sheet[47] == "oui") {
-                //     $etudiant->setBourse(1);
-                // }
-                // if ($sheet[48] == "oui"){
-                //     $etudiant->setLogement(1);
-                // }
-                // if ($sheet[49] == "oui") {
-                //     $etudiant->setParking(1);
-                // }                    
-                // if ($sheet[50] == "oui") {
-                //     $etudiant->setCpgem(1);
-                // }
-                if ($sheet[29] == "oui") {
-                    $etudiant->setCpge2(1);
-                }                    
-                if ($sheet[30] == "oui") {
-                    $etudiant->setCpge1(1);
-                }
-                // if ($sheet[53] == "oui") {
-                //     $etudiant->setVet(1);
-                // }
-                if ($sheet[31] == "oui") {
-                    $etudiant->setCam(1);
-                }
-                if ($sheet[32] == "oui") {
-                    $etudiant->setIst(1);
-                }
-                if ($sheet[33] == "oui") {
-                    $etudiant->setIp(1);
-                }                    
-                if ($sheet[34] == "oui") {
-                    $etudiant->setFpa(1);
-                }
-                if ($sheet[35] == "oui") {
-                    $etudiant->setFma(1);
-                }
-                if ($sheet[36] == "oui") {
-                    $etudiant->setFda(1);
-                }                   
-               
-                $etudiant->setSourceSite(1);
-                $etudiant->setUserCreated($this->getUser());
-                $etudiant->setCreated(new DateTime('now'));
-                $etudiant->setStatut(
-                    $this->em->getRepository(PStatut::class)->find(20)
-                );
-                $this->em->persist($etudiant);
-                $this->em->flush();
-                $etudiant->setCode('CND_UA'.str_pad($etudiant->getId(), 8, '0', STR_PAD_LEFT).'/'.date('Y'));
-                $this->em->flush();
+            if ($sheet[8] != "" || empty($sheet[8])) {
+                $etudiantExist = $this->em->getRepository(TEtudiant::class)->findOneBy(['cin' => $sheet[8],'nom'=>$sheet[2]]);
+            
+                // dd($etudiantExist);
+                if($etudiantExist != null) {
+                    $exist++;
+                    array_push($exist_array, [
+                        $etudiantExist->getId()
+                    ]);
+                } else {
+                    $etudiant = new TEtudiant();
+                    $etudiant->setNom(strtoupper($sheet[2]));
+                    $etudiant->setPrenom(ucfirst(strtolower($sheet[3])));
+                    $date = new DateTime();
+                    $etudiant->setDateNaissance($date->setTimestamp(strtotime($sheet[4])));
+                    $etudiant->setLieuNaissance($sheet[5]);
+                    $etudiant->setSexe($sheet[6]);
+                    $etudiant->setTeleListe('Intéressé');
+                    // $etudiant->setStFamille();
+                    // $etudiant->setStFamilleParent();
+                    $etudiant->setNationalite($sheet[7]);
+                    $etudiant->setCin($sheet[8]);
+                    $etudiant->setVille($sheet[9]);
+                    $etudiant->setTel1($sheet[10]);
+                    $etudiant->setMail1($sheet[11]);
+                    // $etudiant->setPasseport($sheet[11]);
+                    // $etudiant->setAdresse($sheet[12]);
+                    $etudiant->setNomPere($sheet[12]);
+                    $etudiant->setPrenomPere($sheet[13]);
+                    $etudiant->setTelPere($sheet[14]);
+                    $etudiant->setMailPere($sheet[15]);
+                    // $etudiant->setNationalitePere($sheet[21]);
+                    // $etudiant->setProfessionPere($sheet[22]);
+                    // $etudiant->setEmployePere($sheet[23]);
+                    // $etudiant->setCategoriePere($sheet[24]);
+                    // $etudiant->setSalairePere($sheet[27]);
+                    $etudiant->setNomMere($sheet[16]);
+                    $etudiant->setPrenomMere($sheet[17]);
+                    // $etudiant->setNationaliteMere($sheet[30]);
+                    // $etudiant->setProfessionMere($sheet[31]);
+                    // $etudiant->setEmployeMere($sheet[32]);
+                    // $etudiant->setCategorieMere($sheet[33]);
+                    $etudiant->setTelMere($sheet[18]);
+                    $etudiant->setMailMere($sheet[19]);
+                    // $etudiant->setSalaireMere($sheet[36]);
+                    $etudiant->setCne($sheet[20]);
+                    $etudiant->setAcademie(
+                        $this->em->getRepository(XAcademie::class)->findOneBy(['code' => $sheet[21]])
+                    );
+                    $etudiant->setEtablissement($sheet[22]);
+                    $etudiant->setFiliere(
+                        $this->em->getRepository(XFiliere::class)->findOneBy(["designation" => $sheet[23]])
+                    );
+                    $etudiant->setTypeBac(
+                        $this->em->getRepository(XTypeBac::class)->findOneBy(['code' => $sheet[24]])
+                    );
+                    $etudiant->setAnneeBac($sheet[25]);
+                    $etudiant->setMoyenneBac(str_replace(',', '.', $sheet[26]));
+                    // $etudiant->setMoyenneRegional(str_replace(',', '.', $sheet[27]));
+                    // $etudiant->setLangueConcours($sheet[44]);
+                    // $etudiant->setNombreEnfants($sheet[45]);
+                    $etudiant->setNatureDemande(
+                        $this->em->getRepository(NatureDemande::class)->findOneBy(['code' => $sheet[27]])
+                    );
+                    // if ($sheet[47] == "oui") {
+                    //     $etudiant->setBourse(1);
+                    // }
+                    // if ($sheet[48] == "oui"){
+                    //     $etudiant->setLogement(1);
+                    // }
+                    // if ($sheet[49] == "oui") {
+                    //     $etudiant->setParking(1);
+                    // }                    
+                    // if ($sheet[50] == "oui") {
+                    //     $etudiant->setCpgem(1);
+                    // }
+                    if ($sheet[29] == "oui") {
+                        $etudiant->setCpge2(1);
+                    }                    
+                    if ($sheet[30] == "oui") {
+                        $etudiant->setCpge1(1);
+                    }
+                    // if ($sheet[53] == "oui") {
+                    //     $etudiant->setVet(1);
+                    // }
+                    if ($sheet[31] == "oui") {
+                        $etudiant->setCam(1);
+                    }
+                    if ($sheet[32] == "oui") {
+                        $etudiant->setIst(1);
+                    }
+                    if ($sheet[33] == "oui") {
+                        $etudiant->setIp(1);
+                    }                    
+                    if ($sheet[34] == "oui") {
+                        $etudiant->setFpa(1);
+                    }
+                    if ($sheet[35] == "oui") {
+                        $etudiant->setFma(1);
+                    }
+                    if ($sheet[36] == "oui") {
+                        $etudiant->setFda(1);
+                    }                   
+                
+                    $etudiant->setSourceSite(1);
+                    $etudiant->setUserCreated($this->getUser());
+                    $etudiant->setCreated(new DateTime('now'));
+                    $etudiant->setStatut(
+                        $this->em->getRepository(PStatut::class)->find(20)
+                    );
+                    $this->em->persist($etudiant);
+                    $this->em->flush();
+                    $etudiant->setCode('CND_UA'.str_pad($etudiant->getId(), 8, '0', STR_PAD_LEFT).'/'.date('Y'));
+                    $this->em->flush();
 
-                $inserted++;
+                    $inserted++;
 
-            }
+                }
+            } 
         }
 
         $session = $request->getSession();
