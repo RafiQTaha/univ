@@ -34,7 +34,7 @@ Encore
     .addEntry('evaluationElement', './assets/components/evaluation/element.js')
     .addEntry('evaluationEpreuve', './assets/components/evaluation/epreuve.js')
     .addEntry('evaluationModule', './assets/components/evaluation/module.js')
-    .addEntry('evaluationSemstre', './assets/components/evaluation/semestre.js')
+    .addEntry('evaluationSemestre', './assets/components/evaluation/semestre.js')
     .addEntry('evaluationSimulationDeliberation', './assets/components/evaluation/simulationdeliberation.js')
     .addEntry('facture', './assets/components/facture/facture.js')
     .addEntry('bordereau', './assets/components/facture/bordereau.js')

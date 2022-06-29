@@ -17,6 +17,9 @@ use App\Controller\DatatablesController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use App\Entity\nuts;
 use App\Entity\TReglement;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 
 #[Route('/facture/bordereau')]
 class BordereauController extends AbstractController
@@ -161,8 +164,46 @@ class BordereauController extends AbstractController
                 $reglement->setBordereau(Null);
             }
         }
-        $this->em->remove($bordereau);
+        // $this->em->remove($bordereau);
         $this->em->flush();
         return new JsonResponse('Bordereau Supprimé', 200); 
+    }
+    
+    
+    #[Route('/extraction_borderaux', name: 'extraction_borderaux')]
+    public function extraction_borderaux()
+    {   
+        // dd($this->em->getRepository(TBrdpaiement::class)->find(7104));
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        $sheet->setCellValue('A1', 'ORD');
+        $sheet->setCellValue('B1', 'CODE BORDEREAU');
+        $sheet->setCellValue('C1', 'ETABLISSEMENT');
+        $sheet->setCellValue('D1', 'TYPE');
+        $sheet->setCellValue('E1', 'MONTANT');
+        $sheet->setCellValue('F1', 'D-CREATION');
+        $sheet->setCellValue('G1', 'CREE PAR');
+        $i=2;
+        $j=1;
+        $borderaux = $this->em->getRepository(TBrdpaiement::class)->findAll();
+
+        foreach ($borderaux as $bordereau) {
+            $sheet->setCellValue('A'.$i, $j);
+            $sheet->setCellValue('B'.$i, $bordereau->getCode());
+            $sheet->setCellValue('C'.$i, $bordereau->getEtablissement()->getAbreviation());
+            $sheet->setCellValue('D'.$i, $bordereau->getModalite()->getDesignation());
+            $sheet->setCellValue('E'.$i, $this->em->getRepository(TBrdpaiement::class)->getMontantReglementsParBrd($bordereau->getId())[0]['montant']);
+            $sheet->setCellValue('F'.$i, $bordereau->getCreated()->format('d-m-Y'));
+            if ($bordereau->getUserCreated() != null) {
+                $sheet->setCellValue('G'.$i, $bordereau->getUserCreated()->getUsername());
+            }
+            $i++;
+            $j++;
+        }
+        $writer = new Xlsx($spreadsheet);
+        $fileName = 'Extraction Borderaux.xlsx';
+        $temp_file = tempnam(sys_get_temp_dir(), $fileName);
+        $writer->save($temp_file);
+        return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);
     }
 }
