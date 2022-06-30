@@ -273,6 +273,9 @@ class TEtudiant
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'tEtudiants')]
     private $operateur;
 
+    #[ORM\Column(type: 'string', length: 20, nullable: true)]
+    private $choix;
+
     public function __construct()
     {
         $this->preinscriptions = new ArrayCollection();
@@ -1348,6 +1351,18 @@ class TEtudiant
     public function setOperateur(?User $operateur): self
     {
         $this->operateur = $operateur;
+
+        return $this;
+    }
+
+    public function getChoix(): ?string
+    {
+        return $this->choix;
+    }
+
+    public function setChoix(?string $choix): self
+    {
+        $this->choix = $choix;
 
         return $this;
     }

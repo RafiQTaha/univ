@@ -173,7 +173,7 @@ class CentreDappelController extends AbstractController
         if ($request->get('filiere') != "") {
             $etudiant->setFiliere($this->em->getRepository(XFiliere::class)->find($request->get('filiere')));
         }
-
+        $etudiant->setChoix($request->get('choix'));
         $etudiant->setOperateur($this->getUser());
         $this->em->flush();
         return new JsonResponse("Bien enregistre");
@@ -200,6 +200,7 @@ class CentreDappelController extends AbstractController
         $sheet->setCellValue('M1', 'RDV1');
         $sheet->setCellValue('N1', 'RDV2');
         $sheet->setCellValue('O1', 'OPERATEUR');
+        $sheet->setCellValue('P1', 'Choix');
         $i=2;
         $j=1;
         // $current_year = date('m') > 7 ? $current_year = date('Y').'/'.date('Y')+1 : $current_year = date('Y') - 1 .'/' .date('Y');
@@ -228,6 +229,7 @@ class CentreDappelController extends AbstractController
             if ($etudiant->getOperateur() != NULL) {
                 $sheet->setCellValue('O'.$i, $etudiant->getOperateur()->getUserName());
             }
+            $sheet->setCellValue('P'.$i, $etudiant->getChoix());
             $i++;
             $j++;
         }

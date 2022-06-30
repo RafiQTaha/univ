@@ -54,7 +54,16 @@
                   <option value="{{filiere.id}}">{{filiere.abreviation}}</option>  
               {% endfor %}
           </select>
-          <button type="submit" class="btn btn-success mt-2"><i class="fas fa-check-circle"></i> Enregistrer</button>
+          <label> Choix :</label><br>
+          <div class="d-flex">
+              <div class="d-flex" style='justify-content: center;align-items: center;'>
+                  <input type="radio" name="choix" id="choixu" value="UIASS" checked=""> 
+                  <label style="margin: 0px 10px 0px 10px;"  for="choixu"> UIASS </label>   
+                  <input type="radio" name="choix" id="choixc" value="CPGE"> 
+                  <label style="margin:0 10px" for="choixc"> CPGE </label> 
+              </div> 
+              <button type="submit" class="btn btn-success mt-2 ml-auto"><i class="fas fa-check-circle"></i> Enregistrer</button>
+          </div>
         </form>
       </div>
     </div>

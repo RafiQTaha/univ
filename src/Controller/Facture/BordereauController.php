@@ -164,7 +164,7 @@ class BordereauController extends AbstractController
                 $reglement->setBordereau(Null);
             }
         }
-        // $this->em->remove($bordereau);
+        $this->em->remove($bordereau);
         $this->em->flush();
         return new JsonResponse('Bordereau Supprimé', 200); 
     }
