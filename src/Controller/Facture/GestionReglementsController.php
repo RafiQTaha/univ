@@ -215,10 +215,12 @@ class GestionReglementsController extends AbstractController
         $total = 0;
         foreach ($ids as $id) {
             $reglement = $this->em->getRepository(TReglement::class)->find($id);
-            $total = $total + $reglement->getMontant();
-            if ($reglement->getPaiement()->getId() == $paiement->getId()) {
-                $reglement->setBordereau($borderaux);
-                $this->em->flush();
+            if ($reglement->getBordereau() != null) {
+                $total = $total + $reglement->getMontant();
+                if ($reglement->getPaiement()->getId() == $paiement->getId()) {
+                    $reglement->setBordereau($borderaux);
+                    $this->em->flush();
+                }
             }
         }
         $borderaux->setCode($etablissement->getAbreviation().'-BER'.str_pad($borderaux->getId(), 6, '0', STR_PAD_LEFT).'/'.date('Y'));
@@ -371,7 +373,7 @@ class GestionReglementsController extends AbstractController
                 $sheet->setCellValue('N'.$i, $reglement['date_reglement']->format('d-m-Y'));
             }
             if ($reglement['created'] != null) {
-                $sheet->setCellValue('O'.$i, $reglement['created']->format('d-m-Y H:m:s'));
+                $sheet->setCellValue('O'.$i, $reglement['created']->format('d-m-Y'));
             }
             $sheet->setCellValue('P'.$i, $reglement['num_brd']);
             $i++;

@@ -117,6 +117,13 @@ $(document).ready(function () {
           })
     });
     $('body').on('click','#extraction', function (){
-      window.open('/facture/bordereau/extraction_borderaux', '_blank');
+        if(!id_bordereau){
+            Toast.fire({
+                icon: 'error',
+                title: 'Merci de Choisir un bordereau!',
+            })
+            return;
+        }
+      window.open('/facture/bordereau/extraction_borderaux/'+id_bordereau, '_blank');
     })
 })

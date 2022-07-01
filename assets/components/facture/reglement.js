@@ -129,9 +129,10 @@ $(document).ready(function () {
         }
         console.log(id_reglement);
     })
-    $('body').on('click','#datables_reglement tbody tr',function (e) {
+    $('body').on('click','#datables_reglement tbody tr input',function (e) {
         e.preventDefault();
-        const input = $(this).find("input");
+        // const input = $(this).find("input");
+        const input = $(this);
         if (input.hasClass('check_reg')) {
             return;
         }
