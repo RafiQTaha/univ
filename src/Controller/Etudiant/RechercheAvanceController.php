@@ -64,8 +64,10 @@ class RechercheAvanceController extends AbstractController
     public function recherche(TInscription $inscription): Response
     {
         $administratif = $this->render("etudiant/recherche_avance/page/administratif.html.twig", ['inscription' => $inscription])->getContent();
-        $academique = $this->render("etudiant/recherche_avance/page/academique.html.twig", ['inscription' => $inscription])->getContent();
+        $academique = $this->render("etudiant/recherche_avance/page/academique.html.twig", ['inscription' => $inscription])->getContent();        
         $informations = $this->render("etudiant/recherche_avance/page/informations.html.twig", ['inscription' => $inscription])->getContent();
+        // dd($informations);
+        
         return new JsonResponse([
             'informations' => $informations,
             'administratif' => $administratif,
