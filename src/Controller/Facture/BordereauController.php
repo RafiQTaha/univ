@@ -180,8 +180,8 @@ class BordereauController extends AbstractController
         $sheet->setCellValue('B1', 'CODE BORDEREAU');
         $sheet->setCellValue('C1', 'ETABLISSEMENT');
         $sheet->setCellValue('D1', 'MODALITE');
-        $sheet->setCellValue('E1', 'D-CREATION');
-        $sheet->setCellValue('F1', 'CODE REGLEMENT');
+        $sheet->setCellValue('E1', 'CODE REGLEMENT');
+        $sheet->setCellValue('F1', 'REG D-CREATION');
         $sheet->setCellValue('G1', 'CODE FACTURE');
         $sheet->setCellValue('H1', 'CODE PRE-INSCRIPTION');
         $sheet->setCellValue('I1', 'NOM');
@@ -198,8 +198,8 @@ class BordereauController extends AbstractController
             $sheet->setCellValue('B'.$i, $bordereau->getCode());
             $sheet->setCellValue('C'.$i, $bordereau->getEtablissement()->getDesignation());
             $sheet->setCellValue('D'.$i, $bordereau->getModalite()->getDesignation());
-            $sheet->setCellValue('E'.$i, $bordereau->getCreated());
-            $sheet->setCellValue('F'.$i, $reglement->getCode());
+            $sheet->setCellValue('E'.$i, $reglement->getCode());
+            $sheet->setCellValue('F'.$i, $reglement->getDateReglement());
             $sheet->setCellValue('G'.$i, $reglement->getOperation()->getCode());
             $sheet->setCellValue('H'.$i, $reglement->getOperation()->getPreinscription()->getCode());
             $sheet->setCellValue('I'.$i, $reglement->getOperation()->getPreinscription()->getEtudiant()->getNom());

@@ -188,6 +188,7 @@ $(document).ready(function () {
         }
         $("#detail_facture_modal").modal('show');
     });
+    extra_frais
     $('input[type=radio][name=organ]').on('change', async function (e){
         e.preventDefault();
         if (this.value == 0) {
@@ -370,4 +371,14 @@ $(document).ready(function () {
       window.open('/facture/factures/extraction_factures', '_blank');
     })
     
+    $('body').on('click','#extra_frais',function (e) {
+        e.preventDefault();
+        $("#annee_extraction_frais").modal('show');
+    });
+    $('body').on('click','#export_frais',function (e) {
+        e.preventDefault();
+        let annee = $('#annee').val();
+        // alert(annee);
+        window.open('/facture/factures/extraction_factures_by_annee/'+annee, '_blank');
+    });
 });
