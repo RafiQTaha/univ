@@ -115,6 +115,7 @@ class TReglementRepository extends ServiceEntityRepository
             ->leftJoin("reg.bordereau","brd")
             ->Where("reg.annuler = 0")
             ->Where("reg.created like '2021-%'")
+            ->Where("reg.created like '2022-%'")
             // ->Where("ann.cloture_academique = 'non'")
             // ->AndWhere("ann.designation = :annee")
             // ->setParameter("annee", $currentyear)
