@@ -215,7 +215,7 @@ class GestionReglementsController extends AbstractController
         $total = 0;
         foreach ($ids as $id) {
             $reglement = $this->em->getRepository(TReglement::class)->find($id);
-            if ($reglement->getBordereau() != null) {
+            if ($reglement->getBordereau() == null) {
                 $total = $total + $reglement->getMontant();
                 if ($reglement->getPaiement()->getId() == $paiement->getId()) {
                     $reglement->setBordereau($borderaux);
