@@ -38,7 +38,7 @@ class BordereauController extends AbstractController
             return $this->render("errors/403.html.twig");
         }
         $etablissements = $this->em->getRepository(AcEtablissement::class)->findAll();
-        $paiements = $this->em->getRepository(XModalites::class)->findAll();
+        $paiements = $this->em->getRepository(XModalites::class)->findby(['active'=>1]);
         return $this->render('facture/bordereau.html.twig', [
             'operations' => $operations,
             'etablissements' => $etablissements,

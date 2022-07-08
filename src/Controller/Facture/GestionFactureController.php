@@ -258,7 +258,7 @@ class GestionFactureController extends AbstractController
         $promotion = $inscription == NULL ? "" : $inscription->getPromotion()->getDesignation();
         $inscription = $inscription == NULL ? "" : $inscription->getCode();
         $html = "";
-        for ($i=0; $i < 3; $i++) { 
+        for ($i=0; $i < 4; $i++) { 
             $html .= $this->render("facture/pdfs/facture_reglement.html.twig", [
                     'reglementTotal' => $reglementTotal,
                     'operationTotal' => $operationTotal,

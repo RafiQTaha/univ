@@ -30,6 +30,17 @@ $(document).ready(function  () {
         $("body tr#" + id_etudiant).addClass('active_databales');
       }
     },
+    preDrawCallback: function(settings) {
+        if ($.fn.DataTable.isDataTable('#datables_etudiant')) {
+            var dt = $('#datables_etudiant').DataTable();
+
+            //Abort previous ajax request if it is still in process.
+            var settings = dt.settings();
+            if (settings[0].jqXHR) {
+                settings[0].jqXHR.abort();
+            }
+        }
+    },
     language: {
       url: "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/French.json",
     },
@@ -150,8 +161,8 @@ $(document).ready(function  () {
     });    
     loadExistMatieres();
     loadEtudiantStatut();
-    getEtudiantInfos();
-    getAppelRdv()
+    // getEtudiantInfos();
+    // getAppelRdv()
   })
   
   let cancelToken;
@@ -457,6 +468,7 @@ $(document).ready(function  () {
         })
         return;
     }
+    getEtudiantInfos();
     $('#modifier_modal').modal("show");
   })
   

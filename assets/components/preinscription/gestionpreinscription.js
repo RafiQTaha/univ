@@ -290,7 +290,7 @@ $('body').on('click','.modal #add-btn',function () {
             load_etud_info();
             load_frais_preins();
             getDocumentsPreins();
-            getEtudiantInfos();
+            // getEtudiantInfos();
         }
         console.log(id_preinscription);
     })
@@ -436,6 +436,7 @@ $('body').on('click','#modifier',function () {
         })
         return;
     }
+    getEtudiantInfos();
     $('#modifier_modal').modal("show");
 })
 

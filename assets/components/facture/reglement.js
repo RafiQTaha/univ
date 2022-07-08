@@ -148,6 +148,39 @@ $(document).ready(function () {
         }
         console.log(ids_reglement);
     })
+    // $('body').on('change','#datables_reglement tbody tr input[type=checkbox]',function (e) {
+    //     e.preventDefault();
+    //     // alert('test')
+    //     const input = $(this);
+    //     if (input.hasClass('check_reg')) {
+    //         alert('class')
+    //         return;
+    //     }
+    //     if(input.prop("checked",true)){
+    //         input.prop("checked",false);
+    //         const index = ids_reglement.indexOf(input.attr("data-id"));
+    //         ids_reglement.splice(index,1);
+    //     }else{
+    //         input.prop("checked",true);
+    //         ids_reglement.push(input.attr("data-id"));
+    //     }
+    //     // const input = $(this).find("input");
+    //     // if (input.hasClass('check_reg')) {
+    //     //     alert('class')
+    //     //     return;
+    //     // }
+    //     // else{
+    //     //     if(input.is(":checked")){
+    //     //         input.prop("checked",false);
+    //     //         const index = ids_reglement.indexOf(input.attr("data-id"));
+    //     //         ids_reglement.splice(index,1);
+    //     //     }else{
+    //     //         input.prop("checked",true);
+    //     //         ids_reglement.push(input.attr("data-id"));
+    //     //     }
+    //     // }
+    //     console.log(ids_reglement);
+    // })
     $("body").on("click", '#imprimer', async function (e) {
         e.preventDefault();
         if(!id_reglement){
@@ -185,6 +218,7 @@ $(document).ready(function () {
             ids_reglement.length = [];
             window.open('/facture/reglements/printborderaux/'+data, '_blank');
             table_reglement.ajax.reload(null,false);
+            console.log(ids_reglement);
         } catch (error) {
             const message = error.response.data;
             console.log(error, error.response);

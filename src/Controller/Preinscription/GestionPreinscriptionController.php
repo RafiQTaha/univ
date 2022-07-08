@@ -221,7 +221,7 @@ class GestionPreinscriptionController extends AbstractController
     public function frais_preins_modals(Request $request,TPreinscription $preinscription): Response
     {   
         $etudiant = $preinscription->getEtudiant();
-        $natutre = $etudiant->getNatureDemande();
+        $natutre = $preinscription->getNature();
         $annee = $preinscription->getAnnee();
         $formation =$annee->getFormation();
         $etablissement=$formation->getEtablissement();
@@ -654,7 +654,7 @@ class GestionPreinscriptionController extends AbstractController
             $sheet->setCellValue('K'.$i, $formation->getDesignation());
             $sheet->setCellValue('L'.$i, $preinscription->getEtudiant()->getCategoriePreinscription());
             if ($etudiant->getNatureDemande()) {
-                $sheet->setCellValue('M'.$i, $preinscription->getNatureDemande()->getDesignation());
+                $sheet->setCellValue('M'.$i, $preinscription->getNature()->getDesignation());
             }
             $sheet->setCellValue('N'.$i, $etudiant->getTypeBac() == Null ? "" : $etudiant->getTypeBac()->getDesignation());
             $sheet->setCellValue('O'.$i, $etudiant->getAnneeBac());

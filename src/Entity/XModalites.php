@@ -27,6 +27,9 @@ class XModalites
     #[ORM\OneToMany(mappedBy: 'modalite', targetEntity: TBrdpaiement::class)]
     private $bordereaux;
 
+    #[ORM\Column(type: 'float', nullable: true)]
+    private $active;
+
     public function __construct()
     {
         $this->reglements = new ArrayCollection();
@@ -118,6 +121,18 @@ class XModalites
                 $bordereaux->setModalite(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getActive(): ?float
+    {
+        return $this->active;
+    }
+
+    public function setActive(?float $active): self
+    {
+        $this->active = $active;
 
         return $this;
     }

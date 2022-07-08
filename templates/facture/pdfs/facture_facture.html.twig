@@ -30,13 +30,15 @@
                 <th style="width: 100% ; font-size: 13px ;font-weight: 200;font-weight: bold;padding:4px;color:rgb(3, 35, 68);">
                     {# {% if operationcab.preinscription.annee.formation.etablissement.id == 28 %}
                         <img src="./assets/img/logo/cpge.jpg" style=" width: 400px; margin: 0 auto;">                
-                    {% endif %}                 #}
+                    {% endif %} #}
                 </th>
                 <th style="width: 100% ; font-size: 13px ;font-weight: 200;font-weight: bold;padding:4px;color:rgb(3, 35, 68);">
                     {% if operationcab.preinscription.annee.formation.etablissement.id == 28 %}
-                            <img src="./assets/img/logo/cpge.jpg" style=" width: 500px; margin: 20 auto;"> 
-                        {% elseif operationcab.preinscription.annee.formation.etablissement.id != 28 %}                    
-                            <img src="./assets/img/logo/Logo_UIASS_bkack2.png" style=" width: 400px; margin: 0 auto;">
+                            <img src="./assets/img/logo/cpge.svg" style=" width: 800px; margin: 20 auto;"> 
+                    {% elseif operationcab.preinscription.annee.formation.etablissement.id == 5 %}
+                            <img src="./assets/img/logo/logo_lez.png" style=" width: 800px; margin: 0 auto;">
+                    {% else %}                
+                            <img src="./assets/img/logo/Logo_UIASS_bkack2.png" style=" width: 500px; margin: 0 auto;">
                     {% endif %}
                     {# <img src="./assets/img/logo/Logo_UIASS_bkack2.png" style=" width: 400px; margin: 0 auto;"> #}
                 </th>
@@ -196,15 +198,14 @@
                 <td style="width: 100% ;padding:15px 2px 2px 30px ">NB : EN CAS DE DEPASSEMENT DES DELAIS DE PAIEMENT,UNE PENALITE DE RETARD EST APPLIQUEE. </td> 
             </tr>
             <tr>
-                {# {% if operationcab.preinscription.annee.formation.etablissement.id == 28 %} #}
-                    {# <td style="width: 100% ;padding:40px 2px 2px 30px;"><b>RIB UIASS - LEZ : 007 810 0012405000301617 32</b></td> #}
-                    {# {% else %} #}
+                {% if operationcab.preinscription.annee.formation.etablissement.id == 28 or operationcab.preinscription.annee.formation.etablissement.id == 5 %}
+                    <td style="width: 100% ;padding:40px 2px 2px 30px;"><b>RIB UIASS - LEZ : 007 810 0012405000301617 32</b></td>
+                    {% else %}
                     <td style="width: 100% ;padding:40px 2px 2px 30px;"><b>RIB UIASS : 007 810 0012404000300234 15</b></td>
-                {# {% endif %} #}
-                {# <td style="width: 100% ;padding:40px 2px 2px 30px;"><b>RIB POUR LES ETRANGER : XXXXXXXXXXXXXXXXXXX</b></td>  #}
+                {% endif %}
             </tr>
             <tr>
-                {% if operationcab.preinscription.annee.formation.etablissement.id != 28 %}
+                {% if operationcab.preinscription.annee.formation.etablissement.id != 28 and operationcab.preinscription.annee.formation.etablissement.id != 5 %}
                     <td style="width: 100% ;padding:2px 2px 2px 30px;"><b>RIB UIASS - EAS : 007 810 0012405000301616 35</b></td> 
                 {% endif %}
             </tr>
