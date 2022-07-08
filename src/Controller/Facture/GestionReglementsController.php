@@ -223,7 +223,7 @@ class GestionReglementsController extends AbstractController
                 }
             }
         }
-        $borderaux->setCode($etablissement->getAbreviation().'-BER'.str_pad($borderaux->getId(), 6, '0', STR_PAD_LEFT).'/'.date('Y'));
+        $borderaux->setCode($etablissement->getAbreviation().'-BRD'.str_pad($borderaux->getId(), 6, '0', STR_PAD_LEFT).'/'.date('Y'));
         $borderaux->setMontant($total);
         $this->em->flush();
         return new Response($borderaux->getId());

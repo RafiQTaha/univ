@@ -654,7 +654,7 @@ class GestionPreinscriptionController extends AbstractController
             $sheet->setCellValue('K'.$i, $formation->getDesignation());
             $sheet->setCellValue('L'.$i, $preinscription->getEtudiant()->getCategoriePreinscription());
             if ($etudiant->getNatureDemande()) {
-                $sheet->setCellValue('M'.$i, $etudiant->getNatureDemande()->getDesignation());
+                $sheet->setCellValue('M'.$i, $preinscription->getNatureDemande()->getDesignation());
             }
             $sheet->setCellValue('N'.$i, $etudiant->getTypeBac() == Null ? "" : $etudiant->getTypeBac()->getDesignation());
             $sheet->setCellValue('O'.$i, $etudiant->getAnneeBac());

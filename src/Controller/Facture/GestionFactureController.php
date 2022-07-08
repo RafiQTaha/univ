@@ -572,8 +572,8 @@ class GestionFactureController extends AbstractController
                 $sheet->setCellValue('H'.$i, $operationcab['etablissement']);
                 $sheet->setCellValue('I'.$i, $operationcab['formation']);
                 $sheet->setCellValue('J'.$i, $operationcab['promotion']);
-                $sheet->setCellValue('K'.$i, $operationcab['categorie']);
-                $sheet->setCellValue('L'.$i, '');
+                $sheet->setCellValue('K'.$i, $operationdet->getOrganisme()->getAbreviation());
+                $sheet->setCellValue('L'.$i, $operationdet->getFrais()->getDesignation());
                 $sheet->setCellValue('M'.$i, $operationdet->getMontant());
                 if ($regcount == 0) {
                     $sheet->setCellValue('N'.$i, $montant_reglement['total']);

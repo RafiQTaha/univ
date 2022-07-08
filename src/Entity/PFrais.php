@@ -24,7 +24,7 @@ class PFrais
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $categorie;
 
-    #[ORM\Column(type: 'smallint', nullable: true)]
+    #[ORM\Column(type: 'float', nullable: true)]
     private $montant;
 
     #[ORM\Column(type: 'string', length: 255)]
