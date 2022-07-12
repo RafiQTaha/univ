@@ -60,10 +60,34 @@
             <label> catégorie préinscription (*) :</label>
             <select class="form-control chosen-select" name="categorie_preinscription">
                 <option value="" selected>Choix Categorie Preins</option>
-                <option value="NOUVELLE PRE-INSCRIPTION">NOUVELLE PRE-INSCRIPTION</option>
-                <option value="TRANSFERT">TRANSFERT</option>
-                <option value="PASSERELLE">PASSERELLE</option>
-                <option value="RESIDANAT">RESIDANAT</option>
+                {% if etudiant.categoriePreinscription == "NOUVELLE PRE-INSCRIPTION" %}
+                    <option value="NOUVELLE PRE-INSCRIPTION" selected>NOUVELLE PRE-INSCRIPTION</option>
+                    <option value="TRANSFERT">TRANSFERT</option>
+                    <option value="PASSERELLE">PASSERELLE</option>
+                    <option value="RESIDANAT">RESIDANAT</option>
+                {% elseif etudiant.categoriePreinscription == "TRANSFERT"  %}
+                    <option value="NOUVELLE PRE-INSCRIPTION">NOUVELLE PRE-INSCRIPTION</option>
+                    <option value="TRANSFERT" selected>TRANSFERT</option>
+                    <option value="PASSERELLE">PASSERELLE</option>
+                    <option value="RESIDANAT">RESIDANAT</option>  
+                {% elseif etudiant.categoriePreinscription == "PASSERELLE"  %}
+                    <option value="NOUVELLE PRE-INSCRIPTION">NOUVELLE PRE-INSCRIPTION</option>
+                    <option value="TRANSFERT">TRANSFERT</option>
+                    <option value="PASSERELLE" selected>PASSERELLE</option>
+                    <option value="RESIDANAT">RESIDANAT</option>
+                {% elseif etudiant.categoriePreinscription == "RESIDANAT"  %}
+                    <option value="NOUVELLE PRE-INSCRIPTION">NOUVELLE PRE-INSCRIPTION</option>
+                    <option value="TRANSFERT">TRANSFERT</option>
+                    <option value="PASSERELLE">PASSERELLE</option>
+                    <option value="RESIDANAT" selected>RESIDANAT</option>
+                {% else %}
+                    <option value="NOUVELLE PRE-INSCRIPTION">NOUVELLE PRE-INSCRIPTION</option>
+                    <option value="TRANSFERT">TRANSFERT</option>
+                    <option value="PASSERELLE">PASSERELLE</option>
+                    <option value="RESIDANAT">RESIDANAT</option>
+                {% endif %}
+                
+                
             </select>
 
             {# <input class="form-control" type="text" name="categorie_preinscription" placeholder="Catégorie Préinscription" value="{{etudiant.categoriePreinscription}}">  #}

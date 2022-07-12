@@ -53,6 +53,7 @@ class TPreinscriptionRepository extends ServiceEntityRepository
             ->innerJoin("preins.annee", "annee")
             ->Where('annee.designation = :annee')
             ->andWhere('preins.active = 1')
+            ->andWhere('preins.inscriptionValide = 1')
             ->setParameter('annee', $annee)
             ->getQuery()
             ->getResult()

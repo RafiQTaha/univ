@@ -152,6 +152,7 @@ $(document).ready(function () {
             axios.get('/facture/factures/article_frais/'+id_facture)
             .then(success => {
                 $('#detail_facture_modal #frais').html(success.data).select2();
+                $('#detail_facture_modal #montantt').val('');
             })
             .catch(err => {
                 console.log(err);
@@ -232,6 +233,7 @@ $(document).ready(function () {
             $(".modal-facture .modal-body").prepend(
                 `<div class="alert alert-success">Facture Bien Ajouter</div>`
             );
+            $('select').val('');
             icon.removeClass('fa-spinner fa-spin').addClass("fa-plus");
             getMontant();
             table_facture.ajax.reload(null, false);
@@ -295,6 +297,7 @@ $(document).ready(function () {
                 `<div class="alert alert-success">Reglement Bien Ajouter</div>`
             ); 
             $(this).trigger("reset");
+            $('.new_facture-form select').val('').trigger("change");
             getMontant();
             icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin");
             reglement = false;

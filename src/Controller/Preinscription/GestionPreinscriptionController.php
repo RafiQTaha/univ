@@ -631,6 +631,8 @@ class GestionPreinscriptionController extends AbstractController
         $sheet->setCellValue('Y1', 'DATE FACTURE');
         $sheet->setCellValue('Z1', 'D-CREATION REGLEMENT');
         $sheet->setCellValue('AA1', 'DATE REGLEMENT');
+        // $sheet->setCellValue('AB1', 'U-PREINS');
+        // $sheet->setCellValue('AC1', 'U-REGLEMENT');
         $i=2;
         $j=1;
         $current_year = date('m') > 7 ? $current_year = date('Y').'/'.date('Y')+1 : $current_year = date('Y') - 1 .'/' .date('Y');
