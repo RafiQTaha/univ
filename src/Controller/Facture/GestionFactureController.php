@@ -49,7 +49,7 @@ class GestionFactureController extends AbstractController
         $etbalissements = $this->em->getRepository(AcEtablissement::class)->findAll();
         $organismes = $this->em->getRepository(POrganisme::class)->findAll();
         $banques = $this->em->getRepository(XBanque::class)->findAll();
-        $paiements = $this->em->getRepository(XModalites::class)->findAll();
+        $paiements = $this->em->getRepository(XModalites::class)->findBy(['active'=>1]);
         $reglements = $this->em->getRepository(TReglement::class)->findAll();
         $annees = $this->em->getRepository(AcAnnee::class)->findBy([],['designation'=>'DESC'],['designation']);
         return $this->render('facture/gestion_facture.html.twig', [
@@ -367,7 +367,7 @@ class GestionFactureController extends AbstractController
         }else{
             $frais = $this->em->getRepository(PFrais::class)->findBy(['formation'=>$formation,'categorie'=>$categorie,'active'=>1]);
         }
-        $data = "<option selected enabled>Choix Fraix</option>";
+        $data = "<option selected enabled value=''>Choix Fraix</option>";
         foreach ($frais as $frs) {
             $data .="<option value=".$frs->getId()." data-id=".$frs->getmontant().">".$frs->getDesignation()."</option>";
         }
@@ -421,6 +421,9 @@ class GestionFactureController extends AbstractController
             return new JsonResponse('Merci de choisir une Organisme!', 500);
         }
         $frais =  $this->em->getRepository(PFrais::class)->find($request->get('frais'));
+        if ($frais == null) {
+            return new JsonResponse('Merci de verifier le frais!', 500);  
+        }
         $operationDet = new TOperationdet();
         $operationDet->setOperationcab($operationcab);
         $operationDet->setFrais($frais);

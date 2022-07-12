@@ -3,13 +3,13 @@
         <div class="col-md-12 row">
             <div class="col-md-6">
                 <div class="form-group">
-                    <label>  C.N.E (*) :</label>
+                    <label>  C.N.E :</label>
                     <input class="form-control" type="text" name="cne" placeholder="C.N.E" value="{{etudiant.cne}}"> 
                 </div>
             </div> 
             <div class="col-md-6">
                 <div class="form-group">
-                    <label>Académie (*) :</label>
+                    <label>Académie :</label>
                     <select class="form-control " style="width: 100%" name="id_academie">
                         <option value=""  disabled selected>Choix de académie</option>
                         {% for academie in academies %}
@@ -41,7 +41,7 @@
             </div>
             <div class="col-md-6">
                 <div class="form-group">
-                    <label>Etablissement (*) :</label>
+                    <label>Etablissement :</label>
                     <input class="form-control" type="text" name="etablissement" placeholder="Etablissement" value="{{etudiant.etablissement}}"> 
                 </div>
             </div>

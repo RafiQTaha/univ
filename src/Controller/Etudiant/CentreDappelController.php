@@ -161,18 +161,18 @@ class CentreDappelController extends AbstractController
         $etudiant->setTeleListe($request->get('statut_appel'));
         $etudiant->setObs($request->get('Observation'));
 
-        if ($request->get('annee_bac') != "") {
-            $etudiant->setAnneeBac($request->get('annee_bac'));
-        }
-        if ($request->get('note_bac') != "") {
-            $etudiant->setMoyenneBac($request->get('note_bac'));
-        }
-        if ($request->get('type_bac') != "") {
-            $etudiant->setTypeBac($this->em->getRepository(XTypeBac::class)->find($request->get('type_bac')));
-        }
-        if ($request->get('filiere') != "") {
-            $etudiant->setFiliere($this->em->getRepository(XFiliere::class)->find($request->get('filiere')));
-        }
+        // if ($request->get('annee_bac') != "") {
+        //     $etudiant->setAnneeBac($request->get('annee_bac'));
+        // }
+        // if ($request->get('note_bac') != "") {
+        //     $etudiant->setMoyenneBac($request->get('note_bac'));
+        // }
+        // if ($request->get('type_bac') != "") {
+        //     $etudiant->setTypeBac($this->em->getRepository(XTypeBac::class)->find($request->get('type_bac')));
+        // }
+        // if ($request->get('filiere') != "") {
+        //     $etudiant->setFiliere($this->em->getRepository(XFiliere::class)->find($request->get('filiere')));
+        // }
         $etudiant->setChoix($request->get('choix'));
         $etudiant->setOperateur($this->getUser());
         $this->em->flush();
