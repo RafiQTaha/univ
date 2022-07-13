@@ -81,7 +81,7 @@ class GestionAdmissionController extends AbstractController
             array( 'db' => 'st.designation','dt' => 8)
 
         );
-        $filtre .= " AND adm.statut_id = 7";
+        $filtre .= " AND ad.statut_id = 7";
         $sql = "SELECT " . implode(", ", DatatablesController::Pluck($columns, 'db')) . "
                       
                 FROM tadmission ad
@@ -91,13 +91,12 @@ class GestionAdmissionController extends AbstractController
                 inner join ac_formation form on form.id = an.formation_id              
                 inner join ac_etablissement etab on etab.id = form.etablissement_id 
                 INNER JOIN pstatut st ON st.id = ad.statut_id
-                LEFT JOIN tadmission adm on adm.preinscription_id = pre.id
                 LEFT JOIN (SELECT adm.id id_admission,SUM(det.montant) montant 
                     FROM toperationcab cab 
                     INNER JOIN tadmission adm ON adm.preinscription_id = cab.preinscription_id
                     INNER JOIN toperationdet det ON cab.id = det.operationcab_id 
                     INNER JOIN ac_annee an ON an.id = cab.annee_id 
-                    GROUP BY adm.id) tab ON tab.id_admission = adm.id 
+                    GROUP BY adm.id) tab ON tab.id_admission = ad.id 
                 $filtre "
         ;
         // dd($sql);
