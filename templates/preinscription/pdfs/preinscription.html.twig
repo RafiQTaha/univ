@@ -268,9 +268,12 @@
 
         <td style="width: 33% ;border:1px solid gray;"> </td> 
 
-        <td style="width: 25% ;background:rgb(194, 194, 194);"> &nbsp;Academie : </td> 
-        <td style="width: 32.2% ;border:1px solid gray;">{{ preinscription.etudiant.Academie.designation }}</td>
-
+        <td style="width: 25% ;background:rgb(194, 194, 194);"> &nbsp;Academie : </td>
+        {% if preinscription.etudiant.Academie == null %}
+            <td style="width: 32.2% ;border:1px solid gray;"></td>
+        {% else %}
+            <td style="width: 32.2% ;border:1px solid gray;">{{ preinscription.etudiant.Academie.designation }}</td>
+        {% endif %}
     </tr>
 
 </table>
