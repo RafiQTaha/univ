@@ -509,16 +509,18 @@ class EtudiantController extends AbstractController
     #[Route('/addmatiere/{etudiant}', name: 'etudiant_add_matiere')]
     public function addMatiere(Request $request, TEtudiant $etudiant) 
     {
-        $matiere = $request->get('matiere');
+        // $matiere = $request->get('matiere');
         $note = $request->get('note');
         // dd($matiere);
         $preinscriptioReleveNote = new TPreinscriptionReleveNote();
         $preinscriptioReleveNote->setUserCreated($this->getUser());
         $preinscriptioReleveNote->setNote($note);
         $preinscriptioReleveNote->setEtudiant($etudiant);
-        $preinscriptioReleveNote->setMatiere(
-            $this->em->getRepository(PMatiere::class)->find($matiere)
-        );
+        $matiere = $this->em->getRepository(PMatiere::class)->find($request->get('matiere'));
+        if ($matiere == NULL) {
+            return new JsonResponse("Merci de choisir une matiere!",500);
+        }
+        $preinscriptioReleveNote->setMatiere($matiere);
         $preinscriptioReleveNote->setCreated(new \DateTime('now'));
         $this->em->persist($preinscriptioReleveNote);
         $this->em->flush();
