@@ -65,7 +65,7 @@ class GestionPreinscriptionController extends AbstractController
          
         $params = $request->query;
         $where = $totalRows = $sqlRequest = "";
-        $filtre = "where 1=1 AND inscription_valide = '1' ";
+        $filtre = "where 1=1 AND inscription_valide = 1 ";
         
         if (!empty($params->all('columns')[0]['search']['value'])) {
             $filtre .= " and etab.id = '" . $params->all('columns')[0]['search']['value'] . "' ";
@@ -102,7 +102,7 @@ class GestionPreinscriptionController extends AbstractController
         inner join ac_etablissement etab on etab.id = form.etablissement_id
         left join xtype_bac tbac on tbac.id = etu.type_bac_id 
         left join nature_demande nat on nat.id = pre.nature_id 
-        inner join pstatut stat on stat.id = pre.statut_id
+        left join pstatut stat on stat.id = pre.statut_id
         LEFT JOIN (SELECT etudiant_id,COUNT(code) AS nbrIns FROM tpreinscription WHERE etudiant_id IS NOT NULL GROUP BY etudiant_id ) nbr ON nbr.etudiant_id = pre.etudiant_id 
          $filtre";
         // $sql .= "";
