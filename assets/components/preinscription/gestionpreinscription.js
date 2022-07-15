@@ -297,10 +297,10 @@ $('body').on('click','.modal #add-btn',function () {
 
 $("#annulation").on('click', async (e) => {
     e.preventDefault();
-    if(!id_preinscription){
+    if(idpreins.length < 1){
         Toast.fire({
           icon: 'error',
-          title: 'Veuillez selection une ligne!',
+          title: 'Veuillez cocher une ou plusieurs ligne!',
         })
         return;
     }
@@ -315,6 +315,7 @@ $("#annulation").on('click', async (e) => {
             icon: 'success',
             title: 'Preinscription Bien Annuler',
         })
+        idpreins = []
         icon.addClass('fa-times-circle').removeClass("fa-spinner fa-spin");
         table_gestion_preins.ajax.reload(null,false);
     } catch (error) {
@@ -331,7 +332,7 @@ $("#admission").on('click', async (e) => {
     if(idpreins.length < 1){
         Toast.fire({
           icon: 'error',
-          title: 'Veuillez cocher une or plusieurs ligne!',
+          title: 'Veuillez cocher une ou plusieurs ligne!',
         })
         return;
     }
