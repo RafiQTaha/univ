@@ -50,39 +50,6 @@ var table_gestion_preins = $("#datables_gestion_preinscription").DataTable({
         url: "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/French.json",
     },
 });
-
-const load_etud_info = () => {
-    if(id_preinscription){
-        const icon = $("#frais_preinscription i");
-         icon.removeClass('fa-money-bill-alt').addClass("fa-spinner fa-spin");
-        axios.get('/preinscription/gestion/frais_preins_modals/'+id_preinscription)
-        .then(success => {
-            $('.modal-preins .etudiant_info').html(success.data);
-            icon.removeClass("fa-spinner fa-spin").addClass('fa-money-bill-alt');
-            // success.data
-        })
-        .catch(err => {
-            console.log(err);
-            icon.removeClass("fa-spinner fa-spin").addClass('fa-money-bill-alt');
-        })
-    }    
-}
-
-const load_frais_preins = () => {
-    if(id_preinscription){
-        // icon.addClass('fa-spinner fa-spin').removeClass('fa-money-bill-alt')
-        axios.get('/preinscription/gestion/article_frais/'+id_preinscription)
-        .then(success => {
-            $('.modal-preins .article #frais').html(success.data.list).select2();
-            $('.modal-preins #code-facture').html(success.data.codefacture);
-            // success.data
-        })
-        .catch(err => {
-            console.log(err);
-            icon.removeClass("fa-spinner fa-spin").addClass('fa-money-bill-alt');
-        })
-    }    
-}
 const getDocumentsPreins = async () => {
     try {
         const icon = $('#doc_preinscription i')
@@ -126,6 +93,40 @@ $("#nature").on('change', async function (){
     table_gestion_preins.columns(2).search($(this).val()).draw();
 })
 
+
+const load_etud_info = () => {
+    if(id_preinscription){
+        const icon = $("#frais_preinscription i");
+         icon.removeClass('fa-money-bill-alt').addClass("fa-spinner fa-spin");
+        axios.get('/preinscription/gestion/frais_preins_modals/'+id_preinscription)
+        .then(success => {
+            $('.modal-preins .etudiant_info').html(success.data);
+            icon.removeClass("fa-spinner fa-spin").addClass('fa-money-bill-alt');
+            // success.data
+        })
+        .catch(err => {
+            console.log(err);
+            icon.removeClass("fa-spinner fa-spin").addClass('fa-money-bill-alt');
+        })
+    }    
+}
+
+const load_frais_preins = () => {
+    if(id_preinscription){
+        // icon.addClass('fa-spinner fa-spin').removeClass('fa-money-bill-alt')
+        axios.get('/preinscription/gestion/article_frais/'+id_preinscription)
+        .then(success => {
+            $('.modal-preins .article #frais').html(success.data.list).select2();
+            $('.modal-preins #code-facture').html(success.data.codefacture);
+            $('#frais_preinscription-modal').modal("show");
+            // success.data
+        })
+        .catch(err => {
+            console.log(err);
+            icon.removeClass("fa-spinner fa-spin").addClass('fa-money-bill-alt');
+        })
+    }    
+}
 $('body').on('click','#frais_preinscription',function (e) {
     e.preventDefault();
     if(!id_preinscription){
@@ -135,7 +136,8 @@ $('body').on('click','#frais_preinscription',function (e) {
         })
         return;
     }
-    $('#frais_preinscription-modal').modal("show");
+    load_etud_info();
+    load_frais_preins();
 });
 $('body').on('change','.modal-preins .article #frais',function (e) {
     e.preventDefault();
@@ -287,8 +289,6 @@ $('body').on('click','.modal #add-btn',function () {
             $("#datables_gestion_preinscription tbody tr").removeClass('active_databales');
             $(this).addClass('active_databales');
             id_preinscription = $(this).attr('id');
-            load_etud_info();
-            load_frais_preins();
             getDocumentsPreins();
             // getEtudiantInfos();
         }

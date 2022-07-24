@@ -71,22 +71,6 @@ const Toast = Swal.mixin({
             })    
         }
     }
-    const getFrais = async () => {
-        try {
-            const request = await axios.get("/api/frais/"+id_admission);
-            const data = await request.data;
-            $('#frais').html(data.list).select2();
-            $('#code-facture').html(data.codefacture);
-            
-          } catch (error) {
-            const message = error.response.data;
-            console.log(error, error.response);
-            Toast.fire({
-                icon: 'error',
-                title: 'Some Error',
-            })    
-        }
-    }
     const getNatureEtudiant = async () =>{
         try {
             const request = await axios.get("/api/nature_etudiant/"+id_admission);
@@ -135,24 +119,6 @@ const Toast = Swal.mixin({
         table.columns().search("");
         table.columns(2).search($(this).val()).draw();
     })
-    const getAdmissionInfos = async () => {
-        try {
-            const icon = $('#frais-modal i')
-            icon.removeClass('fa-money-bill-alt').addClass('fa-spinner fa-spin')
-            const request = await axios.get("/admission/gestion/info/"+id_admission);
-            const data = await request.data;
-            $('.etudiant_info').html(data);
-            icon.addClass('fa-money-bill-alt').removeClass('fa-spinner fa-spin')
-        } catch (error) {
-            const message = error.response.data;
-            console.log(error, error.response);
-            Toast.fire({
-                icon: 'error',
-                title: 'Some Error',
-            })    
-            icon.addClass('fa-money-bill-alt').removeClass('fa-spinner fa-spin')
-        }
-    }
     const getInscriptionAnnee = async () => {
         const icon = $('#inscription-modal i')
         try {
@@ -199,10 +165,7 @@ const Toast = Swal.mixin({
             id_admission = $(this).attr('id');
             getNatureEtudiant();
             getInscriptionAnnee();
-            getDocuments();
-            getAdmissionInfos();
-            getFrais();
-           
+            getDocuments();          
         }
         
     })
@@ -251,6 +214,41 @@ const Toast = Swal.mixin({
             })
         }
     })
+    const getFrais = async () => {
+        try {
+            const request = await axios.get("/api/frais/"+id_admission);
+            const data = await request.data;
+            $('#frais').html(data.list).select2();
+            $('#code-facture').html(data.codefacture);
+            $("#frais_inscription-modal").modal("show")
+
+          } catch (error) {
+            const message = error.response.data;
+            console.log(error, error.response);
+            Toast.fire({
+                icon: 'error',
+                title: 'Some Error',
+            })
+        }
+    }
+    const getAdmissionInfos = async () => {
+        try {
+            const icon = $('#frais-modal i')
+            icon.removeClass('fa-money-bill-alt').addClass('fa-spinner fa-spin')
+            const request = await axios.get("/admission/gestion/info/"+id_admission);
+            const data = await request.data;
+            $('.etudiant_info').html(data);
+            icon.addClass('fa-money-bill-alt').removeClass('fa-spinner fa-spin')
+        } catch (error) {
+            const message = error.response.data;
+            console.log(error, error.response);
+            Toast.fire({
+                icon: 'error',
+                title: 'Some Error',
+            })
+            icon.addClass('fa-money-bill-alt').removeClass('fa-spinner fa-spin')    
+        }
+    }
     $("#frais-modal").on("click", () => {
         if(!id_admission){
           Toast.fire({
@@ -259,8 +257,8 @@ const Toast = Swal.mixin({
           })
           return;
         }
-  
-        $("#frais_inscription-modal").modal("show")
+        getAdmissionInfos(); 
+        getFrais();
     })
     $('input[type=radio][name=organ]').on('change', async function (e){
         e.preventDefault();

@@ -126,7 +126,7 @@ class ApiController extends AbstractController
     #[Route('/anneeresidanat/{id}', name: 'anneeResidanat')]
     public function anneeResidanat(AcFormation $formation): Response
     {   
-        if(strpos($formation->getDesignation(), 'Résidanat') === false){
+        if((strpos($formation->getDesignation(), 'Résidanat') === false) && $formation->getEtablissement()->getId() != 25){
             return new JsonResponse(1);
         }else{
             $annee = $this->em->getRepository(AcAnnee::class)->findBy(['formation'=>$formation],['id'=>'DESC'],2);

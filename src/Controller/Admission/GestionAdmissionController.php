@@ -217,7 +217,7 @@ class GestionAdmissionController extends AbstractController
     public function admissionInfo(Request $request, TAdmission $admission): Response
     {
         $etudiant = $admission->getPreinscription()->getEtudiant();
-        $natutre = $etudiant->getNatureDemande();
+        $natutre = $admission->getPreinscription()->getNature();
         $annee = $admission->getPreinscription()->getAnnee();
         $formation =$annee->getFormation();
         $etablissement=$formation->getEtablissement();
@@ -361,7 +361,8 @@ class GestionAdmissionController extends AbstractController
         $promotion = $this->em->getRepository(AcPromotion::class)->find($request->get('promotion_inscription'));
         // dd($admission->getPreinscription()->getEtudiant()->getCategoriePreinscription());
         $etudiant = $admission->getPreinscription()->getEtudiant();
-        if ($etudiant->getNationalite() == 'MOROCCO' || $etudiant->getCategoriePreinscription() == 'NOUVELLE PRE-INSCRIPTION') {
+        
+        if ($etudiant->getNationalite() == 'MOROCCO' || $etudiant->getCategoriePreinscription() == 'NOUVELLE PRE-INSCRIPTION') {            
             if ($promotion->getLimite() != Null) {
                 $inss = $this->em->getRepository(TInscription::class)->findBy(['promotion'=>$promotion,'annee'=>$annee,'statut'=>13]);
                 if (count($inss) >= $promotion->getLimite()) {
@@ -369,6 +370,7 @@ class GestionAdmissionController extends AbstractController
                 }
             }
         }
+
         $inscription = new TInscription();
         $inscription->setStatut(
             $this->em->getRepository(PStatut::class)->find(13)
