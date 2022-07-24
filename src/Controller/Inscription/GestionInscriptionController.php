@@ -189,7 +189,7 @@ class GestionInscriptionController extends AbstractController
     {   
         $admission = $inscription->getAdmission();
         $etudiant = $admission->getPreinscription()->getEtudiant();
-        $natutre = $etudiant->getNatureDemande();
+        $natutre = $admission->getPreinscription()->getNature();
         $annee = $admission->getPreinscription()->getAnnee();
         $formation =$annee->getFormation();
         $etablissement=$formation->getEtablissement();

@@ -56,45 +56,9 @@ const Toast = Swal.mixin({
         }
         icon.addClass('fa-check').removeClass('fa-spinner fa-spin')
     }
-    const getFrais = async () => {
-        try {
-            const request = await axios.get("/inscription/gestion/frais/"+id_inscription);
-            const data = await request.data;
-            facture_exist = 1;
-            $('#frais').html(data.list).select2();
-            $('#code-facture').html(data.codefacture);
-          } catch (error) {
-            const message = error.response.data;
-            facture_exist = false;
-            // console.log(error, error.response);
-            Toast.fire({
-                icon: 'error',
-                title: message,
-            })
-
-        }
-    }
     $("#frais").on("change", () => {
         $("#montant").val($("#frais").find(":selected").data('frais'))
     })
-    const getInscriptionInfos = async () => {
-        try {
-            const icon = $('#frais-modal i')
-            icon.removeClass('fa-money-bill-alt').addClass('fa-spinner fa-spin')
-            const request = await axios.get("/inscription/gestion/info/"+id_inscription);
-            const data = await request.data;
-            $('.etudiant_info').html(data);
-            icon.addClass('fa-money-bill-alt').removeClass('fa-spinner fa-spin')
-        } catch (error) {
-            const message = error.response.data;
-            console.log(error, error.response);
-            Toast.fire({
-                icon: 'error',
-                title: 'Some Error',
-            })    
-            icon.addClass('fa-money-bill-alt').removeClass('fa-spinner fa-spin')
-        }
-    }
     const getOrganisme = async () => {
         try {
             const request = await axios.get("/api/organisme");
@@ -185,11 +149,51 @@ const Toast = Swal.mixin({
             $(this).addClass('active_databales');
             id_inscription = $(this).attr('id');
             getStatutInscription();
-            getInscriptionInfos();
-            getFrais();
         }
         
     })
+    const getFrais = async () => {
+        try {
+            const request = await axios.get("/inscription/gestion/frais/"+id_inscription);
+            const data = await request.data;
+            facture_exist = 1;
+            $('#frais').html(data.list).select2();
+            $('#code-facture').html(data.codefacture);
+          } catch (error) {
+            const message = error.response.data;
+            facture_exist = false;
+            Toast.fire({
+                icon: 'error',
+                title: 'Facture Introuvable!',
+              })
+            return;
+            // console.log(error, error.response);
+            Toast.fire({
+                icon: 'error',
+                title: message,
+            })
+
+        }
+    }
+    const getInscriptionInfos = async () => {
+        try {
+            const icon = $('#frais-modal i')
+            icon.removeClass('fa-money-bill-alt').addClass('fa-spinner fa-spin')
+            const request = await axios.get("/inscription/gestion/info/"+id_inscription);
+            const data = await request.data;
+            $('.etudiant_info').html(data);
+            icon.addClass('fa-money-bill-alt').removeClass('fa-spinner fa-spin')
+            $("#frais_inscription-modal").modal("show")
+        } catch (error) {
+            const message = error.response.data;
+            console.log(error, error.response);
+            Toast.fire({
+                icon: 'error',
+                title: 'Some Error',
+            })    
+            icon.addClass('fa-money-bill-alt').removeClass('fa-spinner fa-spin')
+        }
+    }
     $("#frais-modal").on("click", () => {
         if(!id_inscription){
           Toast.fire({
@@ -198,15 +202,15 @@ const Toast = Swal.mixin({
           })
           return;
         }
-        if(!facture_exist){
-            Toast.fire({
-              icon: 'error',
-              title: 'Facture Introuvable!',
-            })
-            return;
-        }
-  
-        $("#frais_inscription-modal").modal("show")
+        // if(!facture_exist){
+        //     Toast.fire({
+        //       icon: 'error',
+        //       title: 'Facture Introuvable!',
+        //     })
+        //     return;
+        // }
+        getFrais();
+        getInscriptionInfos();
     })
     
     $('input[type=radio][name=organ]').on('change', async function (e){
