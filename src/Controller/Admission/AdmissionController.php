@@ -251,19 +251,19 @@ class AdmissionController extends AbstractController
                 $admission->setCode('ADM-'.$etablissement.'_'.$formation.str_pad($admission->getId(), 8, '0', STR_PAD_LEFT));
                 $this->em->flush();
                 
-                $operationcab = new TOperationcab();
-                $operationcab->setPreinscription($preinscription);
-                $operationcab->setAnnee($preinscription->getAnnee());
-                $operationcab->setOrganisme($this->em->getRepository(POrganisme::class)->find(7));
-                $operationcab->setCategorie('admission');
-                $operationcab->setCreated(new DateTime('now'));
-                $operationcab->setUserCreated($this->getUser());
-                $operationcab->setActive(1);
-                $this->em->persist($operationcab);
-                $this->em->flush();
-                $etab = $preinscription->getAnnee()->getFormation()->getEtablissement()->getAbreviation();
-                $operationcab->setCode($etab.'-FAC'.str_pad($operationcab->getId(), 8, '0', STR_PAD_LEFT).'/'.date('Y'));
-                $this->em->flush();
+                // $operationcab = new TOperationcab();
+                // $operationcab->setPreinscription($preinscription);
+                // $operationcab->setAnnee($preinscription->getAnnee());
+                // $operationcab->setOrganisme($this->em->getRepository(POrganisme::class)->find(7));
+                // $operationcab->setCategorie('admission');
+                // $operationcab->setCreated(new DateTime('now'));
+                // $operationcab->setUserCreated($this->getUser());
+                // $operationcab->setActive(1);
+                // $this->em->persist($operationcab);
+                // $this->em->flush();
+                // $etab = $preinscription->getAnnee()->getFormation()->getEtablissement()->getAbreviation();
+                // $operationcab->setCode($etab.'-FAC'.str_pad($operationcab->getId(), 8, '0', STR_PAD_LEFT).'/'.date('Y'));
+                // $this->em->flush();
             }
         }
 

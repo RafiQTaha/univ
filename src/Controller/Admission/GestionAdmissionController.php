@@ -343,9 +343,12 @@ class GestionAdmissionController extends AbstractController
     {
         $annee = date('Y').'/'.date('Y')+1;
         $inscription = $this->em->getRepository(TInscription::class)->getActiveInscriptionByAnnee($admission,$annee);
-        
         if(!$inscription) {
-            $findAnnee = $this->em->getRepository(AcAnnee::class)->findBy(['designation' => $annee, 'formation' => $admission->getPreinscription()->getAnnee()->getFormation()]);
+            $limit = 1;
+            if ($admission->getPreinscription()->getAnnee()->getFormation()->getEtablissement()->getAbreviation() == 'CFC') {
+                $limit = 2;
+            }
+            $findAnnee = $this->em->getRepository(AcAnnee::class)->findBy([ 'formation' => $admission->getPreinscription()->getAnnee()->getFormation()],['id'=>'DESC'],$limit);
             $promotions = $this->em->getRepository(AcPromotion::class)->findBy(['formation' => $admission->getPreinscription()->getAnnee()->getFormation()]);
             $promotionHtml = ApiController::dropdown($promotions, "promotion");
             $anneeHtml = ApiController::dropdown($findAnnee, "annee");
