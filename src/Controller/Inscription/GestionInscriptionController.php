@@ -315,7 +315,10 @@ class GestionInscriptionController extends AbstractController
         $sheet->setCellValue('AB1', 'DATE REGLEMENT');
         $i=2;
         $j=1;
-        $inscriptions = $this->em->getRepository(TInscription::class)->getActiveInscriptionByCurrentAnnee();
+        $current_year = date('m') > 7 ? $current_year = date('Y').'/'.date('Y')+1 : $current_year = date('Y') - 1 .'/' .date('Y');
+        $current_year = "2022/2023";
+        $inscriptions = $this->em->getRepository(TInscription::class)->getActiveInscriptionByCurrentAnnee($current_year);
+        // dd($inscriptions);
         foreach ($inscriptions as $inscription) {
             $sheet->setCellValue('A'.$i, $j);
             $sheet->setCellValue('B'.$i, $inscription->getAdmission()->getCode());

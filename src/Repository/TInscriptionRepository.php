@@ -47,15 +47,19 @@ class TInscriptionRepository extends ServiceEntityRepository
         ;
     }
     */
-    public function getActiveInscriptionByCurrentAnnee()
+    public function getActiveInscriptionByCurrentAnnee($annee)
     {
         return $this->createQueryBuilder('t')
             ->innerJoin("t.annee", "annee")
-            // ->innerJoin("t.admission", "admission")
-            // ->innerJoin("admission.preinscription", "preinscription")
-            ->Where("annee.validation_academique = 'non'")
-            ->andWhere("annee.cloture_academique = 'non'")
-            ->andWhere("t.statut = 13")
+            ->innerJoin("t.admission", "admission")
+            ->innerJoin("admission.preinscription", "preinscription")
+            // ->Where("annee.validation_academique = 'non'")
+            // ->andWhere("annee.cloture_academique = 'non'")
+            ->Where("t.statut = 13")
+            ->andWhere('preinscription.active = 1')
+            ->andWhere('preinscription.inscriptionValide = 1')
+            ->andWhere('annee.designation = :annee')
+            ->setParameter('annee', $annee)
             // ->andWhere("admission.statut = 7")
             // ->andWhere("preinscription.statut = 17")
             ->getQuery()
