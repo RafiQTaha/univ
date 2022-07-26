@@ -221,6 +221,8 @@ class GestionFactureController extends AbstractController
         $reglement->setDateReglement(new DateTime($request->get('d_reglement')));
         $reglement->setReference($request->get('reference'));
         $reglement->setPayant($request->get('organisme'));
+        $reglement->setUserCreated($this->getUser());
+        $reglement->setPayant($request->get('organisme'));
         $this->em->persist($reglement);
         $this->em->flush();
         $reglement->setCode($etablissement.'-REG'.str_pad($reglement->getId(), 8, '0', STR_PAD_LEFT).'/'.date('Y'));

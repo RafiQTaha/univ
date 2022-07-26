@@ -53,7 +53,7 @@ class GestionInscriptionController extends AbstractController
         $params = $request->query;
         // dd($params);
         $where = $totalRows = $sqlRequest = "";
-        $filtre = "where 1 = 1";   
+        $filtre = "where 1 = 1 and pre.inscription_valide = 1 ";   
         // dd($params->all('columns')[0]);
         
         if (!empty($params->all('columns')[0]['search']['value'])) {
@@ -95,7 +95,6 @@ class GestionInscriptionController extends AbstractController
         inner join ac_etablissement etab on etab.id = form.etablissement_id 
         INNER JOIN pstatut st ON st.id = ins.statut_id
         inner join ac_promotion prom on prom.id = ins.promotion_id
-        
         $filtre "
         ;
         // dd($sql);

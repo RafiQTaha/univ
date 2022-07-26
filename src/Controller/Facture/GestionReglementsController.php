@@ -325,6 +325,7 @@ class GestionReglementsController extends AbstractController
         $reglement->setDateReglement(new DateTime($request->get('d_reglement')));
         $reglement->setReference($request->get('reference'));
         $reglement->setPayant($request->get('organisme'));
+        $reglement->setUserUpdated($this->getUser());
         $this->em->flush();
         return new JsonResponse('Reglement bien modifier', 200);        
     }
@@ -349,7 +350,9 @@ class GestionReglementsController extends AbstractController
         $sheet->setCellValue('M1', 'MODE PAIEMENT');
         $sheet->setCellValue('N1', 'DATE REGLEMENT');
         $sheet->setCellValue('O1', 'D-CREATION REGLEMENT');
-        $sheet->setCellValue('P1', 'N° BRD');
+        $sheet->setCellValue('P1', 'U-Created');
+        $sheet->setCellValue('Q1', 'U-Updated');
+        $sheet->setCellValue('R1', 'N° BRD');
         $i=2;
         $j=1;
         $currentyear = '2022/2023';
@@ -372,10 +375,12 @@ class GestionReglementsController extends AbstractController
             if ($reglement['date_reglement'] != null) {
                 $sheet->setCellValue('N'.$i, $reglement['date_reglement']->format('d-m-Y'));
             }
+            $sheet->setCellValue('O'.$i, $reglement['u_created']);
+            $sheet->setCellValue('P'.$i, $reglement['u_updated']);
             if ($reglement['created'] != null) {
-                $sheet->setCellValue('O'.$i, $reglement['created']->format('d-m-Y'));
+                $sheet->setCellValue('Q'.$i, $reglement['created']->format('d-m-Y'));
             }
-            $sheet->setCellValue('P'.$i, $reglement['num_brd']);
+            $sheet->setCellValue('R'.$i, $reglement['num_brd']);
             $i++;
             $j++;
         }
