@@ -58,6 +58,12 @@ class TReglement
     #[ORM\Column(type: 'datetime', nullable: true)]
     private $updated;
 
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'tReglements')]
+    private $UserCreated;
+
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'tReglements')]
+    private $UserUpdated;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -239,6 +245,30 @@ class TReglement
     public function setUpdated(?\DateTimeInterface $updated): self
     {
         $this->updated = $updated;
+
+        return $this;
+    }
+
+    public function getUserCreated(): ?User
+    {
+        return $this->UserCreated;
+    }
+
+    public function setUserCreated(?User $UserCreated): self
+    {
+        $this->UserCreated = $UserCreated;
+
+        return $this;
+    }
+
+    public function getUserUpdated(): ?User
+    {
+        return $this->UserUpdated;
+    }
+
+    public function setUserUpdated(?User $UserUpdated): self
+    {
+        $this->UserUpdated = $UserUpdated;
 
         return $this;
     }

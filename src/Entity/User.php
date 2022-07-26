@@ -67,6 +67,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'operateur', targetEntity: TEtudiant::class)]
     private $tEtudiants;
 
+    #[ORM\OneToMany(mappedBy: 'UserCreated', targetEntity: TReglement::class)]
+    private $tReglements;
+
 
     public function __construct()
     {
@@ -79,6 +82,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->ensgrilles = new ArrayCollection();
         $this->enseignantexcepts = new ArrayCollection();
         $this->tEtudiants = new ArrayCollection();
+        $this->tReglements = new ArrayCollection();
     }
 
     
@@ -472,6 +476,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($tEtudiant->getOperateur() === $this) {
                 $tEtudiant->setOperateur(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, TReglement>
+     */
+    public function getTReglements(): Collection
+    {
+        return $this->tReglements;
+    }
+
+    public function addTReglement(TReglement $tReglement): self
+    {
+        if (!$this->tReglements->contains($tReglement)) {
+            $this->tReglements[] = $tReglement;
+            $tReglement->setUserCreated($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTReglement(TReglement $tReglement): self
+    {
+        if ($this->tReglements->removeElement($tReglement)) {
+            // set the owning side to null (unless already changed)
+            if ($tReglement->getUserCreated() === $this) {
+                $tReglement->setUserCreated(null);
             }
         }
 
