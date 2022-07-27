@@ -232,7 +232,8 @@ class GestionReglementsController extends AbstractController
     #[Route('/printborderaux/{borderaux}', name: 'printborderaux')]
     public function printborderaux(Request $request,TBrdpaiement $borderaux)
     {  
-        $reglements = $borderaux->getReglements();
+        // $reglements = $borderaux->getReglements();
+        $reglements = $this->em->getRepository(Treglement::class)->findBy(['bordereau'=>$borderaux,'annuler'=>0]);
         $reglementTotal = $this->em->getRepository(TReglement::class)->getReglementsSumMontant($borderaux);
         $reglementTotal = $reglementTotal['total'] < 0 ? $reglementTotal['total'] * -1 : $reglementTotal['total'];
         $obj = new nuts( $reglementTotal, "MAD");
