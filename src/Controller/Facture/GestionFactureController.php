@@ -128,7 +128,7 @@ class GestionFactureController extends AbstractController
         LEFT JOIN nature_demande nat on nat.id = pre.nature_id 
         LEFT JOIN (select operationcab_id, SUM(montant) as montant_facture from toperationdet where active = 1 group by operationcab_id ) opdet on opdet.operationcab_id = opcab.id
         LEFT JOIN (select operation_id, SUM(montant) as montant_regle from treglement where annuler = 0 group by operation_id ) reg on reg.operation_id = opcab.id $filtre ";
-        dd($sql);
+        // dd($sql);
         $totalRows .= $sql;
         $sqlRequest .= $sql;
         $stmt = $this->em->getConnection()->prepare($sql);
