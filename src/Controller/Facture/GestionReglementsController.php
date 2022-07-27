@@ -376,11 +376,11 @@ class GestionReglementsController extends AbstractController
             if ($reglement['date_reglement'] != null) {
                 $sheet->setCellValue('N'.$i, $reglement['date_reglement']->format('d-m-Y'));
             }
-            $sheet->setCellValue('O'.$i, $reglement['u_created']);
-            $sheet->setCellValue('P'.$i, $reglement['u_updated']);
             if ($reglement['created'] != null) {
-                $sheet->setCellValue('Q'.$i, $reglement['created']->format('d-m-Y'));
+                $sheet->setCellValue('O'.$i, $reglement['created']->format('d-m-Y'));
             }
+            $sheet->setCellValue('P'.$i, $reglement['u_created']);
+            $sheet->setCellValue('Q'.$i, $reglement['u_updated']);
             $sheet->setCellValue('R'.$i, $reglement['num_brd']);
             $i++;
             $j++;

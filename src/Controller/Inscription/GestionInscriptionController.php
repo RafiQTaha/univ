@@ -305,14 +305,15 @@ class GestionInscriptionController extends AbstractController
         $sheet->setCellValue('R1', 'MOYENNE GENERALE');
         $sheet->setCellValue('S1', 'MOYENNE NATIONALE');
         $sheet->setCellValue('T1', 'MOYENNE REGIONALE');
-        $sheet->setCellValue('U1', 'N°FACTURE');
-        $sheet->setCellValue('V1', 'MONTANT FACTURE');
-        $sheet->setCellValue('W1', 'MONTANT REGLE');
-        $sheet->setCellValue('X1', 'RESTE');
-        $sheet->setCellValue('Y1', 'TYPE REGLEMENT');
-        $sheet->setCellValue('Z1', 'REFERENCE REGLEMENT');
-        $sheet->setCellValue('AA1', 'DATE FACTURE');
-        $sheet->setCellValue('AB1', 'DATE REGLEMENT');
+        $sheet->setCellValue('U1', 'D-INSCRIPTION');
+        // $sheet->setCellValue('U1', 'N°FACTURE');
+        // $sheet->setCellValue('V1', 'MONTANT FACTURE');
+        // $sheet->setCellValue('W1', 'MONTANT REGLE');
+        // $sheet->setCellValue('X1', 'RESTE');
+        // $sheet->setCellValue('Y1', 'TYPE REGLEMENT');
+        // $sheet->setCellValue('Z1', 'REFERENCE REGLEMENT');
+        // $sheet->setCellValue('AA1', 'DATE FACTURE');
+        // $sheet->setCellValue('AB1', 'DATE REGLEMENT');
         $i=2;
         $j=1;
         $current_year = date('m') > 7 ? $current_year = date('Y').'/'.date('Y')+1 : $current_year = date('Y') - 1 .'/' .date('Y');
@@ -340,27 +341,29 @@ class GestionInscriptionController extends AbstractController
             $sheet->setCellValue('R'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getMoyenneBac());
             $sheet->setCellValue('S'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getMoyenNational());
             $sheet->setCellValue('T'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getMoyenRegional());
-            $facture = $this->em->getRepository(TOperationcab::class)->findOneBy(['categorie'=>'inscription','preinscription'=>$inscription->getAdmission()->getPreinscription(),'active'=>1]);
-            if ($facture) {
-                $sheet->setCellValue('U'.$i, $facture->getCode());
-                $sommefacture = $this->em->getRepository(TOperationdet::class)->getSumMontantByCodeFacture($facture);
-                $sommefacture = $sommefacture == Null ? 0 : $sommefacture['total'];
-                $sheet->setCellValue('V'.$i, $sommefacture);
-                $sommereglement = $this->em->getRepository(TReglement::class)->getSumMontantByCodeFacture($facture);
-                $sommereglement = $sommereglement == Null ? 0 : $sommereglement['total'];
-                $sheet->setCellValue('W'.$i, $sommereglement);
-                $reste = $sommefacture - $sommereglement;
-                $sheet->setCellValue('X'.$i, $reste);
-                $reglement = $this->em->getRepository(TReglement::class)->findOneBy(['operation'=>$facture],['id'=>'DESC']);
-                if ($reglement) {
-                    $sheet->setCellValue('Y'.$i, $reglement->getPaiement()->getDesignation());
-                    $sheet->setCellValue('Z'.$i, $reglement->getCode());
-                }
-                $sheet->setCellValue('AA'.$i, $facture->getCreated());
-                if ($reglement) {
-                    $sheet->setCellValue('AB'.$i, $reglement->getCreated());
-                }
-            }
+            $sheet->setCellValue('U'.$i, $inscription->getCreated());
+
+            // $facture = $this->em->getRepository(TOperationcab::class)->findOneBy(['categorie'=>'inscription','preinscription'=>$inscription->getAdmission()->getPreinscription(),'active'=>1]);
+            // if ($facture) {
+            //     $sheet->setCellValue('U'.$i, $facture->getCode());
+            //     $sommefacture = $this->em->getRepository(TOperationdet::class)->getSumMontantByCodeFacture($facture);
+            //     $sommefacture = $sommefacture == Null ? 0 : $sommefacture['total'];
+            //     $sheet->setCellValue('V'.$i, $sommefacture);
+            //     $sommereglement = $this->em->getRepository(TReglement::class)->getSumMontantByCodeFacture($facture);
+            //     $sommereglement = $sommereglement == Null ? 0 : $sommereglement['total'];
+            //     $sheet->setCellValue('W'.$i, $sommereglement);
+            //     $reste = $sommefacture - $sommereglement;
+            //     $sheet->setCellValue('X'.$i, $reste);
+            //     $reglement = $this->em->getRepository(TReglement::class)->findOneBy(['operation'=>$facture],['id'=>'DESC']);
+            //     if ($reglement) {
+            //         $sheet->setCellValue('Y'.$i, $reglement->getPaiement()->getDesignation());
+            //         $sheet->setCellValue('Z'.$i, $reglement->getCode());
+            //     }
+            //     $sheet->setCellValue('AA'.$i, $facture->getCreated());
+            //     if ($reglement) {
+            //         $sheet->setCellValue('AB'.$i, $reglement->getCreated());
+            //     }
+            // }
             $i++;
             $j++;
         }
