@@ -24,11 +24,11 @@ $(document).ready(function () {
             deferRender: true,
             scrollX: true,
             drawCallback: function () {
-                ids_reglement.forEach((e) => {
-                    $("body tr#" + e)
-                    .find("input")
-                    .prop("checked", true);
-                });
+                // ids_reglement.forEach((e) => {
+                //     $("body tr#" + e)
+                //     .find("input")
+                //     .prop("checked", true);
+                // });
                 $("body tr#" + id_reglement).addClass('active_databales');
             },
             preDrawCallback: function(settings) {
@@ -129,58 +129,36 @@ $(document).ready(function () {
         }
         console.log(id_reglement);
     })
-    $('body').on('click','#datables_reglement tbody tr',function (e) {
-        e.preventDefault();
-        const input = $(this).find("input");
-        // const input = $(this);
-        if (input.hasClass('check_reg')) {
-            return;
-        }
-        else{
-            if(input.is(":checked")){
-                input.prop("checked",false);
-                const index = ids_reglement.indexOf(input.attr("data-id"));
-                ids_reglement.splice(index,1);
-            }else{
-                input.prop("checked",true);
-                ids_reglement.push(input.attr("data-id"));
-            }
-        }
-        console.log(ids_reglement);
-    })
-    // $('body').on('change','#datables_reglement tbody tr input[type=checkbox]',function (e) {
+    // $('body').on('click','#datables_reglement tbody tr',function (e) {
     //     e.preventDefault();
-    //     // alert('test')
-    //     const input = $(this);
+    //     const input = $(this).find("input");
+    //     // const input = $(this);
     //     if (input.hasClass('check_reg')) {
-    //         alert('class')
     //         return;
     //     }
-    //     if(input.prop("checked",true)){
-    //         input.prop("checked",false);
-    //         const index = ids_reglement.indexOf(input.attr("data-id"));
-    //         ids_reglement.splice(index,1);
-    //     }else{
-    //         input.prop("checked",true);
-    //         ids_reglement.push(input.attr("data-id"));
+    //     else{
+    //         if(input.is(":checked")){
+    //             input.prop("checked",false);
+    //             const index = ids_reglement.indexOf(input.attr("data-id"));
+    //             ids_reglement.splice(index,1);
+    //         }else{
+    //             input.prop("checked",true);
+    //             ids_reglement.push(input.attr("data-id"));
+    //         }
     //     }
-    //     // const input = $(this).find("input");
-    //     // if (input.hasClass('check_reg')) {
-    //     //     alert('class')
-    //     //     return;
-    //     // }
-    //     // else{
-    //     //     if(input.is(":checked")){
-    //     //         input.prop("checked",false);
-    //     //         const index = ids_reglement.indexOf(input.attr("data-id"));
-    //     //         ids_reglement.splice(index,1);
-    //     //     }else{
-    //     //         input.prop("checked",true);
-    //     //         ids_reglement.push(input.attr("data-id"));
-    //     //     }
-    //     // }
     //     console.log(ids_reglement);
     // })
+    $('body').on('click', '#check', function() {
+        const input = $(this)
+        console.log(input.attr("data-id"))
+        if(input.is(":checked")){
+            ids_reglement.push(input.attr("data-id"));
+        }else{
+            const index = ids_reglement.indexOf(input.attr("data-id"));
+            ids_reglement.splice(index,1);
+        }
+      console.log(ids_reglement)
+      });
     $("body").on("click", '#imprimer', async function (e) {
         e.preventDefault();
         if(!id_reglement){
