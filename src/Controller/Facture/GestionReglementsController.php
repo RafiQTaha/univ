@@ -337,51 +337,53 @@ class GestionReglementsController extends AbstractController
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
         $sheet->setCellValue('A1', 'ORD');
-        $sheet->setCellValue('B1', 'CODE PRE-INSCRIPTION');
-        $sheet->setCellValue('C1', 'CODE FACTURE');
-        $sheet->setCellValue('D1', 'ANNEE UNIVERSITAIRE');
-        $sheet->setCellValue('E1', 'NOM');
-        $sheet->setCellValue('F1', 'PRENOM');
-        $sheet->setCellValue('G1', 'NATIONALITE');
-        $sheet->setCellValue('H1', 'ETABLISSEMENT');
-        $sheet->setCellValue('I1', 'FORMATION');
-        $sheet->setCellValue('J1', 'CODE REGLEMENT');
-        $sheet->setCellValue('K1', 'MT REGLE');
-        $sheet->setCellValue('L1', 'REFERENCE DOC');
-        $sheet->setCellValue('M1', 'MODE PAIEMENT');
-        $sheet->setCellValue('N1', 'DATE REGLEMENT');
-        $sheet->setCellValue('O1', 'D-CREATION REGLEMENT');
-        $sheet->setCellValue('P1', 'U-Created');
-        $sheet->setCellValue('Q1', 'U-Updated');
-        $sheet->setCellValue('R1', 'N° BRD');
+        $sheet->setCellValue('B1', 'CODE CONDIDAT');
+        $sheet->setCellValue('C1', 'CODE PRE-INSCRIPTION');
+        $sheet->setCellValue('D1', 'CODE FACTURE');
+        $sheet->setCellValue('E1', 'ANNEE UNIVERSITAIRE');
+        $sheet->setCellValue('F1', 'NOM');
+        $sheet->setCellValue('G1', 'PRENOM');
+        $sheet->setCellValue('H1', 'NATIONALITE');
+        $sheet->setCellValue('I1', 'ETABLISSEMENT');
+        $sheet->setCellValue('J1', 'FORMATION');
+        $sheet->setCellValue('K1', 'CODE REGLEMENT');
+        $sheet->setCellValue('L1', 'MT REGLE');
+        $sheet->setCellValue('M1', 'REFERENCE DOC');
+        $sheet->setCellValue('N1', 'MODE PAIEMENT');
+        $sheet->setCellValue('O1', 'DATE REGLEMENT');
+        $sheet->setCellValue('P1', 'D-CREATION REGLEMENT');
+        $sheet->setCellValue('Q1', 'U-Created');
+        $sheet->setCellValue('R1', 'U-Updated');
+        $sheet->setCellValue('S1', 'N° BRD');
         $i=2;
         $j=1;
         $currentyear = '2022/2023';
         $reglements = $this->em->getRepository(TReglement::class)->getReglementsByCurrentYear($currentyear);
         foreach ($reglements as $reglement) {
             $sheet->setCellValue('A'.$i, $j);
-            $sheet->setCellValue('B'.$i, $reglement['code_preins']);
-            $sheet->setCellValue('C'.$i, $reglement['code_facture']);
-            $sheet->setCellValue('D'.$i, $reglement['annee']);
-            $sheet->setCellValue('E'.$i, $reglement['nom']);
-            $sheet->setCellValue('F'.$i, $reglement['prenom']);
-            $sheet->setCellValue('G'.$i, $reglement['nationalite']);
-            $sheet->setCellValue('H'.$i, $reglement['etablissement']);
-            $sheet->setCellValue('I'.$i, $reglement['formation']);
-            $sheet->setCellValue('J'.$i, $reglement['code_reglement']);
-            $sheet->setCellValue('K'.$i, $reglement['montant_regle']);
-            $sheet->setCellValue('L'.$i, $reglement['reference']);
-            $sheet->setCellValue('M'.$i, $reglement['mode_paiement']);
+            $sheet->setCellValue('B'.$i, $reglement['code_etu']);
+            $sheet->setCellValue('C'.$i, $reglement['code_preins']);
+            $sheet->setCellValue('D'.$i, $reglement['code_facture']);
+            $sheet->setCellValue('E'.$i, $reglement['annee']);
+            $sheet->setCellValue('F'.$i, $reglement['nom']);
+            $sheet->setCellValue('G'.$i, $reglement['prenom']);
+            $sheet->setCellValue('H'.$i, $reglement['nationalite']);
+            $sheet->setCellValue('I'.$i, $reglement['etablissement']);
+            $sheet->setCellValue('J'.$i, $reglement['formation']);
+            $sheet->setCellValue('K'.$i, $reglement['code_reglement']);
+            $sheet->setCellValue('L'.$i, $reglement['montant_regle']);
+            $sheet->setCellValue('M'.$i, $reglement['reference']);
+            $sheet->setCellValue('N'.$i, $reglement['mode_paiement']);
 
             if ($reglement['date_reglement'] != null) {
-                $sheet->setCellValue('N'.$i, $reglement['date_reglement']->format('d-m-Y'));
+                $sheet->setCellValue('O'.$i, $reglement['date_reglement']->format('d-m-Y'));
             }
             if ($reglement['created'] != null) {
-                $sheet->setCellValue('O'.$i, $reglement['created']->format('d-m-Y'));
+                $sheet->setCellValue('P'.$i, $reglement['created']->format('d-m-Y'));
             }
-            $sheet->setCellValue('P'.$i, $reglement['u_created']);
-            $sheet->setCellValue('Q'.$i, $reglement['u_updated']);
-            $sheet->setCellValue('R'.$i, $reglement['num_brd']);
+            $sheet->setCellValue('Q'.$i, $reglement['u_created']);
+            $sheet->setCellValue('R'.$i, $reglement['u_updated']);
+            $sheet->setCellValue('S'.$i, $reglement['num_brd']);
             $i++;
             $j++;
         }
