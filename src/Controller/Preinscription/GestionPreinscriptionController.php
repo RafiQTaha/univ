@@ -664,7 +664,7 @@ class GestionPreinscriptionController extends AbstractController
             // ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('ff0000');
             $sheet->setCellValue('Q'.$i, $etudiant->getMoyenNational());
             $sheet->setCellValue('R'.$i, $etudiant->getMoyenRegional());
-            $facture = $this->em->getRepository(TOperationcab::class)->findOneBy(['categorie'=>'pré-inscription','preinscription'=>$preinscription,'active'=>1]);
+            $facture = $this->em->getRepository(TOperationcab::class)->findOneBy(['categorie'=>'pré-inscription','preinscription'=>$preinscription]);
             if ($facture) {
                 $sheet->setCellValue('S'.$i, $facture->getCode());
                 $sommefacture = $this->em->getRepository(TOperationdet::class)->getSumMontantByCodeFacture($facture);
