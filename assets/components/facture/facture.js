@@ -248,6 +248,29 @@ $(document).ready(function () {
             $(".modal-facture .modal-body .alert").remove();
         }, 4000);
     });
+    ////////////////////delete all
+        $('body').on('click','#delete_detaille',async function (e) {
+            e.preventDefault();
+            // alert(id_facture)
+            // let id_det = $(this).attr('id');
+            
+            var res = confirm('Vous voulez vraiment desactiver tout les frais ?');
+            if(res == 1){
+                const icon = $(this).find('i');
+                icon.removeClass('fa-window-close').addClass("fa-spinner fa-spin");
+                try{
+                    const request = await  axios.post('/facture/factures/cloture_all_detaille/'+id_facture)
+                    getMontant()
+                    getFacture();
+                    table_facture.ajax.reload(null, false);
+                    icon.removeClass('fa-spinner fa-spin').addClass("fa-window-close");
+                }catch(error){
+                    const message = error.response.data;
+                    icon.removeClass('fa-spinner fa-spin').addClass("fa-window-close");
+                }
+            }
+        });
+    ////////////////////delete all
     $('body').on('click','.detaille_cloture',async function (e) {
         e.preventDefault();
         const icon = $(this).find('i');

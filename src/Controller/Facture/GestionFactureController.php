@@ -456,6 +456,15 @@ class GestionFactureController extends AbstractController
         $this->em->flush();
         return new JsonResponse(1, 200);    
     }
+    #[Route('/cloture_all_detaille/{id}', name: 'cloture_all_detaille')]
+    public function cloture_all_detaille(TOperationcab $operationcab): Response
+    {   
+        foreach ($operationcab->getOperationdets() as $operationdet) {
+            $operationdet->setActive(0);
+            $this->em->flush();
+        }
+        return new JsonResponse(1, 200);    
+    }
     
     #[Route('/extraction_factures', name: 'extraction_factures')]
     public function extraction_factures()
