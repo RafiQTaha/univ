@@ -113,7 +113,12 @@
         </tr>  
         <tr>
             <td style="font-size:10px;padding:2px 0px 5px 2px;width:70%">ANNEE UNIVERSITAIRE :  {{operationcab.annee.designation}}</td>
-            <td style="font-size:10px;padding:2px 0px 5px 2px;">NIVEAU   :   {{promotion}}</td>
+                {% set codes = ['FMA-FAC00016175/2017','FMA-FAC00028745/2019','FMA-FAC00042874/2021','FMA-FAC00028744/2019','FMA-FAC00042872/2021'] %}
+                {% if operationcab.code in codes %}
+                    <td style="font-size:10px;padding:2px 0px 5px 2px;"></td>
+                {% else %}
+                    <td style="font-size:10px;padding:2px 0px 5px 2px;">NIVEAU   :   {{promotion}}</td>
+                {% endif %}
         </tr>  
         <tr>
             <td style="font-size:10px;padding:2px 0px 5px 2px;width:70%">Source :  {{source}}</td>
