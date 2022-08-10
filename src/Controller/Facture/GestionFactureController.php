@@ -485,13 +485,12 @@ class GestionFactureController extends AbstractController
         $sheet->setCellValue('L1', 'FORMATION');
         $sheet->setCellValue('M1', 'PROMOTION');
         $sheet->setCellValue('N1', 'SOURCE');
-        $sheet->setCellValue('O1', 'FRAIS');
-        $sheet->setCellValue('P1', 'MT FACTURE');
-        $sheet->setCellValue('Q1', 'MT REGLE');
-        $sheet->setCellValue('R1', 'REST');
-        $sheet->setCellValue('S1', 'ORG');
-        $sheet->setCellValue('T1', 'statut');
-        $sheet->setCellValue('U1', 'D-CREATION');
+        $sheet->setCellValue('O1', 'MT FACTURE');
+        $sheet->setCellValue('P1', 'MT REGLE');
+        $sheet->setCellValue('Q1', 'REST');
+        $sheet->setCellValue('R1', 'ORG');
+        $sheet->setCellValue('S1', 'statut');
+        $sheet->setCellValue('T1', 'D-CREATION');
         $i=2;
         $j=1;
         $currentyear = '2022/2023';
@@ -514,10 +513,9 @@ class GestionFactureController extends AbstractController
             $sheet->setCellValue('L'.$i, $operationcab['formation']);
             $sheet->setCellValue('M'.$i, $operationcab['promotion']);
             $sheet->setCellValue('N'.$i, $operationcab['categorie']);
-            $sheet->setCellValue('O'.$i, '');
-            $sheet->setCellValue('P'.$i, $montant['total']);
-            $sheet->setCellValue('Q'.$i, $montant_reglement['total']);
-            $sheet->setCellValue('R'.$i, $montant['total'] - $montant_reglement['total']);
+            $sheet->setCellValue('O'.$i, $montant['total']);
+            $sheet->setCellValue('P'.$i, $montant_reglement['total']);
+            $sheet->setCellValue('Q'.$i, $montant['total'] - $montant_reglement['total']);
             $value ="";
             $orgpyt = $this->em->getRepository(TOperationdet::class)->findBy(['operationcab'=>$operationcab['id'],'active'=>1,'organisme'=>103]);
             if (count($orgpyt)) {
@@ -533,10 +531,10 @@ class GestionFactureController extends AbstractController
                     $value = 'PYT';
                 }
             }
-            $sheet->setCellValue('S'.$i, $value);
-            $sheet->setCellValue('T'.$i, $operationcab['statut']);
+            $sheet->setCellValue('R'.$i, $value);
+            $sheet->setCellValue('S'.$i, $operationcab['statut']);
             if ($operationcab['created'] != "") {
-                $sheet->setCellValue('U'.$i, $operationcab['created']->format('d-m-Y'));
+                $sheet->setCellValue('T'.$i, $operationcab['created']->format('d-m-Y'));
             }
             $i++;
             $j++;
