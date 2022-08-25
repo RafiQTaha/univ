@@ -129,13 +129,13 @@ const Toast = Swal.mixin({
     })
     $("#ajouter").on("click", () => {
         // alert($("#formation").val())
-        // if(!$("#element").val() || $("#element").val() == "" || !$("#annee").val() || $("#annee").val() == ""){
-        //     Toast.fire({
-        //       icon: 'error',
-        //       title: 'Veuillez choissir une annee et un element!',
-        //     })
-        //     return;
-        // }
+        if(!$("#element").val() || $("#element").val() == "" || !$("#annee").val() || $("#annee").val() == ""){
+            Toast.fire({
+              icon: 'error',
+              title: 'Veuillez choissir une annee et un element!',
+            })
+            return;
+        }
         $("#ajout_modal").modal("show")
         $("select").select2();
 
