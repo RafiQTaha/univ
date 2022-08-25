@@ -48,6 +48,7 @@ Encore
     .addEntry('etablissement', './assets/components/parametre/etablissement.js')
     .addEntry('module', './assets/components/parametre/module.js')
     .addEntry('element', './assets/components/parametre/element.js')
+    .addEntry('programmation', './assets/components/parametre/programmation.js')
     .addEntry('formation', './assets/components/parametre/formation.js')
     .addEntry('promotion', './assets/components/parametre/promotion.js')
     .addEntry('semestre', './assets/components/parametre/semestre.js')
