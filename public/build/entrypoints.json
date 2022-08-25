@@ -230,7 +230,7 @@
         "/build/runtime.c3e9a731.js",
         "/build/755.5a8586e9.js",
         "/build/29.ac17dd24.js",
-        "/build/module.cb7dccff.js"
+        "/build/module.7651fe11.js"
       ]
     },
     "element": {
@@ -238,7 +238,15 @@
         "/build/runtime.c3e9a731.js",
         "/build/755.5a8586e9.js",
         "/build/29.ac17dd24.js",
-        "/build/element.55892848.js"
+        "/build/element.991f2338.js"
+      ]
+    },
+    "programmation": {
+      "js": [
+        "/build/runtime.c3e9a731.js",
+        "/build/755.5a8586e9.js",
+        "/build/29.ac17dd24.js",
+        "/build/programmation.d051cfb5.js"
       ]
     },
     "formation": {

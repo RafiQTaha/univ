@@ -2,6 +2,7 @@
 
 namespace App\Controller\Parametre;
 
+use App\Controller\ApiController;
 use App\Controller\DatatablesController;
 use App\Entity\AcEtablissement;
 use App\Entity\AcModule;
@@ -22,10 +23,16 @@ class ModuleController extends AbstractController
         $this->em = $doctrine->getManager();
     }
     #[Route('/', name: 'parametre_module')]
-    public function index()
+    public function index(Request $request)
     {
+        
+        $operations = ApiController::check($this->getUser(), 'parametre_module', $this->em, $request);
+        if(!$operations) {
+            return $this->render("errors/403.html.twig");
+        }
         return $this->render('parametre/module/index.html.twig', [
-            'etablissements' => $this->em->getRepository(AcEtablissement::class)->findBy(['active' => 1])
+            'etablissements' => $this->em->getRepository(AcEtablissement::class)->findBy(['active' => 1]),
+            'operations' => $operations
         ]);
     }
     #[Route('/list', name: 'parametre_module_list')]
@@ -136,8 +143,9 @@ class ModuleController extends AbstractController
     public function details(AcModule $module): Response
     {
        return new JsonResponse([
-           'designation' => $module->getDesignation(),
-           'active' => $module->getActive()
+            'designation' => $module->getDesignation(),
+            'coefficient' => $module->getCoefficient(),
+            'active' => $module->getActive()
        ]);
     }
     #[Route('/update/{module}', name: 'parametre_module_update')]
@@ -147,6 +155,7 @@ class ModuleController extends AbstractController
         $module->setCoefficient($request->get("coefficient"));
         $module->setActive($request->get('active') == "on" ? true : false);
         $module->setUpdated(new \DateTime("now"));
+        $module->setUserUpdated($this->getUser());
         $this->em->flush();
  
         return new JsonResponse(1);

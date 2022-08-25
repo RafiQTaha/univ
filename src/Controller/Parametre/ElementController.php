@@ -2,6 +2,7 @@
 
 namespace App\Controller\Parametre;
 
+use App\Controller\ApiController;
 use App\Controller\DatatablesController;
 use App\Entity\AcElement;
 use App\Entity\AcEtablissement;
@@ -23,11 +24,16 @@ class ElementController extends AbstractController
         $this->em = $doctrine->getManager();
     }
     #[Route('/', name: 'parametre_element')]
-    public function index()
+    public function index(Request $request)
     {
+        $operations = ApiController::check($this->getUser(), 'parametre_element', $this->em, $request);
+        if(!$operations) {
+            return $this->render("errors/403.html.twig");
+        }
         return $this->render('parametre/element/index.html.twig', [
             'etablissements' => $this->em->getRepository(AcEtablissement::class)->findBy(['active' => 1]),
-            'natures' => $this->em->getRepository(TypeElement::class)->findAll()
+            'natures' => $this->em->getRepository(TypeElement::class)->findAll(),
+            'operations' => $operations
         ]);
     }
     #[Route('/list', name: 'parametre_element_list')]
@@ -121,7 +127,7 @@ class ElementController extends AbstractController
     {       
        $element = new AcElement();
        $element->setDesignation($request->get('designation'));
-       $element->setActive($request->get('active') == "on" ? true : false);
+       $element->setActive($request->get('active') == "on" ? true : null);
        $element->setCreated(new \DateTime("now"));
        $element->setModule(
            $this->em->getRepository(AcModule::class)->find($request->get("module_id"))
@@ -135,6 +141,7 @@ class ElementController extends AbstractController
        $coefficient_epreuve['NAT000000002'] = $request->get('coefficient_tp');
        $coefficient_epreuve['NAT000000003'] = $request->get('coefficient_ef');
        $element->setCoefficientEpreuve($coefficient_epreuve);
+       $element->setCoursDocument($request->get('cours_document') == "on" ? true : false);
        $this->em->persist($element);
        $this->em->flush();
        $element->setCode("MOD".str_pad($element->getId(), 8, '0', STR_PAD_LEFT));
@@ -142,24 +149,37 @@ class ElementController extends AbstractController
 
        return new JsonResponse(1);
     }
-    // #[Route('/details/{module}', name: 'parametre_module_details')]
-    // public function details(AcElement $element): Response
-    // {
-    //    return new JsonResponse([
-    //        'designation' => $module->getDesignation(),
-    //        'active' => $module->getActive()
-    //    ]);
-    // }
-    // #[Route('/update/{module}', name: 'parametre_module_update')]
-    // public function update(Request $request, AcElement $element): Response
-    // {
+    #[Route('/details/{element}', name: 'parametre_element_details')]
+    public function details(AcElement $element): Response
+    {
+       $html = $this->render('parametre/element/pages/modifier.html.twig', [
+            'element' => $element,
+            'natures' => $this->em->getRepository(TypeElement::class)->findAll(),
+       ])->getContent();
+       return new JsonResponse($html,200);
+    }
 
-    //     $module->setDesignation($request->get('designation'));
-    //     $module->setCoefficient($request->get("coefficient"));
-    //     $module->setActive($request->get('active') == "on" ? true : false);
-    //     $module->setUpdated(new \DateTime("now"));
-    //     $this->em->flush();
- 
-    //     return new JsonResponse(1);
-    // }
+    #[Route('/update/{element}', name: 'parametre_element_update')]
+    public function update(Request $request, AcElement $element): Response
+    {   
+        if (empty($request->get('designation')) || empty($request->get('coefficient'))) {
+            return new JsonResponse('merci de remplir tout les champs!!',500);
+        }
+        $element->setDesignation($request->get('designation'));
+        $element->setActive($request->get('active') == "on" ? true : false);
+        $element->setCoursDocument($request->get('cours_document') == "on" ? true : null);
+        $element->setUpdated(new \DateTime("now"));
+        $element->setNature(
+            $this->em->getRepository(TypeElement::class)->find($request->get("nature"))
+        );
+        $element->setUserUpdated($this->getUser());
+        $element->setCoefficient($request->get("coefficient"));
+        $coefficient_epreuve['NAT000000001'] = $request->get('coefficient_cc');
+        $coefficient_epreuve['NAT000000002'] = $request->get('coefficient_tp');
+        $coefficient_epreuve['NAT000000003'] = $request->get('coefficient_ef');
+        $element->setCoefficientEpreuve($coefficient_epreuve);
+        $this->em->flush();
+    
+        return new JsonResponse('Element Bien Modifier',200);
+    }
 }

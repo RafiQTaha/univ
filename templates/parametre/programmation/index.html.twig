@@ -1,13 +1,13 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Univ - Paramétre - Module{% endblock %}
+{% block title %}Univ - Paramétre - Elements{% endblock %}
 
 
 {% block body %}
 <div class="main-content">
     <section class="section">
         <div class="section-header">
-          <h1>Module</h1>
+          <h1>Element</h1>
           <div class="section-header-breadcrumb">
               {# <a href="#" class="btn btn-success ml-1" id="modifier"><i class="fas fa-edit"></i>  Modifier</a> #}
               {# <a href="#" class="btn btn-success ml-1" id="ajouter"><i class="fas fa-plus"></i>  Ajouter</a> #}
@@ -21,7 +21,7 @@
         <div class="section-body">
         <div class="card">
             <div class="card-header">
-            <h4>Tableau des modules</h4>
+            <h4>Tableau des Elements</h4>
             </div>
             <div class="card-body">
             <div class="card-search" style="margin-bottom: 1.5rem;">
@@ -42,6 +42,12 @@
                         </select>
                     </div>
                     <div class="col-md-2">
+                        <label for="annee">Annee:</label>
+                        <select class="form-control" name="annee" id="annee">
+                           
+                        </select>
+                    </div>
+                    <div class="col-md-2">
                         <label for="promotion">Promotion:</label>
                         <select class="form-control" name="promotion" id="promotion">
                            
@@ -53,18 +59,34 @@
                            
                         </select>
                     </div>
+                    <div class="col-md-2">
+                        <label for="module">Module:</label>
+                        <select class="form-control" name="module" id="module">
+                           
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label for="module">Element:</label>
+                        <select class="form-control" name="element" id="element">
+                           
+                        </select>
+                    </div>
                 </div>
             </div>
             
-            <table id="datatables_gestion_module" class="table table-striped" style="width:100%">
+            <table id="datatables_gestion_programmation" class="table table-striped" style="width:100%">
                 <thead>
                     <tr>
-                         <th>id</th>
-                        <th>etablissement</th>
-                        <th>formation</th>
+                        <th>id</th>
+                        <th>etab</th>
+                        <th>form</th>
+                        <th>Annee</th>
                         <th>Promotion</th>
                         <th>Semestre</th>
                         <th>Module</th>
+                        <th>Element</th>
+                        <th>Nature</th>
+                        <th>Volume</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -73,11 +95,15 @@
                 <tfoot>
                     <tr>
                         <th>id</th>
-                        <th>etablissement</th>
-                        <th>formation</th>
+                        <th>etab</th>
+                        <th>form</th>
+                        <th>Annee</th>
                         <th>Promotion</th>
                         <th>Semestre</th>
                         <th>Module</th>
+                        <th>Element</th>
+                        <th>Nature</th>
+                        <th>Volume</th>
                     </tr>
                 </tfoot>
             </table>
@@ -91,14 +117,14 @@
 
 
 <!--Modal Import Group-->
-{% include 'parametre/module/modals/ajouter.html.twig' %}
-{% include 'parametre/module/modals/modifier.html.twig' %}
+{% include 'parametre/programmation/modals/ajouter.html.twig' %}
+{% include 'parametre/programmation/modals/modifier.html.twig' %}
 
 {% endblock %}
 
 {% block javascripts %}
 {{parent()}}
-{{ encore_entry_script_tags('module') }}
+{{ encore_entry_script_tags('programmation') }}
 
 {# <script src="/assets/js/parametre/formation.js"></script> #}
 

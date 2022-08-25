@@ -130,16 +130,12 @@ const Toast = Swal.mixin({
 
         try {
             icon.remove('fa-edit').addClass("fa-spinner fa-spin ");
-            const request = await axios.get('/parametre/module/details/'+id_element);
+            const request = await axios.get('/parametre/element/details/'+id_element);
             const response = request.data;
             console.log(response)
             icon.addClass('fa-edit').removeClass("fa-spinner fa-spin ");
-            $("#modifier_modal #designation").val(response.designation)
-            if(response.active == 1){
-                $("#modifier_modal #active").prop("checked", true)
-            }else {
-                $("#modifier_modal #active").prop("checked", false)
-            }
+            $("body #modifier_modal #udpate").html(response)
+            $('select').select2();
             $("#modifier_modal").modal("show")
         } catch (error) {
             console.log(error, error.response);
@@ -181,11 +177,17 @@ const Toast = Swal.mixin({
         const icon = $("#udpate i");
         try {
             icon.remove('fa-check-circle').addClass("fa-spinner fa-spin ");
-            const request = await axios.post('/parametre/element/update/'+id_module, formData);
+            const request = await axios.post('/parametre/element/update/'+id_element, formData);
             const response = request.data;
             icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
+            id_element = false;
             table.ajax.reload();
             $("#modifier_modal").modal("hide")
+            Toast.fire({
+                icon: 'success',
+                title: response,
+              })
+            icon.addClass('fa-edit').removeClass("fa-spinner fa-spin ");
         } catch (error) {
             console.log(error, error.response);
             const message = error.response.data;
@@ -194,10 +196,8 @@ const Toast = Swal.mixin({
                 title: message,
               })
             icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
-            
         }
     })
-   
 })
 
 
