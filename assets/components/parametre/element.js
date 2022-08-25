@@ -107,10 +107,10 @@ const Toast = Swal.mixin({
     })
     $("#ajouter").on("click", () => {
         // alert($("#formation").val())
-        if(!$("#semestre").val() || $("#semestre").val() == ""){
+        if(!$("#module").val() || $("#module").val() == ""){
             Toast.fire({
               icon: 'error',
-              title: 'Veuillez choissir une semestre!',
+              title: 'Veuillez choissir un module!',
             })
             return;
         }
