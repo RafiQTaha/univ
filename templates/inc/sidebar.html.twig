@@ -26,10 +26,10 @@
         </ul>
       </li>
       {% endfor %}
-      {# {% if is_granted('ROLE_ADMIN') %}
+      {% if is_granted('ROLE_ADMIN') %}
       <li class="nav-item dropdown {% if getCurrentUrl == "parametre" %} active {% endif %}">
         <a href="#" class="nav-link has-dropdown"
-          ><i class="fas fa-cog"></i><span>Paramétre</span></a
+          ><i class="fas fa-cog"></i><span>Adminstration</span></a
         >
         <ul class="dropdown-menu">
             <li><a class="nav-link {% if getCurrentUrl == "parametre" and secondCurrentUrl == "user" %} activeSecondUrl {% endif %}" href="{{path('parametre_user')}}">Users</a></li>
@@ -37,11 +37,11 @@
             <li><a class="nav-link {% if getCurrentUrl == "parametre" and secondCurrentUrl == "formation" %} activeSecondUrl {% endif %}" href="{{path('parametre_formation')}}">Formations</a></li>
             <li><a class="nav-link {% if getCurrentUrl == "parametre" and secondCurrentUrl == "promotion" %} activeSecondUrl {% endif %}" href="{{path('parametre_promotion')}}">Promotions</a></li>
             <li><a class="nav-link {% if getCurrentUrl == "parametre" and secondCurrentUrl == "semestre" %} activeSecondUrl {% endif %}" href="{{path('parametre_semestre')}}">Semestres</a></li>
-            <li><a class="nav-link {% if getCurrentUrl == "parametre" and secondCurrentUrl == "module" %} activeSecondUrl {% endif %}" href="{{path('parametre_module')}}">Modules</a></li>
-            <li><a class="nav-link {% if getCurrentUrl == "parametre" and secondCurrentUrl == "element" %} activeSecondUrl {% endif %}" href="{{path('parametre_element')}}">Elements</a></li>
+            {# <li><a class="nav-link {% if getCurrentUrl == "parametre" and secondCurrentUrl == "module" %} activeSecondUrl {% endif %}" href="{{path('parametre_module')}}">Modules</a></li>
+            <li><a class="nav-link {% if getCurrentUrl == "parametre" and secondCurrentUrl == "element" %} activeSecondUrl {% endif %}" href="{{path('parametre_element')}}">Elements</a></li> #}
         </ul>
       </li>
-      {% endif %} #}
+      {% endif %}
       {# <li class="nav-item dropdown {% if getCurrentUrl == 'preinscription'%} active {% endif %}">
         <a href="#" class="nav-link has-dropdown"
           ><i class="fas fa-users"></i><span>Pré-Inscription</span></a
