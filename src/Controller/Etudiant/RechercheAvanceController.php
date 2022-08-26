@@ -85,9 +85,9 @@ class RechercheAvanceController extends AbstractController
             'margin_left' => 5,
             'margin_right' => 5,
         ]);
-        $mpdf->SetHTMLHeader(
-            $this->render("etudiant/recherche_avance/pdf/attestations/header.html.twig")->getContent()
-        );
+        // $mpdf->SetHTMLHeader(
+        //     $this->render("etudiant/recherche_avance/pdf/attestations/header.html.twig")->getContent()
+        // );
         $mpdf->SetHTMLFooter(
             $this->render("etudiant/recherche_avance/pdf/attestations/footer.html.twig")->getContent()
         );
@@ -108,9 +108,9 @@ class RechercheAvanceController extends AbstractController
             'margin_left' => 5,
             'margin_right' => 5,
         ]);
-        $mpdf->SetHTMLHeader(
-            $this->render("etudiant/recherche_avance/pdf/attestations/header.html.twig")->getContent()
-        );
+        // $mpdf->SetHTMLHeader(
+        //     $this->render("etudiant/recherche_avance/pdf/attestations/header.html.twig")->getContent()
+        // );
         $mpdf->SetHTMLFooter(
             $this->render("etudiant/recherche_avance/pdf/attestations/footer.html.twig")->getContent()
         );
@@ -137,9 +137,9 @@ class RechercheAvanceController extends AbstractController
             'margin_left' => 5,
             'margin_right' => 5,
         ]);
-        $mpdf->SetHTMLHeader(
-            $this->render("etudiant/recherche_avance/pdf/attestations/header.html.twig")->getContent()
-        );
+        // $mpdf->SetHTMLHeader(
+        //     $this->render("etudiant/recherche_avance/pdf/attestations/header.html.twig")->getContent()
+        // );
         $mpdf->SetHTMLFooter(
             $this->render("etudiant/recherche_avance/pdf/attestations/footer.html.twig")->getContent()
         );
@@ -151,6 +151,9 @@ class RechercheAvanceController extends AbstractController
     #[Route('/attestation/reussitenote/{inscription}', name: 'etudiant_recherche_attestation_reussite_note')]
     public function attestationReussiteNote(TInscription $inscription): Response
     {
+        if ($inscription->getAnotes() == null) {
+            die('Notes Inrouvable!!');
+        }
         $html = $this->render("etudiant/recherche_avance/pdf/attestations/reussite_avec_moyenne.html.twig", [
             'inscription' => $inscription
         ])->getContent();
@@ -159,9 +162,9 @@ class RechercheAvanceController extends AbstractController
             'margin_left' => 5,
             'margin_right' => 5,
         ]);
-        $mpdf->SetHTMLHeader(
-            $this->render("etudiant/recherche_avance/pdf/attestations/header.html.twig")->getContent()
-        );
+        // $mpdf->SetHTMLHeader(
+        //     $this->render("etudiant/recherche_avance/pdf/attestations/header.html.twig")->getContent()
+        // );
         $mpdf->SetHTMLFooter(
             $this->render("etudiant/recherche_avance/pdf/attestations/footer.html.twig")->getContent()
         );
