@@ -46,7 +46,7 @@ const Toast = Swal.mixin({
         if(id_etab != "") {
             const request = await axios.get('/api/formation/'+id_etab);
             response = request.data
-            table.columns(0).search($(this).val()).draw();
+            table.columns(0).search(id_etab).draw();
         } else {
             table.columns(0).search("").draw();
         }
