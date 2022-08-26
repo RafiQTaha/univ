@@ -18,7 +18,7 @@ class IndexController extends AbstractController
     public function index(ManagerRegistry $doctrine, Request $request): Response
     {
         if(in_array('ROLE_ADMIN', $this->getUser()->getRoles())){
-            $sousModules = $doctrine->getManager()->getRepository(UsSousModule::class)->findAll();
+            $sousModules = $doctrine->getManager()->getRepository(UsSousModule::class)->findBy([],['ordre'=>'ASC']);
         } else {
             $sousModules = $doctrine->getManager()->getRepository(UsSousModule::class)->findByUserOperations($this->getUser());
         }

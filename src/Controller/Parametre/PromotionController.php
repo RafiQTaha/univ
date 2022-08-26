@@ -2,6 +2,7 @@
 
 namespace App\Controller\Parametre;
 
+use App\Controller\ApiController;
 use App\Entity\AcPromotion;
 use App\Entity\AcEtablissement;
 use App\Controller\DatatablesController;
@@ -23,10 +24,15 @@ class PromotionController extends AbstractController
         $this->em = $doctrine->getManager();
     }
     #[Route('/', name: 'parametre_promotion')]
-    public function index(): Response
+    public function index(Request $request)
     {
+        $operations = ApiController::check($this->getUser(), 'parametre_promotion', $this->em, $request);
+        if(!$operations) {
+            return $this->render("errors/403.html.twig");
+        }
         return $this->render('parametre/promotion/index.html.twig', [
-            'etablissements' => $this->em->getRepository(AcEtablissement::class)->findBy(['active' => 1])
+            'etablissements' => $this->em->getRepository(AcEtablissement::class)->findBy(['active' => 1]),
+            'operations' => $operations
         ]);
     }
     #[Route('/list', name: 'parametre_promotion_list')]

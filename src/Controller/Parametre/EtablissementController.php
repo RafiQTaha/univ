@@ -2,6 +2,7 @@
 
 namespace App\Controller\Parametre;
 
+use App\Controller\ApiController;
 use App\Controller\DatatablesController;
 use App\Entity\AcEtablissement;
 use Doctrine\Persistence\ManagerRegistry;
@@ -20,9 +21,15 @@ class EtablissementController extends AbstractController
         $this->em = $doctrine->getManager();
     }
     #[Route('/', name: 'parametre_etablissement')]
-    public function index(): Response
+    public function index(Request $request)
     {
-        return $this->render('parametre/etablissement/index.html.twig');
+        $operations = ApiController::check($this->getUser(), 'parametre_etablissement', $this->em, $request);
+        if(!$operations) {
+            return $this->render("errors/403.html.twig");
+        }
+        return $this->render('parametre/etablissement/index.html.twig',[
+            'operations' => $operations
+        ]);
     }
     #[Route('/list', name: 'parametre_etablissement_list')]
     public function gestionInscriptionList(Request $request): Response
