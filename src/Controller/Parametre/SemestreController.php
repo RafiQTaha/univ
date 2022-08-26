@@ -2,6 +2,7 @@
 
 namespace App\Controller\Parametre;
 
+use App\Controller\ApiController;
 use App\Entity\AcSemestre;
 use App\Entity\AcPromotion;
 use App\Entity\AcEtablissement;
@@ -22,16 +23,20 @@ class SemestreController extends AbstractController
         $this->em = $doctrine->getManager();
     }
     #[Route('/', name: 'parametre_semestre')]
-    public function index(): Response
+    public function index(Request $request): Response
     {
+        $operations = ApiController::check($this->getUser(), 'parametre_semestre', $this->em, $request);
+        if(!$operations) {
+            return $this->render("errors/403.html.twig");
+        }
         return $this->render('parametre/semestre/index.html.twig', [
-            'etablissements' => $this->em->getRepository(AcEtablissement::class)->findBy(['active' => 1])
+            'etablissements' => $this->em->getRepository(AcEtablissement::class)->findBy(['active' => 1]),
+            'operations' => $operations
         ]);
     }
     #[Route('/list', name: 'parametre_semestre_list')]
     public function list(Request $request): Response
     {
-        
         $params = $request->query;
         // dd($params);
         $where = $totalRows = $sqlRequest = "";
