@@ -136,8 +136,8 @@ const Toast = Swal.mixin({
             })
             return;
         }
+        $('select').select2();
         $("#ajout_modal").modal("show")
-        $("select").select2();
 
     })
     $("#save").on("submit", async (e) => {
@@ -166,6 +166,64 @@ const Toast = Swal.mixin({
                 title: message,
               })
             icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
+        }
+    })
+    $("#modifier").on("click", async function(){
+        if(!id_programmation){
+            Toast.fire({
+              icon: 'error',
+              title: 'Veuillez selectioner une ligne!',
+            })
+            return;
+        }
+        const icon = $("#modifier i");
+        icon.remove('fa-edit').addClass("fa-spinner fa-spin ");
+        try {
+            const request = await axios.get('/parametre/programmation/details/'+id_programmation);
+            const response = request.data;
+            // console.log(response)
+            icon.addClass('fa-edit').removeClass("fa-spinner fa-spin ");
+            $("body #modifier_modal #udpate").html(response)
+            $('select').select2();
+            $("#modifier_modal").modal("show")
+        } catch (error) {
+            console.log(error, error.response);
+            const message = error.response.data;
+            Toast.fire({
+                icon: 'error',
+                title: message,
+              })
+            icon.addClass('fa-edit').removeClass("fa-spinner fa-spin ");
+        }
+    })
+    $("#udpate").on("submit", async (e) => {
+        e.preventDefault();
+        var formData = new FormData($("#udpate")[0])
+        formData.append("annee_id", $("#annee").val());
+        formData.append("element_id", $("#element").val());
+        const icon = $("#udpate i");
+
+        try {
+            icon.remove('fa-check-circle').addClass("fa-spinner fa-spin ");
+            const request = await axios.post('/parametre/programmation/update/'+id_programmation, formData);
+            const response = request.data;
+            $('#udpate')[0].reset();
+            icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
+            table.ajax.reload();
+            $("#modifier_modal").modal("hide")
+            Toast.fire({
+                icon: 'success',
+                title: response,
+            })
+        } catch (error) {
+            console.log(error, error.response);
+            const message = error.response.data;
+            Toast.fire({
+                icon: 'error',
+                title: message,
+              })
+            icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
+            
         }
     })
 })

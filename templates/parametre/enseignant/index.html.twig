@@ -1,13 +1,13 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Univ - Paramétre - Etablissements{% endblock %}
+{% block title %}Univ - Paramétre - Enseignant{% endblock %}
 
 
 {% block body %}
 <div class="main-content">
     <section class="section">
         <div class="section-header">
-          <h1>Etablissements</h1>
+          <h1>Enseignant</h1>
           <div class="section-header-breadcrumb">
               {# <a href="#" class="btn btn-success ml-1" id="modifier"><i class="fas fa-edit"></i>  Modifier</a>
               <a href="#" class="btn btn-success ml-1" id="ajouter"><i class="fas fa-plus"></i>  Aouter</a> #}
@@ -21,18 +21,19 @@
         <div class="section-body">
         <div class="card">
             <div class="card-header">
-            <h4>Tableau des etablissements</h4>
+            <h4>Tableau des enseignants</h4>
             </div>
             <div class="card-body">
             
-            <table id="datatables_gestion_etablissement" class="table table-striped" style="width:100%">
+            <table id="datatables_gestion_enseignant" class="table table-striped" style="width:100%">
                 <thead>
                     <tr>
-                        <th>id</th>
-                        <th>etablissement</th>
-                        <th>abreviation</th>
-                        <th>nature</th>
-                        <th>date</th>
+                        <th>ID</th>
+                        <th>CODE</th>
+                        <th>NOM</th>
+                        <th>PRENOM</th>
+                        <th>GRADE</th>
+                        <th>QUALITE</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -40,12 +41,12 @@
                 </tbody>
                 <tfoot>
                     <tr>
-                        <th>id</th>
-                        <th>etablissement</th>
-                        <th>abreviation</th>
-                        <th>nature</th>
-                        <th>date</th>
-
+                        <th>ID</th>
+                        <th>CODE</th>
+                        <th>NOM</th>
+                        <th>PRENOM</th>
+                        <th>GRADE</th>
+                        <th>QUALITE</th>
                     </tr>
                 </tfoot>
             </table>
@@ -59,16 +60,16 @@
 
 
 <!--Modal Import Group-->
-{% include 'parametre/etablissement/modals/ajouter.html.twig' %}
-{% include 'parametre/etablissement/modals/modifier.html.twig' %}
+{% include 'parametre/enseignant/modals/ajouter.html.twig' %}
+{% include 'parametre/enseignant/modals/modifier.html.twig' %}
 
 {% endblock %}
 
 {% block javascripts %}
 {{parent()}}
-{{ encore_entry_script_tags('etablissement') }}
+{{ encore_entry_script_tags('enseignant') }}
 
-{# <script src="/assets/js/parametre/etablissement.js"></script> #}
+{# <script src="/assets/js/parametre/enseignant.js"></script> #}
 
 {% endblock %}
 

@@ -48,7 +48,7 @@ class ProgrammationController extends AbstractController
         $params = $request->query;
         // dd($params);
         $where = $totalRows = $sqlRequest = "";
-        $filtre = "where 1 = 1";   
+        $filtre = "where 1 = 1 ";   
         // dd($params->all('columns')[0]);
         if (!empty($params->all('columns')[0]['search']['value'])) {
             $filtre .= " and etab.id = '" . $params->all('columns')[0]['search']['value'] . "' ";
@@ -143,9 +143,10 @@ class ProgrammationController extends AbstractController
     #[Route('/new', name: 'parametre_programmation_new')]
     public function new(Request $request)
     {     
+        // dd($request->get('nature'));
         if (empty($request->get('observation')) || empty($request->get('volume')) ||
             $request->get('element_id') == "" || $request->get('annee_id') == "" || 
-            $request->get('enseignant') == null) 
+            $request->get('enseignant') == null || $request->get('nature') == "") 
         {
             return new JsonResponse('merci de remplir tout les champs!!',500);
         }
@@ -167,37 +168,39 @@ class ProgrammationController extends AbstractController
 
        return new JsonResponse('Programmation Bien Ajoutée',200);
     }
-    // #[Route('/details/{element}', name: 'parametre_element_details')]
-    // public function details(AcElement $element): Response
-    // {
-    //    $html = $this->render('parametre/element/pages/modifier.html.twig', [
-    //         'element' => $element,
-    //         'natures' => $this->em->getRepository(TypeElement::class)->findAll(),
-    //    ])->getContent();
-    //    return new JsonResponse($html,200);
-    // }
+    #[Route('/details/{programmation}', name: 'parametre_programmation_details')]
+    public function details(PrProgrammation $programmation): Response
+    {
+        // dd($programmation->getEnseignants()[0]);
+       $html = $this->render('parametre/programmation/pages/modifier.html.twig', [
+            'programmation' => $programmation,
+            'natures' => $this->em->getRepository(PNatureEpreuve::class)->findAll(),
+            'enseignants' => $this->em->getRepository(PEnseignant::class)->findAll(),
+       ])->getContent();
+       return new JsonResponse($html,200);
+    }
 
-    // #[Route('/update/{element}', name: 'parametre_element_update')]
-    // public function update(Request $request, AcElement $element): Response
-    // {   
-    //     if (empty($request->get('designation')) || empty($request->get('coefficient'))) {
-    //         return new JsonResponse('merci de remplir tout les champs!!',500);
-    //     }
-    //     $element->setDesignation($request->get('designation'));
-    //     $element->setActive($request->get('active') == "on" ? true : false);
-    //     $element->setCoursDocument($request->get('cours_document') == "on" ? true : null);
-    //     $element->setUpdated(new \DateTime("now"));
-    //     $element->setNature(
-    //         $this->em->getRepository(TypeElement::class)->find($request->get("nature"))
-    //     );
-    //     $element->setUserUpdated($this->getUser());
-    //     $element->setCoefficient($request->get("coefficient"));
-    //     $coefficient_epreuve['NAT000000001'] = $request->get('coefficient_cc');
-    //     $coefficient_epreuve['NAT000000002'] = $request->get('coefficient_tp');
-    //     $coefficient_epreuve['NAT000000003'] = $request->get('coefficient_ef');
-    //     $element->setCoefficientEpreuve($coefficient_epreuve);
-    //     $this->em->flush();
+    #[Route('/update/{programmation}', name: 'parametre_programmation_update')]
+    public function update(Request $request, PrProgrammation $programmation): Response
+    {   
+        // dd($request);     
+        if (empty($request->get('observation')) || empty($request->get('volume')) ||
+            $request->get('element_id') == "" || $request->get('annee_id') == "" || 
+            $request->get('enseignant') == null || $request->get('nature') == "")  
+        {
+            return new JsonResponse('merci de remplir tout les champs!!',500);
+        }
+        $programmation->setObservation($request->get("observation"));
+        $programmation->setVolume($request->get("volume"));
+        $programmation->setNatureEpreuve($this->em->getRepository(PNatureEpreuve::class)->find($request->get("nature")));
+        $programmation->setElement($this->em->getRepository(AcElement::class)->find($request->get("element_id")));
+        $programmation->setAnnee($this->em->getRepository(AcAnnee::class)->find($request->get("annee_id")));
+        $programmation->setUpdated(new \DateTime("now"));
+        foreach ($request->get('enseignant') as $enseignant) {
+            $programmation->addEnseignant($this->em->getRepository(PEnseignant::class)->find($enseignant));
+        }
+        $this->em->flush();
     
-    //     return new JsonResponse('Element Bien Modifier',200);
-    // }
+        return new JsonResponse('Programmation Bien Modifier',200);
+    }
 }
