@@ -147,7 +147,7 @@ class ElementController extends AbstractController
        $element->setCode("MOD".str_pad($element->getId(), 8, '0', STR_PAD_LEFT));
        $this->em->flush();
 
-       return new JsonResponse(1);
+       return new JsonResponse('Element bien ajouter',200);
     }
     #[Route('/details/{element}', name: 'parametre_element_details')]
     public function details(AcElement $element): Response
