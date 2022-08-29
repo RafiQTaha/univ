@@ -42,7 +42,7 @@ class ProgrammationController extends AbstractController
             'operations' => $operations
         ]);
     }
-    #[Route('/list', name: 'parametre_element_list')]
+    #[Route('/list', name: 'parametre_programmation_list')]
     public function list(Request $request)
     {
         $params = $request->query;
@@ -140,7 +140,7 @@ class ProgrammationController extends AbstractController
         // die;
         return new Response(json_encode($json_data));
     }
-    #[Route('/new', name: 'parametre_element_new')]
+    #[Route('/new', name: 'parametre_programmation_new')]
     public function new(Request $request)
     {     
         if (empty($request->get('observation')) || empty($request->get('volume')) ||

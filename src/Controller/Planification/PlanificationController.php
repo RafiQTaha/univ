@@ -211,20 +211,28 @@ class PlanificationController extends AbstractController
         if ($request->get('nature_seance') == "" || $request->get('element') =="" || $request->get('salle') =="") {
             return new Response('Merci de renseignez tout les champs',500);
         }
+        $element = $this->em->getRepository(AcElement::class)->find($request->get('element'));
+        $annee = $this->em->getRepository(AcAnnee::class)->getActiveAnneeByFormation($element->getModule()->getSemestre()->getPromotion()->getFormation());
+        $programmation = $this->em->getRepository(PrProgrammation::class)->findOneBy(['element'=>$request->get('element'),'nature_epreuve'=>$request->get('nature_seance'),'annee'=>$annee]);
+        if ($programmation == null) {
+            return new Response("Programmation introuvable ou l'annee ".$annee->getDesignation()." est cloturée!!",500);
+        }
         if ($request->get('enseignant') == NULL) {
             return new Response('Merci de Choisir Au Moins Un Enseignant!!',500);
         }
-        $programmation = $this->em->getRepository(PrProgrammation::class)->findOneBy(['element'=>$request->get('element'),'nature_epreuve'=>$request->get('nature_seance')]);
         // $programmation = $this->em->getRepository(PrProgrammation::class)->findOneBy(['element'=>107,'nature_epreuve'=>9]);
-        if($programmation != Null){
-            $element = $this->em->getRepository(AcElement::class)->find($request->get('element'));
+        // if($programmation != Null){
             // $annee = $this->em->getRepository(AcAnnee::class)->findOneBy([
             //     'formation'=>$element->getModule()->getSemestre()->getPromotion()->getFormation(),
             //     'validation_academique'=>'non',
             //     'cloture_academique'=>'non',
             // ]);
-            $annee = $this->em->getRepository(AcAnnee::class)->getActiveAnneeByFormation($element->getModule()->getSemestre()->getPromotion()->getFormation());
             $semaine = $this->em->getRepository(Semaine::class)->findOneBy(['nsemaine'=>$request->get('n_semaine'),'anneeS'=>$annee->getDesignation()]);
+            if ($semaine == null) {
+                return new Response("Semaine Introuvable ou l'annee ".$annee->getDesignation()." est cloturée!!",500);
+            }
+            // dd($request->get('n_semaine'),$annee->getDesignation());
+            // dd($annee,$semaine);
             $emptime = new PlEmptime();
             $emptime->setDescription($request->get('description'));
             $emptime->setProgrammation($programmation);
@@ -263,8 +271,8 @@ class PlanificationController extends AbstractController
             }
             $this->em->flush();
             return new Response('Planification bien Ajouter!!',200);
-        }
-        return new Response('Programme Introuvable!!',500);        
+        // }
+        // return new Response('Programme Introuvable!!',500);        
     }
 
     

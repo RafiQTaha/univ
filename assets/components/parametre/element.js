@@ -161,6 +161,10 @@ const Toast = Swal.mixin({
             $('#save')[0].reset();
             table.ajax.reload();
             $("#ajout_modal").modal("hide")
+            Toast.fire({
+                icon: 'success',
+                title: response,
+            })
         } catch (error) {
             console.log(error, error.response);
             const message = error.response.data;
