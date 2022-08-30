@@ -172,7 +172,7 @@ const Toast = Swal.mixin({
         if(!id_programmation){
             Toast.fire({
               icon: 'error',
-              title: 'Veuillez selectioner une ligne!',
+              title: 'Veuillez selectionner une ligne!',
             })
             return;
         }

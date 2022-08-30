@@ -186,7 +186,7 @@ class ProgrammationController extends AbstractController
         // dd($request);     
         if (empty($request->get('observation')) || empty($request->get('volume')) ||
             $request->get('element_id') == "" || $request->get('annee_id') == "" || 
-            $request->get('enseignant') == null || $request->get('nature') == "")  
+            $request->get('enseignants') == null || $request->get('nature') == "")  
         {
             return new JsonResponse('merci de remplir tout les champs!!',500);
         }
@@ -196,7 +196,7 @@ class ProgrammationController extends AbstractController
         $programmation->setElement($this->em->getRepository(AcElement::class)->find($request->get("element_id")));
         $programmation->setAnnee($this->em->getRepository(AcAnnee::class)->find($request->get("annee_id")));
         $programmation->setUpdated(new \DateTime("now"));
-        foreach ($request->get('enseignant') as $enseignant) {
+        foreach ($request->get('enseignants') as $enseignant) {
             $programmation->addEnseignant($this->em->getRepository(PEnseignant::class)->find($enseignant));
         }
         $this->em->flush();

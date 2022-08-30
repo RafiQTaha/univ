@@ -118,15 +118,16 @@ const Toast = Swal.mixin({
             icon.remove('fa-edit').addClass("fa-spinner fa-spin ");
             const request = await axios.get('/parametre/module/details/'+id_module);
             const response = request.data;
-            console.log(response)
+            // console.log(response)
             icon.addClass('fa-edit').removeClass("fa-spinner fa-spin ");
-            $("#modifier_modal #designation").val(response.designation)
-            $("#modifier_modal #coefficient").val(response.coefficient)
-            if(response.active == 1){
-                $("#modifier_modal #active").prop("checked", true)
-            }else {
-                $("#modifier_modal #active").prop("checked", false)
-            }
+            $("body #modifier_modal #udpate").html(response)
+            // $("#modifier_modal #designation").val(response.designation)
+            // $("#modifier_modal #coefficient").val(response.coefficient)
+            // if(response.active == 1){
+            //     $("#modifier_modal #active").prop("checked", true)
+            // }else {
+            //     $("#modifier_modal #active").prop("checked", false)
+            // }
             $("#modifier_modal").modal("show")
         } catch (error) {
             console.log(error, error.response);
