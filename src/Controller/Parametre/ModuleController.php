@@ -123,10 +123,13 @@ class ModuleController extends AbstractController
     #[Route('/new', name: 'parametre_module_new')]
     public function new(Request $request)
     {
+        dd($request);
        $module = new AcModule();
        $module->setDesignation($request->get('designation'));
        $module->setActive($request->get('active') == "on" ? true : false);
        $module->setCreated(new \DateTime("now"));
+       $module->setType($request->get('type'));
+       $module->setColor($request->get('color'));
        $module->setSemestre(
            $this->em->getRepository(AcSemestre::class)->find($request->get("semestre_id"))
        );
@@ -142,11 +145,10 @@ class ModuleController extends AbstractController
     #[Route('/details/{module}', name: 'parametre_module_details')]
     public function details(AcModule $module): Response
     {
-       return new JsonResponse([
-            'designation' => $module->getDesignation(),
-            'coefficient' => $module->getCoefficient(),
-            'active' => $module->getActive()
-       ]);
+        $html = $this->render('parametre/module/pages/modifier.html.twig', [
+             'module' => $module
+        ])->getContent();
+        return new JsonResponse($html,200);
     }
     #[Route('/update/{module}', name: 'parametre_module_update')]
     public function update(Request $request, AcModule $module): Response
@@ -155,6 +157,8 @@ class ModuleController extends AbstractController
         $module->setCoefficient($request->get("coefficient"));
         $module->setActive($request->get('active') == "on" ? true : false);
         $module->setUpdated(new \DateTime("now"));
+        $module->setType($request->get('type'));
+        $module->setColor($request->get('color'));
         $module->setUserUpdated($this->getUser());
         $this->em->flush();
  

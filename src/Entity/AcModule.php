@@ -48,6 +48,9 @@ class AcModule
     #[ORM\ManyToOne(targetEntity: AcSemestre::class, inversedBy: 'modules')]
     private $semestre;
 
+    #[ORM\Column(type: 'string', length: 10, nullable: true)]
+    private $color;
+
     public function __construct()
     {
         $this->elements = new ArrayCollection();
@@ -204,6 +207,18 @@ class AcModule
     public function setSemestre(?AcSemestre $semestre): self
     {
         $this->semestre = $semestre;
+
+        return $this;
+    }
+
+    public function getColor(): ?string
+    {
+        return $this->color;
+    }
+
+    public function setColor(?string $color): self
+    {
+        $this->color = $color;
 
         return $this;
     }

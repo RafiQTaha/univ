@@ -15,7 +15,7 @@
     {% endfor %}
 </select>
 <label for="enseignant">enseignants:</label>
-<select class="form-control chosen-select" name="enseignant[]" id="enseignant" multiple="multiple">
+<select class="form-control chosen-select" name="enseignants[]" id="enseignants" multiple="multiple">
     <option value="" disabled="disabled">Choix Enseignant</option>
     {% for enseignant in enseignants %}
         {% if enseignant in programmation.Enseignants %}
