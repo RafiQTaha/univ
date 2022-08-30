@@ -41,13 +41,12 @@
                 <td><b> Semestre  :</b> </td>
                 <td> {{semestre.designation}} </td>
             </tr>
-
             {% if groupe != 0 %}
                 <tr>
                     <td><b> Groupe Principale  :</b> </td>
-                    <td> {{groupe.niveau}} </td>
+                    <td> {{niveau.niveau}} </td>
                 </tr>
-                <input type="text" id="niv" value="{{groupe.id}}" style="display:none"/>
+                <input type="text" id="niv" value="{{niveau.id}}" style="display:none"/>
             {% else %}
                 <input type="text" id="niv" value="{{groupe}}" style="display:none"/>
             {% endif %}

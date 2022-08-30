@@ -69,6 +69,7 @@ class PlanificationController extends AbstractController
         }else{
             $emptimes = $this->em->getRepository(PlEmptime::class)->getEmptimeBySemestreAndGroupe($semestre,$groupe);
         }
+        // dd($emptimes);
         $times = [];
         foreach($emptimes as $emptime){
             // dd($emptime);
@@ -97,7 +98,7 @@ class PlanificationController extends AbstractController
                         $enseingant,
                 'start' => $emptime->getStart()->format('Y-m-d H:i:s'),
                 'end' => $emptime->getEnd()->format('Y-m-d H:i:s'),
-                'color'=> $emptime->getColor() == NUll  ? "" : $emptime->getColor()->getCouleur(),
+                'color'=> $element->getModule()->getColor(),
             ];
         }
         return new Response(json_encode($times));
@@ -113,13 +114,17 @@ class PlanificationController extends AbstractController
         //     'validation_academique'=>'non',
         //     'cloture_academique'=>'non',
         // ]);
+        $niveau = "";
         $annee = $this->em->getRepository(AcAnnee::class)->getActiveAnneeByFormation($semestre->getPromotion()->getFormation());
         $semaine = $this->em->getRepository(Semaine::class)->findOneBy(['nsemaine'=>$semaine,'anneeS'=>$annee->getDesignation()]);
         if($groupe == 0){
             $emptimes = $this->em->getRepository(PlEmptime::class)->getEmptimeBySemestreAndSemaine($semestre,$semaine);
         }else{
             $emptimes = $this->em->getRepository(PlEmptime::class)->getEmptimeBySemestreAndGroupeAndSemaine($semestre,$groupe,$semaine);
+            $niveau = $this->em->getRepository(PGroupe::class)->find($groupe);
         }
+        // dd($emptimes);
+        // dd($emptime->getGroupe()->getNiveau());  
         
         /////////////////
         $times = [];
@@ -142,7 +147,8 @@ class PlanificationController extends AbstractController
                         $enseingant,
                 'start' => $emptime->getStart()->format('Y-m-d H:i:s'),
                 'end' => $emptime->getEnd()->format('Y-m-d H:i:s'),
-                'color'=> $emptime->getColor() == NUll  ? "" : $emptime->getColor()->getCouleur(),
+                'color'=> $element->getModule()->getColor(),
+                // 'color'=> $emptime->getColor() == NUll  ? "" : $emptime->getColor()->getCouleur(),
             ];
         }
         // dd($times);
@@ -153,7 +159,8 @@ class PlanificationController extends AbstractController
             'annee' => $annee,
             'groupe' => $groupe,
             'day' => $day,
-            'times'=> $times
+            'times'=> $times,
+            'niveau' => $niveau
         ]);
     }
 

@@ -123,7 +123,7 @@ class ModuleController extends AbstractController
     #[Route('/new', name: 'parametre_module_new')]
     public function new(Request $request)
     {
-        dd($request);
+        // dd($request);
        $module = new AcModule();
        $module->setDesignation($request->get('designation'));
        $module->setActive($request->get('active') == "on" ? true : false);
