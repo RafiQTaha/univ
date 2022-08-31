@@ -137,7 +137,7 @@ class ModuleController extends AbstractController
        $module->setCoefficient($request->get("coefficient"));
        $this->em->persist($module);
        $this->em->flush();
-       $module->setCode("SEM".str_pad($module->getId(), 8, '0', STR_PAD_LEFT));
+       $module->setCode("MOD".str_pad($module->getId(), 8, '0', STR_PAD_LEFT));
        $this->em->flush();
 
        return new JsonResponse(1);

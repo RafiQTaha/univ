@@ -144,7 +144,7 @@ class ElementController extends AbstractController
        $element->setCoursDocument($request->get('cours_document') == "on" ? true : false);
        $this->em->persist($element);
        $this->em->flush();
-       $element->setCode("MOD".str_pad($element->getId(), 8, '0', STR_PAD_LEFT));
+       $element->setCode("ELE".str_pad($element->getId(), 8, '0', STR_PAD_LEFT));
        $this->em->flush();
 
        return new JsonResponse('Element bien ajouter',200);
