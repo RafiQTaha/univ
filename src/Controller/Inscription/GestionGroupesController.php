@@ -235,46 +235,100 @@ class GestionGroupesController extends AbstractController
         return new Response('Inscription Bien Modifier!',200);
     }
     
-    #[Route('/exportbypromotion/{promotion}/{annee}', name: 'exportbypromotion')]
-    public function exportbypromotion($promotion,$annee): Response
+    // #[Route('/exportbypromotion/{promotion}/{annee}', name: 'exportbypromotion')]
+    // public function exportbypromotion($promotion,$annee): Response
+    // {   
+    //     $inscriptions = $this->em->getRepository(TInscription::class)->findBy(['promotion'=>$promotion,'annee'=>$annee]);
+    //     if ($inscriptions == Null) {
+    //         return new Response('Inscriptions Introuvable!!',500);
+    //     }
+    //     $spreadsheet = new Spreadsheet();
+    //     $sheet = $spreadsheet->getActiveSheet();
+    //     $sheet->setCellValue('A1', 'Id');
+    //     $sheet->setCellValue('B1', 'Code Inscription');
+    //     $sheet->setCellValue('C1', 'Nom');
+    //     $sheet->setCellValue('D1', 'Prenom');
+    //     $sheet->setCellValue('E1', 'Etablissement');
+    //     $sheet->setCellValue('F1', 'Formation');
+    //     $sheet->setCellValue('G1', 'Promotion');
+    //     $sheet->setCellValue('H1', 'Année');
+    //     $sheet->setCellValue('I1', 'Niveau1');
+    //     $sheet->setCellValue('J1', 'Niveau2');
+    //     $sheet->setCellValue('K1', 'Niveau3');
+    //     $i=2;
+    //     foreach ($inscriptions as $inscription) {
+    //         $sheet->setCellValue('A'.$i, $inscription->getId());
+    //         $sheet->setCellValue('B'.$i, $inscription->getCode());
+    //         $sheet->setCellValue('C'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getNom());
+    //         $sheet->setCellValue('D'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getPrenom());
+    //         $sheet->setCellValue('E'.$i, $inscription->getPromotion()->getFormation()->getEtablissement()->getDesignation());
+    //         $sheet->setCellValue('F'.$i, $inscription->getPromotion()->getFormation()->getDesignation());
+    //         $sheet->setCellValue('G'.$i, $inscription->getPromotion()->getDesignation());
+    //         $sheet->setCellValue('H'.$i, $inscription->getAnnee()->getDesignation());
+    //         if ($inscription->getGroupe() != Null) {
+    //             if ($inscription->getGroupe()->getGroupe() == Null) {
+    //                 $sheet->setCellValue('I'.$i, $inscription->getGroupe()->getNiveau());
+    //             }elseif ($inscription->getGroupe()->getGroupe()->getGroupe() == Null) {
+    //                 $sheet->setCellValue('I'.$i, $inscription->getGroupe()->getGroupe()->getNiveau());
+    //                 $sheet->setCellValue('J'.$i, $inscription->getGroupe()->getNiveau());
+    //             }else {
+    //                 $sheet->setCellValue('I'.$i, $inscription->getGroupe()->getGroupe()->getGroupe()->getNiveau());
+    //                 $sheet->setCellValue('J'.$i, $inscription->getGroupe()->getGroupe()->getNiveau());
+    //                 $sheet->setCellValue('K'.$i, $inscription->getGroupe()->getNiveau());
+    //             }
+    //         }
+    //         $i++;
+    //     }
+    //     $writer = new Xlsx($spreadsheet);
+    //     $fileName = 'Inscriptions.xlsx';
+    //     $temp_file = tempnam(sys_get_temp_dir(), $fileName);
+    //     $writer->save($temp_file);
+    //     return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);
+    // }
+    #[Route('/exportbyformation/{annee}', name: 'exportbyformation')]
+    public function exportbyformation($annee): Response
     {   
-        $inscriptions = $this->em->getRepository(TInscription::class)->findBy(['promotion'=>$promotion,'annee'=>$annee]);
+        $inscriptions = $this->em->getRepository(TInscription::class)->findBy(['annee'=>$annee,'statut'=>13]);
         if ($inscriptions == Null) {
             return new Response('Inscriptions Introuvable!!',500);
         }
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
         $sheet->setCellValue('A1', 'Id');
-        $sheet->setCellValue('B1', 'Code Inscription');
-        $sheet->setCellValue('C1', 'Nom');
-        $sheet->setCellValue('D1', 'Prenom');
-        $sheet->setCellValue('E1', 'Etablissement');
-        $sheet->setCellValue('F1', 'Formation');
-        $sheet->setCellValue('G1', 'Promotion');
-        $sheet->setCellValue('H1', 'Année');
-        $sheet->setCellValue('I1', 'Niveau1');
-        $sheet->setCellValue('J1', 'Niveau2');
-        $sheet->setCellValue('K1', 'Niveau3');
+        $sheet->setCellValue('B1', 'Code Pre-Inscription');
+        $sheet->setCellValue('C1', 'Code Admission');
+        $sheet->setCellValue('D1', 'Code Inscription');
+        $sheet->setCellValue('E1', 'Nom');
+        $sheet->setCellValue('F1', 'Prenom');
+        $sheet->setCellValue('G1', 'Etablissement');
+        $sheet->setCellValue('H1', 'Formation');
+        $sheet->setCellValue('I1', 'Promotion');
+        $sheet->setCellValue('J1', 'Année');
+        $sheet->setCellValue('K1', 'Niveau1');
+        $sheet->setCellValue('L1', 'Niveau2');
+        $sheet->setCellValue('M1', 'Niveau3');
         $i=2;
         foreach ($inscriptions as $inscription) {
             $sheet->setCellValue('A'.$i, $inscription->getId());
-            $sheet->setCellValue('B'.$i, $inscription->getCode());
-            $sheet->setCellValue('C'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getNom());
-            $sheet->setCellValue('D'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getPrenom());
-            $sheet->setCellValue('E'.$i, $inscription->getPromotion()->getFormation()->getEtablissement()->getDesignation());
-            $sheet->setCellValue('F'.$i, $inscription->getPromotion()->getFormation()->getDesignation());
-            $sheet->setCellValue('G'.$i, $inscription->getPromotion()->getDesignation());
-            $sheet->setCellValue('H'.$i, $inscription->getAnnee()->getDesignation());
+            $sheet->setCellValue('B'.$i, $inscription->getAdmission()->getPreinscription()->getCode());
+            $sheet->setCellValue('C'.$i, $inscription->getAdmission()->getCode());
+            $sheet->setCellValue('D'.$i, $inscription->getCode());
+            $sheet->setCellValue('E'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getNom());
+            $sheet->setCellValue('F'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getPrenom());
+            $sheet->setCellValue('G'.$i, $inscription->getPromotion()->getFormation()->getEtablissement()->getDesignation());
+            $sheet->setCellValue('H'.$i, $inscription->getPromotion()->getFormation()->getDesignation());
+            $sheet->setCellValue('I'.$i, $inscription->getPromotion()->getDesignation());
+            $sheet->setCellValue('J'.$i, $inscription->getAnnee()->getDesignation());
             if ($inscription->getGroupe() != Null) {
                 if ($inscription->getGroupe()->getGroupe() == Null) {
-                    $sheet->setCellValue('I'.$i, $inscription->getGroupe()->getNiveau());
-                }elseif ($inscription->getGroupe()->getGroupe()->getGroupe() == Null) {
-                    $sheet->setCellValue('I'.$i, $inscription->getGroupe()->getGroupe()->getNiveau());
-                    $sheet->setCellValue('J'.$i, $inscription->getGroupe()->getNiveau());
-                }else {
-                    $sheet->setCellValue('I'.$i, $inscription->getGroupe()->getGroupe()->getGroupe()->getNiveau());
-                    $sheet->setCellValue('J'.$i, $inscription->getGroupe()->getGroupe()->getNiveau());
                     $sheet->setCellValue('K'.$i, $inscription->getGroupe()->getNiveau());
+                }elseif ($inscription->getGroupe()->getGroupe()->getGroupe() == Null) {
+                    $sheet->setCellValue('K'.$i, $inscription->getGroupe()->getGroupe()->getNiveau());
+                    $sheet->setCellValue('L'.$i, $inscription->getGroupe()->getNiveau());
+                }else {
+                    $sheet->setCellValue('K'.$i, $inscription->getGroupe()->getGroupe()->getGroupe()->getNiveau());
+                    $sheet->setCellValue('L'.$i, $inscription->getGroupe()->getGroupe()->getNiveau());
+                    $sheet->setCellValue('M'.$i, $inscription->getGroupe()->getNiveau());
                 }
             }
             $i++;

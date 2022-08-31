@@ -165,15 +165,24 @@
     
     $("#export").on("click", function(e) {
         e.preventDefault();
-        if($("#promotion").val() == "" || $("#promotion").val() == ""){
+        // if($("#promotion").val() == "" || $("#annee").val() == ""){
+        //     Toast.fire({
+        //         icon: 'error',
+        //         title: 'Merci de Choisir une Promotion, Une Année!',
+        //     })
+        //     return;
+        // }
+        if($("#formation").val() == "" || $("#annee").val() == ""){
             Toast.fire({
                 icon: 'error',
-                title: 'Merci de Choisir une Promotion, Une Année!',
+                title: 'Merci de Choisir une formation, Une Année!',
             })
             return;
         }
-        window.open('/inscription/groupes/exportbypromotion/'+$("#promotion").val()+'/'+$("#annee").val(), '_blank');
+        window.open('/inscription/groupes/exportbyformation/'+$("#formation").val()+'/'+$("#annee").val(), '_blank');
+        // window.open('/inscription/groupes/exportbypromotion/'+$("#promotion").val()+'/'+$("#annee").val(), '_blank');
     })
+    // })
 
 })
 

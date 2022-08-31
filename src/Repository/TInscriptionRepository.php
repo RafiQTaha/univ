@@ -56,7 +56,7 @@ class TInscriptionRepository extends ServiceEntityRepository
             ->innerJoin("preinscription.etudiant", "etudiant")
             // ->Where("annee.validation_academique = 'non'")
             // ->andWhere("annee.cloture_academique = 'non'")
-            ->Where("t.statut = 13")
+            ->Where("t.statut in (13,14)")
             // ->andWhere('preinscription.active = 1')
             ->andWhere('preinscription.inscriptionValide = 1')
             ->andWhere('annee.designation = :annee')

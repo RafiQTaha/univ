@@ -56,7 +56,7 @@ class GestionPlanificationController extends AbstractController
          
         $params = $request->query;
         $where = $totalRows = $sqlRequest = "";
-        $filtre = " where ann.validation_academique = 'non' and emp.active = 1 and emp.annuler = 0";
+        $filtre = " where ann.validation_academique = 'non' and emp.active = 1 ";
         
         if (!empty($params->all('columns')[0]['search']['value'])) {
             $filtre .= " and etab.id = '" . $params->all('columns')[0]['search']['value'] . "' ";
@@ -160,6 +160,8 @@ class GestionPlanificationController extends AbstractController
                 else{
                     $nestedData[] = $value;
                 }
+                $active = $this->em->getRepository(PlEmptime::class)->find($cd);
+                $etat_bg = $active->getAnnuler() == 0 ? $etat_bg : "etat_bg_nf";
             }
             $nestedData["DT_RowId"] = $cd;
             $nestedData["DT_RowClass"] = $etat_bg; 
@@ -217,20 +219,24 @@ class GestionPlanificationController extends AbstractController
         }
         return new Response('Seances Bien Anuller',200);
     }  
-    #[Route('/gestion_valider_planning', name: 'gestion_valider_planning')]
-    public function gestion_valider_planning(Request $request): Response
+    #[Route('/gestion_valider_planning/{emptime}', name: 'gestion_valider_planning')]
+    public function gestion_valider_planning(Request $request,PlEmptime $emptime): Response
     {   
-        $ids = json_decode($request->get('ids_planning'));
-        if (count($ids) == 0) {
-            return new Response('Merci de choisir Au moins une Seance!',500);
+        // $ids = json_decode($request->get('ids_planning'));
+        // if (count($ids) == 0) {
+        //     return new Response('Merci de choisir Au moins une Seance!',500);
+        // }
+        // dd($emptime->getAnnuler());
+        if ($emptime->getAnnuler() == 1) {
+            return new Response('Impossible de valider une séance annulé! ',500);
         }
-        foreach ($ids as $id) {
-            $emptime = $this->em->getRepository(PlEmptime::class)->find($id);
+        // foreach ($ids as $id) {
+        //     $emptime = $this->em->getRepository(PlEmptime::class)->find($id);
             if ($emptime) {
                 $emptime->setValider(1);
                 $this->em->flush();
             }
-        }
+        // }
         return new Response('Seances Bien Valider',200);
     }  
     

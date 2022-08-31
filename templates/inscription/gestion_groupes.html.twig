@@ -26,7 +26,7 @@
                     <div class="col-md-2">
                         <label for="etablissement">Etablissement:</label>
                         <select class="form-control" name="etablissement" id="etablissement">
-                            <option value="">Choix etablissement</option>
+                            <option value="">Choix Etablissement</option>
                             {% for etablissement in etablissements %}
                                 <option value="{{etablissement.id}}">{{etablissement.designation}}</option>
                             {% endfor %}
@@ -40,11 +40,13 @@
                     <div class="col-md-2">
                         <label for="promotion">Promotion:</label>
                         <select class="form-control" name="promotion" id="promotion">
+                            <option value="">Choix Promotion</option>
                         </select>
                     </div>
                     <div class="col-md-2">
                         <label for="frais">annee:</label>
                         <select class="form-control" name="annee" id="annee">
+                            <option value="">Choix Annee</option>
                         </select>
                     </div>
                 </div>
