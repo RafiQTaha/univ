@@ -302,10 +302,10 @@ $(document).ready(function () {
     })
     $('body').on('click','#annulation', async function (e) {
         e.preventDefault();
-        if(ids_planning.length === 0 ){
+        if(!id_planning){
             Toast.fire({
-            icon: 'error',
-            title: 'Merci de Choisir au moins une ligne',
+                icon: 'error',
+                title: 'Merci de Choisir une ligne',
             })
             return;
         }
@@ -317,10 +317,18 @@ $(document).ready(function () {
     
     $('body').on('click','#Annuler_planning', async function (e) {
         e.preventDefault();
-        if(ids_planning.length === 0 ){
+        // if(ids_planning.length === 0 ){
+        //     Toast.fire({
+        //     icon: 'error',
+        //     title: 'Merci de Choisir au moins une ligne',
+        //     })
+        //     return;
+        // }
+        
+        if(!id_planning){
             Toast.fire({
-            icon: 'error',
-            title: 'Merci de Choisir au moins une ligne',
+                icon: 'error',
+                title: 'Merci de Choisir une ligne',
             })
             return;
         }
@@ -337,10 +345,11 @@ $(document).ready(function () {
             const icon = $("#Annuler_planning i");
             icon.removeClass('fa-times-circle').addClass("fa-spinner fa-spin");
             var formData = new FormData();
-            formData.append('ids_planning', JSON.stringify(ids_planning)); 
+            // formData.append('ids_planning', JSON.stringify(ids_planning)); 
             formData.append('motif_annuler', $('#motif_annuler').val()); 
             try {
-                const request = await axios.post('/planification/gestions/gestion_annuler_planning',formData);
+                // const request = await axios.post('/planification/gestions/gestion_annuler_planning',formData);
+                const request = await axios.post('/planification/gestions/gestion_annuler_planning/'+id_planning,formData);
                 const response = request.data;
                 Toast.fire({
                     icon: 'success',
@@ -352,6 +361,10 @@ $(document).ready(function () {
             } catch (error) {
                 const message = error.response.data;
                 icon.addClass('fa-times-circle').removeClass("fa-spinner fa-spin");
+                Toast.fire({
+                    icon: 'error',
+                    title: message,
+                })
             }
         }  
     })

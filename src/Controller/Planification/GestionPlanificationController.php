@@ -198,27 +198,31 @@ class GestionPlanificationController extends AbstractController
         }
         return new Response('Seances Bien Supprimer',200);
     } 
-    #[Route('/gestion_annuler_planning', name: 'gestion_annuler_planning')]
-    public function gestion_annuler_planning(Request $request): Response
+    #[Route('/gestion_annuler_planning/{emptime}', name: 'gestion_annuler_planning')]
+    public function gestion_annuler_planning(Request $request,PlEmptime $emptime): Response
     {   
-        $ids = json_decode($request->get('ids_planning'));
+        // $ids = json_decode($request->get('ids_planning'));
         $motif = $request->get('motif_annuler');
-        if (count($ids) == 0) {
-            return new Response('Merci de choisir Au moins une Seance!',500);
+        // if (count($ids) == 0) {
+        //     return new Response('Merci de choisir Au moins une Seance!',500);
+        // }
+        // if (empty($request->get('motif_annuler'))) {
+        //     return new Response('Merci de Choisir le motif d\'annulation!',500);
+        // }
+        
+        if ($emptime->getValider() == 1) {
+            return new Response('Impossible de valider une séance annulé! ',500);
         }
-        if (empty($request->get('motif_annuler'))) {
-            return new Response('Merci de Choisir le motif d\'annulation!',500);
-        }
-        foreach ($ids as $id) {
-            $emptime = $this->em->getRepository(PlEmptime::class)->find($id);
-            if ($emptime) {
-                if ($emptime->getValider() != 0) {
+        // foreach ($ids as $id) {
+            // $emptime = $this->em->getRepository(PlEmptime::class)->find($id);
+            // if ($emptime) {
+                // if ($emptime->getValider() != 0) {
                     $emptime->setAnnuler(1);
                     $emptime->setMotifAnnuler($motif);
                     $this->em->flush();
-                }
-            }
-        }
+                // }
+            // }
+        // }
         return new Response('Seances Bien Anuller',200);
     }  
     #[Route('/gestion_valider_planning/{emptime}', name: 'gestion_valider_planning')]
