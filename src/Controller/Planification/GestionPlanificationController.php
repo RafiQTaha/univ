@@ -212,9 +212,11 @@ class GestionPlanificationController extends AbstractController
         foreach ($ids as $id) {
             $emptime = $this->em->getRepository(PlEmptime::class)->find($id);
             if ($emptime) {
-                $emptime->setAnnuler(1);
-                $emptime->setMotifAnnuler($motif);
-                $this->em->flush();
+                if ($emptime->getValider() != 0) {
+                    $emptime->setAnnuler(1);
+                    $emptime->setMotifAnnuler($motif);
+                    $this->em->flush();
+                }
             }
         }
         return new Response('Seances Bien Anuller',200);
