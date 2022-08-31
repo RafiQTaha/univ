@@ -179,7 +179,7 @@
             })
             return;
         }
-        window.open('/inscription/groupes/exportbyformation/'+$("#formation").val()+'/'+$("#annee").val(), '_blank');
+        window.open('/inscription/groupes/exportbyformation/'+$("#annee").val(), '_blank');
         // window.open('/inscription/groupes/exportbypromotion/'+$("#promotion").val()+'/'+$("#annee").val(), '_blank');
     })
     // })
