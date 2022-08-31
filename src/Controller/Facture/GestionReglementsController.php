@@ -108,7 +108,7 @@ class GestionReglementsController extends AbstractController
         INNER JOIN toperationcab oprcab ON oprcab.id = reg.operation_id
         INNER JOIN tpreinscription pre ON pre.id = oprcab.preinscription_id
         INNER JOIN tetudiant etu ON etu.id = pre.etudiant_id
-        INNER JOIN ac_annee an ON an.id = pre.annee_id
+        INNER JOIN ac_annee an ON an.id = oprcab.annee_id
         LEFT JOIN ac_formation frm ON frm.id = an.formation_id
         LEFT JOIN ac_etablissement etab ON etab.id = frm.etablissement_id
         left join  xmodalites pae on pae.id = reg.paiement_id 
@@ -177,7 +177,7 @@ class GestionReglementsController extends AbstractController
         $promotion = $inscription == NULL ? "" : $inscription->getPromotion()->getDesignation();
         $inscription = $inscription == NULL ? "" : $inscription->getCode();
         $html = "";
-        for ($i=0; $i < 4; $i++) { 
+        for ($i=0; $i < 3; $i++) { 
             $html .= $this->render("facture/pdfs/facture_reglement.html.twig", [
                     'reglementTotal' => $reglementTotal,
                     'operationTotal' => $operationTotal,
