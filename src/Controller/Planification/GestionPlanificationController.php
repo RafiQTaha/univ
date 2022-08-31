@@ -211,7 +211,7 @@ class GestionPlanificationController extends AbstractController
         // }
         
         if ($emptime->getValider() == 1) {
-            return new Response('Impossible de valider une séance annulé! ',500);
+            return new Response('Impossible d\'annuler une séance validée! ',500);
         }
         // foreach ($ids as $id) {
             // $emptime = $this->em->getRepository(PlEmptime::class)->find($id);
