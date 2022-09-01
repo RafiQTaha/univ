@@ -239,10 +239,17 @@ class ApiController extends AbstractController
             // if ($groupe != Null) {
                 if ($groupe->getGroupe() == Null) {
                     $data .="<option value=".$groupe->getId().">".$groupe->getNiveau()."</option>";
+                }elseif ($groupe->getGroupe()->getGroupe() == Null) {
+                    $groupe = $groupe->getGroupe();
+                    $data .="<option value=".$groupe->getId().">".$groupe->getNiveau()."</option>";
+                }else {
+                    $groupe = $groupe->getGroupe()->getGroupe();
+                    $data .="<option value=".$groupe->getId().">".$groupe->getNiveau()."</option>";
                 }
+                
             // }
         }
-        return new JsonResponse($data);     
+        return new JsonResponse($data);
     }
 
     #[Route('/niv2/{niv1}', name: 'getNiv2ByNiv1')]
