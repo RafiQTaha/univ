@@ -234,20 +234,35 @@ class ApiController extends AbstractController
 
         $inscriptions = $this->em->getRepository(TInscription::class)->getNiveaux($promotion,$annee);
         $data = "<option selected enabled value=''>Choix Niveau 1</option>";
+        $groupes = [];
         foreach ($inscriptions as $inscription) {
             $groupe = $inscription->getGroupe();
             // if ($groupe != Null) {
                 if ($groupe->getGroupe() == Null) {
-                    $data .="<option value=".$groupe->getId().">".$groupe->getNiveau()."</option>";
+                    if (!in_array($groupe, $groupes)){
+                        array_push($groupes,$groupe);
+                    }
+                    // $data .="<option value=".$groupe->getId().">".$groupe->getNiveau()."</option>";
                 }elseif ($groupe->getGroupe()->getGroupe() == Null) {
                     $groupe = $groupe->getGroupe();
-                    $data .="<option value=".$groupe->getId().">".$groupe->getNiveau()."</option>";
+                    if (!in_array($groupe, $groupes)){
+                        array_push($groupes,$groupe);
+                    }
+                    // $data .="<option value=".$groupe->getId().">".$groupe->getNiveau()."</option>";
                 }else {
                     $groupe = $groupe->getGroupe()->getGroupe();
-                    $data .="<option value=".$groupe->getId().">".$groupe->getNiveau()."</option>";
+                    if (!in_array($groupe, $groupes)){
+                        array_push($groupes,$groupe);
+                    }
+                    // $data .="<option value=".$groupe->getId().">".$groupe->getNiveau()."</option>";
                 }
                 
+                // $data .="<option value=".$groupe->getId().">".$groupe->getNiveau()."</option>";
+                
             // }
+        }
+        foreach ($groupes as $groupe) {
+            $data .="<option value=".$groupe->getId().">".$groupe->getNiveau()."</option>";
         }
         return new JsonResponse($data);
     }
