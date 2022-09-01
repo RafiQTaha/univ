@@ -172,14 +172,15 @@
         //     })
         //     return;
         // }
-        if($("#formation").val() == "" || $("#annee").val() == ""){
-            Toast.fire({
-                icon: 'error',
-                title: 'Merci de Choisir une formation, Une Année!',
-            })
-            return;
-        }
-        window.open('/inscription/groupes/exportbyformation/'+$("#annee").val(), '_blank');
+        // if($("#formation").val() == "" || $("#annee").val() == ""){
+        //     Toast.fire({
+        //         icon: 'error',
+        //         title: 'Merci de Choisir une formation, Une Année!',
+        //     })
+        //     return;
+        // }
+        window.open('/inscription/groupes/exportAllgroupes', '_blank');
+        // window.open('/inscription/groupes/exportbyformation/'+$("#annee").val(), '_blank');
         // window.open('/inscription/groupes/exportbypromotion/'+$("#promotion").val()+'/'+$("#annee").val(), '_blank');
     })
     // })

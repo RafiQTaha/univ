@@ -309,6 +309,7 @@ class GestionInscriptionController extends AbstractController
         $sheet->setCellValue('V1', 'MOYENNE NATIONALE');
         $sheet->setCellValue('W1', 'MOYENNE REGIONALE');
         $sheet->setCellValue('Y1', 'D-INSCRIPTION');
+        $sheet->setCellValue('Z1', 'STATUT');
         // $sheet->setCellValue('U1', 'N°FACTURE');
         // $sheet->setCellValue('V1', 'MONTANT FACTURE');
         // $sheet->setCellValue('W1', 'MONTANT REGLE');
@@ -351,6 +352,7 @@ class GestionInscriptionController extends AbstractController
             $sheet->setCellValue('V'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getMoyenNational());
             $sheet->setCellValue('W'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getMoyenRegional());
             $sheet->setCellValue('Y'.$i, $inscription->getCreated());
+            $sheet->setCellValue('Z'.$i, $inscription->getStatut()->GetDesignation());
 
             // $facture = $this->em->getRepository(TOperationcab::class)->findOneBy(['categorie'=>'inscription','preinscription'=>$inscription->getAdmission()->getPreinscription(),'active'=>1]);
             // if ($facture) {

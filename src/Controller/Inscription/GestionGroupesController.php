@@ -285,10 +285,12 @@ class GestionGroupesController extends AbstractController
     //     $writer->save($temp_file);
     //     return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);
     // }
-    #[Route('/exportbyformation/{annee}', name: 'exportbyformation')]
-    public function exportbyformation($annee): Response
+    #[Route('/exportAllgroupes', name: 'exportAllgroupes')]
+    public function exportAllgroupes(): Response
     {   
-        $inscriptions = $this->em->getRepository(TInscription::class)->findBy(['annee'=>$annee,'statut'=>13]);
+        $current_year = date('m') > 7 ? $current_year = date('Y').'/'.date('Y')+1 : $current_year = date('Y') - 1 .'/' .date('Y');
+        $inscriptions = $this->em->getRepository(TInscription::class)->getActiveInscriptionByCurrentAnnee($current_year);
+        // $inscriptions = $this->em->getRepository(TInscription::class)->findBy(['annee'=>$annee,'statut'=>13]);
         if ($inscriptions == Null) {
             return new Response('Inscriptions Introuvable!!',500);
         }
