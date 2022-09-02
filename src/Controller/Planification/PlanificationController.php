@@ -95,7 +95,9 @@ class PlanificationController extends AbstractController
                 'title' => $emptime->getCode() . "\n".
                         ' Element :  '.$element->getDesignation() . "\n".
                         ' Type de Cours :  '.$natureEpreuve->getDesignation() . "\n".
-                        $enseingant,
+                        // $enseingant,
+                        $enseingant .
+                        'salle : '. $emptime->getSalle()->getDesignation(),
                 'start' => $emptime->getStart()->format('Y-m-d H:i:s'),
                 'end' => $emptime->getEnd()->format('Y-m-d H:i:s'),
                 'color'=> $element->getModule()->getColor(),
@@ -139,12 +141,16 @@ class PlanificationController extends AbstractController
                     $enseingant .= $emptime->getProgrammation()->getEnseignants()[0]->getNom().' '.$emptime->getProgrammation()->getEnseignants()[0]->getPrenom();
                 }
             }
+            // dd($emptime->getSalle()->getDesignation());
             $times[] = [
                 'id' => $emptime->getId(),
                 'title' => $emptime->getCode() . "\n".
                         ' Element :  '.$element->getDesignation() . "\n".
                         ' Type de Cours :  '.$natureEpreuve->getDesignation() . "\n".
-                        $enseingant,
+                        // 'salle : '.$emptime->getSalle()->getDesignation() . "\n".
+                        $enseingant ,
+                        // $enseingant . "\n".
+                        // 'salle : '. $emptime->getSalle()->getDesignation(),
                 'start' => $emptime->getStart()->format('Y-m-d H:i:s'),
                 'end' => $emptime->getEnd()->format('Y-m-d H:i:s'),
                 'color'=> $element->getModule()->getColor(),

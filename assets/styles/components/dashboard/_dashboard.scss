@@ -6402,7 +6402,13 @@ tr:first-child > td > .fc-day-grid-event {
   color:#000 !important;
   text-align:left;
 }
-
+.fc-time-grid .fc-slats td{
+  height: 2.5rem !important;
+}
+.fc-scroller{
+  height: auto !important;
+  overflow: none !important;
+}
 .search-box li {
   // padding-left: 5px;
   padding: 5px 0 5px 5px;
