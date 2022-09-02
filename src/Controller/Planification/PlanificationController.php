@@ -77,7 +77,9 @@ class PlanificationController extends AbstractController
             // dd($enseignants[0]->getEnseignant()->getNom().' '.$emptime->getEmptimens()[0]->getPrenom(););
             $enseingant = "";
             foreach ($emptimens as $emptimen) {
-                $enseingant .= $emptimen->getEnseignant()->getNom()." ".$emptimen->getEnseignant()->getPrenom() ."\n";
+                if ($emptimen->getEnseignant() != null ) {
+                    $enseingant .= $emptimen->getEnseignant()->getNom()." ".$emptimen->getEnseignant()->getPrenom() ."\n";
+                }
             }
             // dd(count($emptimens));
             $element = $emptime->getProgrammation()->getElement();
