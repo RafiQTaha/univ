@@ -77,6 +77,7 @@ class PlanificationController extends AbstractController
             $niv = $emptime->getGroupe();
             if ($niv != null) {
                 if ($niv->getGroupe() == Null) {
+                    // $nivs .= '$niv' . "\n";
                     $nivs .= $niv->getNiveau() . "\n";
                 }elseif ($niv->getGroupe()->getGroupe() == Null) {
                     $nivs .= $niv->getGroupe()->getNiveau().' - ' .$niv->getNiveau() . "\n";
@@ -96,14 +97,6 @@ class PlanificationController extends AbstractController
             // dd(count($emptimens));
             $element = $emptime->getProgrammation()->getElement();
             $natureEpreuve = $emptime->getProgrammation()->getNatureEpreuve();
-            // $epreuve = $this->em->getRepository(AcEpreuve::class)->findOneBy(['id'=>2]);
-            // if($emptime->getProgrammation()->getEnseignants() != Null){
-            //     if($emptime->getProgrammation()->getEnseignants()[0] != Null){
-            //         $enseingant .= $enseingant != "" ? ", " : ""; 
-            //         // $enseingant .= $emptime->getProgrammation()->getEnseignants()[0]->getNom().' '.$emptime->getProgrammation()->getEnseignants()[0]->getPrenom();
-            //         $enseingant .= $emptime->getEmptimens()[0]->getNom().' '.$emptime->getEmptimens()[0]->getPrenom();
-            //     }
-            // }
             $times[] = [
                 'id' => $emptime->getId(),
                 'title' => $emptime->getCode() . "\n".
@@ -117,6 +110,7 @@ class PlanificationController extends AbstractController
                 'end' => $emptime->getEnd()->format('Y-m-d H:i:s'),
                 'color'=> $element->getModule()->getColor(),
             ];
+            $nivs = "";
         }
         return new Response(json_encode($times));
     }
