@@ -100,8 +100,8 @@ $(document).ready(function () {
                     .then(success => {
                         $('.modal-updateform_planif .update_planning').html(success.data);
                         $('.modal-updateform_planif select').select2();
-                        $('#updateform_planif-modal').modal("show");
                         pills()
+                        $('#updateform_planif-modal').modal("show");
                     })
                     .catch(err => {
                         // console.log(err);
@@ -343,7 +343,7 @@ $(document).ready(function () {
         ////////////
         let modalAlert =  $("#updateform_planif-modal .modal-body .alert");
         modalAlert.remove();
-        const icon = $(".form_update_planning .btn i");
+        const icon = $(".form_update_planning .btn_update_planning i");
         icon.removeClass('fa-check-circle').addClass("fa-spinner fa-spin");
         try{
             const request = await  axios.post('/planification/planifications/planifications_calendar_edit/'+id_planning,formData)

@@ -71,8 +71,20 @@ class PlanificationController extends AbstractController
         }
         // dd($emptimes);
         $times = [];
+        $nivs = "";
         foreach($emptimes as $emptime){
             // dd($emptime);
+            $niv = $emptime->getGroupe();
+            if ($niv != null) {
+                if ($niv->getGroupe() == Null) {
+                    $nivs .= $niv->getNiveau() . "\n";
+                }elseif ($niv->getGroupe()->getGroupe() == Null) {
+                    $nivs .= $niv->getGroupe()->getNiveau().' - ' .$niv->getNiveau() . "\n";
+                }else {
+                    $nivs .= $niv->getGroupe()->getGroupe()->getNiveau().' - ' .$niv->getGroupe()->getNiveau().' - ' .$niv->getNiveau() . "\n";
+                }
+            }
+            
             $emptimens = $this->em->getRepository(PlEmptimens::class)->findBy(['seance'=>$emptime]);
             // dd($enseignants[0]->getEnseignant()->getNom().' '.$emptime->getEmptimens()[0]->getPrenom(););
             $enseingant = "";
@@ -99,6 +111,7 @@ class PlanificationController extends AbstractController
                         ' Type de Cours :  '.$natureEpreuve->getDesignation() . "\n".
                         // $enseingant,
                         $enseingant .
+                        'Niv : '.$nivs .
                         'salle : '. $emptime->getSalle()->getDesignation(),
                 'start' => $emptime->getStart()->format('Y-m-d H:i:s'),
                 'end' => $emptime->getEnd()->format('Y-m-d H:i:s'),
@@ -208,8 +221,15 @@ class PlanificationController extends AbstractController
         $natureepreuves = $this->em->getRepository(PNatureEpreuve::class)->findBy([],['designation'=>'ASC']);
         $modules = $this->em->getRepository(AcModule::class)->findBy(['semestre'=>$programmation->getElement()->getModule()->getSemestre(), 'active' => 1],['designation'=>'ASC']);
         $elements = $this->em->getRepository(AcElement::class)->findBy(['module'=>$programmation->getElement()->getModule(), 'active' => 1],['designation'=>'ASC']);
+        // $enseignants = $this->em->getRepository(PlEmptimens::class)->findBy();
+        $emptimens = $this->em->getRepository(PlEmptimens::class)->findBy(['seance'=>$emptime]);
+        $empenseignants = [];
+        foreach ($emptimens as $emptimen) {
+            array_push($empenseignants,$emptimen->getEnseignant());
+        }
         $html = $this->render("planification/pages/update_form.html.twig", [
             'emptime' => $emptime,
+            'empenseignants' => $empenseignants,
             'annee' => $annee,
             'natureepreuves' => $natureepreuves,
             'salles' => $salles,
@@ -237,17 +257,10 @@ class PlanificationController extends AbstractController
         }
         // $programmation = $this->em->getRepository(PrProgrammation::class)->findOneBy(['element'=>107,'nature_epreuve'=>9]);
         // if($programmation != Null){
-            // $annee = $this->em->getRepository(AcAnnee::class)->findOneBy([
-            //     'formation'=>$element->getModule()->getSemestre()->getPromotion()->getFormation(),
-            //     'validation_academique'=>'non',
-            //     'cloture_academique'=>'non',
-            // ]);
             $semaine = $this->em->getRepository(Semaine::class)->findOneBy(['nsemaine'=>$request->get('n_semaine'),'anneeS'=>$annee->getDesignation()]);
             if ($semaine == null) {
                 return new Response("Semaine Introuvable ou l'annee ".$annee->getDesignation()." est cloturée!!",500);
             }
-            // dd($request->get('n_semaine'),$annee->getDesignation());
-            // dd($annee,$semaine);
             $emptime = new PlEmptime();
             $emptime->setDescription($request->get('description'));
             $emptime->setProgrammation($programmation);
@@ -290,6 +303,61 @@ class PlanificationController extends AbstractController
         // return new Response('Programme Introuvable!!',500);        
     }
 
+
+    #[Route('/planifications_calendar_edit/{id}', name: 'planifications_calendar_edit')]
+    public function planifications_calendar_edit(PlEmptime $emptime,Request $request): Response
+    {
+        // dd('$emptime');
+        if($emptime->getValider() == 1){
+            return new Response('Seance déja validée!!',500);
+        }
+        
+        if ($request->get('nature_seance') == "" || $request->get('nature_seance') == "" || 
+            $request->get('element') =="" || $request->get('salle') =="") {
+            return new Response('Merci de renseignez tout les champs',500);
+        }
+        $element = $this->em->getRepository(AcElement::class)->find($request->get('element'));
+        $annee = $this->em->getRepository(AcAnnee::class)->getActiveAnneeByFormation($element->getModule()->getSemestre()->getPromotion()->getFormation());
+        $programmation = $this->em->getRepository(PrProgrammation::class)->findOneBy(['element'=>$request->get('element'),'nature_epreuve'=>$request->get('nature_seance'),'annee'=>$annee]);
+        if ($programmation == null) {
+            return new Response("Programmation introuvable ou l'annee ".$annee->getDesignation()." est cloturée!!",500);
+        }
+        if ($request->get('enseignant') == NULL) {
+            return new Response('Merci de Choisir Au Moins Un Enseignant!!',500);
+        } 
+        $emptime->setProgrammation($programmation);
+        $emptime->setDescription($request->get('description'));
+        $emptime->setSalle($this->em->getRepository(PSalles::class)->find($request->get('salle')));
+        $emptime->setUserUpdated($this->getUser());
+        $emptime->setUpdated(new \DateTime('now'));
+        $this->em->flush();
+        $epreuve = $this->em->getRepository(PNatureEpreuve::class)->find($request->get('nature_seance'))->getAbreviation();
+        $etab = $element->getModule()->getSemestre()->getPromotion()->getFormation()->getEtablissement()->getAbreviation();
+        $emptime->setCode($epreuve.'-'.$etab.str_pad($emptime->getId(), 7, '0', STR_PAD_LEFT).'/'.date('Y'));
+        $emptimens = $this->em->getRepository(PlEmptimens::class)->findBy(['seance'=>$emptime]);
+        $empenseignants = [];
+        foreach ($emptimens as $emptimen) {
+            $this->em->remove($emptimen);
+        }
+        foreach ($request->get('enseignant') as $enseignant) {
+            $emptimens = new PlEmptimens();
+            $emptimens->setSeance($emptime);
+            $emptimens->setEnseignant(
+                $this->em->getRepository(PEnseignant::class)->find($enseignant)
+            );
+            $emptimens->setGenerer(0);
+            $emptimens->setActive(1);
+            $emptimens->setCreated(new \DateTime('now'));
+            $this->em->persist($emptimens);
+        }
+        $this->em->flush();
+        
+        return new Response('Planification bien Modifier!!',200);
+        // }
+        // return new Response('Programme Introuvable',500);
+        
+    }
+
     
     #[Route('/delete_planning/{id}', name: 'delete_planning')]
     public function delete_planning(PlEmptime $emptime): Response
@@ -312,11 +380,6 @@ class PlanificationController extends AbstractController
         // dd($request->get('nsemaine'),$request->get('crntday') , $semestre ,$groupe);
         if ($request->get('nsemaine') != "" && $semestre) {
             $annee = $this->em->getRepository(AcAnnee::class)->getActiveAnneeByFormation($semestre->getPromotion()->getFormation());
-            // $annee = $this->em->getRepository(AcAnnee::class)->findOneBy([
-                //     'formation'=>$semestre->getPromotion()->getFormation(),
-                //     'validation_academique'=>'non',
-                //     'cloture_academique'=>'non',
-                //     ])->getDesignation();
             $semaine = $this->em->getRepository(Semaine::class)->findOneBy(['nsemaine'=>$request->get('nsemaine'),'anneeS'=>$annee->getDesignation()]);
             // $semaine = $this->em->getRepository(Semaine::class)->findsemaine($request->get('nsemaine'),$request->get('crntday'));
             if ($groupe == 0) {
@@ -336,44 +399,6 @@ class PlanificationController extends AbstractController
             }
         }
         return new Response('Generation Echouée',500);
-    }
-
-
-    #[Route('/planifications_calendar_edit/{id}', name: 'planifications_calendar_edit')]
-    public function planifications_calendar_edit(PlEmptime $emptime,Request $request): Response
-    {
-        // dd($request->get('n_semaine'));
-        if ($request->get('nature_seance') == "" || $request->get('element') =="" || $request->get('salle') =="") {
-            return new Response('Merci de renseignez tout les champs',500);
-        }
-        if($emptime->getValider() == 1){
-            return new Response('Seance déja validée!!',500);
-        }
-        $programmation = $this->em->getRepository(PrProgrammation::class)->findOneBy(['element'=>$request->get('element'),'nature_epreuve'=>$request->get('nature_seance')]);  
-        if ($programmation != Null) {
-            $element = $this->em->getRepository(AcElement::class)->find($request->get('element'));
-            $annee = $this->em->getRepository(AcAnnee::class)->getActiveAnneeByFormation($element->getModule()->getSemestre()->getPromotion()->getFormation());   
-            // $annee = $this->em->getRepository(AcAnnee::class)->findOneBy([
-            //     'formation'=>$element->getModule()->getSemestre()->getPromotion()->getFormation(),
-            //     'validation_academique'=>'non',
-            //     'cloture_academique'=>'non',
-            // ])->getDesignation();
-            // $semaine = $this->em->getRepository(Semaine::class)->findOneBy(['nsemaine'=>$request->get('n_semaine'),'anneeS'=>$annee->getDesignation()]);
-            $emptime->setProgrammation($programmation);
-            $emptime->setDescription($request->get('description'));
-            $emptime->setSalle($this->em->getRepository(PSalles::class)->find($request->get('salle')));
-            // $emptime->setSemaine($semaine);
-            $emptime->setUserUpdated($this->getUser());
-            $emptime->setUpdated(new \DateTime('now'));
-            $this->em->flush();
-            $epreuve = $this->em->getRepository(PNatureEpreuve::class)->find($request->get('nature_seance'))->getAbreviation();
-            $etab = $element->getModule()->getSemestre()->getPromotion()->getFormation()->getEtablissement()->getAbreviation();
-            $emptime->setCode($epreuve.'-'.$etab.str_pad($emptime->getId(), 7, '0', STR_PAD_LEFT).'/'.date('Y'));
-            $this->em->flush();
-            return new Response('Planification bien Ajouter!!',200);
-        }
-        return new Response('Programme Introuvable',500);
-        
     }
 
     #[Route('/planifications_editEventDate/{id}', name: 'planifications_editEventDate')]

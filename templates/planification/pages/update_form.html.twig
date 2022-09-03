@@ -117,6 +117,13 @@
                             <label for="enseignant">Enseignant :</label>
                             <select class="form-control chosen-select" name="enseignant[]" id="enseignant" multiple="multiple" >
                                 <option value="" disabled="disabled">Choix Enseignant</option>
+                                    {% for enseignant in emptime.programmation.Enseignants %}
+                                        {% if enseignant in empenseignants %}
+                                            <option value="{{enseignant.id}}" selected>{{enseignant.nom}} {{enseignant.prenom}}</option>
+                                            {% else %}
+                                            <option value="{{enseignant.id}}">{{enseignant.nom}} {{enseignant.prenom}}</option>
+                                        {% endif %}
+                                    {% endfor %}
                             </select>
                         </div>
                     </div>              
