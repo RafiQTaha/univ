@@ -46,7 +46,7 @@ class ApiController extends AbstractController
     #[Route('/etablissement', name: 'getetablissement')]
     public function getetbalissement(): Response
     {
-        $etbalissements = $this->em->getRepository(AcEtablissement::class)->findAll();
+        $etbalissements = $this->em->getRepository(AcEtablissement::class)->findBy(['active'=>1]);
         $data = self::dropdown($etbalissements,'Etablissement');
         return new JsonResponse($data);
     }
