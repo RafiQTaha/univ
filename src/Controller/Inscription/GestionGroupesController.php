@@ -309,6 +309,7 @@ class GestionGroupesController extends AbstractController
         $sheet->setCellValue('K1', 'Niveau1');
         $sheet->setCellValue('L1', 'Niveau2');
         $sheet->setCellValue('M1', 'Niveau3');
+        $sheet->setCellValue('N1', 'STATUT');
         $i=2;
         foreach ($inscriptions as $inscription) {
             $sheet->setCellValue('A'.$i, $inscription->getId());
@@ -333,6 +334,7 @@ class GestionGroupesController extends AbstractController
                     $sheet->setCellValue('M'.$i, $inscription->getGroupe()->getNiveau());
                 }
             }
+            $sheet->setCellValue('N'.$i, $inscription->getStatut()->GetDesignation());
             $i++;
         }
         $writer = new Xlsx($spreadsheet);
