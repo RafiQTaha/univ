@@ -67,7 +67,18 @@ class PlanificationController extends AbstractController
         if($groupe == 0){
             $emptimes = $this->em->getRepository(PlEmptime::class)->getEmptimeBySemestre($semestre);
         }else{
-            $emptimes = $this->em->getRepository(PlEmptime::class)->getEmptimeBySemestreAndGroupe($semestre,$groupe);
+            $groupes = [];
+            $pgroupe1 = $this->em->getRepository(PGroupe::class)->find($groupe);
+            array_push($groupes,$pgroupe1);
+            $pgroupe2 = $this->em->getRepository(PGroupe::class)->findGroupesByGroupes(['groupe'=>$pgroupe1]);
+            foreach ($pgroupe2 as $pgroupe2e) {
+                array_push($groupes,$pgroupe2e);
+            }
+            $pgroupe3 = $this->em->getRepository(PGroupe::class)->findGroupesByGroupes($pgroupe2);
+            foreach ($pgroupe3 as $pgroupe3e) {
+                array_push($groupes,$pgroupe3e);
+            }
+            $emptimes = $this->em->getRepository(PlEmptime::class)->getEmptimeBySemestreAndGroupe($semestre,$groupes);
         }
         // dd($emptimes);
         $times = [];
@@ -82,9 +93,10 @@ class PlanificationController extends AbstractController
                 }elseif ($niv->getGroupe()->getGroupe() == Null) {
                     $nivs .= $niv->getGroupe()->getNiveau().' - ' .$niv->getNiveau() . "\n";
                 }else {
-                    $nivs .= $niv->getGroupe()->getGroupe()->getNiveau().' - ' .$niv->getGroupe()->getNiveau().' - ' .$niv->getNiveau() . "\n";
+                    $nivs .= $niv->getGroupe()->getGroupe()->getNiveau(). ' - ' .$niv->getGroupe()->getNiveau().' - ' .$niv->getNiveau() . "\n";
                 }
             }
+            if ($nivs == "" )  $nivs .= "\n";
             
             $emptimens = $this->em->getRepository(PlEmptimens::class)->findBy(['seance'=>$emptime]);
             // dd($enseignants[0]->getEnseignant()->getNom().' '.$emptime->getEmptimens()[0]->getPrenom(););
@@ -102,9 +114,8 @@ class PlanificationController extends AbstractController
                 'title' => $emptime->getCode() . "\n".
                         ' Element :  '.$element->getDesignation() . "\n".
                         ' Type de Cours :  '.$natureEpreuve->getDesignation() . "\n".
-                        // $enseingant,
                         $enseingant .
-                        'Niv : '.$nivs .
+                        'Niv : '.$nivs  . 
                         'salle : '. $emptime->getSalle()->getDesignation(),
                 'start' => $emptime->getStart()->format('Y-m-d H:i:s'),
                 'end' => $emptime->getEnd()->format('Y-m-d H:i:s'),

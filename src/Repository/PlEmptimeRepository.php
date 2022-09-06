@@ -51,7 +51,7 @@ class PlEmptimeRepository extends ServiceEntityRepository
     */
 
     
-    public function getEmptimeBySemestreAndGroupe($semestre,$groupe)
+    public function getEmptimeBySemestreAndGroupe($semestre,$groupes)
     {
         return $this->createQueryBuilder('e')
             ->innerJoin("e.groupe", "groupe")
@@ -60,10 +60,11 @@ class PlEmptimeRepository extends ServiceEntityRepository
             ->innerJoin("element.module", "module")
             ->innerJoin("module.semestre", "semestre")
             ->where('semestre.id = :semestre')
-            ->andWhere("groupe = :groupe")
+            // ->andWhere("groupe = :groupe")
             ->andWhere("e.active = 1")
+            ->andWhere('groupe in (:groupes)')
             ->setParameter('semestre', $semestre)
-            ->setParameter('groupe', $groupe)
+            ->setParameter('groupes', $groupes)
             ->getQuery()
             ->getResult()
         ;

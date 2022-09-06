@@ -47,4 +47,14 @@ class PGroupeRepository extends ServiceEntityRepository
         ;
     }
     */
+    
+    public function findGroupesByGroupes($groupes)
+    {
+        return $this->createQueryBuilder('p')
+            ->andWhere('p.groupe in (:groupes)')
+            ->setParameter('groupes', $groupes)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
 }
