@@ -36,7 +36,7 @@ class ImpressionController extends AbstractController
         if(!$operations) {
             return $this->render("errors/403.html.twig");
         }
-        $etablissements = $this->em->getRepository(AcEtablissement::class)->findAll();
+        $etablissements =  $this->em->getRepository(AcEtablissement::class)->findBy(['active'=>1]);
         return $this->render('administration_epreuve/impression.html.twig', [
             'operations' => $operations,
             'etablissements' => $etablissements,

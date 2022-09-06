@@ -38,7 +38,7 @@ class GestionGroupesController extends AbstractController
             return $this->render("errors/403.html.twig");
         }
         return $this->render('inscription/gestion_groupes.html.twig', [
-            'etablissements' => $this->em->getRepository(AcEtablissement::class)->findAll(),
+            'etablissements' =>  $this->em->getRepository(AcEtablissement::class)->findBy(['active'=>1]),
             'operations' => $operations
         ]);
     }

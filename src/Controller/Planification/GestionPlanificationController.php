@@ -37,7 +37,7 @@ class GestionPlanificationController extends AbstractController
         if(!$operations) {
             return $this->render("errors/403.html.twig");
         }
-        $etbalissements = $this->em->getRepository(AcEtablissement::class)->findAll();
+        $etbalissements =  $this->em->getRepository(AcEtablissement::class)->findBy(['active'=>1]);
         $professeurs = $this->em->getRepository(PEnseignant::class)->findAll();
         $grades = $this->em->getRepository(PGrade::class)->findAll();
         $semaines = $this->em->getRepository(Semaine::class)->findAll();

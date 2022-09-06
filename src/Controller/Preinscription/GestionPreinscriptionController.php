@@ -51,7 +51,7 @@ class GestionPreinscriptionController extends AbstractController
         if(!$operations) {
             return $this->render("errors/403.html.twig");
         }
-        $etbalissements = $this->em->getRepository(AcEtablissement::class)->findAll();
+        $etbalissements =  $this->em->getRepository(AcEtablissement::class)->findBy(['active'=>1]);
         $natures = $this->em->getRepository(NatureDemande::class)->findBy(['active'=>1]);
         return $this->render('preinscription/gestion_preinscription.html.twig',[
             'etablissements' => $etbalissements,

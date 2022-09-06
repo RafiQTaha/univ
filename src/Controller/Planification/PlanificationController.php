@@ -54,7 +54,7 @@ class PlanificationController extends AbstractController
         if(!$operations) {
             return $this->render("errors/403.html.twig");
         }
-        $etbalissements = $this->em->getRepository(AcEtablissement::class)->findAll();
+        $etbalissements =  $this->em->getRepository(AcEtablissement::class)->findBy(['active'=>1]);
         return $this->render('planification/planification.html.twig', [
             'etablissements' => $etbalissements,
             'operations' => $operations,

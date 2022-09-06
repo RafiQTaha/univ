@@ -42,7 +42,7 @@ class GestionInscriptionController extends AbstractController
 
         }
         return $this->render('inscription/gestion_inscription.html.twig', [
-            'etablissements' => $this->em->getRepository(AcEtablissement::class)->findAll(),
+            'etablissements' =>  $this->em->getRepository(AcEtablissement::class)->findBy(['active'=>1]),
             'operations' => $operations
         ]);
     }

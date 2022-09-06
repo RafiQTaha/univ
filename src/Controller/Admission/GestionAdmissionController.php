@@ -46,7 +46,7 @@ class GestionAdmissionController extends AbstractController
         }
         // dd($operations);
         return $this->render('admission/gestion_admission.html.twig', [
-            'etablissements' => $this->em->getRepository(AcEtablissement::class)->findAll(),
+            'etablissements' =>  $this->em->getRepository(AcEtablissement::class)->findBy(['active'=>1]),
             'operations' => $operations
         ]);
     }

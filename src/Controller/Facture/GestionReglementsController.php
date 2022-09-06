@@ -49,7 +49,7 @@ class GestionReglementsController extends AbstractController
         if(!$operations) {
             return $this->render("errors/403.html.twig");
         }
-        $etablissements = $this->em->getRepository(AcEtablissement::class)->findAll();
+        $etablissements = $this->em->getRepository(AcEtablissement::class)->findBy(['active'=>1]);
         $banques = $this->em->getRepository(XBanque::class)->findAll();
         $paiements = $this->em->getRepository(XModalites::class)->findBy(['active'=>1]);
         $bordereaux = $this->em->getRepository(TBrdpaiement::class)->findAll();

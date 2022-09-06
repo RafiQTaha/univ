@@ -47,7 +47,7 @@ class EpreuveController extends AbstractController
             return $this->render("errors/403.html.twig");
 
         }
-        $etablissements = $this->em->getRepository(AcEtablissement::class)->findAll();
+        $etablissements =  $this->em->getRepository(AcEtablissement::class)->findBy(['active'=>1]);
         $natureEpreuves = $this->em->getRepository(PNatureEpreuve::class)->findAll();
         $enseignants = $this->em->getRepository(PEnseignant::class)->findAll();
         return $this->render('administration_epreuve/epreuve.html.twig', [

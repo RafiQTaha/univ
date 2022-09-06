@@ -46,14 +46,14 @@ class GestionFactureController extends AbstractController
         if(!$operations) {
             return $this->render("errors/403.html.twig");
         }
-        $etbalissements = $this->em->getRepository(AcEtablissement::class)->findBy(['active'=>1]);
+        $etablissements = $this->em->getRepository(AcEtablissement::class)->findBy(['active'=>1]);
         $organismes = $this->em->getRepository(POrganisme::class)->findAll();
         $banques = $this->em->getRepository(XBanque::class)->findAll();
         $paiements = $this->em->getRepository(XModalites::class)->findBy(['active'=>1]);
         $reglements = $this->em->getRepository(TReglement::class)->findAll();
         $annees = $this->em->getRepository(AcAnnee::class)->findBy([],['designation'=>'DESC'],['designation']);
         return $this->render('facture/gestion_facture.html.twig', [
-            'etablissements' => $etbalissements,
+            'etablissements' => $etablissements,
             'reglements' => $reglements,
             'operations' => $operations,
             'banques' => $banques,

@@ -38,7 +38,7 @@ class GestionBorderauxController extends AbstractController
         if(!$operations) {
             return $this->render("errors/403.html.twig");
         }
-        $etbalissements = $this->em->getRepository(AcEtablissement::class)->findAll();
+        $etbalissements =  $this->em->getRepository(AcEtablissement::class)->findBy(['active'=>1]);
         $semaines = $this->em->getRepository(Semaine::class)->findAll();
         return $this->render('honoraire/gestion_borderaux.html.twig', [
             'etablissements' => $etbalissements,
