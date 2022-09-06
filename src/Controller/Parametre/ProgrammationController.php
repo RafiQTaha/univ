@@ -193,9 +193,13 @@ class ProgrammationController extends AbstractController
         $programmation->setObservation($request->get("observation"));
         $programmation->setVolume($request->get("volume"));
         $programmation->setNatureEpreuve($this->em->getRepository(PNatureEpreuve::class)->find($request->get("nature")));
-        $programmation->setElement($this->em->getRepository(AcElement::class)->find($request->get("element_id")));
-        $programmation->setAnnee($this->em->getRepository(AcAnnee::class)->find($request->get("annee_id")));
+        // $programmation->setElement($this->em->getRepository(AcElement::class)->find($request->get("element_id")));
+        // $programmation->setAnnee($this->em->getRepository(AcAnnee::class)->find($request->get("annee_id")));
         $programmation->setUpdated(new \DateTime("now"));
+        foreach ($programmation->getEnseignants() as $enseignant) {
+            $programmation->removeEnseignant($enseignant);
+        }
+        
         foreach ($request->get('enseignants') as $enseignant) {
             $programmation->addEnseignant($this->em->getRepository(PEnseignant::class)->find($enseignant));
         }
