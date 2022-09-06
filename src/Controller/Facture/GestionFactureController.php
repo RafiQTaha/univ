@@ -284,16 +284,16 @@ class GestionFactureController extends AbstractController
         $mpdf->Output("facture.pdf", "I");
     }
 
-    #[Route('/modifier_organisme_facture/{id}', name: 'modifier_organisme_facture')]
-    public function modifier_organisme_facture(Request $request,TOperationcab $operationcab): Response
-    { 
-        if (empty($request->get('organisme')) ) {
-            return new JsonResponse('Veuillez Choisir Une Organisme!', 500);
-        }
-        $operationcab->setOrganisme($this->em->getRepository(POrganisme::class)->find($request->get('organisme')));
-        $this->em->flush();
-        return new JsonResponse('Organisme Modifier', 200);        
-    }
+    // #[Route('/modifier_organisme_facture/{id}', name: 'modifier_organisme_facture')]
+    // public function modifier_organisme_facture(Request $request,TOperationcab $operationcab): Response
+    // { 
+    //     if (empty($request->get('organisme')) ) {
+    //         return new JsonResponse('Veuillez Choisir Une Organisme!', 500);
+    //     }
+    //     $operationcab->setOrganisme($this->em->getRepository(POrganisme::class)->find($request->get('organisme')));
+    //     $this->em->flush();
+    //     return new JsonResponse('Organisme Modifier', 200);        
+    // }
     #[Route('/printfacture/{operationcab}', name: 'imprimerfacture')]
     public function imprimerfacture(TOperationcab $operationcab)
     {
@@ -370,7 +370,8 @@ class GestionFactureController extends AbstractController
         }elseif($formation->getEtablissement()->getAbreviation() == 'CFC'){
             $frais = $this->em->getRepository(PFrais::class)->findBy(['formation'=>$formation,'active'=>1]);
         }else{
-            $frais = $this->em->getRepository(PFrais::class)->findBy(['formation'=>$formation,'categorie'=>$categorie,'active'=>1]);
+            $frais = $this->em->getRepository(PFrais::class)->findBy(['formation'=>$formation,'active'=>1]);
+            // $frais = $this->em->getRepository(PFrais::class)->findBy(['formation'=>$formation,'categorie'=>$categorie,'active'=>1]);
         }
         $data = "<option selected enabled value=''>Choix Fraix</option>";
         foreach ($frais as $frs) {
