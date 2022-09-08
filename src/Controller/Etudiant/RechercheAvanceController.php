@@ -82,6 +82,7 @@ class RechercheAvanceController extends AbstractController
         ])->getContent();
         // dd($html);
         $mpdf = new Mpdf([
+            'mode' => 'utf-8', 
             'margin_left' => 5,
             'margin_right' => 5,
         ]);
