@@ -67,7 +67,7 @@ class PlanificationController extends AbstractController
         if($groupe == 0){
             $emptimes = $this->em->getRepository(PlEmptime::class)->getEmptimeBySemestre($semestre);
         }else{
-            $groupes = [];
+            $groupes = [null];
             $pgroupe1 = $this->em->getRepository(PGroupe::class)->find($groupe);
             array_push($groupes,$pgroupe1);
             $pgroupe2 = $this->em->getRepository(PGroupe::class)->findGroupesByGroupes(['groupe'=>$pgroupe1]);
@@ -81,7 +81,7 @@ class PlanificationController extends AbstractController
             $emptimes = $this->em->getRepository(PlEmptime::class)->getEmptimeBySemestreAndGroupe($semestre,$groupes);
             // $emptimes = $this->em->getRepository(PlEmptime::class)->getEmptimeBySemestreAndGroupe($semestre,$groupe);
         }
-        // dd($emptimes);
+        // dd($groupes);
         $times = [];
         $nivs = "";
         foreach($emptimes as $emptime){
