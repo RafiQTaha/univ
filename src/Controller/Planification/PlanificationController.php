@@ -218,11 +218,6 @@ class PlanificationController extends AbstractController
     {
         $salles = $this->em->getRepository(PSalles::class)->findBy([],['designation'=>'ASC']);
         $programmation = $emptime->getProgrammation();
-        // $annee = $this->em->getRepository(AcAnnee::class)->findOneBy([
-        //     'formation'=>$programmation->getElement()->getModule()->getSemestre()->getPromotion()->getFormation(),
-        //     'validation_academique'=>'non',
-        //     'cloture_academique'=>'non',
-        // ]);
         $annee = $this->em->getRepository(AcAnnee::class)->getActiveAnneeByFormation($programmation->getElement()->getModule()->getSemestre()->getPromotion()->getFormation());
         $natureepreuves = $this->em->getRepository(PNatureEpreuve::class)->findBy([],['designation'=>'ASC']);
         $modules = $this->em->getRepository(AcModule::class)->findBy(['semestre'=>$programmation->getElement()->getModule()->getSemestre(), 'active' => 1],['designation'=>'ASC']);
@@ -233,6 +228,18 @@ class PlanificationController extends AbstractController
         foreach ($emptimens as $emptimen) {
             array_push($empenseignants,$emptimen->getEnseignant());
         }
+        $nivs = "";
+        $niv = $emptime->getGroupe();
+        if ($niv != null) {
+            if ($niv->getGroupe() == Null) {
+                // $nivs .= '$niv' . "\n";
+                $nivs .= $niv->getNiveau() . "\n";
+            }elseif ($niv->getGroupe()->getGroupe() == Null) {
+                $nivs .= $niv->getGroupe()->getNiveau().' - ' .$niv->getNiveau() . "\n";
+            }else {
+                $nivs .= $niv->getGroupe()->getGroupe()->getNiveau(). ' - ' .$niv->getGroupe()->getNiveau().' - ' .$niv->getNiveau() . "\n";
+            }
+        }
         $html = $this->render("planification/pages/update_form.html.twig", [
             'emptime' => $emptime,
             'empenseignants' => $empenseignants,
@@ -241,6 +248,7 @@ class PlanificationController extends AbstractController
             'salles' => $salles,
             'modules' => $modules,
             'elements' => $elements,
+            'nivs' => $nivs,
         ])->getContent();
         return new JsonResponse($html);
     }
