@@ -202,7 +202,19 @@ class GestionPlanificationController extends AbstractController
     public function gestion_annuler_planning(Request $request,PlEmptime $emptime): Response
     {   
         // $ids = json_decode($request->get('ids_planning'));
-        $motif = $request->get('motif_annuler');
+        if ($emptime->getValider() == 1) {
+            return new Response('Impossible d\'annuler une séance validée! ',500);
+        }elseif ($emptime->getAnnuler() == 1) {
+            return new Response('Cette séance est déja annuler! ',500);
+        }
+        if ($request->get('motif_annuler') == "Autre") {
+            if ($request->get('autre_motif') == "") {
+                return new Response('Merci d\'entrer Le Motif d\'annulation ',500);
+            }
+            $motif = $request->get('autre_motif');
+        }else {
+            $motif = $request->get('motif_annuler');
+        }
         // if (count($ids) == 0) {
         //     return new Response('Merci de choisir Au moins une Seance!',500);
         // }
@@ -210,9 +222,6 @@ class GestionPlanificationController extends AbstractController
         //     return new Response('Merci de Choisir le motif d\'annulation!',500);
         // }
         
-        if ($emptime->getValider() == 1) {
-            return new Response('Impossible d\'annuler une séance validée! ',500);
-        }
         // foreach ($ids as $id) {
             // $emptime = $this->em->getRepository(PlEmptime::class)->find($id);
             // if ($emptime) {

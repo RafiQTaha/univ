@@ -315,6 +315,14 @@ $(document).ready(function () {
         // }, 1000);
     })
     
+    
+    $("body #motif_annuler").on('change', async function (){
+        if ($('#motif_annuler').val() == "Autre" ) {
+            $("body #autre_motif").removeClass('d-none').addClass('d-block')
+        }else{
+            $("body #autre_motif").removeClass('d-block').addClass('d-none')
+        }
+    })
     $('body').on('click','#Annuler_planning', async function (e) {
         e.preventDefault();
         // if(ids_planning.length === 0 ){
@@ -347,6 +355,7 @@ $(document).ready(function () {
             var formData = new FormData();
             // formData.append('ids_planning', JSON.stringify(ids_planning)); 
             formData.append('motif_annuler', $('#motif_annuler').val()); 
+            formData.append('autre_motif', $('#autre_motif').val()); 
             try {
                 // const request = await axios.post('/planification/gestions/gestion_annuler_planning',formData);
                 const request = await axios.post('/planification/gestions/gestion_annuler_planning/'+id_planning,formData);
@@ -355,7 +364,9 @@ $(document).ready(function () {
                     icon: 'success',
                     title: response,
                 })
-                ids_planning = []
+                // ids_planning = []
+                id_planning = false;
+                $('#annuler_planning_modal').modal("hide");
                 table_gestion_planification.ajax.reload(null,false);
                 icon.addClass('fa-times-circle').removeClass("fa-spinner fa-spin");
             } catch (error) {
