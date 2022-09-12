@@ -108,7 +108,7 @@ class GestionPlanificationController extends AbstractController
             array( 'db' => 'Hour(SUBTIME(emp.heur_fin,emp.heur_db))','dt' => 12),
             array( 'db' => 'emp.valider','dt' => 13),
         );
-        $sql = "SELECT " . implode(", ", DatatablesController::Pluck($columns, 'db')) . "
+        $sql = "SELECT DISTINCT " . implode(", ", DatatablesController::Pluck($columns, 'db')) . "
         FROM pl_emptime emp
         INNER join pr_programmation prg on prg.id = emp.programmation_id
         INNER join pnature_epreuve nat on nat.id = prg.nature_epreuve_id
