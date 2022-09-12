@@ -19,6 +19,7 @@ use App\Entity\PlEmptimens;
 use App\Entity\Semaine;
 use App\Entity\TInscription;
 use Mpdf\Mpdf;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 #[Route('/planification/gestions')]
 class GestionPlanificationController extends AbstractController
@@ -292,6 +293,17 @@ class GestionPlanificationController extends AbstractController
         $mpdf->Output("Fiche D'abcense.pdf", "I");
     }
     
+    // #[Route('/getEnseignantByseance/{emptime}', name: 'getEnseignantByseance')]
+    // public function getEnseignantByseance(PlEmptime $emptime)
+    // {   
+    //     $emptimenss = $this->em->getRepository(PlEmptimens::class)->findBy(['seance'=>$emptime]);
+    //     $enseignants = [];
+    //     foreach ( $emptimenss as $enseignant) {
+    //         array_push($enseignants,$enseignant->getenseignant()->getId());
+    //     }
+    //     return new JsonResponse($enseignants,200);
+        
+    // }
     #[Route('/Getsequence_gestion/{emptime}', name: 'Getsequence_gestion')]
     public function Getsequence_gestion(PlEmptime $emptime)
     {   
@@ -306,26 +318,31 @@ class GestionPlanificationController extends AbstractController
         $hours = $diff->h;
         $hours = $hours + ($diff->days*24);
         $emptimenss = $this->em->getRepository(PlEmptimens::class)->findBy(['seance'=>$emptime]);
-        $html = $this->render("planification/pdfs/sequence.html.twig", [
-            'seance' => $emptime,
-            'annee' => $annee,
-            'emptimenss' => $emptimenss,
-            'hours' => $hours,
-            'effectife' => count($inscriptions),
-        ])->getContent();
+        $html = "";
+        $i=1;
+        foreach ($emptimenss as $emptimens) {
+            $html .= $this->render("planification/pdfs/sequence.html.twig", [
+                'seance' => $emptime,
+                'annee' => $annee,
+                'emptimenss' => $emptimenss,
+                'emptimens' => $emptimens,
+                'hours' => $hours,
+                'effectife' => count($inscriptions),
+            ])->getContent();
+            $i < count($emptimenss) ? $html .= '<page_break>':"";
+            $i++;
+        }
         $mpdf = new Mpdf([
-            'mode' => 'utf-8',
+            // 'mode' => 'utf-8',
             'margin_top' => '8',
             'margin_left' => '5',
             'margin_right' => '5',
-            ]);
+        ]);
         $mpdf->SetTitle('Fiche D\'abcense');
         $mpdf->SetHTMLFooter(
             $this->render("planification/pdfs/footer.html.twig")->getContent()
         );
         $mpdf->WriteHTML($html);
         $mpdf->Output("Fiche D'abcense.pdf", "I");
-    }
-    
-     
+    }  
 }

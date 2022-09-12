@@ -390,7 +390,7 @@ $(document).ready(function () {
         }
         window.open('/planification/gestions/GetAbsenceByGroupe_gestion/'+id_planning, '_blank');
     });
-    $("body").on("click", '#fiche_sequence', function (e) {
+    $("body").on("click", '#fiche_sequence', async function (e) {
         e.preventDefault();
         if(!id_planning){
             Toast.fire({
