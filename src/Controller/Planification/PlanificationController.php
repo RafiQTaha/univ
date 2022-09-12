@@ -240,6 +240,28 @@ class PlanificationController extends AbstractController
                 $nivs .= $niv->getGroupe()->getGroupe()->getNiveau(). ' - ' .$niv->getGroupe()->getNiveau().' - ' .$niv->getNiveau() . "\n";
             }
         }
+        $promotion = $emptime->getProgrammation()->getElement()->getModule()->getSemestre()->getPromotion();
+        $inscriptions = $this->em->getRepository(TInscription::class)->getNiveaux($promotion,$annee);
+        $data="";
+        $groupes = [];
+        foreach ($inscriptions as $inscription) {
+            $groupe = $inscription->getGroupe();
+                if ($groupe->getGroupe() == Null) {
+                    if (!in_array($groupe, $groupes)){
+                        array_push($groupes,$groupe);
+                    }
+                }elseif ($groupe->getGroupe()->getGroupe() == Null) {
+                    $groupe = $groupe->getGroupe();
+                    if (!in_array($groupe, $groupes)){
+                        array_push($groupes,$groupe);
+                    }
+                }else {
+                    $groupe = $groupe->getGroupe()->getGroupe();
+                    if (!in_array($groupe, $groupes)){
+                        array_push($groupes,$groupe);
+                    }
+                }
+        }
         $html = $this->render("planification/pages/update_form.html.twig", [
             'emptime' => $emptime,
             'empenseignants' => $empenseignants,
@@ -249,6 +271,7 @@ class PlanificationController extends AbstractController
             'modules' => $modules,
             'elements' => $elements,
             'nivs' => $nivs,
+            'groupes' => $groupes
         ])->getContent();
         return new JsonResponse($html);
     }
@@ -325,7 +348,7 @@ class PlanificationController extends AbstractController
         // if($emptime->getValider() == 1){
         //     return new Response('Seance déja validée!!',500);
         // }
-        
+        // dd($request);
         if($emptime->getValider() != 1){
             // return new Response('Seance déja validée!!',500);
             $element = $this->em->getRepository(AcElement::class)->find($request->get('element'));
@@ -341,6 +364,9 @@ class PlanificationController extends AbstractController
             $emptime->setProgrammation($programmation);
             $emptime->setDescription($request->get('description'));
             $emptime->setSalle($this->em->getRepository(PSalles::class)->find($request->get('salle')));
+            if ($request->get('edit_groupe') != 0) {
+                $emptime->setGroupe($this->em->getRepository(PGroupe::class)->find($request->get('edit_groupe')));
+            }
             $this->em->flush();
         }
         if ($request->get('enseignant') == NULL) {

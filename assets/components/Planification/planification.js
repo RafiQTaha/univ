@@ -23,6 +23,7 @@ $(document).ready(function () {
         $('.modal-addform_planif #module').html(response).select2();
     }
     
+    let edit_groupe = 0;
     let id_semestre = false;
     let niv = 0;
     let currentweek = false;
@@ -100,8 +101,8 @@ $(document).ready(function () {
                     .then(success => {
                         $('.modal-updateform_planif .update_planning').html(success.data);
                         $('.modal-updateform_planif select').select2();
-                        pills()
                         $('#updateform_planif-modal').modal("show");
+                        pills()
                     })
                     .catch(err => {
                         // console.log(err);
@@ -340,7 +341,7 @@ $(document).ready(function () {
     $("body").on('submit','.form_update_planning', async function (e){
         e.preventDefault();
         var formData = new FormData(this);
-        // formData.append('n_semaine', currentweek);
+        formData.append('edit_groupe', edit_groupe);
         ////////////
         let modalAlert =  $("#updateform_planif-modal .modal-body .alert");
         modalAlert.remove();
@@ -501,11 +502,40 @@ $(document).ready(function () {
         }
         window.open('/planification/planifications/Getsequence/'+id_planning, '_blank');
     });
-    
-    
 
-    
-    
+    $("body").on('change',"#niveau1", async function (){
+        const niveau1 = $(this).val();
+        // niv = $(this).val();
+        let response = ""
+        if(niveau1 != "") {
+            edit_groupe = niveau1;
+            const request = await axios.get('/api/niv2/'+niveau1);
+            response = request.data
+        }else{
+            edit_groupe = 0;
+        }
+        $('#niveau3').html("").select2();
+        $('#niveau2').html(response).select2();
+    })
+    $("body").on('change',"#niveau2", async function (){
+        const niveau2 = $(this).val();
+        if(niveau2 != "") {
+            edit_groupe = niveau2;
+            const request = await axios.get('/api/niv3/'+niveau2);
+            response = request.data
+        }else{
+            edit_groupe = $('#niveau2').val();
+        }
+        $('#niveau3').html(response).select2();
+    })
+    $("body").on('change',"#niveau3", async function (){
+        const niveau3 = $(this).val();
+        if(niveau3 != "") {
+            edit_groupe = niveau3;
+        }else{
+            edit_groupe = $('#niveau2').val();
+        }
+    })   
 })
 
 // const allLocales = require("../includes/local-all");

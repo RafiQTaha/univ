@@ -26,6 +26,37 @@
             <div class="tab-content">
                 <div class="tab-pane fade show active" id="planification_infos">
                     <div class="col-md-12 row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="description">Niveau 1:</label>
+                                <select class="form-control chosen-select" id="niveau1" {{readonly}}>
+                                    <option value="">Choix Niveau 1</option>
+                                    {% for groupe in groupes %}
+                                        <option value="{{groupe.id}}">{{groupe.niveau}}</option>                                                                                       
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="niveau">Niveau 2:</label>
+                                <select class="form-control chosen-select" id="niveau2" {{readonly}}>
+                                    <option value="">Choix Niveau 2</option>
+                                    
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="niveau">Niveau 3:</label>
+                                <select class="form-control chosen-select" id="niveau3" {{readonly}}>
+                                    <option value="">Choix Niveau 3</option>
+                                    
+                                </select>
+                            </div>
+                        </div>
+                    </div> 
+                    <div class="col-md-12 row">
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="description">Description :</label>
