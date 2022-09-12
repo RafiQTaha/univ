@@ -1,3 +1,8 @@
+{% set readonly = "" %}
+{% if emptime.valider == 1 %}
+    <center style="color:red">NB: Impossible de modifier une planification qui été déja validé!!</center>
+    {% set readonly = 'disabled' %}
+{% endif %}
 <div class="plannification_info modal-box">
         <p><span>Etablissement</span> : {{emptime.programmation.element.module.semestre.promotion.formation.etablissement.designation}} </p>
         <p><span>Formation</span> : {{emptime.programmation.element.module.semestre.promotion.formation.designation}} </p>
@@ -56,11 +61,11 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="salle">Salle :</label>
-                                <select class="form-control chosen-select" name="salle">
+                                <select class="form-control chosen-select" name="salle" {{readonly}}>
                                     <option value="">Choix Salle</option>
                                     {% for salle in salles %}
                                         {% if salle == emptime.salle %}
-                                            <option value="{{salle.id}}" selected>{{salle.designation}}</option>  
+                                            <option value="{{salle.id}}" selected >{{salle.designation}}</option>  
                                             {% else %}
                                             <option value="{{salle.id}}">{{salle.designation}}</option>                                                                                       
                                         {% endif %}
@@ -71,7 +76,7 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="nature_seance">Nature Seance :</label>
-                                <select class="form-control chosen-select" name="nature_seance" id="nature_seance">
+                                <select class="form-control chosen-select" name="nature_seance" id="nature_seance" {{readonly}}>
                                     <option value="">Choix Nature Seance</option>
                                     {% for natureepreuve in natureepreuves %}
                                         {% if natureepreuve == emptime.programmation.natureepreuve %}
@@ -88,7 +93,7 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="module">Module :</label>
-                                <select class="form-control chosen-select" name="module" id="module">
+                                <select class="form-control chosen-select" name="module" id="module" {{readonly}}>
                                     <option value="">Choix Module</option>
                                     {% for module in modules %}
                                         {% if module == emptime.programmation.element.module %}
@@ -103,7 +108,7 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="element">Element :</label>
-                                <select class="form-control chosen-select" name="element" id="element">
+                                <select class="form-control chosen-select" name="element" id="element" {{readonly}}>
                                     <option value="">Choix Element</option>
                                     {% for element in elements %}
                                         {% if element == emptime.programmation.element %}

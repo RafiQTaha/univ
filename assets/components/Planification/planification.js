@@ -193,6 +193,7 @@ $(document).ready(function () {
         $('#niv1').html(response).select2();
         $('#niv2').html(response).select2();
         $('#niv3').html(response).select2();
+        niv = 0;
         if(id_promotion != "") {
             const request = await axios.get('/api/semestre/'+id_promotion);
             semestre = request.data            
