@@ -240,6 +240,28 @@ class PlanificationController extends AbstractController
                 $nivs .= $niv->getGroupe()->getGroupe()->getNiveau(). ' - ' .$niv->getGroupe()->getNiveau().' - ' .$niv->getNiveau() . "\n";
             }
         }
+        $promotion = $emptime->getProgrammation()->getElement()->getModule()->getSemestre()->getPromotion();
+        $inscriptions = $this->em->getRepository(TInscription::class)->getNiveaux($promotion,$annee);
+        $data="";
+        $groupes = [];
+        foreach ($inscriptions as $inscription) {
+            $groupe = $inscription->getGroupe();
+                if ($groupe->getGroupe() == Null) {
+                    if (!in_array($groupe, $groupes)){
+                        array_push($groupes,$groupe);
+                    }
+                }elseif ($groupe->getGroupe()->getGroupe() == Null) {
+                    $groupe = $groupe->getGroupe();
+                    if (!in_array($groupe, $groupes)){
+                        array_push($groupes,$groupe);
+                    }
+                }else {
+                    $groupe = $groupe->getGroupe()->getGroupe();
+                    if (!in_array($groupe, $groupes)){
+                        array_push($groupes,$groupe);
+                    }
+                }
+        }
         $html = $this->render("planification/pages/update_form.html.twig", [
             'emptime' => $emptime,
             'empenseignants' => $empenseignants,
@@ -249,6 +271,7 @@ class PlanificationController extends AbstractController
             'modules' => $modules,
             'elements' => $elements,
             'nivs' => $nivs,
+            'groupes' => $groupes
         ])->getContent();
         return new JsonResponse($html);
     }
@@ -322,32 +345,40 @@ class PlanificationController extends AbstractController
     public function planifications_calendar_edit(PlEmptime $emptime,Request $request): Response
     {
         // dd('$emptime');
-        if($emptime->getValider() == 1){
-            return new Response('Seance déja validée!!',500);
-        }
-        
-        if ($request->get('nature_seance') == "" || $request->get('nature_seance') == "" || 
-            $request->get('element') =="" || $request->get('salle') =="") {
-            return new Response('Merci de renseignez tout les champs',500);
-        }
-        $element = $this->em->getRepository(AcElement::class)->find($request->get('element'));
-        $annee = $this->em->getRepository(AcAnnee::class)->getActiveAnneeByFormation($element->getModule()->getSemestre()->getPromotion()->getFormation());
-        $programmation = $this->em->getRepository(PrProgrammation::class)->findOneBy(['element'=>$request->get('element'),'nature_epreuve'=>$request->get('nature_seance'),'annee'=>$annee]);
-        if ($programmation == null) {
-            return new Response("Programmation introuvable ou l'annee ".$annee->getDesignation()." est cloturée!!",500);
+        // if($emptime->getValider() == 1){
+        //     return new Response('Seance déja validée!!',500);
+        // }
+        // dd($request);
+        if($emptime->getValider() != 1){
+            // return new Response('Seance déja validée!!',500);
+            $element = $this->em->getRepository(AcElement::class)->find($request->get('element'));
+            $annee = $this->em->getRepository(AcAnnee::class)->getActiveAnneeByFormation($element->getModule()->getSemestre()->getPromotion()->getFormation());
+            $programmation = $this->em->getRepository(PrProgrammation::class)->findOneBy(['element'=>$request->get('element'),'nature_epreuve'=>$request->get('nature_seance'),'annee'=>$annee]);
+            if ($programmation == null) {
+                return new Response("Programmation introuvable ou l'annee ".$annee->getDesignation()." est cloturée!!",500);
+            }
+            if ($request->get('nature_seance') == "" || $request->get('nature_seance') == "" || 
+                $request->get('element') =="" || $request->get('salle') =="") {
+                return new Response('Merci de renseignez tout les champs',500);
+            }
+            $emptime->setProgrammation($programmation);
+            $emptime->setDescription($request->get('description'));
+            $emptime->setSalle($this->em->getRepository(PSalles::class)->find($request->get('salle')));
+            if ($request->get('vide') == "on") {
+                $emptime->setGroupe(null);
+            }elseif ($request->get('edit_groupe') != 0) {
+                $emptime->setGroupe($this->em->getRepository(PGroupe::class)->find($request->get('edit_groupe')));
+            }
+            $this->em->flush();
         }
         if ($request->get('enseignant') == NULL) {
             return new Response('Merci de Choisir Au Moins Un Enseignant!!',500);
         } 
-        $emptime->setProgrammation($programmation);
-        $emptime->setDescription($request->get('description'));
-        $emptime->setSalle($this->em->getRepository(PSalles::class)->find($request->get('salle')));
         $emptime->setUserUpdated($this->getUser());
         $emptime->setUpdated(new \DateTime('now'));
-        $this->em->flush();
-        $epreuve = $this->em->getRepository(PNatureEpreuve::class)->find($request->get('nature_seance'))->getAbreviation();
-        $etab = $element->getModule()->getSemestre()->getPromotion()->getFormation()->getEtablissement()->getAbreviation();
-        $emptime->setCode($epreuve.'-'.$etab.str_pad($emptime->getId(), 7, '0', STR_PAD_LEFT).'/'.date('Y'));
+        // $epreuve = $this->em->getRepository(PNatureEpreuve::class)->find($request->get('nature_seance'))->getAbreviation();
+        // $etab = $element->getModule()->getSemestre()->getPromotion()->getFormation()->getEtablissement()->getAbreviation();
+        // $emptime->setCode($epreuve.'-'.$etab.str_pad($emptime->getId(), 7, '0', STR_PAD_LEFT).'/'.date('Y'));
         $emptimens = $this->em->getRepository(PlEmptimens::class)->findBy(['seance'=>$emptime]);
         $empenseignants = [];
         foreach ($emptimens as $emptimen) {
@@ -549,7 +580,6 @@ class PlanificationController extends AbstractController
     #[Route('/Getsequence/{emptime}', name: 'Getsequence')]
     public function Getsequence(PlEmptime $emptime)
     {   
-        // $element = $emptime->getProgrammation()->getElement();
         $promotion = $emptime->getProgrammation()->getElement()->getModule()->getSemestre()->getPromotion();
         $annee = $this->em->getRepository(AcAnnee::class)->getActiveAnneeByFormation($promotion->getFormation());
         $inscriptions = $this->em->getRepository(TInscription::class)->getInscriptionsByAnneeAndPromoAndGroupe($promotion,$annee,$emptime->getGroupe());
@@ -557,19 +587,26 @@ class PlanificationController extends AbstractController
         $hours = $diff->h;
         $hours = $hours + ($diff->days*24);
         $emptimenss = $this->em->getRepository(PlEmptimens::class)->findBy(['seance'=>$emptime]);
-        $html = $this->render("planification/pdfs/sequence.html.twig", [
-            'seance' => $emptime,
-            'annee' => $annee,
-            'emptimenss' => $emptimenss,
-            'hours' => $hours,
-            'effectife' => count($inscriptions),
-        ])->getContent();
+        $html = "";
+        $i=1;
+        foreach ($emptimenss as $emptimens) {
+            $html .= $this->render("planification/pdfs/sequence.html.twig", [
+                'seance' => $emptime,
+                'annee' => $annee,
+                'emptimenss' => $emptimenss,
+                'emptimens' => $emptimens,
+                'hours' => $hours,
+                'effectife' => count($inscriptions),
+            ])->getContent();
+            $i < count($emptimenss) ? $html .= '<page_break>':"";
+            $i++;
+        }
         $mpdf = new Mpdf([
-            'mode' => 'utf-8',
+            // 'mode' => 'utf-8',
             'margin_top' => '8',
             'margin_left' => '5',
             'margin_right' => '5',
-            ]);
+        ]);
         $mpdf->SetTitle('Fiche D\'abcense');
         $mpdf->SetHTMLFooter(
             $this->render("planification/pdfs/footer.html.twig")->getContent()

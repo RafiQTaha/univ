@@ -308,11 +308,12 @@ class GestionPlanificationController extends AbstractController
     public function Getsequence_gestion(PlEmptime $emptime)
     {   
         $promotion = $emptime->getProgrammation()->getElement()->getModule()->getSemestre()->getPromotion();
-        $annee = $this->em->getRepository(AcAnnee::class)->findOneBy([
-            'formation'=>$promotion->getFormation(),
-            'validation_academique'=>'non',
-            'cloture_academique'=>'non',
-        ]);
+        // $annee = $this->em->getRepository(AcAnnee::class)->findOneBy([
+        //     'formation'=>$promotion->getFormation(),
+        //     'validation_academique'=>'non',
+        //     'cloture_academique'=>'non',
+        // ]);
+        $annee = $this->em->getRepository(AcAnnee::class)->getActiveAnneeByFormation($promotion->getFormation());
         $inscriptions = $this->em->getRepository(TInscription::class)->getInscriptionsByAnneeAndPromoAndGroupe($promotion,$annee,$emptime->getGroupe());
         $diff = $emptime->getEnd()->diff($emptime->getStart());
         $hours = $diff->h;
