@@ -364,7 +364,9 @@ class PlanificationController extends AbstractController
             $emptime->setProgrammation($programmation);
             $emptime->setDescription($request->get('description'));
             $emptime->setSalle($this->em->getRepository(PSalles::class)->find($request->get('salle')));
-            if ($request->get('edit_groupe') != 0) {
+            if ($request->get('vide') == "on") {
+                $emptime->setGroupe(null);
+            }elseif ($request->get('edit_groupe') != 0) {
                 $emptime->setGroupe($this->em->getRepository(PGroupe::class)->find($request->get('edit_groupe')));
             }
             $this->em->flush();
@@ -578,7 +580,6 @@ class PlanificationController extends AbstractController
     #[Route('/Getsequence/{emptime}', name: 'Getsequence')]
     public function Getsequence(PlEmptime $emptime)
     {   
-        // $element = $emptime->getProgrammation()->getElement();
         $promotion = $emptime->getProgrammation()->getElement()->getModule()->getSemestre()->getPromotion();
         $annee = $this->em->getRepository(AcAnnee::class)->getActiveAnneeByFormation($promotion->getFormation());
         $inscriptions = $this->em->getRepository(TInscription::class)->getInscriptionsByAnneeAndPromoAndGroupe($promotion,$annee,$emptime->getGroupe());
@@ -586,19 +587,26 @@ class PlanificationController extends AbstractController
         $hours = $diff->h;
         $hours = $hours + ($diff->days*24);
         $emptimenss = $this->em->getRepository(PlEmptimens::class)->findBy(['seance'=>$emptime]);
-        $html = $this->render("planification/pdfs/sequence.html.twig", [
-            'seance' => $emptime,
-            'annee' => $annee,
-            'emptimenss' => $emptimenss,
-            'hours' => $hours,
-            'effectife' => count($inscriptions),
-        ])->getContent();
+        $html = "";
+        $i=1;
+        foreach ($emptimenss as $emptimens) {
+            $html .= $this->render("planification/pdfs/sequence.html.twig", [
+                'seance' => $emptime,
+                'annee' => $annee,
+                'emptimenss' => $emptimenss,
+                'emptimens' => $emptimens,
+                'hours' => $hours,
+                'effectife' => count($inscriptions),
+            ])->getContent();
+            $i < count($emptimenss) ? $html .= '<page_break>':"";
+            $i++;
+        }
         $mpdf = new Mpdf([
-            'mode' => 'utf-8',
+            // 'mode' => 'utf-8',
             'margin_top' => '8',
             'margin_left' => '5',
             'margin_right' => '5',
-            ]);
+        ]);
         $mpdf->SetTitle('Fiche D\'abcense');
         $mpdf->SetHTMLFooter(
             $this->render("planification/pdfs/footer.html.twig")->getContent()
