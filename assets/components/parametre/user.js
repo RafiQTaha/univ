@@ -220,6 +220,25 @@ const Toast = Swal.mixin({
             }) 
         }
     })
+    
+    $("body").on("click", ".btn_reinitialiser",async function(){
+        var id = $(this).attr("id");
+        try {
+            const request = await axios.post("/reinitialiser/"+id);
+            const response = request.data;
+            table.ajax.reload();
+            Toast.fire({
+                icon: 'success',
+                title: response,
+            }) 
+        } catch (error) {
+            const message = error.response.data;
+            Toast.fire({
+                icon: 'error',
+                title: message,
+            }) 
+        }
+    })
 })
 
 

@@ -13,6 +13,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
 #[Route('/parametre/user')]
@@ -48,9 +49,7 @@ class UserController extends AbstractController
             array( 'db' => 'u.prenom','dt' => 3),
             array( 'db' => 'u.roles','dt' => 4),
             array( 'db' => 'u.enable','dt' => 5),
-           
-           
-            
+
         );
         $sql = "SELECT " . implode(", ", DatatablesController::Pluck($columns, 'db')) . "
         
@@ -89,6 +88,7 @@ class UserController extends AbstractController
             foreach (array_values($row) as $key => $value) {
                 if($key == 5) {
                     $nestedData[] = $value == 1 ?  "<i class='fas fa-lock-open disable text-success' id='$cd'></i>" : "<i class='enable fas fa-lock text-danger' id='$cd'></i>";
+                    $nestedData[] = "<button class='btn_reinitialiser btn btn-secondary' id='$cd'><i class='fas fa-sync'></i></button>";
                 }
                 if($key == 4) {
                     
@@ -198,5 +198,19 @@ class UserController extends AbstractController
         $this->em->flush();
         return new JsonResponse(1);
     }
+    // private UserPasswordHasherInterface $passwordEncoder;
+    // #[Route('/reinitialiser/{user}', name: 'parametre_user_reinitialiser')]
+    // public function reinitialiser(Request $request,User $user, UserPasswordHasherInterface $passwordHasher,UserPasswordHasherInterface $passwordEncoder)
+    // {
+    //     // dd($user);
+    //     $this->passwordEncoder = $passwordEncoder;
+    //     $user->setPassword($passwordHasher->hashPassword(
+    //         $user,
+    //         '0123456789'
+    //     ));
+    //     $this->em->flush();
+    //     dd($user);
+    //     return new JsonResponse('Mot De Passe Bien Réinitialiser',200);
+    // }
 }
 
