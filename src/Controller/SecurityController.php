@@ -82,6 +82,21 @@ class SecurityController extends AbstractController
         $em->flush();
         return new JsonResponse("Bien Enregistre!", 200);
     }
+
+    /**
+     * @Route("/reinitialiser/{user}", name="app_reinitialiser")
+     */
+    public function reinitialiser(Request $request,User $user, ManagerRegistry $doctrine)
+    {
+        $em = $doctrine->getManager();
+        $user->setPassword($this->passwordEncoder->hashPassword(
+            $user,
+            '0123456789'
+        ));
+
+        $em->flush();
+        return new JsonResponse("Bien Réinitialiser!", 200);
+    }
     /**
      * @Route("/logout", name="app_logout")
      */
