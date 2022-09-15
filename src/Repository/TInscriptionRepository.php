@@ -309,7 +309,7 @@ class TInscriptionRepository extends ServiceEntityRepository
 
     public function getPreviousInsription($inscription)
     {
-        return $this->createQueryBuilder('i')
+        $previousInscription =  $this->createQueryBuilder('i')
         ->innerJoin("i.statut", "statut")
         ->where('i.admission = :admission')
         ->andWhere("i.id < :id")
@@ -321,5 +321,28 @@ class TInscriptionRepository extends ServiceEntityRepository
         ->getQuery()
         ->getOneOrNullResult()
         ;
+
+        if($previousInscription && ($inscription->getPromotion()->getId() === $previousInscription->getPromotion()->getId() )) {
+            $previousPreviousInscription =  $this->createQueryBuilder('i')
+                ->innerJoin("i.statut", "statut")
+                ->where('i.admission = :admission')
+                ->andWhere("i.id < :id")
+                ->andWhere("statut.id = 13")
+                ->setParameter('admission', $inscription->getAdmission())
+                ->setParameter('id', $inscription->getId())
+                ->setMaxResults(1)
+                ->orderBy("i.id", "desc")
+                ->getQuery()
+                ->getOneOrNullResult()
+            ;
+            if($previousPreviousInscription && ($previousPreviousInscription->getPromotion()->getId() === $previousInscription->getPromotion()->getId() )) {
+                return null;
+            } 
+            
+            return $previousInscription;
+            
+        }
+        return null;
     } 
+    
 }

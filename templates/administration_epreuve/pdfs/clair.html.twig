@@ -215,22 +215,26 @@
                 
                 
                 
+                {% for enseignant in epreuve.enseignants %}
                 <tr>
                     <td style="width: 12% ;font-weight: bold;">
                         <table style="width: 100% ; ">
                             <tr>
-                                <td style="width: 100%;font-weight: bold;">Professeur           :</td>
+                                <td style="width: 100%;font-weight: bold;">Professeur  {{loop.index}}         :</td>
                             </tr>
                         </table>
                     </td>
                     <td style="width: 75%;">
                         <table style="width: 100% ;">
                             <tr>
-                                <td style="width: 100%">{{epreuve.enseignant.nom}} {{epreuve.enseignant.prenom}}</td>
+                                <td style="width: 100%">
+                                        {{enseignant.nom}} {{enseignant.prenom}}
+                                </td>
                             </tr>
                         </table>
                     </td>
                 </tr>
+                {% endfor %}
                 
             </table>
         </td>
