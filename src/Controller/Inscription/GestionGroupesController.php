@@ -302,14 +302,21 @@ class GestionGroupesController extends AbstractController
         $sheet->setCellValue('D1', 'Code Inscription');
         $sheet->setCellValue('E1', 'Nom');
         $sheet->setCellValue('F1', 'Prenom');
-        $sheet->setCellValue('G1', 'Etablissement');
-        $sheet->setCellValue('H1', 'Formation');
-        $sheet->setCellValue('I1', 'Promotion');
-        $sheet->setCellValue('J1', 'Année');
-        $sheet->setCellValue('K1', 'Niveau1');
-        $sheet->setCellValue('L1', 'Niveau2');
-        $sheet->setCellValue('M1', 'Niveau3');
-        $sheet->setCellValue('N1', 'STATUT');
+        $sheet->setCellValue('G1', 'Cin');
+        $sheet->setCellValue('H1', 'DateNaissance');
+        $sheet->setCellValue('I1', 'LieuNaissance');
+        $sheet->setCellValue('J1', 'Sexe');
+        $sheet->setCellValue('K1', 'Adresse');
+        $sheet->setCellValue('L1', 'Tel');
+        $sheet->setCellValue('M1', 'Nationalité');
+        $sheet->setCellValue('N1', 'Etablissement');
+        $sheet->setCellValue('O1', 'Formation');
+        $sheet->setCellValue('P1', 'Promotion');
+        $sheet->setCellValue('Q1', 'Année');
+        $sheet->setCellValue('R1', 'Niveau1');
+        $sheet->setCellValue('S1', 'Niveau2');
+        $sheet->setCellValue('T1', 'Niveau3');
+        $sheet->setCellValue('U1', 'STATUT');
         $i=2;
         foreach ($inscriptions as $inscription) {
             $sheet->setCellValue('A'.$i, $inscription->getId());
@@ -318,23 +325,31 @@ class GestionGroupesController extends AbstractController
             $sheet->setCellValue('D'.$i, $inscription->getCode());
             $sheet->setCellValue('E'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getNom());
             $sheet->setCellValue('F'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getPrenom());
-            $sheet->setCellValue('G'.$i, $inscription->getPromotion()->getFormation()->getEtablissement()->getDesignation());
-            $sheet->setCellValue('H'.$i, $inscription->getPromotion()->getFormation()->getDesignation());
-            $sheet->setCellValue('I'.$i, $inscription->getPromotion()->getDesignation());
-            $sheet->setCellValue('J'.$i, $inscription->getAnnee()->getDesignation());
+            $sheet->setCellValue('G'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getCin());
+            $sheet->setCellValue('H'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getDateNaissance()->format('d-m-Y'));
+            $sheet->setCellValue('I'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getLieuNaissance());
+            $sheet->setCellValue('J'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getSexe());
+            $sheet->setCellValue('K'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getAdresse());
+            $sheet->setCellValue('L'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getTel1());
+            $sheet->setCellValue('M'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getNationalite());
+            ////////////////////////
+            $sheet->setCellValue('N'.$i, $inscription->getPromotion()->getFormation()->getEtablissement()->getDesignation());
+            $sheet->setCellValue('O'.$i, $inscription->getPromotion()->getFormation()->getDesignation());
+            $sheet->setCellValue('P'.$i, $inscription->getPromotion()->getDesignation());
+            $sheet->setCellValue('Q'.$i, $inscription->getAnnee()->getDesignation());
             if ($inscription->getGroupe() != Null) {
                 if ($inscription->getGroupe()->getGroupe() == Null) {
-                    $sheet->setCellValue('K'.$i, $inscription->getGroupe()->getNiveau());
+                    $sheet->setCellValue('R'.$i, $inscription->getGroupe()->getNiveau());
                 }elseif ($inscription->getGroupe()->getGroupe()->getGroupe() == Null) {
-                    $sheet->setCellValue('K'.$i, $inscription->getGroupe()->getGroupe()->getNiveau());
-                    $sheet->setCellValue('L'.$i, $inscription->getGroupe()->getNiveau());
+                    $sheet->setCellValue('R'.$i, $inscription->getGroupe()->getGroupe()->getNiveau());
+                    $sheet->setCellValue('S'.$i, $inscription->getGroupe()->getNiveau());
                 }else {
-                    $sheet->setCellValue('K'.$i, $inscription->getGroupe()->getGroupe()->getGroupe()->getNiveau());
-                    $sheet->setCellValue('L'.$i, $inscription->getGroupe()->getGroupe()->getNiveau());
-                    $sheet->setCellValue('M'.$i, $inscription->getGroupe()->getNiveau());
+                    $sheet->setCellValue('R'.$i, $inscription->getGroupe()->getGroupe()->getGroupe()->getNiveau());
+                    $sheet->setCellValue('S'.$i, $inscription->getGroupe()->getGroupe()->getNiveau());
+                    $sheet->setCellValue('T'.$i, $inscription->getGroupe()->getNiveau());
                 }
             }
-            $sheet->setCellValue('N'.$i, $inscription->getStatut()->GetDesignation());
+            $sheet->setCellValue('U'.$i, $inscription->getStatut()->GetDesignation());
             $i++;
         }
         $writer = new Xlsx($spreadsheet);
