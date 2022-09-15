@@ -2,19 +2,21 @@
 
 namespace App\Controller\AdministrationEpreuve;
 
+use Mpdf\Mpdf;
+use ZipArchive;
 use App\Entity\AcAnnee;
 use App\Entity\PStatut;
 use App\Entity\ExGnotes;
+use App\Entity\ExMnotes;
 use App\Entity\AcElement;
 use App\Entity\AcEpreuve;
 use App\Entity\PEnseignant;
 use App\Entity\TInscription;
 use App\Entity\PNatureEpreuve;
+use App\Entity\AcEtablissement;
 use App\Controller\ApiController;
 use App\Controller\DatatablesController;
-use App\Entity\AcEtablissement;
 use Doctrine\Persistence\ManagerRegistry;
-use Mpdf\Mpdf;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Symfony\Component\HttpFoundation\Request;
@@ -26,7 +28,6 @@ use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
-use ZipArchive;
 
 #[Route('/administration/epreuve')]
 
@@ -107,7 +108,8 @@ class EpreuveController extends AbstractController
         INNER JOIN ac_formation frm ON frm.id = prm.formation_id
         INNER JOIN ac_etablissement etab ON etab.id = frm.etablissement_id
         INNER JOIN ac_annee an ON an.id = epv.annee_id
-        INNER JOIN penseignant ens ON ens.id = epv.enseignant_id
+        left JOIN ac_epreuve_penseignant epvens ON epvens.ac_epreuve_id = epv.id
+        left JOIN penseignant ens ON ens.id = epvens.penseignant_id
         INNER JOIN pnature_epreuve nepv ON nepv.id = epv.nature_epreuve_id  
         INNER JOIN pstatut st on st.id = epv.statut_id
     
@@ -214,7 +216,8 @@ class EpreuveController extends AbstractController
         INNER JOIN ac_formation frm ON frm.id = prm.formation_id
         INNER JOIN ac_etablissement etab ON etab.id = frm.etablissement_id
         INNER JOIN ac_annee an ON an.id = epv.annee_id
-        left JOIN penseignant ens ON ens.id = epv.enseignant_id
+        left JOIN ac_epreuve_penseignant epvens ON epvens.ac_epreuve_id = epv.id
+        left JOIN penseignant ens ON ens.id = epvens.penseignant_id
         INNER JOIN pnature_epreuve nepv ON nepv.id = epv.nature_epreuve_id  
         INNER JOIN pstatut st on st.id = epv.statut_id
     
@@ -361,13 +364,13 @@ class EpreuveController extends AbstractController
             $epreuve->setNatureEpreuve(
                 $this->em->getRepository(PNatureEpreuve::class)->find($sheet[3])
             );
-            $epreuve->setEnseignant(
-                $this->em->getRepository(PEnseignant::class)->find($sheet[4])
-            );
             $epreuve->setNature($sheet[8]);
             $epreuve->setCreated(new \DateTime("now"));
             $this->em->persist($epreuve);
             $this->em->flush();
+            $epreuve->addEnseignant(
+                $this->em->getRepository(PEnseignant::class)->find($sheet[4])
+            );
             $epreuve->setCode('EPV-'.$annee->getFormation()->getEtablissement()->getAbreviation().str_pad($epreuve->getId(), 8, '0', STR_PAD_LEFT).'/'.date('Y'));     
             $this->em->flush();
             // dump( $epreuve->getId());
@@ -500,6 +503,7 @@ class EpreuveController extends AbstractController
         if (empty($request->get('id_element')) || empty($request->get('id_Nature')) || empty($request->get('id_enseignant')) || empty($request->get('d_epreuve'))) {
             return new JsonResponse('Merci de remplir tout les champs!', 500);
         }
+        // dd($request);
         $epreuve = new AcEpreuve();
         $epreuve->setCoefficient(1);
         $epreuve->setStatut($this->em->getRepository(PStatut::class)->find(28));
@@ -507,7 +511,6 @@ class EpreuveController extends AbstractController
         $epreuve->setCreated(new \DateTime('now'));
         $epreuve->setDateEpreuve(new \DateTime($request->get('d_epreuve')));
         $epreuve->setElement($this->em->getRepository(AcElement::class)->find($request->get('id_element')));
-        $epreuve->setEnseignant($this->em->getRepository(PEnseignant::class)->find($request->get('id_enseignant')));
         $epreuve->setNature($request->get('nature'));
         $epreuve->setNatureEpreuve($this->em->getRepository(PNatureEpreuve::class)->find($request->get('id_Nature')));
         $epreuve->setObservation($request->get('obs') == '' ? Null : $request->get('obs'));
@@ -516,9 +519,139 @@ class EpreuveController extends AbstractController
         $this->em->persist($epreuve);
         $this->em->flush();
         $etablissement = $this->em->getRepository(AcEtablissement::class)->find($request->get('id_etablissement'));
+        foreach ($request->get('id_enseignant') as $id) {
+            $epreuve->addEnseignant(
+                $this->em->getRepository(PEnseignant::class)->find($id)
+            );
+        };
         $epreuve->setCode('EPV-'.$etablissement->getAbreviation().str_pad($epreuve->getId(), 8, '0', STR_PAD_LEFT).'/'.date('Y'));     
         $this->em->flush();
 
         return new JsonResponse('Epreuve Bien Ajouter',200);
+    }
+    #[Route('/cloture', name: 'administration_epreuve_cloture')]
+    public function administrationEpreuveCloture(Request $request) 
+    {
+        $idEpreuves = array_unique(json_decode($request->get("idEpreuves")));
+        foreach ($idEpreuves as $key => $id) {
+            $epreuve = $this->em->getRepository(AcEpreuve::class)->find($id);
+            if($epreuve->getStatut()->getDesignation() == "Affilier") {
+                $epreuve->setStatut(
+                    $this->em->getRepository(PStatut::class)->find(30) //Valider
+                );
+            }
+        }
+        $this->em->flush();
+        // dd($idEpreuves);
+        return new JsonResponse('Bien clôturer',200);
+    }
+    #[Route('/decloture', name: 'administration_epreuve_decloture')]
+    public function administrationEpreuveDecloture(Request $request) 
+    {
+        $idEpreuves = array_unique(json_decode($request->get("idEpreuves")));
+        foreach ($idEpreuves as $key => $id) {
+            $epreuve = $this->em->getRepository(AcEpreuve::class)->find($id);
+            if($epreuve->getStatut()->getDesignation() == "Valider") {
+                $epreuve->setStatut(
+                    $this->em->getRepository(PStatut::class)->find(29) //Affilier
+                );
+            }
+        }
+        $this->em->flush();
+        // dd($idEpreuves);
+        return new JsonResponse('Bien delôturer',200);
+    }
+    #[Route('/checkifanonymat/{epreuve}', name: 'administration_epreuve_checkifanonymat')]
+    public function administrationEpreuveCheckifanonymat(AcEpreuve $epreuve) {
+        $html = "<p><span>Etablissement</span> : ".$epreuve->getAnnee()->getFormation()->getEtablissement()->getDesignation()."</p>
+          <p><span>Formation</span> : ".$epreuve->getAnnee()->getFormation()->getDesignation()."</p>
+          <p><span>Promotion</span> : ".$epreuve->getElement()->getModule()->getSemestre()->getPromotion()->getDesignation()."</p>
+          <p><span>Module</span> : ".$epreuve->getElement()->getModule()->getDesignation()."</p>
+          <p><span>Element</span> : ".$epreuve->getElement()->getDesignation()."</p>";
+        if($epreuve->getAnonymat() == 1) {
+            $anonymat = "oui";
+        } else {
+            $anonymat = "non";
+        }
+        return new JsonResponse(['html' => $html,'id' => $epreuve->getId(), 'anonymat' => $anonymat], 200);
+
+    }
+    #[Route('/impression/{epreuve}/{anonymat}', name: 'administration_epreuve_impression_c_a')]
+    public function administrationEpreuveImpression(AcEpreuve $epreuve, $anonymat) {
+        
+            
+        $html = $this->render("administration_epreuve/pdfs/header.html.twig")->getContent();
+        if($epreuve->getAnonymat() == 1 && $anonymat == 1){
+            $html .= $this->render("administration_epreuve/pdfs/anonymat.html.twig", [
+                'epreuve' => $epreuve
+            ])->getContent();
+        } else {
+            $html .= $this->render("administration_epreuve/pdfs/clair.html.twig", [
+                'epreuve' => $epreuve
+            ])->getContent();
+            
+        }
+        $html .= $this->render("administration_epreuve/pdfs/footer.html.twig")->getContent();
+        $mpdf = new Mpdf([
+            'mode' => 'utf-8',
+            'margin_left' => '5',
+            'margin_right' => '5',
+            'margin_top' => '5',
+            'margin_bottom' => '5',
+            ]);
+        // $mpdf->SetHTMLHeader(
+        // );
+        // $mpdf->SetHTMLFooter(
+        //     $this->render("administration_epreuve/pdfs/footer.html.twig")->getContent()
+        // );
+        $mpdf->WriteHTML($html);
+        $mpdf->Output("epreuve_".$epreuve->getId().".pdf", "I");
+    }
+    
+    #[Route('/capitaliser', name: 'administration_epreuve_capitaliser')]
+    public function administrationEpreuveCapitaliser(Request $request) {
+        $idEpreuves = array_unique(json_decode($request->get("idEpreuves")));
+        $count = 0;
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        $sheet->setCellValue('A1', 'inscription');
+        $sheet->setCellValue('B1', 'nom');
+        $sheet->setCellValue('C1', 'prenom');
+        $sheet->setCellValue('D1', 'epreuve');
+        $sheet->setCellValue('E1', 'note');
+        $i=2;
+       
+        foreach ($idEpreuves as $idEpreuve) {
+            $epreuve = $this->em->getRepository(AcEpreuve::class)->find($idEpreuve);
+            foreach ($epreuve->getGnotes() as $gnote) {
+                $inscription = $gnote->getInscription();
+                $previousInscription = $this->em->getRepository(TInscription::class)->getPreviousInsription($inscription);
+                // dd($previousInscription);
+                if($previousInscription) {
+                    $previousNoteModule = $this->em->getRepository(ExMnotes::class)->findOneBy(['module' => $epreuve->getElement()->getModule(), 'inscription' => $previousInscription]);
+                    if($previousNoteModule->getNote() >= 12) {
+                        $gnote->setNote($previousNoteModule->getNote());
+                        $gnote->setObservation('CAP');
+                        $sheet->setCellValue('A'.$i, $inscription->getId());
+                        $sheet->setCellValue('B'.$i, $gnote->getInscription()->getAdmission()->getPreinscription()->getEtudiant()->getNom());
+                        $sheet->setCellValue('C'.$i, $gnote->getInscription()->getAdmission()->getPreinscription()->getEtudiant()->getPrenom());
+                        $sheet->setCellValue('D'.$i, $epreuve->getId());
+                        $sheet->setCellValue('E'.$i, $previousNoteModule->getNote());
+                        $i++;
+                        $count++;
+                    }
+                }
+            }
+        }
+        $this->em->flush();
+        $fileName = null;
+        if($count > 0) {
+            $writer = new Xlsx($spreadsheet);
+            $fileName = 'epreuves_capitaliser_'.uniqid().'.xlsx';
+            $writer->save($fileName);
+        }
+
+        return new JsonResponse(['fileName' => $fileName, 'count' => $count]);
+
     }
 }

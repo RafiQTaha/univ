@@ -30,8 +30,7 @@ class AcEpreuve
     #[ORM\ManyToOne(targetEntity: PNatureEpreuve::class, inversedBy: 'epreuves')]
     private $natureEpreuve;
 
-    #[ORM\ManyToOne(targetEntity: PEnseignant::class, inversedBy: 'epreuves')]
-    private $enseignant;
+    
 
     #[ORM\Column(type: 'date', nullable: true)]
     private $dateEpreuve;
@@ -57,9 +56,13 @@ class AcEpreuve
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $nature;
 
+    #[ORM\ManyToMany(targetEntity: PEnseignant::class)]
+    private $enseignants;
+
     public function __construct()
     {
         $this->gnotes = new ArrayCollection();
+        $this->enseignants = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -127,18 +130,7 @@ class AcEpreuve
         return $this;
     }
 
-    public function getEnseignant(): ?PEnseignant
-    {
-        return $this->enseignant;
-    }
-
-    public function setEnseignant(?PEnseignant $enseignant): self
-    {
-        $this->enseignant = $enseignant;
-
-        return $this;
-    }
-
+    
     public function getDateEpreuve(): ?\DateTimeInterface
     {
         return $this->dateEpreuve;
@@ -249,6 +241,30 @@ class AcEpreuve
     public function setNature(string $nature): self
     {
         $this->nature = $nature;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, PEnseignant>
+     */
+    public function getEnseignants(): Collection
+    {
+        return $this->enseignants;
+    }
+
+    public function addEnseignant(PEnseignant $enseignant): self
+    {
+        if (!$this->enseignants->contains($enseignant)) {
+            $this->enseignants[] = $enseignant;
+        }
+
+        return $this;
+    }
+
+    public function removeEnseignant(PEnseignant $enseignant): self
+    {
+        $this->enseignants->removeElement($enseignant);
 
         return $this;
     }
