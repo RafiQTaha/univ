@@ -326,7 +326,9 @@ class GestionGroupesController extends AbstractController
             $sheet->setCellValue('E'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getNom());
             $sheet->setCellValue('F'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getPrenom());
             $sheet->setCellValue('G'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getCin());
-            $sheet->setCellValue('H'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getDateNaissance()->format('d-m-Y'));
+            if ($inscription->getAdmission()->getPreinscription()->getEtudiant()->getDateNaissance()->format('d-m-Y') != null) {
+                $sheet->setCellValue('H'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getDateNaissance()->format('d-m-Y'));
+            }
             $sheet->setCellValue('I'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getLieuNaissance());
             $sheet->setCellValue('J'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getSexe());
             $sheet->setCellValue('K'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getAdresse());
