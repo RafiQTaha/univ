@@ -12,7 +12,7 @@ const Toast = Swal.mixin({
     
     
     $(document).ready(function  () {
-    let id_promtoion;
+    let id_promotion;
    
     var table = $("#datatables_gestion_promotion").DataTable({
         lengthMenu: [
@@ -34,11 +34,11 @@ const Toast = Swal.mixin({
         
         if($(this).hasClass('active_databales')) {
             $(this).removeClass('active_databales');
-            id_promtoion = null;
+            id_promotion = null;
         } else {
             $("#datatables_gestion_promotion tbody tr").removeClass('active_databales');
             $(this).addClass('active_databales');
-            id_promtoion = $(this).attr('id');   
+            id_promotion = $(this).attr('id');   
         }
         
     })
@@ -76,7 +76,7 @@ const Toast = Swal.mixin({
 
     })
     $("#modifier").on("click", async function(){
-        if(!id_promtoion){
+        if(!id_promotion){
             Toast.fire({
               icon: 'error',
               title: 'Veuillez selectioner une ligne!',
@@ -87,7 +87,7 @@ const Toast = Swal.mixin({
 
         try {
             icon.remove('fa-edit').addClass("fa-spinner fa-spin ");
-            const request = await axios.get('/parametre/promotion/details/'+id_promtoion);
+            const request = await axios.get('/parametre/promotion/details/'+id_promotion);
             const response = request.data;
             console.log(response)
             icon.addClass('fa-edit').removeClass("fa-spinner fa-spin ");
@@ -144,7 +144,7 @@ const Toast = Swal.mixin({
 
         try {
             icon.remove('fa-check-circle').addClass("fa-spinner fa-spin ");
-            const request = await axios.post('/parametre/promotion/update/'+id_promtoion, formData);
+            const request = await axios.post('/parametre/promotion/update/'+id_promotion, formData);
             const response = request.data;
             icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
             table.ajax.reload();

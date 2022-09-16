@@ -58,6 +58,7 @@ Encore
     .addEntry('preinscription', './assets/components/preinscription/preinscription.js')
     .addEntry('gestionPreinscription', './assets/components/preinscription/gestionpreinscription.js')
     .addEntry('enseignant', './assets/components/parametre/enseignant.js')
+    .addEntry('enseignantexcept', './assets/components/parametre/enseignantexcept.js')
 
 
     // .addStyleEntry('login', './assets/styles/components/login/login.scss')
