@@ -348,17 +348,24 @@ class GestionReglementsController extends AbstractController
         $sheet->setCellValue('J1', 'FORMATION');
         $sheet->setCellValue('K1', 'CODE REGLEMENT');
         $sheet->setCellValue('L1', 'MT REGLE');
-        $sheet->setCellValue('M1', 'REFERENCE DOC');
-        $sheet->setCellValue('N1', 'MODE PAIEMENT');
-        $sheet->setCellValue('O1', 'DATE REGLEMENT');
-        $sheet->setCellValue('P1', 'D-CREATION REGLEMENT');
-        $sheet->setCellValue('Q1', 'U-Created');
-        $sheet->setCellValue('R1', 'U-Updated');
-        $sheet->setCellValue('S1', 'N° BRD');
+
+        $sheet->setCellValue('M1', 'MT PROVISOIR');
+        $sheet->setCellValue('N1', 'MT EN DEVISE');
+        
+        $sheet->setCellValue('O1', 'REFERENCE DOC');
+        $sheet->setCellValue('P1', 'MODE PAIEMENT');
+        $sheet->setCellValue('Q1', 'DATE REGLEMENT');
+        $sheet->setCellValue('R1', 'D-CREATION REGLEMENT');
+        $sheet->setCellValue('S1', 'U-Created');
+        $sheet->setCellValue('T1', 'U-Updated');
+        $sheet->setCellValue('U1', 'N° BRD');
         $i=2;
         $j=1;
-        $currentyear = '2022/2023';
+        $currentyear = date('m') > 7 ? $current_year = date('Y').'/'.date('Y')+1 : $current_year = date('Y') - 1 .'/' .date('Y');
+        
+        // $currentyear = '2022/2023';
         $reglements = $this->em->getRepository(TReglement::class)->getReglementsByCurrentYear($currentyear);
+        // dd($reglements);
         foreach ($reglements as $reglement) {
             $sheet->setCellValue('A'.$i, $j);
             $sheet->setCellValue('B'.$i, $reglement['code_etu']);
@@ -371,19 +378,23 @@ class GestionReglementsController extends AbstractController
             $sheet->setCellValue('I'.$i, $reglement['etablissement']);
             $sheet->setCellValue('J'.$i, $reglement['formation']);
             $sheet->setCellValue('K'.$i, $reglement['code_reglement']);
+
             $sheet->setCellValue('L'.$i, $reglement['montant_regle']);
-            $sheet->setCellValue('M'.$i, $reglement['reference']);
-            $sheet->setCellValue('N'.$i, $reglement['mode_paiement']);
+            $sheet->setCellValue('M'.$i, $reglement['montant_provisoir']);
+            $sheet->setCellValue('N'.$i, $reglement['montant_devis']);
+
+            $sheet->setCellValue('O'.$i, $reglement['reference']);
+            $sheet->setCellValue('P'.$i, $reglement['mode_paiement']);
 
             if ($reglement['date_reglement'] != null) {
-                $sheet->setCellValue('O'.$i, $reglement['date_reglement']->format('d-m-Y'));
+                $sheet->setCellValue('Q'.$i, $reglement['date_reglement']->format('d-m-Y'));
             }
             if ($reglement['created'] != null) {
-                $sheet->setCellValue('P'.$i, $reglement['created']->format('d-m-Y'));
+                $sheet->setCellValue('R'.$i, $reglement['created']->format('d-m-Y'));
             }
-            $sheet->setCellValue('Q'.$i, $reglement['u_created']);
-            $sheet->setCellValue('R'.$i, $reglement['u_updated']);
-            $sheet->setCellValue('S'.$i, $reglement['num_brd']);
+            $sheet->setCellValue('S'.$i, $reglement['u_created']);
+            $sheet->setCellValue('T'.$i, $reglement['u_updated']);
+            $sheet->setCellValue('U'.$i, $reglement['num_brd']);
             $i++;
             $j++;
         }

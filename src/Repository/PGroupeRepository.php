@@ -57,4 +57,23 @@ class PGroupeRepository extends ServiceEntityRepository
             ->getResult()
         ;
     }
+
+    
+    
+
+    public function getInscriptionsByNiveaux3($niv2)
+    {
+        return $this->createQueryBuilder('groupe')
+            ->innerJoin("groupe.inscriptions", "inscription")
+            ->innerJoin("inscription.annee", "annee")
+            ->AndWhere("annee.validation_academique = 'non'")
+            ->AndWhere("annee.cloture_academique = 'non'")
+            ->AndWhere("groupe.groupe = :niv2")
+            ->setParameter('niv2', $niv2)
+            ->orderBy('groupe.niveau', 'ASC')
+            ->getQuery()
+            ->getResult()
+        ;
+
+    }
 }
