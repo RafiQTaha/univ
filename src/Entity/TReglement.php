@@ -64,6 +64,12 @@ class TReglement
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'tReglements')]
     private $UserUpdated;
 
+    #[ORM\Column(type: 'float', nullable: true)]
+    private $m_provisoir;
+
+    #[ORM\Column(type: 'float', nullable: true)]
+    private $m_devis;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -269,6 +275,30 @@ class TReglement
     public function setUserUpdated(?User $UserUpdated): self
     {
         $this->UserUpdated = $UserUpdated;
+
+        return $this;
+    }
+
+    public function getMProvisoir(): ?float
+    {
+        return $this->m_provisoir;
+    }
+
+    public function setMProvisoir(?float $m_provisoir): self
+    {
+        $this->m_provisoir = $m_provisoir;
+
+        return $this;
+    }
+
+    public function getMDevis(): ?float
+    {
+        return $this->m_devis;
+    }
+
+    public function setMDevis(?float $m_devis): self
+    {
+        $this->m_devis = $m_devis;
 
         return $this;
     }

@@ -226,12 +226,7 @@ class ApiController extends AbstractController
     #[Route('/niv1/{promotion}', name: 'getNiv1Bypromotion')]
     public function getNiv1Bypromotion(AcPromotion $promotion): Response
     {   
-        $annee = $this->em->getRepository(AcAnnee::class)->findOneBy([
-            'formation'=>$promotion->getFormation(),
-            'validation_academique'=>'non',
-            'cloture_academique'=>'non',
-        ]);
-
+        $annee = $this->em->getRepository(AcAnnee::class)->getActiveAnneeByFormation($promotion->getFormation());
         $inscriptions = $this->em->getRepository(TInscription::class)->getNiveaux($promotion,$annee);
         $data = "<option selected enabled value=''>Choix Niveau 1</option>";
         $groupes = [];
@@ -281,8 +276,10 @@ class ApiController extends AbstractController
     #[Route('/niv3/{niv2}', name: 'getNiv2ByNiv3')]
     public function getNiv2ByNiv3($niv2): Response
     {   
-        $niveaux3 = $this->em->getRepository(PGroupe::class)->findBy(['groupe'=>$niv2]);
-        $data = "<option selected enabled value=''>Choix Niveau 2</option>";
+        // $niveaux3 = $this->em->getRepository(PGroupe::class)->findBy(['groupe'=>$niv2]);
+        $niveaux3 = $this->em->getRepository(PGroupe::class)->getInscriptionsByNiveaux3($niv2);
+        // dd($niveaux3);
+        $data = "<option selected enabled value=''>Choix Niveau 3</option>";
         foreach ($niveaux3 as $niveau3) {
                 $data .="<option value=".$niveau3->getId().">".$niveau3->getNiveau()."</option>"; 
         }

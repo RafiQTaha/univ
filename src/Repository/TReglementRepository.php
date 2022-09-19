@@ -100,7 +100,7 @@ class TReglementRepository extends ServiceEntityRepository
     public function getReglementsByCurrentYear($currentyear)
     {
         return $this->createQueryBuilder('reg')
-            ->select("pre.code as code_preins, cab.code as code_facture, ann.designation as annee, etu.nom as nom, etu.prenom as prenom,etu.nationalite as nationalite, etab.designation as etablissement, frm.designation as formation,reg.code as code_reglement,reg.montant as montant_regle, reg.date_reglement as date_reglement,reg.created as created, reg.reference as reference,pai.designation as mode_paiement,brd.code as num_brd,cuser.username as u_created,uuser.username as u_updated ,etu.code as code_etu ")
+            ->select("pre.code as code_preins, cab.code as code_facture, ann.designation as annee, etu.nom as nom, etu.prenom as prenom,etu.nationalite as nationalite, etab.designation as etablissement, frm.designation as formation,reg.code as code_reglement,reg.montant as montant_regle,reg.m_provisoir as montant_provisoir,reg.m_devis as montant_devis,reg.date_reglement as date_reglement,reg.created as created, reg.reference as reference,pai.designation as mode_paiement,brd.code as num_brd,cuser.username as u_created,uuser.username as u_updated ,etu.code as code_etu ")
             ->innerJoin("reg.operation","cab")
             ->innerJoin("cab.preinscription","pre")
             ->innerJoin("pre.etudiant","etu")
