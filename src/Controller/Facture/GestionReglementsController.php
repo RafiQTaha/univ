@@ -321,6 +321,8 @@ class GestionReglementsController extends AbstractController
         }
         $reglement->setUpdated(new DateTime('now'));
         $reglement->setMontant($request->get('montant'));
+        $reglement->setMProvisoir($request->get('montant_provisoir'));
+        $reglement->setMDevis($request->get('montant_devis'));
         $reglement->setBanque($request->get('banque') == "" ? Null : $this->em->getRepository(XBanque::class)->find($request->get('banque')));
         $reglement->setPaiement($this->em->getRepository(XModalites::class)->find($request->get('paiement')));
         $reglement->setDateReglement(new DateTime($request->get('d_reglement')));
