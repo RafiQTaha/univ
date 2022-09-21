@@ -25,6 +25,9 @@ class Checkinout
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $sn;
 
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private $CHECKTYPE;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -74,6 +77,18 @@ class Checkinout
     public function setSn(?string $sn): self
     {
         $this->sn = $sn;
+
+        return $this;
+    }
+
+    public function getCHECKTYPE(): ?string
+    {
+        return $this->CHECKTYPE;
+    }
+
+    public function setCHECKTYPE(?string $CHECKTYPE): self
+    {
+        $this->CHECKTYPE = $CHECKTYPE;
 
         return $this;
     }
