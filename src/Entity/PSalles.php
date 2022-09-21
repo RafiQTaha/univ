@@ -42,9 +42,13 @@ class PSalles
     #[ORM\OneToMany(mappedBy: 'salle', targetEntity: PlEmptime::class)]
     private $emptimes;
 
+    #[ORM\OneToMany(mappedBy: 'xsalle', targetEntity: PlEmptime::class)]
+    private $plEmptimes;
+
     public function __construct()
     {
         $this->emptimes = new ArrayCollection();
+        $this->plEmptimes = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -172,6 +176,36 @@ class PSalles
             // set the owning side to null (unless already changed)
             if ($emptime->getSalle() === $this) {
                 $emptime->setSalle(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, PlEmptime>
+     */
+    public function getPlEmptimes(): Collection
+    {
+        return $this->plEmptimes;
+    }
+
+    public function addPlEmptime(PlEmptime $plEmptime): self
+    {
+        if (!$this->plEmptimes->contains($plEmptime)) {
+            $this->plEmptimes[] = $plEmptime;
+            $plEmptime->setXsalle($this);
+        }
+
+        return $this;
+    }
+
+    public function removePlEmptime(PlEmptime $plEmptime): self
+    {
+        if ($this->plEmptimes->removeElement($plEmptime)) {
+            // set the owning side to null (unless already changed)
+            if ($plEmptime->getXsalle() === $this) {
+                $plEmptime->setXsalle(null);
             }
         }
 

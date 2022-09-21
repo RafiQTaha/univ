@@ -86,6 +86,9 @@ class PlEmptime
 
     #[ORM\OneToMany(mappedBy: 'seance', targetEntity: HHonens::class)]
     private $honenss;
+
+    #[ORM\ManyToOne(targetEntity: PSalles::class, inversedBy: 'plEmptimes')]
+    private $xsalle;
     
     public function __construct()
     {
@@ -437,6 +440,18 @@ class PlEmptime
                 $honenss->setUserCreated(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getXsalle(): ?PSalles
+    {
+        return $this->xsalle;
+    }
+
+    public function setXsalle(?PSalles $xsalle): self
+    {
+        $this->xsalle = $xsalle;
 
         return $this;
     }

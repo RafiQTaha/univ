@@ -304,6 +304,7 @@ class PlanificationController extends AbstractController
         $emptime->setDescription($request->get('description'));
         $emptime->setProgrammation($programmation);
         $emptime->setSalle($this->em->getRepository(PSalles::class)->find($request->get('salle')));
+        $emptime->setXsalle($this->em->getRepository(PSalles::class)->find($request->get('salle')));
         $emptime->setSemaine($semaine);
         $emptime->setGroupe($this->em->getRepository(PGroupe::class)->find($request->get('groupe')));
         // $emptime->setGroupe($this->em->getRepository(PGroupe::class)->find(4));
@@ -359,6 +360,7 @@ class PlanificationController extends AbstractController
             $emptime->setProgrammation($programmation);
             $emptime->setDescription($request->get('description'));
             $emptime->setSalle($this->em->getRepository(PSalles::class)->find($request->get('salle')));
+            $emptime->setXsalle($this->em->getRepository(PSalles::class)->find($request->get('salle')));
             if ($request->get('vide') == "on") {
                 $emptime->setGroupe(null);
             }elseif ($request->get('edit_groupe') != 0) {
@@ -512,6 +514,7 @@ class PlanificationController extends AbstractController
                 $emptime = new PlEmptime();
                 $emptime->setProgrammation($programmation);
                 $emptime->setSalle($this->em->getRepository(PSalles::class)->find($sheet[1]));
+                $emptime->setXsalle($this->em->getRepository(PSalles::class)->find($sheet[1]));
                 $emptime->setDescription($sheet[2]);
                 $emptime->setSemaine($this->em->getRepository(Semaine::class)->find($sheet[3]));
                 $emptime->setStart(new \DateTime($sheet[4]));
