@@ -17,10 +17,10 @@ class Semaines
     private $semaine;
 
     #[ORM\Column(type: 'string', length: 20, nullable: true)]
-    private $DateD;
+    private $Dated;
 
     #[ORM\Column(type: 'string', length: 20, nullable: true)]
-    private $DateF;
+    private $Datef;
 
     #[ORM\Column(type: 'integer', nullable: true)]
     private $Tranche;
@@ -48,26 +48,26 @@ class Semaines
         return $this;
     }
 
-    public function getDateD(): ?string
+    public function getDated(): ?string
     {
-        return $this->DateD;
+        return $this->Dated;
     }
 
-    public function setDateD(?string $DateD): self
+    public function setDated(?string $Dated): self
     {
-        $this->DateD = $DateD;
+        $this->Dated = $Dated;
 
         return $this;
     }
 
-    public function getDateF(): ?string
+    public function getDatef(): ?string
     {
-        return $this->DateF;
+        return $this->Datef;
     }
 
-    public function setDateF(?string $DateF): self
+    public function setDatef(?string $Datef): self
     {
-        $this->DateF = $DateF;
+        $this->Datef = $Datef;
 
         return $this;
     }
