@@ -312,7 +312,7 @@ class EpreuveController extends AbstractController
         $originalFilename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
         // this is needed to safely include the file name as part of the URL
         $safeFilename = $slugger->slug($originalFilename);
-        $newFilename = $safeFilename.'-'.uniqid().'_'.$this->getUser()->getUserIdentifier().'.'.$file->guessExtension();
+        $newFilename = $safeFilename.'-'.uniqid().'_'.$this->getUser()->getId().'.'.$file->guessExtension();
 
         // Move the file to the directory where brochures are stored
         try {
@@ -344,6 +344,7 @@ class EpreuveController extends AbstractController
         $sheetGenerer->setCellValue('I1', 'anonymat');
         $sheetGenerer->setCellValue('J1', 'Observation');
         $sheetGenerer->setCellValue('K1', 'Nature');
+        $sheetGenerer->setCellValue('L1', 'User');
         $i = 2;
         foreach ($spreadSheetArys as $sheet) {
             $annee = $this->em->getRepository(AcAnnee::class)->find($sheet[1]);
@@ -373,18 +374,19 @@ class EpreuveController extends AbstractController
             );
             $epreuve->setCode('EPV-'.$annee->getFormation()->getEtablissement()->getAbreviation().str_pad($epreuve->getId(), 8, '0', STR_PAD_LEFT).'/'.date('Y'));     
             $this->em->flush();
-            // dump( $epreuve->getId());
+            // dump(37015));
             $sheetGenerer->setCellValue('A'.$i, $epreuve->getId());
             $sheetGenerer->setCellValue('B'.$i, $epreuve->getCode());
             $sheetGenerer->setCellValue('C'.$i, $epreuve->getCoefficient());
-            $sheetGenerer->setCellValue('D'.$i, $element->getId());
-            $sheetGenerer->setCellValue('E'.$i, $annee->getId());
+            $sheetGenerer->setCellValue('D'.$i, $annee->getId());
+            $sheetGenerer->setCellValue('E'.$i, $element->getId());
             $sheetGenerer->setCellValue('F'.$i, $sheet[3]);
             $sheetGenerer->setCellValue('G'.$i, $sheet[4]);
             $sheetGenerer->setCellValue('H'.$i, date_format($epreuve->getDateEpreuve(), 'Y-m-d'));
             $sheetGenerer->setCellValue('I'.$i, $epreuve->getAnonymat());
             $sheetGenerer->setCellValue('J'.$i, $epreuve->getObservation());
             $sheetGenerer->setCellValue('K'.$i, $epreuve->getNature());
+            $sheetGenerer->setCellValue('L'.$i, $epreuve->getUserCreated()->getUsername());
             $i++;
         }
         // die;
@@ -653,5 +655,36 @@ class EpreuveController extends AbstractController
 
         return new JsonResponse(['fileName' => $fileName, 'count' => $count]);
 
+    }
+    #[Route('/edit/{epreuve}', name: 'administration_epreuve_edit')]
+    public function administrationEpreuveEdit(AcEpreuve $epreuve) {
+        $enseignants = $this->em->getRepository(PEnseignant::class)->findAll();
+        $html = $this->renderView('administration_epreuve/pages/epreuve_edit.html.twig', [
+            'epreuve' => $epreuve,
+            'enseignants' => $enseignants
+        ]);
+        return new JsonResponse($html);
+    }
+    #[Route('/update/{epreuve}', name: 'administration_epreuve_update')]
+    public function administrationEpreuveUpdate(Request $request, AcEpreuve $epreuve) {
+        // dd($request);
+       
+        if(empty($request->get('id_enseignant')) or empty($request->get('d_epreuve'))) {
+            return new JsonResponse("Veuillez remplir tous les champs!", 500);
+        }
+        $epreuve->setDateEpreuve(new \DateTime($request->get('d_epreuve')));
+        foreach ($epreuve->getEnseignants() as $key => $enseignant) {
+            $epreuve->removeEnseignant($enseignant);
+        }
+        foreach ($request->get('id_enseignant') as $id) {
+            $epreuve->addEnseignant(
+                $this->em->getRepository(PEnseignant::class)->find($id)
+            );
+        };
+
+        $this->em->flush();
+        return new JsonResponse('Bien enregistre',200);
+
+        
     }
 }

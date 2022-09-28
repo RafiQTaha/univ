@@ -7,8 +7,10 @@ use App\Entity\AcAnnee;
 use App\Entity\PGroupe;
 use App\Entity\XBanque;
 use App\Entity\AcModule;
+use App\Entity\ExGnotes;
 use App\Entity\UsModule;
 use App\Entity\AcElement;
+use App\Entity\AcEpreuve;
 use App\Entity\TEtudiant;
 use App\Entity\AcSemestre;
 use App\Entity\POrganisme;
@@ -19,10 +21,10 @@ use App\Entity\UsOperation;
 use App\Entity\TInscription;
 use App\Entity\UsSousModule;
 use App\Entity\NatureDemande;
+use App\Entity\TOperationcab;
 use App\Entity\PNatureEpreuve;
 use App\Entity\AcEtablissement;
 use App\Entity\PrProgrammation;
-use App\Entity\TOperationcab;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\HttpFoundation\Request;
@@ -41,6 +43,7 @@ class ApiController extends AbstractController
     public function __construct(ManagerRegistry $doctrine)
     {
         $this->em = $doctrine->getManager();
+        $this->emUniv = $doctrine->getManager("univ");
         // $em = $this->getDoctrine()->getManager();
     }
     #[Route('/etablissement', name: 'getetablissement')]
@@ -377,5 +380,57 @@ class ApiController extends AbstractController
         return $operations;
     }
     
+    // /**
+    //  * @Route("/gnote", name="app_gnote")
+    //  */
+    // public function Gnotes(): Response
+    // {
+    //     //1560650 last id i get
+    //     $emUniv = $this->emUniv;   
+    //     $gnotes ="SELECT
+    //                 ex_gnotes.id as id,
+    //                 note,
+    //                 absent as absence,
+    //                 ex_gnotes.observation,
+    //                 ex_gnotes.date_creation as created ,
+    //                 ex_gnotes.anonymat,
+    //                 ac_epreuve.id_epreuve as epreuve_id,
+    //                 t_inscription.id_inscription as inscription_id
+    
+    //             FROM `ex_gnotes`
+    //                 INNER JOIN ac_epreuve  on ac_epreuve.code =ex_gnotes.code_epreuve
+    //                 INNER JOIN t_inscription  on t_inscription.code = ex_gnotes.code_inscription
+    //                 INNER JOIN ac_annee  on ac_annee.code = t_inscription.code_annee
+    //                 where ac_annee.designation= '2021/2022'";
+
+    //     $result = $emUniv->getConnection()->prepare($gnotes);
+    //     $stmt = $result->executeQuery();
+    //     $resulta = $stmt->fetchAll();
+
+    //     //  dd($resulta);
+    //     foreach ($resulta as $data)
+    //     { 
+    //         //   dd($data['created']);
+    //         $epreuve = $this->em->getRepository(AcEpreuve::class)->find($data['epreuve_id']);
+    //         $inscription = $this->em->getRepository(TInscription::class)->find($data['inscription_id']);
+    //         $gnote = new ExGnotes();
+    //         $gnote->setEpreuve($epreuve);
+    //         $gnote->setId($data['id']);
+    //         $gnote->setInscription($inscription);
+    //         $gnote->setUserCreated($this->getUser());
+    //         $gnote->setCreated(new \DateTime($data['created']));
+    //         $gnote->setAnonymat($data['anonymat']);     
+    //         $gnote->setNote($data['note']);
+    //         $gnote->setAbsence($data['absence']);
+    //         $gnote->setObservation($data['observation']);
+    //         $this->em->persist($gnote);
+    //     }
+    //     $this->em->flush();
+  
+    //     // return $this->render('gnote/index.html.twig', [
+    //     //     'controller_name' => 'GnoteController',
+    //     // ]);
+    //     return new Response('good');
+    // }
 
 }
