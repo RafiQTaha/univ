@@ -56,8 +56,6 @@
         "/build/runtime.de6b8033.js",
         "/build/9755.58d5f244.js",
         "/build/8029.7c64de8b.js",
-        "/build/9523.5a6ab50d.js",
-        "/build/epreuve.96503c4c.js"
       ]
     },
     "impression": {
@@ -264,6 +262,14 @@
         "/build/9755.58d5f244.js",
         "/build/8029.7c64de8b.js",
         "/build/promotion.95d4ccd6.js"
+      ]
+    },
+    "annee": {
+      "js": [
+        "/build/runtime.de6b8033.js",
+        "/build/9755.58d5f244.js",
+        "/build/8029.7c64de8b.js",
+        "/build/annee.57493b6a.js"
       ]
     },
     "semestre": {
