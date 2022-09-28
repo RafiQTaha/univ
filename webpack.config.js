@@ -51,6 +51,7 @@ Encore
     .addEntry('programmation', './assets/components/parametre/programmation.js')
     .addEntry('formation', './assets/components/parametre/formation.js')
     .addEntry('promotion', './assets/components/parametre/promotion.js')
+    .addEntry('annee', './assets/components/parametre/annee.js')
     .addEntry('semestre', './assets/components/parametre/semestre.js')
     .addEntry('user', './assets/components/parametre/user.js')
     .addEntry('gestionPlanification', './assets/components/planification/gestion_planification.js')
