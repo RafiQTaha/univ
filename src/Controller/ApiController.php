@@ -43,7 +43,7 @@ class ApiController extends AbstractController
     public function __construct(ManagerRegistry $doctrine)
     {
         $this->em = $doctrine->getManager();
-        $this->emUniv = $doctrine->getManager("univ");
+        // $this->emUniv = $doctrine->getManager("univ");
         // $em = $this->getDoctrine()->getManager();
     }
     #[Route('/etablissement', name: 'getetablissement')]
