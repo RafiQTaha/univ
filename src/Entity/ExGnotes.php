@@ -9,7 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 class ExGnotes
 {
     #[ORM\Id]
-    // #[ORM\GeneratedValue]
+    #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
     private $id;
 
