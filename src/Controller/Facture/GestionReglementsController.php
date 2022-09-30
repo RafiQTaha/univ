@@ -69,7 +69,8 @@ class GestionReglementsController extends AbstractController
          
         $params = $request->query;
         $where = $totalRows = $sqlRequest = "";
-        $filtre = " where 1=1 and (reg.annuler != 1 or reg.annuler is null) ";
+        $filtre = " where 1=1  ";
+        // $filtre = " where 1=1 and (reg.annuler != 1 or reg.annuler is null) ";
         
         if (!empty($params->all('columns')[0]['search']['value'])) {
             $filtre .= " and etab.id = '" . $params->all('columns')[0]['search']['value'] . "' ";
@@ -102,6 +103,7 @@ class GestionReglementsController extends AbstractController
             array( 'db' => 'pae.designation','dt' => 11),
             array( 'db' => 'upper(ban.designation)','dt' => 12),
             array( 'db' => 'lower(brd.code)','dt' => 13),
+            array( 'db' => 'reg.annuler_motif','dt' => 14),
         );
         $sql = "SELECT " . implode(", ", DatatablesController::Pluck($columns, 'db')) . "
         FROM treglement reg 
@@ -127,7 +129,9 @@ class GestionReglementsController extends AbstractController
         if (isset($where) && $where != '') {
             $sqlRequest .= $where;
         }
-        $sqlRequest .= DatatablesController::Order($request, $columns);
+        $changed_column = $params->all('order')[0]['column'] > 0 ? $params->all('order')[0]['column'] - 1 : 0;
+        $sqlRequest .= " ORDER BY " .DatatablesController::Pluck($columns, 'db')[$changed_column] . "   " . $params->all('order')[0]['dir'] . "  LIMIT " . $params->get('start') . " ," . $params->get('length') . " ";
+        // $sqlRequest .= DatatablesController::Order($request, $columns);
         
         $stmt = $this->em->getConnection()->prepare($sqlRequest);
         $resultSet = $stmt->executeQuery();
@@ -140,19 +144,24 @@ class GestionReglementsController extends AbstractController
             $cd = $row['id'];
             $nestedData[] = $i;
             $etat_bg="";
+            $class = "test";
             foreach (array_values($row) as $key => $value) { 
                 $checked = "";
+                $reglement = $this->em->getRepository(TReglement::class)->find($cd);
                 if ($key == 0) {
-                    $check = $this->em->getRepository(TReglement::class)->find($value);
-                    if ((!empty($check->getBordereau())) OR ( $check->getImpayer() == '1')) {
+                    if ((!empty($reglement->getBordereau())) OR ( $reglement->getImpayer() == '1') OR (($reglement->getAnnuler() == 1) AND (!empty($reglement->getBordereau())))) {
                         $checked = " class='check_reg' disabled checked";
+                    }elseif ($reglement->getAnnuler() == 1) {
+                        $checked = " class='check_reg' disabled";
                     }
                     $value = '<input id="check" type="checkbox" data-id='.$value.' '.$checked.'/>';
+                    $class = $reglement->getAnnuler() == 1 ? "etat_bg_nf" : "" ;
                 }
                 $nestedData[] = $value;
             }
+            
             $nestedData["DT_RowId"] = $cd;
-            $nestedData["DT_RowClass"] = "";
+            $nestedData["DT_RowClass"] = $class;
             $data[] = $nestedData;
             $i++;
         }
