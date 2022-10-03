@@ -371,7 +371,7 @@ class PlanificationController extends AbstractController
             if ($programmation == null) {
                 return new Response("Programmation introuvable ou l'annee ".$annee->getDesignation()." est cloturée!!",500);
             }
-            if ($request->get('nature_seance') == "" || $request->get('nature_seance') == "" || $request->get('salle') =="" || (!str_contains($element->getModule()->getSemestre()->getPromotion()->getFormation()->getDesignation(), 'Résidanat') && $request->get('salle') == "")) {
+            if ($request->get('nature_seance') == "" || $request->get('nature_seance') == "" || (!str_contains($element->getModule()->getSemestre()->getPromotion()->getFormation()->getDesignation(), 'Résidanat') && $request->get('salle') == "")) {
                 return new Response('Merci de renseignez tout les champs',500);
             }
             $emptime->setProgrammation($programmation);
