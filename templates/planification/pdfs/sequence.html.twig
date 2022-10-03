@@ -227,7 +227,11 @@
     
     <tr>
         <td style="width: 25% ;border:1px solid gray;"> &nbsp;Salle : </td> 
-        <td style="width: 33% ;border:1px solid gray;">{{seance.salle.designation}}</td> 
+        <td style="width: 33% ;border:1px solid gray;">
+            {% if seance.salle != null %}
+                {{seance.salle.designation}}
+            {% endif %}
+        </td> 
         <td style="width: 25% ;border:1px solid gray;"> Semestre :</td> 
         <td style="width: 32.2% ;border:1px solid gray;">{{seance.programmation.element.module.semestre.designation}}</td>
     </tr>
