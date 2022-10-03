@@ -110,6 +110,7 @@ class PlanificationController extends AbstractController
             // dd(count($emptimens));
             $element = $emptime->getProgrammation()->getElement();
             $natureEpreuve = $emptime->getProgrammation()->getNatureEpreuve();
+            $salle = $emptime->getSalle() == null ? "" : $emptime->getSalle()->getDesignation();
             $times[] = [
                 'id' => $emptime->getId(),
                 'title' => $emptime->getCode() . "\n".
@@ -117,7 +118,7 @@ class PlanificationController extends AbstractController
                         ' Type de Cours :  '.$natureEpreuve->getDesignation() . "\n".
                         $enseingant .
                         'Niv : '.$nivs  . 
-                        'salle : '. $emptime->getSalle()->getDesignation(),
+                        'salle : '.$salle ,
                 'start' => $emptime->getStart()->format('Y-m-d H:i:s'),
                 'end' => $emptime->getEnd()->format('Y-m-d H:i:s'),
                 'color'=> $element->getModule()->getColor(),
@@ -279,6 +280,22 @@ class PlanificationController extends AbstractController
     #[Route('/planifications_calendar_add', name: 'planifications_calendar_add')]
     public function planifications_calendar_add(Request $request): Response
     {
+        // $seance = $this->em->getRepository(PlEmptime::class)->find(15887);
+        // // dd($seances);
+        // // foreach ($seances as $seance) {
+        //     // dd($seance);
+        //     $sql = "select * from semaine 
+        //     where id >= 100 and id <= 200 and date(date_debut) <= (SELECT date(start) FROM `pl_emptime`
+        //     where id = ".$seance->getId().") and date(date_fin) >= (SELECT date(start) FROM `pl_emptime`
+        //     where id = ".$seance->getId().")";
+        //     $stmt = $this->em->getConnection()->prepare($sql);
+        //     $resultSet = $stmt->executeQuery();
+        //     $semaine = $resultSet->fetchAll();
+        //     // dd($semaine[0]['id']);
+        //     $seance->setSemaine($this->em->getRepository(semaine::class)->find($semaine[0]['id']));
+        //     $this->em->flush();
+        // // }
+        // dd('ggod');
         if ($request->get('nature_seance') == "" || $request->get('element') =="" ) {
             return new Response('Merci de renseignez tout les champs',500);
         }
@@ -607,5 +624,93 @@ class PlanificationController extends AbstractController
         $mpdf->WriteHTML($html);
         $mpdf->Output("Fiche D'abcense.pdf", "I");
     }
+    
+    // #[Route('/extraction_planning', name: 'extraction_planning')]
+    // public function extraction_planning()
+    // {   
+    //     $spreadsheet = new Spreadsheet();
+    //     $sheet = $spreadsheet->getActiveSheet();
+    //     $sheet->setCellValue('A1', 'ID');
+    //     $sheet->setCellValue('B1', 'CODE SEANCE');
+    //     $sheet->setCellValue('C1', 'NSEMAINE');
+    //     $sheet->setCellValue('D1', 'ANNEE');
+    //     $sheet->setCellValue('E1', 'ETABLISSEMNT');
+    //     $sheet->setCellValue('F1', 'FORMATION');
+    //     $sheet->setCellValue('G1', 'PROMOTION');
+    //     $sheet->setCellValue('H1', 'SEMESTRE');
+    //     $sheet->setCellValue('I1', 'MODULE');
+    //     $sheet->setCellValue('J1', 'CODE ELEMENT');
+    //     $sheet->setCellValue('K1', 'ELEMENT');
+    //     $sheet->setCellValue('L1', 'NATURE EPREUVE');
+
+    //     $sheet->setCellValue('M1', 'ID TYPE');
+    //     $sheet->setCellValue('N1', 'TYPE');
+        
+    //     $sheet->setCellValue('O1', 'DateSeance');
+    //     $sheet->setCellValue('P1', 'Date_début');
+    //     $sheet->setCellValue('Q1', 'Date_fin');
+    //     $sheet->setCellValue('R1', 'VALIDER');
+    //     $sheet->setCellValue('S1', 'GENERER');
+    //     $sheet->setCellValue('T1', 'ANNULER');
+    //     $sheet->setCellValue('U1', 'CODE SALLE');
+    //     $sheet->setCellValue('V1', 'NIVEAU');
+    //     $sheet->setCellValue('W1', 'CODE ENSEIGNANT');
+    //     $sheet->setCellValue('X1', 'NOM');
+    //     $sheet->setCellValue('Y1', 'PRENOM');
+    //     $sheet->setCellValue('Z1', 'CODE GRADE');
+    //     $sheet->setCellValue('AA1', 'GRADE');
+    //     $i=2;
+    //     $j=1;
+    //     $currentyear = date('m') > 7 ? $current_year = date('Y').'/'.date('Y')+1 : $current_year = date('Y') - 1 .'/' .date('Y');
+        
+    //     // $currentyear = '2022/2023';
+    //     // dd($currentyear);
+    //     // $reglements = $this->em->getRepository(TReglement::class)->getReglementsByCurrentYear($currentyear);
+    //     $seances = $this->em->getRepository(PlEmptime::class)->findSeanceByCurrentYears($currentyear);
+    //     foreach( range('A', 'Z') as $elements) {
+      
+    //         // Display all alphabetic elements
+    //         // one after another
+    //         dump($elements);
+    //     }
+    //     die;
+    //     foreach ($seances as $seance) {
+    //         dd($seance);
+    //         $sheet->setCellValue('A'.$i, $j);
+    //         $sheet->setCellValue('B'.$i, $reglement['code_etu']);
+    //         $sheet->setCellValue('C'.$i, $reglement['code_preins']);
+    //         $sheet->setCellValue('D'.$i, $reglement['code_facture']);
+    //         $sheet->setCellValue('E'.$i, $reglement['annee']);
+    //         $sheet->setCellValue('F'.$i, $reglement['nom']);
+    //         $sheet->setCellValue('G'.$i, $reglement['prenom']);
+    //         $sheet->setCellValue('H'.$i, $reglement['nationalite']);
+    //         $sheet->setCellValue('I'.$i, $reglement['etablissement']);
+    //         $sheet->setCellValue('J'.$i, $reglement['formation']);
+    //         $sheet->setCellValue('K'.$i, $reglement['code_reglement']);
+
+    //         $sheet->setCellValue('L'.$i, $reglement['montant_regle']);
+    //         $sheet->setCellValue('M'.$i, $reglement['montant_provisoir']);
+    //         $sheet->setCellValue('N'.$i, $reglement['montant_devis']);
+
+    //         $sheet->setCellValue('O'.$i, $reglement['reference']);
+    //         $sheet->setCellValue('P'.$i, $reglement['mode_paiement']);
+
+    //         if ($reglement['date_reglement'] != null) {
+    //             $sheet->setCellValue('Q'.$i, $reglement['date_reglement']->format('d-m-Y'));
+    //         }
+    //         if ($reglement['created'] != null) {
+    //             $sheet->setCellValue('R'.$i, $reglement['created']->format('d-m-Y'));
+    //         }
+    //         $sheet->setCellValue('S'.$i, $reglement['u_created']);
+    //         $sheet->setCellValue('T'.$i, $reglement['u_updated']);
+    //         $sheet->setCellValue('U'.$i, $reglement['num_brd']);
+    //         $i++;
+    //     }
+    //     $writer = new Xlsx($spreadsheet);
+    //     $fileName = 'Extraction Seance.xlsx';
+    //     $temp_file = tempnam(sys_get_temp_dir(), $fileName);
+    //     $writer->save($temp_file);
+    //     return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);
+    // }
     
 }

@@ -222,6 +222,36 @@ class PlEmptimeRepository extends ServiceEntityRepository
         $result = $resultSets->fetchAll();
         return $result;
     }
+
+    // public function findSeanceByCurrentYears($currentyear)
+    // {
+    //     $sqls="SELECT DISTINCT ep.id,ep.code,sm.id,sm.nsemaine,ann.id,ann.designation 'Année',etab.id,etab.designation 'Etablissement',
+    //     frm.id,frm.designation 'Formation',prm.id,prm.designation 'Promotion',sem.id,sem.designation 'Semestre',mdl.id,mdl.designation 'Module',ele.id,ele.code 'Code_element',ele.designation 'Element',ne.id,ne.designation 'Nature_epreuve',te.id 'Id_Type',te.designation 'Type',date(start) 'DateSeance',ep.start 'Date_début',ep.end 'Date_fin',ep.valider,ep.generer,ep.annuler,s.id,s.code as code_salle,s.designation 'Salle',grp.id,grp.niveau,epe.id,epe.code as code_enseignant,epe.nom,epe.prenom,gr.id,gr.code as code_grade,gr.abreviation 'Grade'
+    //     FROM pl_emptime ep
+    //     INNER join pr_programmation pr on pr.id = ep.programmation_id
+    //     INNER join pnature_epreuve ne on ne.id = pr.nature_epreuve_id
+    //     INNER join ac_element ele on ele.id = pr.element_id
+    //     INNER JOIN type_element te on te.id = ele.nature_id
+    //     INNER join ac_module mdl on mdl.id = ele.module_id
+    //     INNER join ac_semestre sem on sem.id = mdl.semestre_id
+    //     INNER join ac_promotion prm on prm.id = sem.promotion_id
+    //     inner join ac_formation frm on frm.id = prm.formation_id
+    //     INNER JOIN ac_annee ann ON ann.id = pr.annee_id
+    //     INNER join ac_etablissement etab on etab.id = frm.etablissement_id
+    //     INNER join semaine sm on sm.id = ep.semaine_id
+    //     left join pl_emptimens emen on emen.seance_id = ep.id
+    //     left join penseignant epe on epe.id = emen.enseignant_id
+    //     left join pgrade gr on gr.id = epe.grade_id
+    //     LEFT JOIN psalles s ON s.id = ep.salle_id
+    //     LEFT JOIN pgroupe grp ON grp.id = ep.groupe_id
+    //     WHERE ann.designation= '$currentyear' ";
+    //     // dd($sqls);
+    //     $stmts = $this->em->getConnection()->prepare($sqls);
+    //     $resultSets = $stmts->executeQuery();
+    //     $result = $resultSets->fetchAll();
+    //     return $result;
+    // }
+    
     
     
     
