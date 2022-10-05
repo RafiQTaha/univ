@@ -72,7 +72,6 @@ $(document).ready(function  () {
         preDrawCallback: function(settings) {
             if ($.fn.DataTable.isDataTable('#list_epreuve_rattrapage')) {
                 var dt = $('#list_epreuve_rattrapage').DataTable();
-
                 //Abort previous ajax request if it is still in process.
                 var settings = dt.settings();
                 if (settings[0].jqXHR) {
