@@ -9,7 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 class ExGnotes
 {
     #[ORM\Id]
-    // #[ORM\GeneratedValue]
+    #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
     private $id;
 
@@ -58,13 +58,7 @@ class ExGnotes
         $this->epreuve = $epreuve;
 
         return $this;
-    }
-    public function setId(?int $id): self
-    {
-        $this->id = $id;
-
-        return $this;
-    }
+    }   
 
     public function getInscription(): ?TInscription
     {
