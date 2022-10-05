@@ -212,7 +212,9 @@
         </td>
     </tr>   
 </table>
-
+{# <br> #}
+<br>
+{% set index = 1 %}
 <table style="width: 100%;" align="center" cellspacing="0">
     <tbody>
         <tr>
@@ -234,14 +236,15 @@
     </tr>
     {% for mnote in noteModulesBySemestre1 %}
         <tr>
-            <td style="width: 8%;padding: 3px;font-size: 8px;text-align: left;border: 0px;"><b>MODULE {{loop.index}}</b></td>
+            <td style="width: 8%;padding: 3px;font-size: 8px;text-align: left;border: 0px;"><b>MODULE {{index}}</b></td>
             <td style="width: 38%;padding: 3px;font-size: 8px;text-align: left;border: 0px;">{{mnote.module.designation}}</td>
             <td style="width: 9%;padding: 3px;font-size: 8px;text-align:center;border: 0px;">{% if mnote.statutAff.id == 35 %} -  {% else %} {{mnote.noteIni}}{% endif %}</td>
-            <td style="width: 9%;padding: 3px;font-size: 8px;text-align:center;border: 0px;">{% if mnote.statutAff.id == 35 or mnote.noteRat is null %} -  {% else %} {{ mnote.noteRat}}{% endif %}</td>
+            <td style="width: 9%;padding: 3px;font-size: 8px;text-align:center;border: 0px;">{% if mnote.statutAff.id == 34 or mnote.noteRat is null %} -  {% else %} {{ mnote.noteRat}}{% endif %}</td>
             <td style="width: 9%;padding: 3px;font-size: 8px;text-align:center;border: 0px;">{% if mnote.statutAff.id == 35 %} -  {% else %} {{mnote.note}}{% endif %}</td>
             <td style="width: 15%;padding: 3px;font-size: 7px;text-align:left;border: 0px;">{{mnote.statutAff.designation}}</td>
             <td style="width: 10%;padding: 3px;font-size: 7px;text-align: left;border: 0px;">{{mnote.observation}}</td>
         </tr>
+        {% set index = index + 1 %}
     {% endfor %}    
 
 
@@ -253,10 +256,10 @@
             <td style="width: 100%; text-align: left;font-size: 10px;">
                 
                 {% if assiduite == 1 %}
-                    <p style="margin: 15px 0px 0px 0px"><b>MOYENNE {{noteSemestre1.semestre.designation}} :  {% if noteSemestre1.statutAff.id == 40 %} - {% else %}{{noteSemestre1.noteSec}}{% endif %}</b></p>
+                    <p style="margin: 15px 0px 0px 0px"><b>MOYENNE {{noteSemestre1.semestre.designation}} :  {% if noteSemestre1.statutAff.id == 40 %} - {% else %}{{noteSemestre1.noteSec|number_format(2) }}{% endif %}</b></p>
                     <p style="margin: 2px 0px 0px 0px"><b>STATUT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{noteSemestre1.semestre.designation}} :{{noteSemestre1.statutAff.designation}}</b></p>
                 {% else %} 
-                    <p style="margin: 15px 0px 0px 0px"><b>MOYENNE {{noteSemestre1.semestre.designation}} :  {% if noteSemestre1.statutAff.id == 40 %} - {% else %}{{noteSemestre1.note}}{% endif %}</b></p>
+                    <p style="margin: 15px 0px 0px 0px"><b>MOYENNE {{noteSemestre1.semestre.designation}} :  {% if noteSemestre1.statutAff.id == 40 %} - {% else %}{{noteSemestre1.note|number_format(2) }}{% endif %}</b></p>
                     <p style="margin: 2px 0px 0px 0px"><b>STATUT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{noteSemestre1.semestre.designation}} :{{noteSemestre1.statutAff.designation}}</b></p>
                 {% endif %}
                 
@@ -290,14 +293,16 @@
     </tr>
     {% for mnote in noteModulesBySemestre2 %}
         <tr>
-            <td style="width: 8%;padding: 3px;font-size: 8px;text-align: left;border: 0px;"><b>MODULE {{loop.index}}</b></td>
+            <td style="width: 8%;padding: 3px;font-size: 8px;text-align: left;border: 0px;"><b>MODULE {{index}}</b></td>
             <td style="width: 38%;padding: 3px;font-size: 8px;text-align: left;border: 0px;">{{mnote.module.designation}}</td>
             <td style="width: 9%;padding: 3px;font-size: 8px;text-align:center;border: 0px;">{% if mnote.statutAff.id == 35 %}  -  {% else %} {{mnote.noteIni}}{% endif %}</td>
-            <td style="width: 9%;padding: 3px;font-size: 8px;text-align:center;border: 0px;">{% if mnote.statutAff.id == 35 or mnote.noteRat is null  %} -  {% else %} {{ mnote.noteRat}}{% endif %}</td>
+            <td style="width: 9%;padding: 3px;font-size: 8px;text-align:center;border: 0px;">{% if mnote.statutAff.id == 34 or mnote.noteRat is null  %} -  {% else %} {{ mnote.noteRat}}{% endif %}</td>
             <td style="width: 9%;padding: 3px;font-size: 8px;text-align:center;border: 0px;">{% if mnote.statutAff.id == 35 %} -  {% else %} {{mnote.note}} {% endif %}</td>
             <td style="width: 15%;padding: 3px;font-size: 7px;text-align:left;border: 0px;">{{mnote.statutAff.designation}}</td>
             <td style="width: 10%;padding: 3px;font-size: 7px;text-align: left;border: 0px;">{{mnote.observation}}</td>
         </tr>
+        {% set index = index + 1 %}
+
     {% endfor %}    
 
 
@@ -309,10 +314,10 @@
             <td style="width: 100%; text-align: left;font-size: 10px;">
                 
                 {% if assiduite == 1 %}
-                    <p style="margin: 15px 0px 0px 0px"><b>MOYENNE {{noteSemestre2.semestre.designation}} :  {% if noteSemestre2.statutAff.id == 40 %} - {% else %}{{noteSemestre2.noteSec}}{% endif %}</b></p>
+                    <p style="margin: 15px 0px 0px 0px"><b>MOYENNE {{noteSemestre2.semestre.designation}} :  {% if noteSemestre2.statutAff.id == 40 %} - {% else %}{{noteSemestre2.noteSec|number_format(2) }}{% endif %}</b></p>
                     <p style="margin: 2px 0px 0px 0px"><b>STATUT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{noteSemestre2.semestre.designation}} :{{noteSemestre2.statutAff.designation}}</b></p>
                 {% else %} 
-                    <p style="margin: 15px 0px 0px 0px"><b>MOYENNE {{noteSemestre2.semestre.designation}} :  {% if noteSemestre2.statutAff.id == 40 %} - {% else %}{{noteSemestre2.note}}{% endif %}</b></p>
+                    <p style="margin: 15px 0px 0px 0px"><b>MOYENNE {{noteSemestre2.semestre.designation}} :  {% if noteSemestre2.statutAff.id == 40 %} - {% else %}{{noteSemestre2.note|number_format(2) }}{% endif %}</b></p>
                     <p style="margin: 2px 0px 0px 0px"><b>STATUT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{noteSemestre2.semestre.designation}} :{{noteSemestre2.statutAff.designation}}</b></p>
                 {% endif %}
                 
@@ -338,9 +343,9 @@
             </td>
             <td style="width: 80%">
                 {% if assiduite == 1 %}
-                <b>: {{inscription.anotes.noteSec}}</b>
+                <b>: {{inscription.anotes.noteSec|number_format(2) }}</b>
                 {% else %}
-                <b>: {{inscription.anotes.note}}</b>
+                <b>: {{inscription.anotes.note|number_format(2) }}</b>
                 {% endif %}
             </td>
         </tr>

@@ -58,13 +58,7 @@ class ExGnotes
         $this->epreuve = $epreuve;
 
         return $this;
-    }
-    public function setId(?int $id): self
-    {
-        $this->id = $id;
-
-        return $this;
-    }
+    }   
 
     public function getInscription(): ?TInscription
     {
