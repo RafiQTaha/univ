@@ -110,6 +110,7 @@ class PlanificationController extends AbstractController
             // dd(count($emptimens));
             $element = $emptime->getProgrammation()->getElement();
             $natureEpreuve = $emptime->getProgrammation()->getNatureEpreuve();
+            $salle = $emptime->getSalle() == null ? "" : $emptime->getSalle()->getDesignation();
             $times[] = [
                 'id' => $emptime->getId(),
                 'title' => $emptime->getCode() . "\n".
@@ -117,7 +118,7 @@ class PlanificationController extends AbstractController
                         ' Type de Cours :  '.$natureEpreuve->getDesignation() . "\n".
                         $enseingant .
                         'Niv : '.$nivs  . 
-                        'salle : '. $emptime->getSalle()->getDesignation(),
+                        'salle : '.$salle ,
                 'start' => $emptime->getStart()->format('Y-m-d H:i:s'),
                 'end' => $emptime->getEnd()->format('Y-m-d H:i:s'),
                 'color'=> $element->getModule()->getColor(),
@@ -279,6 +280,22 @@ class PlanificationController extends AbstractController
     #[Route('/planifications_calendar_add', name: 'planifications_calendar_add')]
     public function planifications_calendar_add(Request $request): Response
     {
+        // $seance = $this->em->getRepository(PlEmptime::class)->find(15887);
+        // // dd($seances);
+        // // foreach ($seances as $seance) {
+        //     // dd($seance);
+        //     $sql = "select * from semaine 
+        //     where id >= 100 and id <= 200 and date(date_debut) <= (SELECT date(start) FROM `pl_emptime`
+        //     where id = ".$seance->getId().") and date(date_fin) >= (SELECT date(start) FROM `pl_emptime`
+        //     where id = ".$seance->getId().")";
+        //     $stmt = $this->em->getConnection()->prepare($sql);
+        //     $resultSet = $stmt->executeQuery();
+        //     $semaine = $resultSet->fetchAll();
+        //     // dd($semaine[0]['id']);
+        //     $seance->setSemaine($this->em->getRepository(semaine::class)->find($semaine[0]['id']));
+        //     $this->em->flush();
+        // // }
+        // dd('ggod');
         if ($request->get('nature_seance') == "" || $request->get('element') =="" ) {
             return new Response('Merci de renseignez tout les champs',500);
         }
@@ -304,6 +321,7 @@ class PlanificationController extends AbstractController
         $emptime->setDescription($request->get('description'));
         $emptime->setProgrammation($programmation);
         $emptime->setSalle($this->em->getRepository(PSalles::class)->find($request->get('salle')));
+        $emptime->setXsalle($this->em->getRepository(PSalles::class)->find($request->get('salle')));
         $emptime->setSemaine($semaine);
         $emptime->setGroupe($this->em->getRepository(PGroupe::class)->find($request->get('groupe')));
         // $emptime->setGroupe($this->em->getRepository(PGroupe::class)->find(4));
@@ -346,6 +364,7 @@ class PlanificationController extends AbstractController
     #[Route('/planifications_calendar_edit/{id}', name: 'planifications_calendar_edit')]
     public function planifications_calendar_edit(PlEmptime $emptime,Request $request): Response
     {
+        // dd($request->get('n_semaine'));
         if($emptime->getValider() != 1){
             $element = $this->em->getRepository(AcElement::class)->find($request->get('element'));
             $annee = $this->em->getRepository(AcAnnee::class)->getActiveAnneeByFormation($element->getModule()->getSemestre()->getPromotion()->getFormation());
@@ -353,12 +372,18 @@ class PlanificationController extends AbstractController
             if ($programmation == null) {
                 return new Response("Programmation introuvable ou l'annee ".$annee->getDesignation()." est cloturée!!",500);
             }
-            if ($request->get('nature_seance') == "" || $request->get('nature_seance') == "" || $request->get('salle') =="" || (!str_contains($element->getModule()->getSemestre()->getPromotion()->getFormation()->getDesignation(), 'Résidanat') && $request->get('salle') == "")) {
+            if ($request->get('nature_seance') == "" || $request->get('nature_seance') == "" || (!str_contains($element->getModule()->getSemestre()->getPromotion()->getFormation()->getDesignation(), 'Résidanat') && $request->get('salle') == "")) {
                 return new Response('Merci de renseignez tout les champs',500);
             }
+            $semaine = $this->em->getRepository(Semaine::class)->findOneBy(['nsemaine'=>$request->get('n_semaine'),'anneeS'=>$annee->getDesignation()]);
+            if ($semaine == null) {
+                return new Response("Semaine Introuvable ou l'annee ".$annee->getDesignation()." est cloturée!!",500);
+            }
+            $emptime->setSemaine($semaine);
             $emptime->setProgrammation($programmation);
             $emptime->setDescription($request->get('description'));
             $emptime->setSalle($this->em->getRepository(PSalles::class)->find($request->get('salle')));
+            $emptime->setXsalle($this->em->getRepository(PSalles::class)->find($request->get('salle')));
             if ($request->get('vide') == "on") {
                 $emptime->setGroupe(null);
             }elseif ($request->get('edit_groupe') != 0) {
@@ -512,6 +537,7 @@ class PlanificationController extends AbstractController
                 $emptime = new PlEmptime();
                 $emptime->setProgrammation($programmation);
                 $emptime->setSalle($this->em->getRepository(PSalles::class)->find($sheet[1]));
+                $emptime->setXsalle($this->em->getRepository(PSalles::class)->find($sheet[1]));
                 $emptime->setDescription($sheet[2]);
                 $emptime->setSemaine($this->em->getRepository(Semaine::class)->find($sheet[3]));
                 $emptime->setStart(new \DateTime($sheet[4]));

@@ -266,6 +266,14 @@
         "/build/promotion.95d4ccd6.js"
       ]
     },
+    "annee": {
+      "js": [
+        "/build/runtime.de6b8033.js",
+        "/build/9755.58d5f244.js",
+        "/build/8029.7c64de8b.js",
+        "/build/annee.57493b6a.js"
+      ]
+    },
     "semestre": {
       "js": [
         "/build/runtime.de6b8033.js",
@@ -279,7 +287,7 @@
         "/build/runtime.de6b8033.js",
         "/build/9755.58d5f244.js",
         "/build/8029.7c64de8b.js",
-        "/build/user.659bd3b6.js"
+        "/build/user.a06aad77.js"
       ]
     },
     "gestionPlanification": {
@@ -288,7 +296,7 @@
         "/build/9755.58d5f244.js",
         "/build/8029.7c64de8b.js",
         "/build/3918.bd0695ed.js",
-        "/build/gestionPlanification.f37c155a.js"
+        "/build/gestionPlanification.46e8f70c.js"
       ]
     },
     "planification": {
@@ -296,7 +304,7 @@
         "/build/runtime.de6b8033.js",
         "/build/9755.58d5f244.js",
         "/build/8029.7c64de8b.js",
-        "/build/planification.7ac8b742.js"
+        "/build/planification.98c516b9.js"
       ]
     },
     "preinscription": {

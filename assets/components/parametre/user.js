@@ -223,16 +223,21 @@ const Toast = Swal.mixin({
     
     $("body").on("click", ".btn_reinitialiser",async function(){
         var id = $(this).attr("id");
+        const icon = $(this).find("i");
+        icon.remove('fa-sync').addClass("fa-spinner fa-spin ");
         try {
             const request = await axios.post("/reinitialiser/"+id);
             const response = request.data;
             table.ajax.reload();
+            icon.addClass('fa-sync').removeClass("fa-spinner fa-spin ");
             Toast.fire({
                 icon: 'success',
                 title: response,
-            }) 
+            })
+            id_user = flase;
         } catch (error) {
             const message = error.response.data;
+            icon.addClass('fa-sync').removeClass("fa-spinner fa-spin ");
             Toast.fire({
                 icon: 'error',
                 title: message,

@@ -94,6 +94,7 @@ $(document).ready(function () {
         },
         eventRender: function (event, element) {
             element.bind('dblclick', function () {
+                currentweek = moment(event.start, "MMDDYYYY").isoWeek();
                 id_planning = event.id;
                 if (id_planning) {
                     let formData = new FormData();
@@ -342,6 +343,7 @@ $(document).ready(function () {
         e.preventDefault();
         var formData = new FormData(this);
         formData.append('edit_groupe', edit_groupe);
+        formData.append('n_semaine', currentweek);
         ////////////
         let modalAlert =  $("#updateform_planif-modal .modal-body .alert");
         modalAlert.remove();

@@ -432,6 +432,12 @@ $(document).ready(function () {
             })
         }
     })
+
+    $('body').on('click','#extraction', async function (e) {
+        e.preventDefault();
+        const icon = $("#extraction i");
+        window.open('/planification/gestions/extraction_planning', '_blank');
+    })
      
     
 })

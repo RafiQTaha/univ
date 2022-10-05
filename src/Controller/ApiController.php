@@ -72,7 +72,7 @@ class ApiController extends AbstractController
     #[Route('/annee/{id}', name: 'getAnnee')]
     public function getAnnee($id): Response
     {   
-        $annee = $this->em->getRepository(AcAnnee::class)->findBy(['formation'=>$id, 'active' => 1],['id'=>'DESC']);
+        $annee = $this->em->getRepository(AcAnnee::class)->findBy(['formation'=>$id, 'active' => 1],['designation'=>'DESC']);
         $data = self::dropdown($annee,'Annee');
         return new JsonResponse($data);
     }

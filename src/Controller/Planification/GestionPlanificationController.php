@@ -19,7 +19,11 @@ use App\Entity\PlEmptimens;
 use App\Entity\Semaine;
 use App\Entity\TInscription;
 use Mpdf\Mpdf;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\Reader\Xlsx as reader;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 
 #[Route('/planification/gestions')]
 class GestionPlanificationController extends AbstractController
@@ -346,4 +350,34 @@ class GestionPlanificationController extends AbstractController
         $mpdf->WriteHTML($html);
         $mpdf->Output("Fiche D'abcense.pdf", "I");
     }  
+    
+    #[Route('/extraction_planning', name: 'extraction_planning')]
+    public function extraction_planning()
+    {   
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        $i=2;
+        $j=1;
+        $currentyear = date('m') > 7 ? $current_year = date('Y').'/'.date('Y')+1 : $current_year = date('Y') - 1 .'/' .date('Y');
+        $seances = $this->em->getRepository(PlEmptime::class)->findSeanceByCurrentYears($currentyear);
+        $sheet->fromArray(
+            array_keys($seances[0]),
+            null,
+            'A1'
+        );
+        foreach ($seances as $seance) {
+            $sheet->fromArray(
+                $seance,
+                null,
+                'A'.$i
+            );
+            $i++;
+            $j++;
+        }
+        $writer = new Xlsx($spreadsheet);
+        $fileName = 'Extraction Seances.xlsx';
+        $temp_file = tempnam(sys_get_temp_dir(), $fileName);
+        $writer->save($temp_file);
+        return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);
+    }
 }

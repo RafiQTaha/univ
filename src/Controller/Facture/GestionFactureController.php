@@ -360,6 +360,24 @@ class GestionFactureController extends AbstractController
         $mpdf->WriteHTML($html);
         $mpdf->Output("facture.pdf", "I");
     }
+
+    
+    #[Route('/printreleve/{operationcab}', name: 'imprimerreleve')]
+    public function imprimerreleve(TOperationcab $operationcab)
+    {
+        $all = [];
+        $operationcabs = $this->em->getRepository(TOperationcab::class)->findBy(['preinscription'=>$operationcab->getPreinscription()]);
+        foreach ($operationcabs as $operationcab) {
+            $all = [
+                'operationcab' => $operationcab,
+                'operationdets' => $this->em->getRepository(TOperationdet::class)->FindDetGroupByFrais($operationcab),
+                'reglements' => $this->em->getRepository(TReglement::class)->findBy(['operation'=>$operationcab])
+            ];
+            // # code...
+        }
+        dd($all);
+        $operationdets = $this->em->getRepository(TOperationdet::class)->FindDetGroupByFrais($operationcab);
+    }
     
     #[Route('/article_frais/{id}', name: 'article_frais_facture')]
     public function article_frais(Request $request,TOperationCab $operationcab): Response
