@@ -35,6 +35,17 @@ $(document).ready(function  () {
             $("body tr#" + id_epreuve).addClass('active_databales')
 
         },
+        preDrawCallback: function(settings) {
+            if ($.fn.DataTable.isDataTable('#list_epreuve_normal')) {
+                var dt = $('#list_epreuve_normal').DataTable();
+
+                //Abort previous ajax request if it is still in process.
+                var settings = dt.settings();
+                if (settings[0].jqXHR) {
+                    settings[0].jqXHR.abort();
+                }
+            }
+        },
         language: {
             url: "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/French.json",
         },
@@ -57,6 +68,17 @@ $(document).ready(function  () {
             });
             $("body tr#" + id_epreuve).addClass('active_databales')
 
+        },
+        preDrawCallback: function(settings) {
+            if ($.fn.DataTable.isDataTable('#list_epreuve_rattrapage')) {
+                var dt = $('#list_epreuve_rattrapage').DataTable();
+
+                //Abort previous ajax request if it is still in process.
+                var settings = dt.settings();
+                if (settings[0].jqXHR) {
+                    settings[0].jqXHR.abort();
+                }
+            }
         },
         language: {
             url: "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/French.json",
