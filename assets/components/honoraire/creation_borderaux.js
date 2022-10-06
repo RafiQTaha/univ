@@ -223,6 +223,7 @@ $(document).ready(function () {
                 icon: 'success',
                 title: 'Borderaux Bien Crée',
             })
+            ids_seances = [];
             window.open('/honoraire/creation_borderaux/honoraire_borderaux/'+response, '_blank');
             table_creation_borderaux.ajax.reload(null,false);
             icon.addClass('fa-folder-open').removeClass("fa-spinner fa-spin");
