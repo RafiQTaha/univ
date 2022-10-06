@@ -329,7 +329,7 @@ class TInscriptionRepository extends ServiceEntityRepository
                 ->andWhere("i.id < :id")
                 ->andWhere("statut.id = 13")
                 ->setParameter('admission', $inscription->getAdmission())
-                ->setParameter('id', $inscription->getId())
+                ->setParameter('id', $previousInscription->getId())
                 ->setMaxResults(1)
                 ->orderBy("i.id", "desc")
                 ->getQuery()
