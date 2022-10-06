@@ -149,6 +149,7 @@ class GestionBorderauxController extends AbstractController
             $halbhon = $this->em->getRepository(HAlbhon::class)->find($id);
             foreach ($halbhon->getHonenss() as $honens) {
                 $honens->setBordereau(Null);
+                $honens->setStatut('E');
                 $this->em->flush();
             }
         }

@@ -244,7 +244,7 @@ class PlEmptimeRepository extends ServiceEntityRepository
         left join pgrade gr on gr.id = epe.grade_id
         LEFT JOIN psalles s ON s.id = ep.salle_id
         LEFT JOIN pgroupe grp ON grp.id = ep.groupe_id
-        WHERE ann.designation= '$currentyear' ";
+        WHERE ann.designation= '$currentyear' and emp.active = 1";
         // dd($sqls);
         $stmts = $this->em->getConnection()->prepare($sqls);
         $resultSets = $stmts->executeQuery();
