@@ -144,12 +144,15 @@ class CreationBorderauxController extends AbstractController
             $etat_bg="";
             foreach (array_values($row) as $key => $value) { 
                 $checked = "";
+                $select = "";
                 if ($key == 0) {
                     $borderau = $this->em->getRepository(HHonens::class)->find($cd)->getBordereau();
                     if ($borderau != NULL) {
                         $checked = "checked='' disabled='' class='check_seance'";
+                    }else {
+                        $select = "id='check_seance'";
                     }
-                    $nestedData[] = "<input $checked type ='checkbox' data-id ='$cd' >";
+                    $nestedData[] = "<input $checked type ='checkbox' data-id ='$cd' $select value='$cd'>";
                 }
                 else{
                     $nestedData[] = $value;

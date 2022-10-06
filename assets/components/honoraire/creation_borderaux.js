@@ -31,6 +31,9 @@ $(document).ready(function () {
             });
             $("body tr#" + id_seance).addClass('active_databales');
         },
+        columnDefs: [
+            { targets: [1], orderable: false }
+        ],
         language: {
             url: "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/French.json",
         },
@@ -61,6 +64,22 @@ $(document).ready(function () {
                 ids_seances.push(input.attr("data-id"));
             }
         }
+        console.log(ids_seances);
+    })
+    
+    $('body').on('click','.check_all_seances',function () {
+        // alert('test')
+        ids_seances = [];
+        const snc = $("body #check_seance");
+        if($(".check_all_seances").prop('checked') == true) {
+            snc.prop("checked",true);
+            snc.map(function() {
+                ids_seances.push(this.value);
+             });
+        } else {
+            snc.prop("checked",false);
+        }
+        console.log(ids_seances);
     })
     $("select").select2();
     $("#etablissement").on('change', async function (){
