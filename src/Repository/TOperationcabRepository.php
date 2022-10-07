@@ -68,7 +68,7 @@ public function getFacturesByCurrentYear($currentyear)
         // ->Where("cab.active = 1")
         ->setParameter("annee", $currentyear)
         ->orderby('ins.id','DESC')
-        ->groupBy('cab.id')
+        // ->groupBy('cab.id')
         ->getQuery()
         ->getResult()
     ;
