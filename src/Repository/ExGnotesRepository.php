@@ -52,4 +52,26 @@ class ExGnotesRepository extends ServiceEntityRepository
                     ->getResult()
         ;
     }
+    public function getNombreSaisi($epreuve)
+    {
+        return $this->createQueryBuilder('e')
+                    ->innerJoin('e.epreuve', "epreuve")
+                    ->where('epreuve.id = :epreuve')
+                    ->andWhere("(e.absence = 0 or e.absence is null) AND (e.note IS NOT NULL OR e.note != '' )")
+                    ->setParameter('epreuve', $epreuve)
+                    ->getQuery()
+                    ->getResult()
+        ;
+    }
+    public function getNombreNonSaisi($epreuve)
+    {
+        return $this->createQueryBuilder('e')
+                    ->innerJoin('e.epreuve', "epreuve")
+                    ->where('epreuve.id = :epreuve')
+                    ->andWhere("(e.absence = 0 or e.absence is null) AND (e.note IS NULL OR e.note = '' )")
+                    ->setParameter('epreuve', $epreuve)
+                    ->getQuery()
+                    ->getResult()
+        ;
+    }
 }

@@ -382,7 +382,7 @@ class ElementController extends AbstractController
             $send_data['statut_def'] = 12;
             $send_data['statut_aff'] = 12;
         } else {
-            if((isset($noteComposantInitial["mcc"]) && $noteComposantInitial["mcc"] < 10) || (isset($noteComposantInitial["mtp"]) && $noteComposantInitial["mcc"] < 10)){
+            if((isset($noteComposantInitial["mcc"]) && $noteComposantInitial["mcc"] < 10) || (isset($noteComposantInitial["mtp"]) && $noteComposantInitial["mtp"] < 10)){
                 $send_data['statut_s1'] = 16;
                 $send_data['statut_def'] = 16;
                 $send_data['statut_aff'] = 16;
@@ -428,7 +428,7 @@ class ElementController extends AbstractController
                         $send_data['statut_def'] = 16;
                         $send_data['statut_aff'] = 16;
                     } else {
-                        if ((isset($noteComposantInitial["mcc"]) && $noteComposantInitial["mcc"] < 10 ) || (isset($noteComposantInitial["mtp"]) && $noteComposantInitial["mcc"] < 10 ) || ($enote->getMef() && $enote->getMef() < 10)) {
+                        if ((isset($noteComposantInitial["mcc"]) && $noteComposantInitial["mcc"] < 10 ) || (isset($noteComposantInitial["mtp"]) && $noteComposantInitial["mtp"] < 10 ) || ($enote->getMef() && $enote->getMef() < 10)) {
                             $send_data['statut_s1'] = 19;
                             $send_data['statut_def'] = 19;
                         } else {
