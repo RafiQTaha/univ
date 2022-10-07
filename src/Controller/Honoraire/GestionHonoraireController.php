@@ -157,6 +157,8 @@ class GestionHonoraireController extends AbstractController
                 if ($key == 0) {
                     if ($row['statut'] == 'A' || $row['statut'] == 'R') {
                         $checked = "checked='' disabled='' class='check_seance'";
+                    }else {
+                        $checked = " class='check_check_seance' value='$cd'";
                     }
                     $nestedData[] = "<input $checked type ='checkbox' data-id ='$cd' >";
                 }

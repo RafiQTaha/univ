@@ -34,6 +34,9 @@ $(document).ready(function () {
         language: {
             url: "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/French.json",
         },
+        columnDefs: [
+            { targets: [1], orderable: false }
+        ],
     });
     $('body').on('dblclick','#datables_gestion_honoraires tbody tr',function (e) {
         e.preventDefault();
@@ -61,6 +64,21 @@ $(document).ready(function () {
                 ids_seances.push(input.attr("data-id"));
             }
         }
+        // console.log(ids_seances);
+    })
+    $('body').on('click','.check_all_seances',function () {
+        // alert('test')
+        ids_seances = [];
+        const snc = $("body .check_check_seance");
+        if($(".check_all_seances").prop('checked') == true) {
+            snc.prop("checked",true);
+            snc.map(function() {
+                ids_seances.push(this.value);
+             });
+        } else {
+            snc.prop("checked",false);
+        }
+        // console.log(ids_seances);
     })
     $("select").select2();
     $("#etablissement").on('change', async function (){
