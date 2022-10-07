@@ -155,7 +155,8 @@ class GenerationHonoraireController extends AbstractController
             foreach (array_values($row) as $key => $value) { 
                 $checked = "";
                 if ($key == 0) {
-                    $nestedData[] = "<input type ='checkbox'  data-id ='$cd' >";
+                    // $nestedData[] = "<input type ='checkbox'  data-id ='$cd' >";
+                    $nestedData[] = "<input type ='checkbox' data-id ='$cd' id='check_seance' value='$cd'>";
                 }elseif($key == 12){
                     $nestedData[] = $value;
                     $nbr_sc_regroupe = $this->em->getRepository(PlEmptime::class)->getNbr_sc_regroupe($cd);
