@@ -353,6 +353,7 @@ class GestionPlanificationController extends AbstractController
         $j=1;
         $currentyear = date('m') > 7 ? $current_year = date('Y').'/'.date('Y')+1 : $current_year = date('Y') - 1 .'/' .date('Y');
         $seances = $this->em->getRepository(PlEmptime::class)->findSeanceByCurrentYears($currentyear);
+        // dd($seances);
         $sheet->fromArray(
             array_keys($seances[0]),
             null,
