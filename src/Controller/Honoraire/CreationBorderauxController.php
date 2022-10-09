@@ -55,7 +55,7 @@ class CreationBorderauxController extends AbstractController
          
         $params = $request->query;
         $where = $totalRows = $sqlRequest = "";
-        $filtre = " where emp.annuler = 0 and hon.statut='R' and ann.validation_academique = 'non' ";
+        $filtre = " where emp.annuler = 0 and emp.active = 1  and hon.statut='R' and ann.validation_academique = 'non' ";
         
         if (!empty($params->all('columns')[0]['search']['value'])) {
             $filtre .= " and etab.id = '" . $params->all('columns')[0]['search']['value'] . "' ";
@@ -202,7 +202,9 @@ class CreationBorderauxController extends AbstractController
     #[Route('/honoraire_borderaux/{borderaux}', name: 'honoraire_borderaux')]
     public function honoraireborderaux(HAlbhon $borderaux)
     {  
-        $honenss = $borderaux->getHonenss();
+        // $honenss = $borderaux->getHonenss();
+        // getHonoraireByActiveSeanceAndBordereau
+        $honenss = $this->em->getRepository(HHonens::class)->getHonoraireByActiveSeanceAndBordereau($borderaux);
         $nombre_seance = [];
         $ens = [];
         foreach ($honenss as $honens) {

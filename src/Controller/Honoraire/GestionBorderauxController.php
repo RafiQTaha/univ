@@ -55,7 +55,7 @@ class GestionBorderauxController extends AbstractController
          
         $params = $request->query;
         $where = $totalRows = $sqlRequest = "";
-        $filtre = " where emp.annuler = 0 ";
+        $filtre = " where emp.annuler = 0 and emp.active = 1 ";
         
         if (!empty($params->all('columns')[0]['search']['value'])) {
             $filtre .= " and etab.id = '" . $params->all('columns')[0]['search']['value'] . "' ";

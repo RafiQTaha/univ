@@ -105,9 +105,24 @@ public function getEnsByBordereau($bordereau)
         ->innerJoin("promotion.formation","formation")
         ->innerJoin("formation.etablissement","etablissement")
         ->Where("bordereau = :bordereau")
+        ->andWhere("ep.active = 1")
         ->setParameter("bordereau", $bordereau)
         ->groupBy('bordereau.id,ens.code  ,  ens.nom , ens.prenom')  
         ->orderby('ens.nom','ASC')
+        ->getQuery()
+        ->getResult()
+    ;
+}
+
+
+public function getHonoraireByActiveSeanceAndBordereau($bordereau)
+{
+    return $this->createQueryBuilder('hon')
+        ->innerJoin("hon.bordereau","bordereau")
+        ->innerJoin("hon.seance","ep")
+        ->Where("bordereau = :bordereau")
+        ->andWhere("ep.active = 1")
+        ->setParameter("bordereau", $bordereau)
         ->getQuery()
         ->getResult()
     ;

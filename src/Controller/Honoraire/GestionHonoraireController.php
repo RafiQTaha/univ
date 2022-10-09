@@ -60,7 +60,7 @@ class GestionHonoraireController extends AbstractController
          
         $params = $request->query;
         $where = $totalRows = $sqlRequest = "";
-        $filtre = " where 1=1 and hon.annuler = 0 and  ann.validation_academique = 'non' ";
+        $filtre = " where 1=1 and emp.active = 1  and hon.annuler = 0 and  ann.validation_academique = 'non' ";
         
         if (!empty($params->all('columns')[0]['search']['value'])) {
             $filtre .= " and etab.id = '" . $params->all('columns')[0]['search']['value'] . "' ";
