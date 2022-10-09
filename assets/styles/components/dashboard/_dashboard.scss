@@ -6514,3 +6514,6 @@ table.dataTable th.dt-center, table.dataTable td.dt-center, table.dataTable td.d
 .select-organ{
   display: none;
 }
+.select2-container--default .select2-selection--single .select2-selection__clear {
+  margin-right: 40px !important;
+}

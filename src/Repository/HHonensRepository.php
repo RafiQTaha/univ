@@ -67,7 +67,7 @@ class HHonensRepository extends ServiceEntityRepository
         INNER JOIN ac_annee ann ON ann.id = prog.annee_id
         INNER JOIN ac_etablissement etab ON etab.id = frm.etablissement_id
         INNER JOIN halbhon alb on alb.id = hon.bordereau_id
-        where frm.designation not like '%Residanat%' and etab.abreviation != 'CFC'  ";
+        -- where frm.designation not like '%Residanat%' and etab.abreviation != 'CFC'  ";
         // WHERE ann.designation= '$currentyear' and emp.active = 1";
         // dd($sqls);
         $stmts = $this->em->getConnection()->prepare($sqls);
@@ -75,6 +75,43 @@ class HHonensRepository extends ServiceEntityRepository
         $result = $resultSets->fetchAll();
         return $result;
     }
+    //  INNER JOIN ac_element ele ON ele.id = prog.element_id
+    //    INNER JOIN type_element te on te.id = ele.nature_id
+    //   INNER JOIN ac_module mdl ON mdl.id =  ele.module_id
+    //   INNER JOIN ac_semestre sem ON sem.id =  mdl.semestre_id
+    //  INNER JOIN ac_promotion prm ON prm.id = sem.promotion_id
+    //  INNER JOIN ac_formation frm ON frm.id = prm.formation_id
+    //  INNER JOIN ac_annee ann ON ann.id = prog.annee_id
+    //  INNER JOIN ac_etablissement etab ON etab.id = frm.etablissement_id
+    // INNER JOIN halbhon alb on alb.id = hon.bordereau_id
+    // where alb.id = 12616
+    // GROUP by alb.code ,ens.code  ,  ens.nom , ens.prenom 
+    // ORDER by  ens.nom asc;
+public function getEnsByBordereau($bordereau)
+{
+    return $this->createQueryBuilder('hon')
+        ->select("bordereau.code , hon.exept , ens.code as code_enseignant ,  ens.nom , ens.prenom , gr.designation as grade,SUM(hon.montant) as montant ,  hon.nbrScRegroupe ")
+        ->innerJoin("hon.bordereau","bordereau")
+        ->innerJoin("hon.enseignant","ens")
+        ->innerJoin("ens.grade","gr")
+        ->innerJoin("hon.seance","ep")
+        ->innerJoin("ep.semaine","sm")
+        ->innerJoin("ep.programmation","prog")
+        ->innerJoin("prog.nature_epreuve","ne")
+        ->innerJoin("prog.element", "element")
+        ->innerJoin("element.module", "module")
+        ->innerJoin("module.semestre", "semestre")
+        ->innerJoin("semestre.promotion", "promotion")
+        ->innerJoin("promotion.formation","formation")
+        ->innerJoin("formation.etablissement","etablissement")
+        ->Where("bordereau = :bordereau")
+        ->setParameter("bordereau", $bordereau)
+        ->groupBy('bordereau.id,ens.code  ,  ens.nom , ens.prenom')  
+        ->orderby('ens.nom','ASC')
+        ->getQuery()
+        ->getResult()
+    ;
+}
 
     // /**
     //  * @return HHonens[] Returns an array of HHonens objects

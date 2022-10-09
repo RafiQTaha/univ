@@ -6,6 +6,7 @@ use App\Controller\ApiController;
 use App\Controller\DatatablesController;
 use App\Entity\AcEtablissement;
 use App\Entity\HAlbhon;
+use App\Entity\HHonens;
 use App\Entity\PEnseignant;
 use App\Entity\PGrade;
 use App\Entity\Semaine;
@@ -221,5 +222,37 @@ class GestionBorderauxController extends AbstractController
         $fileName = 'Report_2.xlsx';
         $writer->save($this->getParameter('honoraire_export_directory').'/'.$fileName);
         return new JsonResponse($fileName,200);
+    }
+    
+    #[Route('/extraction_honoraire', name: 'extraction_honoraire')]
+    public function extraction_honoraire()
+    {   
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        $i=2;
+        $j=1;
+        $currentyear = date('m') > 7 ? $current_year = date('Y').'/'.date('Y')+1 : $current_year = date('Y') - 1 .'/' .date('Y');
+        // $seances = $this->em->getRepository(PlEmptime::class)->findSeanceByCurrentYears($currentyear);
+        $honoraires = $this->em->getRepository(HHonens::class)->findHonoraireByCurrentYears($currentyear);
+        // dd($honoraires[0]);
+        $sheet->fromArray(
+            array_keys($honoraires[0]),
+            null,
+            'A1'
+        );
+        foreach ($honoraires as $honoraire) {
+            $sheet->fromArray(
+                $honoraire,
+                null,
+                'A'.$i
+            );
+            $i++;
+            $j++;
+        }
+        $writer = new Xlsx($spreadsheet);
+        $fileName = 'Extraction honoraires.xlsx';
+        $temp_file = tempnam(sys_get_temp_dir(), $fileName);
+        $writer->save($temp_file);
+        return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);
     }
 }

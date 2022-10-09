@@ -183,4 +183,9 @@ $(document).ready(function () {
         }
     })
     
+    $('body').on('click','#extraction_honoraire', async function (e) {
+        e.preventDefault();
+        window.open('/honoraire/gestion_borderaux/extraction_honoraire','_blank');
+    })
+    
 })

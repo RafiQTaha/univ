@@ -1,0 +1,20 @@
+    <h3 style="text-align: center ; margin-bottom: 5px">ETAT DES HONORAIRES PAR PROFESSEUR</h3>
+    <p style="text-align: center ; margin: 0px ; font-size: 14px ; font-weight: bold"> {{honenss|first.seance.programmation.element.module.semestre.promotion.formation.etablissement.designation}} </p>
+    <p style="text-align: center ; margin: 0px ; font-size: 14px ;">{{honenss|first.seance.programmation.element.module.semestre.promotion.formation.designation}}</p>
+    <p style="text-align: center ; margin: 0px ; font-size: 14px ;">{{honenss|first.seance.programmation.element.module.semestre.promotion.designation}}</p>
+
+    <table class="inf" style="width: 100%; text-align: left; font-size:10px ; font-weight:bold ; font-size: 12px">
+        <tr>
+            <td style="width: 50% ;border-bottom: 1px solid black; padding-bottom: 10px;">ID_BE : {{borderaux.code}}</td>  
+            <td style="width: 50%"></td> 
+        </tr>
+        <tr>
+            <td style="border-bottom: 1px solid black; padding-bottom: 10px;">DATE_BE : {{borderaux.created | date('Y-m-j')}}</td>
+        </tr>
+        <tr>
+            <td style="border-bottom: 1px solid black; padding-bottom: 10px;">NIVEAU :</td>
+        </tr>
+        <tr>
+            <td style="border-bottom: 1px solid black; padding-bottom: 10px;">Semaine {{borderaux.semaine.nsemaine}} de : {{borderaux.semaine.datedebut | date('j-m')}} à {{borderaux.semaine.datefin | date('j-m')}} {{borderaux.semaine.anneeS}}</td> 
+        </tr>
+    </table>

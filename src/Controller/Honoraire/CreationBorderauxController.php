@@ -203,19 +203,33 @@ class CreationBorderauxController extends AbstractController
     public function honoraireborderaux(HAlbhon $borderaux)
     {  
         $honenss = $borderaux->getHonenss();
-        // dd($borderaux->getHonenss()[0]->getSeance()->getProgrammation()->getElement()->getNature()->getDesignation());
-        $html = $this->render("honoraire/pdfs/borderaux.html.twig", [
+        $nombre_seance = [];
+        $ens = [];
+        foreach ($honenss as $honens) {
+            array_push($nombre_seance,$honens->getSeance()->getCode());
+        }
+        $ens_infos = $this->em->getRepository(HHonens::class)->getEnsByBordereau($borderaux);
+        $html = $this->render("honoraire/pdfs/borderaux_2.html.twig", [
             'borderaux' => $borderaux,
-            'honenss' => $honenss
+            'honenss' => $honenss,
+            'nombre_seance'=> array_unique($nombre_seance),
+            'ens_infos'=> $ens_infos
         ])->getContent();
         $mpdf = new Mpdf([
             'format' => 'A4-L',
             'mode' => 'utf-8',
-            'margin_top' => '5',
+            'margin_top' => '60',
             'margin_left' => '5',
             'margin_right' => '5',
+            'margin_bottom' => '35',
             ]);
         $mpdf->SetTitle('ETAT DES HONORAIRES PAR PROFESSEUR');
+        $mpdf->SetHTMLHeader(
+            $this->render("honoraire/pdfs/header_borderaux.html.twig", [
+                'borderaux' => $borderaux,
+                'honenss' => $honenss
+            ])->getContent()
+        );
         $mpdf->SetHTMLFooter(
             $this->render("facture/pdfs/footer_borderaux.html.twig")->getContent()
         );

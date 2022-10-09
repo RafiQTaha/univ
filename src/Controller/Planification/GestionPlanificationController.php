@@ -95,6 +95,11 @@ class GestionPlanificationController extends AbstractController
         }    
         if (!empty($params->all('columns')[10]['search']['value']) || $params->all('columns')[10]['search']['value'] == 0) {
             $filtre .= " and emp.valider = '" . $params->all('columns')[10]['search']['value'] . "' ";
+        }   
+        if (!empty($params->all('columns')[11]['search']['value'])) {
+            // dd($params->all('columns')[11]['search']['value']);
+            $filtre .= " and date(emp.start) = '" . $params->all('columns')[11]['search']['value'] . "' ";
+            // $filtre .= " and sm.id = '" . $params->all('columns')[11]['search']['value'] . "' ";
         } 
         $columns = array(
             array( 'db' => 'emp.id','dt' => 0 ),
@@ -141,7 +146,10 @@ class GestionPlanificationController extends AbstractController
         if (isset($where) && $where != '') {
             $sqlRequest .= $where;
         }
-        $sqlRequest .= DatatablesController::Order($request, $columns);
+        
+        $changed_column = $params->all('order')[0]['column'] > 0 ? $params->all('order')[0]['column'] - 1 : 0;
+        $sqlRequest .= " ORDER BY " .DatatablesController::Pluck($columns, 'db')[$changed_column] . "   " . $params->all('order')[0]['dir'] . "  LIMIT " . $params->get('start') . " ," . $params->get('length') . " ";
+        // $sqlRequest .= DatatablesController::Order($request, $columns);
         
         $stmt = $this->em->getConnection()->prepare($sqlRequest);
         $resultSet = $stmt->executeQuery();
@@ -182,6 +190,8 @@ class GestionPlanificationController extends AbstractController
         );
         return new Response(json_encode($json_data));
     }
+
+    
     
     #[Route('/gestion_delete_planning', name: 'gestion_delete_planning')]
     public function gestion_delete_planning(Request $request): Response
@@ -220,43 +230,31 @@ class GestionPlanificationController extends AbstractController
         }else {
             $motif = $request->get('motif_annuler');
         }
-        // if (count($ids) == 0) {
-        //     return new Response('Merci de choisir Au moins une Seance!',500);
-        // }
-        // if (empty($request->get('motif_annuler'))) {
-        //     return new Response('Merci de Choisir le motif d\'annulation!',500);
-        // }
-        
-        // foreach ($ids as $id) {
-            // $emptime = $this->em->getRepository(PlEmptime::class)->find($id);
-            // if ($emptime) {
-                // if ($emptime->getValider() != 0) {
-                    $emptime->setAnnuler(1);
-                    $emptime->setMotifAnnuler($motif);
-                    $this->em->flush();
-                // }
-            // }
-        // }
+        $emptime->setAnnuler(1);
+        $emptime->setMotifAnnuler($motif);
+        $this->em->flush();
         return new Response('Seances Bien Anuller',200);
     }  
     #[Route('/gestion_valider_planning/{emptime}', name: 'gestion_valider_planning')]
     public function gestion_valider_planning(Request $request,PlEmptime $emptime): Response
     {   
-        // $ids = json_decode($request->get('ids_planning'));
-        // if (count($ids) == 0) {
-        //     return new Response('Merci de choisir Au moins une Seance!',500);
-        // }
-        // dd($emptime->getAnnuler());
         if ($emptime->getAnnuler() == 1) {
             return new Response('Impossible de valider une séance annulé! ',500);
         }
-        // foreach ($ids as $id) {
-        //     $emptime = $this->em->getRepository(PlEmptime::class)->find($id);
-            if ($emptime) {
-                $emptime->setValider(1);
-                $this->em->flush();
-            }
-        // }
+        $sql = "select * from semaine 
+            where id >= 100 and id <= 200 and date(date_debut) <= (SELECT date(start) FROM `pl_emptime`
+            where id = ".$emptime->getId().") and date(date_fin) >= (SELECT date(start) FROM `pl_emptime`
+            where id = ".$emptime->getId().")";
+        $stmt = $this->em->getConnection()->prepare($sql);
+        $resultSet = $stmt->executeQuery();
+        $semaine = $resultSet->fetchAll();
+        $emptime->setSemaine($this->em->getRepository(semaine::class)->find($semaine[0]['id']));
+        $this->em->flush();
+        
+        if ($emptime) {
+            $emptime->setValider(1);
+            $this->em->flush();
+        }
         return new Response('Seances Bien Valider',200);
     }  
     
@@ -312,11 +310,6 @@ class GestionPlanificationController extends AbstractController
     public function Getsequence_gestion(PlEmptime $emptime)
     {   
         $promotion = $emptime->getProgrammation()->getElement()->getModule()->getSemestre()->getPromotion();
-        // $annee = $this->em->getRepository(AcAnnee::class)->findOneBy([
-        //     'formation'=>$promotion->getFormation(),
-        //     'validation_academique'=>'non',
-        //     'cloture_academique'=>'non',
-        // ]);
         $annee = $this->em->getRepository(AcAnnee::class)->getActiveAnneeByFormation($promotion->getFormation());
         $inscriptions = $this->em->getRepository(TInscription::class)->getInscriptionsByAnneeAndPromoAndGroupe($promotion,$annee,$emptime->getGroupe());
         $diff = $emptime->getEnd()->diff($emptime->getStart());
@@ -380,4 +373,18 @@ class GestionPlanificationController extends AbstractController
         $writer->save($temp_file);
         return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);
     }
+    // #[Route('/findSemainePlanning', name: 'findSemainePlanning')]
+    // public function findSemainePlanning(Request $request): Response
+    // {
+    //     // dd($request->query->get("search"));
+    //     $semaine = $this->em->getRepository(Semaine::class)->findSemaine($request->query->get("search"));
+    //     // $html = '<option value="">Choix semaine</option>';
+    //     $list['id'] = $semaine->getId();
+    //     $list['nsemaine'] = $semaine->getNsemaine();
+    //     $list['debut'] = $semaine->getDateDebut()->format('j/m');
+    //     $list['fin'] = $semaine->getDateFin()->format('j/m');
+    //     // dd($semaine);
+    //     // dd($list);
+    //     return new JsonResponse($list);
+    // }
 }

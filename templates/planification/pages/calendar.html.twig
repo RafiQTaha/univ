@@ -54,6 +54,7 @@
         </table>
         {# <div>{{times}}</div> #}
         <input type="text" id="date" value="{{day}}" style="display:none"/>
+        <input type="text" id="professeur" value="{{professeur}}" style="display:none"/>
         <input type="text" id="semestre" value="{{semestre.id}}" style="display:none"/>
     </div>
     <div id='calendar'></div>
@@ -71,8 +72,12 @@ $(document).ready(function () {
     let alltime = [];
     const alltimes = async () => {
         try{
-            const request = await axios.post('/planification/planifications/calendar/'+$('#semestre').val()+'/'+$('#niv').val())
-            //const request = await axios.post('/planification/planifications/calendar/79/4/')
+            let formData = new FormData()
+            formData.append('semestre', $("#semestre").val()); 
+            formData.append('niv', $('#niv').val()); 
+            formData.append('professeur', $('#professeur').val()); 
+            const request = await axios.post('/planification/planifications/calendar_planning',formData);
+            // const request = await axios.post('/planification/planifications/calendar/'+$('#semestre').val()+'/'+$('#niv').val())
             alltime = request.data;
             console.log(alltime)
             $("#calendar").fullCalendar('removeEvents'); 
@@ -106,9 +111,7 @@ $(document).ready(function () {
         firstDay: 1,
         minTime: "08:00:00",
         maxTime: "18:01:00",
-    });
-    
-    
+    }); 
 })
     
 </script>

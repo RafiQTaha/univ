@@ -108,6 +108,16 @@
                                 <option value="1">Oui</option>
                             </select>
                         </div>
+                        <div class="col-md-2">
+                            <label for="semaine_day">Jour:</label>
+                            <input type='date' class="form-control" placeholder="2022-01-01" name="semaine_day" id="semaine_day" />
+                            {# <select class="form-control" name="semaine_day" id="semaine_day">
+                                <option value="">Choix semaine_day</option>
+                                {% for semaine in semaines %}
+                                    <option value="{{semaine.id}}">Semaine {{semaine.nsemaine}} de: {{semaine.datedebut | date('j/m')}} à {{semaine.datefin | date('j/m')}} {{semaine.datefin | date('Y')}}</option>
+                                {% endfor %} 
+                            </select> #}
+                        </div>
                     </div>
                 </div>
             <table id="datables_gestion_planification" class="table table-striped" style="width:100%">
