@@ -67,7 +67,7 @@ class HHonensRepository extends ServiceEntityRepository
         INNER JOIN ac_annee ann ON ann.id = prog.annee_id
         INNER JOIN ac_etablissement etab ON etab.id = frm.etablissement_id
         INNER JOIN halbhon alb on alb.id = hon.bordereau_id
-        where ann.designation= '$currentyear' and emp.active = 1";
+        where ann.designation= '$currentyear' and ep.active = 1";
         // -- where frm.designation not like '%Residanat%' and etab.abreviation != 'CFC'  ";
         // dd($sqls);
         $stmts = $this->em->getConnection()->prepare($sqls);
