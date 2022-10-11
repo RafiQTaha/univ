@@ -40,12 +40,6 @@ $(document).ready(function () {
         url: "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/French.json",
         },
     });
-    // $("#banque").select2();
-    // $("#paiement").select2();
-    // $("#etablissement").select2();
-    // $("#modifier_org-modal #org").select2();
-    // $("#organisme").select2();
-    // $("#reglement").select2();
     $("select").select2();
     
     $("#etablissement").on('change', async function (){
@@ -391,6 +385,17 @@ $(document).ready(function () {
             return;
         }
         window.open('/facture/factures/printfacture/'+id_facture, '_blank');
+    });
+    $("body").on("click", '#releve', async function (e) {
+        e.preventDefault();
+        if(!id_facture){
+            Toast.fire({
+            icon: 'error',
+            title: 'Veuillez selection une ligne!',
+            })
+            return;
+        }
+        window.open('/facture/factures/releve/'+id_facture, '_blank');
     });
   
     $('body').on('click','#extraction', function (){

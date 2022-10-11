@@ -49,6 +49,10 @@ $(document).ready(function () {
             id_seance = $(this).attr('id');
         }
     })
+    $('#table_gestion_honoraires').on('page.dt', function () {
+        var info = table_gestion_honoraires.page.info();
+        alert('info')
+    });
     $('body').on('click','#datables_gestion_honoraires tbody tr',function (e) {
         e.preventDefault();
         const input = $(this).find("input");

@@ -25,6 +25,7 @@ use App\Entity\TOperationdet;
 use App\Entity\XModalites;
 use App\Controller\ApiController;
 use App\Controller\DatatablesController;
+use App\Entity\PStatut;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -362,21 +363,60 @@ class GestionFactureController extends AbstractController
     }
 
     
-    #[Route('/printreleve/{operationcab}', name: 'imprimerreleve')]
+    #[Route('/releve/{operationcab}', name: 'imprimerreleve')]
     public function imprimerreleve(TOperationcab $operationcab)
     {
-        $all = [];
+        $facture_infos = [];
         $operationcabs = $this->em->getRepository(TOperationcab::class)->findBy(['preinscription'=>$operationcab->getPreinscription()]);
         foreach ($operationcabs as $operationcab) {
+            $organisme = "";
+            $orgpyt = $this->em->getRepository(TOperationdet::class)->findBy(['operationcab'=>$operationcab,'active'=>1,'organisme'=>103]);
+            if (count($orgpyt)) {
+                $organisme = 'O/P';
+            }else{
+                $pyt = $this->em->getRepository(TOperationdet::class)->findBy(['operationcab'=>$operationcab,'active'=>1,'organisme'=>7]);
+                $org = $this->em->getRepository(TOperationdet::class)->FindDetNotPayant($operationcab);
+                if (count($pyt) && count($org)) {
+                    $organisme = 'Organisme & Payant';
+                }elseif (!count($pyt) && count($org)) {
+                    $organisme = 'Organisme';
+                }else {
+                    $organisme = 'Payant';
+                }
+            }
+            $totalfacture = $this->em->getRepository(TOperationdet::class)->getSumMontantByCodeFacture($operationcab)['total'];
+            $totalreglement = $this->em->getRepository(TReglement::class)->getSumMontantByCodeFacture($operationcab)['total'];
             $all = [
                 'operationcab' => $operationcab,
-                'operationdets' => $this->em->getRepository(TOperationdet::class)->FindDetGroupByFrais($operationcab),
-                'reglements' => $this->em->getRepository(TReglement::class)->findBy(['operation'=>$operationcab])
+                'totalfacture' => $totalfacture,
+                'totalreglement' => $totalreglement,
+                'diffirence' => $totalfacture - $totalreglement,
+                'organisme' => $organisme,
             ];
-            // # code...
+            array_push($facture_infos,$all);
         }
-        dd($all);
-        $operationdets = $this->em->getRepository(TOperationdet::class)->FindDetGroupByFrais($operationcab);
+        // dd($facture_info);
+        $inscription = $this->em->getRepository(TInscription::class)->findOneBy([
+            'admission'=>$operationcab->getPreinscription()->getAdmissions()[0],
+            'statut' => $this->em->getRepository(PStatut::class)->find(13)           
+        ],['code' => 'DESC']);
+        $html = $this->render("facture/pdfs/facture_releve.html.twig", [
+            'facture_infos' => $facture_infos,
+            'inscription' => $inscription,
+            'preinscription' => $operationcab->getPreinscription()
+        ])->getContent();
+        $mpdf = new Mpdf([
+            'mode' => 'utf-8',
+            'margin_top' => 5,
+        ]);        
+        $mpdf->SetTitle('Facture');
+        $mpdf->SetHTMLFooter(
+            $this->render("facture/pdfs/footer.html.twig")->getContent()
+        );
+        $mpdf->showImageErrors = true;
+        $mpdf->WriteHTML($html);
+        $mpdf->Output("facture.pdf", "I");
+
     }
     
     #[Route('/article_frais/{id}', name: 'article_frais_facture')]

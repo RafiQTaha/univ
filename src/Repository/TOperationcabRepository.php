@@ -75,6 +75,24 @@ public function getFacturesByCurrentYear($currentyear)
         ->getResult()
     ;
 }
+public function getFacturesDetByPreinscription($preinscription)
+{
+    return $this->createQueryBuilder('cab')
+        ->innerJoin("cab.preinscription","pre")
+        ->innerJoin("pre.etudiant","etu")
+        ->innerJoin("cab.annee","ann")
+        ->innerJoin("ann.formation","frm")
+        ->innerJoin("frm.etablissement","etab")
+        ->innerJoin("cab.operationdets","det")
+        ->Where("pre.inscriptionValide = 1")
+        ->AndWhere("pre.id = :preinscription")
+        ->AndWhere("det.active = 1")
+        ->setParameter("preinscription", $preinscription)
+        ->getQuery()
+        ->getResult()
+    ;
+}
+
 
     
 }
