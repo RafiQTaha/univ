@@ -96,6 +96,7 @@ $(document).ready(function () {
         },
         eventRender: function (event, element) {
             element.bind('dblclick', function () {
+                edit_groupe = 0;
                 currentweek = moment(event.start, "MMDDYYYY").isoWeek();
                 id_planning = event.id;
                 if (id_planning) {

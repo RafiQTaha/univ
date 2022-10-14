@@ -377,7 +377,7 @@ class GestionFactureController extends AbstractController
                 $pyt = $this->em->getRepository(TOperationdet::class)->findBy(['operationcab'=>$operationcab,'active'=>1,'organisme'=>7]);
                 $org = $this->em->getRepository(TOperationdet::class)->FindDetNotPayant($operationcab);
                 if (count($pyt) && count($org)) {
-                    $organisme = 'Organisme & Payant';
+                    $organisme = 'Org & Pyt';
                 }elseif (!count($pyt) && count($org)) {
                     $organisme = 'Organisme';
                 }else {
