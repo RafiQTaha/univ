@@ -660,22 +660,22 @@ class GestionFactureController extends AbstractController
                     $sheet->setCellValue('N'.$i, $montant_reglement['total']);
                     $sheet->setCellValue('O'.$i, $montant['total'] - $montant_reglement['total']);
                 }
-                $value ="";
-                $orgpyt = $this->em->getRepository(TOperationdet::class)->findBy(['operationcab'=>$operationcab['id'],'active'=>1,'organisme'=>103]);
-                if (count($orgpyt)) {
-                    $value = 'O/P';
-                }else{
-                    $pyt = $this->em->getRepository(TOperationdet::class)->findBy(['operationcab'=>$operationcab['id'],'active'=>1,'organisme'=>7]);
-                    $org = $this->em->getRepository(TOperationdet::class)->FindDetNotPayant($operationcab['id']);
-                    if (count($pyt) && count($org)) {
-                        $value = 'O/P';
-                    }elseif (!count($pyt) && count($org)) {
-                        $value = 'ORG';
-                    }else {
-                        $value = 'PYT';
-                    }
-                }
-                $sheet->setCellValue('P'.$i, $value);
+                // $value ="";
+                // $orgpyt = $this->em->getRepository(TOperationdet::class)->findBy(['operationcab'=>$operationcab['id'],'active'=>1,'organisme'=>103]);
+                // if (count($orgpyt)) {
+                //     $value = 'O/P';
+                // }else{
+                //     $pyt = $this->em->getRepository(TOperationdet::class)->findBy(['operationcab'=>$operationcab['id'],'active'=>1,'organisme'=>7]);
+                //     $org = $this->em->getRepository(TOperationdet::class)->FindDetNotPayant($operationcab['id']);
+                //     if (count($pyt) && count($org)) {
+                //         $value = 'O/P';
+                //     }elseif (!count($pyt) && count($org)) {
+                //         $value = 'ORG';
+                //     }else {
+                //         $value = 'PYT';
+                //     }
+                // }
+                $sheet->setCellValue('P'.$i, $operationdet->getOrganisme()->getDesignation());
                 $sheet->setCellValue('Q'.$i, $operationcab['statut']);
                 if ($operationcab['created'] != "") {
                     $sheet->setCellValue('R'.$i, $operationcab['created']->format('d-m-Y'));
