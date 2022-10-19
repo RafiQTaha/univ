@@ -631,16 +631,18 @@ class EpreuveController extends AbstractController
                 // dd($previousInscription);
                 if($previousInscription) {
                     $previousNoteModule = $this->em->getRepository(ExMnotes::class)->findOneBy(['module' => $epreuve->getElement()->getModule(), 'inscription' => $previousInscription]);
-                    if($previousNoteModule->getNote() >= 12) {
-                        $gnote->setNote($previousNoteModule->getNote());
-                        $gnote->setObservation('CAP');
-                        $sheet->setCellValue('A'.$i, $inscription->getId());
-                        $sheet->setCellValue('B'.$i, $gnote->getInscription()->getAdmission()->getPreinscription()->getEtudiant()->getNom());
-                        $sheet->setCellValue('C'.$i, $gnote->getInscription()->getAdmission()->getPreinscription()->getEtudiant()->getPrenom());
-                        $sheet->setCellValue('D'.$i, $epreuve->getId());
-                        $sheet->setCellValue('E'.$i, $previousNoteModule->getNote());
-                        $i++;
-                        $count++;
+                    if ($previousNoteModule != null) {
+                        if($previousNoteModule->getNote() >= 12) {
+                            $gnote->setNote($previousNoteModule->getNote());
+                            $gnote->setObservation('CAP');
+                            $sheet->setCellValue('A'.$i, $inscription->getId());
+                            $sheet->setCellValue('B'.$i, $gnote->getInscription()->getAdmission()->getPreinscription()->getEtudiant()->getNom());
+                            $sheet->setCellValue('C'.$i, $gnote->getInscription()->getAdmission()->getPreinscription()->getEtudiant()->getPrenom());
+                            $sheet->setCellValue('D'.$i, $epreuve->getId());
+                            $sheet->setCellValue('E'.$i, $previousNoteModule->getNote());
+                            $i++;
+                            $count++;
+                        }
                     }
                 }
             }
