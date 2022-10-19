@@ -639,7 +639,7 @@ class GestionFactureController extends AbstractController
         // dd($operationcabs);
         foreach ($operationcabs as $operationcab) {
             $montant = $this->em->getRepository(TOperationdet::class)->getSumMontantByCodeFacture($operationcab['id']);
-            $operationdets = $this->em->getRepository(TOperationdet::class)->findBy(['operationcab'=>$operationcab['id']]);
+            $operationdets = $this->em->getRepository(TOperationdet::class)->findBy(['operationcab'=>$operationcab['id'],'active'=>1]);
             $montant_reglement = $this->em->getRepository(TReglement::class)->getSumMontantByCodeFacture($operationcab['id']);
             $regcount = 0;
             foreach ($operationdets as $operationdet) {
