@@ -71,7 +71,7 @@ class GestionFactureController extends AbstractController
         $params = $request->query;
         $where = $totalRows = $sqlRequest = "";
         // $filtre = " where 1=1 and (stat.designation = 'INSCRIT' or stat.designation = '' or stat.designation is null ) ";
-        $filtre = " where 1=1 ";
+        $filtre = " where 1=1 and stat.id = 13 ";
         
         if (!empty($params->all('columns')[0]['search']['value'])) {
             $filtre .= " and etab.id = '" . $params->all('columns')[0]['search']['value'] . "' ";
@@ -109,11 +109,11 @@ class GestionFactureController extends AbstractController
             // array( 'db' => 'nat.designation','dt' => 8),
             array( 'db' => 'upper(etu.nationalite)','dt' => 8),
             array( 'db' => 'opcab.categorie','dt' => 9),
-            array( 'db' => 'montant_facture','dt' => 10),
-            array( 'db' => 'montant_regle','dt' => 11),
-            array( 'db' => '(IFNULL(montant_facture,0)-IFNULL(montant_regle,0)) as diff','dt' => 12),
-            array( 'db' => 'Upper(org.abreviation)','dt' => 13),
-            array( 'db' => 'opcab.active','dt' => 14),
+            // array( 'db' => 'montant_facture','dt' => 10),
+            // array( 'db' => 'montant_regle','dt' => 11),
+            // array( 'db' => '(IFNULL(montant_facture,0)-IFNULL(montant_regle,0)) as diff','dt' => 12),
+            // array( 'db' => 'Upper(org.abreviation)','dt' => 13),
+            array( 'db' => 'opcab.active','dt' => 10),
         );
         $sql = "SELECT DISTINCT " . implode(", ", DatatablesController::Pluck($columns, 'db')) . "
         FROM `toperationcab` opcab
@@ -125,10 +125,11 @@ class GestionFactureController extends AbstractController
         INNER JOIN tetudiant etu on etu.id = pre.etudiant_id
         INNER JOIN ac_formation frma on frma.id = an.formation_id
         INNER JOIN ac_etablissement etab on etab.id = frma.etablissement_id
-        LEFT JOIN porganisme org on org.id = opcab.organisme_id
+        -- LEFT JOIN porganisme org on org.id = opcab.organisme_id
         LEFT JOIN nature_demande nat on nat.id = pre.nature_id 
-        LEFT JOIN (select operationcab_id, SUM(montant) as montant_facture from toperationdet where active = 1 group by operationcab_id ) opdet on opdet.operationcab_id = opcab.id
-        LEFT JOIN (select operation_id, SUM(montant) as montant_regle from treglement where annuler = 0 group by operation_id ) reg on reg.operation_id = opcab.id $filtre ";
+        -- LEFT JOIN (select operationcab_id, SUM(montant) as montant_facture from toperationdet where active = 1 group by operationcab_id ) opdet on opdet.operationcab_id = opcab.id
+        -- LEFT JOIN (select operation_id, SUM(montant) as montant_regle from treglement where annuler = 0 group by operation_id ) reg on reg.operation_id = opcab.id 
+        $filtre ";
         // dd($sql);
         $totalRows .= $sql;
         $sqlRequest .= $sql;
@@ -137,13 +138,14 @@ class GestionFactureController extends AbstractController
         $totalRecords = count($newstmt->fetchAll());
         
         $my_columns = DatatablesController::Pluck($columns, 'db');
-        unset($columns[12]);
+        // unset($columns[12]);
         $where = DatatablesController::Search($request, $columns);
         if (isset($where) && $where != '') {
             $sqlRequest .= $where;
         }
         
-        $columns[12]['db'] = 'diff';
+        // dd($my_columns,$columns);
+        // $columns[12]['db'] = 'diff';
         $sqlRequest .= DatatablesController::Order($request, $columns);
         // dd($sqlRequest);
         
@@ -160,26 +162,46 @@ class GestionFactureController extends AbstractController
             $etat_bg="";
             foreach (array_values($row) as $key => $value) { 
                 if($key > 0) {
-                    if ($key == 10 || $key == 11) {
-                        $value = $value == NULL ? 0 : $value;
-                    }
-                    if ($key == 13) {
+                    // if ($key > 9 ) {
+                    //     $value = $value == NULL ? 0 : $value;
+                    // }
+                    // if ($key == 13) {
+                    //     $orgpyt = $this->em->getRepository(TOperationdet::class)->findBy(['operationcab'=>$cd,'active'=>1,'organisme'=>103]);
+                    //     if (count($orgpyt)) {
+                    //         $value = 'O/P';
+                    //     }else{
+                    //         $pyt = $this->em->getRepository(TOperationdet::class)->findBy(['operationcab'=>$cd,'active'=>1,'organisme'=>7]);
+                    //         $org = $this->em->getRepository(TOperationdet::class)->FindDetNotPayant($cd);
+                    //         if (count($pyt) && count($org)) {
+                    //             $value = 'O/P';
+                    //         }elseif (!count($pyt) && count($org)) {
+                    //             $value = 'ORG';
+                    //         }else {
+                    //             $value = 'PYT';
+                    //         }
+                    //     }
+                    // }
+                    if($key == 10){
+                        $operationTotal = $this->em->getRepository(TOperationdet::class)->getSumMontantByCodeFacture($cd)['total'];
+                        $nestedData[] = $operationTotal;
+                        $reglementTotal = $this->em->getRepository(TReglement::class)->getSumMontantByCodeFacture($cd)['total'];
+                        $nestedData[] = $reglementTotal;
+                        $nestedData[] = $operationTotal - $reglementTotal;
                         $orgpyt = $this->em->getRepository(TOperationdet::class)->findBy(['operationcab'=>$cd,'active'=>1,'organisme'=>103]);
                         if (count($orgpyt)) {
-                            $value = 'O/P';
+                            $org = 'O/P';
                         }else{
                             $pyt = $this->em->getRepository(TOperationdet::class)->findBy(['operationcab'=>$cd,'active'=>1,'organisme'=>7]);
                             $org = $this->em->getRepository(TOperationdet::class)->FindDetNotPayant($cd);
                             if (count($pyt) && count($org)) {
-                                $value = 'O/P';
+                                $org = 'O/P';
                             }elseif (!count($pyt) && count($org)) {
-                                $value = 'ORG';
+                                $org = 'ORG';
                             }else {
-                                $value = 'PYT';
+                                $org = 'PYT';
                             }
                         }
-                    }
-                    if($key == 14){
+                        $nestedData[] = $org;
                         $value = $value == 0 ? 'Cloture' : 'Ouverte';
                     }
                     $nestedData[] = $value;
