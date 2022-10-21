@@ -341,8 +341,8 @@ class GestionInscriptionController extends AbstractController
             $sheet->setCellValue('J'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getSexe());
             $sheet->setCellValue('K'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getDateNaissance());
             $sheet->setCellValue('L'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getCin());
-            $sheet->setCellValue('M'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getNationalite());
-            $sheet->setCellValue('N'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getPasseport());
+            $sheet->setCellValue('M'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getPasseport());
+            $sheet->setCellValue('N'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getNationalite());
             $sheet->setCellValue('O'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getTel1());
             $sheet->setCellValue('P'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getMail1());
             $sheet->setCellValue('Q'.$i, $inscription->getAnnee()->getFormation()->getEtablissement()->getDesignation());
