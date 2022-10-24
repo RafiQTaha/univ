@@ -321,7 +321,6 @@ class GestionFactureController extends AbstractController
     #[Route('/printfacture/{operationcab}', name: 'imprimerfacture')]
     public function imprimerfacture(TOperationcab $operationcab)
     {
-
         $operationdets = $this->em->getRepository(TOperationdet::class)->FindDetGroupByFrais($operationcab);
         $operationdetslist = [];
         $source = "";
@@ -697,6 +696,80 @@ class GestionFactureController extends AbstractController
                 //         $value = 'PYT';
                 //     }
                 // }
+                $sheet->setCellValue('P'.$i, $operationdet->getOrganisme()->getDesignation());
+                $sheet->setCellValue('Q'.$i, $operationcab['statut']);
+                if ($operationcab['created'] != "") {
+                    $sheet->setCellValue('R'.$i, $operationcab['created']->format('d-m-Y'));
+                }
+                $i++;
+                $j++;
+                $regcount++;
+            }
+            
+        }
+        $writer = new Xlsx($spreadsheet);
+        $fileName = 'Extraction Des Articles.xlsx';
+        $temp_file = tempnam(sys_get_temp_dir(), $fileName);
+        $writer->save($temp_file);
+        return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);
+    }
+
+
+    
+    #[Route('/extraction_factures_by_annee_provis/{annee}', name: 'extraction_factures_by_annee_provis')]
+    public function extraction_factures_by_annee_provis($annee)
+    {   
+        // dd($annee.'/'.$annee+1);
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        $sheet->setCellValue('A1', 'ORD');
+        $sheet->setCellValue('B1', 'CODE PRE-INSCRIPTION');
+        $sheet->setCellValue('C1', 'CODE FACTURE');
+        $sheet->setCellValue('D1', 'ANNEE UNIVERSITAIRE');
+        $sheet->setCellValue('E1', 'NOM');
+        $sheet->setCellValue('F1', 'PRENOM');
+        $sheet->setCellValue('G1', 'NATIONALITE');
+        $sheet->setCellValue('H1', 'ETABLISSEMENT');
+        $sheet->setCellValue('I1', 'FORMATION');
+        $sheet->setCellValue('J1', 'PROMOTION');
+        $sheet->setCellValue('K1', 'SOURCE');
+        $sheet->setCellValue('L1', 'FRAIS');
+        $sheet->setCellValue('M1', 'MT FACTURE');
+        $sheet->setCellValue('N1', 'MT REGLE');
+        $sheet->setCellValue('O1', 'REST');
+        $sheet->setCellValue('P1', 'ORG');
+        $sheet->setCellValue('Q1', 'statut');
+        $sheet->setCellValue('R1', 'D-CREATION');
+        $i=2;
+        $j=1;
+        // $currentyear = '2022/2023';
+        $currentyear = $annee.'/'.$annee+1;
+        $operationcabs = $this->em->getRepository(TOperationcab::class)->getFacturesByCurrentYear($currentyear);
+        // dd($operationcabs);
+        foreach ($operationcabs as $operationcab) {
+            $montant = $this->em->getRepository(TOperationdet::class)->getSumMontantByCodeFacture($operationcab['id']);
+            $operationdets = $this->em->getRepository(TOperationdet::class)->findBy(['operationcab'=>$operationcab['id'],'active'=>1]);
+            $montant_reglement = $this->em->getRepository(TReglement::class)->getSumMontantByCodeFacture($operationcab['id']);
+            $regcount = 0;
+            foreach ($operationdets as $operationdet) {
+                // dd($operationdet);
+                $sheet->setCellValue('A'.$i, $j);
+                $sheet->setCellValue('B'.$i, $operationcab['code_preins']);
+                $sheet->setCellValue('C'.$i, $operationcab['code_facture']);
+                $sheet->setCellValue('D'.$i, $operationcab['annee']);
+                $sheet->setCellValue('E'.$i, $operationcab['nom']);
+                $sheet->setCellValue('F'.$i, $operationcab['prenom']);
+                $sheet->setCellValue('G'.$i, $operationcab['nationalite']);
+                $sheet->setCellValue('H'.$i, $operationcab['etablissement']);
+                $sheet->setCellValue('I'.$i, $operationcab['formation']);
+                $sheet->setCellValue('J'.$i, $operationcab['promotion']);
+                $sheet->setCellValue('K'.$i, $operationdet->getOrganisme()->getAbreviation());
+                $sheet->setCellValue('L'.$i, $operationdet->getFrais()->getDesignation());
+                $sheet->setCellValue('M'.$i, $operationdet->getMontant());
+                if ($regcount == 0) {
+                    $sheet->setCellValue('N'.$i, $montant_reglement['total']);
+                    $sheet->setCellValue('O'.$i, $montant['total'] - $montant_reglement['total']);
+                }
                 $sheet->setCellValue('P'.$i, $operationdet->getOrganisme()->getDesignation());
                 $sheet->setCellValue('Q'.$i, $operationcab['statut']);
                 if ($operationcab['created'] != "") {
