@@ -71,7 +71,7 @@ class GestionFactureController extends AbstractController
         $params = $request->query;
         $where = $totalRows = $sqlRequest = "";
         // $filtre = " where 1=1 and (stat.designation = 'INSCRIT' or stat.designation = '' or stat.designation is null ) ";
-        $filtre = " where 1=1 and (stat.id = 13 , stat.id = 14) ";
+        $filtre = " where 1=1 and (stat.id = 13 or stat.id = 14) ";
         
         if (!empty($params->all('columns')[0]['search']['value'])) {
             $filtre .= " and etab.id = '" . $params->all('columns')[0]['search']['value'] . "' ";
