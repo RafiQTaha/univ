@@ -533,6 +533,9 @@ class GestionFactureController extends AbstractController
     #[Route('/cloture_detaille/{id}', name: 'cloture_detaille')]
     public function cloture_detaille(TOperationdet $operationdet): Response
     {   
+        // ApiController::mouchard($this->getUser(), $this->em,$operationdet, 'TOperationdet', 'Cloture');
+        // dd(json_encode($operationdet)->toArray());
+        // dd(json_encode($operationdet));
         $operationdet->setActive(0);
         $this->em->flush();
         return new JsonResponse(1, 200);    

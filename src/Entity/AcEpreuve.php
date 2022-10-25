@@ -59,6 +59,9 @@ class AcEpreuve
     #[ORM\ManyToMany(targetEntity: PEnseignant::class)]
     private $enseignants;
 
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    private $userValidated;
+
     public function __construct()
     {
         $this->gnotes = new ArrayCollection();
@@ -265,6 +268,18 @@ class AcEpreuve
     public function removeEnseignant(PEnseignant $enseignant): self
     {
         $this->enseignants->removeElement($enseignant);
+
+        return $this;
+    }
+
+    public function getUserValidated(): ?User
+    {
+        return $this->userValidated;
+    }
+
+    public function setUserValidated(?User $userValidated): self
+    {
+        $this->userValidated = $userValidated;
 
         return $this;
     }

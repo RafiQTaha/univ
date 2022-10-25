@@ -93,9 +93,7 @@ class EpreuveController extends AbstractController
             array( 'db' => 'UPPER(prm.designation)','dt' => 8),
             array( 'db' => 'CONCAT(ens.nom," ",ens.prenom)','dt' => 9),
             array( 'db' => 'st.designation','dt' => 10),
-            array( 'db' => 'users.username','dt' => 11),
-           
-            
+            array( 'db' => 'users.username','dt' => 11), 
         );
         $sql = "SELECT " . implode(", ", DatatablesController::Pluck($columns, 'db')) . "
         
@@ -146,6 +144,7 @@ class EpreuveController extends AbstractController
             $cd = $row['id'];
             $nestedData[] = "<input type ='checkbox' class='check_admissible' id ='$cd' >";
             $nestedData[] = $cd;
+            $username = "";
             // dd($row);
             
             foreach (array_values($row) as $key => $value) {
@@ -153,6 +152,11 @@ class EpreuveController extends AbstractController
                     $nestedData[] = $value;
                 }
             }
+            $epv = $this->em->getRepository(AcEpreuve::class)->find($cd);
+            if ($epv->getUserValidated() != null && $epv->getStatut()->getId() == 30) {
+                $username = $this->em->getRepository(AcEpreuve::class)->find($cd)->getUserValidated()->getUsername();
+            }
+            $nestedData[] = $username;
             $nestedData["DT_RowId"] = $cd;
             $nestedData["DT_RowClass"] = $cd;
             $data[] = $nestedData;
@@ -254,6 +258,7 @@ class EpreuveController extends AbstractController
             $cd = $row['id'];
             $nestedData[] = "<input type ='checkbox' class='check_admissible' id ='$cd' >";
             $nestedData[] = $cd;
+            $username = "";
             // dd($row);
             
             foreach (array_values($row) as $key => $value) {
@@ -261,6 +266,11 @@ class EpreuveController extends AbstractController
                     $nestedData[] = $value;
                 }
             }
+            $epv = $this->em->getRepository(AcEpreuve::class)->find($cd);
+            if ($epv->getUserValidated() != null && $epv->getStatut()->getId() == 30) {
+                $username = $this->em->getRepository(AcEpreuve::class)->find($cd)->getUserValidated()->getUsername();
+            }
+            $nestedData[] = $username;
             $nestedData["DT_RowId"] = $cd;
             $nestedData["DT_RowClass"] = $cd;
             $data[] = $nestedData;
@@ -541,6 +551,7 @@ class EpreuveController extends AbstractController
                 $epreuve->setStatut(
                     $this->em->getRepository(PStatut::class)->find(30) //Valider
                 );
+                $epreuve->setUserValidated($this->getUser());
             }
         }
         $this->em->flush();
