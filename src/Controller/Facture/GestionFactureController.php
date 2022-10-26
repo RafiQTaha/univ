@@ -533,9 +533,7 @@ class GestionFactureController extends AbstractController
     #[Route('/cloture_detaille/{id}', name: 'cloture_detaille')]
     public function cloture_detaille(TOperationdet $operationdet): Response
     {   
-        // ApiController::mouchard($this->getUser(), $this->em,$operationdet, 'TOperationdet', 'Cloture');
-        // dd(json_encode($operationdet)->toArray());
-        // dd(json_encode($operationdet));
+        ApiController::mouchard($this->getUser(), $this->em,$operationdet, 'TOperationdet', 'Cloture');
         $operationdet->setActive(0);
         $this->em->flush();
         return new JsonResponse(1, 200);    
@@ -737,6 +735,7 @@ class GestionFactureController extends AbstractController
         // dd($operationcabs);
         foreach ($operationcabs as $operationcab) {
             // if ($operationcab['id'] == 48912) {
+                $montant = $this->em->getRepository(TOperationdet::class)->getSumMontantByCodeFacture($operationcab['id']);
                 $operationdets = $this->em->getRepository(TOperationdet::class)->FindDetGroupByFrais($operationcab['id']);
                 $montant_reglement = $this->em->getRepository(TReglement::class)->getSumMontantByCodeFacture($operationcab['id']);
                 $regcount = 0;
@@ -770,7 +769,7 @@ class GestionFactureController extends AbstractController
                     $sheet->setCellValue('O'.$i, $SumByOrg);
                     if ($regcount == 0) {
                         $sheet->setCellValue('P'.$i, $montant_reglement['total']);
-                        $sheet->setCellValue('Q'.$i, $total - $montant_reglement['total']);
+                        $sheet->setCellValue('Q'.$i, $montant['total'] - $montant_reglement['total']);
                     }
                     if ($operationcab['created'] != "") {
                         $sheet->setCellValue('R'.$i, $operationcab['created']->format('d-m-Y'));

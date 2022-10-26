@@ -81,11 +81,8 @@ class GestionInscriptionController extends AbstractController
             array( 'db' => 'UPPER(prom.designation)','dt' => 8),
             array( 'db' => 'LOWER(an.designation)','dt' => 9),
             array( 'db' => 'st.designation','dt' => 10),
-           
-            
         );
         $sql = "SELECT " . implode(", ", DatatablesController::Pluck($columns, 'db')) . "
-        
         FROM tinscription ins
         inner join tadmission ad on ad.id = ins.admission_id
         inner join tpreinscription pre on pre.id = ad.preinscription_id
@@ -95,8 +92,7 @@ class GestionInscriptionController extends AbstractController
         inner join ac_etablissement etab on etab.id = form.etablissement_id 
         INNER JOIN pstatut st ON st.id = ins.statut_id
         inner join ac_promotion prom on prom.id = ins.promotion_id
-        $filtre "
-        ;
+        $filtre ";
         // dd($sql);
         $totalRows .= $sql;
         $sqlRequest .= $sql;

@@ -242,9 +242,9 @@
         <tr>
             <td style="width: 10%;padding: 3px;font-size: 10px;text-align: left;background-color: #f7f7f7;font-weight: 800 !important;"><b>Module {{loop.index}}</b></td>
             <td style="width: 40%;padding: 3px;font-size: 10px;text-align: left;background-color: #f7f7f7;font-weight: 800 !important;"><b>{{mnote.module.designation}}</b></td>
-            <td style="width: 10%;padding: 3px;font-size: 10px;text-align:center;background-color: #f7f7f7;font-weight: 800 !important;"><b>{{mnote.noteIni}}</b></td>
-            <td style="width: 10%;padding: 3px;font-size: 10px;text-align:center;background-color: #f7f7f7;font-weight: 800 !important;"><b>{{mnote.noteRat}}</b></td>
-           <td style="width: 10%;padding: 3px;font-size: 10px;text-align:center;background-color: #f7f7f7;font-weight: 800 !important;"><b>{{mnote.note}}</b></td>
+            <td style="width: 10%;padding: 3px;font-size: 10px;text-align:center;background-color: #f7f7f7;font-weight: 800 !important;"><b>{{mnote.noteIni|number_format(2)}}</b></td>
+            <td style="width: 10%;padding: 3px;font-size: 10px;text-align:center;background-color: #f7f7f7;font-weight: 800 !important;"><b>{{mnote.noteRat|number_format(2)}}</b></td>
+           <td style="width: 10%;padding: 3px;font-size: 10px;text-align:center;background-color: #f7f7f7;font-weight: 800 !important;"><b>{{mnote.note|number_format(2)}}</b></td>
            
             <!--?php if ($dataIns['validation_academique']=='non'){ ?-->
        
@@ -264,9 +264,9 @@
         <tr>
             <td style="width: 100%; text-align: left;font-size: 10px;">
                 {% if assiduite == 1 %}                
-                    <p><b>MOYENNE {{semestre.designation}}: {{noteSemestre.noteSec}}</b></p>
+                    <p><b>MOYENNE {{semestre.designation}}: {{noteSemestre.noteSec|number_format(2)}}</b></p>
                 {% else %}
-                    <p><b>MOYENNE {{semestre.designation}}: {{noteSemestre.note}}</b></p>
+                    <p><b>MOYENNE {{semestre.designation}}: {{noteSemestre.note|number_format(2)}}</b></p>
                 {% endif %}
             </td>
         </tr>

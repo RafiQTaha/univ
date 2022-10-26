@@ -383,10 +383,20 @@ class ApiController extends AbstractController
     
     static function mouchard($user,$em,$object,$table,$action)
     {
+        $table = "App\Entity\\".$table;
+        $array = (array) $object;
+        foreach ($array as $key => $value) {
+            if (!is_object($value)) {
+                $nkey = str_replace($table, '', $key) ;
+                $nkey = preg_replace('/[\x00-\x1F\x7F]/u', '', $nkey);
+                $array[$nkey] = $array[$key];
+            }
+            unset($array[$key]);
+        }
         $mouchard = new Mouchard();
         $mouchard->setCreated(new \DateTime('now'));
         $mouchard->setUserCreated($user);
-        $mouchard->setObservation((array) $object);
+        $mouchard->setObservation($array);
         $mouchard->setFromTable($table);
         $mouchard->setAction($action);
         $em->persist($mouchard);
