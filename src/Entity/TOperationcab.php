@@ -33,8 +33,8 @@ class TOperationcab
     #[ORM\Column(type: 'datetime', nullable: true)]
     private $created;
 
-    #[ORM\ManyToOne(targetEntity: POrganisme::class, inversedBy: 'operationcabs')]
-    private $organisme;
+    // #[ORM\ManyToOne(targetEntity: POrganisme::class, inversedBy: 'operationcabs')]
+    // private $organisme;
 
     #[ORM\OneToMany(mappedBy: 'operation', targetEntity: TReglement::class)]
     private $reglements;
@@ -131,17 +131,17 @@ class TOperationcab
         return $this;
     }
 
-    public function getOrganisme(): ?POrganisme
-    {
-        return $this->organisme;
-    }
+    // public function getOrganisme(): ?POrganisme
+    // {
+    //     return $this->organisme;
+    // }
 
-    public function setOrganisme(?POrganisme $organisme): self
-    {
-        $this->organisme = $organisme;
+    // public function setOrganisme(?POrganisme $organisme): self
+    // {
+    //     $this->organisme = $organisme;
 
-        return $this;
-    }
+    //     return $this;
+    // }
 
     /**
      * @return Collection|TReglement[]

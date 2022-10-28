@@ -383,11 +383,11 @@ class ApiController extends AbstractController
     
     static function mouchard($user,$em,$object,$table,$action)
     {
-        $table = "App\Entity\\".$table;
+        $entity = "App\Entity\\".$table;
         $array = (array) $object;
         foreach ($array as $key => $value) {
             if (!is_object($value)) {
-                $nkey = str_replace($table, '', $key) ;
+                $nkey = str_replace($entity, '', $key) ;
                 $nkey = preg_replace('/[\x00-\x1F\x7F]/u', '', $nkey);
                 $array[$nkey] = $array[$key];
             }

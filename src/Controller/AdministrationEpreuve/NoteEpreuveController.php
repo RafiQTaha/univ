@@ -404,6 +404,7 @@ class NoteEpreuveController extends AbstractController
             $exgnote->setAbsence($sheet[4]);
             $exgnote->setObservation($sheet[5]);
             $this->em->flush();
+            ApiController::mouchard($this->getUser(), $this->em,$exgnote, 'ExGnote', 'Importation Des Notes');
         }
         return new JsonResponse("Total des notes associé est ".$sheetCount);
     }

@@ -90,7 +90,7 @@
         "/build/9755.58d5f244.js",
         "/build/8029.7c64de8b.js",
         "/build/2372.0ce808f0.js",
-        "/build/gestionadmission.dc803e9c.js"
+        "/build/gestionadmission.b3c6ffc0.js"
       ]
     },
     "evaluationAnnee": {
@@ -148,7 +148,7 @@
         "/build/9755.58d5f244.js",
         "/build/8029.7c64de8b.js",
         "/build/6515.4aaf3dea.js",
-        "/build/facture.69873044.js"
+        "/build/facture.37c266f6.js"
       ]
     },
     "bordereau": {
@@ -295,7 +295,7 @@
         "/build/9755.58d5f244.js",
         "/build/8029.7c64de8b.js",
         "/build/5293.18e34747.js",
-        "/build/gestionPlanification.9aa22108.js"
+        "/build/gestionPlanification.64ee1dab.js"
       ]
     },
     "planification": {
@@ -336,6 +336,14 @@
         "/build/9755.58d5f244.js",
         "/build/8029.7c64de8b.js",
         "/build/enseignantexcept.34d4af3f.js"
+      ]
+    },
+    "frais": {
+      "js": [
+        "/build/runtime.de6b8033.js",
+        "/build/9755.58d5f244.js",
+        "/build/8029.7c64de8b.js",
+        "/build/frais.d98775d9.js"
       ]
     }
   }

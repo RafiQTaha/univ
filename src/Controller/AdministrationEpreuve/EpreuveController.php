@@ -384,6 +384,9 @@ class EpreuveController extends AbstractController
             );
             $epreuve->setCode('EPV-'.$annee->getFormation()->getEtablissement()->getAbreviation().str_pad($epreuve->getId(), 8, '0', STR_PAD_LEFT).'/'.date('Y'));     
             $this->em->flush();
+            
+            ApiController::mouchard($this->getUser(), $this->em,$epreuve, 'AcEpreuve', 'Importation Epreuve');
+
             // dump(37015));
             $sheetGenerer->setCellValue('A'.$i, $epreuve->getId());
             $sheetGenerer->setCellValue('B'.$i, $epreuve->getCode());
@@ -448,7 +451,7 @@ class EpreuveController extends AbstractController
                     $this->em->getRepository(PStatut::class)->find(29)
                 );
                 $this->em->flush();
-
+                ApiController::mouchard($this->getUser(), $this->em,$epreuve, 'AcEpreuve', 'Affiliation Epreuve');
                 $writer = new Xlsx($spreadsheet);
                 $fileName = 'affiliation_'.$epreuve->getId().'.xlsx';
                 // $temp_file = tempnam(sys_get_temp_dir(), $fileName);
@@ -504,6 +507,8 @@ class EpreuveController extends AbstractController
             $this->em->getRepository(PStatut::class)->find(29)
         );
         $this->em->flush();
+        
+        ApiController::mouchard($this->getUser(), $this->em,$epreuve, 'AcEpreuve', 'Affiliation Rattrapage');
 
         return new JsonResponse("Bien Enregistre", 200);
 
@@ -538,6 +543,7 @@ class EpreuveController extends AbstractController
         };
         $epreuve->setCode('EPV-'.$etablissement->getAbreviation().str_pad($epreuve->getId(), 8, '0', STR_PAD_LEFT).'/'.date('Y'));     
         $this->em->flush();
+        ApiController::mouchard($this->getUser(), $this->em,$epreuve, 'AcEpreuve', 'Ajouter Epreuve');
 
         return new JsonResponse('Epreuve Bien Ajouter',200);
     }
@@ -552,6 +558,7 @@ class EpreuveController extends AbstractController
                     $this->em->getRepository(PStatut::class)->find(30) //Valider
                 );
                 $epreuve->setUserValidated($this->getUser());
+                ApiController::mouchard($this->getUser(), $this->em,$epreuve, 'AcEpreuve', 'Valider Epreuve');
             }
         }
         $this->em->flush();
@@ -568,6 +575,7 @@ class EpreuveController extends AbstractController
                 $epreuve->setStatut(
                     $this->em->getRepository(PStatut::class)->find(29) //Affilier
                 );
+                ApiController::mouchard($this->getUser(), $this->em,$epreuve, 'AcEpreuve', 'Dévalider Epreuve');
             }
         }
         $this->em->flush();

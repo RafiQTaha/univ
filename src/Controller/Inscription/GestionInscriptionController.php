@@ -103,6 +103,11 @@ class GestionInscriptionController extends AbstractController
         $my_columns = DatatablesController::Pluck($columns, 'db');
             
         // search 
+        $pre = [
+            "db" => "pre.code",
+            "dt" => 11
+        ];
+        array_push($columns,$pre);
         $where = DatatablesController::Search($request, $columns);
         if (isset($where) && $where != '') {
             $sqlRequest .= $where;

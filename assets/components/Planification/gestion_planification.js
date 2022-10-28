@@ -508,4 +508,36 @@ $(document).ready(function () {
     })
      
     
+    $('body').on('click','#degenerer', async function (e) {
+        e.preventDefault();
+        if(ids_planning.length === 0 ){
+            Toast.fire({
+            icon: 'error',
+            title: 'Merci de Choisir au moins une ligne',
+            })
+            return;
+        }
+        alert('test')
+        // var res = confirm('Vous voulez vraiment supprimer cette enregistrement ?');
+        // if(res == 1){
+        //     const icon = $("#supprimer i");
+        //     icon.removeClass('fa-trash').addClass("fa-spinner fa-spin");
+        //     var formData = new FormData();
+        //     formData.append('ids_planning', JSON.stringify(ids_planning)); 
+        //     try {
+        //         const request = await axios.post('/planification/gestions/gestion_delete_planning',formData);
+        //         const response = request.data;
+        //         Toast.fire({
+        //             icon: 'success',
+        //             title: response,
+        //         })
+        //         ids_planning = []
+        //         table_gestion_planification.ajax.reload(null,false);
+        //         icon.addClass('fa-trash').removeClass("fa-spinner fa-spin");
+        //     } catch (error) {
+        //         const message = error.response.data;
+        //         icon.addClass('fa-trash').removeClass("fa-spinner fa-spin");
+        //     }
+        // }  
+    })
 })

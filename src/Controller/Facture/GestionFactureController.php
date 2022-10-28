@@ -71,7 +71,7 @@ class GestionFactureController extends AbstractController
         $params = $request->query;
         $where = $totalRows = $sqlRequest = "";
         // $filtre = " where 1=1 and (stat.designation = 'INSCRIT' or stat.designation = '' or stat.designation is null ) ";
-        $filtre = " where 1=1 and (stat.id = 13 or stat.id = 14) ";
+        $filtre = " where 1=1 and (stat.id = 13 or stat.id = 14 or stat.id = 8) ";
         
         if (!empty($params->all('columns')[0]['search']['value'])) {
             $filtre .= " and etab.id = '" . $params->all('columns')[0]['search']['value'] . "' ";
@@ -528,16 +528,15 @@ class GestionFactureController extends AbstractController
         $this->em->flush();
         return new JsonResponse(1, 200);    
     }
-
     
     #[Route('/cloture_detaille/{id}', name: 'cloture_detaille')]
     public function cloture_detaille(TOperationdet $operationdet): Response
     {   
-        ApiController::mouchard($this->getUser(), $this->em,$operationdet, 'TOperationdet', 'Cloture');
         $operationdet->setActive(0);
         $this->em->flush();
         return new JsonResponse(1, 200);    
     }
+    
     #[Route('/cloture_all_detaille/{id}', name: 'cloture_all_detaille')]
     public function cloture_all_detaille(TOperationcab $operationcab): Response
     {   

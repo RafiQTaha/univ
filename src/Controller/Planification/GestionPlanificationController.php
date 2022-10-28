@@ -22,6 +22,7 @@ use Mpdf\Mpdf;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use PhpOffice\PhpSpreadsheet\Reader\Xlsx as reader;
+use Proxies\__CG__\App\Entity\PlEmptime as EntityPlEmptime;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 
@@ -202,7 +203,7 @@ class GestionPlanificationController extends AbstractController
         }
         foreach ($ids as $id) {
             $emptime = $this->em->getRepository(PlEmptime::class)->find($id);
-            if ($emptime) {
+            if ($emptime && $emptime->getValider() == 0) {
                 $iseances = $this->em->getRepository(ISeance::class)->findBy(['seance'=>$emptime]);
                 foreach($iseances as $iseance){
                     $iseance->setStatut(5);
@@ -241,16 +242,20 @@ class GestionPlanificationController extends AbstractController
         if ($emptime->getAnnuler() == 1) {
             return new Response('Impossible de valider une séance annulé! ',500);
         }
-        $sql = "select * from semaine 
-            where id >= 100 and id <= 200 and date(date_debut) <= (SELECT date(start) FROM `pl_emptime`
-            where id = ".$emptime->getId().") and date(date_fin) >= (SELECT date(start) FROM `pl_emptime`
-            where id = ".$emptime->getId().")";
-        $stmt = $this->em->getConnection()->prepare($sql);
-        $resultSet = $stmt->executeQuery();
-        $semaine = $resultSet->fetchAll();
-        $emptime->setSemaine($this->em->getRepository(semaine::class)->find($semaine[0]['id']));
-        $this->em->flush();
-        
+        $emptimes = $this->em->getRepository(PlEmptime::class)->findBy(['semaine'=>$emptime->getSemaine()]);
+        // dd($emptimes);
+        foreach ($emptimes as $emptime) {
+            $sql = "select * from semaine 
+                where id >= 100 and id <= 200 and date(date_debut) <= (SELECT date(start) FROM `pl_emptime`
+                where id = ".$emptime->getId().") and date(date_fin) >= (SELECT date(start) FROM `pl_emptime`
+                where id = ".$emptime->getId().")";
+            $stmt = $this->em->getConnection()->prepare($sql);
+            $resultSet = $stmt->executeQuery();
+            $semaine = $resultSet->fetchAll();
+            $emptime->setSemaine($this->em->getRepository(semaine::class)->find($semaine[0]['id']));
+            $this->em->flush();
+        }
+        // die('done');
         if ($emptime) {
             $emptime->setValider(1);
             $this->em->flush();
