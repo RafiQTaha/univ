@@ -397,19 +397,24 @@ class GestionPlanificationController extends AbstractController
     #[Route('/fixsemaine/{seance}', name: 'fixsemaine')]
     public function fixsemaine(PlEmptime $seance): Response
     {   
-        $emptimes = $this->em->getRepository(PlEmptime::class)->findBy(['semaine'=>$seance->getSemaine()]);
-        // dd($emptimes);
-        foreach ($emptimes as $emptime) {
-            $sql = "select * from semaine 
-                where id >= 100 and id <= 200 and date(date_debut) <= (SELECT date(start) FROM `pl_emptime`
-                where id = ".$emptime->getId().") and date(date_fin) >= (SELECT date(start) FROM `pl_emptime`
-                where id = ".$emptime->getId().")";
-            $stmt = $this->em->getConnection()->prepare($sql);
-            $resultSet = $stmt->executeQuery();
-            $semaine = $resultSet->fetchAll();
-            $emptime->setSemaine($this->em->getRepository(semaine::class)->find($semaine[0]['id']));
-            $this->em->flush();
-        }
+        $semaines = $this->em->getRepository(Semaine::class)->findAll();
+        // dd($semaines);
+        // foreach ($semaines as $semaine) {
+            // $emptimes = $this->em->getRepository(PlEmptime::class)->findBy(['semaine'=>$semaine]);
+            $emptimes = $this->em->getRepository(PlEmptime::class)->findAll();
+            // dd($emptimes);
+            foreach ($emptimes as $emptime) {
+                $sql = "select * from semaine 
+                    where date(date_debut) <= (SELECT date(start) FROM `pl_emptime`
+                    where id = ".$emptime->getId().") and date(date_fin) >= (SELECT date(start) FROM `pl_emptime`
+                    where id = ".$emptime->getId().")";
+                $stmt = $this->em->getConnection()->prepare($sql);
+                $resultSet = $stmt->executeQuery();
+                $semaine = $resultSet->fetchAll();
+                $emptime->setSemaine($this->em->getRepository(semaine::class)->find($semaine[0]['id']));
+                $this->em->flush();
+            }
+        // }
         die('done');
     }  
 }
