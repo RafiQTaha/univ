@@ -220,6 +220,11 @@ $(document).ready(function () {
         const grade = $(this).val();
         table_creation_borderaux.columns(4).search(grade).draw();
     })
+    $("#semaine_day").on('change', async function (){
+        const semaine_day = $(this).val();
+        console.log(semaine_day)
+        table_creation_borderaux.columns(7).search(semaine_day).draw();
+    })
     $('body').on('click','#cree', async function (e) {
         e.preventDefault();
         if(ids_seances.length === 0 || $("#promotion").val() == "" || $("#semaine").val() == "" ){

@@ -307,19 +307,12 @@ class GestionInscriptionController extends AbstractController
         $sheet->setCellValue('S1', "NIVEAU D'ETUDES");
         $sheet->setCellValue('T1', 'TYPE DE BAC');
         $sheet->setCellValue('U1', 'ANNEE BAC');
-        $sheet->setCellValue('V1', 'MOYENNE GENERALE');
-        $sheet->setCellValue('W1', 'MOYENNE NATIONALE');
+        $sheet->setCellValue('V1', 'FILIERE');
+        $sheet->setCellValue('W1', 'MOYENNE GENERALE');
+        $sheet->setCellValue('X1', 'MOYENNE NATIONALE');
         $sheet->setCellValue('Y1', 'MOYENNE REGIONALE');
         $sheet->setCellValue('Z1', 'D-INSCRIPTION');
         $sheet->setCellValue('AA1', 'STATUT');
-        // $sheet->setCellValue('U1', 'N°FACTURE');
-        // $sheet->setCellValue('V1', 'MONTANT FACTURE');
-        // $sheet->setCellValue('W1', 'MONTANT REGLE');
-        // $sheet->setCellValue('X1', 'RESTE');
-        // $sheet->setCellValue('Y1', 'TYPE REGLEMENT');
-        // $sheet->setCellValue('Z1', 'REFERENCE REGLEMENT');
-        // $sheet->setCellValue('AA1', 'DATE FACTURE');
-        // $sheet->setCellValue('AB1', 'DATE REGLEMENT');
         $i=2;
         $j=1;
         $current_year = date('m') > 7 ? $current_year = date('Y').'/'.date('Y')+1 : $current_year = date('Y') - 1 .'/' .date('Y');
@@ -351,33 +344,13 @@ class GestionInscriptionController extends AbstractController
             $sheet->setCellValue('S'.$i, $inscription->getPromotion()->getDesignation());
             $sheet->setCellValue('T'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getTypeBac() == Null ? "" : $inscription->getAdmission()->getPreinscription()->getEtudiant()->getTypeBac()->getDesignation());
             $sheet->setCellValue('U'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getAnneeBac());
-            $sheet->setCellValue('V'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getMoyenneBac());
-            $sheet->setCellValue('W'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getMoyenNational());
+            $filiere = $inscription->getAdmission()->getPreinscription()->getEtudiant()->getFiliere();
+            $sheet->setCellValue('V'.$i, $filiere != null ? $filiere->getDesignation() : "");
+            $sheet->setCellValue('W'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getMoyenneBac());
+            $sheet->setCellValue('X'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getMoyenNational());
             $sheet->setCellValue('Y'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getMoyenRegional());
             $sheet->setCellValue('Z'.$i, $inscription->getCreated());
             $sheet->setCellValue('AA'.$i, $inscription->getStatut()->GetDesignation());
-
-            // $facture = $this->em->getRepository(TOperationcab::class)->findOneBy(['categorie'=>'inscription','preinscription'=>$inscription->getAdmission()->getPreinscription(),'active'=>1]);
-            // if ($facture) {
-            //     $sheet->setCellValue('U'.$i, $facture->getCode());
-            //     $sommefacture = $this->em->getRepository(TOperationdet::class)->getSumMontantByCodeFacture($facture);
-            //     $sommefacture = $sommefacture == Null ? 0 : $sommefacture['total'];
-            //     $sheet->setCellValue('V'.$i, $sommefacture);
-            //     $sommereglement = $this->em->getRepository(TReglement::class)->getSumMontantByCodeFacture($facture);
-            //     $sommereglement = $sommereglement == Null ? 0 : $sommereglement['total'];
-            //     $sheet->setCellValue('W'.$i, $sommereglement);
-            //     $reste = $sommefacture - $sommereglement;
-            //     $sheet->setCellValue('X'.$i, $reste);
-            //     $reglement = $this->em->getRepository(TReglement::class)->findOneBy(['operation'=>$facture],['id'=>'DESC']);
-            //     if ($reglement) {
-            //         $sheet->setCellValue('Y'.$i, $reglement->getPaiement()->getDesignation());
-            //         $sheet->setCellValue('Z'.$i, $reglement->getCode());
-            //     }
-            //     $sheet->setCellValue('AA'.$i, $facture->getCreated());
-            //     if ($reglement) {
-            //         $sheet->setCellValue('AB'.$i, $reglement->getCreated());
-            //     }
-            // }
             $i++;
             $j++;
         }

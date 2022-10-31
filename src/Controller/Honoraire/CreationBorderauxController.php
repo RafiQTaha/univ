@@ -77,6 +77,9 @@ class CreationBorderauxController extends AbstractController
         }   
         if (!empty($params->all('columns')[6]['search']['value'])) {
             $filtre .= " and ens.id = '" . $params->all('columns')[6]['search']['value'] . "' ";
+        }   
+        if (!empty($params->all('columns')[7]['search']['value'])) {
+            $filtre .= " and date(sm.date_debut) <= '" . $params->all('columns')[7]['search']['value'] . "' and date(sm.date_fin) >= '" . $params->all('columns')[7]['search']['value'] . "' ";
         } 
         
         $columns = array(

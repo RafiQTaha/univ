@@ -242,9 +242,9 @@ class GestionPlanificationController extends AbstractController
         if ($emptime->getAnnuler() == 1) {
             return new Response('Impossible de valider une séance annulé! ',500);
         }
-        $emptimes = $this->em->getRepository(PlEmptime::class)->findBy(['semaine'=>$emptime->getSemaine()]);
-        // dd($emptimes);
-        foreach ($emptimes as $emptime) {
+        // $emptimes = $this->em->getRepository(PlEmptime::class)->findBy(['semaine'=>$emptime->getSemaine()]);
+        // // dd($emptimes);
+        // foreach ($emptimes as $emptime) {
             $sql = "select * from semaine 
                 where id >= 100 and id <= 200 and date(date_debut) <= (SELECT date(start) FROM `pl_emptime`
                 where id = ".$emptime->getId().") and date(date_fin) >= (SELECT date(start) FROM `pl_emptime`
@@ -254,7 +254,7 @@ class GestionPlanificationController extends AbstractController
             $semaine = $resultSet->fetchAll();
             $emptime->setSemaine($this->em->getRepository(semaine::class)->find($semaine[0]['id']));
             $this->em->flush();
-        }
+        // }
         // die('done');
         if ($emptime) {
             $emptime->setValider(1);
@@ -393,4 +393,23 @@ class GestionPlanificationController extends AbstractController
     //     // dd($list);
     //     return new JsonResponse($list);
     // }
+    
+    #[Route('/fixsemaine/{seance}', name: 'fixsemaine')]
+    public function fixsemaine(PlEmptime $seance): Response
+    {   
+        $emptimes = $this->em->getRepository(PlEmptime::class)->findBy(['semaine'=>$seance->getSemaine()]);
+        // dd($emptimes);
+        foreach ($emptimes as $emptime) {
+            $sql = "select * from semaine 
+                where id >= 100 and id <= 200 and date(date_debut) <= (SELECT date(start) FROM `pl_emptime`
+                where id = ".$emptime->getId().") and date(date_fin) >= (SELECT date(start) FROM `pl_emptime`
+                where id = ".$emptime->getId().")";
+            $stmt = $this->em->getConnection()->prepare($sql);
+            $resultSet = $stmt->executeQuery();
+            $semaine = $resultSet->fetchAll();
+            $emptime->setSemaine($this->em->getRepository(semaine::class)->find($semaine[0]['id']));
+            $this->em->flush();
+        }
+        die('done');
+    }  
 }
