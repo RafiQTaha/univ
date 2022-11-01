@@ -707,5 +707,37 @@ class EpreuveController extends AbstractController
         return new JsonResponse('Bien enregistre',200);
 
         
+    } 
+    
+    #[Route('/extraction_epreuve_valide', name: 'extraction_epreuve_valide')]
+    public function extraction_epreuve_valide()
+    {   
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        $i=2;
+        $j=1;
+        $currentyear = date('m') > 7 ? $current_year = date('Y').'/'.date('Y')+1 : $current_year = date('Y') - 1 .'/' .date('Y');
+        $epreuves = $this->em->getRepository(AcEpreuve::class)->findEpreuveValideByCurrentYear($currentyear);
+        // dd($epreuves);
+        $sheet->fromArray(
+            array_keys($epreuves[0]),
+            null,
+            'A1'
+        );
+        foreach ($epreuves as $epreuve) {
+            $sheet->fromArray(
+                $epreuve,
+                null,
+                'A'.$i
+            );
+            $i++;
+            $j++;
+        }
+        $writer = new Xlsx($spreadsheet);
+        $fileName = 'Extraction Epreuves Valide.xlsx';
+        $temp_file = tempnam(sys_get_temp_dir(), $fileName);
+        $writer->save($temp_file);
+        return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);
     }
+    
 }

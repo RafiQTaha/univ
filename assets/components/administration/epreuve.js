@@ -640,5 +640,12 @@ $(document).ready(function  () {
             icon.addClass('fab fa-get-pocket').removeClass("fa fa-spinner fa-spin ");
         }
     })
+
+    $('body').on('click','#extraction_epv_valide', async function (e) {
+        e.preventDefault();
+        const icon = $("#extraction_epv_valide i");
+        window.open('/administration/epreuve/extraction_epreuve_valide', '_blank');
+    })
+     
     
 })

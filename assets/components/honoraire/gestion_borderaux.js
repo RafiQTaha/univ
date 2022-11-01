@@ -149,6 +149,7 @@ $(document).ready(function () {
                 icon: 'success',
                 title: response,
             })
+            ids_borderaux = []
             table_gestion_borderaux.ajax.reload(null,false);
             icon.addClass('fa-times-circle').removeClass("fa-spinner fa-spin");
         } catch (error) {
