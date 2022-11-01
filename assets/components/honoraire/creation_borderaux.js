@@ -10,6 +10,7 @@ $(document).ready(function () {
             toast.addEventListener('mouseleave', Swal.resumeTimer)
         },
     })
+    let semaine_id = false;
     let id_seance = false;
     let ids_seances = [];
     var table_creation_borderaux = $("#datables_creation_borderaux").DataTable({
@@ -222,12 +223,22 @@ $(document).ready(function () {
     })
     $("#semaine_day").on('change', async function (){
         const semaine_day = $(this).val();
+        semaine_id = false;
         console.log(semaine_day)
         table_creation_borderaux.columns(7).search(semaine_day).draw();
+        if (semaine_day != "") {
+            let formData = new FormData()
+            formData.append('semaine_day',semaine_day)
+            const request = await axios.post('/honoraire/creation_borderaux/findSemainePlanning', formData);
+            if (request.data != 0) {
+                semaine_id = request.data
+            }
+            console.log(semaine_id);
+        }
     })
     $('body').on('click','#cree', async function (e) {
         e.preventDefault();
-        if(ids_seances.length === 0 || $("#promotion").val() == "" || $("#semaine").val() == "" ){
+        if(ids_seances.length === 0 || $("#promotion").val() == "" || ($("#semaine").val() == "" && !semaine_id)){
             Toast.fire({
                 icon: 'error',
                 title: 'Merci de Choisir une semestre et une semaine et au moins une ligne!',
@@ -239,7 +250,11 @@ $(document).ready(function () {
         var formData = new FormData();
         formData.append('ids_seances', JSON.stringify(ids_seances)); 
         formData.append('promotion', $("#promotion").val());
-        formData.append('semaine', $("#semaine").val());
+        if (semaine_id != null) {
+            formData.append('semaine', semaine_id);
+        }else{
+            formData.append('semaine', $("#semaine").val());
+        }
         try {
             const request = await axios.post('/honoraire/creation_borderaux/cree_borderaux',formData);
             const response = request.data;

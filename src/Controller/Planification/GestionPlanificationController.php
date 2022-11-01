@@ -397,11 +397,11 @@ class GestionPlanificationController extends AbstractController
     #[Route('/fixsemaine/{seance}', name: 'fixsemaine')]
     public function fixsemaine(PlEmptime $seance): Response
     {   
-        $semaines = $this->em->getRepository(Semaine::class)->findAll();
+        // $semaines = $this->em->getRepository(Semaine::class)->findAll();
         // dd($semaines);
         // foreach ($semaines as $semaine) {
-            // $emptimes = $this->em->getRepository(PlEmptime::class)->findBy(['semaine'=>$semaine]);
-            $emptimes = $this->em->getRepository(PlEmptime::class)->findAll();
+            $emptimes = $this->em->getRepository(PlEmptime::class)->findBy(['semaine'=>$seance->getSemaine()]);
+            // $emptimes = $this->em->getRepository(PlEmptime::class)->findAll();
             // dd($emptimes);
             foreach ($emptimes as $emptime) {
                 $sql = "select * from semaine 

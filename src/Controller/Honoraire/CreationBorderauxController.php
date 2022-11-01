@@ -258,4 +258,15 @@ class CreationBorderauxController extends AbstractController
         return new JsonResponse($list);
     }
     
+    #[Route('/findSemainePlanning', name: 'findSemainePlanning')]
+    public function findSemainePlanning(Request $request): Response
+    {
+        $date = $request->get("semaine_day");
+        $semaine = $this->em->getRepository(Semaine::class)->findSemaine($date);
+        if (!$semaine) {
+            return new JsonResponse(0);
+        }
+        return new JsonResponse($semaine->getId());
+    }
+    
 }

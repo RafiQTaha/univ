@@ -61,6 +61,7 @@ $(document).ready(function () {
                 ids_borderaux.push(input.attr("data-id"));
             }
         }
+        console.log(ids_borderaux);
     })
     $("select").select2();
     $("#etablissement").on('change', async function (){

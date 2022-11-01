@@ -55,7 +55,7 @@ class GestionAdmissionController extends AbstractController
     {
         $params = $request->query;
         $where = $totalRows = $sqlRequest = "";
-        $filtre = "where 1 = 1 ";   
+        $filtre = "where 1 = 1 AND ad.statut_id = 7 ";   
         // dd($params->all('columns')[0]);
 
         if (!empty($params->all('columns')[0]['search']['value'])) {
@@ -77,10 +77,10 @@ class GestionAdmissionController extends AbstractController
             array( 'db' => 'etu.prenom','dt' => 4),
             array( 'db' => 'etab.abreviation','dt' => 5),
             array( 'db' => 'UPPER(form.abreviation)','dt' => 6),
-            array( 'db' => 'tab.montant','dt' => 7),
-            array( 'db' => 'st.designation','dt' => 8)
+            // array( 'db' => 'tab.montant','dt' => 7),
+            array( 'db' => 'st.designation','dt' => 7)
         );
-        $filtre .= " AND ad.statut_id = 7 ";
+        // $filtre .= "  ";
         $sql = "SELECT " . implode(", ", DatatablesController::Pluck($columns, 'db')) . "
             FROM tadmission ad
             inner join tpreinscription pre on pre.id = ad.preinscription_id
@@ -89,12 +89,6 @@ class GestionAdmissionController extends AbstractController
             inner join ac_formation form on form.id = an.formation_id              
             inner join ac_etablissement etab on etab.id = form.etablissement_id 
             INNER JOIN pstatut st ON st.id = ad.statut_id
-            LEFT JOIN (SELECT adm.id id_admission,SUM(det.montant) montant 
-            FROM toperationcab cab 
-            INNER JOIN tadmission adm ON adm.preinscription_id = cab.preinscription_id
-            INNER JOIN toperationdet det ON cab.id = det.operationcab_id 
-            INNER JOIN ac_annee an ON an.id = cab.annee_id 
-            GROUP BY adm.id) tab ON tab.id_admission = ad.id 
             $filtre "
         ;
         // dd($sql);
@@ -132,15 +126,27 @@ class GestionAdmissionController extends AbstractController
             // dd($row);
 
             foreach (array_values($row) as $key => $value) {
-                if($key == 8) {
+                if($key == 7) {
+                    $preinscription = $this->em->getRepository(TAdmission::class)->find($row['id'])->getPreinscription();
+                    $cabs = $preinscription->getOperationcabs();
+                    $montant = 0;
+                    foreach ($cabs as $cab) {
+                        $total = $this->em->getRepository(TOperationdet::class)->getSumMontantByCodeFacture($cab->getId())['total'];
+                        $montant = $montant + $total;
+                    }
+                    $nestedData[] = $montant;
                     $nestedData[] = count($this->em->getRepository(TAdmission::class)->find($row['id'])->getInscriptions()) > 0 ? 'Inscrit' : 'Non Inscrit';
                     $nestedData[] = $value;
                 }
+                // elseif($key == 8) {
+                //     $nestedData[] = count($this->em->getRepository(TAdmission::class)->find($row['id'])->getInscriptions()) > 0 ? 'Inscrit' : 'Non Inscrit';
+                //     $nestedData[] = $value;
+                // }
                 else if($key > 0) {
                     $nestedData[] = $value;
                 }
             }
-            if($row['montant'] == '') {
+            if($montant == 0) {
                 $cd .= ' etat_bg_nf';
             } else {
                 $cd .= ' etat_bg_reg';

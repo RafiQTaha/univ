@@ -10,7 +10,9 @@ use App\Entity\HHonens;
 use App\Entity\PEnseignant;
 use App\Entity\PGrade;
 use App\Entity\Semaine;
+use App\Entity\TBrdpaiement;
 use Doctrine\Persistence\ManagerRegistry;
+use Mpdf\Mpdf;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -254,5 +256,43 @@ class GestionBorderauxController extends AbstractController
         $temp_file = tempnam(sys_get_temp_dir(), $fileName);
         $writer->save($temp_file);
         return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);
+    }
+    #[Route('/MultiBorderaux', name: 'MultiBorderaux')]
+    public function MultiBorderaux(Request $request)
+    { 
+        $mpdf = new Mpdf([
+            'format' => 'A4-L',
+            'mode' => 'utf-8',
+            'margin_left' => '5',
+            'margin_right' => '5',
+            'margin_bottom' => '35',
+        ]);
+        $borderauxx = [12500,12623];
+        $borderauxx = $this->em->getRepository(HAlbhon::class)->FindBy(['id'=>$borderauxx]);
+        $html = "";
+        $i = 1;
+        foreach ($borderauxx as $borderaux) {
+            $honenss = $this->em->getRepository(HHonens::class)->getHonoraireByActiveSeanceAndBordereau($borderaux);
+            $nombre_seance = [];
+            $ens = [];
+            foreach ($honenss as $honens) {
+                array_push($nombre_seance,$honens->getSeance()->getCode());
+            }
+            $ens_infos = $this->em->getRepository(HHonens::class)->getEnsByBordereau($borderaux);
+            $html .= $this->render("honoraire/pdfs/borderaux_multi.html.twig", [
+                'borderaux' => $borderaux,
+                'honenss' => $honenss,
+                'nombre_seance'=> array_unique($nombre_seance),
+                'ens_infos'=> $ens_infos
+            ])->getContent();
+            $i < count($borderauxx) ? $html .= '<page_break>':"";
+            $i++;
+        }
+        $mpdf->SetTitle('ETAT DES HONORAIRES PAR PROFESSEUR');
+        $mpdf->SetHTMLFooter(
+            $this->render("facture/pdfs/footer_borderaux.html.twig")->getContent()
+        );
+        $mpdf->WriteHTML($html);
+        $mpdf->Output("Borderaux.pdf", "I");
     }
 }
