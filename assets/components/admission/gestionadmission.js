@@ -35,8 +35,8 @@ const Toast = Swal.mixin({
             $("body tr#" + id_admission).addClass('active_databales')
         },
         preDrawCallback: function(settings) {
-            if ($.fn.DataTable.isDataTable('#datables_facture')) {
-                var dt = $('#datables_facture').DataTable();
+            if ($.fn.DataTable.isDataTable('#datatables_gestion_admission')) {
+                var dt = $('#datatables_gestion_admission').DataTable();
 
                 //Abort previous ajax request if it is still in process.
                 var settings = dt.settings();
