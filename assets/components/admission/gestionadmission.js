@@ -34,6 +34,17 @@ const Toast = Swal.mixin({
             });
             $("body tr#" + id_admission).addClass('active_databales')
         },
+        preDrawCallback: function(settings) {
+            if ($.fn.DataTable.isDataTable('#datables_facture')) {
+                var dt = $('#datables_facture').DataTable();
+
+                //Abort previous ajax request if it is still in process.
+                var settings = dt.settings();
+                if (settings[0].jqXHR) {
+                    settings[0].jqXHR.abort();
+                }
+            }
+        },
         language: {
             url: "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/French.json",
         },
