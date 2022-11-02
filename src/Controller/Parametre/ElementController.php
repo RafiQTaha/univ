@@ -9,10 +9,13 @@ use App\Entity\AcEtablissement;
 use App\Entity\AcModule;
 use App\Entity\TypeElement;
 use Doctrine\Persistence\ManagerRegistry;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\Routing\Annotation\Route;
 
 #[Route('/parametre/element')]
@@ -181,5 +184,37 @@ class ElementController extends AbstractController
         $this->em->flush();
     
         return new JsonResponse('Element Bien Modifier',200);
+    } 
+    
+    #[Route('/extraction_architecture', name: 'extraction_architecture')]
+    public function extraction_architecture()
+    {   
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        $i=2;
+        $j=1;
+        $currentyear = date('m') > 7 ? $current_year = date('Y').'/'.date('Y')+1 : $current_year = date('Y') - 1 .'/' .date('Y');
+        $elements = $this->em->getRepository(AcElement::class)->findArchitectureByCurrentYear($currentyear);
+        // dd($elements[0]);
+        $sheet->fromArray(
+            array_keys($elements[0]),
+            null,
+            'A1'
+        );
+        foreach ($elements as $element) {
+            $sheet->fromArray(
+                $element,
+                null,
+                'A'.$i
+            );
+            $i++;
+            $j++;
+        }
+        $writer = new Xlsx($spreadsheet);
+        $currentyear = date('m') > 7 ? $current_year = date('Y').'-'.date('Y')+1 : $current_year = date('Y') - 1 .'-' .date('Y');
+        $fileName = 'Extraction Architecture '.$currentyear.'.xlsx';
+        $temp_file = tempnam(sys_get_temp_dir(), $fileName);
+        $writer->save($temp_file);
+        return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);
     }
 }

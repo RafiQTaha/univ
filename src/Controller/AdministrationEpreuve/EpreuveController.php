@@ -734,7 +734,8 @@ class EpreuveController extends AbstractController
             $j++;
         }
         $writer = new Xlsx($spreadsheet);
-        $fileName = 'Extraction Epreuves Valide.xlsx';
+        $currentyear = date('m') > 7 ? $current_year = date('Y').'-'.date('Y')+1 : $current_year = date('Y') - 1 .'-' .date('Y');
+        $fileName = 'Extraction Epreuves Valide '.$currentyear.'.xlsx';
         $temp_file = tempnam(sys_get_temp_dir(), $fileName);
         $writer->save($temp_file);
         return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);

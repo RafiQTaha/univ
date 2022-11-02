@@ -50,7 +50,8 @@ class AcEpreuveRepository extends ServiceEntityRepository
     */
     public function findEpreuveValideByCurrentYear($currentyear)
     {
-        $sqls="SELECT ins.code 'code inscriptiont', adm.code 'code admission', pre.code 'code preinscription', ins.code_anonymat, ins.code_anonymat_rat, stat.code, etu.nom, etu.prenom,ann.code, ann.designation 'Annee',etab.code, etab.designation 'Etablissement', frm.code, frm.designation 'Formation',prm.code , prm.designation 'Promotion', sem.code,sem.designation 'Semestre', mdl.code, mdl.designation as Module,elm.code, elm.designation as Designation, epv.code as code_epreuve, pr.code,pr.designation as Nature_Epreuve,epv.date_epreuve,gn.note 
+        $sqls="SELECT ins.id 'Id Inscription
+        ',ins.code 'code inscriptiont', adm.code 'code admission', pre.code 'code preinscription', ins.code_anonymat, ins.code_anonymat_rat, stat.code 'code statut', etu.nom, etu.prenom,ann.code 'code annee', ann.designation 'Annee',etab.code 'code etablissement', etab.designation 'Etablissement', frm.code 'code formation', frm.designation 'Formation',prm.code  'code promotion', prm.designation 'Promotion', sem.code 'code semestre',sem.designation 'Semestre', mdl.code 'code module', mdl.designation 'Module',elm.code 'code element', elm.designation  'Element', epv.code 'code epreuve', pr.code,pr.designation 'Nature Epreuve',epv.date_epreuve 'date epreuve',gn.note 'note'
         FROM `ac_epreuve` epv
         inner join ac_element elm on elm.id = epv.element_id
         inner join ac_annee ann on ann.id = epv.annee_id

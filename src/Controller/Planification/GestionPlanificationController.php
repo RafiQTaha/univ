@@ -374,7 +374,8 @@ class GestionPlanificationController extends AbstractController
             $j++;
         }
         $writer = new Xlsx($spreadsheet);
-        $fileName = 'Extraction Seances.xlsx';
+        $currentyear = date('m') > 7 ? $current_year = date('Y').'-'.date('Y')+1 : $current_year = date('Y') - 1 .'-' .date('Y');
+        $fileName = 'Extraction Seances '.$current_year.'.xlsx';
         $temp_file = tempnam(sys_get_temp_dir(), $fileName);
         $writer->save($temp_file);
         return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);
@@ -397,24 +398,18 @@ class GestionPlanificationController extends AbstractController
     #[Route('/fixsemaine/{seance}', name: 'fixsemaine')]
     public function fixsemaine(PlEmptime $seance): Response
     {   
-        // $semaines = $this->em->getRepository(Semaine::class)->findAll();
-        // dd($semaines);
-        // foreach ($semaines as $semaine) {
-            $emptimes = $this->em->getRepository(PlEmptime::class)->findBy(['semaine'=>$seance->getSemaine()]);
-            // $emptimes = $this->em->getRepository(PlEmptime::class)->findAll();
-            // dd($emptimes);
-            foreach ($emptimes as $emptime) {
-                $sql = "select * from semaine 
-                    where date(date_debut) <= (SELECT date(start) FROM `pl_emptime`
-                    where id = ".$emptime->getId().") and date(date_fin) >= (SELECT date(start) FROM `pl_emptime`
-                    where id = ".$emptime->getId().")";
-                $stmt = $this->em->getConnection()->prepare($sql);
-                $resultSet = $stmt->executeQuery();
-                $semaine = $resultSet->fetchAll();
-                $emptime->setSemaine($this->em->getRepository(semaine::class)->find($semaine[0]['id']));
-                $this->em->flush();
-            }
-        // }
+        $emptimes = $this->em->getRepository(PlEmptime::class)->findBy(['semaine'=>$seance->getSemaine()]);
+        foreach ($emptimes as $emptime) {
+            $sql = "select * from semaine 
+                where date(date_debut) <= (SELECT date(start) FROM `pl_emptime`
+                where id = ".$emptime->getId().") and date(date_fin) >= (SELECT date(start) FROM `pl_emptime`
+                where id = ".$emptime->getId().")";
+            $stmt = $this->em->getConnection()->prepare($sql);
+            $resultSet = $stmt->executeQuery();
+            $semaine = $resultSet->fetchAll();
+            $emptime->setSemaine($this->em->getRepository(semaine::class)->find($semaine[0]['id']));
+            $this->em->flush();
+        }
         die('done');
     }  
 }
