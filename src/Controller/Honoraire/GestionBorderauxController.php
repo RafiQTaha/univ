@@ -89,7 +89,7 @@ class GestionBorderauxController extends AbstractController
         INNER JOIN ac_promotion prm ON prm.id = sem.promotion_id
         INNER JOIN ac_formation frm ON frm.id = prm.formation_id
         INNER JOIN ac_etablissement etab ON etab.id = frm.etablissement_id
-        $filtre GROUP BY alb.id ";
+        $filtre ";
         // dd($sql);
         $totalRows .= $sql;
         $sqlRequest .= $sql;
@@ -103,6 +103,8 @@ class GestionBorderauxController extends AbstractController
         if (isset($where) && $where != '') {
             $sqlRequest .= $where;
         }
+        $sqlRequest .= " GROUP BY alb.id ";
+         
         // $sqlRequest .= DatatablesController::Order($request, $columns);
         $changed_column = $params->all('order')[0]['column'] > 0 ? $params->all('order')[0]['column'] -1 : 0;
         $sqlRequest .= " ORDER BY " .DatatablesController::Pluck($columns, 'db')[$changed_column] . "   " . $params->all('order')[0]['dir'] . "  LIMIT " . $params->get('start') . " ," . $params->get('length') . " ";
