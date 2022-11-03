@@ -399,6 +399,8 @@ class GestionPlanificationController extends AbstractController
     public function fixsemaine(PlEmptime $seance): Response
     {   
         $emptimes = $this->em->getRepository(PlEmptime::class)->findBy(['semaine'=>$seance->getSemaine()]);
+        $count = 0;
+        $id_seances = [];
         foreach ($emptimes as $emptime) {
             $sql = "select * from semaine 
                 where date(date_debut) <= (SELECT date(start) FROM `pl_emptime`
@@ -407,9 +409,15 @@ class GestionPlanificationController extends AbstractController
             $stmt = $this->em->getConnection()->prepare($sql);
             $resultSet = $stmt->executeQuery();
             $semaine = $resultSet->fetchAll();
+            if ($semaine[0]['id'] != $emptime->getSemaine()->getId()) {
+                array_push($id_seances,$emptime->getId());
+                $count++;
+            }
             $emptime->setSemaine($this->em->getRepository(semaine::class)->find($semaine[0]['id']));
             $this->em->flush();
         }
-        die('done');
+        echo $count .' seances modifier!!';
+        dd($id_seances);
+        
     }  
 }

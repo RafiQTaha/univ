@@ -183,8 +183,8 @@ class CreationBorderauxController extends AbstractController
         if($ids == NULL || empty($request->get('promotion')) || empty($request->get('semaine')) ){
             return new JsonResponse('Merci de Choisir une semestre et une semaine et au moins une ligne!',500);
         }
+        // dd($this->em->getRepository(Semaine::class)->find($request->get('semaine')));
         $halbhon = new HAlbhon();
-        
         $halbhon->setPromotion($this->em->getRepository(AcPromotion::class)->find($request->get('promotion')));
         $halbhon->setSemaine($this->em->getRepository(Semaine::class)->find($request->get('semaine')));
         $halbhon->setUserCreated($this->getUser());
