@@ -51,7 +51,7 @@ class AcEpreuveRepository extends ServiceEntityRepository
     public function findEpreuveValideByCurrentYear($currentyear)
     {
         $sqls="SELECT ins.id 'Id Inscription
-        ',ins.code 'code inscriptiont', adm.code 'code admission', pre.code 'code preinscription', ins.code_anonymat, ins.code_anonymat_rat, stat.code 'code statut', etu.nom, etu.prenom,ann.code 'code annee', ann.designation 'Annee',etab.code 'code etablissement', etab.designation 'Etablissement', frm.code 'code formation', frm.designation 'Formation',prm.code  'code promotion', prm.designation 'Promotion', sem.code 'code semestre',sem.designation 'Semestre', mdl.code 'code module', mdl.designation 'Module',elm.code 'code element', elm.designation  'Element', epv.code 'code epreuve', pr.code,pr.designation 'Nature Epreuve',epv.date_epreuve 'date epreuve',gn.note 'note'
+        ',ins.code 'code inscriptiont', adm.code 'code admission', pre.code 'code preinscription', ins.code_anonymat, ins.code_anonymat_rat, stat.code 'code statut', etu.nom, etu.prenom,ann.code 'code annee', ann.designation 'Annee',etab.code 'code etablissement', etab.designation 'Etablissement', frm.code 'code formation', frm.designation 'Formation',prm.code  'code promotion', prm.designation 'Promotion', sem.code 'code semestre',sem.designation 'Semestre', mdl.code 'code module', mdl.designation 'Module',elm.code 'code element', elm.designation  'Element', epv.id 'id epreuve',epv.code 'code epreuve',epv.nature 'nature', pr.code 'code Nature Epreuve',pr.designation 'Nature Epreuve',epv.date_epreuve 'date epreuve',gn.note 'note'
         FROM `ac_epreuve` epv
         inner join ac_element elm on elm.id = epv.element_id
         inner join ac_annee ann on ann.id = epv.annee_id
@@ -67,7 +67,7 @@ class AcEpreuveRepository extends ServiceEntityRepository
         inner join tetudiant etu on etu.id = pre.etudiant_id
         inner join pnature_epreuve pr on pr.id = epv.nature_epreuve_id
         inner join pstatut stat on stat.id = ins.statut_id
-        where ann.designation = '$currentyear' and epv.statut_id = 30 ";
+        where ann.designation = '$currentyear' and epv.statut_id = 30";
         // dd($sqls);
         $stmts = $this->em->getConnection()->prepare($sqls);
         $resultSets = $stmts->executeQuery();
