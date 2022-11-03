@@ -137,7 +137,7 @@ class GestionInscriptionController extends AbstractController
                 }
             }
             $nestedData["DT_RowId"] = $cd;
-            $nestedData["DT_RowClass"] = $cd;
+            $nestedData["DT_RowClass"] = "";
             $data[] = $nestedData;
             $i++;
         }
@@ -162,6 +162,18 @@ class GestionInscriptionController extends AbstractController
     #[Route('/updatestatut/{inscription}', name: 'gestion_statut_update')]
     public function inscriptionStatutUpdate(Request $request, TInscription $inscription): Response
     {
+        $cabs = $this->em->getRepository(TOperationcab::class)->findBy(['annee'=>$inscription->getAnnee(),'preinscription'=>$inscription->getAdmission()->getPreinscription()]);
+        // $cabs = $inscription->getAdmission()->getPreinscription()->getOperationcabs();
+        // dd($cabs);
+        $valide = 0;
+        foreach ($cabs as $cab) {
+            $totalfacture = $this->em->getRepository(TOperationdet::class)->getSumMontantByCodeFacture($cab)['total'];
+            $totalreglement = $this->em->getRepository(TReglement::class)->getSumMontantByCodeFacture($cab)['total'];
+            if ($totalfacture - $totalreglement != 0) {
+                return new JsonResponse("Facture non reglé, Merci de contacter le service Financière !", 500);
+            }
+        }
+
         if ($request->get('statut_inscription') == "") {
             return new JsonResponse("Merci de choisir un statut!", 500);
         }

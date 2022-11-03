@@ -206,7 +206,7 @@ const Toast = Swal.mixin({
     $('body').on('click','#extraction_architecture', async function (e) {
         e.preventDefault();
         const icon = $("#extraction_architecture i");
-        window.open('/administration/epreuve/extraction_epreuve_valide', '_blank');
+        window.open('/parametre/element/extraction_architecture', '_blank');
     })
 })
 

@@ -271,7 +271,8 @@
     </tbody>
 </table>
 <br>
-
+{% if noteSemestre2 != null and noteModulesBySemestre2 != null %}
+    
 <table style="width: 100%;" align="center" cellspacing="0">
     <tbody>
         <tr>
@@ -328,16 +329,13 @@
         
     </tbody>
 </table>
+
+{% endif %}
+
 <br/>
 <table style="width: 100%;font-size: 10px;" cellspacing="0">
     <tbody>
         <tr>
-            
-            
-             
-            
-            
-            
             <td style="width: 100px; text-align: left ;">
                 <b>MOYENNE Année </b>
             </td>
