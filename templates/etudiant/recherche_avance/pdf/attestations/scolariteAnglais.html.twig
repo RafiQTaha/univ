@@ -85,10 +85,10 @@
             <td class="txt">
                 I The Undersigned {{inscription.annee.formation.etablissement.doyen}}, {{inscription.annee.formation.etablissement.statut}} ,dean of :
             <span style="font-size:10px;font-weight: bold;color:black;"> 
-                {% if inscription.annee.formation.etablissement.designation =='Centre de Simulation Médicale' %}
+                {% if inscription.annee.formation.etablissement.designationEn =='Centre de Simulation Médicale' %}
                     Université Internationale Abulcasis des Sciences de la Santé
                 {% else %} 
-                    {{inscription.annee.formation.etablissement.designation}}
+                    {{inscription.annee.formation.etablissement.designationEn}}
                 {% endif %}
                 </span>, located at Madinat al Irfane,Building B,Avenue Allal Al Fassi,Hereby certify that:
             </td>
@@ -176,7 +176,7 @@
 
             </td>
             <td style="width: 70%; text-align: left;line-height: 30px">
-                <span style="font-size:11px;font-weight: bold;color:#000;">EDUCATIONAL ETABLISHMENT </span> : {{inscription.annee.formation.etablissement.designation}}
+                <span style="font-size:11px;font-weight: bold;color:#000;">EDUCATIONAL ETABLISHMENT </span> : {{inscription.annee.formation.etablissement.designationEn}}
             </td>
             <td style="width: 20%; text-align: left;line-height: 30px">
                 <span style="font-size:11px;font-weight: bold;color:#000;"> </span>
@@ -199,7 +199,7 @@
 
             </td>
             <td style="width: 70%; text-align: left;line-height: 30px">
-                <span style="font-size:11px;font-weight: bold;color:#000;">Formation </span> :  {{inscription.annee.formation.designation}}          
+                <span style="font-size:11px;font-weight: bold;color:#000;">Formation </span> :  {{inscription.annee.formation.designationEn}}          
             </td>
             <td style="width: 20%; text-align: left;line-height: 30px">
                 <span style="font-size:11px;font-weight: bold;color:#000;"> </span>
@@ -222,7 +222,7 @@
 
             </td>
             <td style="width: 70%; text-align: left;line-height: 30px">
-                <span style="font-size:11px;font-weight: bold;color:#000;">SCHOOL YEAR </span> : {{inscription.promotion.designation}}
+                <span style="font-size:11px;font-weight: bold;color:#000;">SCHOOL YEAR </span> : {{inscription.promotion.designationEn}}
             </td> 
             <td style="width: 20%; text-align: left;line-height: 30px">
                 <span style="font-size:11px;font-weight: bold;color:#000;"> </span>
