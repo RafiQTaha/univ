@@ -177,9 +177,9 @@ class ElementController extends AbstractController
         );
         $element->setUserUpdated($this->getUser());
         $element->setCoefficient($request->get("coefficient"));
-        $coefficient_epreuve['NAT000000001'] = $request->get('coefficient_cc');
-        $coefficient_epreuve['NAT000000002'] = $request->get('coefficient_tp');
-        $coefficient_epreuve['NAT000000003'] = $request->get('coefficient_ef');
+        $coefficient_epreuve['NAT000000001'] = $request->get('coefficient_cc') == null ? 0 : $request->get('coefficient_cc');
+        $coefficient_epreuve['NAT000000002'] = $request->get('coefficient_tp') == null ? 0 : $request->get('coefficient_tp');
+        $coefficient_epreuve['NAT000000003'] = $request->get('coefficient_ef') == null ? 0 : $request->get('coefficient_ef');
         $element->setCoefficientEpreuve($coefficient_epreuve);
         $this->em->flush();
     
