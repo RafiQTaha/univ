@@ -234,10 +234,10 @@ class GestionPlanificationController extends AbstractController
         $emptime->setAnnuler(1);
         $emptime->setMotifAnnuler($motif);
         $this->em->flush();
-        return new Response('Seances Bien Anuller',200);
+        return new Response('Seance Bien Anuller',200);
     }  
     #[Route('/gestion_valider_planning/{emptime}', name: 'gestion_valider_planning')]
-    public function gestion_valider_planning(Request $request,PlEmptime $emptime): Response
+    public function gestion_valider_planning(PlEmptime $emptime): Response
     {   
         if ($emptime->getAnnuler() == 1) {
             return new Response('Impossible de valider une séance annulé! ',500);
@@ -245,22 +245,44 @@ class GestionPlanificationController extends AbstractController
         // $emptimes = $this->em->getRepository(PlEmptime::class)->findBy(['semaine'=>$emptime->getSemaine()]);
         // // dd($emptimes);
         // foreach ($emptimes as $emptime) {
-            $sql = "select * from semaine 
-                where id >= 100 and id <= 200 and date(date_debut) <= (SELECT date(start) FROM `pl_emptime`
-                where id = ".$emptime->getId().") and date(date_fin) >= (SELECT date(start) FROM `pl_emptime`
-                where id = ".$emptime->getId().")";
-            $stmt = $this->em->getConnection()->prepare($sql);
-            $resultSet = $stmt->executeQuery();
-            $semaine = $resultSet->fetchAll();
-            $emptime->setSemaine($this->em->getRepository(semaine::class)->find($semaine[0]['id']));
-            $this->em->flush();
+            // $sql = "select * from semaine 
+            //     where id >= 100 and id <= 200 and date(date_debut) <= (SELECT date(start) FROM `pl_emptime`
+            //     where id = ".$emptime->getId().") and date(date_fin) >= (SELECT date(start) FROM `pl_emptime`
+            //     where id = ".$emptime->getId().")";
+            // $stmt = $this->em->getConnection()->prepare($sql);
+            // $resultSet = $stmt->executeQuery();
+            // $semaine = $resultSet->fetchAll();
+            // $emptime->setSemaine($this->em->getRepository(semaine::class)->find($semaine[0]['id']));
+            // $this->em->flush();
         // }
         // die('done');
         if ($emptime) {
             $emptime->setValider(1);
             $this->em->flush();
         }
-        return new Response('Seances Bien Valider',200);
+        return new Response('Seance Bien Valider',200);
+    }  
+    #[Route('/gestion_devalider_planning/{emptime}', name: 'gestion_devalider_planning')]
+    public function gestion_devalider_planning(PlEmptime $emptime): Response
+    {   
+        if ($emptime->getGenerer() == 1) {
+            return new Response('Impossible de valider une séance générer! ',500);
+        }
+        if ($emptime) {
+            $emptime->setValider(0);
+            $emptime->setAnnuler(0);
+            $emptime->setMotifAnnuler(null);
+            $emptime->setGenerer(0);
+            $this->em->flush();
+        }
+        return new Response('Seances Dévalider',200);
+    }  
+    #[Route('/gestion_degenerer_planning/{emptime}', name: 'gestion_degenerer_planning')]
+    public function gestion_degenerer_planning(PlEmptime $emptime): Response
+    {   
+        $emptime->setGenerer(0);
+        $this->em->flush();
+        return new Response('Seance Dégénérer',200);
     }  
     
     #[Route('/GetAbsenceByGroupe_gestion/{emptime}', name: 'GetAbsenceByGroupe_gestion')]

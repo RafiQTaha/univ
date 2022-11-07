@@ -123,7 +123,7 @@ class GenerationHonoraireController extends AbstractController
         inner join penseignant ens ON ens.id = emp_ens.enseignant_id
         inner join pgrade grd ON grd.id = ens.grade_id
         left join pgroupe grp ON grp.id = emp.groupe_id
-        $filtre Group BY emp.id ";
+        $filtre ";
         // dd($sql);
         $totalRows .= $sql;
         $sqlRequest .= $sql;
@@ -137,6 +137,7 @@ class GenerationHonoraireController extends AbstractController
         if (isset($where) && $where != '') {
             $sqlRequest .= $where;
         }
+        $sqlRequest .= " Group BY emp.id ";
         // $sqlRequest .= DatatablesController::Order($request, $columns);
         $changed_column = $params->all('order')[0]['column'] > 0 ? $params->all('order')[0]['column'] -1 : 0;
         $sqlRequest .= " ORDER BY " .DatatablesController::Pluck($columns, 'db')[$changed_column] . "   " . $params->all('order')[0]['dir'] . "  LIMIT " . $params->get('start') . " ," . $params->get('length') . " ";

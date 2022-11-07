@@ -508,36 +508,68 @@ $(document).ready(function () {
     })
      
     
-    $('body').on('click','#degenerer', async function (e) {
+    $('body').on('click','#devalidation', async function (e) {
         e.preventDefault();
-        if(ids_planning.length === 0 ){
+        if(!id_planning){
             Toast.fire({
-            icon: 'error',
-            title: 'Merci de Choisir au moins une ligne',
+                icon: 'error',
+                title: 'Merci de Sélectionner une ligne',
             })
             return;
         }
-        alert('test')
-        // var res = confirm('Vous voulez vraiment supprimer cette enregistrement ?');
-        // if(res == 1){
-        //     const icon = $("#supprimer i");
-        //     icon.removeClass('fa-trash').addClass("fa-spinner fa-spin");
-        //     var formData = new FormData();
-        //     formData.append('ids_planning', JSON.stringify(ids_planning)); 
-        //     try {
-        //         const request = await axios.post('/planification/gestions/gestion_delete_planning',formData);
-        //         const response = request.data;
-        //         Toast.fire({
-        //             icon: 'success',
-        //             title: response,
-        //         })
-        //         ids_planning = []
-        //         table_gestion_planification.ajax.reload(null,false);
-        //         icon.addClass('fa-trash').removeClass("fa-spinner fa-spin");
-        //     } catch (error) {
-        //         const message = error.response.data;
-        //         icon.addClass('fa-trash').removeClass("fa-spinner fa-spin");
-        //     }
-        // }  
+        var res = confirm('Vous voulez vraiment dévalider cette seance ?');
+        if(res == 1){
+            const icon = $("#devalidation i");
+            icon.removeClass('fa-times').addClass("fa-spinner fa-spin");
+            try {
+                const request = await axios.post('/planification/gestions/gestion_devalider_planning/'+id_planning);
+                const response = request.data;
+                Toast.fire({
+                    icon: 'success',
+                    title: response,
+                })
+                table_gestion_planification.ajax.reload(null,false);
+                icon.addClass('fa-times').removeClass("fa-spinner fa-spin");
+            } catch (error) {
+                const message = error.response.data;
+                icon.addClass('fa-times').removeClass("fa-spinner fa-spin");
+                Toast.fire({
+                    icon: 'error',
+                    title: message,
+                })
+            }
+        }  
+    })
+    $('body').on('click','#degenerer', async function (e) {
+        e.preventDefault();
+        if(!id_planning){
+            Toast.fire({
+                icon: 'error',
+                title: 'Merci de Sélectionner une ligne',
+            })
+            return;
+        }
+        var res = confirm('Vous voulez vraiment dégénérer cette seance ?');
+        if(res == 1){
+            const icon = $("#degenerer i");
+            icon.removeClass('fa-times').addClass("fa-spinner fa-spin");
+            try {
+                const request = await axios.post('/planification/gestions/gestion_degenerer_planning/'+id_planning);
+                const response = request.data;
+                Toast.fire({
+                    icon: 'success',
+                    title: response,
+                })
+                table_gestion_planification.ajax.reload(null,false);
+                icon.addClass('fa-times').removeClass("fa-spinner fa-spin");
+            } catch (error) {
+                const message = error.response.data;
+                icon.addClass('fa-times').removeClass("fa-spinner fa-spin");
+                Toast.fire({
+                    icon: 'error',
+                    title: message,
+                })
+            }
+        }
     })
 })

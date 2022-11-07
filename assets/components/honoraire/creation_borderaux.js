@@ -200,7 +200,7 @@ $(document).ready(function () {
              }
            },
            processResults: function (data, page) {
-            console.log(data)
+            // console.log(data)
            
             var list = {
                 text: "Semaine " +data.nsemaine +" de: "+data.debut + " à " +data.fin,
@@ -233,7 +233,7 @@ $(document).ready(function () {
             if (request.data != 0) {
                 semaine_id = request.data
             }
-            console.log(semaine_id);
+            // console.log(semaine_id);
         }
     })
     $('body').on('click','#cree', async function (e) {
@@ -250,11 +250,12 @@ $(document).ready(function () {
         var formData = new FormData();
         formData.append('ids_seances', JSON.stringify(ids_seances)); 
         formData.append('promotion', $("#promotion").val());
-        if (semaine_id != null) {
+        if (semaine_id) {
             formData.append('semaine', semaine_id);
         }else{
             formData.append('semaine', $("#semaine").val());
         }
+        // console.log($("#semaine").val());
         try {
             const request = await axios.post('/honoraire/creation_borderaux/cree_borderaux',formData);
             const response = request.data;
