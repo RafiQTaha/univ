@@ -127,7 +127,10 @@ class ElementController extends AbstractController
     }
     #[Route('/new', name: 'parametre_element_new')]
     public function new(Request $request)
-    {       
+    {  
+        if (empty($request->get('designation')) || empty($request->get('coefficient')) || empty($request->get('nature'))) {
+            return new JsonResponse('merci de remplir tout les champs!!',500);
+        }     
        $element = new AcElement();
        $element->setDesignation($request->get('designation'));
        $element->setActive($request->get('active') == "on" ? true : null);
@@ -140,9 +143,9 @@ class ElementController extends AbstractController
        );
        $element->setUserCreated($this->getUser());
        $element->setCoefficient($request->get("coefficient"));
-       $coefficient_epreuve['NAT000000001'] = $request->get('coefficient_cc');
-       $coefficient_epreuve['NAT000000002'] = $request->get('coefficient_tp');
-       $coefficient_epreuve['NAT000000003'] = $request->get('coefficient_ef');
+       $coefficient_epreuve['NAT000000001'] = $request->get('coefficient_cc') == null ? 0 : $request->get('coefficient_cc');
+       $coefficient_epreuve['NAT000000002'] = $request->get('coefficient_tp') == null ? 0 : $request->get('coefficient_tp');
+       $coefficient_epreuve['NAT000000003'] = $request->get('coefficient_ef') == null ? 0 : $request->get('coefficient_ef');
        $element->setCoefficientEpreuve($coefficient_epreuve);
        $element->setCoursDocument($request->get('cours_document') == "on" ? true : false);
        $this->em->persist($element);
@@ -165,7 +168,7 @@ class ElementController extends AbstractController
     #[Route('/update/{element}', name: 'parametre_element_update')]
     public function update(Request $request, AcElement $element): Response
     {   
-        if (empty($request->get('designation')) || empty($request->get('coefficient'))) {
+        if (empty($request->get('designation')) || empty($request->get('coefficient')) || empty($request->get('nature'))) {
             return new JsonResponse('merci de remplir tout les champs!!',500);
         }
         $element->setDesignation($request->get('designation'));
