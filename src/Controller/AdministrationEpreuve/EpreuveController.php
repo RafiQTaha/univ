@@ -154,7 +154,7 @@ class EpreuveController extends AbstractController
                 }
             }
             $nestedData["DT_RowId"] = $cd;
-            $nestedData["DT_RowClass"] = $cd;
+            $nestedData["DT_RowClass"] = '';
             $data[] = $nestedData;
             $i++;
         }
