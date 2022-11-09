@@ -71,7 +71,8 @@ class GestionFactureController extends AbstractController
         $params = $request->query;
         $where = $totalRows = $sqlRequest = "";
         // $filtre = " where 1=1 and (stat.designation = 'INSCRIT' or stat.designation = '' or stat.designation is null ) ";
-        $filtre = " where 1=1 and (stat.id = 13 or stat.id = 14 or stat.id = 8) ";
+        // $filtre = " where 1=1 and (stat.id = 13 or stat.id = 14 or stat.id = 8) ";
+        $filtre = " where 1=1 ";
         
         if (!empty($params->all('columns')[0]['search']['value'])) {
             $filtre .= " and etab.id = '" . $params->all('columns')[0]['search']['value'] . "' ";
@@ -162,25 +163,6 @@ class GestionFactureController extends AbstractController
             $etat_bg="";
             foreach (array_values($row) as $key => $value) { 
                 if($key > 0) {
-                    // if ($key > 9 ) {
-                    //     $value = $value == NULL ? 0 : $value;
-                    // }
-                    // if ($key == 13) {
-                    //     $orgpyt = $this->em->getRepository(TOperationdet::class)->findBy(['operationcab'=>$cd,'active'=>1,'organisme'=>103]);
-                    //     if (count($orgpyt)) {
-                    //         $value = 'O/P';
-                    //     }else{
-                    //         $pyt = $this->em->getRepository(TOperationdet::class)->findBy(['operationcab'=>$cd,'active'=>1,'organisme'=>7]);
-                    //         $org = $this->em->getRepository(TOperationdet::class)->FindDetNotPayant($cd);
-                    //         if (count($pyt) && count($org)) {
-                    //             $value = 'O/P';
-                    //         }elseif (!count($pyt) && count($org)) {
-                    //             $value = 'ORG';
-                    //         }else {
-                    //             $value = 'PYT';
-                    //         }
-                    //     }
-                    // }
                     if($key == 10){
                         $operationTotal = $this->em->getRepository(TOperationdet::class)->getSumMontantByCodeFacture($cd)['total'];
                         $nestedData[] = $operationTotal;
