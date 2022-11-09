@@ -17,6 +17,7 @@ class AcAnneeRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, AcAnnee::class);
+        $this->em = $registry->getManager();
     }
 
     // /**
@@ -49,5 +50,55 @@ class AcAnneeRepository extends ServiceEntityRepository
             ->getOneOrNullResult()
         ;
     }
+    
+    public function getInfosGenerales($annee)
+    {
+        $id_annee = $annee->getId();
+        $sqls="SELECT
+            etab.designation AS designation_etablissement,
+            etab.abreviation AS abreviation_etablissement,
+            etab.doyen,
+            etab.statut as doyen_or_directeur ,
+            etab.nature as nature_etablissement,
+            frm.designation AS designation_formation,
+            frm.abreviation AS abreviation_formation,
+            frm.nbr_annee,
+            ann.designation AS designation_annee
+        FROM
+            ac_etablissement etab
+        INNER JOIN ac_formation frm ON frm.etablissement_id = etab.id
+        INNER JOIN ac_annee ann ON ann.formation_id = frm.id
+        where ann.id=$id_annee limit 1";
+        $stmts = $this->em->getConnection()->prepare($sqls);
+        $resultSets = $stmts->executeQuery();
+        $result = $resultSets->fetch();
+        return $result;
+    }
+    
+    public function getAnnee($annee)
+    {
+        $id_annee = $annee->getId();
+        $id_formation = $annee->getFormation()->getId();
+        $sqls="SELECT ann.code, ann.designation
+        FROM `ac_annee` ann
+        INNER JOIN ex_anotes ex ON ex.annee_id = ann.id
+        WHERE ann.formation_id = $id_formation 
+            AND RIGHT(ann.designation, 4) >=(SELECT RIGHT(designation, 4) AS des
+                                                FROM ac_annee
+                                                WHERE id = $id_annee)
+        GROUP BY
+            ann.code,
+            ann.designation
+        ORDER BY
+            RIGHT(ann.designation, 4) ASC";
+        $stmts = $this->em->getConnection()->prepare($sqls);
+        $resultSets = $stmts->executeQuery();
+        $result = $resultSets->fetchAll();
+        return $result;
+    }
+
+    
+
+    
     
 }
