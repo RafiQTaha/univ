@@ -61,6 +61,10 @@
                             </select>
                         </div>
                         <div class="col-md-2">
+                            <label for="semaine_day">Semaine Par Jour:</label>
+                            <input type='date' class="form-control" name="semaine_day" id="semaine_day" />
+                        </div>
+                        <div class="col-md-2">
                             <label for="professeur">Professeur:</label>
                             <select class="form-control" name="professeur" id="professeur">
                                 <option value="">Choix Professeur</option>
@@ -84,7 +88,7 @@
                 <thead>
                     <tr>
                         <th>Ord</th>
-                        <th>#</th>
+                        <th><input type ="checkbox" class="check_all_seances" ></th>
                         <th>COURS</th>
                         <th>D.HEURE</th>
                         <th>NOM</th>
@@ -106,10 +110,10 @@
                 <tbody>
                     
                 </tbody>
-                <tfoot>
+                {# <tfoot>
                     <tr>
                         <th>Ord</th>
-                        <th>#</th>
+                        <th><input type ="checkbox" class="check_all_etudiant" ></th>
                         <th>COURS</th>
                         <th>D.HEURE</th>
                         <th>NOM</th>
@@ -127,7 +131,7 @@
                         <th>Nat.Epreuve</th>
                         <th>Statut</th>
                     </tr>
-                </tfoot>
+                </tfoot> #}
             </table>
             </div>
             

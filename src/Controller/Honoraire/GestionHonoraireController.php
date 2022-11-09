@@ -60,7 +60,7 @@ class GestionHonoraireController extends AbstractController
          
         $params = $request->query;
         $where = $totalRows = $sqlRequest = "";
-        $filtre = " where 1=1 and hon.annuler = 0 and  ann.validation_academique = 'non' ";
+        $filtre = " where 1=1 and emp.active = 1  and hon.annuler = 0 and  ann.validation_academique = 'non' ";
         
         if (!empty($params->all('columns')[0]['search']['value'])) {
             $filtre .= " and etab.id = '" . $params->all('columns')[0]['search']['value'] . "' ";
@@ -157,6 +157,8 @@ class GestionHonoraireController extends AbstractController
                 if ($key == 0) {
                     if ($row['statut'] == 'A' || $row['statut'] == 'R') {
                         $checked = "checked='' disabled='' class='check_seance'";
+                    }else {
+                        $checked = " class='check_check_seance' value='$cd'";
                     }
                     $nestedData[] = "<input $checked type ='checkbox' data-id ='$cd' >";
                 }
@@ -239,7 +241,38 @@ class GestionHonoraireController extends AbstractController
         }
         return new JsonResponse('Toutes les seances sont Réglées',200);
     }
-
+    
+    // #[Route('/extraction_honoraire_temporaire', name: 'extraction_honoraire_temporaire')]
+    // public function extraction_honoraire_temporaire()
+    // {   
+    //     $spreadsheet = new Spreadsheet();
+    //     $sheet = $spreadsheet->getActiveSheet();
+    //     $i=2;
+    //     $j=1;
+    //     $currentyear = date('m') > 7 ? $current_year = date('Y').'/'.date('Y')+1 : $current_year = date('Y') - 1 .'/' .date('Y');
+    //     // $seances = $this->em->getRepository(PlEmptime::class)->findSeanceByCurrentYears($currentyear);
+    //     $honoraires = $this->em->getRepository(HHonens::class)->findHonoraireByCurrentYears($currentyear);
+    //     // dd($honoraires[0]);
+    //     $sheet->fromArray(
+    //         array_keys($honoraires[0]),
+    //         null,
+    //         'A1'
+    //     );
+    //     foreach ($honoraires as $honoraire) {
+    //         $sheet->fromArray(
+    //             $honoraire,
+    //             null,
+    //             'A'.$i
+    //         );
+    //         $i++;
+    //         $j++;
+    //     }
+    //     $writer = new Xlsx($spreadsheet);
+    //     $fileName = 'Extraction honoraires.xlsx';
+    //     $temp_file = tempnam(sys_get_temp_dir(), $fileName);
+    //     $writer->save($temp_file);
+    //     return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);
+    // }
     
     // #[Route('/reporting_honoraire', name: 'reporting_honoraire')]
     // public function epreuveEnMasse(Request $request, SluggerInterface $slugger) 

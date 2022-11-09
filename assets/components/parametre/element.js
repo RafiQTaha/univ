@@ -202,6 +202,12 @@ const Toast = Swal.mixin({
             icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
         }
     })
+
+    $('body').on('click','#extraction_architecture', async function (e) {
+        e.preventDefault();
+        const icon = $("#extraction_architecture i");
+        window.open('/parametre/element/extraction_architecture', '_blank');
+    })
 })
 
 

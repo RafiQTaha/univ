@@ -27,8 +27,8 @@ class PFrais
     #[ORM\Column(type: 'float', nullable: true)]
     private $montant;
 
-    #[ORM\Column(type: 'string', length: 255)]
-    private $ice;
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private $ice = null;
 
     #[ORM\Column(type: 'smallint')]
     private $active;
@@ -44,6 +44,18 @@ class PFrais
 
     #[ORM\ManyToOne(targetEntity: AcFormation::class, inversedBy: 'frais')]
     private $formation;
+
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    private $userCreated;
+
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    private $userUpdated;
+
+    #[ORM\Column(type: 'datetime', nullable: true)]
+    private $created;
+
+    #[ORM\Column(type: 'datetime', nullable: true)]
+    private $updated;
 
    
     public function __construct()
@@ -190,6 +202,54 @@ class PFrais
     public function setFormation(?AcFormation $formation): self
     {
         $this->formation = $formation;
+
+        return $this;
+    }
+
+    public function getUserCreated(): ?User
+    {
+        return $this->userCreated;
+    }
+
+    public function setUserCreated(?User $userCreated): self
+    {
+        $this->userCreated = $userCreated;
+
+        return $this;
+    }
+
+    public function getUserUpdated(): ?User
+    {
+        return $this->userUpdated;
+    }
+
+    public function setUserUpdated(?User $userUpdated): self
+    {
+        $this->userUpdated = $userUpdated;
+
+        return $this;
+    }
+
+    public function getCreated(): ?\DateTimeInterface
+    {
+        return $this->created;
+    }
+
+    public function setCreated(?\DateTimeInterface $created): self
+    {
+        $this->created = $created;
+
+        return $this;
+    }
+
+    public function getUpdated(): ?\DateTimeInterface
+    {
+        return $this->updated;
+    }
+
+    public function setUpdated(?\DateTimeInterface $updated): self
+    {
+        $this->updated = $updated;
 
         return $this;
     }

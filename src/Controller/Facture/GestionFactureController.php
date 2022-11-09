@@ -25,6 +25,7 @@ use App\Entity\TOperationdet;
 use App\Entity\XModalites;
 use App\Controller\ApiController;
 use App\Controller\DatatablesController;
+use App\Entity\PStatut;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -70,7 +71,7 @@ class GestionFactureController extends AbstractController
         $params = $request->query;
         $where = $totalRows = $sqlRequest = "";
         // $filtre = " where 1=1 and (stat.designation = 'INSCRIT' or stat.designation = '' or stat.designation is null ) ";
-        $filtre = " where 1=1 ";
+        $filtre = " where 1=1 and (stat.id = 13 or stat.id = 14 or stat.id = 8) ";
         
         if (!empty($params->all('columns')[0]['search']['value'])) {
             $filtre .= " and etab.id = '" . $params->all('columns')[0]['search']['value'] . "' ";
@@ -108,11 +109,11 @@ class GestionFactureController extends AbstractController
             // array( 'db' => 'nat.designation','dt' => 8),
             array( 'db' => 'upper(etu.nationalite)','dt' => 8),
             array( 'db' => 'opcab.categorie','dt' => 9),
-            array( 'db' => 'montant_facture','dt' => 10),
-            array( 'db' => 'montant_regle','dt' => 11),
-            array( 'db' => '(IFNULL(montant_facture,0)-IFNULL(montant_regle,0)) as diff','dt' => 12),
-            array( 'db' => 'Upper(org.abreviation)','dt' => 13),
-            array( 'db' => 'opcab.active','dt' => 14),
+            // array( 'db' => 'montant_facture','dt' => 10),
+            // array( 'db' => 'montant_regle','dt' => 11),
+            // array( 'db' => '(IFNULL(montant_facture,0)-IFNULL(montant_regle,0)) as diff','dt' => 12),
+            // array( 'db' => 'Upper(org.abreviation)','dt' => 13),
+            array( 'db' => 'opcab.active','dt' => 10),
         );
         $sql = "SELECT DISTINCT " . implode(", ", DatatablesController::Pluck($columns, 'db')) . "
         FROM `toperationcab` opcab
@@ -124,10 +125,11 @@ class GestionFactureController extends AbstractController
         INNER JOIN tetudiant etu on etu.id = pre.etudiant_id
         INNER JOIN ac_formation frma on frma.id = an.formation_id
         INNER JOIN ac_etablissement etab on etab.id = frma.etablissement_id
-        LEFT JOIN porganisme org on org.id = opcab.organisme_id
+        -- LEFT JOIN porganisme org on org.id = opcab.organisme_id
         LEFT JOIN nature_demande nat on nat.id = pre.nature_id 
-        LEFT JOIN (select operationcab_id, SUM(montant) as montant_facture from toperationdet where active = 1 group by operationcab_id ) opdet on opdet.operationcab_id = opcab.id
-        LEFT JOIN (select operation_id, SUM(montant) as montant_regle from treglement where annuler = 0 group by operation_id ) reg on reg.operation_id = opcab.id $filtre ";
+        -- LEFT JOIN (select operationcab_id, SUM(montant) as montant_facture from toperationdet where active = 1 group by operationcab_id ) opdet on opdet.operationcab_id = opcab.id
+        -- LEFT JOIN (select operation_id, SUM(montant) as montant_regle from treglement where annuler = 0 group by operation_id ) reg on reg.operation_id = opcab.id 
+        $filtre ";
         // dd($sql);
         $totalRows .= $sql;
         $sqlRequest .= $sql;
@@ -136,13 +138,14 @@ class GestionFactureController extends AbstractController
         $totalRecords = count($newstmt->fetchAll());
         
         $my_columns = DatatablesController::Pluck($columns, 'db');
-        unset($columns[12]);
+        // unset($columns[12]);
         $where = DatatablesController::Search($request, $columns);
         if (isset($where) && $where != '') {
             $sqlRequest .= $where;
         }
         
-        $columns[12]['db'] = 'diff';
+        // dd($my_columns,$columns);
+        // $columns[12]['db'] = 'diff';
         $sqlRequest .= DatatablesController::Order($request, $columns);
         // dd($sqlRequest);
         
@@ -159,26 +162,46 @@ class GestionFactureController extends AbstractController
             $etat_bg="";
             foreach (array_values($row) as $key => $value) { 
                 if($key > 0) {
-                    if ($key == 10 || $key == 11) {
-                        $value = $value == NULL ? 0 : $value;
-                    }
-                    if ($key == 13) {
+                    // if ($key > 9 ) {
+                    //     $value = $value == NULL ? 0 : $value;
+                    // }
+                    // if ($key == 13) {
+                    //     $orgpyt = $this->em->getRepository(TOperationdet::class)->findBy(['operationcab'=>$cd,'active'=>1,'organisme'=>103]);
+                    //     if (count($orgpyt)) {
+                    //         $value = 'O/P';
+                    //     }else{
+                    //         $pyt = $this->em->getRepository(TOperationdet::class)->findBy(['operationcab'=>$cd,'active'=>1,'organisme'=>7]);
+                    //         $org = $this->em->getRepository(TOperationdet::class)->FindDetNotPayant($cd);
+                    //         if (count($pyt) && count($org)) {
+                    //             $value = 'O/P';
+                    //         }elseif (!count($pyt) && count($org)) {
+                    //             $value = 'ORG';
+                    //         }else {
+                    //             $value = 'PYT';
+                    //         }
+                    //     }
+                    // }
+                    if($key == 10){
+                        $operationTotal = $this->em->getRepository(TOperationdet::class)->getSumMontantByCodeFacture($cd)['total'];
+                        $nestedData[] = $operationTotal;
+                        $reglementTotal = $this->em->getRepository(TReglement::class)->getSumMontantByCodeFacture($cd)['total'];
+                        $nestedData[] = $reglementTotal;
+                        $nestedData[] = $operationTotal - $reglementTotal;
                         $orgpyt = $this->em->getRepository(TOperationdet::class)->findBy(['operationcab'=>$cd,'active'=>1,'organisme'=>103]);
                         if (count($orgpyt)) {
-                            $value = 'O/P';
+                            $org = 'O/P';
                         }else{
                             $pyt = $this->em->getRepository(TOperationdet::class)->findBy(['operationcab'=>$cd,'active'=>1,'organisme'=>7]);
                             $org = $this->em->getRepository(TOperationdet::class)->FindDetNotPayant($cd);
                             if (count($pyt) && count($org)) {
-                                $value = 'O/P';
+                                $org = 'O/P';
                             }elseif (!count($pyt) && count($org)) {
-                                $value = 'ORG';
+                                $org = 'ORG';
                             }else {
-                                $value = 'PYT';
+                                $org = 'PYT';
                             }
                         }
-                    }
-                    if($key == 14){
+                        $nestedData[] = $org;
                         $value = $value == 0 ? 'Cloture' : 'Ouverte';
                     }
                     $nestedData[] = $value;
@@ -298,7 +321,6 @@ class GestionFactureController extends AbstractController
     #[Route('/printfacture/{operationcab}', name: 'imprimerfacture')]
     public function imprimerfacture(TOperationcab $operationcab)
     {
-
         $operationdets = $this->em->getRepository(TOperationdet::class)->FindDetGroupByFrais($operationcab);
         $operationdetslist = [];
         $source = "";
@@ -359,6 +381,63 @@ class GestionFactureController extends AbstractController
         $mpdf->showImageErrors = true;
         $mpdf->WriteHTML($html);
         $mpdf->Output("facture.pdf", "I");
+    }
+
+    
+    #[Route('/releve/{operationcab}', name: 'imprimerreleve')]
+    public function imprimerreleve(TOperationcab $operationcab)
+    {
+        $facture_infos = [];
+        $operationcabs = $this->em->getRepository(TOperationcab::class)->findBy(['preinscription'=>$operationcab->getPreinscription()]);
+        foreach ($operationcabs as $operationcab) {
+            $organisme = "";
+            $orgpyt = $this->em->getRepository(TOperationdet::class)->findBy(['operationcab'=>$operationcab,'active'=>1,'organisme'=>103]);
+            if (count($orgpyt)) {
+                $organisme = 'O/P';
+            }else{
+                $pyt = $this->em->getRepository(TOperationdet::class)->findBy(['operationcab'=>$operationcab,'active'=>1,'organisme'=>7]);
+                $org = $this->em->getRepository(TOperationdet::class)->FindDetNotPayant($operationcab);
+                if (count($pyt) && count($org)) {
+                    $organisme = 'Org & Pyt';
+                }elseif (!count($pyt) && count($org)) {
+                    $organisme = 'Organisme';
+                }else {
+                    $organisme = 'Payant';
+                }
+            }
+            $totalfacture = $this->em->getRepository(TOperationdet::class)->getSumMontantByCodeFacture($operationcab)['total'];
+            $totalreglement = $this->em->getRepository(TReglement::class)->getSumMontantByCodeFacture($operationcab)['total'];
+            $all = [
+                'operationcab' => $operationcab,
+                'totalfacture' => $totalfacture,
+                'totalreglement' => $totalreglement,
+                'diffirence' => $totalfacture - $totalreglement,
+                'organisme' => $organisme,
+            ];
+            array_push($facture_infos,$all);
+        }
+        // dd($facture_info);
+        $inscription = $this->em->getRepository(TInscription::class)->findOneBy([
+            'admission'=>$operationcab->getPreinscription()->getAdmissions()[0],
+            'statut' => $this->em->getRepository(PStatut::class)->find(13)           
+        ],['code' => 'DESC']);
+        $html = $this->render("facture/pdfs/facture_releve.html.twig", [
+            'facture_infos' => $facture_infos,
+            'inscription' => $inscription,
+            'preinscription' => $operationcab->getPreinscription()
+        ])->getContent();
+        $mpdf = new Mpdf([
+            'mode' => 'utf-8',
+            'margin_top' => 5,
+        ]);        
+        $mpdf->SetTitle('Facture');
+        $mpdf->SetHTMLFooter(
+            $this->render("facture/pdfs/footer.html.twig")->getContent()
+        );
+        $mpdf->showImageErrors = true;
+        $mpdf->WriteHTML($html);
+        $mpdf->Output("facture.pdf", "I");
+
     }
     
     #[Route('/article_frais/{id}', name: 'article_frais_facture')]
@@ -449,7 +528,6 @@ class GestionFactureController extends AbstractController
         $this->em->flush();
         return new JsonResponse(1, 200);    
     }
-
     
     #[Route('/cloture_detaille/{id}', name: 'cloture_detaille')]
     public function cloture_detaille(TOperationdet $operationdet): Response
@@ -458,6 +536,7 @@ class GestionFactureController extends AbstractController
         $this->em->flush();
         return new JsonResponse(1, 200);    
     }
+    
     #[Route('/cloture_all_detaille/{id}', name: 'cloture_all_detaille')]
     public function cloture_all_detaille(TOperationcab $operationcab): Response
     {   
@@ -549,6 +628,80 @@ class GestionFactureController extends AbstractController
     }
 
     
+    // #[Route('/extraction_factures_by_annee/{annee}', name: 'extraction_factures_by_annee')]
+    // public function extraction_factures_by_annee($annee)
+    // {   
+    //     // dd($annee.'/'.$annee+1);
+    //     $spreadsheet = new Spreadsheet();
+    //     $sheet = $spreadsheet->getActiveSheet();
+    //     $sheet->setCellValue('A1', 'ORD');
+    //     $sheet->setCellValue('B1', 'CODE PRE-INSCRIPTION');
+    //     $sheet->setCellValue('C1', 'CODE FACTURE');
+    //     $sheet->setCellValue('D1', 'ANNEE UNIVERSITAIRE');
+    //     $sheet->setCellValue('E1', 'NOM');
+    //     $sheet->setCellValue('F1', 'PRENOM');
+    //     $sheet->setCellValue('G1', 'NATIONALITE');
+    //     $sheet->setCellValue('H1', 'ETABLISSEMENT');
+    //     $sheet->setCellValue('I1', 'FORMATION');
+    //     $sheet->setCellValue('J1', 'PROMOTION');
+    //     $sheet->setCellValue('K1', 'SOURCE');
+    //     $sheet->setCellValue('L1', 'FRAIS');
+    //     $sheet->setCellValue('M1', 'MT FACTURE');
+    //     $sheet->setCellValue('N1', 'MT REGLE');
+    //     $sheet->setCellValue('O1', 'REST');
+    //     $sheet->setCellValue('P1', 'ORG');
+    //     $sheet->setCellValue('Q1', 'statut');
+    //     $sheet->setCellValue('R1', 'D-CREATION');
+    //     $i=2;
+    //     $j=1;
+    //     // $currentyear = '2022/2023';
+    //     $currentyear = $annee.'/'.$annee+1;
+    //     $operationcabs = $this->em->getRepository(TOperationcab::class)->getFacturesByCurrentYear($currentyear);
+    //     // dd($operationcabs);
+    //     foreach ($operationcabs as $operationcab) {
+    //         $montant = $this->em->getRepository(TOperationdet::class)->getSumMontantByCodeFacture($operationcab['id']);
+    //         $operationdets = $this->em->getRepository(TOperationdet::class)->findBy(['operationcab'=>$operationcab['id'],'active'=>1]);
+    //         $montant_reglement = $this->em->getRepository(TReglement::class)->getSumMontantByCodeFacture($operationcab['id']);
+    //         $regcount = 0;
+    //         foreach ($operationdets as $operationdet) {
+    //             $sheet->setCellValue('A'.$i, $j);
+    //             $sheet->setCellValue('B'.$i, $operationcab['code_preins']);
+    //             $sheet->setCellValue('C'.$i, $operationcab['code_facture']);
+    //             $sheet->setCellValue('D'.$i, $operationcab['annee']);
+    //             $sheet->setCellValue('E'.$i, $operationcab['nom']);
+    //             $sheet->setCellValue('F'.$i, $operationcab['prenom']);
+    //             $sheet->setCellValue('G'.$i, $operationcab['nationalite']);
+    //             $sheet->setCellValue('H'.$i, $operationcab['etablissement']);
+    //             $sheet->setCellValue('I'.$i, $operationcab['formation']);
+    //             $sheet->setCellValue('J'.$i, $operationcab['promotion']);
+    //             $sheet->setCellValue('K'.$i, $operationdet->getOrganisme()->getAbreviation());
+    //             $sheet->setCellValue('L'.$i, $operationdet->getFrais()->getDesignation());
+    //             $sheet->setCellValue('M'.$i, $operationdet->getMontant());
+    //             if ($regcount == 0) {
+    //                 $sheet->setCellValue('N'.$i, $montant_reglement['total']);
+    //                 $sheet->setCellValue('O'.$i, $montant['total'] - $montant_reglement['total']);
+    //             }
+    //             $sheet->setCellValue('P'.$i, $operationdet->getOrganisme()->getDesignation());
+    //             $sheet->setCellValue('Q'.$i, $operationcab['statut']);
+    //             if ($operationcab['created'] != "") {
+    //                 $sheet->setCellValue('R'.$i, $operationcab['created']->format('d-m-Y'));
+    //             }
+    //             $i++;
+    //             $j++;
+    //             $regcount++;
+    //         }
+            
+    //     }
+    //     $writer = new Xlsx($spreadsheet);
+    //     $fileName = 'Extraction Des Articles.xlsx';
+    //     $temp_file = tempnam(sys_get_temp_dir(), $fileName);
+    //     $writer->save($temp_file);
+    //     return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);
+    // }
+
+
+    
+    // #[Route('/extraction_factures_by_annee_provis/{annee}', name: 'extraction_factures_by_annee_provis')]
     #[Route('/extraction_factures_by_annee/{annee}', name: 'extraction_factures_by_annee')]
     public function extraction_factures_by_annee($annee)
     {   
@@ -565,13 +718,13 @@ class GestionFactureController extends AbstractController
         $sheet->setCellValue('H1', 'ETABLISSEMENT');
         $sheet->setCellValue('I1', 'FORMATION');
         $sheet->setCellValue('J1', 'PROMOTION');
-        $sheet->setCellValue('K1', 'SOURCE');
-        $sheet->setCellValue('L1', 'FRAIS');
-        $sheet->setCellValue('M1', 'MT FACTURE');
-        $sheet->setCellValue('N1', 'MT REGLE');
-        $sheet->setCellValue('O1', 'REST');
-        $sheet->setCellValue('P1', 'ORG');
-        $sheet->setCellValue('Q1', 'statut');
+        $sheet->setCellValue('K1', 'statut');
+        $sheet->setCellValue('L1', 'SOURCE');
+        $sheet->setCellValue('M1', 'FRAIS');
+        $sheet->setCellValue('N1', 'MT FACTURE PYT');
+        $sheet->setCellValue('O1', 'MT FACTURE ORG');
+        $sheet->setCellValue('P1', 'MT REGLE');
+        $sheet->setCellValue('Q1', 'REST');
         $sheet->setCellValue('R1', 'D-CREATION');
         $i=2;
         $j=1;
@@ -580,56 +733,56 @@ class GestionFactureController extends AbstractController
         $operationcabs = $this->em->getRepository(TOperationcab::class)->getFacturesByCurrentYear($currentyear);
         // dd($operationcabs);
         foreach ($operationcabs as $operationcab) {
-            $montant = $this->em->getRepository(TOperationdet::class)->getSumMontantByCodeFacture($operationcab['id']);
-            $operationdets = $this->em->getRepository(TOperationdet::class)->findBy(['operationcab'=>$operationcab['id']]);
-            $montant_reglement = $this->em->getRepository(TReglement::class)->getSumMontantByCodeFacture($operationcab['id']);
-            $regcount = 0;
-            foreach ($operationdets as $operationdet) {
-                $sheet->setCellValue('A'.$i, $j);
-                $sheet->setCellValue('B'.$i, $operationcab['code_preins']);
-                $sheet->setCellValue('C'.$i, $operationcab['code_facture']);
-                $sheet->setCellValue('D'.$i, $operationcab['annee']);
-                $sheet->setCellValue('E'.$i, $operationcab['nom']);
-                $sheet->setCellValue('F'.$i, $operationcab['prenom']);
-                $sheet->setCellValue('G'.$i, $operationcab['nationalite']);
-                $sheet->setCellValue('H'.$i, $operationcab['etablissement']);
-                $sheet->setCellValue('I'.$i, $operationcab['formation']);
-                $sheet->setCellValue('J'.$i, $operationcab['promotion']);
-                $sheet->setCellValue('K'.$i, $operationdet->getOrganisme()->getAbreviation());
-                $sheet->setCellValue('L'.$i, $operationdet->getFrais()->getDesignation());
-                $sheet->setCellValue('M'.$i, $operationdet->getMontant());
-                if ($regcount == 0) {
-                    $sheet->setCellValue('N'.$i, $montant_reglement['total']);
-                    $sheet->setCellValue('O'.$i, $montant['total'] - $montant_reglement['total']);
-                }
-                $value ="";
-                $orgpyt = $this->em->getRepository(TOperationdet::class)->findBy(['operationcab'=>$operationcab['id'],'active'=>1,'organisme'=>103]);
-                if (count($orgpyt)) {
-                    $value = 'O/P';
-                }else{
-                    $pyt = $this->em->getRepository(TOperationdet::class)->findBy(['operationcab'=>$operationcab['id'],'active'=>1,'organisme'=>7]);
-                    $org = $this->em->getRepository(TOperationdet::class)->FindDetNotPayant($operationcab['id']);
-                    if (count($pyt) && count($org)) {
-                        $value = 'O/P';
-                    }elseif (!count($pyt) && count($org)) {
-                        $value = 'ORG';
+            // if ($operationcab['id'] == 48912) {
+                $montant = $this->em->getRepository(TOperationdet::class)->getSumMontantByCodeFacture($operationcab['id']);
+                $operationdets = $this->em->getRepository(TOperationdet::class)->FindDetGroupByFrais($operationcab['id']);
+                $montant_reglement = $this->em->getRepository(TReglement::class)->getSumMontantByCodeFacture($operationcab['id']);
+                $regcount = 0;
+                foreach ($operationdets as $operationdet) {
+                    // dd($operationdet);
+                    $sheet->setCellValue('A'.$i, $j);
+                    $sheet->setCellValue('B'.$i, $operationcab['code_preins']);
+                    $sheet->setCellValue('C'.$i, $operationcab['code_facture']);
+                    $sheet->setCellValue('D'.$i, $operationcab['annee']);
+                    $sheet->setCellValue('E'.$i, $operationcab['nom']);
+                    $sheet->setCellValue('F'.$i, $operationcab['prenom']);
+                    $sheet->setCellValue('G'.$i, $operationcab['nationalite']);
+                    $sheet->setCellValue('H'.$i, $operationcab['etablissement']);
+                    $sheet->setCellValue('I'.$i, $operationcab['formation']);
+                    $sheet->setCellValue('J'.$i, $operationcab['promotion']);
+                    $sheet->setCellValue('K'.$i, $operationcab['statut']);
+                    $frais = $operationdet->getFrais();
+                    $SumByOrg = $this->em->getRepository(TOperationdet::class)->getSumMontantByCodeFactureAndOrganisme($operationcab['id'],$frais);
+                    $SumByPayant = $this->em->getRepository(TOperationdet::class)->getSumMontantByCodeFactureAndPayant($operationcab['id'],$frais);
+                    if ($SumByPayant != 0 && $SumByOrg != 0) {
+                        $source = "O/P";
+                    }elseif ($SumByPayant != 0 && $SumByOrg == 0) {
+                        $source = "PYT";
                     }else {
-                        $value = 'PYT';
+                        $source = "ORG";
                     }
+                    $total = $SumByPayant + $SumByOrg;
+                    $sheet->setCellValue('L'.$i, $source);
+                    $sheet->setCellValue('M'.$i, $operationdet->getFrais()->getDesignation());
+                    $sheet->setCellValue('N'.$i, $SumByPayant);
+                    $sheet->setCellValue('O'.$i, $SumByOrg);
+                    if ($regcount == 0) {
+                        $sheet->setCellValue('P'.$i, $montant_reglement['total']);
+                        $sheet->setCellValue('Q'.$i, $montant['total'] - $montant_reglement['total']);
+                    }
+                    if ($operationcab['created'] != "") {
+                        $sheet->setCellValue('R'.$i, $operationcab['created']->format('d-m-Y'));
+                    }
+                    $i++;
+                    $j++;
+                    $regcount++;
                 }
-                $sheet->setCellValue('P'.$i, $value);
-                $sheet->setCellValue('Q'.$i, $operationcab['statut']);
-                if ($operationcab['created'] != "") {
-                    $sheet->setCellValue('R'.$i, $operationcab['created']->format('d-m-Y'));
-                }
-                $i++;
-                $j++;
-                $regcount++;
-            }
-            
+            // }
         }
         $writer = new Xlsx($spreadsheet);
-        $fileName = 'Extraction Des Articles.xlsx';
+        $now = date('Y-m-d h:m:s');
+        $year = $annee.'-'.$annee+1;
+        $fileName = "Extraction Des Articles $year -- $now.xlsx";
         $temp_file = tempnam(sys_get_temp_dir(), $fileName);
         $writer->save($temp_file);
         return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);

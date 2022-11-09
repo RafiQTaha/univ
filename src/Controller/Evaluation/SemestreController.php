@@ -468,7 +468,7 @@ class SemestreController extends AbstractController
                     $data_elements = $this->em->getRepository(ExEnotes::class)->findByModule($value->getModule(), $inscription);
                     if ($data_elements) {
                         foreach ($data_elements as $key2 => $value2) {
-                            if ($value2->getElement()->getNature() == 'NE001' or $value2->getElement()->getNature() == 'NE002') {
+                            if ($value2->getElement()->getNature()->getCode() == 'NE001' or $value2->getElement()->getNature()->getCode() == 'NE002') {
                                 if ($value->getNote() < 8) {
                                     $ELM_MOD = true;
                                 }

@@ -170,14 +170,15 @@
     
    Est inscrit(e){{a}}  <span style="font-size:12px;font-weight: bold;color:black;">{{inscription.annee.formation.etablissement.designation}}</span>
                 sous le N° <span style="font-size:12px;font-weight: bold;color:black;">{{inscription.code}}</span> en <span style="font-size:12px;font-weight: bold;color:black;">{{inscription.annee.formation.designation}}</span>
-                    
                     , et a réussi avec succès les examens du 
+                    {% set i = 1 %}
                     {% for semestre in inscription.promotion.semestres %}
                        {% if semestre.active == 1 %}
-                        {% if loop.index > 1 %}
+                        {% if i > 1 %}
                             et {{semestre.designation}}
                         {% else %}
                             {{semestre.designation}}
+                            {% set i = i + 1 %}
                         {% endif %}
                        {% endif %}
                     {% endfor %}

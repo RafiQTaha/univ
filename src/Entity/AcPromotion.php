@@ -54,6 +54,9 @@ class AcPromotion
     #[ORM\Column(type: 'integer', nullable: true)]
     private $limite;
 
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private $designationEn;
+
     public function __construct()
     {
         $this->semestres = new ArrayCollection();
@@ -272,6 +275,18 @@ class AcPromotion
     public function setLimite(int $limite): self
     {
         $this->limite = $limite;
+
+        return $this;
+    }
+
+    public function getDesignationEn(): ?string
+    {
+        return $this->designationEn;
+    }
+
+    public function setDesignationEn(?string $designationEn): self
+    {
+        $this->designationEn = $designationEn;
 
         return $this;
     }

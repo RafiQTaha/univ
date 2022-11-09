@@ -69,6 +69,12 @@ class AcEtablissement
     #[ORM\OneToMany(mappedBy: 'etablissement', targetEntity: TBrdpaiement::class)]
     private $bordereaux;
 
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private $designationEn;
+
+    #[ORM\Column(type: 'string', length: 50, nullable: true)]
+    private $statutEn;
+
     public function __construct()
     {
         $this->acFormations = new ArrayCollection();
@@ -366,6 +372,30 @@ class AcEtablissement
                 $bordereaux->setEtablissement(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getDesignationEn(): ?string
+    {
+        return $this->designationEn;
+    }
+
+    public function setDesignationEn(?string $designationEn): self
+    {
+        $this->designationEn = $designationEn;
+
+        return $this;
+    }
+
+    public function getStatutEn(): ?string
+    {
+        return $this->statutEn;
+    }
+
+    public function setStatutEn(?string $statutEn): self
+    {
+        $this->statutEn = $statutEn;
 
         return $this;
     }

@@ -93,9 +93,7 @@ class EpreuveController extends AbstractController
             array( 'db' => 'UPPER(prm.designation)','dt' => 8),
             array( 'db' => 'CONCAT(ens.nom," ",ens.prenom)','dt' => 9),
             array( 'db' => 'st.designation','dt' => 10),
-            array( 'db' => 'users.username','dt' => 11),
-           
-            
+            array( 'db' => 'users.username','dt' => 11), 
         );
         $sql = "SELECT " . implode(", ", DatatablesController::Pluck($columns, 'db')) . "
         
@@ -146,6 +144,7 @@ class EpreuveController extends AbstractController
             $cd = $row['id'];
             $nestedData[] = "<input type ='checkbox' class='check_admissible' id ='$cd' >";
             $nestedData[] = $cd;
+            $username = "";
             // dd($row);
             
             foreach (array_values($row) as $key => $value) {
@@ -153,6 +152,11 @@ class EpreuveController extends AbstractController
                     $nestedData[] = $value;
                 }
             }
+            $epv = $this->em->getRepository(AcEpreuve::class)->find($cd);
+            if ($epv->getUserValidated() != null && $epv->getStatut()->getId() == 30) {
+                $username = $this->em->getRepository(AcEpreuve::class)->find($cd)->getUserValidated()->getUsername();
+            }
+            $nestedData[] = $username;
             $nestedData["DT_RowId"] = $cd;
             $nestedData["DT_RowClass"] = '';
             $data[] = $nestedData;
@@ -254,6 +258,7 @@ class EpreuveController extends AbstractController
             $cd = $row['id'];
             $nestedData[] = "<input type ='checkbox' class='check_admissible' id ='$cd' >";
             $nestedData[] = $cd;
+            $username = "";
             // dd($row);
             
             foreach (array_values($row) as $key => $value) {
@@ -261,6 +266,11 @@ class EpreuveController extends AbstractController
                     $nestedData[] = $value;
                 }
             }
+            $epv = $this->em->getRepository(AcEpreuve::class)->find($cd);
+            if ($epv->getUserValidated() != null && $epv->getStatut()->getId() == 30) {
+                $username = $this->em->getRepository(AcEpreuve::class)->find($cd)->getUserValidated()->getUsername();
+            }
+            $nestedData[] = $username;
             $nestedData["DT_RowId"] = $cd;
             $nestedData["DT_RowClass"] = $cd;
             $data[] = $nestedData;
@@ -374,6 +384,9 @@ class EpreuveController extends AbstractController
             );
             $epreuve->setCode('EPV-'.$annee->getFormation()->getEtablissement()->getAbreviation().str_pad($epreuve->getId(), 8, '0', STR_PAD_LEFT).'/'.date('Y'));     
             $this->em->flush();
+            
+            ApiController::mouchard($this->getUser(), $this->em,$epreuve, 'AcEpreuve', 'Importation Epreuve');
+
             // dump(37015));
             $sheetGenerer->setCellValue('A'.$i, $epreuve->getId());
             $sheetGenerer->setCellValue('B'.$i, $epreuve->getCode());
@@ -438,7 +451,7 @@ class EpreuveController extends AbstractController
                     $this->em->getRepository(PStatut::class)->find(29)
                 );
                 $this->em->flush();
-
+                ApiController::mouchard($this->getUser(), $this->em,$epreuve, 'AcEpreuve', 'Affiliation Epreuve');
                 $writer = new Xlsx($spreadsheet);
                 $fileName = 'affiliation_'.$epreuve->getId().'.xlsx';
                 // $temp_file = tempnam(sys_get_temp_dir(), $fileName);
@@ -494,6 +507,8 @@ class EpreuveController extends AbstractController
             $this->em->getRepository(PStatut::class)->find(29)
         );
         $this->em->flush();
+        
+        ApiController::mouchard($this->getUser(), $this->em,$epreuve, 'AcEpreuve', 'Affiliation Rattrapage');
 
         return new JsonResponse("Bien Enregistre", 200);
 
@@ -528,6 +543,7 @@ class EpreuveController extends AbstractController
         };
         $epreuve->setCode('EPV-'.$etablissement->getAbreviation().str_pad($epreuve->getId(), 8, '0', STR_PAD_LEFT).'/'.date('Y'));     
         $this->em->flush();
+        ApiController::mouchard($this->getUser(), $this->em,$epreuve, 'AcEpreuve', 'Ajouter Epreuve');
 
         return new JsonResponse('Epreuve Bien Ajouter',200);
     }
@@ -541,6 +557,8 @@ class EpreuveController extends AbstractController
                 $epreuve->setStatut(
                     $this->em->getRepository(PStatut::class)->find(30) //Valider
                 );
+                $epreuve->setUserValidated($this->getUser());
+                ApiController::mouchard($this->getUser(), $this->em,$epreuve, 'AcEpreuve', 'Valider Epreuve');
             }
         }
         $this->em->flush();
@@ -557,6 +575,7 @@ class EpreuveController extends AbstractController
                 $epreuve->setStatut(
                     $this->em->getRepository(PStatut::class)->find(29) //Affilier
                 );
+                ApiController::mouchard($this->getUser(), $this->em,$epreuve, 'AcEpreuve', 'Dévalider Epreuve');
             }
         }
         $this->em->flush();
@@ -631,16 +650,18 @@ class EpreuveController extends AbstractController
                 // dd($previousInscription);
                 if($previousInscription) {
                     $previousNoteModule = $this->em->getRepository(ExMnotes::class)->findOneBy(['module' => $epreuve->getElement()->getModule(), 'inscription' => $previousInscription]);
-                    if($previousNoteModule->getNote() >= 12) {
-                        $gnote->setNote($previousNoteModule->getNote());
-                        $gnote->setObservation('CAP');
-                        $sheet->setCellValue('A'.$i, $inscription->getId());
-                        $sheet->setCellValue('B'.$i, $gnote->getInscription()->getAdmission()->getPreinscription()->getEtudiant()->getNom());
-                        $sheet->setCellValue('C'.$i, $gnote->getInscription()->getAdmission()->getPreinscription()->getEtudiant()->getPrenom());
-                        $sheet->setCellValue('D'.$i, $epreuve->getId());
-                        $sheet->setCellValue('E'.$i, $previousNoteModule->getNote());
-                        $i++;
-                        $count++;
+                    if ($previousNoteModule != null) {
+                        if($previousNoteModule->getNote() >= 12) {
+                            $gnote->setNote($previousNoteModule->getNote());
+                            $gnote->setObservation('CAP');
+                            $sheet->setCellValue('A'.$i, $inscription->getId());
+                            $sheet->setCellValue('B'.$i, $gnote->getInscription()->getAdmission()->getPreinscription()->getEtudiant()->getNom());
+                            $sheet->setCellValue('C'.$i, $gnote->getInscription()->getAdmission()->getPreinscription()->getEtudiant()->getPrenom());
+                            $sheet->setCellValue('D'.$i, $epreuve->getId());
+                            $sheet->setCellValue('E'.$i, $previousNoteModule->getNote());
+                            $i++;
+                            $count++;
+                        }
                     }
                 }
             }
@@ -686,5 +707,38 @@ class EpreuveController extends AbstractController
         return new JsonResponse('Bien enregistre',200);
 
         
+    } 
+    
+    #[Route('/extraction_epreuve_valide', name: 'extraction_epreuve_valide')]
+    public function extraction_epreuve_valide()
+    {   
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        $i=2;
+        $j=1;
+        $currentyear = date('m') > 7 ? $current_year = date('Y').'/'.date('Y')+1 : $current_year = date('Y') - 1 .'/' .date('Y');
+        $epreuves = $this->em->getRepository(AcEpreuve::class)->findEpreuveValideByCurrentYear($currentyear);
+        // dd($epreuves);
+        $sheet->fromArray(
+            array_keys($epreuves[0]),
+            null,
+            'A1'
+        );
+        foreach ($epreuves as $epreuve) {
+            $sheet->fromArray(
+                $epreuve,
+                null,
+                'A'.$i
+            );
+            $i++;
+            $j++;
+        }
+        $writer = new Xlsx($spreadsheet);
+        $currentyear = date('m') > 7 ? $current_year = date('Y').'-'.date('Y')+1 : $current_year = date('Y') - 1 .'-' .date('Y');
+        $fileName = 'Extraction Epreuves Valide '.$currentyear.'.xlsx';
+        $temp_file = tempnam(sys_get_temp_dir(), $fileName);
+        $writer->save($temp_file);
+        return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);
     }
+    
 }

@@ -58,15 +58,93 @@ class PlanificationController extends AbstractController
         return $this->render('planification/planification.html.twig', [
             'etablissements' => $etbalissements,
             'operations' => $operations,
+            'professeurs' => $this->em->getRepository(PEnseignant::class)->findAll()
         ]);
     }
 
-    #[Route('/calendar/{semestre}/{groupe}', name: 'planifications_calendar')]
-    public function planifications_calendar(AcSemestre $semestre, $groupe): Response
+    // #[Route('/calendar/{semestre}/{groupe}', name: 'planifications_calendar')]
+    // public function planifications_calendar(AcSemestre $semestre, $groupe): Response
+    // {
+    //     if($groupe == 0){
+    //         $emptimes = $this->em->getRepository(PlEmptime::class)->getEmptimeBySemestre($semestre);
+    //     }else{
+    //         $groupes = [null];
+    //         $pgroupe1 = $this->em->getRepository(PGroupe::class)->find($groupe);
+    //         array_push($groupes,$pgroupe1);
+    //         $pgroupe2 = $this->em->getRepository(PGroupe::class)->findGroupesByGroupes(['groupe'=>$pgroupe1]);
+    //         foreach ($pgroupe2 as $pgroupe2e) {
+    //             array_push($groupes,$pgroupe2e);
+    //         }
+    //         $pgroupe3 = $this->em->getRepository(PGroupe::class)->findGroupesByGroupes($pgroupe2);
+    //         foreach ($pgroupe3 as $pgroupe3e) {
+    //             array_push($groupes,$pgroupe3e);
+    //         }
+    //         $emptimes = $this->em->getRepository(PlEmptime::class)->getEmptimeBySemestreAndGroupe($semestre,$groupes);
+    //         // $emptimes = $this->em->getRepository(PlEmptime::class)->getEmptimeBySemestreAndGroupe($semestre,$groupe);
+    //     }
+    //     // dd($groupes);
+    //     $times = [];
+    //     $nivs = "";
+    //     foreach($emptimes as $emptime){
+    //         // dd($emptime);
+    //         $niv = $emptime->getGroupe();
+    //         if ($niv != null) {
+    //             if ($niv->getGroupe() == Null) {
+    //                 $nivs .= $niv->getNiveau() . "\n";
+    //             }elseif ($niv->getGroupe()->getGroupe() == Null) {
+    //                 $nivs .= $niv->getGroupe()->getNiveau().' - ' .$niv->getNiveau() . "\n";
+    //             }else {
+    //                 $nivs .= $niv->getGroupe()->getGroupe()->getNiveau(). ' - ' .$niv->getGroupe()->getNiveau().' - ' .$niv->getNiveau() . "\n";
+    //             }
+    //         }
+    //         if ($nivs == "" )  $nivs .= "\n";
+            
+    //         $emptimens = $this->em->getRepository(PlEmptimens::class)->findBy(['seance'=>$emptime]);
+    //         // dd($enseignants[0]->getEnseignant()->getNom().' '.$emptime->getEmptimens()[0]->getPrenom(););
+    //         $enseingant = "";
+    //         foreach ($emptimens as $emptimen) {
+    //             if ($emptimen->getEnseignant() != null ) {
+    //                 $enseingant .= $emptimen->getEnseignant()->getNom()." ".$emptimen->getEnseignant()->getPrenom() ."\n";
+    //             }
+    //         }
+    //         // dd(count($emptimens));
+    //         $element = $emptime->getProgrammation()->getElement();
+    //         $natureEpreuve = $emptime->getProgrammation()->getNatureEpreuve();
+    //         $salle = $emptime->getSalle() == null ? "" : $emptime->getSalle()->getDesignation();
+    //         $times[] = [
+    //             'id' => $emptime->getId(),
+    //             'title' => $emptime->getCode() . "\n".
+    //                     ' Element :  '.$element->getDesignation() . "\n".
+    //                     ' Type de Cours :  '.$natureEpreuve->getDesignation() . "\n".
+    //                     $enseingant .
+    //                     'Niv : '.$nivs  . 
+    //                     'salle : '.$salle ,
+    //             'start' => $emptime->getStart()->format('Y-m-d H:i:s'),
+    //             'end' => $emptime->getEnd()->format('Y-m-d H:i:s'),
+    //             'color'=> $element->getModule()->getColor(),
+    //         ];
+    //         $nivs = "";
+    //     }
+    //     return new Response(json_encode($times));
+    // }
+    
+    
+    #[Route('/calendar_planning', name: 'calendar_planning')]
+    public function calendar_planning(Request $request): Response
     {
-        if($groupe == 0){
+        // dd($request);
+        $semestre = $request->get('semestre');
+        $groupe = $request->get('niv');
+        $professeur = $request->get('professeur');
+        // dd($semestre,$groupe,$professeur);
+        if($groupe == 0 && $professeur == 'null'){
+            // dd('test1');
             $emptimes = $this->em->getRepository(PlEmptime::class)->getEmptimeBySemestre($semestre);
+        }elseif ($groupe == 0 && $professeur != 'null') {
+            // dd('test2');
+            $emptimes = $this->em->getRepository(PlEmptime::class)->getEmptimeBySemestreAndProfesseur($semestre,$professeur);
         }else{
+            // dd('test3');
             $groupes = [null];
             $pgroupe1 = $this->em->getRepository(PGroupe::class)->find($groupe);
             array_push($groupes,$pgroupe1);
@@ -80,8 +158,18 @@ class PlanificationController extends AbstractController
             }
             $emptimes = $this->em->getRepository(PlEmptime::class)->getEmptimeBySemestreAndGroupe($semestre,$groupes);
             // $emptimes = $this->em->getRepository(PlEmptime::class)->getEmptimeBySemestreAndGroupe($semestre,$groupe);
+            if ($professeur == 'null') {
+                $emptimes = $this->em->getRepository(PlEmptime::class)->getEmptimeBySemestreAndGroupe($semestre,$groupes);
+            }else {
+                $emptimes = $this->em->getRepository(PlEmptime::class)->getEmptimeBySemestreAndGroupeAndProfesseur($semestre,$groupes,$professeur);
+                // dd($emptimes);
+            }
         }
-        // dd($groupes);
+        
+        
+        
+        // $emptimes = $this->em->getRepository(PlEmptime::class)->getEmptimeBySemestreAndProfesseur($semestre,1);
+        // dd($emptimes);
         $times = [];
         $nivs = "";
         foreach($emptimes as $emptime){
@@ -110,6 +198,7 @@ class PlanificationController extends AbstractController
             // dd(count($emptimens));
             $element = $emptime->getProgrammation()->getElement();
             $natureEpreuve = $emptime->getProgrammation()->getNatureEpreuve();
+            $salle = $emptime->getSalle() == null ? "" : $emptime->getSalle()->getDesignation();
             $times[] = [
                 'id' => $emptime->getId(),
                 'title' => $emptime->getCode() . "\n".
@@ -117,7 +206,7 @@ class PlanificationController extends AbstractController
                         ' Type de Cours :  '.$natureEpreuve->getDesignation() . "\n".
                         $enseingant .
                         'Niv : '.$nivs  . 
-                        'salle : '. $emptime->getSalle()->getDesignation(),
+                        'salle : '.$salle ,
                 'start' => $emptime->getStart()->format('Y-m-d H:i:s'),
                 'end' => $emptime->getEnd()->format('Y-m-d H:i:s'),
                 'color'=> $element->getModule()->getColor(),
@@ -126,79 +215,71 @@ class PlanificationController extends AbstractController
         }
         return new Response(json_encode($times));
     }
-    
-    
-    #[Route('/print_planning/{semestre}/{groupe}/{semaine}/{day}', name: 'print_planning')]
-    public function print_planning(AcSemestre $semestre,$groupe,$semaine,$day): Response
+
+    #[Route('/print_planning/{semestre}/{groupe}/{day}/{professeur}', name: 'print_planning')]
+    public function print_planning(AcSemestre $semestre,$groupe,$day,$professeur): Response
     { 
-        
-        // $annee = $this->em->getRepository(AcAnnee::class)->findOneBy([
-        //     'formation'=>$semestre->getPromotion()->getFormation(),
-        //     'validation_academique'=>'non',
-        //     'cloture_academique'=>'non',
-        // ]);
-        $niveau = "";
-        $annee = $this->em->getRepository(AcAnnee::class)->getActiveAnneeByFormation($semestre->getPromotion()->getFormation());
-        $semaine = $this->em->getRepository(Semaine::class)->findOneBy(['nsemaine'=>$semaine,'anneeS'=>$annee->getDesignation()]);
-        if($groupe == 0){
-            $emptimes = $this->em->getRepository(PlEmptime::class)->getEmptimeBySemestreAndSemaine($semestre,$semaine);
-        }else{
-            $emptimes = $this->em->getRepository(PlEmptime::class)->getEmptimeBySemestreAndGroupeAndSemaine($semestre,$groupe,$semaine);
-            $niveau = $this->em->getRepository(PGroupe::class)->find($groupe);
-        }
+        // $semaine = $this->em->getRepository(Semaine::class)->findOneBy(['nsemaine'=>$semaine,'anneeS'=>$annee->getDesignation()]);
+        // if($groupe == 0){
+        //     // $emptimes = $this->em->getRepository(PlEmptime::class)->getEmptimeBySemestreAndSemaine($semestre,$semaine);
+        // }else{
+        //     // $emptimes = $this->em->getRepository(PlEmptime::class)->getEmptimeBySemestreAndGroupeAndSemaine($semestre,$groupe,$semaine);
+        //     $niveau = $this->em->getRepository(PGroupe::class)->find($groupe);
+        // }
         // dd($emptimes);
         // dd($emptime->getGroupe()->getNiveau());  
         
         /////////////////
-        $times = [];
-        foreach($emptimes as $emptime){
-            $enseingant = "";
-            $element = $emptime->getProgrammation()->getElement();
-            $natureEpreuve = $emptime->getProgrammation()->getNatureEpreuve();
-            $epreuve = $this->em->getRepository(AcEpreuve::class)->findOneBy(['id'=>2]);
-            if($emptime->getProgrammation()->getEnseignants() != Null){
-                if($emptime->getProgrammation()->getEnseignants()[0] != Null){
-                    $enseingant .= $enseingant != "" ? ", " : ""; 
-                    $enseingant .= $emptime->getProgrammation()->getEnseignants()[0]->getNom().' '.$emptime->getProgrammation()->getEnseignants()[0]->getPrenom();
-                }
-            }
-            // dd($emptime->getSalle()->getDesignation());
-            $times[] = [
-                'id' => $emptime->getId(),
-                'title' => $emptime->getCode() . "\n".
-                        ' Element :  '.$element->getDesignation() . "\n".
-                        ' Type de Cours :  '.$natureEpreuve->getDesignation() . "\n".
-                        // 'salle : '.$emptime->getSalle()->getDesignation() . "\n".
-                        $enseingant ,
-                        // $enseingant . "\n".
-                        // 'salle : '. $emptime->getSalle()->getDesignation(),
-                'start' => $emptime->getStart()->format('Y-m-d H:i:s'),
-                'end' => $emptime->getEnd()->format('Y-m-d H:i:s'),
-                'color'=> $element->getModule()->getColor(),
-                // 'color'=> $emptime->getColor() == NUll  ? "" : $emptime->getColor()->getCouleur(),
-            ];
+        // $times = [];
+        // foreach($emptimes as $emptime){
+        //     $enseingant = "";
+        //     $element = $emptime->getProgrammation()->getElement();
+        //     $natureEpreuve = $emptime->getProgrammation()->getNatureEpreuve();
+        //     $epreuve = $this->em->getRepository(AcEpreuve::class)->findOneBy(['id'=>2]);
+        //     if($emptime->getProgrammation()->getEnseignants() != Null){
+        //         if($emptime->getProgrammation()->getEnseignants()[0] != Null){
+        //             $enseingant .= $enseingant != "" ? ", " : ""; 
+        //             $enseingant .= $emptime->getProgrammation()->getEnseignants()[0]->getNom().' '.$emptime->getProgrammation()->getEnseignants()[0]->getPrenom();
+        //         }
+        //     }
+        //     // dd($emptime->getSalle()->getDesignation());
+        //     $times[] = [
+        //         'id' => $emptime->getId(),
+        //         'title' => $emptime->getCode() . "\n".
+        //                 ' Element :  '.$element->getDesignation() . "\n".
+        //                 ' Type de Cours :  '.$natureEpreuve->getDesignation() . "\n".
+        //                 // 'salle : '.$emptime->getSalle()->getDesignation() . "\n".
+        //                 $enseingant ,
+        //                 // $enseingant . "\n".
+        //                 // 'salle : '. $emptime->getSalle()->getDesignation(),
+        //         'start' => $emptime->getStart()->format('Y-m-d H:i:s'),
+        //         'end' => $emptime->getEnd()->format('Y-m-d H:i:s'),
+        //         'color'=> $element->getModule()->getColor(),
+        //         // 'color'=> $emptime->getColor() == NUll  ? "" : $emptime->getColor()->getCouleur(),
+        //     ];
+        // }
+        // dd($professeur);
+        $niveau = "";
+        $annee = $this->em->getRepository(AcAnnee::class)->getActiveAnneeByFormation($semestre->getPromotion()->getFormation());
+        if ($groupe != 0 ) {
+            $niveau = $this->em->getRepository(PGroupe::class)->find($groupe);
         }
-        // dd($times);
         ////////////////
         return $this->render('planification/pages/calendar.html.twig', [
-            'emptimes' => $emptimes,
+            // 'emptimes' => $emptimes,
             'semestre' => $semestre,
             'annee' => $annee,
             'groupe' => $groupe,
             'day' => $day,
-            'times'=> $times,
-            'niveau' => $niveau
+            // 'times'=> $times,
+            'niveau' => $niveau,
+            'professeur' => $professeur,
         ]);
     }
 
     #[Route('/planification_infos/{id}', name: 'planifications_planification_infos')]
     public function planification_infos(AcSemestre $semestre,Request $request): Response
     {
-        // $annee = $this->em->getRepository(AcAnnee::class)->findOneBy([
-        //     'formation'=>$semestre->getPromotion()->getFormation(),
-        //     'validation_academique'=>'non',
-        //     'cloture_academique'=>'non',
-        // ]);
         $annee = $this->em->getRepository(AcAnnee::class)->getActiveAnneeByFormation($semestre->getPromotion()->getFormation());
         $salles = $this->em->getRepository(PSalles::class)->findBy([],['designation'=>'ASC']);
         $natureepreuves = $this->em->getRepository(PNatureEpreuve::class)->findBy([],['designation'=>'ASC']);
@@ -347,6 +428,7 @@ class PlanificationController extends AbstractController
     #[Route('/planifications_calendar_edit/{id}', name: 'planifications_calendar_edit')]
     public function planifications_calendar_edit(PlEmptime $emptime,Request $request): Response
     {
+        // dd($request->get('n_semaine'));
         if($emptime->getValider() != 1){
             $element = $this->em->getRepository(AcElement::class)->find($request->get('element'));
             $annee = $this->em->getRepository(AcAnnee::class)->getActiveAnneeByFormation($element->getModule()->getSemestre()->getPromotion()->getFormation());
@@ -354,9 +436,14 @@ class PlanificationController extends AbstractController
             if ($programmation == null) {
                 return new Response("Programmation introuvable ou l'annee ".$annee->getDesignation()." est cloturée!!",500);
             }
-            if ($request->get('nature_seance') == "" || $request->get('nature_seance') == "" || $request->get('salle') =="" || (!str_contains($element->getModule()->getSemestre()->getPromotion()->getFormation()->getDesignation(), 'Résidanat') && $request->get('salle') == "")) {
+            if ($request->get('nature_seance') == "" || $request->get('nature_seance') == "" || (!str_contains($element->getModule()->getSemestre()->getPromotion()->getFormation()->getDesignation(), 'Résidanat') && $request->get('salle') == "")) {
                 return new Response('Merci de renseignez tout les champs',500);
             }
+            $semaine = $this->em->getRepository(Semaine::class)->findOneBy(['nsemaine'=>$request->get('n_semaine'),'anneeS'=>$annee->getDesignation()]);
+            if ($semaine == null) {
+                return new Response("Semaine Introuvable ou l'annee ".$annee->getDesignation()." est cloturée!!",500);
+            }
+            $emptime->setSemaine($semaine);
             $emptime->setProgrammation($programmation);
             $emptime->setDescription($request->get('description'));
             $emptime->setSalle($this->em->getRepository(PSalles::class)->find($request->get('salle')));
@@ -399,6 +486,9 @@ class PlanificationController extends AbstractController
     #[Route('/delete_planning/{id}', name: 'delete_planning')]
     public function delete_planning(PlEmptime $emptime): Response
     {   
+        if ($emptime->getValider() == 1) {
+            return new Response('Vous ne pouvez pas supprimer une seance déja valider!',500);
+        }
         if ($emptime) {
             $iseances = $this->em->getRepository(ISeance::class)->findBy(['seance'=>$emptime]);
             foreach($iseances as $iseance){

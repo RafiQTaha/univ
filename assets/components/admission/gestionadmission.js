@@ -34,6 +34,17 @@ const Toast = Swal.mixin({
             });
             $("body tr#" + id_admission).addClass('active_databales')
         },
+        preDrawCallback: function(settings) {
+            if ($.fn.DataTable.isDataTable('#datatables_gestion_admission')) {
+                var dt = $('#datatables_gestion_admission').DataTable();
+
+                //Abort previous ajax request if it is still in process.
+                var settings = dt.settings();
+                if (settings[0].jqXHR) {
+                    settings[0].jqXHR.abort();
+                }
+            }
+        },
         language: {
             url: "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/French.json",
         },
@@ -380,9 +391,10 @@ const Toast = Swal.mixin({
         let modalAlert = $("#inscription_modal .modal-body .alert")
     
         modalAlert.remove();
+        button = $("#inscription_save .btn");
+        button.prop('disabled', true);
         const icon = $("#inscription_save .btn i");
         icon.removeClass('fa-check-circle').addClass("fa-spinner fa-spin");
-        
         try {
           const request = await axios.post('/admission/gestion/inscription/'+id_admission, formData);
           const response = request.data;
@@ -402,6 +414,7 @@ const Toast = Swal.mixin({
             `<div class="alert alert-danger">${message}</div>`
           );
           icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
+          button.prop('disabled', false);
         }
     })
 

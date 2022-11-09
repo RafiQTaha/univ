@@ -93,11 +93,11 @@ class NoteEpreuveController extends AbstractController
             array( 'db' => 'lower(prm.designation)','dt' => 7),
             array( 'db' => 'left(CONCAT(ens.nom,"  ",ens.prenom) , 10)','dt' => 8),
             array( 'db' => 'nepv.abreviation','dt' => 9),
-            array( 'db' => 'nbr_effectif','dt' => 10),
-            array( 'db' => 'nbr_absence','dt' => 11),
-            array( 'db' => 'nbr_saisi','dt' => 12),
-            array( 'db' => 'nbr_non_saisi','dt' => 13),
-            array( 'db' => 'stat.designation','dt' => 14),
+            // array( 'db' => 'nbr_effectif','dt' => 10),
+            // array( 'db' => 'nbr_absence','dt' => 11),
+            // array( 'db' => 'nbr_saisi','dt' => 12),
+            // array( 'db' => 'nbr_non_saisi','dt' => 13),
+            array( 'db' => 'stat.designation','dt' => 10),
         );
         $sql = "SELECT " . implode(", ", DatatablesController::Pluck($columns, 'db')) . "
         FROM ac_epreuve epv 
@@ -112,10 +112,13 @@ class NoteEpreuveController extends AbstractController
         INNER JOIN pstatut stat ON stat.id = epv.statut_id
         INNER JOIN pnature_epreuve nepv ON nepv.id = epv.nature_epreuve_id
         INNER JOIN ac_annee ann on ann.id = epv.annee_id
-        INNER JOIN (SELECT epreuve_id,COUNT(id) nbr_effectif FROM ex_gnotes GROUP BY epreuve_id) ne ON ne.epreuve_id = epv.id 
-        LEFT JOIN (SELECT epreuve_id,COUNT(id) nbr_absence FROM ex_gnotes WHERE absence = '1' GROUP BY epreuve_id) na ON na.epreuve_id = epv.id
-        LEFT JOIN (SELECT epreuve_id, COUNT(id) nbr_saisi FROM ex_gnotes WHERE (absence = '0' or absence is null)  AND (note IS NOT NULL AND note <> '') GROUP BY epreuve_id) ni ON ni.epreuve_id = epv.id 
-        LEFT JOIN (SELECT epreuve_id, COUNT(id) nbr_non_saisi FROM ex_gnotes WHERE (absence = '0' or absence is null) AND (note IS NULL OR note = '' ) GROUP BY epreuve_id) nni ON nni.epreuve_id = epv.id Where 1=1 $filtre";
+        Where 1=1 $filtre";
+
+        // INNER JOIN (SELECT epreuve_id,COUNT(id) nbr_effectif FROM ex_gnotes GROUP BY epreuve_id) ne ON ne.epreuve_id = epv.id 
+        // LEFT JOIN (SELECT epreuve_id,COUNT(id) nbr_absence FROM ex_gnotes WHERE absence = '1' GROUP BY epreuve_id) na ON na.epreuve_id = epv.id
+        // LEFT JOIN (SELECT epreuve_id, COUNT(id) nbr_saisi FROM ex_gnotes WHERE (absence = '0' or absence is null)  AND (note IS NOT NULL AND note <> '') GROUP BY epreuve_id) ni ON ni.epreuve_id = epv.id 
+        // LEFT JOIN (SELECT epreuve_id, COUNT(id) nbr_non_saisi FROM ex_gnotes WHERE (absence = '0' or absence is null) AND (note IS NULL OR note = '' ) GROUP BY epreuve_id) nni ON nni.epreuve_id = epv.id 
+        
         // dd($sql);
         $totalRows .= $sql;
         $sqlRequest .= $sql;
@@ -143,17 +146,28 @@ class NoteEpreuveController extends AbstractController
             // dump($row);die;
             $nestedData = array();
             $cd = $row['id'];
+            $nbr_effectif = count($this->em->getRepository(ExGnotes::class)->findBy(['epreuve' => $cd]));
+            $nbr_absence = count($this->em->getRepository(ExGnotes::class)->findBy(['epreuve' => $cd, 'absence' => 1]));
+            $nbr_saisi = count($this->em->getRepository(ExGnotes::class)->getNombreSaisi($cd));
+            $nbr_non_saisi = count($this->em->getRepository(ExGnotes::class)->getNombreNonSaisi($cd));
+            
+            // dd($nbr_non_saisi);
             $nestedData[] = "<input type ='checkbox' class='check_admissible' id ='$cd' >";
             // $nestedData[] = $i;
             $etat_bg="";
             foreach (array_values($row) as $key => $value) { 
                 $nestedData[] = $value;
             }
+            $nestedData[] = $nbr_effectif;
+            $nestedData[] = $nbr_absence;
+            $nestedData[] = $nbr_saisi;
+            $nestedData[] = $nbr_non_saisi;
+
             ///lst add*
 
-            if ($row['nbr_saisi'] == 0) {
+            if ($nbr_saisi == 0) {
                 $etat_bg = 'etat_bg_nf';
-            } elseif ($row['nbr_saisi'] > 0 AND $row['nbr_saisi'] < ($row['nbr_effectif'] - $row['nbr_absence'])) {
+            } elseif ($nbr_saisi > 0 AND $nbr_saisi < ($nbr_effectif - $nbr_absence)) {
                 $etat_bg = '';
             } else {
                 $etat_bg = 'etat_bg_reg';
@@ -390,6 +404,7 @@ class NoteEpreuveController extends AbstractController
             $exgnote->setAbsence($sheet[4]);
             $exgnote->setObservation($sheet[5]);
             $this->em->flush();
+            ApiController::mouchard($this->getUser(), $this->em,$exgnote, 'ExGnote', 'Importation Des Notes');
         }
         return new JsonResponse("Total des notes associé est ".$sheetCount);
     }

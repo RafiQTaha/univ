@@ -35,9 +35,9 @@
 </table>
 <table style="width:100%">
     <tr style="width:100%"> 
-        <td style="width:33.33%"><b>Date : </b>{{seance.start | date('j-m-Y')}} </td>
-        <td style="width:33.33%"><b>Heure début  : </b>{{seance.start | date('H:m')}} </td>
-        <td style="width:33.33%"><b>Heure fin : </b>{{seance.start | date('H:m')}} </td>
+        <td style="width:33.33%"><b>Date : </b>{{seance.start | date('d-m-Y')}} </td>
+        <td style="width:33.33%"><b>Heure début  : </b>{{seance.start | date('H:s')}} </td>
+        <td style="width:33.33%"><b>Heure fin : </b>{{seance.start | date('H:s')}} </td>
     </tr>
     <tr style="width:100%"> 
         <td style="width:50%"><b>Etablissement : </b>{{seance.programmation.element.module.semestre.promotion.formation.etablissement.designation}} </td>

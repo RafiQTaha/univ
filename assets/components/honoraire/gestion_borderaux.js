@@ -61,6 +61,7 @@ $(document).ready(function () {
                 ids_borderaux.push(input.attr("data-id"));
             }
         }
+        console.log(ids_borderaux);
     })
     $("select").select2();
     $("#etablissement").on('change', async function (){
@@ -148,6 +149,7 @@ $(document).ready(function () {
                 icon: 'success',
                 title: response,
             })
+            ids_borderaux = []
             table_gestion_borderaux.ajax.reload(null,false);
             icon.addClass('fa-times-circle').removeClass("fa-spinner fa-spin");
         } catch (error) {
@@ -181,6 +183,11 @@ $(document).ready(function () {
             const message = error.response.data;
             icon.addClass('fab fa-telegram-plane').removeClass("fas fa-spinner fa-spin");
         }
+    })
+    
+    $('body').on('click','#extraction_honoraire', async function (e) {
+        e.preventDefault();
+        window.open('/honoraire/gestion_borderaux/extraction_honoraire','_blank');
     })
     
 })

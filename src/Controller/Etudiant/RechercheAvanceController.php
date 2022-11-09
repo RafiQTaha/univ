@@ -119,6 +119,27 @@ class RechercheAvanceController extends AbstractController
         
         $mpdf->Output("scolarite.pdf", "I");
     }
+    #[Route('/attestation/scolariteAnglais/{inscription}', name: 'etudiant_recherche_attestation_scolarite_anglais')]
+    public function attestationScolariteAngalis(TInscription $inscription): Response
+    {
+        $html = $this->render("etudiant/recherche_avance/pdf/attestations/scolariteAnglais.html.twig", [
+            'inscription' => $inscription
+        ])->getContent();
+        // dd($html);
+        $mpdf = new Mpdf([
+            'margin_left' => 5,
+            'margin_right' => 5,
+        ]);
+        // $mpdf->SetHTMLHeader(
+        //     $this->render("etudiant/recherche_avance/pdf/attestations/header.html.twig")->getContent()
+        // );
+        $mpdf->SetHTMLFooter(
+            $this->render("etudiant/recherche_avance/pdf/attestations/footer.html.twig")->getContent()
+        );
+        $mpdf->WriteHTML($html);
+        
+        $mpdf->Output("scolarite.pdf", "I");
+    }
     
     #[Route('/attestation/reussite/{inscription}', name: 'etudiant_recherche_attestation_reussite')]
     public function attestationReussite(TInscription $inscription): Response
@@ -212,14 +233,23 @@ class RechercheAvanceController extends AbstractController
     public function attestationReleveAnnee(TInscription $inscription, $assiduite): Response
     {
         $semestres = $this->em->getRepository(ExSnotes::class)->findBy(['inscription' => $inscription]);
+        // dd($semestres);
+        $noteSemestre2 = null;
+        $noteModulesBySemestre2 = null;
         $noteSemestre1 = $semestres ? $semestres[0] : die("Note semestre introuvable");
-        $noteSemestre2 = $semestres ? $semestres[1] : die("Note semestre introuvable");
+        if (count($semestres)>1) {
+            $noteSemestre2 = $semestres[1];
+        }
         if($assiduite == 0){
             $noteModulesBySemestre1 = $this->em->getRepository(ExMnotes::class)->getNotesModuleSansAssiduiteBySemestre($noteSemestre1->getSemestre(), $inscription);
-            $noteModulesBySemestre2 = $this->em->getRepository(ExMnotes::class)->getNotesModuleSansAssiduiteBySemestre($noteSemestre2->getSemestre(), $inscription);
+            if ($noteSemestre2 != null) {
+                $noteModulesBySemestre2 = $this->em->getRepository(ExMnotes::class)->getNotesModuleSansAssiduiteBySemestre($noteSemestre2->getSemestre(), $inscription);
+            }
         } else {
             $noteModulesBySemestre1 = $this->em->getRepository(ExMnotes::class)->getNotesModuleBySemestre($noteSemestre1->getSemestre(), $inscription);
-            $noteModulesBySemestre2 = $this->em->getRepository(ExMnotes::class)->getNotesModuleBySemestre($noteSemestre2->getSemestre(), $inscription);
+            if ($noteSemestre2 != null) {
+                $noteModulesBySemestre2 = $this->em->getRepository(ExMnotes::class)->getNotesModuleBySemestre($noteSemestre2->getSemestre(), $inscription);
+            }
         }
         $html = $this->render("etudiant/recherche_avance/pdf/academique/note_annee.html.twig", [
             'inscription' => $inscription,

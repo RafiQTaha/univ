@@ -24,6 +24,7 @@ use App\Entity\NatureDemande;
 use App\Entity\TOperationcab;
 use App\Entity\PNatureEpreuve;
 use App\Entity\AcEtablissement;
+use App\Entity\Mouchard;
 use App\Entity\PrProgrammation;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Serializer\Serializer;
@@ -378,6 +379,28 @@ class ApiController extends AbstractController
         }
         $operations = $em->getRepository(UsOperation::class)->getOperationByLinkSousModule($user, $link);
         return $operations;
+    }
+    
+    static function mouchard($user,$em,$object,$table,$action)
+    {
+        $entity = "App\Entity\\".$table;
+        $array = (array) $object;
+        foreach ($array as $key => $value) {
+            if (!is_object($value)) {
+                $nkey = str_replace($entity, '', $key) ;
+                $nkey = preg_replace('/[\x00-\x1F\x7F]/u', '', $nkey);
+                $array[$nkey] = $array[$key];
+            }
+            unset($array[$key]);
+        }
+        $mouchard = new Mouchard();
+        $mouchard->setCreated(new \DateTime('now'));
+        $mouchard->setUserCreated($user);
+        $mouchard->setObservation($array);
+        $mouchard->setFromTable($table);
+        $mouchard->setAction($action);
+        $em->persist($mouchard);
+        $em->flush();
     }
     
     // /**

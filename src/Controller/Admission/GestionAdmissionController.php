@@ -55,7 +55,7 @@ class GestionAdmissionController extends AbstractController
     {
         $params = $request->query;
         $where = $totalRows = $sqlRequest = "";
-        $filtre = "where 1 = 1 ";   
+        $filtre = "where 1 = 1 AND ad.statut_id = 7 ";   
         // dd($params->all('columns')[0]);
 
         if (!empty($params->all('columns')[0]['search']['value'])) {
@@ -77,26 +77,19 @@ class GestionAdmissionController extends AbstractController
             array( 'db' => 'etu.prenom','dt' => 4),
             array( 'db' => 'etab.abreviation','dt' => 5),
             array( 'db' => 'UPPER(form.abreviation)','dt' => 6),
-            array( 'db' => 'tab.montant','dt' => 7),
-            array( 'db' => 'st.designation','dt' => 8)
+            // array( 'db' => 'tab.montant','dt' => 7),
+            array( 'db' => 'st.designation','dt' => 7)
         );
-        $filtre .= " AND ad.statut_id = 7 ";
+        // $filtre .= "  ";
         $sql = "SELECT " . implode(", ", DatatablesController::Pluck($columns, 'db')) . "
-                      
-                FROM tadmission ad
-                inner join tpreinscription pre on pre.id = ad.preinscription_id
-                inner join tetudiant etu on etu.id = pre.etudiant_id
-                inner join ac_annee an on an.id = pre.annee_id
-                inner join ac_formation form on form.id = an.formation_id              
-                inner join ac_etablissement etab on etab.id = form.etablissement_id 
-                INNER JOIN pstatut st ON st.id = ad.statut_id
-                LEFT JOIN (SELECT adm.id id_admission,SUM(det.montant) montant 
-                FROM toperationcab cab 
-                INNER JOIN tadmission adm ON adm.preinscription_id = cab.preinscription_id
-                INNER JOIN toperationdet det ON cab.id = det.operationcab_id 
-                INNER JOIN ac_annee an ON an.id = cab.annee_id 
-                GROUP BY adm.id) tab ON tab.id_admission = ad.id 
-                $filtre "
+            FROM tadmission ad
+            inner join tpreinscription pre on pre.id = ad.preinscription_id
+            inner join tetudiant etu on etu.id = pre.etudiant_id
+            inner join ac_annee an on an.id = pre.annee_id
+            inner join ac_formation form on form.id = an.formation_id              
+            inner join ac_etablissement etab on etab.id = form.etablissement_id 
+            INNER JOIN pstatut st ON st.id = ad.statut_id
+            $filtre "
         ;
         // dd($sql);
         $totalRows .= $sql;
@@ -133,15 +126,27 @@ class GestionAdmissionController extends AbstractController
             // dd($row);
 
             foreach (array_values($row) as $key => $value) {
-                if($key == 8) {
+                if($key == 7) {
+                    $preinscription = $this->em->getRepository(TAdmission::class)->find($row['id'])->getPreinscription();
+                    $cabs = $preinscription->getOperationcabs();
+                    $montant = 0;
+                    foreach ($cabs as $cab) {
+                        $total = $this->em->getRepository(TOperationdet::class)->getSumMontantByCodeFacture($cab->getId())['total'];
+                        $montant = $montant + $total;
+                    }
+                    $nestedData[] = $montant;
                     $nestedData[] = count($this->em->getRepository(TAdmission::class)->find($row['id'])->getInscriptions()) > 0 ? 'Inscrit' : 'Non Inscrit';
                     $nestedData[] = $value;
                 }
+                // elseif($key == 8) {
+                //     $nestedData[] = count($this->em->getRepository(TAdmission::class)->find($row['id'])->getInscriptions()) > 0 ? 'Inscrit' : 'Non Inscrit';
+                //     $nestedData[] = $value;
+                // }
                 else if($key > 0) {
                     $nestedData[] = $value;
                 }
             }
-            if($row['montant'] == '') {
+            if($montant == 0) {
                 $cd .= ' etat_bg_nf';
             } else {
                 $cd .= ' etat_bg_reg';
@@ -231,113 +236,86 @@ class GestionAdmissionController extends AbstractController
         return new JsonResponse($donnee_frais, 200);
     }
 
-    #[Route('/addfrais/{admission}', name: 'admission_addfrais')]
-    public function admissionAddFrais(Request $request, TAdmission $admission): Response
-    {
+    // #[Route('/addfrais/{admission}', name: 'admission_addfrais')]
+    // public function admissionAddFrais(Request $request, TAdmission $admission): Response
+    // {
         
-        $arrayOfFrais = json_decode($request->get('frais'));
-        $preinscription = $admission->getPreinscription();
-        $operationcab = $this->em->getRepository(TOperationcab::class)->findOneBy(['preinscription'=>$preinscription,'categorie'=>'admission']);
+    //     $arrayOfFrais = json_decode($request->get('frais'));
+    //     $preinscription = $admission->getPreinscription();
+    //     $operationcab = $this->em->getRepository(TOperationcab::class)->findOneBy(['preinscription'=>$preinscription,'categorie'=>'admission']);
         
-        if ($operationcab != Null) {
-            if ($operationcab->getActive() == 0) {
-                return new JsonResponse('Facture Cloturée', 500);
-            }
-        }
-        foreach ($arrayOfFrais as $fraisObject) {
-            $frais =  $this->em->getRepository(PFrais::class)->find($fraisObject->id);
-            $operationDet = new TOperationdet();
-            $operationDet->setOperationcab($operationcab);
-            $operationDet->setFrais($frais);
-            $operationDet->setMontant($fraisObject->montant);
-            $operationDet->setIce($fraisObject->ice);
-            $operationDet->setCreated(new \DateTime("now"));
-            $operationDet->setRemise(0);
-            $operationDet->setActive(1);
-            $operationDet->setOrganisme($this->em->getRepository(POrganisme::class)->find($fraisObject->organisme_id));
-            $this->em->persist($operationDet);
-            $this->em->flush();
-            $operationDet->setCode(
-                "OPD".str_pad($operationDet->getId(), 8, '0', STR_PAD_LEFT)
-            );
-            $this->em->flush();
-        }
+    //     if ($operationcab != Null) {
+    //         if ($operationcab->getActive() == 0) {
+    //             return new JsonResponse('Facture Cloturée', 500);
+    //         }
+    //     }
+    //     foreach ($arrayOfFrais as $fraisObject) {
+    //         $frais =  $this->em->getRepository(PFrais::class)->find($fraisObject->id);
+    //         $operationDet = new TOperationdet();
+    //         $operationDet->setOperationcab($operationcab);
+    //         $operationDet->setFrais($frais);
+    //         $operationDet->setMontant($fraisObject->montant);
+    //         $operationDet->setIce($fraisObject->ice);
+    //         $operationDet->setCreated(new \DateTime("now"));
+    //         $operationDet->setRemise(0);
+    //         $operationDet->setActive(1);
+    //         $this->em->persist($operationDet);
+    //         $this->em->flush();
+    //         $operationDet->setCode(
+    //             "OPD".str_pad($operationDet->getId(), 8, '0', STR_PAD_LEFT)
+    //         );
+    //         $this->em->flush();
+    //     }
 
-        return new JsonResponse($operationcab->getId(), 200);
-    }
+    //     return new JsonResponse($operationcab->getId(), 200);
+    // }
 
-    #[Route('/facture/{operationcab}', name: 'admission_facture')]
-    public function factureAdmission(Request $request, TOperationcab $operationcab)
-    {
-        $operationdets = $this->em->getRepository(TOperationdet::class)->FindDetGroupByFrais($operationcab);
-        $operationdetslist = [];
-        foreach ($operationdets as $operationdet) {
-            $frais = $operationdet->getFrais();
-            $SumByOrg = $this->em->getRepository(TOperationdet::class)->getSumMontantByCodeFactureAndOrganisme($operationcab,$frais);
-            // $SumByOrgPyt = $this->em->getRepository(TOperationdet::class)->getSumMontantByCodeFactureAndOrganismePayant($operationcab,$frais);
-            $SumByPayant = $this->em->getRepository(TOperationdet::class)->getSumMontantByCodeFactureAndPayant($operationcab,$frais);
-            $list['dateOperation'] = $this->em->getRepository(TOperationdet::class)->findOneBy(['operationcab'=>$operationcab,'frais'=>$frais],['created'=>'DESC'])->getCreated()->format('d/m/Y');
-            $list['designation'] = $operationdet->getFrais()->getDesignation();
-            $list['SumByOrg'] = $SumByOrg;
-            // $list['SumByOrgPyt'] = $SumByOrgPyt;
-            $list['SumByPayant'] = $SumByPayant;
-            $list['total'] = $SumByPayant + $SumByOrg;
-            array_push($operationdetslist,$list);
-        }
-        $inscription = $this->em->getRepository(TInscription::class)->findOneBy([
-            'admission'=>$this->em->getRepository(TAdmission::class)->findBy([
-                'preinscription'=>$operationcab->getPreinscription()]),
-            'annee' => $operationcab->getAnnee()]);
-        $promotion = $inscription == NULL ? "" : $inscription->getPromotion()->getDesignation();
+    // #[Route('/facture/{operationcab}', name: 'admission_facture')]
+    // public function factureAdmission(Request $request, TOperationcab $operationcab)
+    // {
+    //     $operationdets = $this->em->getRepository(TOperationdet::class)->FindDetGroupByFrais($operationcab);
+    //     $operationdetslist = [];
+    //     foreach ($operationdets as $operationdet) {
+    //         $frais = $operationdet->getFrais();
+    //         $SumByOrg = $this->em->getRepository(TOperationdet::class)->getSumMontantByCodeFactureAndOrganisme($operationcab,$frais);
+    //         // $SumByOrgPyt = $this->em->getRepository(TOperationdet::class)->getSumMontantByCodeFactureAndOrganismePayant($operationcab,$frais);
+    //         $SumByPayant = $this->em->getRepository(TOperationdet::class)->getSumMontantByCodeFactureAndPayant($operationcab,$frais);
+    //         $list['dateOperation'] = $this->em->getRepository(TOperationdet::class)->findOneBy(['operationcab'=>$operationcab,'frais'=>$frais],['created'=>'DESC'])->getCreated()->format('d/m/Y');
+    //         $list['designation'] = $operationdet->getFrais()->getDesignation();
+    //         $list['SumByOrg'] = $SumByOrg;
+    //         // $list['SumByOrgPyt'] = $SumByOrgPyt;
+    //         $list['SumByPayant'] = $SumByPayant;
+    //         $list['total'] = $SumByPayant + $SumByOrg;
+    //         array_push($operationdetslist,$list);
+    //     }
+    //     $inscription = $this->em->getRepository(TInscription::class)->findOneBy([
+    //         'admission'=>$this->em->getRepository(TAdmission::class)->findBy([
+    //             'preinscription'=>$operationcab->getPreinscription()]),
+    //         'annee' => $operationcab->getAnnee()]);
+    //     $promotion = $inscription == NULL ? "" : $inscription->getPromotion()->getDesignation();
         
-        $reglementOrg = $this->em->getRepository(TReglement::class)->getReglementSumMontantByCodeFactureByOrganisme($operationcab)['total'];
-        $reglementPyt = $this->em->getRepository(TReglement::class)->getReglementSumMontantByCodeFactureByPayant($operationcab)['total'];
+    //     $reglementOrg = $this->em->getRepository(TReglement::class)->getReglementSumMontantByCodeFactureByOrganisme($operationcab)['total'];
+    //     $reglementPyt = $this->em->getRepository(TReglement::class)->getReglementSumMontantByCodeFactureByPayant($operationcab)['total'];
         
-        $html = $this->render("facture/pdfs/facture_facture.html.twig", [
-            'reglementOrg' => $reglementOrg,
-            'reglementPyt' => $reglementPyt,
-            'operationcab' => $operationcab,
-            'promotion' => $promotion,
-            'operationdets' => $operationdetslist
-        ])->getContent();
-        $mpdf = new Mpdf([
-            'mode' => 'utf-8',
-            'margin_top' => 5,
-        ]);        
-        $mpdf->SetTitle('Facture');
-        $mpdf->SetHTMLFooter(
-            $this->render("facture/pdfs/footer.html.twig")->getContent()
-        );
-        $mpdf->showImageErrors = true;
-        $mpdf->WriteHTML($html);
-        $mpdf->Output("facture.pdf", "I");
-
-
-
-
-
-        // $reglementTotal = $this->em->getRepository(TReglement::class)->getSumMontantByCodeFacture($operationcab);
-        // $operationTotal = $this->em->getRepository(TOperationdet::class)->getSumMontantByCodeFacture($operationcab);
-        // $operationTotal = $operationTotal == Null ? 0 : $operationTotal['total'];
-        // $reglementTotal = $reglementTotal == Null ? 0 : $reglementTotal['total'];
-        // $total = $operationTotal - $reglementTotal;
-        // // dd($reglementTotal, $operationTotal);
-        // $html = $this->render("facture/pdfs/facture.html.twig", [
-        //     'reglementTotal' => $reglementTotal,
-        //     'operationTotal' => $operationTotal,
-        //     'operationcab' => $operationcab,
-        //     'total' => $total
-        // ])->getContent();
-        // $mpdf = new Mpdf();
-        // $mpdf->SetHTMLHeader(
-        //     $this->render("facture/pdfs/header.html.twig")->getContent()
-        // );
-        // $mpdf->SetHTMLFooter(
-        //     $this->render("facture/pdfs/footer.html.twig")->getContent()
-        // );
-        // $mpdf->WriteHTML($html);
-        // $mpdf->Output("facture.pdf", "I");
-    }
+    //     $html = $this->render("facture/pdfs/facture_facture.html.twig", [
+    //         'reglementOrg' => $reglementOrg,
+    //         'reglementPyt' => $reglementPyt,
+    //         'operationcab' => $operationcab,
+    //         'promotion' => $promotion,
+    //         'operationdets' => $operationdetslist
+    //     ])->getContent();
+    //     $mpdf = new Mpdf([
+    //         'mode' => 'utf-8',
+    //         'margin_top' => 5,
+    //     ]);        
+    //     $mpdf->SetTitle('Facture');
+    //     $mpdf->SetHTMLFooter(
+    //         $this->render("facture/pdfs/footer.html.twig")->getContent()
+    //     );
+    //     $mpdf->showImageErrors = true;
+    //     $mpdf->WriteHTML($html);
+    //     $mpdf->Output("facture.pdf", "I");
+    // }
     #[Route('/getAnneeDisponible/{admission}', name: 'admission_annee_disponible')]
     public function getAnneeDisponible(Request $request, TAdmission $admission): Response
     {
@@ -355,12 +333,17 @@ class GestionAdmissionController extends AbstractController
             return new JsonResponse(['anneeHtml' => $anneeHtml, 'promotionHtml' => $promotionHtml], 200);
         }
 
-        return new JsonResponse("Etudiant deja inscrit à l'année courant!", 500);
+        return new JsonResponse("Etudiant deja inscrit à l'année courante!", 500);
     }
     #[Route('/inscription/{admission}', name: 'admission_inscription')]
     public function inscriptionAction(Request $request, TAdmission $admission)
     {
         $annee = $this->em->getRepository(AcAnnee::class)->find($request->get('annee_inscription'));
+        $inscription = $this->em->getRepository(TInscription::class)->getActiveInscriptionByAnnee($admission,$annee);
+        if ($inscription != null) {
+            return new JsonResponse("Etudiant deja inscrit à l'année courante!", 500);
+        }
+        // dd('test'); 
         $promotion = $this->em->getRepository(AcPromotion::class)->find($request->get('promotion_inscription'));
         // dd($admission->getPreinscription()->getEtudiant()->getCategoriePreinscription());
         $etudiant = $admission->getPreinscription()->getEtudiant();
@@ -400,11 +383,6 @@ class GestionAdmissionController extends AbstractController
             $operationCab = new TOperationcab();
             $operationCab->setPreinscription($inscription->getAdmission()->getPreinscription());
             $operationCab->setUserCreated($this->getUser());
-            // A supprimer
-            $operationCab->setOrganisme(
-                $this->em->getRepository(POrganisme::class)->find(7)
-            );
-            //
             $operationCab->setAnnee($inscription->getAnnee());
             $i == 0 ? $operationCab->setCategorie('inscription') : $operationCab->setCategorie('hors inscription');
             $operationCab->setCreated(new \DateTime("now"));

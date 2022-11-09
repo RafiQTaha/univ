@@ -55,7 +55,7 @@ class CreationBorderauxController extends AbstractController
          
         $params = $request->query;
         $where = $totalRows = $sqlRequest = "";
-        $filtre = " where emp.annuler = 0 and hon.statut='R' and ann.validation_academique = 'non' ";
+        $filtre = " where emp.annuler = 0 and emp.active = 1  and hon.statut='R' and ann.validation_academique = 'non' ";
         
         if (!empty($params->all('columns')[0]['search']['value'])) {
             $filtre .= " and etab.id = '" . $params->all('columns')[0]['search']['value'] . "' ";
@@ -77,6 +77,9 @@ class CreationBorderauxController extends AbstractController
         }   
         if (!empty($params->all('columns')[6]['search']['value'])) {
             $filtre .= " and ens.id = '" . $params->all('columns')[6]['search']['value'] . "' ";
+        }   
+        if (!empty($params->all('columns')[7]['search']['value'])) {
+            $filtre .= " and date(sm.date_debut) <= '" . $params->all('columns')[7]['search']['value'] . "' and date(sm.date_fin) >= '" . $params->all('columns')[7]['search']['value'] . "' ";
         } 
         
         $columns = array(
@@ -144,12 +147,15 @@ class CreationBorderauxController extends AbstractController
             $etat_bg="";
             foreach (array_values($row) as $key => $value) { 
                 $checked = "";
+                $select = "";
                 if ($key == 0) {
                     $borderau = $this->em->getRepository(HHonens::class)->find($cd)->getBordereau();
                     if ($borderau != NULL) {
                         $checked = "checked='' disabled='' class='check_seance'";
+                    }else {
+                        $select = "id='check_seance'";
                     }
-                    $nestedData[] = "<input $checked type ='checkbox' data-id ='$cd' >";
+                    $nestedData[] = "<input $checked type ='checkbox' data-id ='$cd' $select value='$cd'>";
                 }
                 else{
                     $nestedData[] = $value;
@@ -178,7 +184,6 @@ class CreationBorderauxController extends AbstractController
             return new JsonResponse('Merci de Choisir une semestre et une semaine et au moins une ligne!',500);
         }
         $halbhon = new HAlbhon();
-        
         $halbhon->setPromotion($this->em->getRepository(AcPromotion::class)->find($request->get('promotion')));
         $halbhon->setSemaine($this->em->getRepository(Semaine::class)->find($request->get('semaine')));
         $halbhon->setUserCreated($this->getUser());
@@ -199,20 +204,36 @@ class CreationBorderauxController extends AbstractController
     #[Route('/honoraire_borderaux/{borderaux}', name: 'honoraire_borderaux')]
     public function honoraireborderaux(HAlbhon $borderaux)
     {  
-        $honenss = $borderaux->getHonenss();
-        // dd($borderaux->getHonenss()[0]->getSeance()->getProgrammation()->getElement()->getNature()->getDesignation());
-        $html = $this->render("honoraire/pdfs/borderaux.html.twig", [
+        // $honenss = $borderaux->getHonenss();
+        // getHonoraireByActiveSeanceAndBordereau
+        $honenss = $this->em->getRepository(HHonens::class)->getHonoraireByActiveSeanceAndBordereau($borderaux);
+        $nombre_seance = [];
+        $ens = [];
+        foreach ($honenss as $honens) {
+            array_push($nombre_seance,$honens->getSeance()->getCode());
+        }
+        $ens_infos = $this->em->getRepository(HHonens::class)->getEnsByBordereau($borderaux);
+        $html = $this->render("honoraire/pdfs/borderaux_2.html.twig", [
             'borderaux' => $borderaux,
-            'honenss' => $honenss
+            'honenss' => $honenss,
+            'nombre_seance'=> array_unique($nombre_seance),
+            'ens_infos'=> $ens_infos
         ])->getContent();
         $mpdf = new Mpdf([
             'format' => 'A4-L',
             'mode' => 'utf-8',
-            'margin_top' => '5',
+            'margin_top' => '60',
             'margin_left' => '5',
             'margin_right' => '5',
+            'margin_bottom' => '35',
             ]);
         $mpdf->SetTitle('ETAT DES HONORAIRES PAR PROFESSEUR');
+        $mpdf->SetHTMLHeader(
+            $this->render("honoraire/pdfs/header_borderaux.html.twig", [
+                'borderaux' => $borderaux,
+                'honenss' => $honenss
+            ])->getContent()
+        );
         $mpdf->SetHTMLFooter(
             $this->render("facture/pdfs/footer_borderaux.html.twig")->getContent()
         );
@@ -234,6 +255,17 @@ class CreationBorderauxController extends AbstractController
         // dd($semaine);
         // dd($list);
         return new JsonResponse($list);
+    }
+    
+    #[Route('/findSemainePlanning', name: 'findSemainePlanning')]
+    public function findSemainePlanning(Request $request): Response
+    {
+        $date = $request->get("semaine_day");
+        $semaine = $this->em->getRepository(Semaine::class)->findSemaine($date);
+        if (!$semaine) {
+            return new JsonResponse(0);
+        }
+        return new JsonResponse($semaine->getId());
     }
     
 }

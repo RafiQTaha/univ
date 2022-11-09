@@ -6,10 +6,13 @@ use App\Controller\ApiController;
 use App\Controller\DatatablesController;
 use App\Entity\AcEtablissement;
 use App\Entity\HAlbhon;
+use App\Entity\HHonens;
 use App\Entity\PEnseignant;
 use App\Entity\PGrade;
 use App\Entity\Semaine;
+use App\Entity\TBrdpaiement;
 use Doctrine\Persistence\ManagerRegistry;
+use Mpdf\Mpdf;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -54,7 +57,7 @@ class GestionBorderauxController extends AbstractController
          
         $params = $request->query;
         $where = $totalRows = $sqlRequest = "";
-        $filtre = " where emp.annuler = 0 ";
+        $filtre = " where emp.annuler = 0 and emp.active = 1 ";
         
         if (!empty($params->all('columns')[0]['search']['value'])) {
             $filtre .= " and etab.id = '" . $params->all('columns')[0]['search']['value'] . "' ";
@@ -86,7 +89,7 @@ class GestionBorderauxController extends AbstractController
         INNER JOIN ac_promotion prm ON prm.id = sem.promotion_id
         INNER JOIN ac_formation frm ON frm.id = prm.formation_id
         INNER JOIN ac_etablissement etab ON etab.id = frm.etablissement_id
-        $filtre GROUP BY alb.id";
+        $filtre ";
         // dd($sql);
         $totalRows .= $sql;
         $sqlRequest .= $sql;
@@ -100,6 +103,8 @@ class GestionBorderauxController extends AbstractController
         if (isset($where) && $where != '') {
             $sqlRequest .= $where;
         }
+        $sqlRequest .= " GROUP BY alb.id ";
+         
         // $sqlRequest .= DatatablesController::Order($request, $columns);
         $changed_column = $params->all('order')[0]['column'] > 0 ? $params->all('order')[0]['column'] -1 : 0;
         $sqlRequest .= " ORDER BY " .DatatablesController::Pluck($columns, 'db')[$changed_column] . "   " . $params->all('order')[0]['dir'] . "  LIMIT " . $params->get('start') . " ," . $params->get('length') . " ";
@@ -149,6 +154,7 @@ class GestionBorderauxController extends AbstractController
             $halbhon = $this->em->getRepository(HAlbhon::class)->find($id);
             foreach ($halbhon->getHonenss() as $honens) {
                 $honens->setBordereau(Null);
+                $honens->setStatut('E');
                 $this->em->flush();
             }
         }
@@ -220,5 +226,75 @@ class GestionBorderauxController extends AbstractController
         $fileName = 'Report_2.xlsx';
         $writer->save($this->getParameter('honoraire_export_directory').'/'.$fileName);
         return new JsonResponse($fileName,200);
+    }
+    
+    #[Route('/extraction_honoraire', name: 'extraction_honoraire')]
+    public function extraction_honoraire()
+    {   
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        $i=2;
+        $j=1;
+        $currentyear = date('m') > 7 ? $current_year = date('Y').'/'.date('Y')+1 : $current_year = date('Y') - 1 .'/' .date('Y');
+        // $seances = $this->em->getRepository(PlEmptime::class)->findSeanceByCurrentYears($currentyear);
+        $honoraires = $this->em->getRepository(HHonens::class)->findHonoraireByCurrentYears($currentyear);
+        // dd($honoraires[0]);
+        $sheet->fromArray(
+            array_keys($honoraires[0]),
+            null,
+            'A1'
+        );
+        foreach ($honoraires as $honoraire) {
+            $sheet->fromArray(
+                $honoraire,
+                null,
+                'A'.$i
+            );
+            $i++;
+            $j++;
+        }
+        $writer = new Xlsx($spreadsheet);
+        $fileName = 'Extraction honoraires.xlsx';
+        $temp_file = tempnam(sys_get_temp_dir(), $fileName);
+        $writer->save($temp_file);
+        return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);
+    }
+    #[Route('/MultiBorderaux', name: 'MultiBorderaux')]
+    public function MultiBorderaux(Request $request)
+    { 
+        $mpdf = new Mpdf([
+            'format' => 'A4-L',
+            'mode' => 'utf-8',
+            'margin_left' => '5',
+            'margin_right' => '5',
+            'margin_bottom' => '35',
+        ]);
+        $borderauxx = [12500,12623];
+        $borderauxx = $this->em->getRepository(HAlbhon::class)->FindBy(['id'=>$borderauxx]);
+        $html = "";
+        $i = 1;
+        foreach ($borderauxx as $borderaux) {
+            $honenss = $this->em->getRepository(HHonens::class)->getHonoraireByActiveSeanceAndBordereau($borderaux);
+            $nombre_seance = [];
+            $ens = [];
+            foreach ($honenss as $honens) {
+                array_push($nombre_seance,$honens->getSeance()->getCode());
+            }
+            $ens_infos = $this->em->getRepository(HHonens::class)->getEnsByBordereau($borderaux);
+            $html .= $this->render("honoraire/pdfs/borderaux_multi.html.twig", [
+                'borderaux' => $borderaux,
+                'honenss' => $honenss,
+                'nombre_seance'=> array_unique($nombre_seance),
+                'ens_infos'=> $ens_infos
+            ])->getContent();
+            $i < count($borderauxx) ? $html .= '<page_break>':"";
+            $i++;
+        }
+        $mpdf->SetTitle('ETAT DES HONORAIRES PAR PROFESSEUR');
+        $mpdf->SetHTMLFooter(
+            $this->render("facture/pdfs/footer_borderaux.html.twig")->getContent()
+        );
+        $mpdf->WriteHTML($html);
+        $mpdf->Output("Borderaux.pdf", "I");
     }
 }

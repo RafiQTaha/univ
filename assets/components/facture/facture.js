@@ -40,12 +40,6 @@ $(document).ready(function () {
         url: "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/French.json",
         },
     });
-    // $("#banque").select2();
-    // $("#paiement").select2();
-    // $("#etablissement").select2();
-    // $("#modifier_org-modal #org").select2();
-    // $("#organisme").select2();
-    // $("#reglement").select2();
     $("select").select2();
     
     $("#etablissement").on('change', async function (){
@@ -339,48 +333,48 @@ $(document).ready(function () {
            $("#ajouter_modal .modal-body .alert").remove();
         }, 4000);
     });
-    $('body').on('click','#modifier',async function (e) {
-        e.preventDefault();
-        // if(!id_facture){
-        //     Toast.fire({
-        //     icon: 'error',
-        //     title: 'Veuillez selection une ligne!',
-        //     })
-        //     return;
-        // }
-        // $("#modifier_org-modal").modal('show');
-    });
+    // $('body').on('click','#modifier',async function (e) {
+    //     e.preventDefault();
+    //     // if(!id_facture){
+    //     //     Toast.fire({
+    //     //     icon: 'error',
+    //     //     title: 'Veuillez selection une ligne!',
+    //     //     })
+    //     //     return;
+    //     // }
+    //     // $("#modifier_org-modal").modal('show');
+    // });
     
-    $('body').on('click','#modifier_org', async function(e){
-        e.preventDefault();
-        let modalAlert =  $("#modifier_org-modal .modal-body .alert");
-        modalAlert.remove();
-        const icon = $(".modal_modifier_org-facture .btn i");
-        icon.removeClass('fa-check-circle').addClass("fa-spinner fa-spin");
-        let formData = new FormData();
-        formData.append('organisme', $('#org').val());
-        try{
-            const request = await axios.post('/facture/factures/modifier_organisme_facture/'+id_facture,formData)
-            const data = request.data;
-            $("#modifier_org-modal .modal-body").prepend(
-                `<div class="alert alert-success">${data}</div>`
-            ); 
-            icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin");
-            table_facture.ajax.reload(null, false);
-            $('#org').select2()
-        }catch(error){
-            const message = error.response.data;
-            modalAlert.remove();
-            $("#modifier_org-modal .modal-body").prepend(
-                `<div class="alert alert-danger">${message}</div>`
-            );
-            icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
-        }
-        setTimeout(() => {
-           $("#modifier_org-modal .modal-body .alert").remove();
-        }, 4000);
+    // $('body').on('click','#modifier_org', async function(e){
+    //     e.preventDefault();
+    //     let modalAlert =  $("#modifier_org-modal .modal-body .alert");
+    //     modalAlert.remove();
+    //     const icon = $(".modal_modifier_org-facture .btn i");
+    //     icon.removeClass('fa-check-circle').addClass("fa-spinner fa-spin");
+    //     let formData = new FormData();
+    //     formData.append('organisme', $('#org').val());
+    //     try{
+    //         const request = await axios.post('/facture/factures/modifier_organisme_facture/'+id_facture,formData)
+    //         const data = request.data;
+    //         $("#modifier_org-modal .modal-body").prepend(
+    //             `<div class="alert alert-success">${data}</div>`
+    //         ); 
+    //         icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin");
+    //         table_facture.ajax.reload(null, false);
+    //         $('#org').select2()
+    //     }catch(error){
+    //         const message = error.response.data;
+    //         modalAlert.remove();
+    //         $("#modifier_org-modal .modal-body").prepend(
+    //             `<div class="alert alert-danger">${message}</div>`
+    //         );
+    //         icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
+    //     }
+    //     setTimeout(() => {
+    //        $("#modifier_org-modal .modal-body .alert").remove();
+    //     }, 4000);
 
-    })
+    // })
     $("body").on("click", '#imprimer', async function (e) {
         e.preventDefault();
         if(!id_facture){
@@ -391,6 +385,17 @@ $(document).ready(function () {
             return;
         }
         window.open('/facture/factures/printfacture/'+id_facture, '_blank');
+    });
+    $("body").on("click", '#releve', async function (e) {
+        e.preventDefault();
+        if(!id_facture){
+            Toast.fire({
+            icon: 'error',
+            title: 'Veuillez selection une ligne!',
+            })
+            return;
+        }
+        window.open('/facture/factures/releve/'+id_facture, '_blank');
     });
   
     $('body').on('click','#extraction', function (){

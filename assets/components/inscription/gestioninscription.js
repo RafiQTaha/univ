@@ -362,5 +362,15 @@ const Toast = Swal.mixin({
     $('body').on('click','#extraction', function (){
         window.open('/inscription/gestion/extraction_ins', '_blank');
     })
+    $('body').on('click','#extraction_annee',function (e) {
+        e.preventDefault();
+        $("#annee_extraction_inscription").modal('show');
+    });
+    $('body').on('click','#export_inscription',function (e) {
+        e.preventDefault();
+        let annee = $('#annee_export').val();
+        // alert(annee);
+        window.open('/inscription/gestion/extraction_ins_annee/'+annee, '_blank');
+    });
 })
 

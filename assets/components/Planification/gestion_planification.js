@@ -31,6 +31,17 @@ $(document).ready(function () {
             });
             $("body tr#" + id_planning).addClass('active_databales');
         },
+        preDrawCallback: function(settings) {
+            if ($.fn.DataTable.isDataTable('#datables_gestion_planification')) {
+                var dt = $('#datables_gestion_planification').DataTable();
+
+                //Abort previous ajax request if it is still in process.
+                var settings = dt.settings();
+                if (settings[0].jqXHR) {
+                    settings[0].jqXHR.abort();
+                }
+            }
+        },
         language: {
             url: "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/French.json",
         },
@@ -44,6 +55,9 @@ $(document).ready(function () {
             table_gestion_planification.columns(0).search(id_etab).draw();
             if($("#semaine").val() != ""){
                 table_gestion_planification.columns(6).search($("#semaine").val())
+            }
+            if($("#semaine_day").val() != ""){
+                table_gestion_planification.columns(11).search($("#semaine_day").val())
             }
             if($("#professeur").val() != ""){
                 table_gestion_planification.columns(7).search($("#professeur").val())
@@ -64,6 +78,9 @@ $(document).ready(function () {
             if($("#semaine").val() != ""){
                 table_gestion_planification.columns(6).search($("#semaine").val())
             }
+            if($("#semaine_day").val() != ""){
+                table_gestion_planification.columns(11).search($("#semaine_day").val())
+            }
             if($("#professeur").val() != ""){
                 table_gestion_planification.columns(7).search($("#professeur").val())
             }
@@ -77,6 +94,7 @@ $(document).ready(function () {
                 table_gestion_planification.columns(10).search($("#valide").val())
             }
         }
+        $('#semestre_day').html('').select2();
         $('#semestre').html('').select2();
         $('#module').html('').select2();
         $('#element').html('').select2();
@@ -88,6 +106,9 @@ $(document).ready(function () {
         table_gestion_planification.columns().search("");
         if($("#semaine").val() != ""){
             table_gestion_planification.columns(6).search($("#semaine").val())
+        }
+        if($("#semaine_day").val() != ""){
+            table_gestion_planification.columns(11).search($("#semaine_day").val())
         }
         if($("#professeur").val() != ""){
             table_gestion_planification.columns(7).search($("#professeur").val())
@@ -109,6 +130,7 @@ $(document).ready(function () {
         }else{
             table_gestion_planification.columns(0).search($("#etablissement").val()).draw();
         }
+        $('#semestre_day').html('').select2();
         $('#semestre').html('').select2();
         $('#module').html('').select2();
         $('#element').html('').select2();
@@ -119,6 +141,9 @@ $(document).ready(function () {
         table_gestion_planification.columns().search("");
         if($("#semaine").val() != ""){
             table_gestion_planification.columns(6).search($("#semaine").val())
+        }
+        if($("#semaine_day").val() != ""){
+            table_gestion_planification.columns(11).search($("#semaine_day").val())
         }
         if($("#professeur").val() != ""){
             table_gestion_planification.columns(7).search($("#professeur").val())
@@ -139,6 +164,7 @@ $(document).ready(function () {
         }else{
             table_gestion_planification.columns(1).search($("#formation").val()).draw();
         }
+        $('#semestre_day').html('').select2();
         $('#semestre').html('').select2();
         $('#module').html('').select2();
         $('#element').html('').select2();
@@ -149,6 +175,9 @@ $(document).ready(function () {
         table_gestion_planification.columns().search("");
         if($("#semaine").val() != ""){
             table_gestion_planification.columns(6).search($("#semaine").val())
+        }
+        if($("#semaine_day").val() != ""){
+            table_gestion_planification.columns(11).search($("#semaine_day").val())
         }
         if($("#professeur").val() != ""){
             table_gestion_planification.columns(7).search($("#professeur").val())
@@ -178,6 +207,9 @@ $(document).ready(function () {
         if($("#semaine").val() != ""){
             table_gestion_planification.columns(6).search($("#semaine").val())
         }
+        if($("#semaine_day").val() != ""){
+            table_gestion_planification.columns(11).search($("#semaine_day").val())
+        }
         if($("#professeur").val() != ""){
             table_gestion_planification.columns(7).search($("#professeur").val())
         }
@@ -205,6 +237,9 @@ $(document).ready(function () {
         table_gestion_planification.columns().search("");
         if($("#semaine").val() != ""){
             table_gestion_planification.columns(6).search($("#semaine").val())
+        }
+        if($("#semaine_day").val() != ""){
+            table_gestion_planification.columns(11).search($("#semaine_day").val())
         }
         if($("#professeur").val() != ""){
             table_gestion_planification.columns(7).search($("#professeur").val())
@@ -240,6 +275,39 @@ $(document).ready(function () {
         const valider = $(this).val();
         table_gestion_planification.columns(10).search(valider).draw();
     })
+    $("#semaine_day").on('change', async function (){
+        const semaine_day = $(this).val();
+        console.log(semaine_day)
+        table_gestion_planification.columns(11).search(semaine_day).draw();
+    })
+    // $("#semaine_day").select2({
+    //     minimumInputLength: 10,  // required enter 3 characters or more
+    //     allowClear: true,
+    //     placeholder: '2022-10-10',
+    //     language: "fr",
+    //     ajax: {
+    //        dataType: 'json',
+    //        url: '/planification/gestions/findSemainePlanning',  
+    //        delay: 5,  // ini bebas mau di pake atau tidak
+    //        data: function(params) {
+    //          return {
+    //            search: params.term
+    //          }
+    //        },
+    //        processResults: function (data, page) {
+    //         console.log(data)
+           
+    //         var list = {
+    //             text: "Semaine " +data.nsemaine +" de: "+data.debut + " à " +data.fin,
+    //             id: data.id
+    //         }
+
+    //         return {
+    //             results:  [list]
+    //         };
+    //      },
+    //    }
+    // })
     $('body').on('dblclick','#datables_gestion_planification tbody tr',function (e) {
         e.preventDefault();
         if($(this).hasClass('active_databales')) {
@@ -432,6 +500,76 @@ $(document).ready(function () {
             })
         }
     })
+
+    $('body').on('click','#extraction', async function (e) {
+        e.preventDefault();
+        const icon = $("#extraction i");
+        window.open('/planification/gestions/extraction_planning', '_blank');
+    })
      
     
+    $('body').on('click','#devalidation', async function (e) {
+        e.preventDefault();
+        if(!id_planning){
+            Toast.fire({
+                icon: 'error',
+                title: 'Merci de Sélectionner une ligne',
+            })
+            return;
+        }
+        var res = confirm('Vous voulez vraiment dévalider cette seance ?');
+        if(res == 1){
+            const icon = $("#devalidation i");
+            icon.removeClass('fa-times').addClass("fa-spinner fa-spin");
+            try {
+                const request = await axios.post('/planification/gestions/gestion_devalider_planning/'+id_planning);
+                const response = request.data;
+                Toast.fire({
+                    icon: 'success',
+                    title: response,
+                })
+                table_gestion_planification.ajax.reload(null,false);
+                icon.addClass('fa-times').removeClass("fa-spinner fa-spin");
+            } catch (error) {
+                const message = error.response.data;
+                icon.addClass('fa-times').removeClass("fa-spinner fa-spin");
+                Toast.fire({
+                    icon: 'error',
+                    title: message,
+                })
+            }
+        }  
+    })
+    $('body').on('click','#degenerer', async function (e) {
+        e.preventDefault();
+        if(!id_planning){
+            Toast.fire({
+                icon: 'error',
+                title: 'Merci de Sélectionner une ligne',
+            })
+            return;
+        }
+        var res = confirm('Vous voulez vraiment dégénérer cette seance ?');
+        if(res == 1){
+            const icon = $("#degenerer i");
+            icon.removeClass('fa-times').addClass("fa-spinner fa-spin");
+            try {
+                const request = await axios.post('/planification/gestions/gestion_degenerer_planning/'+id_planning);
+                const response = request.data;
+                Toast.fire({
+                    icon: 'success',
+                    title: response,
+                })
+                table_gestion_planification.ajax.reload(null,false);
+                icon.addClass('fa-times').removeClass("fa-spinner fa-spin");
+            } catch (error) {
+                const message = error.response.data;
+                icon.addClass('fa-times').removeClass("fa-spinner fa-spin");
+                Toast.fire({
+                    icon: 'error',
+                    title: message,
+                })
+            }
+        }
+    })
 })

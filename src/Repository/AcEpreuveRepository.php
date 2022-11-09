@@ -17,6 +17,7 @@ class AcEpreuveRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, AcEpreuve::class);
+        $this->em = $registry->getManager();
     }
 
     // /**
@@ -47,4 +48,30 @@ class AcEpreuveRepository extends ServiceEntityRepository
         ;
     }
     */
+    public function findEpreuveValideByCurrentYear($currentyear)
+    {
+        $sqls="SELECT ins.id 'Id Inscription
+        ',ins.code 'code inscriptiont', adm.code 'code admission', pre.code 'code preinscription', ins.code_anonymat, ins.code_anonymat_rat, stat.code 'code statut', etu.nom, etu.prenom,ann.code 'code annee', ann.designation 'Annee',etab.code 'code etablissement', etab.designation 'Etablissement', frm.code 'code formation', frm.designation 'Formation',prm.code  'code promotion', prm.designation 'Promotion', sem.code 'code semestre',sem.designation 'Semestre', mdl.code 'code module', mdl.designation 'Module',elm.code 'code element', elm.designation  'Element', epv.id 'id epreuve',epv.code 'code epreuve',epv.nature 'nature', pr.code 'code Nature Epreuve',pr.designation 'Nature Epreuve',epv.date_epreuve 'date epreuve',gn.note 'note'
+        FROM `ac_epreuve` epv
+        inner join ac_element elm on elm.id = epv.element_id
+        inner join ac_annee ann on ann.id = epv.annee_id
+        inner join ex_gnotes gn on gn.epreuve_id = epv.id
+        inner join tinscription ins on ins.id = gn.inscription_id
+        inner join ac_module mdl on mdl.id = elm.module_id
+        inner join ac_semestre sem on sem.id = mdl.semestre_id
+        inner join ac_promotion prm on prm.id = sem.promotion_id
+        inner join ac_formation frm on frm.id = prm.formation_id
+        inner join ac_etablissement etab on etab.id = frm.etablissement_id
+        inner join tadmission adm on adm.id = ins.admission_id
+        inner join tpreinscription pre on pre.id = adm.preinscription_id
+        inner join tetudiant etu on etu.id = pre.etudiant_id
+        inner join pnature_epreuve pr on pr.id = epv.nature_epreuve_id
+        inner join pstatut stat on stat.id = ins.statut_id
+        where ann.designation = '$currentyear' and epv.statut_id = 30";
+        // dd($sqls);
+        $stmts = $this->em->getConnection()->prepare($sqls);
+        $resultSets = $stmts->executeQuery();
+        $result = $resultSets->fetchAll();
+        return $result;
+    }
 }

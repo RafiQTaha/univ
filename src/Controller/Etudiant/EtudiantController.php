@@ -390,7 +390,7 @@ class EtudiantController extends AbstractController
         $operationcab = new TOperationcab();
         $operationcab->setPreinscription($preinscription);
         $operationcab->setAnnee($preinscription->getAnnee());
-        $operationcab->setOrganisme($this->em->getRepository(POrganisme::class)->find(7));
+        // $operationcab->setOrganisme($this->em->getRepository(POrganisme::class)->find(7));
         $operationcab->setCategorie('pré-inscription');
         $operationcab->setCreated(new DateTime('now'));
         $operationcab->setUserCreated($this->getUser());

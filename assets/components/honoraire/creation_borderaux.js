@@ -10,6 +10,7 @@ $(document).ready(function () {
             toast.addEventListener('mouseleave', Swal.resumeTimer)
         },
     })
+    let semaine_id = false;
     let id_seance = false;
     let ids_seances = [];
     var table_creation_borderaux = $("#datables_creation_borderaux").DataTable({
@@ -31,6 +32,9 @@ $(document).ready(function () {
             });
             $("body tr#" + id_seance).addClass('active_databales');
         },
+        columnDefs: [
+            { targets: [1], orderable: false }
+        ],
         language: {
             url: "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/French.json",
         },
@@ -61,6 +65,22 @@ $(document).ready(function () {
                 ids_seances.push(input.attr("data-id"));
             }
         }
+        console.log(ids_seances);
+    })
+    
+    $('body').on('click','.check_all_seances',function () {
+        // alert('test')
+        ids_seances = [];
+        const snc = $("body #check_seance");
+        if($(".check_all_seances").prop('checked') == true) {
+            snc.prop("checked",true);
+            snc.map(function() {
+                ids_seances.push(this.value);
+             });
+        } else {
+            snc.prop("checked",false);
+        }
+        console.log(ids_seances);
     })
     $("select").select2();
     $("#etablissement").on('change', async function (){
@@ -180,7 +200,7 @@ $(document).ready(function () {
              }
            },
            processResults: function (data, page) {
-            console.log(data)
+            // console.log(data)
            
             var list = {
                 text: "Semaine " +data.nsemaine +" de: "+data.debut + " à " +data.fin,
@@ -201,9 +221,24 @@ $(document).ready(function () {
         const grade = $(this).val();
         table_creation_borderaux.columns(4).search(grade).draw();
     })
+    $("#semaine_day").on('change', async function (){
+        const semaine_day = $(this).val();
+        semaine_id = false;
+        console.log(semaine_day)
+        table_creation_borderaux.columns(7).search(semaine_day).draw();
+        if (semaine_day != "") {
+            let formData = new FormData()
+            formData.append('semaine_day',semaine_day)
+            const request = await axios.post('/honoraire/creation_borderaux/findSemainePlanning', formData);
+            if (request.data != 0) {
+                semaine_id = request.data
+            }
+            // console.log(semaine_id);
+        }
+    })
     $('body').on('click','#cree', async function (e) {
         e.preventDefault();
-        if(ids_seances.length === 0 || $("#promotion").val() == "" || $("#semaine").val() == "" ){
+        if(ids_seances.length === 0 || $("#promotion").val() == "" || ($("#semaine").val() == "" && !semaine_id)){
             Toast.fire({
                 icon: 'error',
                 title: 'Merci de Choisir une semestre et une semaine et au moins une ligne!',
@@ -215,7 +250,12 @@ $(document).ready(function () {
         var formData = new FormData();
         formData.append('ids_seances', JSON.stringify(ids_seances)); 
         formData.append('promotion', $("#promotion").val());
-        formData.append('semaine', $("#semaine").val());
+        if (semaine_id) {
+            formData.append('semaine', semaine_id);
+        }else{
+            formData.append('semaine', $("#semaine").val());
+        }
+        // console.log($("#semaine").val());
         try {
             const request = await axios.post('/honoraire/creation_borderaux/cree_borderaux',formData);
             const response = request.data;
@@ -223,6 +263,7 @@ $(document).ready(function () {
                 icon: 'success',
                 title: 'Borderaux Bien Crée',
             })
+            ids_seances = [];
             window.open('/honoraire/creation_borderaux/honoraire_borderaux/'+response, '_blank');
             table_creation_borderaux.ajax.reload(null,false);
             icon.addClass('fa-folder-open').removeClass("fa-spinner fa-spin");

@@ -22,6 +22,25 @@ $(document).ready(function () {
         processing: true,
         serverSide: true,
         deferRender: true,
+        drawCallback: function () {
+            idEpreuves.forEach((e) => {
+                $("body tr#" + e)
+                .find("input")
+                .prop("checked", true);
+            });
+            $("body tr#" + id_epreuve).addClass('active_databales')
+        },
+        preDrawCallback: function(settings) {
+            if ($.fn.DataTable.isDataTable('#datables_notes_epreuve')) {
+                var dt = $('#datables_notes_epreuve').DataTable();
+
+                //Abort previous ajax request if it is still in process.
+                var settings = dt.settings();
+                if (settings[0].jqXHR) {
+                    settings[0].jqXHR.abort();
+                }
+            }
+        },
         language: {
         url: "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/French.json",
         },
@@ -226,12 +245,12 @@ $(document).ready(function () {
             formData.append('absence',true);
             const request = await axios.post('/administration/note/absence_update/'+id_exgnotes, formData);
             const data = await request.data;
-            table_notes_epreuve.ajax.reload(null,false);;
+            table_notes_epreuve.ajax.reload(null,false);
         }else{
             formData.append('absence',false);
             const request = await axios.post('/administration/note/absence_update/'+id_exgnotes, formData);
             const data = await request.data;
-            table_notes_epreuve.ajax.reload(null,false);;
+            table_notes_epreuve.ajax.reload(null,false);
         }
     })
     $("#import").on('click', async function (e){
@@ -267,6 +286,7 @@ $(document).ready(function () {
           );
           icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
           table_note_inscription()
+          table_notes_epreuve.ajax.reload(null,false);
         } catch (error) {
           const message = error.response.data;
           console.log(error, error.response);
@@ -281,162 +301,162 @@ $(document).ready(function () {
 
 
     
-    $("#cloture_epreuve").on('click', async function(e) {
-        e.preventDefault();
-        if(idEpreuves.length ==0) {
-            Toast.fire({
-                icon: 'error',
-                title: 'Veuillez cochez une ou plusieurs ligne!',
-            })
-            return;
-        }
-        const icon = $("#cloture_epreuve i");
-        icon.removeClass('fa-lock').addClass("fa-spinner fa-spin");
+    // $("#cloture_epreuve").on('click', async function(e) {
+    //     e.preventDefault();
+    //     if(idEpreuves.length ==0) {
+    //         Toast.fire({
+    //             icon: 'error',
+    //             title: 'Veuillez cochez une ou plusieurs ligne!',
+    //         })
+    //         return;
+    //     }
+    //     const icon = $("#cloture_epreuve i");
+    //     icon.removeClass('fa-lock').addClass("fa-spinner fa-spin");
         
-        try {
-            let formData = new FormData();
-            formData.append("epreuves", JSON.stringify(idEpreuves))
-            const request = await axios.post('/administration/note/cloturer', formData);
-            const response = request.data;
-            icon.addClass('fa-lock').removeClass("fa-spinner fa-spin ");
-            Toast.fire({
-                icon: 'success',
-                title: response,
-            }) 
-            table_notes_epreuve.ajax.reload(null, false)
-            idEpreuves = [];
-        } catch (error) {
-            console.log(error)
-            const message = error.response.data;
-            Toast.fire({
-                icon: 'error',
-                title: message,
-            }) 
-            icon.addClass('fa-lock').removeClass("fa-spinner fa-spin ");
+    //     try {
+    //         let formData = new FormData();
+    //         formData.append("epreuves", JSON.stringify(idEpreuves))
+    //         const request = await axios.post('/administration/note/cloturer', formData);
+    //         const response = request.data;
+    //         icon.addClass('fa-lock').removeClass("fa-spinner fa-spin ");
+    //         Toast.fire({
+    //             icon: 'success',
+    //             title: response,
+    //         }) 
+    //         table_notes_epreuve.ajax.reload(null, false)
+    //         idEpreuves = [];
+    //     } catch (error) {
+    //         console.log(error)
+    //         const message = error.response.data;
+    //         Toast.fire({
+    //             icon: 'error',
+    //             title: message,
+    //         }) 
+    //         icon.addClass('fa-lock').removeClass("fa-spinner fa-spin ");
             
-        }
-    })
-    $("#decloturer_epreuve").on('click', async function(e) {
-        e.preventDefault();
-        if(idEpreuves.length ==0) {
-            Toast.fire({
-                icon: 'error',
-                title: 'Veuillez cochez une ou plusieurs ligne!',
-            })
-            return;
-        }
-        const icon = $("#decloturer_epreuve i");
-        icon.removeClass('fa-lock-open').addClass("fa-spinner fa-spin");
+    //     }
+    // })
+    // $("#decloturer_epreuve").on('click', async function(e) {
+    //     e.preventDefault();
+    //     if(idEpreuves.length ==0) {
+    //         Toast.fire({
+    //             icon: 'error',
+    //             title: 'Veuillez cochez une ou plusieurs ligne!',
+    //         })
+    //         return;
+    //     }
+    //     const icon = $("#decloturer_epreuve i");
+    //     icon.removeClass('fa-lock-open').addClass("fa-spinner fa-spin");
         
-        try {
-            let formData = new FormData();
-            formData.append("epreuves", JSON.stringify(idEpreuves))
-            const request = await axios.post('/administration/note/decloturer', formData);
-            const response = request.data;
-            icon.addClass('fa-lock-open').removeClass("fa-spinner fa-spin ");
-            Toast.fire({
-                icon: 'success',
-                title: response,
-            }) 
-            table_notes_epreuve.ajax.reload(null, false)
-            idEpreuves =  []
-        } catch (error) {
-            console.log(error)
-            const message = error.response.data;
-            Toast.fire({
-                icon: 'error',
-                title: message,
-            }) 
-            icon.addClass('fa-lock-open').removeClass("fa-spinner fa-spin ");
+    //     try {
+    //         let formData = new FormData();
+    //         formData.append("epreuves", JSON.stringify(idEpreuves))
+    //         const request = await axios.post('/administration/note/decloturer', formData);
+    //         const response = request.data;
+    //         icon.addClass('fa-lock-open').removeClass("fa-spinner fa-spin ");
+    //         Toast.fire({
+    //             icon: 'success',
+    //             title: response,
+    //         }) 
+    //         table_notes_epreuve.ajax.reload(null, false)
+    //         idEpreuves =  []
+    //     } catch (error) {
+    //         console.log(error)
+    //         const message = error.response.data;
+    //         Toast.fire({
+    //             icon: 'error',
+    //             title: message,
+    //         }) 
+    //         icon.addClass('fa-lock-open').removeClass("fa-spinner fa-spin ");
             
-        }
-    })
+    //     }
+    // })
 
 
-    $('#epreuve_imprimer').on('click', async function(e){
-        e.preventDefault();
-        if(!id_epreuve) {
-            Toast.fire({
-                icon: 'error',
-                title: 'Veuillez selection une ligne!',
-            })
-            return;
-        }
-        const icon = $("#epreuve_imprimer i");
-        icon.removeClass('fa-copy').addClass("fa-spinner fa-spin");
+    // $('#epreuve_imprimer').on('click', async function(e){
+    //     e.preventDefault();
+    //     if(!id_epreuve) {
+    //         Toast.fire({
+    //             icon: 'error',
+    //             title: 'Veuillez selection une ligne!',
+    //         })
+    //         return;
+    //     }
+    //     const icon = $("#epreuve_imprimer i");
+    //     icon.removeClass('fa-copy').addClass("fa-spinner fa-spin");
         
-        try {
-            const request = await axios.get('/administration/note/checkifanonymat/'+id_epreuve);
-            const response = request.data;
-            console.log(response)
-            icon.addClass('fa-copy').removeClass("fa-spinner fa-spin ");
-            $("#imprimer_epreuve").modal("show")
-            $('#imprimer_epreuve .etudiant_info').html(response.html);
-            $('#imprimer_epreuve .epreuve_title').html(response.id);
-            if(response.anonymat == "oui") {
-                $('#imprimer_epreuve .actions').html(
-                    `<a href="#" class="btn btn-success mt-3" id="impression_clair">Impression Clair</a>
-                    <a href="#" class="btn btn-secondary mt-3" id="impression_anonymat">Impression Anonymat</a>`
-                );
-            } else {
-                $('#imprimer_epreuve .actions').html(
-                    `<a href="#" class="btn btn-success mt-3" id="impression_clair">Impression Clair</a>`
-                );
-            }
+    //     try {
+    //         const request = await axios.get('/administration/note/checkifanonymat/'+id_epreuve);
+    //         const response = request.data;
+    //         console.log(response)
+    //         icon.addClass('fa-copy').removeClass("fa-spinner fa-spin ");
+    //         $("#imprimer_epreuve").modal("show")
+    //         $('#imprimer_epreuve .etudiant_info').html(response.html);
+    //         $('#imprimer_epreuve .epreuve_title').html(response.id);
+    //         if(response.anonymat == "oui") {
+    //             $('#imprimer_epreuve .actions').html(
+    //                 `<a href="#" class="btn btn-success mt-3" id="impression_clair">Impression Clair</a>
+    //                 <a href="#" class="btn btn-secondary mt-3" id="impression_anonymat">Impression Anonymat</a>`
+    //             );
+    //         } else {
+    //             $('#imprimer_epreuve .actions').html(
+    //                 `<a href="#" class="btn btn-success mt-3" id="impression_clair">Impression Clair</a>`
+    //             );
+    //         }
 
-        } catch (error) {
-            console.log(error)
-            const message = error.response.data;
-            Toast.fire({
-                icon: 'error',
-                title: message,
-            }) 
-            icon.addClass('fa-copy').removeClass("fa-spinner fa-spin ");
+    //     } catch (error) {
+    //         console.log(error)
+    //         const message = error.response.data;
+    //         Toast.fire({
+    //             icon: 'error',
+    //             title: message,
+    //         }) 
+    //         icon.addClass('fa-copy').removeClass("fa-spinner fa-spin ");
             
-        }
-    })
+    //     }
+    // })
 
-    $('body').on('click', '#impression_clair', function(e){
-        e.preventDefault();
-        window.open("/administration/note/impression/"+id_epreuve+"/0", '_blank');
-    })
-    $('body').on('click', '#impression_anonymat', function(e){
-        e.preventDefault();
-        window.open("/administration/note/impression/"+id_epreuve+"/1", '_blank');
-    })
+    // $('body').on('click', '#impression_clair', function(e){
+    //     e.preventDefault();
+    //     window.open("/administration/note/impression/"+id_epreuve+"/0", '_blank');
+    // })
+    // $('body').on('click', '#impression_anonymat', function(e){
+    //     e.preventDefault();
+    //     window.open("/administration/note/impression/"+id_epreuve+"/1", '_blank');
+    // })
 
-    $("#capitaliser_etudiant").on('click', async function(e) {
-        e.preventDefault();
-        if(idEpreuves.length ==0) {
-            Toast.fire({
-                icon: 'error',
-                title: 'Veuillez cochez une ou plusieurs ligne!',
-            })
-            return;
-        }
-        const icon = $("#capitaliser_etudiant i");
-        icon.removeClass('fa-archive').addClass("fa-spinner fa-spin");
+    // $("#capitaliser_etudiant").on('click', async function(e) {
+    //     e.preventDefault();
+    //     if(idEpreuves.length ==0) {
+    //         Toast.fire({
+    //             icon: 'error',
+    //             title: 'Veuillez cochez une ou plusieurs ligne!',
+    //         })
+    //         return;
+    //     }
+    //     const icon = $("#capitaliser_etudiant i");
+    //     icon.removeClass('fa-archive').addClass("fa-spinner fa-spin");
         
-        try {
-            let formData = new FormData();
-            formData.append("epreuves", JSON.stringify(idEpreuves))
-            const request = await axios.post('/administration/note/capitaliser', formData);
-            const response = request.data;
-            icon.addClass('fa-archive').removeClass("fa-spinner fa-spin ");
-            if(response.count>0) {
-                window.open("/"+response.fileName ,"_blank");
-            }
-            idEpreuves =  []
-        } catch (error) {
-            console.log(error)
-            const message = error.response.data;
-            Toast.fire({
-                icon: 'error',
-                title: message,
-            }) 
-            icon.addClass('fa-archive').removeClass("fa-spinner fa-spin ");
+    //     try {
+    //         let formData = new FormData();
+    //         formData.append("epreuves", JSON.stringify(idEpreuves))
+    //         const request = await axios.post('/administration/note/capitaliser', formData);
+    //         const response = request.data;
+    //         icon.addClass('fa-archive').removeClass("fa-spinner fa-spin ");
+    //         if(response.count>0) {
+    //             window.open("/"+response.fileName ,"_blank");
+    //         }
+    //         idEpreuves =  []
+    //     } catch (error) {
+    //         console.log(error)
+    //         const message = error.response.data;
+    //         Toast.fire({
+    //             icon: 'error',
+    //             title: message,
+    //         }) 
+    //         icon.addClass('fa-archive').removeClass("fa-spinner fa-spin ");
             
-        }
-    })
+    //     }
+    // })
     
 });

@@ -25,6 +25,7 @@ $(document).ready(function () {
     
     let edit_groupe = 0;
     let id_semestre = false;
+    let professeur = null;
     let niv = 0;
     let currentweek = false;
     let heur_debut = false;
@@ -43,7 +44,8 @@ $(document).ready(function () {
                     var currentWeek = moment($('#calendar').fullCalendar('getDate'), "MMDDYYYY").isoWeek();
                     var currentDate = moment($('#calendar').fullCalendar('getDate')).format('YYYY-MM-DD');
                     if(id_semestre != ""){
-                        window.open('/planification/planifications/print_planning/'+id_semestre+'/'+niv+'/'+currentWeek+'/'+currentDate, '_blank');
+                        window.open('/planification/planifications/print_planning/'+id_semestre+'/'+niv+'/'+currentDate+'/'+professeur, '_blank');
+                        // window.open('/planification/planifications/print_planning/'+id_semestre+'/'+niv+'/'+currentWeek+'/'+currentDate+'/'+professeur, '_blank');
                     }else{
                         Toast.fire({
                             icon: 'error',
@@ -94,6 +96,8 @@ $(document).ready(function () {
         },
         eventRender: function (event, element) {
             element.bind('dblclick', function () {
+                edit_groupe = 0;
+                currentweek = moment(event.start, "MMDDYYYY").isoWeek();
                 id_planning = event.id;
                 if (id_planning) {
                     let formData = new FormData();
@@ -122,8 +126,13 @@ $(document).ready(function () {
     $("#salle").select2();
     const alltimes = async () => {
         try{
-            const request = await  axios.post('/planification/planifications/calendar/'+id_semestre+'/'+niv)
-            // const request = await axios.post('/planification/planifications/calendar/107/9')
+            let formData = new FormData()
+            formData.append('semestre', $("#semestre").val()); 
+            formData.append('niv', niv); 
+            formData.append('professeur',  professeur); 
+            const request = await axios.post('/planification/planifications/calendar_planning',formData);
+            // const request = await  axios.post('/planification/planifications/calendar/'+id_semestre+'/'+niv)
+            // const request = await  axios.post('/planification/planifications/calendar/'+id_semestre+'/'+niv)
             alltime = request.data;
             $("#calendar").fullCalendar('removeEvents'); 
             $("#calendar").fullCalendar('addEventSource', alltime); 
@@ -173,6 +182,9 @@ $(document).ready(function () {
             const request = await axios.get('/api/formation/'+id_etab);
             response = request.data
         }
+        $('#niv1').html('').select2();
+        $('#niv2').html('').select2();
+        $('#niv3').html('').select2();
         $('#semestre').html('').select2();
         $('#promotion').html('').select2();
         $('#formation').html(response).select2();
@@ -184,6 +196,9 @@ $(document).ready(function () {
             const request = await axios.get('/api/promotion/'+id_formation);
             response = request.data
         }
+        $('#niv1').html('').select2();
+        $('#niv2').html('').select2();
+        $('#niv3').html('').select2();
         $('#semestre').html('').select2();
         $('#promotion').html(response).select2();
     })
@@ -207,6 +222,19 @@ $(document).ready(function () {
     $("#semestre").on('change', async function (){
         id_semestre = $(this).val();
         if(id_semestre != ""){
+            alltimes()
+        }else{
+            alltime = [];
+            $("#calendar").fullCalendar('removeEvents'); 
+            $("#calendar").fullCalendar('addEventSource', alltime); 
+        }
+    })
+    $("#professeur").on('change', async function (){
+        professeur = $(this).val();
+        if (professeur == "") {
+            professeur = null;
+        }
+        if(id_semestre != "" ){
             alltimes()
         }else{
             alltime = [];
@@ -342,6 +370,7 @@ $(document).ready(function () {
         e.preventDefault();
         var formData = new FormData(this);
         formData.append('edit_groupe', edit_groupe);
+        formData.append('n_semaine', currentweek);
         ////////////
         let modalAlert =  $("#updateform_planif-modal .modal-body .alert");
         modalAlert.remove();
@@ -389,7 +418,7 @@ $(document).ready(function () {
                 } catch (error) {
                     const message = error.response.data;
                     Toast.fire({
-                        icon: 'success',
+                        icon: 'error',
                         title: message,
                     })
                     icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");

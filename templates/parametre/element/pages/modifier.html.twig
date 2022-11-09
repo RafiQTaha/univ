@@ -16,7 +16,7 @@
             <label for="coefficient_cc">Coefficient:</label>
             <select class="form-control" name="coefficient_cc" id="coefficient_cc">
                 <option value="">Choix Coefficient Epreuve CC </option>
-                {% for i in 1..20 %}
+                {% for i in 0..20 %}
                     {% if element.CoefficientEpreuve.NAT000000001 == i %}
                         <option value="{{ i }}" selected>{{ i }}</option>
                     {% else %}
@@ -27,7 +27,7 @@
             <label for="coefficient_tp">Coefficient Epreuve TP: (*)</label>
             <select class="form-control" name="coefficient_tp" id="coefficient_tp">
                 <option value="">Choix Coefficient Epreuve TP </option>
-                {% for i in 1..20 %}
+                {% for i in 0..20 %}
                     {% if element.CoefficientEpreuve.NAT000000002 == i %}
                         <option value="{{ i }}" selected>{{ i }}</option>
                     {% else %}
@@ -38,7 +38,7 @@
             <label for="coefficient_ef">Coefficient Epreuve EF (*)</label>
             <select class="form-control" name="coefficient_ef" id="coefficient_ef">
                 <option value="">Choix Coefficient Epreuve EF </option>
-                {% for i in 1..20 %}
+                {% for i in 0..20 %}
                     {% if element.CoefficientEpreuve.NAT000000003 == i %}
                         <option value="{{ i }}" selected>{{ i }}</option>
                     {% else %}

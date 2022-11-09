@@ -63,7 +63,7 @@ class ElementController extends AbstractController
             $m_cc = $enote->getCcr() < $enote->getMcc() || !$enote->getCcr() ? $enote->getMcc() : $enote->getCcr();
             $m_tp = $enote->getTpr() < $enote->getMtp() || !$enote->getTpr() ? $enote->getMtp() : $enote->getTpr();
             $m_ef = $enote->getEfr() < $enote->getMef() || !$enote->getEfr() ? $enote->getMef() : $enote->getEfr();
-            if($element->getNature() == "NE003" || $element->getNature() == "NE004" || $element->getNature() == "NE005"){
+            if($element->getNature()->getCode() == "NE003" || $element->getNature()->getCode() == "NE004" || $element->getNature()->getCode() == "NE005"){
                 $moyenne_ini = $this->CalculMoyenneElement($element->getCoefficientEpreuve(), $m_cc, $m_tp, $enote->getPondMef() * $enote->getMef());
                 if ($moyenne_ini < 10 || $enote->getMef() < 10 || (!empty($enote->getMtp()) && $enote->getMtp() >= 0 && $enote->getMtp() < 10) || (!empty($enote->getMcc()) && $enote->getMcc() >= 0 && $enote->getMcc() < 10) || $statutS1 == 12 || $statutS1 == 13) {
                     $moyenne_rat = $this->CalculMoyenneElement($element->getCoefficientEpreuve(), $m_cc, $m_tp, $enote->getPondMef() * $m_ef);
@@ -267,7 +267,7 @@ class ElementController extends AbstractController
         
             $noteElement->setNote($moyenne_tot);
             $noteElement->setNoteIni($moyenne_ini);
-            if(($moyenne_rat > 0 && ($element->getNature()=="NE003" || $element->getNature()=="NE004" || $element->getNature()=="NE005")) 
+            if(($moyenne_rat > 0 && ($element->getNature()->getCode()=="NE003" || $element->getNature()->getCode()=="NE004" || $element->getNature()->getCode()=="NE005")) 
             or ($moyenne_ini < 10 || $data['mefini'] < 7 || $moyenne_rat > 0)){
                 $noteElement->setNoteRat($moyenne_rat);                
             }
@@ -291,7 +291,7 @@ class ElementController extends AbstractController
                 $m_cc = $enote->getCcr() < $enote->getMcc() || !$enote->getCcr() ? $enote->getMcc() : $enote->getCcr();
                 $m_tp = $enote->getTpr() < $enote->getMtp() || !$enote->getTpr() ? $enote->getMtp() : $enote->getTpr();
                 $m_ef = $enote->getEfr() < $enote->getMef() || !$enote->getEfr() ? $enote->getMef() : $enote->getEfr();
-                if($element->getNature() == "NE003" || $element->getNature() == "NE004" || $element->getNature() == "NE005"){
+                if($element->getNature()->getCode() == "NE003" || $element->getNature()->getCode() == "NE004" || $element->getNature()->getCode() == "NE005"){
                     $result = $this->ElementGetStatutS1_pratique($enote, ['mcc' => $m_cc, 'mtp'=>$m_tp, 'mef'=>$m_ef], 10,10);
                 } else {
                     $result = $this->ElementGetStatutS1($enote, ['mcc' => $m_cc, 'mtp'=>$m_tp, 'mef'=>$m_ef], 7, 10);
@@ -316,7 +316,7 @@ class ElementController extends AbstractController
                 $m_cc = $enote->getCcr() < $enote->getMcc() || !$enote->getCcr() ? $enote->getMcc() : $enote->getCcr();
                 $m_tp = $enote->getTpr() < $enote->getMtp() || !$enote->getTpr() ? $enote->getMtp() : $enote->getTpr();
                 $m_ef = $enote->getEfr() < $enote->getMef() || !$enote->getEfr() ? $enote->getMef() : $enote->getEfr();
-                if($element->getNature() == "NE003" || $element->getNature() == "NE004" || $element->getNature() == "NE005"){
+                if($element->getNature()->getCode() == "NE003" || $element->getNature()->getCode() == "NE004" || $element->getNature()->getCode() == "NE005"){
                     $result = $this->ElementGetStatutS2_pratique($enote, ['mcc' => $m_cc, 'mtp'=>$m_tp, 'mef'=>$m_ef], 10,10);
                 } else {
                     $result = $this->ElementGetStatutS2($enote, ['mcc' => $m_cc, 'mtp'=>$m_tp, 'mef'=>$m_ef], 7, 10);
@@ -338,7 +338,7 @@ class ElementController extends AbstractController
             foreach ($dataSaved as $data) {
                 $inscription = $this->em->getRepository(TInscription::class)->find($data['inscription']->getId());
                 $enote = $this->em->getRepository(ExEnotes::class)->findOneBy(['element' => $element, 'inscription' => $inscription]);
-                if($element->getNature() == "NE003" || $element->getNature() == "NE004" || $element->getNature() == "NE005"){
+                if($element->getNature()->getCode() == "NE003" || $element->getNature()->getCode() == "NE004" || $element->getNature()->getCode() == "NE005"){
                     $result = $this->ElementGetStatutRachat_pratique($enote);
                     if (isset($result) and !empty($result)) {
                         $enote->setStatutS2(
@@ -382,7 +382,7 @@ class ElementController extends AbstractController
             $send_data['statut_def'] = 12;
             $send_data['statut_aff'] = 12;
         } else {
-            if((isset($noteComposantInitial["mcc"]) && $noteComposantInitial["mcc"] < 10) || (isset($noteComposantInitial["mtp"]) && $noteComposantInitial["mcc"] < 10)){
+            if((isset($noteComposantInitial["mcc"]) && $noteComposantInitial["mcc"] < 10) || (isset($noteComposantInitial["mtp"]) && $noteComposantInitial["mtp"] < 10)){
                 $send_data['statut_s1'] = 16;
                 $send_data['statut_def'] = 16;
                 $send_data['statut_aff'] = 16;
@@ -428,7 +428,7 @@ class ElementController extends AbstractController
                         $send_data['statut_def'] = 16;
                         $send_data['statut_aff'] = 16;
                     } else {
-                        if ((isset($noteComposantInitial["mcc"]) && $noteComposantInitial["mcc"] < 10 ) || (isset($noteComposantInitial["mtp"]) && $noteComposantInitial["mcc"] < 10 ) || ($enote->getMef() && $enote->getMef() < 10)) {
+                        if ((isset($noteComposantInitial["mcc"]) && $noteComposantInitial["mcc"] < 10 ) || (isset($noteComposantInitial["mtp"]) && $noteComposantInitial["mtp"] < 10 ) || ($enote->getMef() && $enote->getMef() < 10)) {
                             $send_data['statut_s1'] = 19;
                             $send_data['statut_def'] = 19;
                         } else {
