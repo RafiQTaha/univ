@@ -2,42 +2,49 @@
         <thead>
             <tr style= "background-color:white; position: sticky; top: 0;">
                 <th>#</th>
-                <th>inscription</th>
+                <th>Code</th>
                 <th>Nom</th>
-                <th>Prenom</th>                
-                {% for element in elements %}
-                    <th>{{element.id}}<br>{{element.designation}}<br>{{element.coefficient}}</th>  
-                {% endfor %}           
-                <th>Moyenne Ini</th>                
-                <th>Moyenne Rat</th>                
-                <th>N.Rachat</th>
-                <th>Moyenne Tot</th>
+                <th>Prenom</th>    
+                {% for i in 0..(nbrAnnee - 1) %}
+                    <th>Année({{i+1}})<br>
+                    {% if dataAnnee[i] is defined %}
+                        {{dataAnnee[i].designation}}
+                    {% else %}
+                        prochainement
+                    {% endif %}
+                    </th>
+                {% endfor %}
+
+                {% if dataAnnee|length > 0 and dataAnnee|length == nbrAnnee%}
+                        <th>Moyenne</th>                
+                        <th>Moyenne Sec</th>
+                {% endif %}      
+                
             </tr>
         </thead>
         <tbody>
-            {% for data in data_saved %}
+            {% for etudiant in etudiants %}
                 <tr>
                     <td>{{loop.index}}</td>
-                    <td>{{data.inscription.id}}</td>
-                    <td>{{data.inscription.admission.preinscription.etudiant.nom}}</td>
-                    <td>{{data.inscription.admission.preinscription.etudiant.prenom}}</td>
-                    {% for noteElement in data.noteElements %}
-                        <td>{{noteElement}}</td>  
-                    {% endfor %}   
-                    <td>{{data.moyenneIni|number_format(2, '.', ',')}}</td>                
-                    <td>
-                        {% if data.moyenneRat > 0 %}
-                            {{data.moyenneRat|number_format(2, '.', ',')}}
+                    <td>{{etudiant.codeAdm}}</td>
+                    <td>{{etudiant.nom}}</td>
+                    <td>{{etudiant.prenom}}</td>
+                    {% for note in etudiant.notes %}
+                        {% if note != 'Prochainement' %}
+                            <td>{{note|number_format(2, '.', ',')}}</td>
+                            {% else %}
+                            <td>{{note}}</td>
                         {% endif %}
-                    </td>                
-                    <td>
-                    {% if data.noteRachat > 0 %}
-                        {{data.noteRachat|number_format(2, '.', ',')}}
+                    {% endfor %}
+
+                    {% if etudiant.moyenne is defined %}
+                        <td>{{etudiant.moyenne}}</td>
                     {% endif %}
-                    </td>
-                    <td>
-                        {{data.moyenneTot|number_format(2, '.', ',') }}
-                    </td>
+                    {% if etudiant.moyenne is defined %}
+                        <td>{{etudiant.moyenneSec}}</td>
+                    {% endif %}
+                    
+                    
                 </tr>
             {% endfor %}
         </tbody>

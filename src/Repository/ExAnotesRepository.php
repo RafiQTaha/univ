@@ -14,9 +14,11 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class ExAnotesRepository extends ServiceEntityRepository
 {
+    
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, ExAnotes::class);
+        $this->em = $registry->getManager();
     }
 
     // /**
@@ -75,5 +77,20 @@ class ExAnotesRepository extends ServiceEntityRepository
         } 
 
         return $request;
+    }
+    public function getNoteFromExAnotes($codeAdm, $annee)
+    {
+        $sqls="SELECT ex.*
+        FROM `ex_anotes` ex 
+        inner join tinscription ins on ins.id = ex.inscription_id
+        inner join ac_annee ann on ann.id = ex.annee_id
+        inner join tadmission adm on adm.id = ins.admission_id
+        where adm.code = '$codeAdm' 
+        and ann.code = '$annee' limit 1";
+        // dd($sqls);
+        $stmts = $this->em->getConnection()->prepare($sqls);
+        $resultSets = $stmts->executeQuery();
+        $result = $resultSets->fetchAll();
+        return $result;
     }
 }
