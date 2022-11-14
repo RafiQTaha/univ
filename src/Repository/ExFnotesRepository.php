@@ -39,6 +39,21 @@ class ExFnotesRepository extends ServiceEntityRepository
         }
     }
 
+    
+    public function getFnotesByAdmissions($admissions)
+    {
+        return $this->createQueryBuilder('f')
+            ->innerJoin("f.admission", 'admission')
+            ->where("admission in (:admissions)")
+            ->setParameter('admissions', $admissions)
+            ->groupBy("admission")
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+    // andWhere('r.winner IN (:ids)')
+    //          ->setParameter('ids', $ids);
+
 //    /**
 //     * @return ExFnotes[] Returns an array of ExFnotes objects
 //     */

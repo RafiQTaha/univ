@@ -30,16 +30,6 @@ $(document).ready(function  () {
             $("#imprimer").removeClass('btn-info').addClass('btn-secondary').attr('disabled', true)
             $("#recalculer").removeClass('btn-info').addClass('btn-secondary').attr('disabled', true)
         }
-        
-        // if(check == 0) {
-        //     $("#imprimerAnony").removeClass('btn-secondary').addClass('btn-primary').attr('disabled', false)
-        //     $("#imprimer").removeClass('btn-secondary').addClass('btn-danger').attr('disabled', false)
-        //     $("#devalider").addClass('btn-secondary').removeClass('btn-success').attr('disabled', true)
-        // } else {
-        //     $("#enregister").addClass('btn-secondary').removeClass('btn-primary').attr('disabled', true)
-        //     $("#valider").addClass('btn-secondary').removeClass('btn-danger').attr('disabled', true)
-        //     $("#devalider").removeClass('btn-secondary').addClass('btn-success').attr('disabled', false)
-        // }
     }
 
     $("select").select2();
@@ -81,7 +71,7 @@ $(document).ready(function  () {
         try {
             const request = await axios.post('/evaluation/formation/list/'+annee_id);
             let response = request.data;
-            console.log(response.html2);
+            // console.log(response.html2);
 
             $('#infos').html(response.html1);
             // $("#list_etu").DataTable().destroy();
@@ -89,11 +79,13 @@ $(document).ready(function  () {
                 $('#list_etu').DataTable().clear().destroy();
             }
             $("#list_etu").html(response.html2).DataTable({
+                scrollX: true,
                 language: {
                     url: "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/French.json",
                 },
             });
             check = response.check;
+            // console.log(check)
             enableButtons();
             icon.addClass('fa-search').removeClass("fa-spinner fa-spin");
         } catch (error) {
@@ -114,12 +106,10 @@ $(document).ready(function  () {
         try {
             const request = await axios.post('/evaluation/formation/enregistrer');
             let response = request.data
-            
-            
             icon.addClass('fa-check').removeClass("fa-spinner fa-spin");
             Toast.fire({
                 icon: 'success',
-                title: response,
+                title: response.message,
             });
             check = response.check;
             enableButtons();
