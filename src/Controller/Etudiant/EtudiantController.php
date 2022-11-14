@@ -137,7 +137,7 @@ class EtudiantController extends AbstractController
             }
             $nestedData[] = 'N.R';
             $nestedData["DT_RowId"] = $cd;
-            $nestedData["DT_RowClass"] = $cd;
+            $nestedData["DT_RowClass"] = "";
             $data[] = $nestedData;
         }
         $json_data = array(

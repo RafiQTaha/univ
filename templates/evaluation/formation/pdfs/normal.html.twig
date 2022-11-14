@@ -52,7 +52,7 @@
 
 <table  cellspacing="0" style="margin-top:100px; width: 100%; text-align: left; font-size: 12px" >
     <tr>
-        <td style="width: 100% ;background: #6777ef; color: #fff ;height: 17px;padding: 8px ;font-weight: bold;padding-left: 15px;"> Informations Epreuve </td> 
+        <td style="width: 100% ;background: #6777ef; color: #fff ;height: 17px;padding: 8px ;font-weight: bold;padding-left: 15px;"> Statut </td> 
     </tr>
     <tr>
 
@@ -61,33 +61,61 @@
  <br>
 <table cellspacing="0" style="width: 40%; text-align: left; font-size:9px" >
     <tr>
-        <td style="width: 50% ;">
-            <table cellspacing="0" style="width:60%; text-align: left; font-size: 10px ; " >                               
+        <td style="width: 50% ;vertical-align: top;">
+            <h1>Formation</h1>
+            <table cellspacing="0" style="width:60%; text-align: left; font-size: 10px ; " >                             
                <tr>
-                    <td style="font-weight: bold"> Module</td> 
-                    <td style="padding: 2px">:</td> 
-                    <td><label> {{module.designation}} </label> </td> 
+                    <td style="font-weight: bold;font-size: 12px ;"> Abréviation</td> 
+                    <td style="padding: 2px"></td> 
+                    <td style=" text-align: left; font-weight: bold; font-size: 12px ;"><label> Désignation </label> </td> 
                 </tr>
+                {% for statut in stautsFormation %}
+                    <tr>
+                        <td style="font-weight: bold; padding: 0px 20px 0px 0px ">{{statut.abreviation}}</td>
+                        <td style="padding: 2px">:</td> 
+                        <td >{{statut.designation}}</td> 
+                    </tr>
+                {% endfor %}
             </table> 
-        </td> 
-
+        </td>
+        <td style="width: 50% ;vertical-align: top;">
+            <h1>Semestre</h1>
+            <table cellspacing="0" style="width:60%; text-align: left; font-size: 10px ; " >                             
+               <tr>
+                    <td style="font-weight: bold;font-size: 12px ;"> Abréviation</td> 
+                    <td style="padding: 2px"></td> 
+                    <td style=" text-align: left; font-weight: bold; font-size: 12px ;"><label> Désignation </label> </td> 
+                </tr>
+                {% for statut in stautsSemestre %}
+                    <tr>
+                        <td style="font-weight: bold; padding: 0px 20px 0px 0px ">{{statut.abreviation}}</td>
+                        <td style="padding: 2px">:</td> 
+                        <td >{{statut.designation}}</td> 
+                    </tr>
+                {% endfor %}
+            </table> 
+        </td>
+        <td style="width: 50% ;vertical-align: top;">
+            <h1>Annee</h1>
+            <table cellspacing="0" style="width:60%; text-align: left; font-size: 10px ; " >                             
+               <tr>
+                    <td style="font-weight: bold;font-size: 12px ;"> Abréviation</td> 
+                    <td style="padding: 2px"></td> 
+                    <td style=" text-align: left; font-weight: bold; font-size: 12px ;"><label> Désignation </label> </td> 
+                </tr>
+                {% for statut in stautsAnnee %}
+                    <tr>
+                        <td style="font-weight: bold; padding: 0px 20px 0px 0px ">{{statut.abreviation}}</td>
+                        <td style="padding: 2px">:</td> 
+                        <td >{{statut.designation}}</td> 
+                    </tr>
+                {% endfor %}
+            </table> 
+        </td>
     </tr>
 </table> 
-<br>
-    <table cellspacing="0" style="width:40%; text-align: left; font-size: 9px ; " >
-        <tr>
-            <td style=" font-weight: bold ; color:#525252; font-size: 11px ; padding: 5px 0px">Abréviation </td> 
-            <td style="font-weight: bold ; color:#525252 ;; font-size: 11px; padding: 5px 0px">Désignation</td> 
-        </tr>
-            {% for statut in statuts %}
-            <tr>
-                <td style="font-weight: bold; padding: 0px 20px 0px 0px " >{{statut.abreviation}}</td> 
-                <td >{{statut.designation}}</td> 
-            </tr>
-            {% endfor %}
-    </table> 
-
 <br/>
+
 <table cellspacing="0" style="width: 100%; text-align: left; font-size: 12px" >
     <tr>
         <td style="width: 100% ;background: #6777ef; color: #fff ;height: 17px;padding: 8px ;font-weight: bold;padding-left: 15px;">Liste des étudiants</td> 
@@ -106,10 +134,13 @@
             <th style="width:60px;text-align: left;font-weight: 400">Code</th>
             <th style="width:120px; text-align: left;font-weight: 600">Nom</th>
             <th style="width:120px;text-align: left;font-weight: 600">Prénom</th>
-            {% for element in elements %}
-                <th style="width:200px;text-align: left;font-weight: 600">{{element.id}}<br>{{element.designation}}<br>{{element.coefficient}}</th>  
-            {% endfor %} 
-            <th style="width:80px; background-color: #525252;color: white; text-align: center;font-weight: 800">Moyenne</th>
+            {% for i in 0..(infosGeneral.nbr_annee - 1) %}
+                    <th>Année({{i+1}})<br>
+                        {{dataAnnee[i].designation}}
+                    </th>
+            {% endfor %}
+            <th style="width:80px; background-color: #525252;color: white; text-align: center;font-weight: 800">Moyenne Validation</th>
+            <th style="width:80px; background-color: #525252;color: white; text-align: center;font-weight: 800">Moyenne Classement</th>
             <th style="width:80px; background-color: #525252;color: white; text-align: center;font-weight: 800">Statut</th>
 
         </tr>
@@ -117,29 +148,32 @@
 
     </thead>
     <tbody>
-        {% for data in dataSaved %}
+        {% for etudiant in etudiantsArray %}
             <tr style="font-size: 9px;padding: 5px ;">
                 <td style="font-size: 9px; padding-top: 3px; text-align:center; padding-bottom: 3px">{{loop.index}}</td>
-                <td style="font-size: 9px; padding-top: 3px; text-align:left; padding-bottom: 3px">{{data.inscription.id}}</td>
-                <td style="font-size: 9px; text-align: left">{{data.inscription.admission.preinscription.etudiant.nom}}</td>
-                <td style="font-size: 9px; text-align: left">{{data.inscription.admission.preinscription.etudiant.prenom}}</td>
-                {% for noteElement in data.noteElements %}
-                    <td style="font-size: 9px; text-align: left">{{noteElement}}</td>  
+                <td style="font-size: 9px; padding-top: 3px; text-align:left; padding-bottom: 3px">{{etudiant.codeAdm}}</td>
+                <td style="font-size: 9px; text-align: left">{{etudiant.nom}}</td>
+                <td style="font-size: 9px; text-align: left">{{etudiant.prenom}}</td>
+                {% for note in etudiant.notes %}
+                    <td style="font-size: 9px; text-align: left">{{note|number_format(2, '.', ',')}}</td>  
                 {% endfor %}
                 <td style="font-size: 9px; background: #d8d8d8; text-align: center ; color: #000; font-weight: bold;"> 
-                    {{data.moyenneTot|number_format(2, '.', ',') }}
+                    {{etudiant.moyenne }}
                 </td>
                 <td style="font-size: 9px; background: #d8d8d8; text-align: center ; color: #000; font-weight: bold;"> 
-                    {% if affichage == 0 %} 
+                    {{etudiant.moyenneSec }}
+                </td>
+                <td style="font-size: 9px; background: #d8d8d8; text-align: center ; color: #000; font-weight: bold;"> 
+                    {# {% if affichage == 0 %} 
                         {{ render(controller(
-                            'App\\Controller\\Evaluation\\ModuleController::getStatut', { inscription: data.inscription, module: module, statut: "statutDef" }
+                            'App\\Controller\\Evaluation\\ModuleController::getStatut', { inscription: etudiant.inscription, module: module, statut: "statutDef" }
                         )) }}
                     {% elseif affichage == 1 %}
                         {{ render(controller(
                             'App\\Controller\\Evaluation\\ModuleController::getStatut', { inscription: data.inscription, module: module, statut: "statutAff" }
                         )) }}
                     {% else %}
-                    {% endif %}
+                    {% endif %} #}
                 </td>
             </tr>
         {% endfor %}

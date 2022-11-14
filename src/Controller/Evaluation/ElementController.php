@@ -123,7 +123,6 @@ class ElementController extends AbstractController
         $m_ef = $m_ef ? $m_ef : 0;
         $total_coef = intval($coef['NAT000000001'] + $coef['NAT000000002'] + $coef['NAT000000003']);
         return (number_format(((($coef['NAT000000001'] * $m_cc) + ($coef['NAT000000002'] * $m_tp) + ($coef['NAT000000003'] * $m_ef)) / $total_coef), 2, '.', ' '));
-
     }
 
     #[Route('/impression/{type}/{affichage}', name: 'administration_element_impression')]
@@ -283,6 +282,7 @@ class ElementController extends AbstractController
     {         
         $session = $request->getSession();
         $dataSaved = $session->get('data_element')['data_saved'];
+        dd($dataSaved);
         $element = $session->get('data_element')['element'];
         if($type == 's1'){
             foreach ($dataSaved as $data) {

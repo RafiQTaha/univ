@@ -158,7 +158,7 @@ class EpreuveController extends AbstractController
             }
             $nestedData[] = $username;
             $nestedData["DT_RowId"] = $cd;
-            $nestedData["DT_RowClass"] = $cd;
+            $nestedData["DT_RowClass"] = '';
             $data[] = $nestedData;
             $i++;
         }
