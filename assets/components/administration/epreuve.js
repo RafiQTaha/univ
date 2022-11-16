@@ -369,14 +369,22 @@ $(document).ready(function  () {
 
     $("#save_list_etudiant").on('click', async function(e) {
         e.preventDefault();
-        const icon = $("#save_list_etudiant i");
+        if(idInscriptions.length == 0) {
+            Toast.fire({
+                icon: 'error',
+                title: 'Veuillez cochez une ou plusieurs ligne!',
+            })
+            return;
+        }
+        const button = $('#save_list_etudiant');
+        const icon = button.find('i');
         icon.removeClass('fa-check-circle').addClass("fa-spinner fa-spin");
         let modalAlert = $("#affilier_list_etudiant .modal-body .alert")
         modalAlert.remove();
         let formData = new FormData();
         formData.append("idInscriptions", JSON.stringify(idInscriptions))
         formData.append("idEpreuve", id_epreuve)
-
+        button.addClass("disabled");
         try {
             const request = await axios.post('/administration/epreuve/affiliation_rattrapage', formData);
             const response = request.data;    
@@ -389,6 +397,9 @@ $(document).ready(function  () {
             $(".list_etudiants").empty()
             tableEpreuveRattrapage.ajax.reload(null, false);
             tableEpreuveNormal.ajax.reload(null, false);
+            idInscriptions = []
+            $("#affilier_list_etudiant").modal("hide");
+            button.removeClass("disabled");
         } catch (error) {
             console.log(error)
             const message = error.response.data;
@@ -397,6 +408,7 @@ $(document).ready(function  () {
                 `<div class="alert alert-danger">${message}</div>`
             );
             icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin");
+            button.removeClass("disabled");
             
         }
     })
