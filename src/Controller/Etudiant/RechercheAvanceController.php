@@ -232,7 +232,7 @@ class RechercheAvanceController extends AbstractController
     #[Route('/attestation/releve/annee/{inscription}/{assiduite}', name: 'etudiant_recherche_releve_annee')]
     public function attestationReleveAnnee(TInscription $inscription, $assiduite): Response
     {
-        $semestres = $this->em->getRepository(ExSnotes::class)->findBy(['inscription' => $inscription]);
+        $semestres = $this->em->getRepository(ExSnotes::class)->findBy(['inscription' => $inscription],['semestre'=>'ASC']);
         // dd($semestres);
         $noteSemestre2 = null;
         $noteModulesBySemestre2 = null;
