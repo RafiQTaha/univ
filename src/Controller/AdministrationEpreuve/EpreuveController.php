@@ -644,14 +644,17 @@ class EpreuveController extends AbstractController
        
         foreach ($idEpreuves as $idEpreuve) {
             $epreuve = $this->em->getRepository(AcEpreuve::class)->find($idEpreuve);
+            // dd($epreuve);
             foreach ($epreuve->getGnotes() as $gnote) {
+                // dd($gnote);
                 $inscription = $gnote->getInscription();
                 $previousInscription = $this->em->getRepository(TInscription::class)->getPreviousInsription($inscription);
                 // dd($previousInscription);
                 if($previousInscription) {
                     $previousNoteModule = $this->em->getRepository(ExMnotes::class)->findOneBy(['module' => $epreuve->getElement()->getModule(), 'inscription' => $previousInscription]);
+                    // dd($previousNoteModule);
                     if ($previousNoteModule != null) {
-                        if($previousNoteModule->getNote() >= 12) {
+                        if($previousNoteModule->getStatutAff() == 53) {
                             $gnote->setNote($previousNoteModule->getNote());
                             $gnote->setObservation('CAP');
                             $sheet->setCellValue('A'.$i, $inscription->getId());
@@ -665,6 +668,7 @@ class EpreuveController extends AbstractController
                     }
                 }
             }
+            dd('tewst');
         }
         $this->em->flush();
         $fileName = null;

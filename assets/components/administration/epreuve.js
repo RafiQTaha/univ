@@ -641,7 +641,6 @@ $(document).ready(function  () {
                     title: "Epreuves no capitaliser",
                 }) 
             }
-            idEpreuves =  []
         } catch (error) {
             console.log(error)
             const message = error.response.data;
