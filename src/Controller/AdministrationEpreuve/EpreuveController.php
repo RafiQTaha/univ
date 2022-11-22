@@ -649,7 +649,7 @@ class EpreuveController extends AbstractController
                 // dump($gnote->getInscription()->getId());
                 $inscription = $gnote->getInscription();
                 // dump($inscription);
-                if ($inscription->getId() == 16322) {
+                // if ($inscription->getId() == 16322) {
                     $previousInscription = $this->em->getRepository(TInscription::class)->getPreviousInsription($inscription);
                     // dd($previousInscription);
                     if($previousInscription) {
@@ -671,7 +671,7 @@ class EpreuveController extends AbstractController
                             }
                         }
                     }
-                }
+                // }
                 
             }
             // dd('tewst');
