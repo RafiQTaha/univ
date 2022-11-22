@@ -164,8 +164,6 @@ $(document).ready(function  () {
     })
    
     $("#ExtracDip").on('click',function(){
-        const icon = $("#ExtracDip i");
-        icon.removeClass('fa-redo-alt').addClass("fa-spinner fa-spin");
         window.open('/evaluation/formation/extractiondiplome', '_blank');
     })
 })
