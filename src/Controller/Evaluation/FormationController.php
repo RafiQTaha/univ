@@ -12,10 +12,14 @@ use App\Entity\TInscription;
 use App\Entity\AcEtablissement;
 use App\Controller\ApiController;
 use App\Entity\AcPromotion;
+use App\Entity\DDiplomes;
+use App\Entity\DPrediplomes;
 use App\Entity\ExAnotes;
 use App\Entity\ExFnotes;
 use App\Entity\ExMnotes;
+use App\Entity\PDiplomes;
 use App\Entity\PeStatut;
+use App\Entity\PSignataire;
 use App\Entity\PStatut;
 use App\Entity\TAdmission;
 use Doctrine\Persistence\ManagerRegistry;
@@ -77,7 +81,10 @@ class FormationController extends AbstractController
                 for($i=0; $i < $nbr_annee; $i++ ){
                     if (!empty($data_annee[$i])) {
                         $anote =$this->em->getRepository(ExAnotes::class)->getNoteFromExAnotes($admission->getCode(), $data_annee[$i]['code']);
+                        // dd($lastYear);
+                        // dd($anote);
                         if (count($anote) >0) {
+                            $lastYear = $anote[0]['annee_id'];
                             $moyenne =($moyenne + $anote[0]['note']);
                             $moyenneSec =($moyenneSec + $anote[0]['note_sec']);
                             array_push($array_notes , $anote[0]['note']);
@@ -90,6 +97,7 @@ class FormationController extends AbstractController
                     }
                 }
                 $array_informations['notes'] = $array_notes;
+                $array_informations['lastYear'] = $lastYear;
 
                 if( count($data_annee) == $nbr_annee && count($data_annee)>0){
                     $array_informations['moyenne'] = number_format($moyenne/$nbr_annee, 2, '.', ' ');
@@ -135,30 +143,155 @@ class FormationController extends AbstractController
     {  
         $session = $request->getSession();
         $etudiants = $session->get('data_fnotes')['etudiants'];
+        // dd($etudiants[0]['lastYear']);
         $check = 2;
+        
+        // dd($lastYear);
+
+        //insertion de pdiplome
+        
+        $admission = $this->em->getRepository(TAdmission::class)->find($etudiants[0]['admission']);
+        $formation =$admission->getPreinscription()->getAnnee()->getFormation();
+        $pdiplome = $this->em->getRepository(PDiplomes::class)->findOneBy(['formation'=> $formation]);
+        // dd($pdiplome);
+
+        if(!$pdiplome){
+            $pdiplome = new PDiplomes();
+            $pdiplome->setFormation($formation);
+            $pdiplome->setUserCreated($this->getUser());
+            $pdiplome->setDesignation($formation->getDesignation());
+            $pdiplome->setAbreviation($formation->getAbreviation());
+            $pdiplome->setCreated(new \DateTime('now'));
+            
+            $this->em->persist($pdiplome);
+            $this->em->flush();
+
+            $pdiplome->setCode('DIP'.str_pad($pdiplome->getId(), 8, '0', STR_PAD_LEFT));
+            $this->em->flush();
+        }
+
+        
+
         foreach ($etudiants as $etudiant){
             $fnote = $this->em->getRepository(ExFnotes::class)->findOneByAdmission($etudiant['admission']);
             $admission = $this->em->getRepository(TAdmission::class)->find($etudiant['admission']);
+            // $annee = $admission->getPreinscription()->getAnnee();
+            $etablissement = $admission->getPreinscription()->getAnnee()->getFormation()->getEtablissement();
+            $Year = $this->em->getRepository(AcAnnee::class)->find($etudiant['lastYear']);
+            $Predip = $this->em->getRepository(DPrediplomes::class)->findBy(['annee'=>$Year]);
+            $countPredip = count($Predip);
+
+            $Ddip = $this->em->getRepository(DDiplomes::class)->findBy(['annee'=>$Year]);
+            $countDdip = count($Ddip);
+
+            $lastYear = substr($Year->getDesignation(), 5);
             if(!$fnote) {
-                $fnotes = new ExFnotes();
-                $fnotes->setAdmission($admission);
-                $fnotes->setFormation($admission->getPreinscription()->getAnnee()->getFormation());
-                $fnotes->setUserCreated($this->getUser());
-                $fnotes->setCreated(new \DateTime("now"));
-                $fnotes->setFlag(0);
-                $fnotes->setNote($etudiant['moyenne']);
-                $fnotes->setNoteSec($etudiant['moyenneSec']);
-                $this->em->persist($fnotes);
+                $fnote = new ExFnotes();
+                $fnote->setAdmission($admission);
+                $fnote->setFormation($admission->getPreinscription()->getAnnee()->getFormation());
+                $fnote->setUserCreated($this->getUser());
+                $fnote->setCreated(new \DateTime("now"));
+                $fnote->setFlag(0);
+                $fnote->setNote($etudiant['moyenne']);
+                $fnote->setNoteSec($etudiant['moyenneSec']);
+                $this->em->persist($fnote);
+                $this->em->flush();
+            }else {
+                $fnote->setNote($etudiant['moyenne']);
+                $fnote->setNoteSec($etudiant['moyenneSec']);
+                $this->em->flush();
+                // dd($prediplome);    
             }
-            // else {
-            //     $fnote->setFormation($admission->getPreinscription()->getAnnee()->getFormation());
-            //     $fnote->setUserCreated($this->getUser());
-            //     $fnote->setCreated(new \DateTime("now"));
-            //     $fnote->setNote($etudiant['moyenne']);
-            //     $fnote->setNoteSec($etudiant['moyenneSec']);
-            // } 
+
+            
+            $prediplome = $this->em->getRepository(DPrediplomes::class)->findOneBy(['fnote'=>$fnote]);
+
+            if(!$prediplome){
+
+                $prediplome = new DPrediplomes();
+                // $admission = $this->em->getRepository(TAdmission::class)->find($etudiant['admission']);
+                // $pdiplome = $this->em->getRepository(PDiplomes::class)->find($pdiplome[0]->getId());
+                // $fnote = $this->em->getRepository(ExFnotes::class)->findOneByAdmission($etudiant['admission']);
+                $prediplome->setFnote($fnote);
+                $prediplome->setDiplome($pdiplome);
+                $prediplome->setUserCreated($this->getUser());
+                $prediplome->setAnnee($Year);
+                // if($fnote == null){dd($fnote);}
+                $note= $fnote->getNote();
+                $prediplome->setNote($note);
+
+                switch ($note) {
+                    case ($note >= 10 && $note <= 12):
+                    $mention = 'Passable';
+                    break;
+                    case ($note > 12 && $note <= 14):
+                    $mention = 'Assez bien';
+                    break;
+                    case ($note > 14 && $note <= 16):
+                    $mention = 'Bien';
+                    break;
+                    case ($note > 16 && $note <= 18):
+                    $mention = 'Très bien';
+                    break;
+                    case ($note > 18):
+                    $mention = 'Excellent';
+                    break;
+                }
+
+                $prediplome->setMention($mention);
+                $prediplome->setCreated(new \DateTime('now'));
+                
+                $countPredip = $countPredip + 1;
+                // dd($countPredip);
+                $prediplome->setCode('PRD_UIA_'.$etablissement->getAbreviation().'_'.$formation->getAbreviation().'_'.str_pad($countPredip, 3, '0', STR_PAD_LEFT).'/'.$lastYear);
+
+                $this->em->persist($prediplome);
+                $this->em->flush();
+                // $annee = $admission->getPreinscription()->getAnnee();
+
+                // dd(count($countPredip));
+
+                // $this->em->persist($prediplome);
+                // $this->em->flush();  
+                $statutSignataire = $Year->getFormation()->getEtablissement()->getStatut();
+                if($statutSignataire == 'Doyen'){
+                    $signataire = $this->em->getRepository(PSignataire::class)->find(1);
+                }else if($statutSignataire == 'Directeur'){
+                    $signataire = $this->em->getRepository(PSignataire::class)->find(2);
+                }else{
+                    $signataire = null;
+                }
+                $note= $fnote->getNote();
+                
+                // $prediplome = $this->em->getRepository(DPrediplomes::class)->find($prediplome[0]->getId());
+                $ddiplome = $this->em->getRepository(DDiplomes::class)->findOneBy(['prediplome'=>$prediplome]);
+                if(!$ddiplome){
+                    
+                    $ddiplome = new DDiplomes();
+                    $ddiplome->setPrediplome($prediplome);
+                    $ddiplome->setAnnee($Year);
+                    // dd($prediplome);
+                    $ddiplome->setUserCreated($this->getUser());
+                    // if($signataire){     
+                    $ddiplome->setSignataire($signataire);
+                    // }
+                    $countDdip = $countDdip + 1;
+                    $ddiplome->setCode('DIP_UIA_'.$etablissement->getAbreviation().'_'.$formation->getAbreviation().'_'.str_pad($countDdip, 3, '0', STR_PAD_LEFT).'/'.$lastYear);
+                    $ddiplome->setNote($note);
+                    $ddiplome->setCreated(new \DateTime('now'));
+                    $ddiplome->setDate(new \DateTime('now'));
+                    $this->em->persist($ddiplome);
+                    $this->em->flush();
+                }            
+            }
+            
+            
         }
-        $this->em->flush();
+
+        
+
+
+
         return new JsonResponse(['message'=>"Bien Enregistre",'check' => $check],200);
     }
 
