@@ -4,29 +4,32 @@ namespace App\Controller\Evaluation;
 
 use Mpdf\Mpdf;
 use App\Entity\AcAnnee;
+use App\Entity\PStatut;
 use App\Entity\AcModule;
+use App\Entity\ExAnotes;
 use App\Entity\ExEnotes;
+use App\Entity\ExFnotes;
+use App\Entity\ExMnotes;
+use App\Entity\PeStatut;
 use App\Entity\AcElement;
+use App\Entity\DDiplomes;
+use App\Entity\PDiplomes;
 use App\Entity\ExControle;
+use App\Entity\TAdmission;
+use App\Entity\AcPromotion;
+use App\Entity\PSignataire;
+use App\Entity\DPrediplomes;
 use App\Entity\TInscription;
 use App\Entity\AcEtablissement;
 use App\Controller\ApiController;
-use App\Entity\AcPromotion;
-use App\Entity\DDiplomes;
-use App\Entity\DPrediplomes;
-use App\Entity\ExAnotes;
-use App\Entity\ExFnotes;
-use App\Entity\ExMnotes;
-use App\Entity\PDiplomes;
-use App\Entity\PeStatut;
-use App\Entity\PSignataire;
-use App\Entity\PStatut;
-use App\Entity\TAdmission;
 use Doctrine\Persistence\ManagerRegistry;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[Route('/evaluation/formation')]
@@ -373,5 +376,52 @@ class FormationController extends AbstractController
         $this->em->flush();
         return new JsonResponse("Bien Recalculer", 200);
 
+    }
+    
+    #[Route('/extractiondiplome', name: 'evaluation_formation_extractiondiplome')]
+    public function evaluationFormationExtractionDiplome(Request $request) 
+    {         
+        $session = $request->getSession();
+        $etudiants = $session->get('data_fnotes')['etudiants'];
+
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        $sheet->setCellValue('A1', 'ORD');
+        $sheet->setCellValue('B1', 'Serie');
+        $sheet->setCellValue('C1', 'ID_ADM');
+        $sheet->setCellValue('D1', 'ID_DIP');
+        $sheet->setCellValue('E1', 'ID_PRD');
+        $i=2;
+        $j=1;
+
+        $admission = $this->em->getRepository(TAdmission::class)->find($etudiants[0]['admission']);
+        $formation =$admission->getPreinscription()->getAnnee()->getFormation();
+        $pdiplome = $this->em->getRepository(PDiplomes::class)->findOneBy(['formation'=> $formation]);
+              
+        foreach ($etudiants as $etudiant){
+
+            $admission = $this->em->getRepository(TAdmission::class)->find($etudiant['admission']);
+            $fnote = $this->em->getRepository(ExFnotes::class)->findOneByAdmission($etudiant['admission']);
+            $prediplome = $this->em->getRepository(DPrediplomes::class)->findOneBy(['fnote'=>$fnote]);
+            $ddiplome = $this->em->getRepository(DDiplomes::class)->findOneBy(['prediplome'=>$prediplome]);
+            $annee = $ddiplome->getAnnee()->getDesignation();
+            $lastyear = substr($annee, 5);
+
+            // dd($lastyear);  
+
+            $sheet->setCellValue('A'.$i, $j);
+            $sheet->setCellValue('B'.$i, $pdiplome->getCode());
+            $sheet->setCellValue('C'.$i, $admission->getCode());
+            $sheet->setCellValue('D'.$i, $prediplome->getCode());
+            $sheet->setCellValue('E'.$i, $ddiplome->getCode());
+            $i++;
+            $j++;
+        }
+        
+        $writer = new Xlsx($spreadsheet);
+        $fileName = "Extraction Diplomes $lastyear.xlsx";
+        $temp_file = tempnam(sys_get_temp_dir(), $fileName);
+        $writer->save($temp_file);
+        return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);
     }
 }

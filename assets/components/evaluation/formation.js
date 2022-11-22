@@ -14,21 +14,24 @@ let check;
     
 $(document).ready(function  () {
 
-    $(" #enregistrer, #imprimer, #recalculer").attr('disabled', true);
+    $(" #enregistrer, #imprimer, #recalculer , #ExtracDip").attr('disabled', true);
 
     const enableButtons = () => {
         if (check == 1) {
             $("#enregistrer").removeClass('btn-secondary').addClass('btn-info').attr('disabled', false)
             $("#imprimer").removeClass('btn-info').addClass('btn-secondary').attr('disabled', true)
             $("#recalculer").removeClass('btn-info').addClass('btn-secondary').attr('disabled', true)
+            $("#ExtracDip").removeClass('btn-info').addClass('btn-secondary').attr('disabled', true)
         }else if (check == 2) {
             $("#enregistrer").removeClass('btn-info').addClass('btn-secondary').attr('disabled', true)
             $("#imprimer").removeClass('btn-secondary').addClass('btn-info').attr('disabled', false)
             $("#recalculer").removeClass('btn-secondary').addClass('btn-info').attr('disabled', false)
+            $("#ExtracDip").removeClass('btn-secondary').addClass('btn-info').attr('disabled', false)
         }else{
             $("#enregistrer").removeClass('btn-info').addClass('btn-secondary').attr('disabled', true)
             $("#imprimer").removeClass('btn-info').addClass('btn-secondary').attr('disabled', true)
             $("#recalculer").removeClass('btn-info').addClass('btn-secondary').attr('disabled', true)
+            $("#ExtracDip").removeClass('btn-info').addClass('btn-secondary').attr('disabled', true)
         }
     }
 
@@ -158,6 +161,12 @@ $(document).ready(function  () {
                 title: message,
             });
         }
+    })
+   
+    $("#ExtracDip").on('click',function(){
+        const icon = $("#ExtracDip i");
+        icon.removeClass('fa-redo-alt').addClass("fa-spinner fa-spin");
+        window.open('/evaluation/formation/extractiondiplome', '_blank');
     })
 })
 
