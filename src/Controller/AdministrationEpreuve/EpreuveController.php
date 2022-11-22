@@ -644,27 +644,37 @@ class EpreuveController extends AbstractController
        
         foreach ($idEpreuves as $idEpreuve) {
             $epreuve = $this->em->getRepository(AcEpreuve::class)->find($idEpreuve);
+            // dd($epreuve->getElement()->getModule());
             foreach ($epreuve->getGnotes() as $gnote) {
+                // dump($gnote->getInscription()->getId());
                 $inscription = $gnote->getInscription();
-                $previousInscription = $this->em->getRepository(TInscription::class)->getPreviousInsription($inscription);
-                // dd($previousInscription);
-                if($previousInscription) {
-                    $previousNoteModule = $this->em->getRepository(ExMnotes::class)->findOneBy(['module' => $epreuve->getElement()->getModule(), 'inscription' => $previousInscription]);
-                    if ($previousNoteModule != null) {
-                        if($previousNoteModule->getNote() >= 12) {
-                            $gnote->setNote($previousNoteModule->getNote());
-                            $gnote->setObservation('CAP');
-                            $sheet->setCellValue('A'.$i, $inscription->getId());
-                            $sheet->setCellValue('B'.$i, $gnote->getInscription()->getAdmission()->getPreinscription()->getEtudiant()->getNom());
-                            $sheet->setCellValue('C'.$i, $gnote->getInscription()->getAdmission()->getPreinscription()->getEtudiant()->getPrenom());
-                            $sheet->setCellValue('D'.$i, $epreuve->getId());
-                            $sheet->setCellValue('E'.$i, $previousNoteModule->getNote());
-                            $i++;
-                            $count++;
+                // dump($inscription);
+                if ($inscription->getId() == 16322) {
+                    $previousInscription = $this->em->getRepository(TInscription::class)->getPreviousInsription($inscription);
+                    // dd($previousInscription);
+                    if($previousInscription) {
+                        $previousNoteModule = $this->em->getRepository(ExMnotes::class)->findOneBy(['module' => $epreuve->getElement()->getModule(), 'inscription' => $previousInscription]);
+                        // dd($previousNoteModule);
+                        if ($previousNoteModule != null) {
+                            $stat = $previousNoteModule->getStatutAff() != null ? $previousNoteModule->getStatutAff()->getId() : "";
+                            // dump($stat);
+                            if($stat == 53) {
+                                $gnote->setNote($previousNoteModule->getNote());
+                                $gnote->setObservation('CAP');
+                                $sheet->setCellValue('A'.$i, $inscription->getId());
+                                $sheet->setCellValue('B'.$i, $gnote->getInscription()->getAdmission()->getPreinscription()->getEtudiant()->getNom());
+                                $sheet->setCellValue('C'.$i, $gnote->getInscription()->getAdmission()->getPreinscription()->getEtudiant()->getPrenom());
+                                $sheet->setCellValue('D'.$i, $epreuve->getId());
+                                $sheet->setCellValue('E'.$i, $previousNoteModule->getNote());
+                                $i++;
+                                $count++;
+                            }
                         }
                     }
                 }
+                
             }
+            // dd('tewst');
         }
         $this->em->flush();
         $fileName = null;

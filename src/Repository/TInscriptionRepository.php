@@ -328,29 +328,30 @@ class TInscriptionRepository extends ServiceEntityRepository
         ->orderBy("i.id", "desc")
         ->getQuery()
         ->getOneOrNullResult()
-        ;
+        ;    
+        return $previousInscription;
 
-        if($previousInscription && ($inscription->getPromotion()->getId() === $previousInscription->getPromotion()->getId() )) {
-            $previousPreviousInscription =  $this->createQueryBuilder('i')
-                ->innerJoin("i.statut", "statut")
-                ->where('i.admission = :admission')
-                ->andWhere("i.id < :id")
-                ->andWhere("statut.id = 13")
-                ->setParameter('admission', $inscription->getAdmission())
-                ->setParameter('id', $previousInscription->getId())
-                ->setMaxResults(1)
-                ->orderBy("i.id", "desc")
-                ->getQuery()
-                ->getOneOrNullResult()
-            ;
-            if($previousPreviousInscription && ($previousPreviousInscription->getPromotion()->getId() === $previousInscription->getPromotion()->getId() )) {
-                return null;
-            } 
+        // if($previousInscription && ($inscription->getPromotion()->getId() === $previousInscription->getPromotion()->getId() )) {
+        //     $previousPreviousInscription =  $this->createQueryBuilder('i')
+        //         ->innerJoin("i.statut", "statut")
+        //         ->where('i.admission = :admission')
+        //         ->andWhere("i.id < :id")
+        //         ->andWhere("statut.id = 13")
+        //         ->setParameter('admission', $inscription->getAdmission())
+        //         ->setParameter('id', $previousInscription->getId())
+        //         ->setMaxResults(1)
+        //         ->orderBy("i.id", "desc")
+        //         ->getQuery()
+        //         ->getOneOrNullResult()
+        //     ;
+        //     if($previousPreviousInscription && ($previousPreviousInscription->getPromotion()->getId() === $previousInscription->getPromotion()->getId() )) {
+        //         return null;
+        //     } 
+                
+        //         return $previousInscription;
             
-            return $previousInscription;
-            
-        }
-        return null;
+        // }
+        // return null;
     } 
     
 }
