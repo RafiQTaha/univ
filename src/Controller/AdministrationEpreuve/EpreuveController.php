@@ -654,7 +654,8 @@ class EpreuveController extends AbstractController
                     $previousNoteModule = $this->em->getRepository(ExMnotes::class)->findOneBy(['module' => $epreuve->getElement()->getModule(), 'inscription' => $previousInscription]);
                     // dd($previousNoteModule);
                     if ($previousNoteModule != null) {
-                        if($previousNoteModule->getStatutAff() == 53) {
+                        $stat = $previousNoteModule->getStatutAff() != null ? $previousNoteModule->getStatutAff()->getId() : "";
+                        if($stat == 53) {
                             $gnote->setNote($previousNoteModule->getNote());
                             $gnote->setObservation('CAP');
                             $sheet->setCellValue('A'.$i, $inscription->getId());
@@ -668,7 +669,7 @@ class EpreuveController extends AbstractController
                     }
                 }
             }
-            dd('tewst');
+            // dd('tewst');
         }
         $this->em->flush();
         $fileName = null;
