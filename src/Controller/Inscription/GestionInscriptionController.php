@@ -167,7 +167,7 @@ class GestionInscriptionController extends AbstractController
         // dd($cabs);
         $valide = 0;
         foreach ($cabs as $cab) {
-            $totalfacture = $this->em->getRepository(TOperationdet::class)->getSumMontantByCodeFacture($cab)['total'];
+            $totalfacture = $this->em->getRepository(TOperationdet::class)->getSumMontantNonOrganismeByCodeFacture($cab)['total'];
             $totalreglement = $this->em->getRepository(TReglement::class)->getSumMontantByCodeFacture($cab)['total'];
             if ($totalfacture - $totalreglement != 0) {
                 return new JsonResponse("Facture non reglé, Merci de contacter le service Financière !", 500);

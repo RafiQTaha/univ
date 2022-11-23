@@ -47,6 +47,23 @@ class TOperationdetRepository extends ServiceEntityRepository
         ;
     }
     */
+    public function getSumMontantNonOrganismeByCodeFacture($operation)
+    {
+        $request = $this->createQueryBuilder('t')
+            ->select("SUM(t.montant) as total")
+            ->Where('t.operationcab = :operation')
+            ->andWhere('t.active = 1')
+            ->andWhere('t.organisme = 7')
+            ->setParameter('operation', $operation)
+            ->groupBy('t.operationcab')
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
+        if(!$request) {
+            return ['total' => 0];
+        } 
+        return $request;
+    }
     public function getSumMontantByCodeFacture($operation)
     {
         $request = $this->createQueryBuilder('t')

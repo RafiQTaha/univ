@@ -412,8 +412,8 @@ class FormationController extends AbstractController
             $sheet->setCellValue('A'.$i, $j);
             $sheet->setCellValue('B'.$i, $pdiplome->getCode());
             $sheet->setCellValue('C'.$i, $admission->getCode());
-            $sheet->setCellValue('D'.$i, $prediplome->getCode());
-            $sheet->setCellValue('E'.$i, $ddiplome->getCode());
+            $sheet->setCellValue('D'.$i, $ddiplome->getCode());
+            $sheet->setCellValue('E'.$i, $prediplome->getCode());
             $i++;
             $j++;
         }
