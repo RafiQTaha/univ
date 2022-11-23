@@ -634,6 +634,9 @@ $(document).ready(function  () {
             console.log(response)
             icon.addClass('fab fa-get-pocket').removeClass("fa fa-spinner fa-spin ");
             if(response.count>0) {
+                tableEpreuveNormal.ajax.reload(null, false)
+                tableEpreuveRattrapage.ajax.reload(null, false)
+                idEpreuves = [];
                 window.open("/"+response.fileName ,"_blank");
             }else {
                 Toast.fire({

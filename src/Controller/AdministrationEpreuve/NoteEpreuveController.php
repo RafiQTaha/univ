@@ -152,7 +152,7 @@ class NoteEpreuveController extends AbstractController
             $nbr_non_saisi = count($this->em->getRepository(ExGnotes::class)->getNombreNonSaisi($cd));
             
             // dd($nbr_non_saisi);
-            $nestedData[] = "<input type ='checkbox' class='check_admissible' id ='$cd' >";
+            // $nestedData[] = "<input type ='checkbox' class='check_admissible' id ='$cd' >";
             // $nestedData[] = $i;
             $etat_bg="";
             foreach (array_values($row) as $key => $value) { 

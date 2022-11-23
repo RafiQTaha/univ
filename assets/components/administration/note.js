@@ -22,12 +22,13 @@ $(document).ready(function () {
         processing: true,
         serverSide: true,
         deferRender: true,
+        scrollX: true,
         drawCallback: function () {
-            idEpreuves.forEach((e) => {
-                $("body tr#" + e)
-                .find("input")
-                .prop("checked", true);
-            });
+            // idEpreuves.forEach((e) => {
+            //     $("body tr#" + e)
+            //     .find("input")
+            //     .prop("checked", true);
+            // });
             $("body tr#" + id_epreuve).addClass('active_databales')
         },
         preDrawCallback: function(settings) {
@@ -63,19 +64,19 @@ $(document).ready(function () {
             bDestroy: true
         });
     }
-    $('body').on('click','#datables_notes_epreuve tbody tr',function () {
-        const input = $(this).find("input");
-        if(input.is(":checked")){
-            input.prop("checked",false);
-            const index = idEpreuves.indexOf(input.attr("id"));
-            idEpreuves.splice(index,1);
-        }else{
-            input.prop("checked",true);
-            idEpreuves.push(input.attr("id"));
-        }
-        console.log(idEpreuves);
-    })
-    $('body').on('dblclick','#datables_notes_epreuve tbody tr',function (e) {
+    // $('body').on('click','#datables_notes_epreuve tbody tr',function () {
+    //     const input = $(this).find("input");
+    //     if(input.is(":checked")){
+    //         input.prop("checked",false);
+    //         const index = idEpreuves.indexOf(input.attr("id"));
+    //         idEpreuves.splice(index,1);
+    //     }else{
+    //         input.prop("checked",true);
+    //         idEpreuves.push(input.attr("id"));
+    //     }
+    //     console.log(idEpreuves);
+    // })
+    $('body').on('click','#datables_notes_epreuve tbody tr',function (e) {
         e.preventDefault();
         if($(this).hasClass('active_databales')) {
             $(this).removeClass('active_databales');
