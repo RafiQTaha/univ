@@ -102,7 +102,9 @@ class FormationController extends AbstractController
                 $array_informations['notes'] = $array_notes;
                 $array_informations['lastYear'] = $lastYear;
 
-                if( count($data_annee) == $nbr_annee && count($data_annee)>0){
+                // dd($moyenne);
+
+                if( count($array_notes) == $nbr_annee && count($data_annee)>0){
                     $array_informations['moyenne'] = number_format($moyenne/$nbr_annee, 2, '.', ' ');
                     $array_informations['moyenneSec'] = number_format($moyenneSec/$nbr_annee, 2, '.', ' ');
                 }
@@ -132,6 +134,7 @@ class FormationController extends AbstractController
             'etudiants' => $array_etudiants,
             'nbrAnnee' => $nbr_annee,
             'dataAnnee' => $data_annee,
+            'arrayNotes'=> $array_notes
         ])->getContent();
         return new JsonResponse([
             'html1' => $html1,
@@ -361,10 +364,12 @@ class FormationController extends AbstractController
     {         
         $session = $request->getSession();
         $etudiantsArray = $session->get('data_fnotes')['etudiants'];
+        
         $annee = $this->em->getRepository(AcAnnee::class)->find($session->get('data_fnotes')['annee']);
         foreach ($etudiantsArray as $etudiant) {
-            $inscription = $this->em->getRepository(TInscription::class)->find($etudiant['inscription']->getId());
-            $admission = $inscription->getAdmission();
+            // dd($etudiant['admission']);
+            $admission = $this->em->getRepository(TAdmission::class)->find($etudiant['admission']);
+            
             $fnote  = $this->em->getRepository(ExFnotes::class)->findOneBy(['admission' => $admission]);
             $fnote->setNote(
                 $etudiant['moyenneSec'] < 0 ? null : $etudiant['moyenneSec']
