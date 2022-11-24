@@ -1,6 +1,7 @@
  {# <h4>Tableau des épreuves</h4> #}
         <thead>
             <tr style= "background-color:white; position: sticky; top: 0;">
+                <th></th>
                 <th>#</th>
                 <th>Code</th>
                 <th>Nom</th>
@@ -15,7 +16,7 @@
                     </th>
                 {% endfor %}
 
-                {% if dataAnnee|length > 0 and arrayNotes|length == nbrAnnee%}
+                {% if dataAnnee|length > 0 and countAnote == nbrAnnee%}
                         <th>Moyenne</th>                
                         <th>Moyenne Sec</th>
                 {% endif %}      
@@ -25,10 +26,11 @@
         <tbody>
             {% for etudiant in etudiants %}
                 <tr>
+                    <td><input type ='checkbox' class='check_etu' id ='{{etudiant.admission.id}}' ></td>
                     <td>{{loop.index}}</td>
-                    <td>{{etudiant.codeAdm}}</td>
-                    <td>{{etudiant.nom}}</td>
-                    <td>{{etudiant.prenom}}</td>
+                    <td>{{etudiant.admission.code}}</td>
+                    <td>{{etudiant.etudiantInfo.nom}}</td>
+                    <td>{{etudiant.etudiantInfo.prenom}}</td>
                     {% for note in etudiant.notes %}
                         {% if note != 'Prochainement' %}
                             <td>{{note|number_format(2, '.', ',')}}</td>
