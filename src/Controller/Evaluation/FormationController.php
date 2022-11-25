@@ -66,6 +66,7 @@ class FormationController extends AbstractController
         $array_etudiants = [];
         $array_informations = [];
         $admissions = [];
+        
         if (!empty($inscriptions)) {
 		    foreach ($inscriptions as $key => $value) {
                 if (!in_array($value->getAdmission(),$admissions)) {
@@ -74,13 +75,15 @@ class FormationController extends AbstractController
             }
             foreach ($admissions as $admission) {
                 $etudiant = $admission->getPreinscription()->getEtudiant();
-                $array_informations['nom'] = $etudiant->getNom();
-                $array_informations['prenom'] = $etudiant->getPrenom();
-                $array_informations['codeAdm'] = $admission->getCode();
+                // $array_informations['nom'] = $etudiant->getNom();
+                // $array_informations['prenom'] = $etudiant->getPrenom();
+                $array_informations['etudiantInfo'] = $etudiant;
+                // $array_informations['codeAdm'] = $admission->getCode();
                 $array_informations['admission'] = $admission;
                 $moyenne = 0;
                 $moyenneSec = 0 ;
                 $array_notes = [];
+                $countAnote = 0;
                 for($i=0; $i < $nbr_annee; $i++ ){
                     if (!empty($data_annee[$i])) {
                         $anote =$this->em->getRepository(ExAnotes::class)->getNoteFromExAnotes($admission->getCode(), $data_annee[$i]['code']);
@@ -91,9 +94,10 @@ class FormationController extends AbstractController
                             $moyenne =($moyenne + $anote[0]['note']);
                             $moyenneSec =($moyenneSec + $anote[0]['note_sec']);
                             array_push($array_notes , $anote[0]['note']);
-                            
+                            $countAnote++;
                         }else{
                             array_push($array_notes , 0);
+                            $countAnote++;
                         }
                     }else{
                         array_push($array_notes , 'Prochainement');
@@ -102,22 +106,26 @@ class FormationController extends AbstractController
                 $array_informations['notes'] = $array_notes;
                 $array_informations['lastYear'] = $lastYear;
 
-                // dd($moyenne);
+                // dd($nbr_annee);
 
-                if( count($array_notes) == $nbr_annee && count($data_annee)>0){
+                if( $countAnote == $nbr_annee && $countAnote>0){
                     $array_informations['moyenne'] = number_format($moyenne/$nbr_annee, 2, '.', ' ');
                     $array_informations['moyenneSec'] = number_format($moyenneSec/$nbr_annee, 2, '.', ' ');
                 }
                 array_push($array_etudiants, $array_informations);
             }
         }
+        // dd($admissions);
         $cechekIfExistAllAnneeExist = $this->em->getRepository(ExFnotes::class)->getFnotesByAdmissions($admissions);
-        
+        // dd(count($cechekIfExistAllAnneeExist));
         $check = 0; //valider cette opération
-        if(!$cechekIfExistAllAnneeExist && count($data_annee) == $nbr_annee && count($data_annee)>0){
-            $check = 1; 
+        if(!$cechekIfExistAllAnneeExist and $countAnote == $nbr_annee and $countAnote>0){
+            $check = 1;
         }elseif (count($cechekIfExistAllAnneeExist) == count($admissions)) {
             $check = 2;
+        }elseif(count($cechekIfExistAllAnneeExist) != count($admissions) and count($cechekIfExistAllAnneeExist) > 0){
+            $check = 1;
+            // dd('hi'); 
         }
         $session = $request->getSession();
         $session->set('data_fnotes', [
@@ -134,7 +142,7 @@ class FormationController extends AbstractController
             'etudiants' => $array_etudiants,
             'nbrAnnee' => $nbr_annee,
             'dataAnnee' => $data_annee,
-            'arrayNotes'=> $array_notes
+            'countAnote'=> $countAnote
         ])->getContent();
         return new JsonResponse([
             'html1' => $html1,
@@ -385,9 +393,9 @@ class FormationController extends AbstractController
     
     #[Route('/extractiondiplome', name: 'evaluation_formation_extractiondiplome')]
     public function evaluationFormationExtractionDiplome(Request $request) 
-    {         
-        $session = $request->getSession();
-        $etudiants = $session->get('data_fnotes')['etudiants'];
+    {   
+        $admissions = array_unique(json_decode($request->get("admissions")));
+        // dd(!$admissions);
 
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
@@ -399,34 +407,33 @@ class FormationController extends AbstractController
         $i=2;
         $j=1;
 
-        $admission = $this->em->getRepository(TAdmission::class)->find($etudiants[0]['admission']);
-        $formation =$admission->getPreinscription()->getAnnee()->getFormation();
-        $pdiplome = $this->em->getRepository(PDiplomes::class)->findOneBy(['formation'=> $formation]);
-              
-        foreach ($etudiants as $etudiant){
+        
+        foreach ($admissions as $admission){
+            $admission = $this->em->getRepository(TAdmission::class)->find($admission);
+            $formation =$admission->getPreinscription()->getAnnee()->getFormation();
+            $pdiplome = $this->em->getRepository(PDiplomes::class)->findOneBy(['formation'=> $formation]);
+            $fnote = $this->em->getRepository(ExFnotes::class)->findOneByAdmission($admission);
 
-            $admission = $this->em->getRepository(TAdmission::class)->find($etudiant['admission']);
-            $fnote = $this->em->getRepository(ExFnotes::class)->findOneByAdmission($etudiant['admission']);
-            $prediplome = $this->em->getRepository(DPrediplomes::class)->findOneBy(['fnote'=>$fnote]);
-            $ddiplome = $this->em->getRepository(DDiplomes::class)->findOneBy(['prediplome'=>$prediplome]);
-            $annee = $ddiplome->getAnnee()->getDesignation();
+            if(!$fnote || !$pdiplome || !$fnote->getDPrediplomes()[0]->getDDiplomes()[0] || !$fnote->getDPrediplomes()[0]){
+                return new JsonResponse("veuillez d'abord enregistrer ! ", 500);
+            }
+            $annee = $fnote->getDPrediplomes()[0]->getDDiplomes()[0]->getAnnee()->getDesignation();
             $lastyear = substr($annee, 5);
-
-            // dd($lastyear);  
 
             $sheet->setCellValue('A'.$i, $j);
             $sheet->setCellValue('B'.$i, $pdiplome->getCode());
             $sheet->setCellValue('C'.$i, $admission->getCode());
-            $sheet->setCellValue('D'.$i, $ddiplome->getCode());
-            $sheet->setCellValue('E'.$i, $prediplome->getCode());
+            $sheet->setCellValue('E'.$i, $fnote->getDPrediplomes()[0]->getDDiplomes()[0]->getCode());
+            $sheet->setCellValue('D'.$i, $fnote->getDPrediplomes()[0]->getCode());
             $i++;
             $j++;
         }
         
         $writer = new Xlsx($spreadsheet);
-        $fileName = "Extraction Diplomes $lastyear.xlsx";
-        $temp_file = tempnam(sys_get_temp_dir(), $fileName);
-        $writer->save($temp_file);
-        return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);
+        $fileName = "Extraction_Diplomes_$lastyear.xlsx";
+        $writer->save($fileName);
+        // return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);
+        return new JsonResponse(['file' => $fileName]);
+        
     }
 }
