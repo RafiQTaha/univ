@@ -395,7 +395,7 @@ class FormationController extends AbstractController
     public function evaluationFormationExtractionDiplome(Request $request) 
     {   
         $admissions = array_unique(json_decode($request->get("admissions")));
-        // dd($admissions);
+        // dd(!$admissions);
 
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
@@ -408,17 +408,17 @@ class FormationController extends AbstractController
         $j=1;
 
         
-              
         foreach ($admissions as $admission){
             $admission = $this->em->getRepository(TAdmission::class)->find($admission);
             $formation =$admission->getPreinscription()->getAnnee()->getFormation();
             $pdiplome = $this->em->getRepository(PDiplomes::class)->findOneBy(['formation'=> $formation]);
             $fnote = $this->em->getRepository(ExFnotes::class)->findOneByAdmission($admission);
 
+            if(!$fnote || !$pdiplome || !$fnote->getDPrediplomes()[0]->getDDiplomes()[0] || !$fnote->getDPrediplomes()[0]){
+                return new JsonResponse("veuillez d'abord enregistrer ! ", 500);
+            }
             $annee = $fnote->getDPrediplomes()[0]->getDDiplomes()[0]->getAnnee()->getDesignation();
             $lastyear = substr($annee, 5);
-
-            // dd($lastyear);  
 
             $sheet->setCellValue('A'.$i, $j);
             $sheet->setCellValue('B'.$i, $pdiplome->getCode());
@@ -434,5 +434,6 @@ class FormationController extends AbstractController
         $writer->save($fileName);
         // return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);
         return new JsonResponse(['file' => $fileName]);
+        
     }
 }
