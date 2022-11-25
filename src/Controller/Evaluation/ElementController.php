@@ -282,7 +282,7 @@ class ElementController extends AbstractController
     {         
         $session = $request->getSession();
         $dataSaved = $session->get('data_element')['data_saved'];
-        dd($dataSaved);
+        // dd($dataSaved);
         $element = $session->get('data_element')['element'];
         if($type == 's1'){
             foreach ($dataSaved as $data) {
