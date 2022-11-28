@@ -16,6 +16,7 @@ use App\Entity\PNatureEpreuve;
 use App\Entity\AcEtablissement;
 use App\Controller\ApiController;
 use App\Controller\DatatablesController;
+use DateTime;
 use Doctrine\Persistence\ManagerRegistry;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
@@ -778,7 +779,7 @@ class EpreuveController extends AbstractController
         $count = 1 ;
         foreach ($epreuve->getGnotes() as $gnote) {
             $sheet->setCellValue('A'.$i, $count++);
-            $sheet->setCellValue('B'.$i, $epreuve->getDateEpreuve());
+            $sheet->setCellValue('B'.$i, $epreuve->getDateEpreuve()->format('d/m/Y'));
             $sheet->setCellValue('C'.$i, $epreuve->getElement()->getModule()->getDesignation());
             $sheet->setCellValue('D'.$i, $epreuve->getElement()->getDesignation());
             $sheet->setCellValue('E'.$i, $epreuve->getNatureEpreuve()->getNature());
