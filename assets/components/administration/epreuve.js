@@ -533,11 +533,13 @@ $(document).ready(function  () {
             if(response.anonymat == "oui") {
                 $('#imprimer_epreuve .actions').html(
                     `<a href="#" class="btn btn-success mt-3" id="impression_clair">Impression Clair</a>
-                    <a href="#" class="btn btn-secondary mt-3" id="impression_anonymat">Impression Anonymat</a>`
+                    <a href="#" class="btn btn-secondary mt-3" id="impression_anonymat">Impression Anonymat</a>
+                    <a href="#" class="btn btn-success mt-3" id="extraction_emargement">Extraction Emargement</a>`
                 );
             } else {
                 $('#imprimer_epreuve .actions').html(
-                    `<a href="#" class="btn btn-success mt-3" id="impression_clair">Impression Clair</a>`
+                    `<a href="#" class="btn btn-success mt-3" id="impression_clair">Impression Clair</a>
+                    <a href="#" class="btn btn-success mt-3" id="extraction_emargement">Extraction Emargement</a>`
                 );
             }
 
@@ -615,6 +617,17 @@ $(document).ready(function  () {
         e.preventDefault();
         window.open("/administration/epreuve/impression/"+id_epreuve+"/1", '_blank');
     })
+    $('body').on('click', '#extraction_emargement', function(e){
+        e.preventDefault();
+        if(!id_epreuve) {
+            Toast.fire({
+                icon: 'error',
+                title: 'Veuillez selection une ligne!',
+            })
+            return;
+        }
+        window.open('/administration/epreuve/extraction_emargement/'+id_epreuve, '_blank');
+    })
     $('#capitaliser_etudiant').on('click', async function(e){
         e.preventDefault();
         if(idEpreuves.length == 0) {
@@ -660,6 +673,4 @@ $(document).ready(function  () {
         const icon = $("#extraction_epv_valide i");
         window.open('/administration/epreuve/extraction_epreuve_valide', '_blank');
     })
-     
-    
 })

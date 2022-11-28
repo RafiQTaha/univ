@@ -187,36 +187,36 @@ $(document).ready(function  () {
     
     $("#ExtracDip").on("click", async function(e) {
         console.log(admissions)
-        if(admissions.length > 0){
-            e.preventDefault();
-            let formData = new FormData();
-            formData.append("admissions",  JSON.stringify(admissions));
-
-            const icon = $("#ExtracDip i");
-            icon.removeClass('fa-check-circle').addClass("fa-spinner fa-spin");
-            
-            try {
-            const request = await axios.post('/evaluation/formation/extractiondiplome', formData);
-            const response = request.data;
-
-            window.open("/"+response.file ,"_blank");
-            icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
-
-            } catch (error) {
-            const message = error.response.data;
-            console.log(error, error.response);
+        e.preventDefault();
+        if(admissions.length ==0) {
             Toast.fire({
                 icon: 'error',
-                title: message,
-                });
-            icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
-            
-            }
-        }else{
-            Toast.fire({
-                icon: 'error',
-                title: 'veuiller selectionner etudiant (s)',
+                title: 'Veuillez cochez une ou plusieurs ligne!',
+            })
+            return;
+        }
+        let formData = new FormData();
+        formData.append("admissions",  JSON.stringify(admissions));
+
+        const icon = $("#ExtracDip i");
+        icon.removeClass('fa-check-circle').addClass("fa-spinner fa-spin");
+        
+        try {
+        const request = await axios.post('/evaluation/formation/extractiondiplome', formData);
+        const response = request.data;
+
+        window.open("/"+response.file ,"_blank");
+        icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
+
+        } catch (error) {
+        const message = error.response.data;
+        console.log(error, error.response);
+        Toast.fire({
+            icon: 'error',
+            title: message,
             });
+        icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
+        
         }
         
     })

@@ -751,4 +751,52 @@ class EpreuveController extends AbstractController
         return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);
     }
     
+    #[Route('/extraction_emargement/{epreuve}', name: 'administration_epreuve_emargement')]
+    public function administration_epreuve_emargement(AcEpreuve $epreuve) 
+    {
+        // dd($epreuve);
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        $sheet->setCellValue('A1', 'ORD');
+        $sheet->setCellValue('B1', 'DATE');
+        $sheet->setCellValue('C1', 'MODULE');
+        $sheet->setCellValue('D1', 'ELEMENT');
+        $sheet->setCellValue('E1', 'SESSION');
+        $sheet->setCellValue('F1', 'TYPE');
+        $sheet->setCellValue('G1', 'CODE INSCRIPTION');
+        $sheet->setCellValue('H1', 'NOM');
+        $sheet->setCellValue('I1', 'PRENOM');
+        $sheet->setCellValue('J1', 'PROMOTION');
+        $sheet->setCellValue('K1', 'EMPLACEMENT');
+        $sheet->setCellValue('L1', 'EMARGEMENT DE PRESENCE');
+        $sheet->setCellValue('M1', 'ETUDIANT');
+        $sheet->setCellValue('N1', 'RESP. SALLE');
+        $sheet->setCellValue('O1', 'COPIE RENSEIGNEE');
+        $sheet->setCellValue('P1', 'VIDE');
+        $sheet->setCellValue('Q1', 'EMARGEMENT DE REMISE DES COPIES');
+        $i=2;
+        $count = 1 ;
+        foreach ($epreuve->getGnotes() as $gnote) {
+            $sheet->setCellValue('A'.$i, $count++);
+            $sheet->setCellValue('B'.$i, $epreuve->getDateEpreuve());
+            $sheet->setCellValue('C'.$i, $epreuve->getElement()->getModule()->getDesignation());
+            $sheet->setCellValue('D'.$i, $epreuve->getElement()->getDesignation());
+            $sheet->setCellValue('E'.$i, $epreuve->getNatureEpreuve()->getNature());
+            $sheet->setCellValue('F'.$i, $epreuve->getNatureEpreuve()->getDesignation());
+            $sheet->setCellValue('G'.$i, $gnote->getInscription()->getCode());
+            $sheet->setCellValue('H'.$i, $gnote->getInscription()->getAdmission()->getPreinscription()->getEtudiant()->getNom());
+            $sheet->setCellValue('I'.$i, $gnote->getInscription()->getAdmission()->getPreinscription()->getEtudiant()->getPrenom());
+            $sheet->setCellValue('J'.$i, $gnote->getInscription()->getPromotion()->getDesignation());
+            $i++;
+        }
+            
+        $this->em->flush();
+        $fileName = null;
+        $writer = new Xlsx($spreadsheet);
+        $fileName = 'epreuves_emargement.xlsx';
+        $temp_file = tempnam(sys_get_temp_dir(), $fileName);
+        $writer->save($temp_file);
+        return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);
+
+    }
 }
