@@ -511,19 +511,30 @@ class PlanificationController extends AbstractController
             // $semaine = $this->em->getRepository(Semaine::class)->findsemaine($request->get('nsemaine'),$request->get('crntday'));
             if ($groupe == 0) {
                 $emptimes = $this->em->getRepository(PlEmptime::class)->getEmptimeBySemestreAndSemaineToGenerer($semestre,$semaine);
+                $Allemptimes = $this->em->getRepository(PlEmptime::class)->getEmptimeBySemestreAndSemaine($semestre,$semaine);
             }else{
                 $emptimes = $this->em->getRepository(PlEmptime::class)->getEmptimeBySemestreAndGroupeAndSemaineToGenerer($semestre,$groupe,$semaine);
+                $Allemptimes = $this->em->getRepository(PlEmptime::class)->getEmptimeBySemestreAndGroupeAndSemaine($semestre,$groupe,$semaine);
             }
-            // dd($emptimes);
-            if($emptimes != NULL){
+            // dd(count($Allemptimes),count($emptimes));
+            if (count($Allemptimes) == count($emptimes) && $emptimes != NULL) {
                 foreach($emptimes as $emptime){
                     $emptime->setGenerer(1);
                     $this->em->flush();
                 }
                 return new Response('Géneration bien Effectuée',200);
             }else {
-                return new Response('Merci de Valider les seances pour les générer!',500);
+                return new Response('Merci de Valider tout les seances de cette semaine!',500);
             }
+            // if($emptimes != NULL){
+            //     foreach($emptimes as $emptime){
+            //         $emptime->setGenerer(1);
+            //         $this->em->flush();
+            //     }
+            //     return new Response('Géneration bien Effectuée',200);
+            // }else {
+            //     return new Response('Merci de Valider les seances pour les générer!',500);
+            // }
         }
         return new Response('Generation Echouée',500);
     }
