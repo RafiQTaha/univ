@@ -62,6 +62,7 @@ Encore
     .addEntry('enseignant', './assets/components/parametre/enseignant.js')
     .addEntry('enseignantexcept', './assets/components/parametre/enseignantexcept.js')
     .addEntry('frais', './assets/components/parametre/frais.js')
+    .addEntry('academie', './assets/components/parametre/academie.js')
 
 
     // .addStyleEntry('login', './assets/styles/components/login/login.scss')
