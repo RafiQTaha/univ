@@ -259,6 +259,27 @@ class PlEmptimeRepository extends ServiceEntityRepository
             ->getResult()
         ;
     }
+    public function getEmptimeAnnulerBySemestreAndGroupeAndSemaineToGenerer($semestre,$groupe,$semaine)
+    {
+        return $this->createQueryBuilder('e')
+            ->innerJoin("e.groupe", "groupe")
+            ->innerJoin("e.semaine", "semaine")
+            ->innerJoin("e.programmation", "programmation")
+            ->innerJoin("programmation.element", "element")
+            ->innerJoin("element.module", "module")
+            ->innerJoin("module.semestre", "semestre")
+            ->where('semestre.id = :semestre')
+            ->andWhere("groupe = :groupe")
+            ->andWhere("semaine = :semaine")
+            ->andWhere("e.active = 1")
+            ->andWhere("e.annuler = 1")
+            ->setParameter('semestre', $semestre)
+            ->setParameter('groupe', $groupe)
+            ->setParameter('semaine', $semaine)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
     
     public function getEmptimeBySemestreAndSemaineToGenerer($semestre,$semaine)
     {
@@ -272,6 +293,24 @@ class PlEmptimeRepository extends ServiceEntityRepository
             ->andWhere("semaine.id = :semaine")
             ->andWhere("e.active = 1")
             ->andWhere("e.valider = 1")
+            ->setParameter('semestre', $semestre)
+            ->setParameter('semaine', $semaine)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+    public function getEmptimeAnnulerBySemestreAndSemaineToGenerer($semestre,$semaine)
+    {
+        return $this->createQueryBuilder('e')
+            ->innerJoin("e.programmation", "programmation")
+            ->innerJoin("programmation.element", "element")
+            ->innerJoin("element.module", "module")
+            ->innerJoin("module.semestre", "semestre")
+            ->innerJoin("e.semaine", "semaine")
+            ->where('semestre.id = :semestre')
+            ->andWhere("semaine.id = :semaine")
+            ->andWhere("e.active = 1")
+            ->andWhere("e.annuler = 1")
             ->setParameter('semestre', $semestre)
             ->setParameter('semaine', $semaine)
             ->getQuery()
