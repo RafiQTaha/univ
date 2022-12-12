@@ -12,7 +12,7 @@ const Toast = Swal.mixin({
     
     
     $(document).ready(function  () {
-    let id_frais;
+    let id_academie;
         
     var table = $("#datatables_gestion_academie").DataTable({
         lengthMenu: [
@@ -72,6 +72,7 @@ const Toast = Swal.mixin({
         }
     })
     $("#modifier").on("click", async function(){
+        // alert('hi')
         if(!id_academie){
             Toast.fire({
               icon: 'error',
@@ -115,7 +116,7 @@ const Toast = Swal.mixin({
             icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
             Toast.fire({
                 icon: 'success',
-                title: response,
+                title: 'Academie bien Modifier',
             })
             $("#modifier_modal").modal("hide")
         } catch (error) {
@@ -131,6 +132,14 @@ const Toast = Swal.mixin({
     })
 
     $("#supprimer").on("click", async function() {
+        alert(id_academie);
+        if(!id_academie){
+            Toast.fire({
+              icon: 'error',
+              title: 'Veuillez selectioner une ligne!',
+            })
+            return;
+        }
         const icon = $("#udpate i");
         try {
             icon.remove('fa-check-circle').addClass("fa-spinner fa-spin ");
@@ -141,7 +150,7 @@ const Toast = Swal.mixin({
             icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
             Toast.fire({
                 icon: 'success',
-                title: response,
+                title: 'Academie bien Supprimer',
             })
         } catch (error) {
             console.log(error, error.response);
