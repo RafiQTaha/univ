@@ -115,7 +115,7 @@ const Toast = Swal.mixin({
             icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
             Toast.fire({
                 icon: 'success',
-                title: response,
+                title: 'typebac bien Modifier',
             })
             $("#modifier_modal").modal("hide")
         } catch (error) {
@@ -141,7 +141,7 @@ const Toast = Swal.mixin({
             icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
             Toast.fire({
                 icon: 'success',
-                title: response,
+                title: 'typebac bien Supprimer',
             })
         } catch (error) {
             console.log(error, error.response);

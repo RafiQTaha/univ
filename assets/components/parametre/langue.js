@@ -115,7 +115,7 @@ const Toast = Swal.mixin({
             icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
             Toast.fire({
                 icon: 'success',
-                title: response,
+                title: 'langue bien Modifier',
             })
             $("#modifier_modal").modal("hide")
         } catch (error) {
@@ -131,6 +131,13 @@ const Toast = Swal.mixin({
     })
 
     $("#supprimer").on("click", async function() {
+        if(!id_langue){
+            Toast.fire({
+                icon: 'success',
+                title: 'langue bien Supprimer',
+            })
+            return;
+        }
         const icon = $("#udpate i");
         try {
             icon.remove('fa-check-circle').addClass("fa-spinner fa-spin ");

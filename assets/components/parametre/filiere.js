@@ -115,15 +115,15 @@ const Toast = Swal.mixin({
             icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
             Toast.fire({
                 icon: 'success',
-                title: response,
+                title: 'filiere bien Modifier',
             })
             $("#modifier_modal").modal("hide")
         } catch (error) {
             console.log(error, error.response);
             const message = error.response.data;
             Toast.fire({
-                icon: 'error',
-                title: message,
+                icon: 'success',
+                title: 'Banque bien Modifier',
             })
             icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
             
@@ -131,6 +131,13 @@ const Toast = Swal.mixin({
     })
 
     $("#supprimer").on("click", async function() {
+        if(!id_filiere){
+            Toast.fire({
+              icon: 'error',
+              title: 'Veuillez selectioner une ligne!',
+            })
+            return;
+        }
         const icon = $("#udpate i");
         try {
             icon.remove('fa-check-circle').addClass("fa-spinner fa-spin ");
@@ -141,7 +148,7 @@ const Toast = Swal.mixin({
             icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
             Toast.fire({
                 icon: 'success',
-                title: response,
+                title: 'filiere bien Supprimer',
             })
         } catch (error) {
             console.log(error, error.response);
