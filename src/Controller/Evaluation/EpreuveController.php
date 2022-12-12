@@ -143,6 +143,7 @@ class EpreuveController extends AbstractController
             }
             // dd($inscriptionsArray);
             $infos['inscriptionsArray'] = $inscriptionsArray;
+            // dd('test');
             $html = $this->render("evaluation/epreuve/pdfs/rattrapage.html.twig", $infos)->getContent();
         } else {
             die("403 something wrong !");

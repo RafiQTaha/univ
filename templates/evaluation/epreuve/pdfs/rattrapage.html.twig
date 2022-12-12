@@ -105,10 +105,10 @@
             <th style="width:60px;text-align: left;font-weight: 400">Code</th>
             <th style="width:120px; text-align: left;font-weight: 600">Nom</th>
             <th style="width:120px;text-align: left;font-weight: 600">Prénom</th>
-            {% for epreuve in epreuves %}
+            {# {% for epreuve in epreuves %}
                 <th style="width:80px; text-align: left;font-weight: 600">EPV:{{epreuve.id}}<br>Cof: {{epreuve.coefficient}}</th>
             {% endfor %}
-            <th style="width:80px; background-color: #525252;color: #fff; text-align: center;font-weight: 900">Moyenne</th>
+            <th style="width:80px; background-color: #525252;color: #fff; text-align: center;font-weight: 900">Moyenne</th> #}
 
         </tr>
 
@@ -121,7 +121,7 @@
                 <td style="font-size: 9px; padding-top: 3px; text-align:left; padding-bottom: 3px">{{array.inscription.id}}</td>
                 <td style="font-size: 9px; text-align: left">{{array.inscription.admission.preinscription.etudiant.nom}}</td>
                 <td style="font-size: 9px; text-align: left">{{array.inscription.admission.preinscription.etudiant.prenom}}</td>
-                {% for note in array.notes %}
+                {# {% for note in array.notes %}
                     {% if note != "" %} 
                          <td style="font-size: 9px; text-align: left">{{note|number_format(2, '.', ',') }}</td>
                     {% else %} 
@@ -134,7 +134,7 @@
                 {% endif %}
                 <td style="font-size: 9px; background: #d8d8d8; text-align: center ; color: #000; font-weight: bold; {{check}} "> 
                     {{array.moyenne|number_format(2, '.', ',') }}
-                </td>
+                </td> #}
             </tr>
         {% endfor %}
     </tbody>
