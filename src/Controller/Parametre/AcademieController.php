@@ -112,6 +112,7 @@ class AcademieController extends AbstractController
         $academie = new XAcademie();
         $academie->setDesignation($request->get('designation'));
         $academie->setAbreviation($request->get('abreviation'));
+        $academie->setActive('1');
         $this->em->persist($academie);
         $this->em->flush();
         $academie->setCode("aca".str_pad($academie->getId(), 8, '0', STR_PAD_LEFT));

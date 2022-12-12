@@ -362,6 +362,54 @@
         "/build/8029.7c64de8b.js",
         "/build/academie.4a5dcdbf.js"
       ]
+    },
+    "banque": {
+      "js": [
+        "/build/runtime.de6b8033.js",
+        "/build/9755.58d5f244.js",
+        "/build/8029.7c64de8b.js",
+        "/build/banque.3ddea968.js"
+      ]
+    },
+    "filiere": {
+      "js": [
+        "/build/runtime.de6b8033.js",
+        "/build/9755.58d5f244.js",
+        "/build/8029.7c64de8b.js",
+        "/build/filiere.7e5a4ac7.js"
+      ]
+    },
+    "langue": {
+      "js": [
+        "/build/runtime.de6b8033.js",
+        "/build/9755.58d5f244.js",
+        "/build/8029.7c64de8b.js",
+        "/build/langue.227bf0ce.js"
+      ]
+    },
+    "modalites": {
+      "js": [
+        "/build/runtime.de6b8033.js",
+        "/build/9755.58d5f244.js",
+        "/build/8029.7c64de8b.js",
+        "/build/modalites.22d25d6a.js"
+      ]
+    },
+    "serieBac": {
+      "js": [
+        "/build/runtime.de6b8033.js",
+        "/build/9755.58d5f244.js",
+        "/build/8029.7c64de8b.js",
+        "/build/serieBac.a670b79f.js"
+      ]
+    },
+    "typeBac": {
+      "js": [
+        "/build/runtime.de6b8033.js",
+        "/build/9755.58d5f244.js",
+        "/build/8029.7c64de8b.js",
+        "/build/typeBac.03b8df0b.js"
+      ]
     }
   }
 }
