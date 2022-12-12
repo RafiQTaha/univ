@@ -1,0 +1,66 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Univ - Paramétre - Typoe de Bac{% endblock %}
+
+
+{% block body %}
+<div class="main-content">
+    <section class="section">
+        <div class="section-header">
+          <h1>Type de Bac</h1>
+          <div class="section-header-breadcrumb">
+              {% for operation in operations %}
+              <a href="{{operation.link}}" class="{{operation.classTag}}" id="{{operation.idTag}}"><i class="{{operation.icon}}"></i>  {{operation.designation}}</a>
+              {% endfor %}
+          </div>
+        </div>
+
+        <div class="section-body">
+        <div class="card">
+            <div class="card-header">
+                <h4>Tableau des type de bac</h4>
+            </div>
+            <div class="card-body">
+            
+            <table id="datatables_gestion_typebac" class="table table-striped" style="width:100%">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>CODE</th>
+                        <th>DESIGNATION</th>
+                        <th>ABREVIATION</th>
+                    </tr>
+                </thead>
+                <tbody>
+                   
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <th>ID</th>
+                        <th>CODE</th>
+                        <th>DESIGNATION</th>
+                        <th>ABREVIATION</th>
+                    </tr>
+                </tfoot>
+            </table>
+            </div>
+            
+        </div>
+        </div>
+    </section>
+</div>
+
+
+
+<!--Modal Import Group-->
+{% include 'parametre/typebac/modals/ajouter.html.twig' %}
+{% include 'parametre/typebac/modals/modifier.html.twig' %}
+
+{% endblock %}
+
+{% block javascripts %}
+{{parent()}}
+{{ encore_entry_script_tags('typeBac') }}
+
+{% endblock %}
+

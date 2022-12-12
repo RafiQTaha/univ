@@ -62,6 +62,13 @@ Encore
     .addEntry('enseignant', './assets/components/parametre/enseignant.js')
     .addEntry('enseignantexcept', './assets/components/parametre/enseignantexcept.js')
     .addEntry('frais', './assets/components/parametre/frais.js')
+    .addEntry('academie', './assets/components/parametre/academie.js')
+    .addEntry('banque', './assets/components/parametre/banque.js')
+    .addEntry('filiere', './assets/components/parametre/filiere.js')
+    .addEntry('langue', './assets/components/parametre/langue.js')
+    .addEntry('modalites', './assets/components/parametre/modalites.js')
+    .addEntry('serieBac', './assets/components/parametre/serieBac.js')
+    .addEntry('typeBac', './assets/components/parametre/typeBac.js')
 
 
     // .addStyleEntry('login', './assets/styles/components/login/login.scss')
