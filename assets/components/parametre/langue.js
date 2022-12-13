@@ -56,6 +56,7 @@ const Toast = Swal.mixin({
             icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
             $('#save')[0].reset();
             table.ajax.reload();
+            id_langue = false
             Toast.fire({
                 icon: 'success',
                 title: 'langue bien Ajouter',

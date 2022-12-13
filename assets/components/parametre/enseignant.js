@@ -58,6 +58,7 @@ const Toast = Swal.mixin({
             icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
             $('#save')[0].reset();
             table.ajax.reload();
+            id_enseignant = false;
             $("#ajout_modal").modal("hide")
             Toast.fire({
                 icon: 'succees',
@@ -115,6 +116,7 @@ const Toast = Swal.mixin({
             $('#udpate')[0].reset();
             icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
             table.ajax.reload();
+            id_enseignant = false;
             $("#modifier_modal").modal("hide")
             Toast.fire({
                 icon: 'success',
