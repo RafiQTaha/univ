@@ -133,7 +133,7 @@ const Toast = Swal.mixin({
     })
 
     $("#supprimer").on("click", async function() {
-        alert(id_academie);
+        // alert(id_academie);
         if(!id_academie){
             Toast.fire({
               icon: 'error',

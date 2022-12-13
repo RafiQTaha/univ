@@ -157,6 +157,42 @@ const Toast = Swal.mixin({
             
         }
     })
+
+    $("#supprimer").on("click", async function() {
+        if(!id_frais){
+            Toast.fire({
+              icon: 'error',
+              title: 'Veuillez selectioner une ligne!',
+            })
+            return;
+        }
+        const icon = $("#supprimer i");
+        
+        var res = confirm('Vous voulez vraiment supprimer ce frais ?');
+        if(res == 1){
+            try {
+                icon.remove('fa-check-circle').addClass("fa-spinner fa-spin ");
+                const request = await axios.post('/parametre/frais/delete/'+id_frais);
+                const response = request.data;
+                table.ajax.reload();
+                id_frais = false
+                icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
+                Toast.fire({
+                    icon: 'success',
+                    title: response,
+                })
+            } catch (error) {
+                console.log(error, error.response);
+                const message = error.response.data;
+                Toast.fire({
+                    icon: 'error',
+                    title: message,
+                })
+                icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
+            }
+        }  
+        
+    })
    
 })
 

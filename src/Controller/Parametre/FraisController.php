@@ -45,7 +45,7 @@ class FraisController extends AbstractController
         $params = $request->query;
         // dd($params);
         $where = $totalRows = $sqlRequest = "";
-        $filtre = "where 1 = 1";   
+        $filtre = "where frai.active=1 ";   
         // dd($params->all('columns')[0]);
         if (!empty($params->all('columns')[0]['search']['value'])) {
             // dd("in");
@@ -161,5 +161,14 @@ class FraisController extends AbstractController
         $this->em->flush();
  
         return new JsonResponse('Frais bien Modifier',200);
+    }
+
+    #[Route('/delete/{frais}', name: 'parametre_frais_delete')]
+    public function delete(Request $request, PFrais $frais): Response
+    {
+        $frais->setActive(0);
+        $this->em->flush();
+ 
+        return new JsonResponse('Frais bien Supprimer!',200);
     }
 }
