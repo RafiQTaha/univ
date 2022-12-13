@@ -153,6 +153,7 @@ const Toast = Swal.mixin({
             icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
             $('#save')[0].reset();
             table.ajax.reload();
+            id_programmation = false;
             $("#ajout_modal").modal("hide")
             Toast.fire({
                 icon: 'success',
@@ -210,6 +211,7 @@ const Toast = Swal.mixin({
             $('#udpate')[0].reset();
             icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
             table.ajax.reload();
+            id_programmation = false;
             $("#modifier_modal").modal("hide")
             Toast.fire({
                 icon: 'success',

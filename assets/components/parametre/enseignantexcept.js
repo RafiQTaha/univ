@@ -88,7 +88,8 @@ const Toast = Swal.mixin({
         try {
             const request = await axios.post('/parametre/enseignantexcept/new',formData);
             const response = request.data;
-            table.ajax.reload()
+            table.ajax.reload();
+            id_enseignantexcept = false;
             icon.addClass('fa-plus').removeClass("fa-spinner fa-spin ");
             Toast.fire({
                 icon: 'success',
@@ -121,7 +122,8 @@ const Toast = Swal.mixin({
             const request = await axios.post('/parametre/enseignantexcept/delete',formData);
             const response = request.data;
             id_enseignantexcept = null;
-            table.ajax.reload()
+            table.ajax.reload();
+            id_enseignantexcept = null;
             icon.addClass('fa-trash').removeClass("fa-spinner fa-spin ");
             Toast.fire({
                 icon: 'success',

@@ -84,6 +84,7 @@ const Toast = Swal.mixin({
             $('#save')[0].reset();
             $('#save select').val('').trigger("change");
             table.ajax.reload();
+            id_frais = false
             Toast.fire({
                 icon: 'success',
                 title: 'Frais bien Ajouter',
