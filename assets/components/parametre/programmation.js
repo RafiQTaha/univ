@@ -228,6 +228,43 @@ const Toast = Swal.mixin({
             
         }
     })
+
+    $("#supprimer").on("click", async function(){
+        if(!id_programmation){
+            Toast.fire({
+              icon: 'error',
+              title: 'Veuillez selectioner un enseignant!',
+            })
+            return;
+        }
+        const icon = $("#supprimer i");
+        icon.removeClass('fa-trash').addClass("fa-spinner fa-spin ");
+        var formData = new FormData()
+        formData.append("programmation", id_programmation);
+        var res = confirm('Vous voulez vraiment supprimer cette programmation ?');
+        if(res == 1){
+            try {
+                const request = await axios.post('/parametre/programmation/delete',formData);
+                const response = request.data;
+                id_programmation = null;
+                table.ajax.reload();
+                id_programmation = null;
+                icon.addClass('fa-trash').removeClass("fa-spinner fa-spin ");
+                Toast.fire({
+                    icon: 'success',
+                    title: 'programmation bien Supprimer',
+                })
+            } catch (error) {
+                console.log(error, error.response);
+                const message = error.response.data;
+                Toast.fire({
+                    icon: 'error',
+                    title: message,
+                })
+                icon.addClass('fa-trash').removeClass("fa-spinner fa-spin ");
+            }
+        }
+    })
 })
 
 

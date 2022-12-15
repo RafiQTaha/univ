@@ -132,27 +132,38 @@ const Toast = Swal.mixin({
     })
 
     $("#supprimer").on("click", async function() {
+        if(!id_typebac){
+            Toast.fire({
+              icon: 'error',
+              title: 'Veuillez selectioner une ligne!',
+            })
+            return;
+        }
         const icon = $("#udpate i");
-        try {
-            icon.remove('fa-check-circle').addClass("fa-spinner fa-spin ");
-            const request = await axios.post('/parametre/typebac/delete/'+id_typebac);
-            const response = request.data;
-            table.ajax.reload();
-            id_typebac = false
-            icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
-            Toast.fire({
-                icon: 'success',
-                title: 'typebac bien Supprimer',
-            })
-        } catch (error) {
-            console.log(error, error.response);
-            const message = error.response.data;
-            Toast.fire({
-                icon: 'error',
-                title: message,
-            })
-            icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
-            
+
+        var res = confirm('Vous voulez vraiment supprimer ce type de bac ?');
+        if(res == 1){
+            try {
+                icon.remove('fa-check-circle').addClass("fa-spinner fa-spin ");
+                const request = await axios.post('/parametre/typebac/delete/'+id_typebac);
+                const response = request.data;
+                table.ajax.reload();
+                id_typebac = false
+                icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
+                Toast.fire({
+                    icon: 'success',
+                    title: 'typebac bien Supprimer',
+                })
+            } catch (error) {
+                console.log(error, error.response);
+                const message = error.response.data;
+                Toast.fire({
+                    icon: 'error',
+                    title: message,
+                })
+                icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
+                
+            }
         }
     })
    

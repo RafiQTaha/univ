@@ -44,7 +44,7 @@ class EnseignantController extends AbstractController
         $params = $request->query;
         // dd($params);
         $where = $totalRows = $sqlRequest = "";
-        $filtre = "where 1 = 1";   
+        $filtre = "where 1 = 1 and ens.active = 1";   
         // dd($params->all('columns')[0]);
         if (!empty($params->all('columns')[0]['search']['value'])) {
             // dd("in");
@@ -99,7 +99,7 @@ class EnseignantController extends AbstractController
                 
             }
             $nestedData["DT_RowId"] = $cd;
-            $nestedData["DT_RowClass"] = $cd;
+            // $nestedData["DT_RowClass"] = $cd;
             $data[] = $nestedData;
             $i++;
         }
@@ -154,5 +154,14 @@ class EnseignantController extends AbstractController
         $this->em->flush();
  
         return new JsonResponse('Enseignant bien modifier!',200);
+    }
+
+    #[Route('/delete/{enseignant}', name: 'parametre_enseignant_delete')]
+    public function delete(Request $request, PEnseignant $enseignant): Response
+    {
+        $enseignant->setActive('0');
+        $this->em->flush();
+ 
+        return new JsonResponse(1);
     }
 }

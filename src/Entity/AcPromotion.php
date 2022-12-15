@@ -34,7 +34,7 @@ class AcPromotion
     private $ordre;
 
     #[ORM\Column(type: 'integer', nullable: true)]
-    private $active;
+    private $active = 1;
 
     #[ORM\Column(type: 'datetime', nullable: true)]
     private $created;

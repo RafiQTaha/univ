@@ -42,7 +42,7 @@ class PromotionController extends AbstractController
         $params = $request->query;
         // dd($params);
         $where = $totalRows = $sqlRequest = "";
-        $filtre = "where 1 = 1";   
+        $filtre = "where 1 = 1 and prm.active = 1";   
         // dd($params->all('columns')[0]);
         if (!empty($params->all('columns')[0]['search']['value'])) {
             // dd("in");
@@ -104,7 +104,7 @@ class PromotionController extends AbstractController
                 
             }
             $nestedData["DT_RowId"] = $cd;
-            $nestedData["DT_RowClass"] = $cd;
+            // $nestedData["DT_RowClass"] = $cd;
             $data[] = $nestedData;
             $i++;
         }
@@ -152,6 +152,15 @@ class PromotionController extends AbstractController
         $promotion->setDesignation($request->get('designation'));
         $promotion->setOrdre($request->get('ordre'));
         $promotion->setActive($request->get('active') == "on" ? true : false);
+        $this->em->flush();
+ 
+        return new JsonResponse(1);
+    }
+
+    #[Route('/delete/{promotion}', name: 'parametre_promotion_delete')]
+    public function delete(Request $request, AcPromotion $promotion): Response
+    {
+        $promotion->setActive('0');
         $this->em->flush();
  
         return new JsonResponse(1);

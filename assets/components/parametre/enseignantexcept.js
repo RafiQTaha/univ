@@ -118,25 +118,28 @@ const Toast = Swal.mixin({
         icon.removeClass('fa-trash').addClass("fa-spinner fa-spin ");
         var formData = new FormData()
         formData.append("enseignantexcept", id_enseignantexcept);
-        try {
-            const request = await axios.post('/parametre/enseignantexcept/delete',formData);
-            const response = request.data;
-            id_enseignantexcept = null;
-            table.ajax.reload();
-            id_enseignantexcept = null;
-            icon.addClass('fa-trash').removeClass("fa-spinner fa-spin ");
-            Toast.fire({
-                icon: 'success',
-                title: response,
-            })
-        } catch (error) {
-            console.log(error, error.response);
-            const message = error.response.data;
-            Toast.fire({
-                icon: 'error',
-                title: message,
-            })
-            icon.addClass('fa-trash').removeClass("fa-spinner fa-spin ");
+        var res = confirm('Vous voulez vraiment supprimer cette annee ?');
+        if(res == 1){
+            try {
+                const request = await axios.post('/parametre/enseignantexcept/delete',formData);
+                const response = request.data;
+                id_enseignantexcept = null;
+                table.ajax.reload();
+                id_enseignantexcept = null;
+                icon.addClass('fa-trash').removeClass("fa-spinner fa-spin ");
+                Toast.fire({
+                    icon: 'success',
+                    title: 'Enseignant except bien Supprimer',
+                })
+            } catch (error) {
+                console.log(error, error.response);
+                const message = error.response.data;
+                Toast.fire({
+                    icon: 'error',
+                    title: message,
+                })
+                icon.addClass('fa-trash').removeClass("fa-spinner fa-spin ");
+            }
         }
     })
 })

@@ -41,7 +41,7 @@ class ModuleController extends AbstractController
         $params = $request->query;
         // dd($params);
         $where = $totalRows = $sqlRequest = "";
-        $filtre = "where 1 = 1";   
+        $filtre = "where 1 = 1 and mdl.active = 1";   
         // dd($params->all('columns')[0]);
         if (!empty($params->all('columns')[0]['search']['value'])) {
             // dd("in");
@@ -106,7 +106,7 @@ class ModuleController extends AbstractController
                 
             }
             $nestedData["DT_RowId"] = $cd;
-            $nestedData["DT_RowClass"] = $cd;
+            // $nestedData["DT_RowClass"] = $cd;
             $data[] = $nestedData;
             $i++;
         }
@@ -160,6 +160,15 @@ class ModuleController extends AbstractController
         $module->setType($request->get('type'));
         $module->setColor($request->get('color'));
         $module->setUserUpdated($this->getUser());
+        $this->em->flush();
+ 
+        return new JsonResponse(1);
+    }
+
+    #[Route('/delete/{module}', name: 'parametre_module_delete')]
+    public function delete(Request $request, AcModule $module): Response
+    {
+        $module->setActive('0');
         $this->em->flush();
  
         return new JsonResponse(1);

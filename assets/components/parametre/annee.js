@@ -175,27 +175,30 @@ const Toast = Swal.mixin({
             })
             return;
         }
-        const icon = $("#udpate i");
-        try {
-            icon.remove('fa-trash').addClass("fa-spinner fa-spin ");
-            const request = await axios.post('/parametre/annee/delete/'+id_annee);
-            const response = request.data;
-            icon.addClass('fa-trash').removeClass("fa-spinner fa-spin ");
-            table.ajax.reload();
-            id_annee = false
-            Toast.fire({
-                icon: 'success',
-                title: response,
-            })
-            $("#modifier_modal").modal("hide")
-        } catch (error) {
-            console.log(error, error.response);
-            const message = error.response.data;
-            Toast.fire({
-                icon: 'error',
-                title: message,
-            })
-            icon.addClass('fa-trash').removeClass("fa-spinner fa-spin ");
+        const icon = $("#supprimer i");
+        var res = confirm('Vous voulez vraiment supprimer cette annee ?');
+        if(res == 1){
+            try {
+                icon.remove('fa-trash').addClass("fa-spinner fa-spin ");
+                const request = await axios.post('/parametre/annee/delete/'+id_annee);
+                const response = request.data;
+                icon.addClass('fa-trash').removeClass("fa-spinner fa-spin ");
+                table.ajax.reload();
+                id_annee = false
+                Toast.fire({
+                    icon: 'success',
+                    title: response,
+                })
+                $("#modifier_modal").modal("hide")
+            } catch (error) {
+                console.log(error, error.response);
+                const message = error.response.data;
+                Toast.fire({
+                    icon: 'error',
+                    title: message,
+                })
+                icon.addClass('fa-trash').removeClass("fa-spinner fa-spin ");
+            }
         }
     })
 

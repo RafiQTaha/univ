@@ -104,7 +104,7 @@ class EnseignantExceptController extends AbstractController
                 $nestedData[] = $value;
             }
             $nestedData["DT_RowId"] = $cd;
-            $nestedData["DT_RowClass"] = $cd;
+            // $nestedData["DT_RowClass"] = $cd;
             $data[] = $nestedData;
             $i++;
         }
