@@ -307,6 +307,8 @@ $(document).ready(function () {
         modalAlert.remove();
         const icon = $(".new_facture-form .btn i");
         icon.removeClass('fa-check-circle').addClass("fa-spinner fa-spin");
+        $('.new_facture-form #save_reglement').addClass('disabled').attr('disabled', true)
+        // $("#enregistrer").removeClass('btn-secondary').addClass('btn-info').attr('disabled', false)
         try{
             const request = await  axios.post('/facture/factures/ajouter_reglement/'+id_facture,formdata)
             const data = request.data;
@@ -317,6 +319,7 @@ $(document).ready(function () {
             $('.new_facture-form select').val('').trigger("change");
             getMontant();
             icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin");
+            $('.new_facture-form #save_reglement').removeClass('disabled').attr('disabled', false)
             reglement = false;
             table_facture.ajax.reload(null, false);
             window.open('/facture/factures/facture/'+id_facture+'/'+data, '_blank');
@@ -328,6 +331,7 @@ $(document).ready(function () {
                 `<div class="alert alert-danger">${message}</div>`
             );
             icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
+            $('.new_facture-form #save_reglement').removeClass('disabled').attr('disabled', false)
         }
         setTimeout(() => {
            $("#ajouter_modal .modal-body .alert").remove();
