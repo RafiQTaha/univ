@@ -152,6 +152,7 @@ const Toast = Swal.mixin({
             const response = request.data;
             icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
             table.ajax.reload();
+            id_annee = false
             $("#modifier_modal").modal("hide")
         } catch (error) {
             console.log(error, error.response);
@@ -181,6 +182,7 @@ const Toast = Swal.mixin({
             const response = request.data;
             icon.addClass('fa-trash').removeClass("fa-spinner fa-spin ");
             table.ajax.reload();
+            id_annee = false
             Toast.fire({
                 icon: 'success',
                 title: response,

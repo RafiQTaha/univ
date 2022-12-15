@@ -160,7 +160,7 @@ const Toast = Swal.mixin({
             icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
             $('#save')[0].reset();
             table.ajax.reload();
-            id_element = null;
+            id_element = false;
             $("#ajout_modal").modal("hide")
             Toast.fire({
                 icon: 'success',
