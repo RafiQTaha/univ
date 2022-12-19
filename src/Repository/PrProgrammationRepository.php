@@ -47,4 +47,15 @@ class PrProgrammationRepository extends ServiceEntityRepository
         ;
     }
     */
+    public function findProgrammationsByFormation($formation)
+    {
+        return $this->createQueryBuilder('p')
+            ->innerJoin('p.annee','annee')
+            ->innerJoin('annee.formation','formation')
+            ->where('formation = :formation')
+            ->setParameter('formation', $formation)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
 }
