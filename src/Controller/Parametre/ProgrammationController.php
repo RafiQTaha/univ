@@ -7,12 +7,14 @@ use App\Controller\DatatablesController;
 use App\Entity\AcAnnee;
 use App\Entity\AcElement;
 use App\Entity\AcEtablissement;
+use App\Entity\AcFormation;
 use App\Entity\AcModule;
 use App\Entity\PEnseignant;
 use App\Entity\PNatureEpreuve;
 use App\Entity\PrProgrammation;
 use App\Entity\TypeElement;
 use Doctrine\Persistence\ManagerRegistry;
+use Proxies\__CG__\App\Entity\AcAnnee as EntityAcAnnee;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -126,7 +128,7 @@ class ProgrammationController extends AbstractController
                 
             }
             $nestedData["DT_RowId"] = $cd;
-            // $nestedData["DT_RowClass"] = $cd;
+            $nestedData["DT_RowClass"] = "";
             $data[] = $nestedData;
             $i++;
         }
@@ -224,4 +226,32 @@ class ProgrammationController extends AbstractController
 
        return new JsonResponse('Programmation Bien Supprimer',200);
     }
+    // #[Route('/duplication', name: 'parametre_programmation_duplication')]
+    // public function duplication(): Response
+    // {   
+    //     $formations = $this->em->getRepository(AcFormation::class)->findProgrammationGroupByFormation();
+    //     // if ($formations[0]) {
+    //     // if($formations[0]->getAnnee()->getValidationAcademique() = 'non')
+    //     $programmations = $this->em->getRepository(PrProgrammation::class)->findProgrammationsByFormation($formations[0]);
+    //     foreach ($programmations as $programmation) {
+
+    //         $prog = new PrProgrammation();
+    //         $prog->setVolume($programmation->getVolume());
+    //         $prog->setNatureEpreuve($programmation->getNatureEpreuve());
+    //         $prog->setElement($programmation->getElement());
+    //         $annee = $this->em->getRepository(AcAnnee::class)->getActiveAnneeByFormation($programmations->getAnnee()->getFormation());
+    //         // $annees = $this->em->getRepository(AcAnnee::class)->findBy(["formation"=>$programmations->getAnnee()->getFormation(),'active'=>1]);
+    //         dd($annee);  
+    //         $programmation->setAnnee($this->em->getRepository(AcAnnee::class)->find($request->get("annee_id")));
+    //         $programmation->setCreated(new \DateTime("now"));
+    //         $programmation->setUserCreated($this->getUser());
+    //     }
+    //     dd($programmations);
+            
+    //         # code...
+    //     // }
+    //     dd($formations[0]);  
+    
+    //     return new JsonResponse('Programmation Bien Modifier',200);
+    // }
 }

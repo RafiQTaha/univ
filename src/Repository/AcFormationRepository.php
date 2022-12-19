@@ -47,4 +47,15 @@ class AcFormationRepository extends ServiceEntityRepository
         ;
     }
     */
+    
+    public function findProgrammationGroupByFormation()
+    {
+        return $this->createQueryBuilder('f')
+            ->innerJoin('f.acAnnees','annees')
+            ->innerJoin('annees.programmations','programmations')
+            ->groupBy('f.id')
+            ->getQuery()
+            ->getResult()
+        ;
+    }
 }
