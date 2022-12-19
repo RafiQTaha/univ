@@ -15,11 +15,14 @@ use App\Entity\ExGnotes;
 use App\Entity\PStatut;
 use Doctrine\Persistence\ManagerRegistry;
 use Mpdf\Mpdf;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 
 #[Route('/evaluation/epreuve')]
 class EpreuveController extends AbstractController
@@ -285,5 +288,57 @@ class EpreuveController extends AbstractController
         
         
         return new JsonResponse("Bien Enregistre", 200);
+    }
+      
+    #[Route('/impression_excel/{type}', name: 'administration_epreuve_impression_excel')]
+    public function administration_epreuve_impression_excel(Request $request, $type) 
+    {         
+        $session = $request->getSession();
+        $inscriptionsArray = $session->get('data_epreuves')['inscriptionsArray'];
+        $epreuves = $session->get('data_epreuves')['epreuves'];
+        $element = $session->get('data_epreuves')['element'];
+        $natureEpreuve = $session->get('data_epreuves')['natureEpreuve'];
+        $annee = $this->em->getRepository(AcAnnee::class)->getActiveAnneeByFormation($element->getModule()->getSemestre()->getPromotion()->getFormation());
+        $infos =  [
+            'inscriptionsArray' => $inscriptionsArray,
+            'epreuves' => $epreuves,
+            'element' => $element,
+            'etablissement' => $annee->getFormation()->getEtablissement(),
+            'natureEpreuve' => $natureEpreuve
+        ];
+        if ($type == "excel_rat") {
+            
+            $spreadsheet = new Spreadsheet();
+            $sheet = $spreadsheet->getActiveSheet();
+            $sheet->setCellValue('A1', 'ORD');
+            $sheet->setCellValue('B1', 'CODE');
+            $sheet->setCellValue('C1', 'NOM');
+            $sheet->setCellValue('D1', 'Prenom');
+            $i=2;
+            $j=1;
+            // dd($operationcabs);
+            foreach($inscriptionsArray as $key => $value) {
+                // dd($value['inscription']->getAdmission());
+                if($value['moyenne'] < 10) {  
+                    $sheet->setCellValue('A'.$i, $j);
+                    $sheet->setCellValue('B'.$i, $value['inscription']->getId());
+                    $sheet->setCellValue('C'.$i, $value['inscription']->getAdmission()->getPreinscription()->getEtudiant()->getNom());
+                    $sheet->setCellValue('D'.$i, $value['inscription']->getAdmission()->getPreinscription()->getEtudiant()->getPrenom());
+                    $i++;
+                    $j++;
+                }
+            }
+            // $infos['inscriptionsArray'] = $inscriptionsArray;
+            // dd($inscriptionsArray);
+            
+            $writer = new Xlsx($spreadsheet);
+            $fileName = "epreuve_deliberation_".$element->getId().".xlsx";
+            $temp_file = tempnam(sys_get_temp_dir(), $fileName);
+            $writer->save($temp_file);
+            return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);
+            
+        } else {
+            die("403 something wrong !");
+        }
     }
 }
