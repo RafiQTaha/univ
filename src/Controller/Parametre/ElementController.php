@@ -45,7 +45,7 @@ class ElementController extends AbstractController
         $params = $request->query;
         // dd($params);
         $where = $totalRows = $sqlRequest = "";
-        $filtre = "where 1 = 1";   
+        $filtre = "where 1 = 1 and elm.active = 1";   
         // dd($params->all('columns')[0]);
         if (!empty($params->all('columns')[0]['search']['value'])) {
             $filtre .= " and etab.id = '" . $params->all('columns')[0]['search']['value'] . "' ";
@@ -111,7 +111,7 @@ class ElementController extends AbstractController
                 
             }
             $nestedData["DT_RowId"] = $cd;
-            $nestedData["DT_RowClass"] = $cd;
+            // $nestedData["DT_RowClass"] = $cd;
             $data[] = $nestedData;
             $i++;
         }
@@ -219,5 +219,13 @@ class ElementController extends AbstractController
         $temp_file = tempnam(sys_get_temp_dir(), $fileName);
         $writer->save($temp_file);
         return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);
+    }
+    #[Route('/delete/{element}', name: 'parametre_element_delete')]
+    public function delete(Request $request, AcElement $element): Response
+    {
+        $element->setActive('0');
+        $this->em->flush();
+ 
+        return new JsonResponse(1);
     }
 }

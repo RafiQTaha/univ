@@ -210,6 +210,22 @@ class ProgrammationController extends AbstractController
         return new JsonResponse('Programmation Bien Modifier',200);
     }
 
+    #[Route('/delete', name: 'parametre_programmation_delete')]
+    public function delete(Request $request): Response
+    {
+        // dd($request);
+        $programmation = $this->em->getRepository(PrProgrammation::class)->find($request->get('programmation'));
+        // dd($exist);
+        
+        if ($programmation == null) {
+            return new JsonResponse('Merci de choisir un enseignant!',500);
+        }
+        // dd($request);
+        $this->em->remove($programmation);
+        $this->em->flush();
+
+       return new JsonResponse('Programmation Bien Supprimer',200);
+    }
     // #[Route('/duplication', name: 'parametre_programmation_duplication')]
     // public function duplication(): Response
     // {   

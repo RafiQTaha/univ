@@ -209,6 +209,42 @@ const Toast = Swal.mixin({
         const icon = $("#extraction_architecture i");
         window.open('/parametre/element/extraction_architecture', '_blank');
     })
+
+    $("#supprimer").on("click", async function() {
+        if(!id_element){
+            Toast.fire({
+              icon: 'error',
+              title: 'Veuillez selectioner une ligne!',
+            })
+            return;
+        }
+        const icon = $("#supprimer i");
+
+        var res = confirm('Vous voulez vraiment supprimer cet element ?');
+        if(res == 1){
+            try {
+                icon.remove('fa-check-circle').addClass("fa-spinner fa-spin ");
+                const request = await axios.post('/parametre/element/delete/'+id_element);
+                const response = request.data;
+                table.ajax.reload();
+                id_element = false
+                icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
+                Toast.fire({
+                    icon: 'success',
+                    title: 'Element bien Supprimer',
+                })
+            } catch (error) {
+                console.log(error, error.response);
+                const message = error.response.data;
+                Toast.fire({
+                    icon: 'error',
+                    title: message,
+                })
+                icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
+                
+            }
+        }
+    })
 })
 
 

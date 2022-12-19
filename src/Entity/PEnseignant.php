@@ -48,6 +48,9 @@ class PEnseignant
     #[ORM\OneToMany(mappedBy: 'enseignant', targetEntity: PEnseignantExcept::class)]
     private $enseignantexcepts;
 
+    #[ORM\Column(type: 'integer', nullable: true)]
+    private $active = 1;
+
     public function __construct()
     {
         $this->epreuves = new ArrayCollection();
@@ -293,6 +296,18 @@ class PEnseignant
                 $enseignantexcept->setEnseignant(null);
             }
         }
+
+        return $this;
+    }
+    
+    public function getActive(): ?int
+    {
+        return $this->active;
+    }
+
+    public function setActive(?int $active): self
+    {
+        $this->active = $active;
 
         return $this;
     }

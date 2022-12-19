@@ -40,7 +40,7 @@ class FormationController extends AbstractController
         $params = $request->query;
         // dd($params);
         $where = $totalRows = $sqlRequest = "";
-        $filtre = "where 1 = 1";   
+        $filtre = "where form.`active` = 1";   
         // dd($params->all('columns')[0]);
         if (!empty($params->all('columns')[0]['search']['value'])) {
             // dd("in");
@@ -97,7 +97,7 @@ class FormationController extends AbstractController
                 
             }
             $nestedData["DT_RowId"] = $cd;
-            $nestedData["DT_RowClass"] = $cd;
+            // $nestedData["DT_RowClass"] = $cd;
             $data[] = $nestedData;
             $i++;
         }
@@ -148,6 +148,14 @@ class FormationController extends AbstractController
         $formation->setAbreviation($request->get('abreviation'));
         $formation->setActive($request->get('active') == "on" ? true : false);
         $formation->setNbrAnnee($request->get('duree'));
+        $this->em->flush();
+ 
+        return new JsonResponse(1);
+    }
+    #[Route('/delete/{formation}', name: 'parametre_formation_delete')]
+    public function delete(Request $request, AcFormation $formation): Response
+    {
+        $formation->setActive('0');
         $this->em->flush();
  
         return new JsonResponse(1);

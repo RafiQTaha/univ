@@ -103,7 +103,7 @@ class AnneeController extends AbstractController
                 
             }
             $nestedData["DT_RowId"] = $cd;
-            $nestedData["DT_RowClass"] = $cd;
+            // $nestedData["DT_RowClass"] = $cd;
             $data[] = $nestedData;
             $i++;
         }

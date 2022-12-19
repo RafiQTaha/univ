@@ -38,7 +38,7 @@ class EtablissementController extends AbstractController
         $params = $request->query;
         // dd($params);
         $where = $totalRows = $sqlRequest = "";
-        $filtre = "where 1 = 1";   
+        $filtre = "where 1 = 1 and active = 1";   
         // dd($params->all('columns')[0]);
             
         $columns = array(
@@ -91,7 +91,7 @@ class EtablissementController extends AbstractController
                 
             }
             $nestedData["DT_RowId"] = $cd;
-            $nestedData["DT_RowClass"] = $cd;
+            // $nestedData["DT_RowClass"] = $cd;
             $data[] = $nestedData;
             $i++;
         }
@@ -141,6 +141,15 @@ class EtablissementController extends AbstractController
         $etablissement->setNature($request->get('nature'));
         $etablissement->setActive($request->get('active') == "on" ? true : false);
         $etablissement->setDate(new \DateTime($request->get('date')));
+        $this->em->flush();
+ 
+        return new JsonResponse(1);
+    }
+
+    #[Route('/delete/{etablissement}', name: 'parametre_etablissement_delete')]
+    public function delete(Request $request, AcEtablissement $etablissement): Response
+    {
+        $etablissement->setActive('0');
         $this->em->flush();
  
         return new JsonResponse(1);

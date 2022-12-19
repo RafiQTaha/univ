@@ -140,26 +140,30 @@ const Toast = Swal.mixin({
             return;
         }
         const icon = $("#udpate i");
-        try {
-            icon.remove('fa-check-circle').addClass("fa-spinner fa-spin ");
-            const request = await axios.post('/parametre/filiere/delete/'+id_filiere);
-            const response = request.data;
-            table.ajax.reload();
-            id_filiere = false
-            icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
-            Toast.fire({
-                icon: 'success',
-                title: 'filiere bien Supprimer',
-            })
-        } catch (error) {
-            console.log(error, error.response);
-            const message = error.response.data;
-            Toast.fire({
-                icon: 'error',
-                title: message,
-            })
-            icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
-            
+
+        var res = confirm('Vous voulez vraiment supprimer cette filiere ?');
+        if(res == 1){
+            try {
+                icon.remove('fa-check-circle').addClass("fa-spinner fa-spin ");
+                const request = await axios.post('/parametre/filiere/delete/'+id_filiere);
+                const response = request.data;
+                table.ajax.reload();
+                id_filiere = false
+                icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
+                Toast.fire({
+                    icon: 'success',
+                    title: 'filiere bien Supprimer',
+                })
+            } catch (error) {
+                console.log(error, error.response);
+                const message = error.response.data;
+                Toast.fire({
+                    icon: 'error',
+                    title: message,
+                })
+                icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
+                
+            }
         }
     })
    

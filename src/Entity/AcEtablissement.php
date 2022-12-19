@@ -43,7 +43,7 @@ class AcEtablissement
     private $date;
 
     #[ORM\Column(type: 'integer', nullable: true)]
-    private $active;
+    private $active = 1;
 
     #[ORM\Column(type: 'integer', nullable: true)]
     private $rapport;

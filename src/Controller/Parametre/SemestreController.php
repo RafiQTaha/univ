@@ -40,7 +40,7 @@ class SemestreController extends AbstractController
         $params = $request->query;
         // dd($params);
         $where = $totalRows = $sqlRequest = "";
-        $filtre = "where 1 = 1";   
+        $filtre = "where 1 = 1 and sem.active = 1";   
         // dd($params->all('columns')[0]);
         if (!empty($params->all('columns')[0]['search']['value'])) {
             // dd("in");
@@ -99,7 +99,7 @@ class SemestreController extends AbstractController
                 
             }
             $nestedData["DT_RowId"] = $cd;
-            $nestedData["DT_RowClass"] = $cd;
+            // $nestedData["DT_RowClass"] = $cd;
             $data[] = $nestedData;
             $i++;
         }
@@ -144,6 +144,15 @@ class SemestreController extends AbstractController
     {
         $semestre->setDesignation($request->get('designation'));
         $semestre->setActive($request->get('active') == "on" ? true : false);
+        $this->em->flush();
+ 
+        return new JsonResponse(1);
+    }
+
+    #[Route('/delete/{semestre}', name: 'parametre_semestre_delete')]
+    public function delete(Request $request, AcSemestre $semestre): Response
+    {
+        $semestre->setActive('0');
         $this->em->flush();
  
         return new JsonResponse(1);
