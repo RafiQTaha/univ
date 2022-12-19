@@ -539,21 +539,22 @@ class GestionFactureController extends AbstractController
         $sheet->setCellValue('C1', 'CODE PRE-INSCRIPTION');
         $sheet->setCellValue('D1', 'CODE ADMISSION');
         $sheet->setCellValue('E1', 'CODE INSCRIPTION');
-        $sheet->setCellValue('F1', 'CODE FACTURE');
-        $sheet->setCellValue('G1', 'ANNEE UNIVERSITAIRE');
-        $sheet->setCellValue('H1', 'NOM');
-        $sheet->setCellValue('I1', 'PRENOM');
-        $sheet->setCellValue('J1', 'NATIONALITE');
-        $sheet->setCellValue('K1', 'ETABLISSEMENT');
-        $sheet->setCellValue('L1', 'FORMATION');
-        $sheet->setCellValue('M1', 'PROMOTION');
-        $sheet->setCellValue('N1', 'SOURCE');
-        $sheet->setCellValue('O1', 'MT FACTURE');
-        $sheet->setCellValue('P1', 'MT REGLE');
-        $sheet->setCellValue('Q1', 'REST');
-        $sheet->setCellValue('R1', 'ORG');
-        $sheet->setCellValue('S1', 'statut');
-        $sheet->setCellValue('T1', 'D-CREATION');
+        $sheet->setCellValue('F1', 'ID FACTURE');
+        $sheet->setCellValue('G1', 'CODE FACTURE');
+        $sheet->setCellValue('H1', 'ANNEE UNIVERSITAIRE');
+        $sheet->setCellValue('I1', 'NOM');
+        $sheet->setCellValue('J1', 'PRENOM');
+        $sheet->setCellValue('K1', 'NATIONALITE');
+        $sheet->setCellValue('L1', 'ETABLISSEMENT');
+        $sheet->setCellValue('M1', 'FORMATION');
+        $sheet->setCellValue('N1', 'PROMOTION');
+        $sheet->setCellValue('O1', 'SOURCE');
+        $sheet->setCellValue('P1', 'MT FACTURE');
+        $sheet->setCellValue('Q1', 'MT REGLE');
+        $sheet->setCellValue('R1', 'REST');
+        $sheet->setCellValue('S1', 'ORG');
+        $sheet->setCellValue('T1', 'statut');
+        $sheet->setCellValue('U1', 'D-CREATION');
         $i=2;
         $j=1;
         $currentyear = '2022/2023';
@@ -567,18 +568,19 @@ class GestionFactureController extends AbstractController
             $sheet->setCellValue('C'.$i, $operationcab['code_preins']);
             $sheet->setCellValue('D'.$i, $operationcab['code_adm']);
             $sheet->setCellValue('E'.$i, $operationcab['code_ins']);
-            $sheet->setCellValue('F'.$i, $operationcab['code_facture']);
-            $sheet->setCellValue('G'.$i, $operationcab['annee']);
-            $sheet->setCellValue('H'.$i, $operationcab['nom']);
-            $sheet->setCellValue('I'.$i, $operationcab['prenom']);
-            $sheet->setCellValue('J'.$i, $operationcab['nationalite']);
-            $sheet->setCellValue('K'.$i, $operationcab['etablissement']);
-            $sheet->setCellValue('L'.$i, $operationcab['formation']);
-            $sheet->setCellValue('M'.$i, $operationcab['promotion']);
-            $sheet->setCellValue('N'.$i, $operationcab['categorie']);
-            $sheet->setCellValue('O'.$i, $montant['total']);
-            $sheet->setCellValue('P'.$i, $montant_reglement['total']);
-            $sheet->setCellValue('Q'.$i, $montant['total'] - $montant_reglement['total']);
+            $sheet->setCellValue('F'.$i, $operationcab['id']);
+            $sheet->setCellValue('G'.$i, $operationcab['code_facture']);
+            $sheet->setCellValue('H'.$i, $operationcab['annee']);
+            $sheet->setCellValue('I'.$i, $operationcab['nom']);
+            $sheet->setCellValue('J'.$i, $operationcab['prenom']);
+            $sheet->setCellValue('K'.$i, $operationcab['nationalite']);
+            $sheet->setCellValue('L'.$i, $operationcab['etablissement']);
+            $sheet->setCellValue('M'.$i, $operationcab['formation']);
+            $sheet->setCellValue('N'.$i, $operationcab['promotion']);
+            $sheet->setCellValue('O'.$i, $operationcab['categorie']);
+            $sheet->setCellValue('P'.$i, $montant['total']);
+            $sheet->setCellValue('Q'.$i, $montant_reglement['total']);
+            $sheet->setCellValue('R'.$i, $montant['total'] - $montant_reglement['total']);
             $value ="";
             $orgpyt = $this->em->getRepository(TOperationdet::class)->findBy(['operationcab'=>$operationcab['id'],'active'=>1,'organisme'=>103]);
             if (count($orgpyt)) {
@@ -594,10 +596,10 @@ class GestionFactureController extends AbstractController
                     $value = 'PYT';
                 }
             }
-            $sheet->setCellValue('R'.$i, $value);
-            $sheet->setCellValue('S'.$i, $operationcab['statut']);
+            $sheet->setCellValue('S'.$i, $value);
+            $sheet->setCellValue('T'.$i, $operationcab['statut']);
             if ($operationcab['created'] != "") {
-                $sheet->setCellValue('T'.$i, $operationcab['created']->format('d-m-Y'));
+                $sheet->setCellValue('U'.$i, $operationcab['created']->format('d-m-Y'));
             }
             $i++;
             $j++;
