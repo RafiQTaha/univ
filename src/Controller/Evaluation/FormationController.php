@@ -395,7 +395,7 @@ class FormationController extends AbstractController
     public function evaluationFormationExtractionDiplome(Request $request) 
     {   
         $admissions = array_unique(json_decode($request->get("admissions")));
-        // dd(!$admissions);
+        // dd($admissions);
 
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
@@ -411,6 +411,7 @@ class FormationController extends AbstractController
         foreach ($admissions as $admission){
             $admission = $this->em->getRepository(TAdmission::class)->find($admission);
             $formation =$admission->getPreinscription()->getAnnee()->getFormation();
+            
             $pdiplome = $this->em->getRepository(PDiplomes::class)->findOneBy(['formation'=> $formation]);
             $fnote = $this->em->getRepository(ExFnotes::class)->findOneByAdmission($admission);
 
@@ -429,8 +430,12 @@ class FormationController extends AbstractController
             $j++;
         }
         
+        $year = intval($lastyear)-1;
+        $year = $year.'_'.$lastyear;
+
         $writer = new Xlsx($spreadsheet);
-        $fileName = "Extraction_Diplomes_$lastyear.xlsx";
+        $fileName = $formation->getDesignation().'_'.$year.'.xlsx';
+        // dd($fileName);
         $writer->save($fileName);
         // return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);
         return new JsonResponse(['file' => $fileName]);

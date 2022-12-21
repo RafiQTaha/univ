@@ -1,7 +1,7 @@
  {# <h4>Tableau des épreuves</h4> #}
         <thead>
             <tr style= "background-color:white; position: sticky; top: 0;">
-                <th></th>
+                <th><input type ="checkbox" class="check_all_formation"></th>
                 <th>#</th>
                 <th>Code</th>
                 <th>Nom</th>
@@ -26,7 +26,7 @@
         <tbody>
             {% for etudiant in etudiants %}
                 <tr>
-                    <td><input type ='checkbox' class='check_etu' id ='{{etudiant.admission.id}}' ></td>
+                    <td><input type ='checkbox' class='check_etu' id ='{{etudiant.admission.id}}' value="{{etudiant.admission.id}}"></td>
                     <td>{{loop.index}}</td>
                     <td>{{etudiant.admission.code}}</td>
                     <td>{{etudiant.etudiantInfo.nom}}</td>

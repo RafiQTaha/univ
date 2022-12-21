@@ -10,6 +10,7 @@ const Toast = Swal.mixin({
     },
 })
 
+
 let check;
     
 $(document).ready(function  () {
@@ -87,6 +88,10 @@ $(document).ready(function  () {
                 language: {
                     url: "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/French.json",
                 },
+                lengthMenu: [
+                    [10, 15, 25, 50, 100, 20000000000000],
+                    [10, 15, 25, 50, 100, "All"],
+                ],
             });
             check = response.check;
             // console.log(check)
@@ -173,16 +178,38 @@ $(document).ready(function  () {
     admissions = [];
 
     $('body').on('click','#list_etu tbody tr',function () {
+        
         const input = $(this).find("input.check_etu");
-        if(input.is(":checked")){
+        if(input.prop('checked') == true){
             input.prop("checked",false);
             const index = admissions.indexOf(input.attr("id"));
             admissions.splice(index,1);
         }else{
             input.prop("checked",true);
             admissions.push(input.attr('id'));
-
         }
+        console.log(admissions);
+    })
+    // $('body').on('click','.check_etu',function (e) {
+    //     e.preventDefault();
+
+    // })
+
+    
+    $('body').on('click','.check_all_formation',function () {
+        // alert('test')
+        admissions = [];
+        const etu = $("body .check_etu");
+        if($(".check_all_formation").prop('checked') == true) {
+            etu.prop("checked",true);
+            etu.map(function() {
+                admissions.push(this.value);
+            });
+            // console.log(admissions);
+        } else {
+            etu.prop("checked",false);
+        }
+        console.log(admissions);
     })
     
     $("#ExtracDip").on("click", async function(e) {

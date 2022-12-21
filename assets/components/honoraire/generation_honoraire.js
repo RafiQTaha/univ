@@ -65,7 +65,7 @@ $(document).ready(function () {
                 ids_seances.push(input.attr("data-id"));
             }
         }
-        // console.log(ids_seances);
+        console.log(ids_seances);
     })
     $('body').on('click','.check_all_seances',function () {
         // alert('test')
