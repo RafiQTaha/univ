@@ -61,8 +61,8 @@ class FormationController extends AbstractController
         $dataInfosGenerales = $this->em->getRepository(AcAnnee::class)->getInfosGenerales($annee);
         $nbr_annee = $dataInfosGenerales['nbr_annee'];
         $data_annee = $this->em->getRepository(AcAnnee::class)->getAnnee($annee);
-        dd($data_annee);
         
+        // dd($data_annee);
         $promotion = $this->em->getRepository(AcPromotion::class)->findOneBy(['formation'=>$annee->getFormation(),'ordre'=>1]);
         $inscriptions = $this->em->getRepository(TInscription::class)->findBy(['annee'=>$annee,'promotion'=>$promotion,'statut'=>13]);
         $array_etudiants = [];
