@@ -116,6 +116,7 @@ class TInscriptionRepository extends ServiceEntityRepository
             ->where('t.promotion = :promotion')
             ->andWhere("t.annee = :annee")
             ->andWhere("statut.id = 13")
+            ->andWhere("etudiant.nom not like '%TEST%'")
             ->setParameter('promotion', $promotion)
             ->setParameter('annee', $annee)
             ->orderBy('etudiant.nom', $order)
