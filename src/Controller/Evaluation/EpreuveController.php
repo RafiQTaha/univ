@@ -141,7 +141,8 @@ class EpreuveController extends AbstractController
         else if ($type == "rat") {
             $moy = $annee->getFormation()->getEtablissement()->getId() == 26 ? 12 : 10;
             foreach($inscriptionsArray as $key => $value) {
-                if($value['moyenne'] >= $moy || str_contains($value['inscription']->getAdmission()->getPreinscription()->getEtudiant()->getNom(), 'test')) {  
+                $etudiant = $value['inscription']->getAdmission()->getPreinscription()->getEtudiant();
+                if($value['moyenne'] >= $moy || str_contains($etudiant->getNom(), 'test')) {  
                   unset($inscriptionsArray[$key]);
                 }
             }
