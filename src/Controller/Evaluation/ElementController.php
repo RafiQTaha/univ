@@ -2,21 +2,25 @@
 
 namespace App\Controller\Evaluation;
 
-use App\Controller\ApiController;
+use Mpdf\Mpdf;
 use App\Entity\AcAnnee;
-use App\Entity\AcElement;
-use App\Entity\AcEtablissement;
-use App\Entity\ExControle;
 use App\Entity\ExEnotes;
 use App\Entity\PeStatut;
+use App\Entity\AcElement;
+use App\Entity\ExControle;
+use App\Entity\AcFormation;
 use App\Entity\TInscription;
+use App\Entity\AcEtablissement;
+use App\Controller\ApiController;
 use Doctrine\Persistence\ManagerRegistry;
-use Mpdf\Mpdf;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\JsonResponse;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[Route('/evaluation/element')]
 class ElementController extends AbstractController
@@ -540,5 +544,43 @@ class ElementController extends AbstractController
         }
 
         return $send_data;
+    }
+
+
+    #[Route('/extraction_element', name: 'evaluation_element_extraction_element')]
+    public function evaluationElementExtraction(Request $request) 
+    {   
+        
+        $current_year = date('m') > 7 ? $current_year = date('Y').'/'.date('Y')+1 : $current_year = date('Y') - 1 .'/' .date('Y');
+
+        $elements = $this->em->getRepository(AcElement::class)->getElementByCurrentYear($current_year);
+        // dd($elements);
+
+
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        $i=2;
+        $j=1;
+        // dump($gnotes);die;
+        $sheet->fromArray(
+            array_keys($elements[0]),
+            null,
+            'A1'
+        );
+        foreach ($elements as $element) {
+            $sheet->fromArray(
+                $element,
+                null,
+                'A'.$i
+            );
+            $i++;
+            $j++;
+        }
+        $writer = new Xlsx($spreadsheet);
+        $fileName = 'Extraction elements .xlsx';
+        $temp_file = tempnam(sys_get_temp_dir(), $fileName);
+        $writer->save($temp_file);
+        return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);
+        
     }
 }
