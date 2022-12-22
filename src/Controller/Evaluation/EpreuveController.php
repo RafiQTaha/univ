@@ -169,8 +169,9 @@ class EpreuveController extends AbstractController
             'annee' => $annee
         ])->getContent());
         $mpdf->SetFooter('Page {PAGENO} / {nb}');
+        $mpdf->SetTitle($element->getDesignation());
         $mpdf->WriteHTML($html);
-        $mpdf->Output("epreuve_deliberation_".$element->getId().".pdf", "I");
+        $mpdf->Output($element->getDesignation()."_".$element->getId().".pdf", "I");
     }
     #[Route('/valider', name: 'administration_epreuve_valider')]
     public function administrationEpreuveValider(Request $request) 
@@ -321,13 +322,6 @@ class EpreuveController extends AbstractController
             // dd($operationcabs);
             $moy = $annee->getFormation()->getEtablissement()->getId() == 26 ? 12 : 10;
             foreach($inscriptionsArray as $key => $value) {
-                // dd($value['inscription']->getAdmission());
-                
-                // foreach($inscriptionsArray as $key => $value) {
-                //     if($value['moyenne'] >= $moy) {  
-                //     unset($inscriptionsArray[$key]);
-                //     }
-                // }
                 $etudiant = $value['inscription']->getAdmission()->getPreinscription()->getEtudiant();
                 if($value['moyenne'] < $moy && !str_contains($etudiant->getNom(), 'test')) {  
                     $sheet->setCellValue('A'.$i, $j);
@@ -338,8 +332,6 @@ class EpreuveController extends AbstractController
                     $j++;
                 }
             }
-            // $infos['inscriptionsArray'] = $inscriptionsArray;
-            // dd($inscriptionsArray);
             
             $writer = new Xlsx($spreadsheet);
             $fileName = "epreuve_deliberation_".$element->getId().".xlsx";
