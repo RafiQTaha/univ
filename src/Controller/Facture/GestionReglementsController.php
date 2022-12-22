@@ -372,7 +372,7 @@ class GestionReglementsController extends AbstractController
         $sheet->setCellValue('U1', 'N° BRD');
         $i=2;
         $j=1;
-        $currentyear = date('m') > 7 ? $current_year = date('Y').'/'.date('Y')+1 : $current_year = date('Y') - 1 .'/' .date('Y');
+        $currentyear = date('m') > 7 ? date('Y').'/'.date('Y')+1 : date('Y') - 1 .'/' .date('Y');
         
         // $currentyear = '2022/2023';
         $reglements = $this->em->getRepository(TReglement::class)->getReglementsByCurrentYear($currentyear);

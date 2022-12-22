@@ -327,7 +327,7 @@ class GestionInscriptionController extends AbstractController
         $sheet->setCellValue('AA1', 'STATUT');
         $i=2;
         $j=1;
-        $current_year = date('m') > 7 ? $current_year = date('Y').'/'.date('Y')+1 : $current_year = date('Y') - 1 .'/' .date('Y');
+        $current_year = date('m') > 7 ? date('Y').'/'.date('Y')+1 : date('Y') - 1 .'/' .date('Y');
         // dd($current_year);
         // $current_year = "2022/2023";
         $inscriptions = $this->em->getRepository(TInscription::class)->getActiveInscriptionByCurrentAnnee($current_year);
@@ -367,7 +367,7 @@ class GestionInscriptionController extends AbstractController
             $j++;
         }
         $writer = new Xlsx($spreadsheet);
-        $current_year = date('m') > 7 ? $current_year = date('Y').'-'.date('Y')+1 : $current_year = date('Y') - 1 .'-' .date('Y');
+        $current_year = date('m') > 7 ? date('Y').'-'.date('Y')+1 : date('Y') - 1 .'-' .date('Y');
         $fileName = "Extraction Inscription $current_year.xlsx";
         $temp_file = tempnam(sys_get_temp_dir(), $fileName);
         $writer->save($temp_file);
@@ -409,7 +409,7 @@ class GestionInscriptionController extends AbstractController
         $sheet->setCellValue('AA1', 'STATUT');
         $i=2;
         $j=1;
-        // $current_year = date('m') > 7 ? $current_year = date('Y').'/'.date('Y')+1 : $current_year = date('Y') - 1 .'/' .date('Y');
+        // $current_year = date('m') > 7 ? date('Y').'/'.date('Y')+1 : date('Y') - 1 .'/' .date('Y');
         $current_year = $annee.'/'.$annee+1;
         // dd($current_year);
         // $current_year = "2022/2023";

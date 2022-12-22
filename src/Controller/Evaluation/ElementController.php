@@ -550,13 +550,8 @@ class ElementController extends AbstractController
     #[Route('/extraction_element', name: 'evaluation_element_extraction_element')]
     public function evaluationElementExtraction(Request $request) 
     {   
-        
-        $current_year = date('m') > 7 ? $current_year = date('Y').'/'.date('Y')+1 : $current_year = date('Y') - 1 .'/' .date('Y');
-
+        $current_year = date('m') > 7 ? date('Y').'/'.date('Y')+1 :  date('Y') - 1 .'/' .date('Y');
         $elements = $this->em->getRepository(AcElement::class)->getElementByCurrentYear($current_year);
-        // dd($elements);
-
-
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
         $i=2;
@@ -577,7 +572,8 @@ class ElementController extends AbstractController
             $j++;
         }
         $writer = new Xlsx($spreadsheet);
-        $fileName = 'Extraction elements .xlsx';
+        $year = date('m') > 7 ? date('Y').'-'.date('Y')+1 : date('Y') - 1 .'-' .date('Y');
+        $fileName = "Extraction elements $year.xlsx";
         $temp_file = tempnam(sys_get_temp_dir(), $fileName);
         $writer->save($temp_file);
         return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);
