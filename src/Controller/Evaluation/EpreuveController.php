@@ -139,8 +139,9 @@ class EpreuveController extends AbstractController
             $html = $this->render("evaluation/epreuve/pdfs/clair.html.twig", $infos)->getContent();
         }
         else if ($type == "rat") {
+            $moy = $annee->getFormation()->getEtablissement()->getId() == 26 ? 12 : 10;
             foreach($inscriptionsArray as $key => $value) {
-                if($value['moyenne'] >= 10) {  
+                if($value['moyenne'] >= $moy || str_contains($value['inscription']->getAdmission()->getPreinscription()->getEtudiant()->getNom(), 'test')) {  
                   unset($inscriptionsArray[$key]);
                 }
             }
@@ -317,13 +318,21 @@ class EpreuveController extends AbstractController
             $i=2;
             $j=1;
             // dd($operationcabs);
+            $moy = $annee->getFormation()->getEtablissement()->getId() == 26 ? 12 : 10;
             foreach($inscriptionsArray as $key => $value) {
                 // dd($value['inscription']->getAdmission());
-                if($value['moyenne'] < 10) {  
+                
+                // foreach($inscriptionsArray as $key => $value) {
+                //     if($value['moyenne'] >= $moy) {  
+                //     unset($inscriptionsArray[$key]);
+                //     }
+                // }
+                $etudiant = $value['inscription']->getAdmission()->getPreinscription()->getEtudiant();
+                if($value['moyenne'] < $moy && !str_contains($etudiant->getNom(), 'test')) {  
                     $sheet->setCellValue('A'.$i, $j);
                     $sheet->setCellValue('B'.$i, $value['inscription']->getId());
-                    $sheet->setCellValue('C'.$i, $value['inscription']->getAdmission()->getPreinscription()->getEtudiant()->getNom());
-                    $sheet->setCellValue('D'.$i, $value['inscription']->getAdmission()->getPreinscription()->getEtudiant()->getPrenom());
+                    $sheet->setCellValue('C'.$i, $etudiant->getNom());
+                    $sheet->setCellValue('D'.$i, $etudiant->getPrenom());
                     $i++;
                     $j++;
                 }
