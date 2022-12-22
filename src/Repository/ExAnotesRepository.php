@@ -111,4 +111,18 @@ class ExAnotesRepository extends ServiceEntityRepository
         $result = $resultSets->fetchAll();
         return $result;
     }
+
+    public function CalculeMoyenneNote($admission)
+    {
+        $sqls="SELECT ins.id as inscriptoion, adm.id as admission, sum(note) as moyenne, sum(note_sec) as moyenneSec
+        FROM `ex_anotes` an
+        inner join tinscription ins on ins.id = an.inscription_id
+        inner join tadmission adm on adm.id = ins.admission_id
+        where adm.id = $admission and statut_aff_id != 44 order by ins.code desc";
+        // dd($sqls);
+        $stmts = $this->em->getConnection()->prepare($sqls);
+        $resultSets = $stmts->executeQuery();
+        $result = $resultSets->fetch();
+        return $result;
+    }
 }
