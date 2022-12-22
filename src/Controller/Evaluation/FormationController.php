@@ -448,7 +448,12 @@ class FormationController extends AbstractController
     #[Route('/forceEnregistrer', name: 'forceEnregistrer')]
     public function forceEnregistrer(Request $request) 
     {   
-        $admissions = ['ADM-FPA_PH00000757'];
+        $admissions = [ 'ADM-FMA_FMA00002251', 
+        'ADM-FMA_FMA00002030', 
+        'ADM-FMA_FMA00002250', 
+        'ADM-FMA_FMA00002249', 
+        'ADM-FMA_FMA00002031', 
+        'ADM-FPA_FPA00002024'];
         foreach ($admissions as $admission_code) {
             $admission = $this->em->getRepository(TAdmission::class)->findOneBy(['code'=>$admission_code]);
             $inscriptions = $this->em->getRepository(TInscription::class)->findBy(['admission'=>$admission,'statut'=>13]);
@@ -504,8 +509,10 @@ class FormationController extends AbstractController
                 $prediplome->setAnnee($annee);
                 $note= $fnote->getNote();
                 $prediplome->setNote($note);
-
+                // dd($note);
                 switch ($note) {
+                    case ($note < 10):
+                        $mention = 'a modifier';
                     case ($note >= 10 && $note <= 12):
                     $mention = 'Passable';
                     break;
