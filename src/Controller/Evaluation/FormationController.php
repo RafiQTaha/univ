@@ -448,12 +448,10 @@ class FormationController extends AbstractController
     #[Route('/forceEnregistrer', name: 'forceEnregistrer')]
     public function forceEnregistrer(Request $request) 
     {   
-        $admissions = [ 'ADM-FMA_FMA00002251', 
-        'ADM-FMA_FMA00002030', 
-        'ADM-FMA_FMA00002250', 
-        'ADM-FMA_FMA00002249', 
-        'ADM-FMA_FMA00002031', 
-        'ADM-FPA_FPA00002024'];
+        $admissions = [];
+        if ($admissions == null) {
+            die('admissions vide!');
+        }
         foreach ($admissions as $admission_code) {
             $admission = $this->em->getRepository(TAdmission::class)->findOneBy(['code'=>$admission_code]);
             $inscriptions = $this->em->getRepository(TInscription::class)->findBy(['admission'=>$admission,'statut'=>13]);
