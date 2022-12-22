@@ -443,4 +443,123 @@ class FormationController extends AbstractController
         return new JsonResponse(['file' => $fileName]);
         
     }
+
+    
+    #[Route('/forceEnregistrer', name: 'forceEnregistrer')]
+    public function forceEnregistrer(Request $request) 
+    {   
+        $admissions = ['ADM-FPA_PH00000757'];
+        foreach ($admissions as $admission_code) {
+            $admission = $this->em->getRepository(TAdmission::class)->findOneBy(['code'=>$admission_code]);
+            $inscriptions = $this->em->getRepository(TInscription::class)->findBy(['admission'=>$admission,'statut'=>13]);
+            // dd($inscriptions);
+            $annee = end($inscriptions)->getAnnee();
+            $formation = $annee->getFormation();
+            $pdiplome = $this->em->getRepository(PDiplomes::class)->findOneBy(['formation'=> $formation]);
+            // dd($pdiplome);
+
+            if(!$pdiplome){
+                $pdiplome = new PDiplomes();
+                $pdiplome->setFormation($formation);
+                $pdiplome->setUserCreated($this->getUser());
+                $pdiplome->setDesignation($formation->getDesignation());
+                $pdiplome->setAbreviation($formation->getAbreviation());
+                $pdiplome->setCreated(new \DateTime('now'));
+                
+                $this->em->persist($pdiplome);
+                $this->em->flush();
+
+                $pdiplome->setCode('DIP'.str_pad($pdiplome->getId(), 8, '0', STR_PAD_LEFT));
+                $this->em->flush();
+            }
+            $fnote = $this->em->getRepository(ExFnotes::class)->findOneByAdmission($admission);
+            $admission = $this->em->getRepository(TAdmission::class)->find($admission);
+            $nbr_annee = $formation->getNbrAnnee();
+            $anote =$this->em->getRepository(ExAnotes::class)->CalculeMoyenneNote($admission->getId());
+            if(!$fnote) {
+                $fnote = new ExFnotes();
+                $fnote->setAdmission($admission);
+                $fnote->setFormation($formation);
+                $fnote->setUserCreated($this->getUser());
+                $fnote->setCreated(new \DateTime("now"));
+                $fnote->setFlag(0);
+                $fnote->setNote(round($anote['moyenne']/$nbr_annee, 2));
+                $fnote->setNote(round($anote['moyenneSec']/$nbr_annee, 2));
+                $this->em->persist($fnote);
+                $this->em->flush();
+            }else {
+                $fnote->setNote(round($anote['moyenne']/$nbr_annee, 2));
+                $fnote->setNote(round($anote['moyenneSec']/$nbr_annee, 2));
+                $this->em->flush();    
+            }
+            $lastYear = substr($annee->getDesignation(), 5);
+            $Predip = $this->em->getRepository(DPrediplomes::class)->findBy(['annee'=>$annee]);
+            $countPredip = count($Predip);
+            $prediplome = $this->em->getRepository(DPrediplomes::class)->findOneBy(['fnote'=>$fnote]);
+            if(!$prediplome){
+                $prediplome = new DPrediplomes();
+                $prediplome->setFnote($fnote);
+                $prediplome->setDiplome($pdiplome);
+                $prediplome->setUserCreated($this->getUser());
+                $prediplome->setAnnee($annee);
+                $note= $fnote->getNote();
+                $prediplome->setNote($note);
+
+                switch ($note) {
+                    case ($note >= 10 && $note <= 12):
+                    $mention = 'Passable';
+                    break;
+                    case ($note > 12 && $note <= 14):
+                    $mention = 'Assez bien';
+                    break;
+                    case ($note > 14 && $note <= 16):
+                    $mention = 'Bien';
+                    break;
+                    case ($note > 16 && $note <= 18):
+                    $mention = 'Très bien';
+                    break;
+                    case ($note > 18):
+                    $mention = 'Excellent';
+                    break;
+                }
+
+                $prediplome->setMention($mention);
+                $prediplome->setCreated(new \DateTime('now'));
+                
+                $countPredip = $countPredip + 1;
+                $prediplome->setCode('PRD_UIA_'.$formation->getEtablissement()->getAbreviation().'_'.$formation->getAbreviation().'_'.str_pad($countPredip, 3, '0', STR_PAD_LEFT).'/'.$lastYear);
+
+                $this->em->persist($prediplome);
+                $this->em->flush();
+                $statutSignataire = $formation->getEtablissement()->getStatut();
+                if($statutSignataire == 'Doyen'){
+                    $signataire = $this->em->getRepository(PSignataire::class)->find(1);
+                }else if($statutSignataire == 'Directeur'){
+                    $signataire = $this->em->getRepository(PSignataire::class)->find(2);
+                }else{
+                    $signataire = null;
+                }
+                $note= $fnote->getNote();
+                
+                $Ddip = $this->em->getRepository(DDiplomes::class)->findBy(['annee'=>$annee]);
+                $countDdip = count($Ddip);
+                $ddiplome = $this->em->getRepository(DDiplomes::class)->findOneBy(['prediplome'=>$prediplome]);
+                if(!$ddiplome){
+                    $ddiplome = new DDiplomes();
+                    $ddiplome->setPrediplome($prediplome);
+                    $ddiplome->setAnnee($annee);
+                    $ddiplome->setUserCreated($this->getUser());
+                    $ddiplome->setSignataire($signataire);
+                    $countDdip = $countDdip + 1;
+                    $ddiplome->setCode('DIP_UIA_'.$formation->getEtablissement()->getAbreviation().'_'.$formation->getAbreviation().'_'.str_pad($countDdip, 3, '0', STR_PAD_LEFT).'/'.$lastYear);
+                    $ddiplome->setNote($note);
+                    $ddiplome->setCreated(new \DateTime('now'));
+                    $ddiplome->setDate(new \DateTime('now'));
+                    $this->em->persist($ddiplome);
+                    $this->em->flush();
+                }            
+            }
+        }
+        dd('done');  
+    }
 }
