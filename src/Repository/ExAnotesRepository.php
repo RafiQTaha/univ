@@ -86,7 +86,25 @@ class ExAnotesRepository extends ServiceEntityRepository
         inner join ac_annee ann on ann.id = ex.annee_id
         inner join tadmission adm on adm.id = ins.admission_id
         where adm.code = '$codeAdm' 
-        and ann.code = '$annee' limit 1";
+        and ann.code = '$annee'
+         limit 1";
+        // dd($sqls);
+        $stmts = $this->em->getConnection()->prepare($sqls);
+        $resultSets = $stmts->executeQuery();
+        $result = $resultSets->fetchAll();
+        return $result;
+    }
+
+    public function getNoteFromExAnotesByStatut($inscription)
+    {
+        $sqls="SELECT ex.*
+        FROM `ex_anotes` ex 
+        inner join tinscription ins on ins.id = ex.inscription_id
+        where ins.id = $inscription
+        and ex.statut_aff_id != 44
+        
+        ORDER BY
+            ins.id ASC";
         // dd($sqls);
         $stmts = $this->em->getConnection()->prepare($sqls);
         $resultSets = $stmts->executeQuery();

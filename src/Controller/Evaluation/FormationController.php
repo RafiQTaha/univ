@@ -61,19 +61,25 @@ class FormationController extends AbstractController
         $dataInfosGenerales = $this->em->getRepository(AcAnnee::class)->getInfosGenerales($annee);
         $nbr_annee = $dataInfosGenerales['nbr_annee'];
         $data_annee = $this->em->getRepository(AcAnnee::class)->getAnnee($annee);
-        $promotion = $this->em->getRepository(AcPromotion::class)->findOneBy(['formation'=>$annee->getFormation(),'ordre'=>1]);
-        $inscriptions = $this->em->getRepository(TInscription::class)->findBy(['annee'=>$annee,'promotion'=>$promotion,'statut'=>13]);
+        // dd($data_annee);
+
+        $promotion = $this->em->getRepository(AcPromotion::class)->findOneBy(['formation'=>$annee->getFormation(),'ordre'=>$annee->getFormation()->getNbrAnnee()]);
+        // $promotion = $this->em->getRepository(AcPromotion::class)->findOneBy(['formation'=>$annee->getFormation(),'ordre'=>1]);
+        $inscriptions = $this->em->getRepository(TInscription::class)->findBy(['annee'=>$data_annee[0]['id'],'promotion'=>$promotion,'statut'=>13]);
         $array_etudiants = [];
         $array_informations = [];
         $admissions = [];
-        
+        // dd($inscriptions);
+
         if (!empty($inscriptions)) {
 		    foreach ($inscriptions as $key => $value) {
                 if (!in_array($value->getAdmission(),$admissions)) {
                     $admissions[] = $value->getAdmission();
                 }
             }
+            
             foreach ($admissions as $admission) {
+                
                 $etudiant = $admission->getPreinscription()->getEtudiant();
                 // $array_informations['nom'] = $etudiant->getNom();
                 // $array_informations['prenom'] = $etudiant->getPrenom();
@@ -84,12 +90,75 @@ class FormationController extends AbstractController
                 $moyenneSec = 0 ;
                 $array_notes = [];
                 $countAnote = 0;
-                for($i=0; $i < $nbr_annee; $i++ ){
-                    if (!empty($data_annee[$i])) {
-                        $anote =$this->em->getRepository(ExAnotes::class)->getNoteFromExAnotes($admission->getCode(), $data_annee[$i]['code']);
+
+
+
+                if($admission->getCode() == 'ADM-FPA_PH00000778'){
+                    $inscriptions = $this->em->getRepository(TInscription::class)->findBy(['admission'=>$admission],['id'=> 'DESC']);
+                    // dd($inscriptions);
+                    foreach ($inscriptions as $key => $inscription) {
+                        // dd($data_annee);
+                        $anote =$this->em->getRepository(ExAnotes::class)->getNoteFromExAnotesByStatut($inscription->getId());
+                        // $anote =$this->em->getRepository(ExAnotes::class)->getNoteFromExAnotes($admission->getCode(), $data_annee[$i]['code']);
                         // dd($lastYear);
-                        // dd($anote);
-                        if (count($anote) >0) {
+                        // dd(($inscription->getPromotion()->getOrdre() <= $nbr_annee));
+                        if ($inscription->getPromotion()->getOrdre() < $nbr_annee) {
+                            if (!empty($anote)) {
+                                // dd($anote);
+                                $lastYear = $anote[0]['annee_id'];
+                                $moyenne =($moyenne + $anote[0]['note']);
+                                $moyenneSec =($moyenneSec + $anote[0]['note_sec']);
+                                array_push($array_notes , $anote[0]['note']);
+                                $countAnote++;
+                            }else{
+                                array_push($array_notes , 0);
+                                $countAnote++;
+                            }
+                        }else{
+                            array_push($array_notes , 'Prochainement');
+                        }
+                        
+                        $countAnote++;
+                    }
+                    dd($array_notes);
+                }
+
+
+                // $anotes =$this->em->getRepository(ExAnotes::class)->getNoteFromExAnotesByStatut($admission->getCode());
+                // // dd($data_annee);
+                // for($i=0; $i < $nbr_annee; $i++ ){
+                //     // dd($anotes);
+                //     if ($anotes[$i]) {
+                //         // $anote =$this->em->getRepository(ExAnotes::class)->getNoteFromExAnotes($admission->getCode(), $data_annee[$i]['code']);
+                //         // dd($lastYear);
+                //         // dd($anotes[$i]);
+                //         if (count($anotes) >0) {
+                //             $lastYear = $anotes[0]['annee_id'];
+                //             $moyenne =($moyenne + $anotes[0]['note']);
+                //             $moyenneSec =($moyenneSec + $anotes[0]['note_sec']);
+                //             array_push($array_notes , $anotes[0]['note']);
+                //             $countAnote++;
+                //         }else{
+                //             array_push($array_notes , 0);
+                //             $countAnote++;
+                //         }
+                //     }else{
+                //         array_push($array_notes , 'Prochainement');
+                //         dd('hi');
+                //     }
+                // }
+                // dd($admission->getCode());
+                $inscriptions = $this->em->getRepository(TInscription::class)->findBy(['admission'=>$admission],['id'=> 'DESC']);
+                // dd($inscriptions);
+                foreach ($inscriptions as $key => $inscription) {
+                    // dd($data_annee);
+                    $anote =$this->em->getRepository(ExAnotes::class)->getNoteFromExAnotesByStatut($inscription->getId());
+                    // $anote =$this->em->getRepository(ExAnotes::class)->getNoteFromExAnotes($admission->getCode(), $data_annee[$i]['code']);
+                    // dd($lastYear);
+                    // dd(($inscription->getPromotion()->getOrdre() <= $nbr_annee));
+                    if ($inscription->getPromotion()->getOrdre() < $nbr_annee) {
+                        if (!empty($anote)) {
+                            // dd($anote);
                             $lastYear = $anote[0]['annee_id'];
                             $moyenne =($moyenne + $anote[0]['note']);
                             $moyenneSec =($moyenneSec + $anote[0]['note_sec']);
@@ -102,7 +171,33 @@ class FormationController extends AbstractController
                     }else{
                         array_push($array_notes , 'Prochainement');
                     }
+                    
+                    $countAnote++;
                 }
+                // dd($array_notes);
+
+                // for($i=0; $i < $nbr_annee; $i++ ){
+                //     if (!empty($data_annee[$i])) {
+                //         dd($data_annee[$i]);
+                //         $anote =$this->em->getRepository(ExAnotes::class)->getNoteFromExAnotesByStatut($admission->getCode(), $data_annee[$i]['code']);
+                //         // $anote =$this->em->getRepository(ExAnotes::class)->getNoteFromExAnotes($admission->getCode(), $data_annee[$i]['code']);
+                //         // dd($lastYear);
+                //         dd($anote);
+                //         if (count($anote) >0) {
+                //             $lastYear = $anote[0]['annee_id'];
+                //             $moyenne =($moyenne + $anote[0]['note']);
+                //             $moyenneSec =($moyenneSec + $anote[0]['note_sec']);
+                //             array_push($array_notes , $anote[0]['note']);
+                //             $countAnote++;
+                //         }else{
+                //             array_push($array_notes , 0);
+                //             $countAnote++;
+                //         }
+                //     }else{
+                //         array_push($array_notes , 'Prochainement');
+                //     }
+                // }
+                // dd($array_notes);
                 $array_informations['notes'] = $array_notes;
                 $array_informations['lastYear'] = $lastYear;
 
@@ -119,6 +214,7 @@ class FormationController extends AbstractController
         $cechekIfExistAllAnneeExist = $this->em->getRepository(ExFnotes::class)->getFnotesByAdmissions($admissions);
         // dd(count($cechekIfExistAllAnneeExist));
         $check = 0; //valider cette opération
+
         if(!$cechekIfExistAllAnneeExist and $countAnote == $nbr_annee and $countAnote>0){
             $check = 1;
         }elseif (count($cechekIfExistAllAnneeExist) == count($admissions)) {
