@@ -324,6 +324,10 @@ $(document).ready(function  () {
             });
         }
     })
+
+    $('body').on('click','#extraction', function (){
+        window.open('/evaluation/element/extraction_element', '_blank');
+    })
 })
 
 
