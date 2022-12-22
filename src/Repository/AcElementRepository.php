@@ -71,7 +71,7 @@ class AcElementRepository extends ServiceEntityRepository
     }
     public function getElementByCurrentYear($currentyear)
     {
-        $sqls="SELECT ex.id, etab.code as code, etab.designation as etablissement, frm.code, frm.designation as formation, ann.code, ann.designation as annee, ins.code as code_ins, adm.code as code_adm, pre.code as code_preins, ins.code_anonymat as anonymat, st.code as statut, etu.nom, etu.prenom, prm.code, prm.designation as promotion, sem.code, sem.designation as semestre,mdl.code, mdl.designation as mosule, ele.code, ele.designation as element, ele.coefficient, ele.coefficient_epreuve, ex.mcc , ex.ccr ,ex.cc_rachat, ex.mtp, ex.tpr
+        $sqls="SELECT ex.id, etab.code as code, etab.designation as etablissement, frm.code, frm.designation as formation, ann.code, ann.designation as annee, ins.code as code_ins, adm.code as code_adm, pre.code as code_preins, ins.code_anonymat as anonymat, st.code as statut, etu.nom, etu.prenom, prm.code, prm.designation as promotion, sem.code, sem.designation as semestre,mdl.code, mdl.designation as mosule, ele.code, ele.designation as element, ele.coefficient, ele.coefficient_epreuve, ex.mcc , ex.mtp, ex.mef, ex.ccr , ex.tpr , ex.efr, ex.note_ini, ex.note, ex.note_rat, ex.note_rachat ,ex.cc_rachat, ex.tp_rachat, ex.ef_rachat
         FROM `ac_etablissement` etab
         INNER JOIN ac_formation frm on frm.etablissement_id = etab.id
         INNER JOIN ac_annee ann on ann.formation_id = frm.id
