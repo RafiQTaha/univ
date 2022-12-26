@@ -501,17 +501,22 @@ class GestionPreinscriptionController extends AbstractController
         if(!$preinscription){
             return new JsonResponse("Etudiant Introuvable!!",500);
         }
+        
         if(
             empty($request->get('nom')) || empty($request->get('prenom')) || 
-            empty($request->get('date_naissance')) || empty($request->get('lieu_naissance')) ||
-            empty($request->get('nat_demande'))  || empty($request->get('st_famille')) ||
-            empty($request->get('cin')) ||  empty($request->get('ville')) || 
-            empty($request->get('tel1')) || empty($request->get('tel2')) || 
-            empty($request->get('tel3')) || empty($request->get('mail1')) || empty($request->get('id_filiere')) || 
-            empty($request->get('id_type_bac')) || empty($request->get('annee_bac')) || 
-            empty($request->get('moyenne_bac')) || empty($request->get('moyen_regional')) ||
-            empty($request->get('moyen_national'))
+            empty($request->get('date_naissance')) || empty($request->get('cin')) 
         ){return new JsonResponse("Merci de remplir tout les champs obligatoire!!",500); }
+        // if(
+        //     empty($request->get('nom')) || empty($request->get('prenom')) || 
+        //     empty($request->get('date_naissance')) || empty($request->get('lieu_naissance')) ||
+        //     empty($request->get('nat_demande'))  || empty($request->get('st_famille')) ||
+        //     empty($request->get('cin')) ||  empty($request->get('ville')) || 
+        //     empty($request->get('tel1')) || empty($request->get('tel2')) || 
+        //     empty($request->get('tel3')) || empty($request->get('mail1')) || empty($request->get('id_filiere')) || 
+        //     empty($request->get('id_type_bac')) || empty($request->get('annee_bac')) || 
+        //     empty($request->get('moyenne_bac')) || empty($request->get('moyen_regional')) ||
+        //     empty($request->get('moyen_national'))
+        // ){return new JsonResponse("Merci de remplir tout les champs obligatoire!!",500); }
         $preinscription->getEtudiant()->setNom(strtoupper($request->get('nom')));
         $preinscription->getEtudiant()->setPrenom(ucfirst(strtolower($request->get('prenom'))));
         // $preinscription->getEtudiant()->setTitre($request->get('titre'));

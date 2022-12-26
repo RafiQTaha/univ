@@ -551,7 +551,8 @@ class ElementController extends AbstractController
     public function evaluationElementExtraction(Request $request) 
     {   
         $current_year = date('m') > 7 ? date('Y').'/'.date('Y')+1 :  date('Y') - 1 .'/' .date('Y');
-        $elements = $this->em->getRepository(AcElement::class)->getElementByCurrentYear($current_year);
+        // $elements = $this->em->getRepository(AcElement::class)->getElementByCurrentYear($current_year);
+        $elements = $this->em->getRepository(ExEnotes::class)->getElementByCurrentYear($current_year);
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
         $i=2;
