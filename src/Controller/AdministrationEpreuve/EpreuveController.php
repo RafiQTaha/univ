@@ -798,6 +798,83 @@ class EpreuveController extends AbstractController
         $temp_file = tempnam(sys_get_temp_dir(), $fileName);
         $writer->save($temp_file);
         return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);
+    }
+
+    
+    #[Route('/affiliation_ParInscriptions', name: 'administration_epreuve_affiliation_ParInscriptions')]
+    public function administrationEpreuveaffiliationParInscriptions(Request $request, SluggerInterface $slugger) 
+    {
+        // dd($request);
+        // $idInscriptions = json_decode($request->get("idInscriptions"));
+        
+        $file = $request->files->get('files_inscriptions_ids');
+        // dd($file);
+        if(!$file){
+            return new JsonResponse('Prière d\'importer le fichier',500);
+        }
+        if($file->guessExtension() !== 'xlsx'){
+            return new JsonResponse('Prière d\'enregister un fichier xlsx', 500);            
+        }
+
+        $originalFilename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+        // this is needed to safely include the file name as part of the URL
+        $safeFilename = $slugger->slug($originalFilename);
+        $newFilename = $safeFilename.'-'.uniqid().'_'.$this->getUser()->getUsername().'.'.$file->guessExtension();
+
+        // Move the file to the directory where brochures are stored
+        try {
+            $file->move(
+                $this->getParameter('inscriptions_affiliation_directory'),
+                $newFilename
+            );
+        } catch (FileException $e) {
+            throw new \Exception($e);
+        }
+        $reader = new reader();
+        $spreadsheet = $reader->load($this->getParameter('inscriptions_affiliation_directory').'/'.$newFilename);
+        $worksheet = $spreadsheet->getActiveSheet();
+        $spreadSheetArys = $worksheet->toArray();
+
+        unset($spreadSheetArys[0]);
+        $sheetCount = count($spreadSheetArys);
+        $idInscriptions = [];
+        foreach ($spreadSheetArys as $value) {
+            if ($value[1]) {
+                array_push($idInscriptions ,$value[1]);
+            }
+        }
+        if ($idInscriptions == []) {
+            return new JsonResponse("Le Fichier est vide!!", 500);
+        }
+        // dd($idInscriptions);
+
+        $epreuve = $this->em->getRepository(AcEpreuve::class)->find($request->get("idEpreuve"));
+        foreach ($idInscriptions as $idInscription) {
+            $inscription = $this->em->getRepository(TInscription::class)->find($idInscription);
+            $gnote = new ExGnotes();
+            $gnote->setEpreuve($epreuve);
+            $gnote->setInscription($inscription);
+            $gnote->setUserCreated($this->getUser());
+            $gnote->setCreated(new \DateTime("now"));
+            if($epreuve->getAnonymat() == 1) {
+                if($epreuve->getNatureEpreuve()->getNature() == 'normale') {
+                    $gnote->setAnonymat($inscription->getCodeAnonymat());                    
+                } else {
+                    $gnote->setAnonymat($inscription->getCodeAnonymatRat());
+                }
+            }
+            $this->em->persist($gnote);
+        }
+        $epreuve->setStatut(
+            $this->em->getRepository(PStatut::class)->find(29)
+        );
+        
+        // dd($gnote);
+        $this->em->flush();
+        
+        ApiController::mouchard($this->getUser(), $this->em,$epreuve, 'AcEpreuve', 'Affiliation Rattrapage By Id Inscriptions');
+
+        return new JsonResponse("Bien Enregistre", 200);
 
     }
 }

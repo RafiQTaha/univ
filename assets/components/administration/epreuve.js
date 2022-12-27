@@ -161,7 +161,7 @@ $(document).ready(function  () {
     $("#epreuve_canvas").on('click', function () {
         window.open("/administration/epreuve/canvas", '_blank');
     })
-
+    
     $("#import_epreuve_save").on("submit", async function(e) {
         e.preventDefault();
         let formData = new FormData($(this)[0]);
@@ -672,5 +672,57 @@ $(document).ready(function  () {
         e.preventDefault();
         const icon = $("#extraction_epv_valide i");
         window.open('/administration/epreuve/extraction_epreuve_valide', '_blank');
+    })
+    $('body').on('click','#open_upload_file', async function (e) {
+        e.preventDefault();
+        $('body #inscriptions_ids').click();
+    })
+    $('body').on('submit','#Affiler_inscriptions_ids', async function (e) {
+        e.preventDefault();
+        var res = confirm('L\'affiliation est definitive, vous etes sur ?');
+        if(res == 1){
+            const button = $('#Affiler_inscriptions_ids #Affiler_btn');
+            const icon = button.find('i');
+            icon.removeClass('fa-check').addClass("fa-spinner fa-spin");
+            let modalAlert = $("#affilier_list_etudiant .modal-body .alert")
+            modalAlert.remove();
+            let formData = new FormData($(this)[0]);
+            formData.append("idEpreuve", id_epreuve)
+            button.attr('disabled', true)
+            // button.addClass("disabled");
+            try {
+                const request = await axios.post('/administration/epreuve/affiliation_ParInscriptions', formData);
+                const response = request.data;    
+                icon.addClass('fa-check').removeClass("fa-spinner fa-spin");
+                $("#affilier_list_etudiant .modal-body").prepend(
+                    `<div class="alert alert-success">
+                        <p>${response}</p>
+                      </div>`
+                );
+                $(".list_etudiants").empty()
+                tableEpreuveRattrapage.ajax.reload(null, false);
+                tableEpreuveNormal.ajax.reload(null, false);
+                idInscriptions = []
+                setTimeout(function() {
+                    $("#affilier_list_etudiant .modal-body .alert").remove();
+                }, 2000);
+                $("#affilier_list_etudiant").modal("hide");
+                // button.removeClass("disabled");
+                button.attr('disabled', false)
+            } catch (error) {
+                console.log(error)
+                const message = error.response.data;
+                modalAlert.remove();
+                $("#affilier_list_etudiant .modal-body").prepend(
+                    `<div class="alert alert-danger">${message}</div>`
+                );
+                icon.addClass('fa-check').removeClass("fa-spinner fa-spin");
+                setTimeout(function() {
+                    $("#affilier_list_etudiant .modal-body .alert").remove();
+                }, 2000);
+                // button.removeClass("disabled");
+                button.attr('disabled', false)
+            } 
+        }
     })
 })
