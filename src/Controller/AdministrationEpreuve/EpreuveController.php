@@ -874,7 +874,7 @@ class EpreuveController extends AbstractController
         
         ApiController::mouchard($this->getUser(), $this->em,$epreuve, 'AcEpreuve', 'Affiliation Rat Ins');
 
-        return new JsonResponse("Bien Enregistre", 200);
+        return new JsonResponse("Epreuve Bien Affilier", 200);
 
     }
 }

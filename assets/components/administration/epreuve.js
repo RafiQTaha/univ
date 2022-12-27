@@ -709,6 +709,10 @@ $(document).ready(function  () {
                 $("#affilier_list_etudiant").modal("hide");
                 // button.removeClass("disabled");
                 button.attr('disabled', false)
+                Toast.fire({
+                    icon: 'error',
+                    title: response,
+                }) 
             } catch (error) {
                 console.log(error)
                 const message = error.response.data;
