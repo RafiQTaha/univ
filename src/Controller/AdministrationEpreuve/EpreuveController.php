@@ -872,7 +872,7 @@ class EpreuveController extends AbstractController
         // dd($gnote);
         $this->em->flush();
         
-        ApiController::mouchard($this->getUser(), $this->em,$epreuve, 'AcEpreuve', 'Affiliation Rattrapage By Id Inscriptions');
+        ApiController::mouchard($this->getUser(), $this->em,$epreuve, 'AcEpreuve', 'Affiliation Rat Ins');
 
         return new JsonResponse("Bien Enregistre", 200);
 
