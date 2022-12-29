@@ -2,7 +2,7 @@
 <div class="modal-dialog modal-md" style="max-width: 200px !important;" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">Données Promotion</h5>
+        <h5 class="modal-title">Données Enseignant</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"> 
         <span aria-hidden="true">×</span>
         </button>
@@ -23,6 +23,16 @@
                     <option value="{{ grade.id }}">{{ grade.designation }}</option>
                 {% endfor %}
             </select>
+        
+            <label for="cin">CIN : (*)</label>
+            <input type="text" class="form-control" name="cin" id="cin" placeholder="Cin  d'enseignant" />
+        
+            <label for="rib">Rib : (*)</label>
+            <div class="rib d-flex align-items-center">
+              <input type="text" class="form-control" name="rib" id="rib" placeholder="Rib  d'enseignant" maxlength="24"/>
+              <span class="rib_icon"><i class="fas fa-check-circle"></i></span>
+            </div>
+            
             <button type="submit" class="btn btn-success mt-4"><i class="fas fa-check-circle"></i> Enregister</button>
             {# <button type="button" id="save_document" class="btn btn-success mt-2"><i class="fas fa-check-circle"></i> Enregistrer</button> #}
         </form>

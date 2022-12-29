@@ -16,4 +16,14 @@
         
     {% endfor %}
 </select>
+        
+<label for="cin">CIN : (*)</label>
+<input type="text" class="form-control" name="cin" id="cin" placeholder="Cin  d'enseignant"  value="{{enseignant.cin}}" />
+
+<label for="rib">Rib : (*)</label>
+<div class="rib d-flex align-items-center">
+    <input type="text" class="form-control" name="rib" id="rib" placeholder="Rib  d'enseignant" value="{{enseignant.rib}}" maxlength="24" />
+    <span class="rib_icon"><i class="fas fa-check-circle"></i></span>
+</div>
+
 <button type="submit" class="btn btn-success mt-4"><i class="fas fa-check-circle"></i> Enregister</button>

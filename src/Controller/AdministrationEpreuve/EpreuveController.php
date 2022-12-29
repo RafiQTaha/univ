@@ -804,11 +804,7 @@ class EpreuveController extends AbstractController
     #[Route('/affiliation_ParInscriptions', name: 'administration_epreuve_affiliation_ParInscriptions')]
     public function administrationEpreuveaffiliationParInscriptions(Request $request, SluggerInterface $slugger) 
     {
-        // dd($request);
-        // $idInscriptions = json_decode($request->get("idInscriptions"));
-        
         $file = $request->files->get('files_inscriptions_ids');
-        // dd($file);
         if(!$file){
             return new JsonResponse('Prière d\'importer le fichier',500);
         }

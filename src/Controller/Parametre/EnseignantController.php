@@ -117,12 +117,23 @@ class EnseignantController extends AbstractController
     public function new(Request $request): Response
     {
     //    dd($request);
-       if (empty($request->get('nom')) || empty($request->get('prenom')) || $request->get('grade') == "") {
+       if (empty($request->get('nom')) || empty($request->get('prenom')) || $request->get('grade') == "" 
+       || $request->get('cin') == "" || $request->get('rib') == "") {
             return new JsonResponse('Merci de remplir tout les champs!!',500);
+       }
+       $Existcin = $this->em->getRepository(PEnseignant::class)->findOneBy(['Cin'=>$request->get('cin')]);
+       if ($Existcin != null) {
+           return new JsonResponse('Cet Enseignant est déja Exist!',500);
+       }
+    //    dd($request->get('rib'));
+       if (strlen($request->get('rib')) != 24) {
+           return new JsonResponse('Le RIB doit contenir 24 chiffres',500);
        }
        $enseignant = new PEnseignant();
        $enseignant->setNom($request->get('nom'));
        $enseignant->setPrenom($request->get('prenom'));
+       $enseignant->setCin($request->get('cin'));
+       $enseignant->setRib($request->get('rib'));
        $enseignant->setCreated(new \DateTime('now'));
        $enseignant->setGrade($this->em->getRepository(PGrade::class)->find($request->get('grade')));
        $this->em->persist($enseignant);
@@ -135,7 +146,6 @@ class EnseignantController extends AbstractController
     #[Route('/details/{enseignant}', name: 'parametre_enseignant_details')]
     public function details(PEnseignant $enseignant): Response
     {
-       
         $html = $this->render('parametre/enseignant/pages/modifier.html.twig', [
             'enseignant' => $enseignant,
             'grades' => $this->em->getRepository(PGrade::class)->findAll(),
@@ -145,11 +155,17 @@ class EnseignantController extends AbstractController
     #[Route('/update/{enseignant}', name: 'parametre_enseignant_update')]
     public function update(Request $request, PEnseignant $enseignant): Response
     {
-        if (empty($request->get('nom')) || empty($request->get('prenom')) || $request->get('grade') == "") {
+        if (empty($request->get('nom')) || empty($request->get('prenom')) || $request->get('grade') == "" 
+        || $request->get('cin') == "" || $request->get('rib') == "") {
              return new JsonResponse('Merci de remplir tout les champs!!',500);
+        }
+        if (strlen($request->get('rib')) != 24) {
+            return new JsonResponse('Le RIB doit contenir 24 chiffres',500);
         }
         $enseignant->setNom($request->get('nom'));
         $enseignant->setPrenom($request->get('prenom'));
+        $enseignant->setCin($request->get('cin'));
+        $enseignant->setRib($request->get('rib'));
         $enseignant->setGrade($this->em->getRepository(PGrade::class)->find($request->get('grade')));
         $this->em->flush();
  

@@ -51,6 +51,12 @@ class PEnseignant
     #[ORM\Column(type: 'integer', nullable: true)]
     private $active = 1;
 
+    #[ORM\Column(type: 'string', length: 10, nullable: true)]
+    private $Cin;
+
+    #[ORM\Column(type: 'string', length: 24, nullable: true)]
+    private $Rib;
+
     public function __construct()
     {
         $this->epreuves = new ArrayCollection();
@@ -308,6 +314,30 @@ class PEnseignant
     public function setActive(?int $active): self
     {
         $this->active = $active;
+
+        return $this;
+    }
+
+    public function getCin(): ?string
+    {
+        return $this->Cin;
+    }
+
+    public function setCin(?string $Cin): self
+    {
+        $this->Cin = $Cin;
+
+        return $this;
+    }
+
+    public function getRib(): ?string
+    {
+        return $this->Rib;
+    }
+
+    public function setRib(?string $Rib): self
+    {
+        $this->Rib = $Rib;
 
         return $this;
     }
