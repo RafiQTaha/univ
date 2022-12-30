@@ -59,7 +59,7 @@ class HHonens
     private $Brut;
 
     #[ORM\Column(type: 'integer', nullable: true)]
-    private $Iar;
+    private $Ir;
 
     public function getId(): ?int
     {
@@ -246,14 +246,14 @@ class HHonens
         return $this;
     }
 
-    public function getIar(): ?int
+    public function getIr(): ?int
     {
-        return $this->Iar;
+        return $this->Ir;
     }
 
-    public function setIar(?int $Iar): self
+    public function setIr(?int $Ir): self
     {
-        $this->Iar = $Iar;
+        $this->Ir = $Ir;
 
         return $this;
     }

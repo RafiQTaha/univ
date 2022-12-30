@@ -222,8 +222,8 @@ class GenerationHonoraireController extends AbstractController
                     $honens->setMontant($montant);
                     $brut = $montant / 0.83;
                     $honens->setBrut($brut);
-                    $Iar = $brut * 0.17;
-                    $honens->setIar($Iar);
+                    $Ir = $brut * 0.17;
+                    $honens->setIr($Ir);
                     $this->em->persist($honens);
                     $this->em->flush();
                     $honens->setCode('HON'.str_pad($honens->getId(), 8, '0', STR_PAD_LEFT));
