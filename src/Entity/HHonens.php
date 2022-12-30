@@ -55,6 +55,12 @@ class HHonens
     #[ORM\Column(type: 'datetime', nullable: true)]
     private $dateReglement;
 
+    #[ORM\Column(type: 'integer', nullable: true)]
+    private $Brut;
+
+    #[ORM\Column(type: 'integer', nullable: true)]
+    private $Iar;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -224,6 +230,30 @@ class HHonens
     public function setDateReglement(?\DateTimeInterface $dateReglement): self
     {
         $this->dateReglement = $dateReglement;
+
+        return $this;
+    }
+
+    public function getBrut(): ?int
+    {
+        return $this->Brut;
+    }
+
+    public function setBrut(?int $Brut): self
+    {
+        $this->Brut = $Brut;
+
+        return $this;
+    }
+
+    public function getIar(): ?int
+    {
+        return $this->Iar;
+    }
+
+    public function setIar(?int $Iar): self
+    {
+        $this->Iar = $Iar;
 
         return $this;
     }
