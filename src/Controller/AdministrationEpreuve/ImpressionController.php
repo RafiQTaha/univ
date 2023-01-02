@@ -110,7 +110,7 @@ class ImpressionController extends AbstractController
         foreach ($spreadSheetArys as $sheet) {
             $inscription = $this->em->getRepository(TInscription::class)->find($sheet[0]);
             if ($inscription == null) {
-                return new JsonResponse("Inscription Introuvable!",500);
+                return new JsonResponse("Id Inscription '". $sheet[0] .  "' est Introuvable!",500);
             }
                 // dd($sheet[0]);
                 $inscription->setCodeAnonymat($sheet[1]);
