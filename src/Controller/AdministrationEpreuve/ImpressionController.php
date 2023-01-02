@@ -135,6 +135,7 @@ class ImpressionController extends AbstractController
     #[Route('/imprimer', name: 'administration_impression_imprimer')]
     public function imprimer(Request $request)
     {
+        ini_set("pcre.backtrack_limit", "5000000");
         $session = $request->getSession();
         $inscriptions = $session->get('inscriptions');
         $html = $this->render("administration_epreuve/pdfs/impression.html.twig", ["inscriptions" => $inscriptions])->getContent();
