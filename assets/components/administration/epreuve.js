@@ -700,6 +700,7 @@ $(document).ready(function  () {
                       </div>`
                 );
                 $(".list_etudiants").empty()
+                $(this).trigger("reset");
                 tableEpreuveRattrapage.ajax.reload(null, false);
                 tableEpreuveNormal.ajax.reload(null, false);
                 idInscriptions = []

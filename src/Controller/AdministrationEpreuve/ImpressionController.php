@@ -109,17 +109,27 @@ class ImpressionController extends AbstractController
 
         foreach ($spreadSheetArys as $sheet) {
             $inscription = $this->em->getRepository(TInscription::class)->find($sheet[0]);
-            $inscription->setCodeAnonymat($sheet[1]);
-            $inscription->setCodeAnonymatRat($sheet[2]);
-            if($sheet[4] == 0){
-                $type = "Salle";
-            } else {
-                $type = "Zone";
+            if ($inscription == null) {
+                return new JsonResponse("Inscription Introuvable!",500);
             }
-            $inscription->setSalle($type."-".$sheet[3]);
+                // dd($sheet[0]);
+                $inscription->setCodeAnonymat($sheet[1]);
+                $inscription->setCodeAnonymatRat($sheet[2]);
+                if($sheet[4] == 0){
+                    $type = "Salle";
+                } else {
+                    $type = "Zone";
+                }
+                if ($type == "Salle") {
+                    $inscription->setSalle($type."-".$sheet[3]);
+            }else{
+                $inscription->setSalle($type."-".$inscription->getAnnee()->getFormation()->getEtablissement()->getAbreviation());
+            }
+            // dd($inscription);
+            // $this->em->flush();
         }
         $this->em->flush();
-        return new JsonResponse("Bien Enregistre");
+        return new JsonResponse("Bien Enregistre",200);
 
     }
     #[Route('/imprimer', name: 'administration_impression_imprimer')]
