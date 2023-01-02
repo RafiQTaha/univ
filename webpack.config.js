@@ -27,6 +27,7 @@ Encore
     .addEntry('centreappel', './assets/components/etudiant/centre_appel.js')
     .addEntry('epreuve', './assets/components/administration/epreuve.js')
     .addEntry('impression', './assets/components/administration/impression.js')
+    .addEntry('etat_impression', './assets/components/administration/etat_impression.js')
     .addEntry('note', './assets/components/administration/note.js')
     .addEntry('admission', './assets/components/admission/admissions.js')
     .addEntry('gestionadmission', './assets/components/admission/gestionadmission.js')
