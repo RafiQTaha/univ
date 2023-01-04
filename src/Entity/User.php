@@ -70,6 +70,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'UserCreated', targetEntity: TReglement::class)]
     private $tReglements;
 
+    #[ORM\OneToMany(mappedBy: 'userCreated', targetEntity: PAnonymatActuel::class)]
+    private $pAnonymatActuels;
+
+    #[ORM\OneToMany(mappedBy: 'userCreated', targetEntity: TInscriptionImpLog::class)]
+    private $tInscriptionImpLogs;
+
+    #[ORM\OneToMany(mappedBy: 'userCreated', targetEntity: TInscriptionImpControle::class)]
+    private $tInscriptionImpControles;
+
 
     public function __construct()
     {
@@ -83,6 +92,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->enseignantexcepts = new ArrayCollection();
         $this->tEtudiants = new ArrayCollection();
         $this->tReglements = new ArrayCollection();
+        $this->pAnonymatActuels = new ArrayCollection();
+        $this->tInscriptionImpLogs = new ArrayCollection();
+        $this->tInscriptionImpControles = new ArrayCollection();
     }
 
     
@@ -506,6 +518,96 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($tReglement->getUserCreated() === $this) {
                 $tReglement->setUserCreated(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, PAnonymatActuel>
+     */
+    public function getPAnonymatActuels(): Collection
+    {
+        return $this->pAnonymatActuels;
+    }
+
+    public function addPAnonymatActuel(PAnonymatActuel $pAnonymatActuel): self
+    {
+        if (!$this->pAnonymatActuels->contains($pAnonymatActuel)) {
+            $this->pAnonymatActuels[] = $pAnonymatActuel;
+            $pAnonymatActuel->setUserCreated($this);
+        }
+
+        return $this;
+    }
+
+    public function removePAnonymatActuel(PAnonymatActuel $pAnonymatActuel): self
+    {
+        if ($this->pAnonymatActuels->removeElement($pAnonymatActuel)) {
+            // set the owning side to null (unless already changed)
+            if ($pAnonymatActuel->getUserCreated() === $this) {
+                $pAnonymatActuel->setUserCreated(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, TInscriptionImpLog>
+     */
+    public function getTInscriptionImpLogs(): Collection
+    {
+        return $this->tInscriptionImpLogs;
+    }
+
+    public function addTInscriptionImpLog(TInscriptionImpLog $tInscriptionImpLog): self
+    {
+        if (!$this->tInscriptionImpLogs->contains($tInscriptionImpLog)) {
+            $this->tInscriptionImpLogs[] = $tInscriptionImpLog;
+            $tInscriptionImpLog->setUserCreated($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTInscriptionImpLog(TInscriptionImpLog $tInscriptionImpLog): self
+    {
+        if ($this->tInscriptionImpLogs->removeElement($tInscriptionImpLog)) {
+            // set the owning side to null (unless already changed)
+            if ($tInscriptionImpLog->getUserCreated() === $this) {
+                $tInscriptionImpLog->setUserCreated(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, TInscriptionImpControle>
+     */
+    public function getTInscriptionImpControles(): Collection
+    {
+        return $this->tInscriptionImpControles;
+    }
+
+    public function addTInscriptionImpControle(TInscriptionImpControle $tInscriptionImpControle): self
+    {
+        if (!$this->tInscriptionImpControles->contains($tInscriptionImpControle)) {
+            $this->tInscriptionImpControles[] = $tInscriptionImpControle;
+            $tInscriptionImpControle->setUserCreated($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTInscriptionImpControle(TInscriptionImpControle $tInscriptionImpControle): self
+    {
+        if ($this->tInscriptionImpControles->removeElement($tInscriptionImpControle)) {
+            // set the owning side to null (unless already changed)
+            if ($tInscriptionImpControle->getUserCreated() === $this) {
+                $tInscriptionImpControle->setUserCreated(null);
             }
         }
 

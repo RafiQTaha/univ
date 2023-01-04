@@ -81,12 +81,20 @@ class TInscription
     #[ORM\Column(type: 'string', nullable: true)]
     private $salle;
 
+    #[ORM\OneToMany(mappedBy: 'inscription', targetEntity: TInscriptionImpLog::class)]
+    private $tInscriptionImpLogs;
+
+    #[ORM\OneToMany(mappedBy: 'inscription', targetEntity: TInscriptionImpControle::class)]
+    private $tInscriptionImpControles;
+
     public function __construct()
     {
         $this->gnotes = new ArrayCollection();
         $this->enotes = new ArrayCollection();
         $this->mnotes = new ArrayCollection();
         $this->snotes = new ArrayCollection();
+        $this->tInscriptionImpLogs = new ArrayCollection();
+        $this->tInscriptionImpControles = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -437,6 +445,66 @@ class TInscription
     public function setSalle(?string $salle): self
     {
         $this->salle = $salle;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, TInscriptionImpLog>
+     */
+    public function getTInscriptionImpLogs(): Collection
+    {
+        return $this->tInscriptionImpLogs;
+    }
+
+    public function addTInscriptionImpLog(TInscriptionImpLog $tInscriptionImpLog): self
+    {
+        if (!$this->tInscriptionImpLogs->contains($tInscriptionImpLog)) {
+            $this->tInscriptionImpLogs[] = $tInscriptionImpLog;
+            $tInscriptionImpLog->setInscription($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTInscriptionImpLog(TInscriptionImpLog $tInscriptionImpLog): self
+    {
+        if ($this->tInscriptionImpLogs->removeElement($tInscriptionImpLog)) {
+            // set the owning side to null (unless already changed)
+            if ($tInscriptionImpLog->getInscription() === $this) {
+                $tInscriptionImpLog->setInscription(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, TInscriptionImpControle>
+     */
+    public function getTInscriptionImpControles(): Collection
+    {
+        return $this->tInscriptionImpControles;
+    }
+
+    public function addTInscriptionImpControle(TInscriptionImpControle $tInscriptionImpControle): self
+    {
+        if (!$this->tInscriptionImpControles->contains($tInscriptionImpControle)) {
+            $this->tInscriptionImpControles[] = $tInscriptionImpControle;
+            $tInscriptionImpControle->setInscription($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTInscriptionImpControle(TInscriptionImpControle $tInscriptionImpControle): self
+    {
+        if ($this->tInscriptionImpControles->removeElement($tInscriptionImpControle)) {
+            // set the owning side to null (unless already changed)
+            if ($tInscriptionImpControle->getInscription() === $this) {
+                $tInscriptionImpControle->setInscription(null);
+            }
+        }
 
         return $this;
     }

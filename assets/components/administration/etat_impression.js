@@ -150,76 +150,27 @@ $(document).ready(function () {
         }
         table_notes_epreuve.columns(5).search(id_element).draw();
     })
-    $("#professeur").on('change', async function (){
-        const id_prof = $(this).val();
-        table_notes_epreuve.columns(6).search(id_prof).draw();
-    })
-
-    $("#note").on('click', async function (e){
+    
+    // $("#etat_controle").on('click', async function (e){
+    //     e.preventDefault();
+    //     if(!id_epreuve){
+    //         Toast.fire({
+    //           icon: 'error',
+    //           title: 'Veuillez selection une ligne!',
+    //         })
+    //         return;
+    //     }
+    //     // $('#import_en_masse').modal("show");
+    // })
+    $('body').on('click','#etat_controle', function (e){
         e.preventDefault();
-        if(!id_epreuve){
-            Toast.fire({
-              icon: 'error',
-              title: 'Veuillez selection une ligne!',
-            })
-            return;
-        }
-        $('#notesmodal').modal("show");
-    })
-    $('body').on('submit','.save_note', async function (e){
-        e.preventDefault();
-        let id_exgnotes = $(this).find('input').attr('id');
-        if( $(this).find('input').val() < 0 || $(this).find('input').val() > 20){
+        if(!$("#semestre").val()){
             Toast.fire({
                 icon: 'error',
-                title: 'La Note doit etre entre 0 et 20',
-              })
-              return;
-        }
-        $(this).find('input').blur();
-        var formData = new FormData($(this)[0]);
-        $(this).parent().parent().next('tr').find('.input_note').focus();
-        const request = await axios.post('/administration/note/note_update/'+id_exgnotes, formData);
-        response = request.data
-        const data = await request.data;
-        table_notes_epreuve.ajax.reload(null,false);
-    })
-    $('body').on('submit','.save_obs', async function (e){
-        e.preventDefault();
-        $(this).find('input').blur();
-        let id_exgnotes = $(this).find('input').attr('id');
-        var formData = new FormData($(this)[0]);
-        $(this).parent().parent().next('tr').find('.input_obs').focus();
-        const request = await axios.post('/administration/note/observation_update/'+id_exgnotes, formData);
-        const data = await request.data;
-    })
-    $('body').on('click','.check_note_ins', async function (){
-        var formData = new FormData();
-        let id_exgnotes = $(this).attr('id');
-        if ($(this).prop('checked') == true) {
-            formData.append('absence',true);
-            const request = await axios.post('/administration/note/absence_update/'+id_exgnotes, formData);
-            const data = await request.data;
-            table_notes_epreuve.ajax.reload(null,false);
-        }else{
-            formData.append('absence',false);
-            const request = await axios.post('/administration/note/absence_update/'+id_exgnotes, formData);
-            const data = await request.data;
-            table_notes_epreuve.ajax.reload(null,false);
-        }
-    })
-    $("#import").on('click', async function (e){
-        e.preventDefault();
-        if(!id_epreuve){
-            Toast.fire({
-              icon: 'error',
-              title: 'Veuillez selection une ligne!',
+                title: 'Veuillez selection une ligne!',
             })
             return;
         }
-        $('#import_en_masse').modal("show");
-    })
-    $('body').on('click','#epreuve_canvas', function (){
-        window.open('/administration/note/canvas/'+id_epreuve, '_blank');
+        window.open('/administration/etat_impression/etat_controle/'+$("#semestre").val(), '_blank');
     })
 });

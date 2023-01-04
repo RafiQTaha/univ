@@ -28,6 +28,8 @@ Encore
     .addEntry('epreuve', './assets/components/administration/epreuve.js')
     .addEntry('impression', './assets/components/administration/impression.js')
     .addEntry('etat_impression', './assets/components/administration/etat_impression.js')
+    .addEntry('imprimer', './assets/components/administration/imprimer.js')
+    .addEntry('controle', './assets/components/administration/controle.js')
     .addEntry('note', './assets/components/administration/note.js')
     .addEntry('admission', './assets/components/admission/admissions.js')
     .addEntry('gestionadmission', './assets/components/admission/gestionadmission.js')

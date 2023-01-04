@@ -113,15 +113,15 @@ class ImpressionController extends AbstractController
                 return new JsonResponse("Id Inscription '". $sheet[0] .  "' est Introuvable!",500);
             }
                 // dd($sheet[0]);
-                $inscription->setCodeAnonymat($sheet[1]);
-                $inscription->setCodeAnonymatRat($sheet[2]);
-                if($sheet[4] == 0){
-                    $type = "Salle";
-                } else {
-                    $type = "Zone";
-                }
-                if ($type == "Salle") {
-                    $inscription->setSalle($type."-".$sheet[3]);
+            $inscription->setCodeAnonymat($sheet[1]);
+            $inscription->setCodeAnonymatRat($sheet[2]);
+            if($sheet[4] == 0){
+                $type = "Salle";
+            } else {
+                $type = "Zone";
+            }
+            if ($type == "Salle") {
+                $inscription->setSalle($type."-".$sheet[3]);
             }else{
                 $inscription->setSalle($type."-".$inscription->getAnnee()->getFormation()->getEtablissement()->getAbreviation());
             }

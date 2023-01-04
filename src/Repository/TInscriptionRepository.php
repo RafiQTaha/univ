@@ -17,6 +17,7 @@ class TInscriptionRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, TInscription::class);
+        $this->em = $registry->getManager();
     }
 
     // /**
@@ -331,28 +332,35 @@ class TInscriptionRepository extends ServiceEntityRepository
         ->getOneOrNullResult()
         ;    
         return $previousInscription;
+    } 
 
-        // if($previousInscription && ($inscription->getPromotion()->getId() === $previousInscription->getPromotion()->getId() )) {
-        //     $previousPreviousInscription =  $this->createQueryBuilder('i')
-        //         ->innerJoin("i.statut", "statut")
-        //         ->where('i.admission = :admission')
-        //         ->andWhere("i.id < :id")
-        //         ->andWhere("statut.id = 13")
-        //         ->setParameter('admission', $inscription->getAdmission())
-        //         ->setParameter('id', $previousInscription->getId())
-        //         ->setMaxResults(1)
-        //         ->orderBy("i.id", "desc")
-        //         ->getQuery()
-        //         ->getOneOrNullResult()
-        //     ;
-        //     if($previousPreviousInscription && ($previousPreviousInscription->getPromotion()->getId() === $previousInscription->getPromotion()->getId() )) {
-        //         return null;
-        //     } 
-                
-        //         return $previousInscription;
-            
-        // }
-        // return null;
+    public function getEtiquettesSommeControle($semestre)
+    {
+        $sqls="SELECT ins.id 'ID Insription', ins.code 'Code Inscription',  etu.nom , etu.prenom , ins.code_anonymat 'Anonymat', ins.salle , tab.somme 'NBR' , con.controle 'NBR-controle'
+        FROM tinscription ins
+        inner join ac_annee ann on ann.id = ins.annee_id 
+        inner join ac_promotion prm on ins.promotion_id = prm.id
+        inner join ac_semestre sem on prm.id = sem.promotion_id
+        inner join tadmission adm on adm.id = ins.admission_id
+        inner join tpreinscription pre on pre.id = adm.preinscription_id
+        inner join tetudiant etu on etu.id = pre.etudiant_id
+        
+        left join (SELECT inscription_id ,  sum(nombre_etiquettes) as somme  
+                   from tinscription_imp_log 
+                   WHERE YEAR(CURDATE()) = YEAR(created) AND MONTH(CURDATE()) = MONTH(created) AND DAY(CURDATE()) = DAY(created)
+                   GROUP BY inscription_id) tab on tab.inscription_id = ins.id
+        
+        LEFT JOIN (SELECT inscription_id ,sum(controle) as controle  
+                   from tinscription_imp_controle 
+                   WHERE YEAR(CURDATE()) = YEAR(created) AND MONTH(CURDATE()) = MONTH(created) AND DAY(CURDATE()) = DAY(created)
+                   GROUP BY inscription_id) con ON con.inscription_id = ins.id
+        where ann.validation_academique = 'non' and ann.cloture_academique = 'non' and sem.id = ".$semestre->getId();
+        // -- where frm.designation not like '%Residanat%' and etab.abreviation != 'CFC'  ";
+        // dd($sqls);
+        $stmts = $this->em->getConnection()->prepare($sqls);
+        $resultSets = $stmts->executeQuery();
+        $result = $resultSets->fetchAll();
+        return $result;
     } 
     
 }

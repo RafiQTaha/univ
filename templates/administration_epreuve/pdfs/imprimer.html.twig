@@ -1,0 +1,22 @@
+<link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro" rel="stylesheet">
+
+<style>
+    .barcode {
+        padding: 1.5mm;
+        margin: 0;
+        vertical-align: top;
+        color: #000044;
+    }
+    .barcodecell {
+        text-align: center;
+        vertical-align: middle;
+    }
+</style>
+<page backtop="0mm" backbottom="0mm" backleft="0mm" backright="0mm" style="margin-top:50%;">
+    <div class="barcodecell">
+        <barcode code="{{inscription.id}}" type="C128A" height="0.7" size="7" />
+        <p style="font-weight:700;font-size:100px;margin-top: -20px;"> {{anonymat}}</p>
+    </div>
+    <!-- <div class="wrapper">
+    </div> -->
+</page>

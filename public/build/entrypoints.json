@@ -72,7 +72,23 @@
         "/build/runtime.de6b8033.js",
         "/build/9755.58d5f244.js",
         "/build/8029.7c64de8b.js",
-        "/build/etat_impression.502dadb3.js"
+        "/build/etat_impression.b4dab0e1.js"
+      ]
+    },
+    "imprimer": {
+      "js": [
+        "/build/runtime.de6b8033.js",
+        "/build/9755.58d5f244.js",
+        "/build/8029.7c64de8b.js",
+        "/build/imprimer.e05befb2.js"
+      ]
+    },
+    "controle": {
+      "js": [
+        "/build/runtime.de6b8033.js",
+        "/build/9755.58d5f244.js",
+        "/build/8029.7c64de8b.js",
+        "/build/controle.ff1bbd47.js"
       ]
     },
     "note": {
