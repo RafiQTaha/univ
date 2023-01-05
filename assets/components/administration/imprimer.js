@@ -35,6 +35,8 @@ $(document).ready(function () {
         url: "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/French.json",
         },
     });
+    // --kiosk-printing
+    // window.print();
     $("#id_etudiant").on('keydown', async function(event){
         if (event.which == 13) {
             if($('#id_etudiant').val() == "") {
@@ -48,7 +50,6 @@ $(document).ready(function () {
             if ($('#nombre_etiquettes').val() > 1) {
                 nombre_etiquettes = $('#nombre_etiquettes').val();
             }
-            // alert(nombre_etiquettes);
             try {
                 let formData = new FormData();
                 formData.append("inscription", $("#id_etudiant").val())
@@ -61,10 +62,12 @@ $(document).ready(function () {
                 })
                 let win = window.open("/administration/imprimer/print/" + $('#id_etudiant').val() + "/"+nombre_etiquettes,'_blank', "toolbar=yes,scrollbars=yes,top=500,left=500,width=400,height=320");
                 win.onfocus = function () {
+                    win.print();
                     setTimeout(function () {
                         win.close();
-                    }, 1000);
+                    }, 2500);
                 }
+                // }
                 $("#id_etudiant").val("")
                 table_imprimer.ajax.reload(null,false);
                 icon.addClass('fa-search').removeClass("fa-spinner fa-spin");

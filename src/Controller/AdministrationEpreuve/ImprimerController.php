@@ -153,17 +153,22 @@ class ImprimerController extends AbstractController
         
         $anonymatActuel = $this->em->getRepository(PAnonymatActuel::class)->find(1)->getAbreviation();
         $anonymat = $anonymatActuel == 'anonymat' ? $inscription->getCodeAnonymat() : $inscription->getCodeAnonymatRat();
+        // return $this->render("administration_epreuve/pdfs/imprimer.html.twig", [
+        //     "inscription" => $inscription,
+        //     "netiquettes" => $netiquettes,
+        //     "anonymat" => $anonymat
+        // ]);
         $html = $this->render("administration_epreuve/pdfs/imprimer.html.twig", [
             "inscription" => $inscription,
-            "netiquettes" => $netiquettes,
+            "netiquettes" => (int) $netiquettes,
             "anonymat" => $anonymat
         ])->getContent();
         $mpdf = new Mpdf([
             'mode' => 'utf-8',
             'format' => 'A4-L',
-            'margin_left' => '0',
-            'margin_right' => '0',
-            'margin_top' => '50',
+            'margin_left' => '50',
+            'margin_right' => '50',
+            'margin_top' => '25',
             'margin_bottom' => '0',
             'default_font_size' => 10,
             'default_font' => 'Arial',
@@ -177,7 +182,7 @@ class ImprimerController extends AbstractController
         // dd($mpdf);
 
         $mpdf->Output();
-        die;
+        // die;
     }
 
     
