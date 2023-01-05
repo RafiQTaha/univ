@@ -65,7 +65,7 @@ $(document).ready(function () {
                     win.print();
                     setTimeout(function () {
                         win.close();
-                    }, 2500);
+                    }, 3500);
                 }
                 // }
                 $("#id_etudiant").val("")
