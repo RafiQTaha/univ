@@ -1,4 +1,4 @@
-<link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro" rel="stylesheet">
+{# <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro" rel="stylesheet">
 
 <style>
     .barcode {
@@ -20,3 +20,39 @@
     <!-- <div class="wrapper">
     </div> -->
 </page>
+<script>
+            window.print()
+</script> #}
+<!DOCTYPE html>
+<html>
+<head>
+<link href='https://fonts.googleapis.com/css?family=Libre Barcode 39' rel='stylesheet'>
+<style>
+    .barcode {
+        padding: 1.5mm;
+        margin: 0;
+        vertical-align: top;
+        color: #000044;
+    }
+    .barcodecell {
+        text-align: center;
+        vertical-align: middle;
+    }
+</style>
+</head>
+<body>
+<page backtop="0mm" backbottom="0mm" backleft="0mm" backright="0mm" style="margin-top:50%;">
+    <div class="barcodecell">
+        {# <barcode style="font-family: 'Libre Barcode 39';font-size: 22px;" code="{{inscription.id}}" type="C128A" height="0.7" size="7" /> #}
+        <p style="font-family: 'Libre Barcode 39';font-size: 130px;">{{inscription.id}}</p>
+        <p style="font-weight:700;font-size:50px;margin-top: -180px;"> {{anonymat}}</p>
+    </div>
+    <!-- <div class="wrapper">
+    </div> -->
+</page>
+
+<script>
+            window.print()
+</script>
+</body>
+</html>

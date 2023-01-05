@@ -219,46 +219,6 @@ class PlanificationController extends AbstractController
     #[Route('/print_planning/{semestre}/{groupe}/{day}/{professeur}', name: 'print_planning')]
     public function print_planning(AcSemestre $semestre,$groupe,$day,$professeur): Response
     { 
-        // $semaine = $this->em->getRepository(Semaine::class)->findOneBy(['nsemaine'=>$semaine,'anneeS'=>$annee->getDesignation()]);
-        // if($groupe == 0){
-        //     // $emptimes = $this->em->getRepository(PlEmptime::class)->getEmptimeBySemestreAndSemaine($semestre,$semaine);
-        // }else{
-        //     // $emptimes = $this->em->getRepository(PlEmptime::class)->getEmptimeBySemestreAndGroupeAndSemaine($semestre,$groupe,$semaine);
-        //     $niveau = $this->em->getRepository(PGroupe::class)->find($groupe);
-        // }
-        // dd($emptimes);
-        // dd($emptime->getGroupe()->getNiveau());  
-        
-        /////////////////
-        // $times = [];
-        // foreach($emptimes as $emptime){
-        //     $enseingant = "";
-        //     $element = $emptime->getProgrammation()->getElement();
-        //     $natureEpreuve = $emptime->getProgrammation()->getNatureEpreuve();
-        //     $epreuve = $this->em->getRepository(AcEpreuve::class)->findOneBy(['id'=>2]);
-        //     if($emptime->getProgrammation()->getEnseignants() != Null){
-        //         if($emptime->getProgrammation()->getEnseignants()[0] != Null){
-        //             $enseingant .= $enseingant != "" ? ", " : ""; 
-        //             $enseingant .= $emptime->getProgrammation()->getEnseignants()[0]->getNom().' '.$emptime->getProgrammation()->getEnseignants()[0]->getPrenom();
-        //         }
-        //     }
-        //     // dd($emptime->getSalle()->getDesignation());
-        //     $times[] = [
-        //         'id' => $emptime->getId(),
-        //         'title' => $emptime->getCode() . "\n".
-        //                 ' Element :  '.$element->getDesignation() . "\n".
-        //                 ' Type de Cours :  '.$natureEpreuve->getDesignation() . "\n".
-        //                 // 'salle : '.$emptime->getSalle()->getDesignation() . "\n".
-        //                 $enseingant ,
-        //                 // $enseingant . "\n".
-        //                 // 'salle : '. $emptime->getSalle()->getDesignation(),
-        //         'start' => $emptime->getStart()->format('Y-m-d H:i:s'),
-        //         'end' => $emptime->getEnd()->format('Y-m-d H:i:s'),
-        //         'color'=> $element->getModule()->getColor(),
-        //         // 'color'=> $emptime->getColor() == NUll  ? "" : $emptime->getColor()->getCouleur(),
-        //     ];
-        // }
-        // dd($professeur);
         $niveau = "";
         $annee = $this->em->getRepository(AcAnnee::class)->getActiveAnneeByFormation($semestre->getPromotion()->getFormation());
         if ($groupe != 0 ) {

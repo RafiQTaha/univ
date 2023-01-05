@@ -153,30 +153,30 @@ class ImprimerController extends AbstractController
         
         $anonymatActuel = $this->em->getRepository(PAnonymatActuel::class)->find(1)->getAbreviation();
         $anonymat = $anonymatActuel == 'anonymat' ? $inscription->getCodeAnonymat() : $inscription->getCodeAnonymatRat();
-        $html = $this->render("administration_epreuve/pdfs/imprimer.html.twig", [
+        return $this->render("administration_epreuve/pdfs/imprimer.html.twig", [
             "inscription" => $inscription,
             "netiquettes" => $netiquettes,
             "anonymat" => $anonymat
-        ])->getContent();
-        $mpdf = new Mpdf([
-            'mode' => 'utf-8',
-            'format' => 'A4-L',
-            'margin_left' => '0',
-            'margin_right' => '0',
-            'margin_top' => '50',
-            'margin_bottom' => '0',
-            'default_font_size' => 10,
-            'default_font' => 'Arial',
-            'showBarcodeNumbers' => FALSE
         ]);
-        $mpdf->SetTitle('Etiquettes');
+        // $mpdf = new Mpdf([
+        //     'mode' => 'utf-8',
+        //     'format' => 'A4-L',
+        //     'margin_left' => '0',
+        //     'margin_right' => '0',
+        //     'margin_top' => '50',
+        //     'margin_bottom' => '0',
+        //     'default_font_size' => 10,
+        //     'default_font' => 'Arial',
+        //     'showBarcodeNumbers' => FALSE
+        // ]);
+        // $mpdf->SetTitle('Etiquettes');
        
-        // $html = "<barcode code=".$inscription->getId()." type='C128A' height='0.7' size='1.5'/>";
-        $mpdf->SetJS('this.print();');
-        $mpdf->WriteHTML($html);
-        // dd($mpdf);
+        // // $html = "<barcode code=".$inscription->getId()." type='C128A' height='0.7' size='1.5'/>";
+        // $mpdf->SetJS('this.print();');
+        // $mpdf->WriteHTML($html);
+        // // dd($mpdf);
 
-        $mpdf->Output();
+        // $mpdf->Output();
         die;
     }
 
