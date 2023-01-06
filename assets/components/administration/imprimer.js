@@ -83,9 +83,12 @@ $(document).ready(function () {
         }
     });
     $('#datables_imprimer').on('click', 'tbody tr .get_cd', function (event) {
-       var code = $(this).attr('role');
-       window.open("/administration/imprimer/print/" + code + "/1",'_blank', "toolbar=yes,scrollbars=yes,top=500,left=500,width=400,height=330");
-       event.preventDefault();
+        var code = $(this).attr('role');
+        let win = window.open("/administration/imprimer/print/" + code + "/1",'_blank', "toolbar=yes,scrollbars=yes,top=500,left=500,width=400,height=330");
+        win.onfocus = function () {
+            win.print();
+        }
+        event.preventDefault();
    });
     
 });
