@@ -133,13 +133,13 @@ $(document).ready(function () {
             console.log(err)
         })
     }
-    const getOrganismeByFacture = async () => {
-        if(id_facture){
-            const request = await axios.get('/api/organisme/'+id_facture);
-            response = request.data
-            $('#org').html(response).select2();
-        }    
-    }
+    // const getOrganismeByFacture = async () => {
+    //     if(id_facture){
+    //         const request = await axios.get('/api/organisme/'+id_facture);
+    //         response = request.data
+    //         $('#org').html(response).select2();
+    //     }    
+    // }
     
     const load_frais_preins = () => {
         if(id_facture){
@@ -165,7 +165,7 @@ $(document).ready(function () {
             $(this).addClass('active_databales');
             id_facture = $(this).attr('id');
             console.log(id_facture);
-            getOrganismeByFacture()
+            // getOrganismeByFacture()
             getMontant();
             getFacture();
             load_frais_preins();
@@ -183,7 +183,7 @@ $(document).ready(function () {
         }
         $("#detail_facture_modal").modal('show');
     });
-    extra_frais
+    
     $('input[type=radio][name=organ]').on('change', async function (e){
         e.preventDefault();
         if (this.value == 0) {
@@ -260,6 +260,10 @@ $(document).ready(function () {
                     icon.removeClass('fa-spinner fa-spin').addClass("fa-window-close");
                 }catch(error){
                     const message = error.response.data;
+                    Toast.fire({
+                        icon: 'error',
+                        title: message,
+                    })
                     icon.removeClass('fa-spinner fa-spin').addClass("fa-window-close");
                 }
             }
@@ -416,4 +420,42 @@ $(document).ready(function () {
         // alert(annee);
         window.open('/facture/factures/extraction_factures_by_annee/'+annee, '_blank');
     });
+    $("#cloturer").on('click', async function(e) {
+        e.preventDefault();
+        if(!id_facture){
+            Toast.fire({
+            icon: 'error',
+            title: 'Veuillez selection une ligne!',
+            })
+            return;
+        }
+        const icon = $("#cloturer i");
+        icon.removeClass('fa-lock').addClass("fa-spinner fa-spin");
+        let formData = new FormData();
+        formData.append("facture",  id_facture)
+        var res = confirm('Vous voulez vraiment cloturer cette facture ?');
+        if(res == 1){
+            try {
+                const request = await axios.post('/facture/factures/cloture', formData);
+                const response = request.data;    
+                icon.addClass('fa-lock').removeClass("fa-spinner fa-spin");
+                Toast.fire({
+                    icon: 'success',
+                    title: response,
+                }) 
+                getFacture()
+                id_facture = false
+                table_facture.ajax.reload(null, false);
+            } catch (error) {
+                console.log(error)
+                const message = error.response.data;
+                icon.addClass('fa-lock').removeClass("fa-spinner fa-spin");
+                Toast.fire({
+                    icon: 'error',
+                    title: message,
+                })
+                
+            }
+        }
+    })
 });

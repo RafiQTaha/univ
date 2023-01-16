@@ -48,6 +48,9 @@ class TOperationcab
     #[ORM\Column(type: 'float', nullable: true)]
     private $active;
 
+    #[ORM\Column(type: 'float', nullable: true)]
+    private $synFlag = 0;
+
     public function __construct()
     {
         $this->reglements = new ArrayCollection();
@@ -223,6 +226,18 @@ class TOperationcab
     public function setActive(?float $active): self
     {
         $this->active = $active;
+
+        return $this;
+    }
+
+    public function getSynFlag(): ?float
+    {
+        return $this->synFlag;
+    }
+
+    public function setSynFlag(?float $synFlag): self
+    {
+        $this->synFlag = $synFlag;
 
         return $this;
     }

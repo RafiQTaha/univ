@@ -269,6 +269,10 @@ $(document).ready(function () {
                 icon.addClass('fa-times-circle').removeClass("fa-spinner fa-spin");
             } catch (error) {
                 const message = error.response.data;
+                Toast.fire({
+                    icon: 'error',
+                    title: message,
+                })
                 icon.addClass('fa-times-circle').removeClass("fa-spinner fa-spin");
             }
         }  

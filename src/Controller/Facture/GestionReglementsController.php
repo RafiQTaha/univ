@@ -297,8 +297,20 @@ class GestionReglementsController extends AbstractController
     {  
         // dd($request->get('motif_annuler'));
         if ($reglement) {
+            if ($reglement->getAnnuler() == 1) {
+                return new JsonResponse('Cette Réglement est déja annuler!', 500);
+            }
             $reglement->setAnnuler(1);
             $reglement->setAnnulerMotif($request->get('motif_annuler'));
+            $this->em->flush();
+            $nreglement = clone $reglement;
+            $nreglement->setUserCreated($this->getUser());
+            $nreglement->setMontant($reglement->getMontant() * -1);
+            $nreglement->setCreated(new DateTime('now'));
+            $this->em->persist($nreglement);
+            $this->em->flush();
+            $etablissement = $reglement->getOperation()->getAnnee()->getFormation()->getEtablissement()->getAbreviation();
+            $reglement->setCode($etablissement.'-REG'.str_pad($nreglement->getId(), 8, '0', STR_PAD_LEFT).'/'.date('Y'));
             $this->em->flush();
             return new JsonResponse('Reglement Bien Annuler',200);
         }

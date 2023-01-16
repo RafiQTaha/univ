@@ -165,20 +165,20 @@ class ApiController extends AbstractController
         return new JsonResponse($data);        
     }
 
-    #[Route('/organisme/{operationcab}', name: 'getOrganismeByoperation')]
-    public function getOrganismeByoperation(TOperationcab $operationcab): Response
-    {   
-        $organismes = $this->em->getRepository(POrganisme::class)->findBy(['active'=>1]);
-        $data = "<option selected disabled value=''>Choix Organisme</option>";
-        foreach ($organismes as $organisme) {
-            if ($organisme === $operationcab->getOrganisme()) {
-                $data .="<option selected value=".$organisme->getId().">".$organisme->getDesignation()."</option>";
-            }else{
-                $data .="<option value=".$organisme->getId().">".$organisme->getDesignation()."</option>";
-            }
-        }
-        return new JsonResponse($data);        
-    }
+    // #[Route('/organisme/{operationcab}', name: 'getOrganismeByoperation')]
+    // public function getOrganismeByoperation(TOperationcab $operationcab): Response
+    // {   
+    //     $organismes = $this->em->getRepository(POrganisme::class)->findBy(['active'=>1]);
+    //     $data = "<option selected disabled value=''>Choix Organisme</option>";
+    //     foreach ($organismes as $organisme) {
+    //         if ($organisme === $operationcab->getOrganisme()) {
+    //             $data .="<option selected value=".$organisme->getId().">".$organisme->getDesignation()."</option>";
+    //         }else{
+    //             $data .="<option value=".$organisme->getId().">".$organisme->getDesignation()."</option>";
+    //         }
+    //     }
+    //     return new JsonResponse($data);        
+    // }
     
     #[Route('/nature_etudiant/{admission}', name: 'getnatureetudiant')]
     public function getNatureEtudiant(TAdmission $admission): Response
