@@ -104,7 +104,7 @@ class TReglementRepository extends ServiceEntityRepository
             ->innerJoin("reg.operation","cab")
             ->innerJoin("cab.preinscription","pre")
             ->innerJoin("pre.etudiant","etu")
-            ->leftJoin("pre.admissions","adm")
+            // ->leftJoin("pre.admissions","adm")
             // ->leftJoin("adm.inscriptions","ins")
             // ->leftJoin("ins.promotion","prm")
             // ->leftJoin("ins.statut","stat")

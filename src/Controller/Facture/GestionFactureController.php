@@ -500,12 +500,14 @@ class GestionFactureController extends AbstractController
         $operationDet->setCreated(new \DateTime("now"));
         $operationDet->setRemise(0);
         $operationDet->setActive(1);
+        $operationDet->setUserCreated($this->getUser());
         $operationDet->setOrganisme($this->em->getRepository(POrganisme::class)->find($request->get('organisme_id')));
         $this->em->persist($operationDet);
         $this->em->flush();
         $operationDet->setCode(
             "OPD".str_pad($operationDet->getId(), 8, '0', STR_PAD_LEFT)
         );
+        $operationDet->getOperationcab()->setSynFlag(0);
         $this->em->flush();
         return new JsonResponse(1, 200);    
     }
