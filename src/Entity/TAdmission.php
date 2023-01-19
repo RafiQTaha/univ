@@ -42,9 +42,13 @@ class TAdmission
     #[ORM\OneToMany(mappedBy: 'admission', targetEntity: TInscription::class)]
     private $inscriptions;
 
+    #[ORM\OneToMany(mappedBy: 'admission', targetEntity: AnoteExterne::class)]
+    private $anoteExternes;
+
     public function __construct()
     {
         $this->inscriptions = new ArrayCollection();
+        $this->anoteExternes = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -172,6 +176,36 @@ class TAdmission
             // set the owning side to null (unless already changed)
             if ($inscription->getAdmission() === $this) {
                 $inscription->setAdmission(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, AnoteExterne>
+     */
+    public function getAnoteExternes(): Collection
+    {
+        return $this->anoteExternes;
+    }
+
+    public function addAnoteExterne(AnoteExterne $anoteExterne): self
+    {
+        if (!$this->anoteExternes->contains($anoteExterne)) {
+            $this->anoteExternes[] = $anoteExterne;
+            $anoteExterne->setAdmission($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAnoteExterne(AnoteExterne $anoteExterne): self
+    {
+        if ($this->anoteExternes->removeElement($anoteExterne)) {
+            // set the owning side to null (unless already changed)
+            if ($anoteExterne->getAdmission() === $this) {
+                $anoteExterne->setAdmission(null);
             }
         }
 

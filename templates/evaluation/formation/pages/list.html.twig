@@ -16,34 +16,43 @@
                     </th>
                 {% endfor %}
 
-                {% if dataAnnee|length > 0 and countAnote == nbrAnnee%}
+                
                         <th>Moyenne</th>                
                         <th>Moyenne Sec</th>
-                {% endif %}      
+                      
                 
             </tr>
         </thead>
         <tbody>
             {% for etudiant in etudiants %}
-                <tr>
+                <tr {% if etudiant.notFull == 1 %}
+                    style="background: #e74c3c; color:aliceblue;"
+                {% endif %}
+                id='{{etudiant.admission.id}}' >
                     <td><input type ='checkbox' class='check_etu' id ='{{etudiant.admission.id}}' value="{{etudiant.admission.id}}"></td>
                     <td>{{loop.index}}</td>
                     <td>{{etudiant.admission.code}}</td>
                     <td>{{etudiant.etudiantInfo.nom}}</td>
                     <td>{{etudiant.etudiantInfo.prenom}}</td>
                     {% for note in etudiant.notes %}
-                        {% if note != 'Prochainement' %}
-                            <td>{{note|number_format(2, '.', ',')}}</td>
-                            {% else %}
-                            <td>{{note}}</td>
-                        {% endif %}
+                    <td>{{note}}</td>
                     {% endfor %}
 
-                    {% if etudiant.moyenne is defined %}
-                        <td>{{etudiant.moyenne}}</td>
-                    {% endif %}
-                    {% if etudiant.moyenne is defined %}
-                        <td>{{etudiant.moyenneSec}}</td>
+
+                    {% if etudiant.notFull == 1 %}
+                        <td > indispo </td>
+                        <td > indispo </td>
+                    {% else %}
+                        {% if etudiant.moyenne is defined %}
+                            <td>{{etudiant.moyenne}}</td>
+                        {% else %}
+                            <td > indispo </td>
+                        {% endif %}
+                        {% if etudiant.moyenne is defined %}
+                            <td>{{etudiant.moyenneSec}}</td>
+                        {% else %}
+                            <td > indispo </td>
+                        {% endif %}
                     {% endif %}
                     
                     

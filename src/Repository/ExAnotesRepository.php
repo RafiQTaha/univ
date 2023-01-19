@@ -95,12 +95,14 @@ class ExAnotesRepository extends ServiceEntityRepository
         return $result;
     }
 
-    public function getNoteFromExAnotesByStatut($inscription)
+
+    public function getNoteFromExAnotesByStatut($admission)
     {
         $sqls="SELECT ex.*
         FROM `ex_anotes` ex 
         inner join tinscription ins on ins.id = ex.inscription_id
-        where ins.id = $inscription
+        inner join tadmission adm on adm.id = ins.admission_id
+        where adm.id = $admission
         and ex.statut_aff_id != 44
         
         ORDER BY

@@ -317,6 +317,24 @@ class TInscriptionRepository extends ServiceEntityRepository
         ;
     }
 
+    public function getInscriptionsByAnoteExiste($annee,$promotion)
+    {
+        // dd($promotion->getId());
+        return $this->createQueryBuilder('inscription')
+        ->leftJoin("inscription.anotes", "anotes")
+        ->where('inscription.promotion = :promotion')
+        ->andWhere("inscription.annee = :annee")
+        ->andWhere("inscription.statut = 13")
+        ->andWhere("anotes.statutAff != 44")
+        // ->andWhere("inscription.admission = 238")
+        ->setParameter('promotion', $promotion)
+        ->setParameter('annee', $annee)
+        ->getQuery()
+        ->getResult()
+        // dd($return);
+        ;
+    }
+
     public function getPreviousInsription($inscription)
     {
         $previousInscription =  $this->createQueryBuilder('i')

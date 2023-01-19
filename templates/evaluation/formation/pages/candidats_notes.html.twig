@@ -1,0 +1,49 @@
+
+
+    <div class="row">
+        <div class="col-md-4">
+            <div class="form-group">
+                <label>  Nom :</label>
+                <div type="text" name="nom" >{{etudiant.etudiantInfo.nom}}</div> 
+            </div>
+        </div> 
+
+        <div class="col-md-4">
+            <div class="form-group">
+                <label>  Prénom :</label>
+                <div  type="text" name="prenom">{{etudiant.etudiantInfo.prenom}}</div> 
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <label>  Code Admission:</label>
+                <div  type="text" name="codeAdm">{{etudiant.admission.code}}</div>  
+            </div>
+        </div>
+    </div>
+    
+    
+
+    <div class="row">
+    {# {{ dump(etudiant.notes[0]) }} #}
+    {% for i in 0..(nbrAnnee - 1) %}
+        <div class="form-group col-md-4">
+            <label>  Note {{dataAnnee[i].designation}} :</label>
+            {% if etudiant.notes[i] == 'indispo' %}
+            <div style="max-width:400px;margin:auto;width: 100%;
+                margin-bottom: 10px;display: flex;
+                position: relative;">
+                    <input class="form-control noteExterne" type="text" name="noteExterne" annee='{{dataAnnee[i].id}}' value="{{etudiant.notes[i]}}" style="width: 100%;
+                padding: 10px;
+                text-align: center;">
+                    <span class='test' style='position:absolute;'><i class="fa fa-check" id='icon' style="padding: 10px;
+                min-width: 40px;display:none;" ></i></span>
+            </div> 
+            {% else %}
+                <div  type="text" name="anote">{{etudiant.notes[i]}}</div>
+            {% endif %}
+        </div>
+    {% endfor %}
+    </div>
+    
+  
