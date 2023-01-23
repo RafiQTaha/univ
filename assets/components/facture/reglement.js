@@ -64,7 +64,7 @@ $(document).ready(function () {
         })
     }
     $("select").select2();
-    $("#paiement").select2();
+    // $("#paiement").select2();
     $("#etablissement").on('change', async function (){
         const id_etab = $(this).val();
         table_reglement.columns(1).search("");

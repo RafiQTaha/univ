@@ -209,9 +209,10 @@ class GestionFactureController extends AbstractController
         if (empty($request->get('d_reglement')) || $request->get('montant') == "" || empty($request->get('banque')) ||
          empty($request->get('paiement'))  ||  empty($request->get('reference'))) {
             return new JsonResponse('Veuillez renseigner tous les champs!', 500);
-        }elseif ($request->get('montant') <= 0 && empty($request->get('montant_provisoir'))) {
-            return new JsonResponse('Le montant ne peut pas étre égale ou inferieur à 0', 500);
         }
+        // elseif ($request->get('montant') <= 0 && empty($request->get('montant_provisoir'))) {
+        //     return new JsonResponse('Le montant ne peut pas étre égale ou inferieur à 0', 500);
+        // }
         // elseif ($request->get('montant') > $request->get('montant2')) {
         //     return new JsonResponse('Le montant a réglé est '.$request->get('montant2').'DH', 500);
         // }
@@ -221,7 +222,7 @@ class GestionFactureController extends AbstractController
         $reglement->setOperation($operationcab);
         $reglement->setCreated(new DateTime('now'));
         $reglement->setMontant($request->get('montant'));
-        $reglement->setMProvisoir($request->get('montant_provisoir'));
+        // $reglement->setMProvisoir($request->get('montant_provisoir'));
         $reglement->setMDevis($request->get('montant_devis'));
         $reglement->setRemise(0);
         $reglement->setBanque($request->get('banque') == "" ? Null : $this->em->getRepository(XBanque::class)->find($request->get('banque')));

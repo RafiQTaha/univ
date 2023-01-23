@@ -89,6 +89,39 @@ $(document).ready(function () {
             win.print();
         }
         event.preventDefault();
-   });
+    });
+    $('#anonymat').on('click', function (event) {
+        $('#change_anonymat').modal("show");
+        event.preventDefault();
+    });
+    $("#change_anonymat_save").on("submit", async function(e) {
+        e.preventDefault();
+        let formData = new FormData($(this)[0]);
+        const icon = $("#anonymat_changed i");
+        icon.removeClass('fa-check-circle').addClass("fa-spinner fa-spin");
+        
+        try {
+            const request = await axios.post('/api/changeAnonymat', formData);
+            const response = request.data;
+            $('body #c-anonymat').html(response);
+            icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
+            $('#change_anonymat').modal("hide");
+            Toast.fire({
+                icon: 'success',
+                title: 'Le type d\'anonymat est bien changé',
+            })
+            return;
+        } catch (error) {
+            const message = error.response.data;
+            console.log(error, error.response);
+            $('#change_anonymat').modal("hide");
+            Toast.fire({
+                icon: 'success',
+                title: message,
+            })
+            icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
+        }
+    })
+   
     
 });

@@ -1,0 +1,31 @@
+<div class="modal" role="dialog" id="change_anonymat" aria-modal="true" >
+  <div class="modal-dialog modal-md" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Change Anonymat</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" >
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <!-- <div class="alert alert-info">Please check your browser console</div> -->
+        <form id="change_anonymat_save" method="post"> 
+            <div class="form-group">
+                <label for="formation">Type D'Anonymat:</label>
+                <select class="form-control" name="anonymat" id="type_anonymat">
+                    {% if anonymatActuel.abreviation == "anonymat" %}
+                        <option value="0" selected>ANONYMAT</option>
+                        <option value="1">ANONYMAT RATTRAPAGE</option>
+                        {% else %}
+                        <option value="0">ANONYMAT</option>
+                        <option value="1" selected>ANONYMAT RATTRAPAGE</option>
+                    {% endif %}
+                </select>
+            </div>
+          {# <a href="#" class="btn btn-primary" id="epreuve_canvas"><i class="fas fa-download"></i> Canvas</a> #}
+          <button class="btn btn-success" type="submit" id="anonymat_changed"><i class="fas fa-check-circle"></i> Changé</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
