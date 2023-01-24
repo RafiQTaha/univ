@@ -552,9 +552,13 @@ class EpreuveController extends AbstractController
     public function administrationEpreuveCloture(Request $request) 
     {
         $idEpreuves = array_unique(json_decode($request->get("idEpreuves")));
+        if ($idEpreuves == null) {
+            return new JsonResponse('Merci de choisir une epreuve!',500);
+        }
         foreach ($idEpreuves as $key => $id) {
             $epreuve = $this->em->getRepository(AcEpreuve::class)->find($id);
             if($epreuve->getStatut()->getDesignation() == "Affilier") {
+                // dd($epreuve);
                 $epreuve->setStatut(
                     $this->em->getRepository(PStatut::class)->find(30) //Valider
                 );
