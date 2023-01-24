@@ -152,7 +152,38 @@ class RechercheAvanceController extends AbstractController
             return new JsonResponse('Redoublant!!',500);
         }
         $html = $this->render("etudiant/recherche_avance/pdf/attestations/reussite.html.twig", [
-            'inscription' => $inscription
+            'inscription' => $inscription,
+            'laz' => 0
+        ])->getContent();
+        // dd($html);
+        $mpdf = new Mpdf([
+            'margin_left' => 5,
+            'margin_right' => 5,
+        ]);
+        // $mpdf->SetHTMLHeader(
+        //     $this->render("etudiant/recherche_avance/pdf/attestations/header.html.twig")->getContent()
+        // );
+        $mpdf->SetHTMLFooter(
+            $this->render("etudiant/recherche_avance/pdf/attestations/footer.html.twig")->getContent()
+        );
+        $mpdf->WriteHTML($html);
+        
+        $mpdf->Output("reussite.pdf", "I");
+    }
+    
+    #[Route('/attestation/reussite_laz/{inscription}', name: 'etudiant_recherche_attestation_reussite_laz')]
+    public function attestationReussiteLaz(TInscription $inscription): Response
+    {
+        $prm = $this->em->getRepository(TInscription::class)->findBy([
+            'admission' => $inscription->getAdmission(),
+            'promotion' => $inscription->getPromotion()
+        ]);
+        if (count($prm) > 1) {
+            return new JsonResponse('Redoublant!!',500);
+        }
+        $html = $this->render("etudiant/recherche_avance/pdf/attestations/reussite.html.twig", [
+            'inscription' => $inscription,
+            'laz' => 1
         ])->getContent();
         // dd($html);
         $mpdf = new Mpdf([

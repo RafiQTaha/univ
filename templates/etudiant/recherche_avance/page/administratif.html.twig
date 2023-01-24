@@ -16,8 +16,13 @@
             </li>
             <li>
                <a target="_blank" href="{{path('etudiant_recherche_attestation_reussite', {inscription: inscription.id})}}">     Attestation de réussite </a>
-           </li>
-             <li>
+            </li>
+            {% if inscription.annee.formation.etablissement.id == 28 %}
+                <li>
+                    <a target="_blank" href="{{path('etudiant_recherche_attestation_reussite_laz', {inscription: inscription.id})}}">     Attestation de réussite LAZ</a>
+                </li>
+            {% endif %}
+            <li>
                 <a target="_blank" href="{{path('etudiant_recherche_attestation_reussite_note', {inscription: inscription.id})}}">        Attestation de réussite Avec Moyenne	</a>
             </li>
         </ul>
