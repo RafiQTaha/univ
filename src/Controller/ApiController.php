@@ -25,7 +25,9 @@ use App\Entity\TOperationcab;
 use App\Entity\PNatureEpreuve;
 use App\Entity\AcEtablissement;
 use App\Entity\Mouchard;
+use App\Entity\PAnonymatActuel;
 use App\Entity\PrProgrammation;
+use DateTime;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\HttpFoundation\Request;
@@ -165,20 +167,20 @@ class ApiController extends AbstractController
         return new JsonResponse($data);        
     }
 
-    #[Route('/organisme/{operationcab}', name: 'getOrganismeByoperation')]
-    public function getOrganismeByoperation(TOperationcab $operationcab): Response
-    {   
-        $organismes = $this->em->getRepository(POrganisme::class)->findBy(['active'=>1]);
-        $data = "<option selected disabled value=''>Choix Organisme</option>";
-        foreach ($organismes as $organisme) {
-            if ($organisme === $operationcab->getOrganisme()) {
-                $data .="<option selected value=".$organisme->getId().">".$organisme->getDesignation()."</option>";
-            }else{
-                $data .="<option value=".$organisme->getId().">".$organisme->getDesignation()."</option>";
-            }
-        }
-        return new JsonResponse($data);        
-    }
+    // #[Route('/organisme/{operationcab}', name: 'getOrganismeByoperation')]
+    // public function getOrganismeByoperation(TOperationcab $operationcab): Response
+    // {   
+    //     $organismes = $this->em->getRepository(POrganisme::class)->findBy(['active'=>1]);
+    //     $data = "<option selected disabled value=''>Choix Organisme</option>";
+    //     foreach ($organismes as $organisme) {
+    //         if ($organisme === $operationcab->getOrganisme()) {
+    //             $data .="<option selected value=".$organisme->getId().">".$organisme->getDesignation()."</option>";
+    //         }else{
+    //             $data .="<option value=".$organisme->getId().">".$organisme->getDesignation()."</option>";
+    //         }
+    //     }
+    //     return new JsonResponse($data);        
+    // }
     
     #[Route('/nature_etudiant/{admission}', name: 'getnatureetudiant')]
     public function getNatureEtudiant(TAdmission $admission): Response
@@ -303,6 +305,29 @@ class ApiController extends AbstractController
          }
         return new JsonResponse($data);
     }
+    
+    #[Route('/changeAnonymat', name: 'changeAnonymat')]
+    public function changeAnonymat(Request $request): Response
+    {   
+        $anonymatActuel = $this->em->getRepository(PAnonymatActuel::class)->find(1);
+        $an_actuel = "";
+        if ($request->get('anonymat') == 0) {
+            $anonymatActuel->setDesignation('Anonymat');
+            $anonymatActuel->setAbreviation('anonymat');
+            $an_actuel = "Anonymat Actuel: <span style='text-transform: uppercase;font-weight: 800;color:green'>anonymat</span>";
+        }else{
+            $anonymatActuel->setDesignation('Anonymat Ratrappage');
+            $anonymatActuel->setAbreviation('anonymatrat');
+            $an_actuel = "Anonymat Actuel: <span style='text-transform: uppercase;font-weight: 800;color:orange'>anonymatrat</span>";
+        }
+        $anonymatActuel->setCreated(new DateTime('now'));
+        $anonymatActuel->setUserCreated($this->getUser());
+        if ($an_actuel != "") {
+            $this->em->flush();
+        }
+        return new JsonResponse($an_actuel,200);
+    }
+    
     
     // #[Route('/findSemaine', name: 'findSemaine')]
     // public function findSemaine(Request $request): Response

@@ -70,6 +70,9 @@ class TReglement
     #[ORM\Column(type: 'float', nullable: true)]
     private $m_devis;
 
+    #[ORM\Column(type: 'float', nullable: true)]
+    private $synFlag = 0;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -299,6 +302,18 @@ class TReglement
     public function setMDevis(?float $m_devis): self
     {
         $this->m_devis = $m_devis;
+
+        return $this;
+    }
+
+    public function getSynFlag(): ?float
+    {
+        return $this->synFlag;
+    }
+
+    public function setSynFlag(?float $synFlag): self
+    {
+        $this->synFlag = $synFlag;
 
         return $this;
     }

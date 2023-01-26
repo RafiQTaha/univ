@@ -167,7 +167,7 @@ $(document).ready(function () {
         if(!$("#semestre").val()){
             Toast.fire({
                 icon: 'error',
-                title: 'Veuillez selection une ligne!',
+                title: 'Veuillez selection une Semestre!',
             })
             return;
         }

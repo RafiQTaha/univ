@@ -654,7 +654,7 @@ $(document).ready(function  () {
             }else {
                 Toast.fire({
                     icon: 'info',
-                    title: "Epreuves no capitaliser",
+                    title: "Epreuves non capitaliser",
                 }) 
             }
         } catch (error) {

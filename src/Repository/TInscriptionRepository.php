@@ -372,7 +372,7 @@ class TInscriptionRepository extends ServiceEntityRepository
                    from tinscription_imp_controle 
                    WHERE YEAR(CURDATE()) = YEAR(created) AND MONTH(CURDATE()) = MONTH(created) AND DAY(CURDATE()) = DAY(created)
                    GROUP BY inscription_id) con ON con.inscription_id = ins.id
-        where ann.validation_academique = 'non' and ann.cloture_academique = 'non' and sem.id = ".$semestre->getId();
+        where ann.validation_academique = 'non' and ann.cloture_academique = 'non' and nom not like '%test%' and ins.statut_id = 13 and sem.id = ".$semestre->getId();
         // -- where frm.designation not like '%Residanat%' and etab.abreviation != 'CFC'  ";
         // dd($sqls);
         $stmts = $this->em->getConnection()->prepare($sqls);

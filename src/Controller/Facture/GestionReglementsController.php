@@ -297,8 +297,20 @@ class GestionReglementsController extends AbstractController
     {  
         // dd($request->get('motif_annuler'));
         if ($reglement) {
+            if ($reglement->getAnnuler() == 1) {
+                return new JsonResponse('Cette Réglement est déja annuler!', 500);
+            }
             $reglement->setAnnuler(1);
             $reglement->setAnnulerMotif($request->get('motif_annuler'));
+            $this->em->flush();
+            $nreglement = clone $reglement;
+            $nreglement->setUserCreated($this->getUser());
+            $nreglement->setMontant($reglement->getMontant() * -1);
+            $nreglement->setCreated(new DateTime('now'));
+            $this->em->persist($nreglement);
+            $this->em->flush();
+            $etablissement = $reglement->getOperation()->getAnnee()->getFormation()->getEtablissement()->getAbreviation();
+            $reglement->setCode($etablissement.'-REG'.str_pad($nreglement->getId(), 8, '0', STR_PAD_LEFT).'/'.date('Y'));
             $this->em->flush();
             return new JsonResponse('Reglement Bien Annuler',200);
         }
@@ -322,15 +334,22 @@ class GestionReglementsController extends AbstractController
     #[Route('/modifier_reglement/{id}', name: 'modifier_reglement')]
     public function ajouter_reglement(Request $request,TReglement $reglement): Response
     { 
-        if (empty($request->get('d_reglement')) || $request->get('montant') == ""  || empty($request->get('banque')) ||
-        empty($request->get('paiement')) ||  empty($request->get('reference')) ) {
-            return new JsonResponse('Veuillez renseigner tous les champs!', 500);
-        }elseif ($request->get('montant') == 0) {
-            return new JsonResponse('Le montant ne peut pas étre égale à 0', 500);
+        if ($reglement->getAnnuler() == 1) {
+            return new JsonResponse('Reglement déja Annuler!', 500);
         }
+        // if (empty($request->get('d_reglement')) || $request->get('montant') == ""  || empty($request->get('banque')) ||
+        // empty($request->get('paiement')) ||  empty($request->get('reference')) ) {
+        //     return new JsonResponse('Veuillez renseigner tous les champs!', 500);
+        // }
+        if (empty($request->get('d_reglement')) || empty($request->get('banque')) || empty($request->get('paiement')) ||  empty($request->get('reference')) ) {
+            return new JsonResponse('Veuillez renseigner tous les champs!', 500);
+        }
+        // elseif ($request->get('montant') == 0) {
+        //     return new JsonResponse('Le montant ne peut pas étre égale à 0', 500);
+        // }
         $reglement->setUpdated(new DateTime('now'));
-        $reglement->setMontant($request->get('montant'));
-        $reglement->setMProvisoir($request->get('montant_provisoir'));
+        // $reglement->setMontant($request->get('montant'));
+        // $reglement->setMProvisoir($request->get('montant_provisoir'));
         $reglement->setMDevis($request->get('montant_devis'));
         $reglement->setBanque($request->get('banque') == "" ? Null : $this->em->getRepository(XBanque::class)->find($request->get('banque')));
         $reglement->setPaiement($this->em->getRepository(XModalites::class)->find($request->get('paiement')));

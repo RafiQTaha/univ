@@ -43,6 +43,12 @@ class TOperationdet
     #[ORM\ManyToOne(targetEntity: POrganisme::class, inversedBy: 'operationdets')]
     private $organisme;
 
+    #[ORM\Column(type: 'float', nullable: true)]
+    private $synFlag = 0;
+
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'tOperationDets')]
+    private $userCreated;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -164,6 +170,30 @@ class TOperationdet
     public function setOrganisme(?POrganisme $organisme): self
     {
         $this->organisme = $organisme;
+
+        return $this;
+    }
+
+    public function getSynFlag(): ?float
+    {
+        return $this->synFlag;
+    }
+
+    public function setSynFlag(?float $synFlag): self
+    {
+        $this->synFlag = $synFlag;
+
+        return $this;
+    }
+
+    public function getUserCreated(): ?User
+    {
+        return $this->userCreated;
+    }
+
+    public function setUserCreated(?User $userCreated): self
+    {
+        $this->userCreated = $userCreated;
 
         return $this;
     }

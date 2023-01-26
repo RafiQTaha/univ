@@ -79,6 +79,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'userCreated', targetEntity: TInscriptionImpControle::class)]
     private $tInscriptionImpControles;
 
+    #[ORM\OneToMany(mappedBy: 'userCreated', targetEntity: TOperationdet::class)]
+    private $tOperationDets;
+
 
     public function __construct()
     {
@@ -95,6 +98,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->pAnonymatActuels = new ArrayCollection();
         $this->tInscriptionImpLogs = new ArrayCollection();
         $this->tInscriptionImpControles = new ArrayCollection();
+        $this->tOperationDets = new ArrayCollection();
     }
 
     
@@ -608,6 +612,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($tInscriptionImpControle->getUserCreated() === $this) {
                 $tInscriptionImpControle->setUserCreated(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, TOperationDet>
+     */
+    public function getTOperationDets(): Collection
+    {
+        return $this->tOperationDets;
+    }
+
+    public function addTOperationDet(TOperationDet $tOperationDet): self
+    {
+        if (!$this->tOperationDets->contains($tOperationDet)) {
+            $this->tOperationDets[] = $tOperationDet;
+            $tOperationDet->setUserCreated($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTOperationDet(TOperationDet $tOperationDet): self
+    {
+        if ($this->tOperationDets->removeElement($tOperationDet)) {
+            // set the owning side to null (unless already changed)
+            if ($tOperationDet->getUserCreated() === $this) {
+                $tOperationDet->setUserCreated(null);
             }
         }
 

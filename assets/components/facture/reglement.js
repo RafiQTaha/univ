@@ -64,7 +64,7 @@ $(document).ready(function () {
         })
     }
     $("select").select2();
-    $("#paiement").select2();
+    // $("#paiement").select2();
     $("#etablissement").on('change', async function (){
         const id_etab = $(this).val();
         table_reglement.columns(1).search("");
@@ -269,6 +269,10 @@ $(document).ready(function () {
                 icon.addClass('fa-times-circle').removeClass("fa-spinner fa-spin");
             } catch (error) {
                 const message = error.response.data;
+                Toast.fire({
+                    icon: 'error',
+                    title: message,
+                })
                 icon.addClass('fa-times-circle').removeClass("fa-spinner fa-spin");
             }
         }  

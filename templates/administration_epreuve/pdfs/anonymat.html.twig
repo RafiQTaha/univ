@@ -225,7 +225,15 @@
                     <td style="width: 75%;">
                         <table style="width: 100% ;">
                             <tr>
-                                <td style="width: 100%">{{epreuve.enseignant.nom}} {{epreuve.enseignant.prenom}}</td>
+                            {% set countEnseignant = 0 %}
+                            {% set enseignantslenght = epreuve.enseignants|length %}
+                                <td style="width: 100%">
+                                {% for enseignant in epreuve.enseignants %}
+                                    {% set countEnseignant = countEnseignant + 1 %}
+                                    {{enseignant.nom}} {{enseignant.prenom}} {% if countEnseignant < enseignantslenght %} - {% endif %}
+                                {% endfor %}
+                                {# {{epreuve.enseignant.nom}} {{epreuve.enseignant.prenom}} #}
+                                </td>
                             </tr>
                         </table>
                     </td>
