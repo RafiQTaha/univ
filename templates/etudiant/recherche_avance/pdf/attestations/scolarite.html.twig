@@ -92,6 +92,8 @@
 <span style="font-size:10px;font-weight: bold;color:black;"> 
 {% if inscription.annee.formation.etablissement.designation =='Centre de Simulation Médicale' %}
 Université Internationale Abulcasis des Sciences de la Santé
+{% elseif laz == 1 %}
+Lycée AL-ZAHRAWI
 {% else %} 
 {{inscription.annee.formation.etablissement.designation}}
 {% endif %}
