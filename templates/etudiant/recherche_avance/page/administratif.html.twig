@@ -11,17 +11,22 @@
             <li>
                 <a target="_blank" href="{{path('etudiant_recherche_attestation_scolarite', {inscription: inscription.id})}}">        Attestation de scolarité	</a>
             </li>
+            {% if inscription.annee.formation.etablissement.id == 28 %}
+                <li>
+                    <a target="_blank" href="{{path('etudiant_recherche_attestation_scolarite_laz', {inscription: inscription.id})}}">     Attestation de scolarité LAZ</a>
+                </li>
+            {% endif %}
             <li>
                 <a target="_blank" href="{{path('etudiant_recherche_attestation_scolarite_anglais', {inscription: inscription.id})}}">        Attestation de scolarité (Anglais)	</a>
             </li>
+            {% if inscription.annee.formation.etablissement.id == 28 %}
+                <li>
+                    <a target="_blank" href="{{path('etudiant_recherche_attestation_scolarite_anglais_laz', {inscription: inscription.id})}}">     Attestation de scolarité LAZ (Anglais)</a>
+                </li>
+            {% endif %}
             <li>
                <a target="_blank" href="{{path('etudiant_recherche_attestation_reussite', {inscription: inscription.id})}}">     Attestation de réussite </a>
             </li>
-            {% if inscription.annee.formation.etablissement.id == 28 %}
-                <li>
-                    <a target="_blank" href="{{path('etudiant_recherche_attestation_reussite_laz', {inscription: inscription.id})}}">     Attestation de réussite LAZ</a>
-                </li>
-            {% endif %}
             <li>
                 <a target="_blank" href="{{path('etudiant_recherche_attestation_reussite_note', {inscription: inscription.id})}}">        Attestation de réussite Avec Moyenne	</a>
             </li>

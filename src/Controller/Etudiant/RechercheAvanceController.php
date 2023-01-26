@@ -100,9 +100,32 @@ class RechercheAvanceController extends AbstractController
     #[Route('/attestation/scolarite/{inscription}', name: 'etudiant_recherche_attestation_scolarite')]
     public function attestationScolarite(TInscription $inscription): Response
     {
-       
         $html = $this->render("etudiant/recherche_avance/pdf/attestations/scolarite.html.twig", [
-            'inscription' => $inscription
+            'inscription' => $inscription,
+            'laz' => 0
+        ])->getContent();
+        // dd($html);
+        $mpdf = new Mpdf([
+            'margin_left' => 5,
+            'margin_right' => 5,
+        ]);
+        // $mpdf->SetHTMLHeader(
+        //     $this->render("etudiant/recherche_avance/pdf/attestations/header.html.twig")->getContent()
+        // );
+        $mpdf->SetHTMLFooter(
+            $this->render("etudiant/recherche_avance/pdf/attestations/footer.html.twig")->getContent()
+        );
+        $mpdf->WriteHTML($html);
+        
+        $mpdf->Output("scolarite.pdf", "I");
+    }
+    
+    #[Route('/attestation/scolariteLaz/{inscription}', name: 'etudiant_recherche_attestation_scolarite_laz')]
+    public function attestationScolariteLaz(TInscription $inscription): Response
+    {
+        $html = $this->render("etudiant/recherche_avance/pdf/attestations/scolarite.html.twig", [
+            'inscription' => $inscription,
+            'laz' => 1
         ])->getContent();
         // dd($html);
         $mpdf = new Mpdf([
@@ -123,7 +146,8 @@ class RechercheAvanceController extends AbstractController
     public function attestationScolariteAngalis(TInscription $inscription): Response
     {
         $html = $this->render("etudiant/recherche_avance/pdf/attestations/scolariteAnglais.html.twig", [
-            'inscription' => $inscription
+            'inscription' => $inscription,
+            'laz' => 0
         ])->getContent();
         // dd($html);
         $mpdf = new Mpdf([
@@ -141,19 +165,12 @@ class RechercheAvanceController extends AbstractController
         $mpdf->Output("scolarite.pdf", "I");
     }
     
-    #[Route('/attestation/reussite/{inscription}', name: 'etudiant_recherche_attestation_reussite')]
-    public function attestationReussite(TInscription $inscription): Response
+    #[Route('/attestation/scolariteAnglaisLaz/{inscription}', name: 'etudiant_recherche_attestation_scolarite_anglais_laz')]
+    public function attestationScolariteAngalisLaz(TInscription $inscription): Response
     {
-        $prm = $this->em->getRepository(TInscription::class)->findBy([
-            'admission' => $inscription->getAdmission(),
-            'promotion' => $inscription->getPromotion()
-        ]);
-        if (count($prm) > 1) {
-            return new JsonResponse('Redoublant!!',500);
-        }
-        $html = $this->render("etudiant/recherche_avance/pdf/attestations/reussite.html.twig", [
+        $html = $this->render("etudiant/recherche_avance/pdf/attestations/scolariteAnglais.html.twig", [
             'inscription' => $inscription,
-            'laz' => 0
+            'laz' => 1
         ])->getContent();
         // dd($html);
         $mpdf = new Mpdf([
@@ -168,11 +185,11 @@ class RechercheAvanceController extends AbstractController
         );
         $mpdf->WriteHTML($html);
         
-        $mpdf->Output("reussite.pdf", "I");
+        $mpdf->Output("scolarite.pdf", "I");
     }
-    
-    #[Route('/attestation/reussite_laz/{inscription}', name: 'etudiant_recherche_attestation_reussite_laz')]
-    public function attestationReussiteLaz(TInscription $inscription): Response
+
+    #[Route('/attestation/reussite/{inscription}', name: 'etudiant_recherche_attestation_reussite')]
+    public function attestationReussite(TInscription $inscription): Response
     {
         $prm = $this->em->getRepository(TInscription::class)->findBy([
             'admission' => $inscription->getAdmission(),
@@ -183,7 +200,6 @@ class RechercheAvanceController extends AbstractController
         }
         $html = $this->render("etudiant/recherche_avance/pdf/attestations/reussite.html.twig", [
             'inscription' => $inscription,
-            'laz' => 1
         ])->getContent();
         // dd($html);
         $mpdf = new Mpdf([
