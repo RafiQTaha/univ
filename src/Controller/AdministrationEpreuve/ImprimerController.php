@@ -162,7 +162,7 @@ class ImprimerController extends AbstractController
             "inscription" => $inscription,
             "netiquettes" => (int) $netiquettes,
             "anonymat" => $anonymat,
-            "size" => strlen((string)$anonymat) <= 4 ? 10 : 7.2,
+            "size" => strlen((string)$anonymat) <= 4 ? 10 : 8.2,
         ])->getContent();
         $mpdf = new Mpdf([
             'mode' => 'utf-8',
