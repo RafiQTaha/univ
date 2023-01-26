@@ -146,8 +146,11 @@ class ControleController extends AbstractController
             $inscriptionControle->setUserCreated($this->getUser());
             $inscriptionControle->setCreated(new \DateTime('now'));
             $this->em->persist($inscriptionControle);
-        }else{
+        }elseif ($inscriptionControle->getCreated()->format('Y-m-j') == date('Y-m-j')) {
             $inscriptionControle->setControle($inscriptionControle->getControle() + 1);
+        }else {
+            $inscriptionControle->setControle(1);
+            $inscriptionControle->setCreated(new \DateTime('now'));
         }
         $this->em->flush();
         if ($rattrapage == 0) {
