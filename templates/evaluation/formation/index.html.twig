@@ -21,7 +21,7 @@
         <div class="card">
             
             <div class="card-body">
-            <div class="card-search" style="margin-bottom: 1.5rem;">
+                <div class="card-search first-card" style="margin-bottom: 1.5rem;">
                     <div class="row">
                         <div class="col-md-2">
                             <label for="etablissement">Etablissement:</label>
@@ -38,7 +38,7 @@
                             </select>
                         </div> 
                         <div class="col-md-3">
-                            <label for="annee">Début de formation (Année):</label>
+                            <label for="annee">Fin de formation (Année):</label>
                             <select class="form-control" name="annee" id="annee">
                             </select>
                         </div>                   
@@ -62,6 +62,7 @@
 <!--Modal Import Group-->
 {% include 'evaluation/formation/modals/imprimer.html.twig' %}
 {% include 'evaluation/formation/modals/statut.html.twig' %}
+{% include 'evaluation/formation/modals/edit_notes.html.twig' %}
 
 {% endblock %}
 

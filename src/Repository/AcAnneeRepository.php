@@ -75,7 +75,7 @@ class AcAnneeRepository extends ServiceEntityRepository
         return $result;
     }
     
-    public function getAnnee($annee)
+    public function getAnnee($annee, $nbr_annee)
     {
         $id_annee = $annee->getId();
         $id_formation = $annee->getFormation()->getId();
@@ -83,14 +83,15 @@ class AcAnneeRepository extends ServiceEntityRepository
         FROM `ac_annee` ann
         -- INNER JOIN ex_anotes ex ON ex.annee_id = ann.id
         WHERE ann.formation_id = $id_formation 
-            AND RIGHT(ann.designation, 4) >=(SELECT RIGHT(designation, 4) AS des
+            AND RIGHT(ann.designation, 4) <= (SELECT RIGHT(designation, 4) AS des
                                                 FROM ac_annee
                                                 WHERE id = $id_annee)
         GROUP BY
             ann.code,
             ann.designation
         ORDER BY
-            RIGHT(ann.designation, 4) DESC";
+            RIGHT(ann.designation, 4) DESC
+            LIMIT $nbr_annee";
         // dd($sqls);
         $stmts = $this->em->getConnection()->prepare($sqls);
         $resultSets = $stmts->executeQuery();
