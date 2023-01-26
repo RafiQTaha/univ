@@ -161,7 +161,8 @@ class ImprimerController extends AbstractController
         $html = $this->render("administration_epreuve/pdfs/imprimer.html.twig", [
             "inscription" => $inscription,
             "netiquettes" => (int) $netiquettes,
-            "anonymat" => $anonymat
+            "anonymat" => $anonymat,
+            "size" => strlen((string)$anonymat) <= 4 ? 10 : 7.2,
         ])->getContent();
         $mpdf = new Mpdf([
             'mode' => 'utf-8',
