@@ -274,7 +274,8 @@ class EpreuveController extends AbstractController
             } else {
                 die("403 something wrong");
             }
-
+            
+            ApiController::mouchard($this->getUser(), $this->em,$element, 'ExEnotes', 'Enregistrer Enote');
             $this->em->flush();
 
         }

@@ -100,11 +100,11 @@
             <th style="width:60px;text-align: left;font-weight: 400">Code</th>
             <th style="width:120px; text-align: left;font-weight: 600">Nom</th>
             <th style="width:120px;text-align: left;font-weight: 600">Prénom</th>
-            <th style="width:80px;text-align: left;font-weight: 600">M.CC</th>
+            {# <th style="width:80px;text-align: left;font-weight: 600">M.CC</th>
             <th style="width:80;text-align: left;font-weight: 600">M.TP</th>
             <th style="width:80;text-align: left;font-weight: 600">M.EF</th>
             <th style="width:80px; background-color: #525252;color: white; text-align: center;font-weight: 800">Moyenne</th>
-            <th style="width:80px; background-color: #525252;color: white; text-align: center;font-weight: 800">Statut</th>
+            <th style="width:80px; background-color: #525252;color: white; text-align: center;font-weight: 800">Statut</th> #}
 
         </tr>
 
@@ -117,20 +117,20 @@
                 <td style="font-size: 9px; padding-top: 3px; text-align:left; padding-bottom: 3px">{{data.inscription.id}}</td>
                 <td style="font-size: 9px; text-align: left">{{data.inscription.admission.preinscription.etudiant.nom}}</td>
                 <td style="font-size: 9px; text-align: left">{{data.inscription.admission.preinscription.etudiant.prenom}}</td>
-                <td style="font-size: 9px; text-align: left">{{data.mcc|number_format(2, '.', ',') }}</td>
+                {# <td style="font-size: 9px; text-align: left">{{data.mcc|number_format(2, '.', ',') }}</td>
                 <td style="font-size: 9px; text-align: left">{{data.mtp|number_format(2, '.', ',') }}</td>
                 <td style="font-size: 9px; text-align: left">{{data.mef|number_format(2, '.', ',') }}</td>
                 <td style="font-size: 9px; background: #d8d8d8; text-align: center ; color: #000; font-weight: bold;"> 
                     {{data.moyenneTot|number_format(2, '.', ',') }}
-                </td>
-                <td style="font-size: 9px; background: #d8d8d8; text-align: center ; color: #000; font-weight: bold;"> 
+                </td> #}
+                {# <td style="font-size: 9px; background: #d8d8d8; text-align: center ; color: #000; font-weight: bold;"> 
                     {% if affichage == 0  and data.enote.statutDef %} 
                         {{data.enote.statutDef.abreviation}}
                     {% elseif affichage == 1  and data.enote.statutAff %}
                         {{data.enote.statutAff.abreviation}}
                     {% else %}
                     {% endif %}
-                </td>
+                </td> #}
             </tr>
         {% endfor %}
     </tbody>

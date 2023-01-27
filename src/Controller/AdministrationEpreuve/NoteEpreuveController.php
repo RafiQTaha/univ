@@ -270,14 +270,15 @@ class NoteEpreuveController extends AbstractController
     #[Route('/note_update/{id}', name: 'note_update')]
     public function note_update(Request $request, ExGnotes $exgnotes): Response
     {   
+        // dd($exgnotes);
         if(empty($request->get('input_note')) || $request->get('input_note')){
             $exgnotes->setNote($request->get('input_note') == "" ?  NULL : $request->get('input_note'));
         }
-        if(empty($request->get('input_obs')) || $request->get('input_obs')){
-            // dd('fff');
-            $exgnotes->setObservation($request->get('input_obs') == "" ? NULL : $request->get('input_obs'));
-        }
-        // dd('test');
+        // if(empty($request->get('input_obs')) || $request->get('input_obs')){
+        //     // dd('fff');
+        //     $exgnotes->setObservation($request->get('input_obs') == "" ? NULL : $request->get('input_obs'));
+        // }
+        // dd($request->get('input_obs'));
         if($request->get('absence')){
             if($request->get('absence') == 'true'){
                 $exgnotes->setAbsence(1);
@@ -285,6 +286,7 @@ class NoteEpreuveController extends AbstractController
                 $exgnotes->setAbsence(0);
             }
         }
+        ApiController::mouchard($this->getUser(), $this->em,$exgnotes, 'ExGnotes', 'Modifier Note');
         $this->em->flush();
         return new Response('Note Bien Changé');
     }
