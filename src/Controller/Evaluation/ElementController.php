@@ -208,6 +208,8 @@ class ElementController extends AbstractController
             $noteElement->setNoteIni($moyenne_ini);
             if ($moyenne_ini < 10 || $data['mefini'] < 7 || $moyenne_rat > 0) {
                 $noteElement->setNoteRat($moyenne_rat);
+            }elseif ($moyenne_rat <= 0) {
+                $noteElement->setNoteRat(null);
             }
             $this->em->flush();
 

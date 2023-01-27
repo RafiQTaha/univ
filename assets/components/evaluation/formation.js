@@ -26,56 +26,20 @@ $(document).ready(function () {
 
     const enableButtons = () => {
         if (check == 1) {
-            $("#enregistrer")
-                .removeClass("btn-secondary")
-                .addClass("btn-info")
-                .attr("disabled", false);
-            $("#imprimer")
-                .removeClass("btn-info")
-                .addClass("btn-secondary")
-                .attr("disabled", true);
-            $("#recalculer")
-                .removeClass("btn-info")
-                .addClass("btn-secondary")
-                .attr("disabled", true);
-            $("#ExtracDip")
-                .removeClass("btn-info")
-                .addClass("btn-secondary")
-                .attr("disabled", true);
+            $("#enregistrer").removeClass("btn-secondary").addClass("btn-info").attr("disabled", false);
+            $("#imprimer").removeClass("btn-info").addClass("btn-secondary").attr("disabled", true);
+            $("#recalculer").removeClass("btn-info").addClass("btn-secondary").attr("disabled", true);
+            $("#ExtracDip").removeClass("btn-info").addClass("btn-secondary").attr("disabled", true);
         } else if (check == 2) {
-            $("#enregistrer")
-                .removeClass("btn-info")
-                .addClass("btn-secondary")
-                .attr("disabled", true);
-            $("#imprimer")
-                .removeClass("btn-secondary")
-                .addClass("btn-info")
-                .attr("disabled", false);
-            $("#recalculer")
-                .removeClass("btn-secondary")
-                .addClass("btn-info")
-                .attr("disabled", false);
-            $("#ExtracDip")
-                .removeClass("btn-secondary")
-                .addClass("btn-info")
-                .attr("disabled", false);
+            $("#enregistrer").removeClass("btn-info").addClass("btn-secondary").attr("disabled", true);
+            $("#imprimer").removeClass("btn-secondary").addClass("btn-info").attr("disabled", false);
+            $("#recalculer").removeClass("btn-secondary").addClass("btn-info").attr("disabled", false);
+            $("#ExtracDip").removeClass("btn-secondary").addClass("btn-info").attr("disabled", false);
         } else {
-            $("#enregistrer")
-                .removeClass("btn-info")
-                .addClass("btn-secondary")
-                .attr("disabled", true);
-            $("#imprimer")
-                .removeClass("btn-info")
-                .addClass("btn-secondary")
-                .attr("disabled", true);
-            $("#recalculer")
-                .removeClass("btn-info")
-                .addClass("btn-secondary")
-                .attr("disabled", true);
-            $("#ExtracDip")
-                .removeClass("btn-info")
-                .addClass("btn-secondary")
-                .attr("disabled", true);
+            $("#enregistrer").removeClass("btn-info").addClass("btn-secondary").attr("disabled", true);
+            $("#imprimer").removeClass("btn-info").addClass("btn-secondary").attr("disabled", true);
+            $("#recalculer").removeClass("btn-info").addClass("btn-secondary").attr("disabled", true);
+            $("#ExtracDip").removeClass("btn-info").addClass("btn-secondary").attr("disabled", true);
         }
     };
 
@@ -105,8 +69,6 @@ $(document).ready(function () {
     });
 
     $("#recherche").on("click", async function (e) {
-
-
         admissions = [];
         e.preventDefault();
         $("#list_etu").empty();
@@ -153,9 +115,10 @@ $(document).ready(function () {
             enableButtons();
             icon.addClass("fa-search").removeClass("fa-spinner fa-spin");
 
-            element = '<div id="select-box" class="col-md-1"><label for="etablissement">Choix:</label> <select id="choice" class="form-control"><option value="all" default>All</option><option value="Full">Full</option><option value="notFull">not Full</option></select> </div>';
+            element = '<div id="select-box" class="col-md-1"><label for="etablissement">Choix:</label> <select id="choice" class="form-control"><option value="all" default>All</option><option value="Full">Complet</option><option value="notFull">Incomplet</option></select> </div>';
             if($('body .first-card .row #select-box').length == 0) {
                 $("body .first-card .row").append(element);
+                $('select').select2()
             }
             
         } catch (error) {
@@ -214,17 +177,9 @@ $(document).ready(function () {
                 icon.addClass("fa-check").removeClass("fa-spinner fa-spin");
                 icon.css('color','#2ecc71');
                 $(this).css('border-color','#2ecc71');
-                window.setTimeout(  
-                    function() {  
-                        icon.css('display','none');
-                        $('body .noteExterne').css('border-color','#696b7d');
-                    },  
-                    2000
-                );
-                
                 Toast.fire({
                     icon: "success",
-                    title: response.message,
+                    title: response,
                 });
                 check = response.check;
                 enableButtons();
@@ -233,19 +188,20 @@ $(document).ready(function () {
                 icon.addClass("fa-times").removeClass("fa-spinner fa-spin");
                 icon.css('color','#c0392b');
                 $(this).css('border-color','#c0392b');
-                window.setTimeout(  
-                    function() {  
-                        icon.css('display','none');
-                        $('body .noteExterne').css('border-color','#696b7d');
-                    },  
-                    2000
-                );
                 const message = error.response.data;
                 Toast.fire({
                     icon: "error",
                     title: message,
                 });
             }
+            window.setTimeout(  
+                function() {  
+                    icon.css('display','none');
+                    $('body .noteExterne').css('border-color','#696b7d');
+                    $('#editNotes').modal('hide');
+                },  
+                2000
+            );
         }
     });
 // custom filter

@@ -517,6 +517,9 @@ class FormationController extends AbstractController
     {
         $annee = $this->em->getRepository(AcAnnee::class)->findOneBy(['id'=>$request->get('annee')]);
         $note = $request->get('note');
+        if ($note < 10 || $note > 20) {
+            return new JsonResponse("la note doit étre entre 10 et 20!!",500);
+        }
         $admission = $this->em->getRepository(TAdmission::class)->findOneBy(['id'=>$request->get('admission')]);
         // dd($admission);
         $noteExterne = $this->em->getRepository(AnoteExterne::class)->findNoteByAdmission($admission, $annee);
