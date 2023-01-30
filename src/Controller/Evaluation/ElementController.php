@@ -387,13 +387,14 @@ class ElementController extends AbstractController
 
     public function ElementGetStatutS1_pratique($enote, $noteComposantInitial, $note_eliminatoire, $note_validation) {
         //var_dump($data);
+        $moy = $enote->getInscription()->getAnnee()->getFormation()->getEtablissement()->getId() == 26 ? 12 : 10;
         $send_data = array();
-        if ($enote->getNoteIni() < 10 || ($enote->getMef() && $enote->getMef() < 10))   {
+        if ($enote->getNoteIni() < $moy || ($enote->getMef() && $enote->getMef() < $moy))   {
             $send_data['statut_s1'] = 12;
             $send_data['statut_def'] = 12;
             $send_data['statut_aff'] = 12;
         } else {
-            if((isset($noteComposantInitial["mcc"]) && $noteComposantInitial["mcc"] < 10) || (isset($noteComposantInitial["mtp"]) && $noteComposantInitial["mtp"] < 10)){
+            if((isset($noteComposantInitial["mcc"]) && $noteComposantInitial["mcc"] < $moy) || (isset($noteComposantInitial["mtp"]) && $noteComposantInitial["mtp"] < $moy)){
                 $send_data['statut_s1'] = 16;
                 $send_data['statut_def'] = 16;
                 $send_data['statut_aff'] = 16;
