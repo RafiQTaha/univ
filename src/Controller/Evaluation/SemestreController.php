@@ -231,9 +231,8 @@ class SemestreController extends AbstractController
             $inscriptionSemstre->setNoteRachat(
                 $data['noteRachat'] > 0 ?  $data['noteRachat'] : null
             );
-            
+            ApiController::mouchard($this->getUser(), $this->em,$inscriptionSemstre, 'ExSnotes', 'Enregistrer noteSemestre');
             $this->em->flush();
-
         }      
         
         return new JsonResponse("Bien Enregistre", 200);
@@ -251,17 +250,19 @@ class SemestreController extends AbstractController
             return new JsonResponse("Veuillez Valider Toutes les modules pour valider ce semestre ", 500);
         }
         $this->em->getRepository(ExControle::class)->updateSemestreByElement($semestre, $annee, 1);
-
+        
+        ApiController::mouchard($this->getUser(), $this->em,$exControle, 'exControle', 'Validation Circuit SEM');
+        $this->em->flush();
         return new JsonResponse("Bien Valider", 200);
     }
     #[Route('/devalider', name: 'evaluation_semestre_devalider')]
     public function evaluationSemestreDevalider(Request $request) 
     {         
         $session = $request->getSession();
-        $session = $request->getSession();
         $semestre = $session->get('data_semestre')['semestre'];
         $annee = $this->em->getRepository(AcAnnee::class)->getActiveAnneeByFormation($semestre->getPromotion()->getFormation());
         $this->em->getRepository(ExControle::class)->updateSemestreByElement($semestre, $annee, 0);
+        ApiController::mouchard($this->getUser(), $this->em,$semestre, 'exControle', 'Dévalidation Circuit SEM');
         $this->em->flush();
 
         return new JsonResponse("Bien Devalider", 200);
@@ -285,6 +286,7 @@ class SemestreController extends AbstractController
                 $data['noteRachat'] > 0 ?  $data['noteRachat'] : null
             );
         }
+        ApiController::mouchard($this->getUser(), $this->em,$inscriptionSemstre, 'ExSnotes', 'Recalcule NoteSemestre');
         $this->em->flush();
         return new JsonResponse("Bien Recalculer", 200);
 
@@ -362,6 +364,7 @@ class SemestreController extends AbstractController
             }
         }
         
+        ApiController::mouchard($this->getUser(), $this->em,$snote, 'ExSnotes', 'Statuté NoteSemestre');
         $this->em->flush();
         return new JsonResponse("Bien enregistre", 200);
 

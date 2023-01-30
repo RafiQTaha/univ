@@ -232,7 +232,9 @@ class ModuleController extends AbstractController
             return new JsonResponse("Veuillez Valider Toutes les elements pour valider ce module ", 500);
         }
         $this->em->getRepository(ExControle::class)->updateModuleByElement($module, $annee, 1);
-
+        // ------------------ Mouchard à Verifier Apres ------------------------
+        ApiController::mouchard($this->getUser(), $this->em,$exControle, 'exControle', 'Validation Circuit MDL');
+        $this->em->flush();
         return new JsonResponse("Bien Valider", 200);
     }
     #[Route('/devalider', name: 'evaluation_module_devalider')]
@@ -242,6 +244,8 @@ class ModuleController extends AbstractController
         $module = $session->get('data_module')['module'];
         $annee = $this->em->getRepository(AcAnnee::class)->getActiveAnneeByFormation($module->getSemestre()->getPromotion()->getFormation());
         $this->em->getRepository(ExControle::class)->updateModuleByElement($module, $annee, 0);
+        // ------------------ Mouchard à Verifier Apres ------------------------
+        ApiController::mouchard($this->getUser(), $this->em,$module, 'exControle', 'Dévalidation Circuit MDL');
         $this->em->flush();
 
         return new JsonResponse("Bien Devalider", 200);
@@ -287,9 +291,8 @@ class ModuleController extends AbstractController
             $inscriptionModule->setNote(
                 $data['moyenneTot'] < 0 ? null : $data['moyenneTot']
             );
-
+            ApiController::mouchard($this->getUser(), $this->em,$inscriptionModule, 'ExMnotes', 'Enregistrer noteModule');
             $this->em->flush();
-
         }      
         
         return new JsonResponse("Bien Enregistre", 200);
@@ -316,9 +319,9 @@ class ModuleController extends AbstractController
                 $data['moyenneTot'] < 0 ? null : $data['moyenneTot']
             );
         }
+        ApiController::mouchard($this->getUser(), $this->em,$inscriptionModule, 'ExMnotes', 'Recalculer noteModule');
         $this->em->flush();
         return new JsonResponse("Bien Recalculer", 200);
-
     }
     #[Route('/statut/{type}', name: 'administration_module_statut')]
     public function administrationElementStatut(Request $request, $type) 
@@ -382,7 +385,7 @@ class ModuleController extends AbstractController
                 }
             }
         }
-        
+        ApiController::mouchard($this->getUser(), $this->em,$mnote, 'ExMnotes', 'Statué noteModule');
         $this->em->flush();
         return new JsonResponse("Bien enregistre", 200);
 

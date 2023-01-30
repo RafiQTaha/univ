@@ -196,6 +196,7 @@ class EpreuveController extends AbstractController
         }else {
             die("403 something wrong");
         }
+        ApiController::mouchard($this->getUser(), $this->em,$exControle, 'exControle', 'Validation Circuit EPV');
         $this->em->flush();
 
         return new JsonResponse("Bien Valider", 200);
@@ -226,6 +227,7 @@ class EpreuveController extends AbstractController
         }
         $exControle->setMElement(0);
         $exControle->setMmodule(0);
+        ApiController::mouchard($this->getUser(), $this->em,$exControle, 'exControle', 'Devalidation Circuit EPV');
         $this->em->flush();
         return new JsonResponse("Bien devalider", 200);
         
@@ -275,7 +277,7 @@ class EpreuveController extends AbstractController
                 die("403 something wrong");
             }
             
-            ApiController::mouchard($this->getUser(), $this->em,$element, 'ExEnotes', 'Enregistrer Enote');
+            ApiController::mouchard($this->getUser(), $this->em,$inscriptionElement, 'ExEnotes', 'Enregistrer Epreuve');
             $this->em->flush();
 
         }
@@ -287,6 +289,7 @@ class EpreuveController extends AbstractController
             $exControle->setAnnee($annee);
             $exControle->setUser($this->getUser());
             $this->em->persist($exControle);
+            ApiController::mouchard($this->getUser(), $this->em,$exControle, 'exControle', 'Validation Circuit ELE');
             $this->em->flush();
         }
         

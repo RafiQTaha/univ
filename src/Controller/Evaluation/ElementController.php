@@ -152,7 +152,7 @@ class ElementController extends AbstractController
         }
         else if ($type == "rat") {
             foreach($dataSaved as $key => $value) {
-                if($value['moyenneTot'] >= 10) {  
+                if($value['moyenneTot'] >= 10 and $value['enote']->getStatutDef()->getId() != 12) {  
                   unset($dataSaved[$key]);
                 }
             }
@@ -211,8 +211,8 @@ class ElementController extends AbstractController
             }elseif ($moyenne_rat <= 0) {
                 $noteElement->setNoteRat(null);
             }
+            ApiController::mouchard($this->getUser(), $this->em,$noteElement, 'ExEnotes', 'Enregistrer ENotes');
             $this->em->flush();
-
         }
         // create exControle if not exist
         $coef = $element->getCoefficientEpreuve();
@@ -242,6 +242,7 @@ class ElementController extends AbstractController
             return new JsonResponse("Veuillez Valider Toutes les Contrôles continus , Travaux pratiques , Examen Final pour valider cet élément ", 500);
         }
         $exControle->setMelement(1);
+        ApiController::mouchard($this->getUser(), $this->em,$exControle, 'exControle', 'Validation Circuit ELE');
         $this->em->flush();
 
         return new JsonResponse("Bien Valider", 200);
@@ -254,6 +255,7 @@ class ElementController extends AbstractController
         $annee = $this->em->getRepository(AcAnnee::class)->getActiveAnneeByFormation($element->getModule()->getSemestre()->getPromotion()->getFormation());
         $exControle = $this->em->getRepository(ExControle::class)->findOneBy(['element' => $element, 'annee' => $annee]);
         $exControle->setMelement(0);
+        ApiController::mouchard($this->getUser(), $this->em,$exControle, 'exControle', 'Dévalidation Circuit ELE');
         $this->em->flush();
 
         return new JsonResponse("Bien Devalider", 200);
@@ -279,6 +281,7 @@ class ElementController extends AbstractController
             }
 
         }
+        ApiController::mouchard($this->getUser(), $this->em,$noteElement, 'ExEnotes', 'Recalcule noteElement');
         $this->em->flush();
         return new JsonResponse("Bien Recalculer", 200);
 
@@ -375,6 +378,7 @@ class ElementController extends AbstractController
                 }
             }
         }
+        ApiController::mouchard($this->getUser(), $this->em,$enote, 'ExEnotes', 'Statuée noteElement');
         $this->em->flush();
         return new JsonResponse("Bien enregistre", 200);
 

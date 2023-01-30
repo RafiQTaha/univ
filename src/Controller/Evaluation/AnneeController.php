@@ -231,8 +231,7 @@ class AnneeController extends AbstractController
             $inscriptionAnnee->setNoteSec(
                 $data['moyenneSec']
             );
-            
-            
+            ApiController::mouchard($this->getUser(), $this->em,$inscriptionAnnee, 'ExAnotes', 'Enregistrer NoteAnnée');
             $this->em->flush();
 
         }      
@@ -251,6 +250,8 @@ class AnneeController extends AbstractController
             return new JsonResponse("Veuillez Valider Toutes les semestres pour valider cet annee ", 500);
         }
         $this->em->getRepository(ExControle::class)->updateAnneeByElement($promotion, $annee, 1);
+        ApiController::mouchard($this->getUser(), $this->em,$exControle, 'exControle', 'Validation Circuit Ann');
+        $this->em->flush();
 
         return new JsonResponse("Bien Valider", 200);
     }
@@ -262,6 +263,7 @@ class AnneeController extends AbstractController
         $promotion = $session->get('data_annee')['promotion'];
         $annee = $this->em->getRepository(AcAnnee::class)->getActiveAnneeByFormation($promotion->getFormation());
         $this->em->getRepository(ExControle::class)->updateAnneeByElement($promotion, $annee, 0);
+        ApiController::mouchard($this->getUser(), $this->em,$annee, 'ExAnotes', 'Dévalidation Circuit Ann');
         $this->em->flush();
 
         return new JsonResponse("Bien Devalider", 200);
@@ -281,6 +283,7 @@ class AnneeController extends AbstractController
                 $data['moyenneSec']
             );
         }
+        ApiController::mouchard($this->getUser(), $this->em,$inscriptionAnnee, 'ExAnotes', 'Recalcule Circuit Ann');
         $this->em->flush();
         return new JsonResponse("Bien Recalculer", 200);
 
@@ -343,7 +346,7 @@ class AnneeController extends AbstractController
                 }
             }
         }
-        
+        ApiController::mouchard($this->getUser(), $this->em,$anote, 'ExAnotes', 'Statué Circuit Ann');
         $this->em->flush();
         return new JsonResponse("Bien enregistre", 200);
 
