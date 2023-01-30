@@ -168,7 +168,7 @@ class ElementController extends AbstractController
             'margin_left' => '5',
             'margin_right' => '5',
             'margin_top' => '35',
-            'margin_bottom' => '5',
+            'margin_bottom' => '15',
             'format' => 'A4-L',
             'margin_header' => '2',
             'margin_footer' => '2'
@@ -218,7 +218,7 @@ class ElementController extends AbstractController
         $coef = $element->getCoefficientEpreuve();
         $exControle = $this->em->getRepository(ExControle::class)->findOneBy(['element' => $element, 'annee' => $annee]);
         if ($coef['NAT000000001'] == 0){
-            $_POST['m_cc']=1;
+            // $_POST['m_cc']=1;
             $exControle->setMcc(1);
         }
         if ($coef['NAT000000002'] == 0){
