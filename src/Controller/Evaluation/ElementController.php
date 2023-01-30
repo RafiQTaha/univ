@@ -410,9 +410,11 @@ class ElementController extends AbstractController
     }
     public function ElementGetStatutS1($enote, $noteComposantInitial, $note_eliminatoire, $note_validation) {
         //var_dump($data);
-        $moy = $enote->getInscription()->getAnnee()->getFormation()->getEtablissement()->getId() == 26 ? 12 : 10;
+        $etablissement_id = $enote->getInscription()->getAnnee()->getFormation()->getEtablissement()->getId();
+        $moy = $etablissement_id == 26 ? 12 : 10;
+        $moyIni = $etablissement_id == 26 ? 12 : 10;
         $send_data = array();
-        if ($enote->getNoteIni() < 7) {
+        if ($enote->getNoteIni() < $moyIni) {
             $send_data['statut_s1'] = 12;
             $send_data['statut_def'] = 12;
             $send_data['statut_aff'] = 12;
@@ -420,7 +422,7 @@ class ElementController extends AbstractController
             if ($enote->getNoteIni() < $moy) {
                 
                 //NE PAS METTRE A JOUR. MERCI
-                if ((isset($noteComposantInitial["mcc"]) && $noteComposantInitial["mcc"] < 7) || (isset($noteComposantInitial["mtp"]) && $noteComposantInitial["mtp"] < 7 ) || ( $enote->getMef() && $enote->getMef() < 7 )) {
+                if ((isset($noteComposantInitial["mcc"]) && $noteComposantInitial["mcc"] < $moyIni) || (isset($noteComposantInitial["mtp"]) && $noteComposantInitial["mtp"] < $moyIni ) || ( $enote->getMef() && $enote->getMef() < $moyIni )) {
                     $send_data['statut_s1'] = 12;
                     $send_data['statut_def'] = 12;
                     $send_data['statut_aff'] = 12;
@@ -430,13 +432,13 @@ class ElementController extends AbstractController
                     $send_data['statut_aff'] = 13;
                 }
             } else {
-                if (($enote->getMef() && $enote->getMef() < 7)) {
+                if (($enote->getMef() && $enote->getMef() < $moyIni)) {
                     $send_data['statut_s1'] = 12;
                     $send_data['statut_def'] = 12;
                     $send_data['statut_aff'] = 12;
                 } else {
-                    if ((isset($noteComposantInitial["mcc"]) && $noteComposantInitial["mcc"] < 7) || (isset($noteComposantInitial["mtp"]) && $noteComposantInitial["mtp"] < 7)) {
-//                    if ((isset($noteComposantInitial['mtp']) && $noteComposantInitial['mtp'] < 7)) {
+                    if ((isset($noteComposantInitial["mcc"]) && $noteComposantInitial["mcc"] < $moyIni) || (isset($noteComposantInitial["mtp"]) && $noteComposantInitial["mtp"] < $moyIni)) {
+//                    if ((isset($noteComposantInitial['mtp']) && $noteComposantInitial['mtp'] < $moyIni)) {
                         $send_data['statut_s1'] = 16;
                         $send_data['statut_def'] = 16;
                         $send_data['statut_aff'] = 16;
