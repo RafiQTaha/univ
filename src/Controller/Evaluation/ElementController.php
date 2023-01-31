@@ -642,4 +642,8 @@ class ElementController extends AbstractController
         return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);
         
     }
+    public function getStatut($id)
+    {
+        return new Response($this->em->getRepository(PeStatut::class)->find($id)->getAbreviation(), 200, ['Content-Type' => 'text/html']);
+    }
 }

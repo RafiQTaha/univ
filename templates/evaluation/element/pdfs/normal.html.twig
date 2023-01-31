@@ -120,9 +120,14 @@
                 </td>
                 <td style="font-size: 9px; background: #d8d8d8; text-align: center ; color: #000; font-weight: bold;"> 
                     {% if affichage == 0  and data.enote.statutDef %} 
-                        {{data.enote.statutDef.abreviation}}
+                        {{ render(controller(
+                            'App\\Controller\\Evaluation\\ElementController::getStatut', { id :data.enote.statutDef.id}
+                        )) }}
+                       
                     {% elseif affichage == 1  and data.enote.statutAff %}
-                        {{data.enote.statutAff.abreviation}}
+                        {{ render(controller(
+                            'App\\Controller\\Evaluation\\ElementController::getStatut', { id :data.enote.statutAff.id}
+                        )) }}
                     {% else %}
                     {% endif %}
                 </td>
