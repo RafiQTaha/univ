@@ -215,7 +215,7 @@ class ElementController extends AbstractController
             $moy = $annee->getFormation()->getEtablissement()->getId() == 26 ? 12 : 10;
                 foreach($inscriptionsArray as $key => $value) {
                     $etudiant = $value['inscription']->getAdmission()->getPreinscription()->getEtudiant();
-                    if($value['moyenneTot'] >= $moy and $value['enote']->getStatutDef()->getId() != 12&& !str_contains($etudiant->getNom(), 'test')) {  
+                    if(($value['moyenneTot'] < $moy && !str_contains($etudiant->getNom(), 'test')) || $value['enote']->getStatutDef()->getId() == 12) {  
                         $sheet->setCellValue('A'.$i, $j);
                         $sheet->setCellValue('B'.$i, $value['inscription']->getId());
                         $sheet->setCellValue('C'.$i, $etudiant->getNom());
@@ -224,16 +224,6 @@ class ElementController extends AbstractController
                         $j++;
                     }
                 }
-                // $etudiant = $value['inscription']->getAdmission()->getPreinscription()->getEtudiant();
-                // if($value['moyenneTot'] < $moy && !str_contains($etudiant->getNom(), 'test')) {  
-                //     $sheet->setCellValue('A'.$i, $j);
-                //     $sheet->setCellValue('B'.$i, $value['inscription']->getId());
-                //     $sheet->setCellValue('C'.$i, $etudiant->getNom());
-                //     $sheet->setCellValue('D'.$i, $etudiant->getPrenom());
-                //     $i++;
-                //     $j++;
-                // }
-            // }
             
             $writer = new Xlsx($spreadsheet);
             $fileName = $element->getDesignation()."_".$element->getId().".xlsx";
