@@ -184,6 +184,67 @@ class ElementController extends AbstractController
         $mpdf->WriteHTML($html);
         $mpdf->Output("element_deliberation_".$element->getId().".pdf", "I");
     }
+    
+    #[Route('/impression_excel/{type}', name: 'administration_element_impression_excel')]
+    public function administration_element_impression_excel(Request $request, $type) 
+    {         
+        $session = $request->getSession();
+        $inscriptionsArray = $session->get('data_element')['data_saved'];
+        $element = $session->get('data_element')['element'];
+        // dd($inscriptionsArray);
+        // $natureEpreuve = $session->get('data_epreuves')['natureEpreuve'];
+        $annee = $this->em->getRepository(AcAnnee::class)->getActiveAnneeByFormation($element->getModule()->getSemestre()->getPromotion()->getFormation());
+        $infos =  [
+            'inscriptionsArray' => $inscriptionsArray,
+            // 'epreuves' => $epreuves,
+            'element' => $element,
+            'etablissement' => $annee->getFormation()->getEtablissement(),
+            // 'natureEpreuve' => $natureEpreuve
+        ];
+        if ($type == "excel_rat") {
+            
+            $spreadsheet = new Spreadsheet();
+            $sheet = $spreadsheet->getActiveSheet();
+            $sheet->setCellValue('A1', 'ORD');
+            $sheet->setCellValue('B1', 'CODE');
+            $sheet->setCellValue('C1', 'NOM');
+            $sheet->setCellValue('D1', 'Prenom');
+            $i=2;
+            $j=1;
+            // dd($operationcabs);
+            $moy = $annee->getFormation()->getEtablissement()->getId() == 26 ? 12 : 10;
+                foreach($inscriptionsArray as $key => $value) {
+                    $etudiant = $value['inscription']->getAdmission()->getPreinscription()->getEtudiant();
+                    if($value['moyenneTot'] >= $moy and $value['enote']->getStatutDef()->getId() != 12&& !str_contains($etudiant->getNom(), 'test')) {  
+                        $sheet->setCellValue('A'.$i, $j);
+                        $sheet->setCellValue('B'.$i, $value['inscription']->getId());
+                        $sheet->setCellValue('C'.$i, $etudiant->getNom());
+                        $sheet->setCellValue('D'.$i, $etudiant->getPrenom());
+                        $i++;
+                        $j++;
+                    }
+                }
+                // $etudiant = $value['inscription']->getAdmission()->getPreinscription()->getEtudiant();
+                // if($value['moyenneTot'] < $moy && !str_contains($etudiant->getNom(), 'test')) {  
+                //     $sheet->setCellValue('A'.$i, $j);
+                //     $sheet->setCellValue('B'.$i, $value['inscription']->getId());
+                //     $sheet->setCellValue('C'.$i, $etudiant->getNom());
+                //     $sheet->setCellValue('D'.$i, $etudiant->getPrenom());
+                //     $i++;
+                //     $j++;
+                // }
+            // }
+            
+            $writer = new Xlsx($spreadsheet);
+            $fileName = $element->getDesignation()."_".$element->getId().".xlsx";
+            $temp_file = tempnam(sys_get_temp_dir(), $fileName);
+            $writer->save($temp_file);
+            return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);
+            
+        } else {
+            die("403 something wrong !");
+        }
+    }
     #[Route('/enregistre', name: 'administration_element_enregistre')]
     public function administrationElementEnregistre(Request $request) 
     {         

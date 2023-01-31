@@ -16,10 +16,10 @@ class Mouchard
     #[ORM\ManyToOne(targetEntity: User::class)]
     private $userCreated;
 
-    #[ORM\Column(type: 'string', length: 25, nullable: true)]
+    #[ORM\Column(type: 'string', length: 50, nullable: true)]
     private $Action;
 
-    #[ORM\Column(type: 'string', length: 25, nullable: true)]
+    #[ORM\Column(type: 'string', length: 50, nullable: true)]
     private $fromTable;
 
     #[ORM\Column(type: 'json', nullable: true)]
