@@ -185,6 +185,7 @@ class ExControleRepository extends ServiceEntityRepository
             ->where('semestre = :semestre')
             ->andWhere('e.annee = :annee')
             ->andWhere('e.mmodule =  0')
+            ->andWhere('module.active =  1')
             ->setParameter('semestre', $semestre)
             ->setParameter('annee', $annee)
             ->getQuery()
