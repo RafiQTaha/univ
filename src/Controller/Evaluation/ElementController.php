@@ -349,9 +349,9 @@ class ElementController extends AbstractController
             foreach ($dataSaved as $data) {
                 $inscription = $this->em->getRepository(TInscription::class)->find($data['inscription']->getId());
                 $enote = $this->em->getRepository(ExEnotes::class)->findOneBy(['element' => $element, 'inscription' => $inscription]);
-                $m_cc = $enote->getCcr() < $enote->getMcc() || !$enote->getCcr() ? $enote->getMcc() : $enote->getCcr();
-                $m_tp = $enote->getTpr() < $enote->getMtp() || !$enote->getTpr() ? $enote->getMtp() : $enote->getTpr();
-                $m_ef = $enote->getEfr() < $enote->getMef() || !$enote->getEfr() ? $enote->getMef() : $enote->getEfr();
+                $m_cc = $enote->getCcr() < $enote->getMcc() ?? 0 || !$enote->getCcr() ? $enote->getMcc() : $enote->getCcr();
+                $m_tp = $enote->getTpr() < $enote->getMtp() ?? 0 || !$enote->getTpr() ? $enote->getMtp() : $enote->getTpr();
+                $m_ef = $enote->getEfr() < $enote->getMef() ?? 0 || !$enote->getEfr() ? $enote->getMef() : $enote->getEfr();
                 if($element->getNature()->getCode() == "NE003" || $element->getNature()->getCode() == "NE004" || $element->getNature()->getCode() == "NE005"){
                     $result = $this->ElementGetStatutS1_pratique($enote, ['mcc' => $m_cc, 'mtp'=>$m_tp, 'mef'=>$m_ef], 10,10);
                 } else {
@@ -460,10 +460,9 @@ class ElementController extends AbstractController
         return $send_data;
     }
     public function ElementGetStatutS1($enote, $noteComposantInitial, $note_eliminatoire, $note_validation) {
-        //var_dump($data);
         $etablissement_id = $enote->getInscription()->getAnnee()->getFormation()->getEtablissement()->getId();
         $moy = $etablissement_id == 26 ? 12 : 10;
-        $moyIni = $etablissement_id == 26 ? 12 : 10;
+        $moyIni = $etablissement_id == 26 ? 8 : 7;
         $send_data = array();
         if ($enote->getNoteIni() < $moyIni) {
             $send_data['statut_s1'] = 12;
@@ -530,8 +529,11 @@ class ElementController extends AbstractController
 
         return $send_data;
     }
-    public function ElementGetStatutS2($enote, $noteComposantInitial, $note_eliminatoire, $note_validation) {
-
+    public function ElementGetStatutS2($enote, $noteComposantInitial, $note_eliminatoire, $note_validation) 
+    {
+        $etablissement_id = $enote->getInscription()->getAnnee()->getFormation()->getEtablissement()->getId();
+        $moy = $etablissement_id == 26 ? 12 : 10;
+        $moyIni = $etablissement_id == 26 ? 8 : 7;
         $send_data = array();
 
          if ($enote->getStatutS1()->getId() == 52) {
@@ -551,17 +553,17 @@ class ElementController extends AbstractController
                 $send_data['statut_aff'] = 21;
             }else {
 
-                if ((isset($noteComposantInitial['mcc']) && $noteComposantInitial['mcc'] < 7) || (isset($noteComposantInitial['mtp']) && $noteComposantInitial['mtp'] < 7 ) || ( isset($noteComposantInitial['mef']) && $noteComposantInitial['mef'] < 7 ) || ( $enote->getNote() && $enote->getNote() < $note_eliminatoire )) {
+                if ((isset($noteComposantInitial['mcc']) && $noteComposantInitial['mcc'] < $moyIni) || (isset($noteComposantInitial['mtp']) && $noteComposantInitial['mtp'] < $moyIni ) || ( isset($noteComposantInitial['mef']) && $noteComposantInitial['mef'] < $moyIni ) || ( $enote->getNote() && $enote->getNote() < $note_eliminatoire )) {
                     $send_data['statut_s2'] = 16;
                     $send_data['statut_def'] = 16;
                     $send_data['statut_aff'] = 16;
                 } else {
-                    if ($enote->getNote() < 10) {
+                    if ($enote->getNote() < $moy) {
                         $send_data['statut_s2'] = 18;
                         $send_data['statut_def'] = 18;
                         $send_data['statut_aff'] = 18;
                     } else {
-                        if ((isset($noteComposantInitial['mcc']) && $noteComposantInitial['mcc'] < 10 ) || (isset($noteComposantInitial['mtp']) && $noteComposantInitial['mtp'] < 10 ) || (isset($noteComposantInitial['mef']) && $noteComposantInitial['mef'] < 10)) {
+                        if ((isset($noteComposantInitial['mcc']) && $noteComposantInitial['mcc'] < $moy ) || (isset($noteComposantInitial['mtp']) && $noteComposantInitial['mtp'] < $moy ) || (isset($noteComposantInitial['mef']) && $noteComposantInitial['mef'] < $moy)) {
                             $send_data['statut_s2'] = 19;
                             $send_data['statut_def'] = 19;
                             if ($enote->getStatutS1()->getId() == 12 || $enote->getStatutS1()->getId() == 13 || $enote->getStatutS1()->getId() == 11) {
