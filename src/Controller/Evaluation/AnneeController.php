@@ -169,7 +169,7 @@ class AnneeController extends AbstractController
             'margin_left' => '5',
             'margin_right' => '5',
             'margin_top' => '35',
-            'margin_bottom' => '10',
+            'margin_bottom' => '20',
             'format' => 'A4-L',
             'margin_header' => '2',
             'margin_footer' => '2'
