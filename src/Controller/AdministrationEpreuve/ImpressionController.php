@@ -123,14 +123,11 @@ class ImpressionController extends AbstractController
             if ($type == "Salle") {
                 $inscription->setSalle($type."-".$sheet[3]);
             }else{
-                $inscription->setSalle($type."-".$inscription->getAnnee()->getFormation()->getEtablissement()->getAbreviation());
+                $inscription->setSalle($type."-".$inscription->getAnnee()->getFormation()->getAbreviation());
             }
-            // dd($inscription);
-            // $this->em->flush();
         }
         $this->em->flush();
         return new JsonResponse("Bien Enregistre",200);
-
     }
     #[Route('/imprimer', name: 'administration_impression_imprimer')]
     public function imprimer(Request $request)
