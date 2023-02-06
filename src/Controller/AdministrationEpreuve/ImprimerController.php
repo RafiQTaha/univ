@@ -72,6 +72,7 @@ class ImprimerController extends AbstractController
             array( 'db' => 'etu.nom','dt' => 3),
             array( 'db' => 'etu.prenom','dt' => 4),
             array( 'db' => 'ins.code_anonymat','dt' => 5),
+            array( 'db' => 'ins.code_anonymat_rat','dt' => 6),
         );
         $sql = "SELECT " . implode(", ", DatatablesController::Pluck($columns, 'db')) . "
         FROM  tinscription_imp_log log 
@@ -107,7 +108,7 @@ class ImprimerController extends AbstractController
             $nestedData[] = $i;
             foreach (array_values($row) as $key => $value) { 
                 $nestedData[] = $value;
-                if($key == 5){
+                if($key == 6){
                     $nestedData[] = " <a role = '".$ins."' class='get_cd btn btn-app' style='min-width: 22px;height: 30px;background: transparent;border: none' > <i style='font-size: 20px;' class='fa fa-barcode'></i></a>";
                 }
             }
