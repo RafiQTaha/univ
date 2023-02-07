@@ -251,7 +251,7 @@ class SemestreController extends AbstractController
         }
         $this->em->getRepository(ExControle::class)->updateSemestreByElement($semestre, $annee, 1);
         
-        ApiController::mouchard($this->getUser(), $this->em,$exControle, 'exControle', 'Validation Circuit SEM');
+        ApiController::mouchard($this->getUser(), $this->em,$semestre, 'exControle', 'Validation Circuit SEM');
         $this->em->flush();
         return new JsonResponse("Bien Valider", 200);
     }

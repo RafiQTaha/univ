@@ -161,15 +161,7 @@ class GestionHonoraireController extends AbstractController
                         $checked = " class='check_check_seance' value='$cd'";
                     }
                     $nestedData[] = "<input $checked type ='checkbox' data-id ='$cd' >";
-                }
-                
-                // elseif($key == 12){
-                //     $nestedData[] = $value;
-                //     $nbr_sc_regroupe = $this->em->getRepository(PlEmptime::class)->getNbr_sc_regroupe($cd);
-                //     $nbr_sc_regroupe = $nbr_sc_regroupe == 0 ? 1 : $nbr_sc_regroupe;
-                //     $nestedData[] = "<a value='$cd' data-column = '" . $nbr_sc_regroupe . "' class= 'nbr_sc_regroupe nbr_sc_regroupe_" . $nbr_sc_regroupe . "'>" . $nbr_sc_regroupe . "</a>";
-                // }
-                else{
+                }else{
                     $nestedData[] = $value;
                 }
             }

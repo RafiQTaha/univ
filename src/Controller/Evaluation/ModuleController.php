@@ -233,7 +233,7 @@ class ModuleController extends AbstractController
         }
         $this->em->getRepository(ExControle::class)->updateModuleByElement($module, $annee, 1);
         // ------------------ Mouchard à Verifier Apres ------------------------
-        ApiController::mouchard($this->getUser(), $this->em,$exControle, 'exControle', 'Validation Circuit MDL');
+        ApiController::mouchard($this->getUser(), $this->em,$module, 'exControle', 'Validation Circuit MDL');
         $this->em->flush();
         return new JsonResponse("Bien Valider", 200);
     }
