@@ -122,7 +122,7 @@ class AnneeController extends AbstractController
     public function parametre_active_annee(Request $request,AcAnnee $annee): Response
     {
         // dd($this->getUser()->getRoles());
-        if(in_array('ROLE_ADMIN', $this->getUser()->getRoles())){
+        if(!in_array('ROLE_ADMIN', $this->getUser()->getRoles())){
             return new JsonResponse('Vous N\'avez pas l\'autorisation pour effectuer cette operation!',500);
         }
         foreach ($annee->getFormation()->getAcAnnees() as $cannee) {
