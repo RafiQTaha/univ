@@ -214,6 +214,10 @@ const Toast = Swal.mixin({
             icon.removeClass('fa-spinner fa-spin').addClass("fa-power-off");
         }catch(error){
             const message = error.response.data;
+            Toast.fire({
+                icon: 'error',
+                title: message,
+            })
             icon.removeClass('fa-spinner fa-spin').addClass("fa-power-off");
         }
     });
