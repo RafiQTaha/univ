@@ -6,10 +6,11 @@
 .env
 /config/secrets/prod/prod.decrypt.private.php
 /public/bundles/
-/public/uploads
+/public/uploads/
 # /public/build/
 /var/
 /vender/
+/vendor/
 /migrations/
 /.env
 /migrations/
