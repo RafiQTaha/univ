@@ -224,7 +224,7 @@ class ModuleController extends AbstractController
     #[Route('/valider', name: 'evaluation_module_valider')]
     public function evaluationModuleValider(Request $request) 
     {         
-        $session = $request->getSession();
+        $session = $request->getSession(); 
         $module = $session->get('data_module')['module'];
         $annee = $this->em->getRepository(AcAnnee::class)->getActiveAnneeByFormation($module->getSemestre()->getPromotion()->getFormation());
         $exControle = $this->em->getRepository(ExControle::class)->canValidateModule($module, $annee);
