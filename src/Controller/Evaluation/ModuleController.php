@@ -218,7 +218,7 @@ class ModuleController extends AbstractController
 
     public function getStatut($inscription, $module, $statut)
     {
-        return new Response($this->em->getRepository(ExMnotes::class)->getStatutByColumn($inscription, $module, $statut)['abreviation'] , 200, ['Content-Type' => 'text/html']);
+        return new Response($this->em->getRepository(ExMnotes::class)->getStatutByColumn($inscription, $module, $statut)['abreviation'], 200, ['Content-Type' => 'text/html']);
     }
 
     #[Route('/valider', name: 'evaluation_module_valider')]
