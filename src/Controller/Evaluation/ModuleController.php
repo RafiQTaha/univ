@@ -395,6 +395,10 @@ class ModuleController extends AbstractController
 
 
         $send_data = array();
+
+        $etablissement_id = $mnote->getInscription()->getAnnee()->getFormation()->getEtablissement()->getId();
+        $note_validation = $etablissement_id == 26 ? 12 : 10;
+        // $note_eliminatoire = $etablissement_id == 26 ? 8 : 7;
 //        if ($data->statut_aff == 60 || $data->statut_aff == 62) {
 //            
 //        }
@@ -467,6 +471,9 @@ class ModuleController extends AbstractController
 
     public function ModuleGetStatutApresRachat($data, $mnote, $note_eliminatoire, $note_validation) {
         $send_data = array();
+        $etablissement_id = $mnote->getInscription()->getAnnee()->getFormation()->getEtablissement()->getId();
+        $note_validation = $etablissement_id == 26 ? 12 : 10;
+        // $note_eliminatoire = $etablissement_id == 26 ? 8 : 7;
         foreach ($data as $key => $value) {
             if ($value->getStatutAff()->getId() == 17 || $value->getStatutDef()->getId() == 20) {
                 if ($mnote->getNote() < $note_validation) {

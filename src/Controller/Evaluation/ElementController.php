@@ -374,9 +374,9 @@ class ElementController extends AbstractController
             foreach ($dataSaved as $data) {
                 $inscription = $this->em->getRepository(TInscription::class)->find($data['inscription']->getId());
                 $enote = $this->em->getRepository(ExEnotes::class)->findOneBy(['element' => $element, 'inscription' => $inscription]);
-                $m_cc = $enote->getCcr() < $enote->getMcc() || !$enote->getCcr() ? $enote->getMcc() : $enote->getCcr();
-                $m_tp = $enote->getTpr() < $enote->getMtp() || !$enote->getTpr() ? $enote->getMtp() : $enote->getTpr();
-                $m_ef = $enote->getEfr() < $enote->getMef() || !$enote->getEfr() ? $enote->getMef() : $enote->getEfr();
+                $m_cc = $enote->getCcr() < $enote->getMcc() ?? 0 || !$enote->getCcr() ? $enote->getMcc() : $enote->getCcr() ?? 0;
+                $m_tp = $enote->getTpr() < $enote->getMtp() ?? 0 || !$enote->getTpr() ? $enote->getMtp() : $enote->getTpr() ?? 0;
+                $m_ef = $enote->getEfr() < $enote->getMef() ?? 0 || !$enote->getEfr() ? $enote->getMef() : $enote->getEfr() ?? 0;
                 if($element->getNature()->getCode() == "NE003" || $element->getNature()->getCode() == "NE004" || $element->getNature()->getCode() == "NE005"){
                     $result = $this->ElementGetStatutS2_pratique($enote, ['mcc' => $m_cc, 'mtp'=>$m_tp, 'mef'=>$m_ef], 10,10);
                 } else {

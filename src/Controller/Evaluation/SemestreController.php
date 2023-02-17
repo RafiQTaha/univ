@@ -377,7 +377,8 @@ class SemestreController extends AbstractController
             $send_data['statut_def'] = 57;
             $send_data['statut_aff'] = 57;
         } else {
-            if ($snote->getNote() < $note_validation || $count_module > 2) {
+            if ($snote->getNote() < $note_validation) {
+            // if ($snote->getNote() < $note_validation || $count_module > 2) {
                 $send_data['statut_s2'] = 39;
                 $send_data['statut_def'] = 39;
                 $send_data['statut_aff'] = 39;
