@@ -51,6 +51,9 @@ class TOperationcab
     #[ORM\Column(type: 'float', nullable: true)]
     private $synFlag = 0;
 
+    #[ORM\Column(type: 'integer', nullable: true)]
+    private $dateContable;
+
     public function __construct()
     {
         $this->reglements = new ArrayCollection();
@@ -238,6 +241,18 @@ class TOperationcab
     public function setSynFlag(?float $synFlag): self
     {
         $this->synFlag = $synFlag;
+
+        return $this;
+    }
+
+    public function getDateContable(): ?int
+    {
+        return $this->dateContable;
+    }
+
+    public function setDateContable(?int $dateContable): self
+    {
+        $this->dateContable = $dateContable;
 
         return $this;
     }
