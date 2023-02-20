@@ -171,14 +171,16 @@ class ExMnotesRepository extends ServiceEntityRepository
     }
     
     
-    public function getModuleNonAquis($inscription, $semestre)
+    public function getModuleNonAquis($semestre,$inscription)
     {
         return $this->createQueryBuilder('m')
-            ->innerJoin("m.inscription", 'inscription')
             ->innerJoin("m.module", 'module')
-            ->where("inscription = :inscription")
-            ->andWhere('module.semestre = :semestre')
+            ->innerJoin("module.semestre", 'semestre')
+            ->innerJoin("m.statutDef", 'def')
+            ->where("m.inscription = :inscription")
+            ->andWhere('semestre = :semestre')
             ->andWhere('module.type != :type')
+            ->andWhere('def.id = 31')
             ->setParameter('inscription', $inscription)
             ->setParameter('semestre', $semestre)
             ->setParameter('type', 'A')
