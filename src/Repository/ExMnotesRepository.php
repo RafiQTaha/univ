@@ -178,10 +178,10 @@ class ExMnotesRepository extends ServiceEntityRepository
             ->innerJoin("m.module", 'module')
             ->where("inscription = :inscription")
             ->andWhere('module.semestre = :semestre')
-            ->andWhere('module.type != :lettre')
+            ->andWhere('module.type != :type')
             ->setParameter('inscription', $inscription)
             ->setParameter('semestre', $semestre)
-            ->setParameter('letter', 'A')
+            ->setParameter('type', 'A')
             ->getQuery()
             ->getResult()
         ;
