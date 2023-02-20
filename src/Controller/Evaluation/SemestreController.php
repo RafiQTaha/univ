@@ -187,7 +187,12 @@ class SemestreController extends AbstractController
     }
     public function getStatut($inscription, $semestre, $statut)
     {
-        return new Response($this->em->getRepository(ExSnotes::class)->getStatutByColumn($inscription, $semestre, $statut), 200, ['Content-Type' => 'text/html']);
+        $abreviation = $this->em->getRepository(ExSnotes::class)->getStatutByColumn($inscription, $semestre, $statut);
+        if ($abreviation != null) {
+            return new Response($this->em->getRepository(ExSnotes::class)->getStatutByColumn($inscription, $semestre, $statut)['abreviation'], 200, ['Content-Type' => 'text/html']);
+        }else{
+            return new Response("");
+        }
     }
     public function getStatutModule($inscription, $module)
     {
