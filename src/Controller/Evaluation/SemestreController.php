@@ -307,6 +307,7 @@ class SemestreController extends AbstractController
         if($type == 'avantrachat'){
             foreach ($dataSaved as $data) {
                 $inscription = $this->em->getRepository(TInscription::class)->find($data['inscription']->getId());
+                $count_module_non_aquis = $this->em->getRepository(ExMnotes::class)->getModuleNonAquis($semestre, $inscription);
                 $snote = $this->em->getRepository(ExSnotes::class)->findOneBy(['semestre' => $semestre, 'inscription' => $inscription]);
                 $data_module_min = $this->em->getRepository(ExMnotes::class)->GetModuleByCodeAnneeCodeSemstre($annee, $semestre, $inscription, 'min', 'statutDef');
                 $data_module_max = $this->em->getRepository(ExMnotes::class)->GetModuleByCodeAnneeCodeSemstre($annee, $semestre, $inscription, 'max', 'statutDef');
@@ -320,7 +321,7 @@ class SemestreController extends AbstractController
                     $max_module_statut_def = $data_module_max[0]->getStatutDef()->getId();
                     $max_module_statut_aff = $data_module_max_aff[0]->getStatutAff()->getId();
                 }
-                $result = $this->SemestreGetStatutAvantRachat($snote, 7, 10, $min_module_statut_def, $max_module_statut_def, $max_module_statut_aff, count($modules));
+                $result = $this->SemestreGetStatutAvantRachat($snote, 7, 10, $min_module_statut_def, $max_module_statut_def, $max_module_statut_aff, count($count_module_non_aquis));
 
                 if (isset($result) and !empty($result)) {
                     $snote->setStatutS2(
@@ -375,9 +376,9 @@ class SemestreController extends AbstractController
 
     }
 
-    public function SemestreGetStatutAvantRachat($snote, $note_eliminatoire, $note_validation, $min_module_statut_def, $max_module_statut_def, $max_module_statut_aff, $count_module) {
+    public function SemestreGetStatutAvantRachat($snote, $note_eliminatoire, $note_validation, $min_module_statut_def, $max_module_statut_def, $max_module_statut_aff, $count_module_non_aquis) {
         $send_data = array();
-        if ($min_module_statut_def == 29) {
+        if ($min_module_statut_def == 29 || $count_module_non_aquis > 2) {
             $send_data['statut_s2'] = 57;
             $send_data['statut_def'] = 57;
             $send_data['statut_aff'] = 57;
