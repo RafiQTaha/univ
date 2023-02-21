@@ -470,8 +470,7 @@ class ElementController extends AbstractController
             $send_data['statut_s1'] = 52;
             $send_data['statut_def'] = 52;
             $send_data['statut_aff'] = 52;
-        }
-        if ($enote->getNoteIni() < $moyIni) {
+        }elseif ($enote->getNoteIni() < $moyIni) {
             $send_data['statut_s1'] = 12;
             $send_data['statut_def'] = 12;
             $send_data['statut_aff'] = 12;
