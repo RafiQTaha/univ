@@ -466,8 +466,10 @@ class ElementController extends AbstractController
         $moyIni = $etablissement_id == 26 ? 8 : 7;
         $send_data = array();
         $capitaliser = $this->em->getRepository(ExGnotes::class)->checkIfModuleCapitaliser($enote);
-        if ($enote->getInscription() == 16299) {
-            dd($capitaliser);
+        if(count($capitaliser) > 0){
+            $send_data['statut_s1'] = 52;
+            $send_data['statut_def'] = 52;
+            $send_data['statut_aff'] = 52;
         }
         if ($enote->getNoteIni() < $moyIni) {
             $send_data['statut_s1'] = 12;

@@ -81,7 +81,7 @@ class ExGnotesRepository extends ServiceEntityRepository
                     ->innerJoin('epreuve.element', "element")
                     ->innerJoin('e.inscription', "inscription")
                     ->where('element= :element')
-                    ->where('inscription= :inscription')
+                    ->andwhere('inscription= :inscription')
                     ->andWhere("e.observation = 'CAP'")
                     ->setParameter('element', $enote->getElement())
                     ->setParameter('inscription', $enote->getInscription())
