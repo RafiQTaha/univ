@@ -5,13 +5,20 @@
 <label for="coefficient_ef">Coefficient Epreuve EF (*)</label>
 <select class="form-control" name="type" id="type">
     <option value="" selected>Choix Type </option>
-    {% if module.type == "N" %}
+    {% elseif module.type == "A" %}
+        <option value="A" selected>A</option>
+        <option value="N">N</option>
+        <option value="S">S</option>
+    {% elseif module.type == "N" %}
+        <option value="A">A</option>
         <option value="N" selected>N</option>
         <option value="S">S</option>
     {% elseif module.type == "S" %}
+        <option value="A">A</option>
         <option value="N">N</option>
         <option value="S" selected>S</option>
     {% else %}
+        <option value="A">A</option>
         <option value="N">N</option>
         <option value="S">S</option>
     {% endif %}
