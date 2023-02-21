@@ -12,6 +12,7 @@ use App\Entity\AcFormation;
 use App\Entity\TInscription;
 use App\Entity\AcEtablissement;
 use App\Controller\ApiController;
+use App\Entity\ExGnotes;
 use Doctrine\Persistence\ManagerRegistry;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
@@ -464,6 +465,10 @@ class ElementController extends AbstractController
         $moy = $etablissement_id == 26 ? 12 : 10;
         $moyIni = $etablissement_id == 26 ? 8 : 7;
         $send_data = array();
+        $capitaliser = $this->em->getRepository(ExGnotes::class)->checkIfModuleCapitaliser($enote);
+        if ($enote->getInscription() == 16299) {
+            dd($capitaliser);
+        }
         if ($enote->getNoteIni() < $moyIni) {
             $send_data['statut_s1'] = 12;
             $send_data['statut_def'] = 12;
