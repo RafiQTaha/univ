@@ -110,4 +110,5 @@ and ex_e.code_inscription = '$code_inscription' group by ex_e.id order by ex_e.$
         $result = $resultSets->fetchAll();
         return $result;
     }
+ 
 }
