@@ -559,7 +559,7 @@ class ElementController extends AbstractController
                 $send_data['statut_aff'] = 21;
             }else {
 
-                if ((isset($noteComposantInitial['mcc']) && $noteComposantInitial['mcc'] < $moyIni) || (isset($noteComposantInitial['mtp']) && $noteComposantInitial['mtp'] < $moyIni ) || ( isset($noteComposantInitial['mef']) && $noteComposantInitial['mef'] < $moyIni ) || ( $enote->getNote() && $enote->getNote() < $note_eliminatoire )) {
+                if ((isset($noteComposantInitial['mcc']) && $noteComposantInitial['mcc'] < $moyIni) || (isset($noteComposantInitial['mtp']) && $noteComposantInitial['mtp'] < $moyIni ) || ( isset($noteComposantInitial['mef']) && $noteComposantInitial['mef'] < $moyIni ) || ( $enote->getNote() && $enote->getNote() == 0.0 ? 0 : $enote->getNote() < $note_eliminatoire )) {
                     $send_data['statut_s2'] = 16;
                     $send_data['statut_def'] = 16;
                     $send_data['statut_aff'] = 16;
