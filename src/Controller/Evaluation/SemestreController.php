@@ -185,6 +185,77 @@ class SemestreController extends AbstractController
         $mpdf->WriteHTML($html);
         $mpdf->Output("semestre_deliberation_".$semestre->getId().".pdf", "I");
     }
+
+    // impression deliberation
+
+    #[Route('/impression_delib/{ins}', name: 'evaluation_semestre_impression_deliberation')]
+    public function evaluationSemestreImpressionDeliberation(Request $request, $ins) 
+    {         
+        $session = $request->getSession();
+        // dd($session);
+        $semestre = $session->get('data_semestre')['semestre'];
+        $modules = $session->get('data_semestre')['modules'];
+        $inscription = $this->em->getRepository(TInscription::class)->find($ins);
+        $snote= $this->em->getRepository(ExSnotes::class)->findBy(['inscription'=>$inscription, 'semestre' =>$semestre]);
+
+        // dd($snote);
+        $annee = $this->em->getRepository(AcAnnee::class)->getActiveAnneeByFormation($semestre->getPromotion()->getFormation());
+        $infos =  [
+            'semestre' => $semestre,
+            'snote' => $snote[0],
+            'inscription' => $inscription,
+            'modules' => $modules,
+            'statutModules' => $this->em->getRepository(PeStatut::class)->findBy(['type' => 'M']),
+            'statutSemestres' => $this->em->getRepository(PeStatut::class)->findBy(['type' => 'S']),
+            'etablissement' => $annee->getFormation()->getEtablissement(),
+        ];
+
+        $html = $this->render("evaluation/semestre/pdfs/deliberation_individuel.html.twig", $infos)->getContent();
+        
+        $html .= $this->render("evaluation/semestre/pdfs/footer.html.twig")->getContent();
+        $mpdf = new Mpdf([
+            'mode' => 'utf-8',
+            'margin_left' => '5',
+            'margin_right' => '5',
+            'margin_top' => '35',
+            'margin_bottom' => '20',
+            'format' => 'A4-L',
+            'margin_header' => '2',
+            'margin_footer' => '2'
+            ]);
+        $mpdf->SetHTMLHeader($this->render("evaluation/semestre/pdfs/header_deliberation_individuel.html.twig", [
+            'semestre' => $semestre,
+            'annee' => $annee
+        ])->getContent());
+        $mpdf->defaultfooterline = 0;
+        $mpdf->SetFooter('Page {PAGENO} / {nb}');
+        $mpdf->WriteHTML($html);
+        $mpdf->Output("semestre_deliberation_individuel".$semestre->getId().".pdf", "I");
+    }
+
+
+    // get enotes by module and inscription and semestre
+
+    public function getEnotesBySemestreAction($module, $inscription)
+    {
+
+        
+        $enotes = $this->em->getRepository(ExEnotes::class)->findByModule($module, $inscription);
+
+        $html = "";
+
+        $count = 0;
+
+        foreach ($enotes as $key => $enote) {
+            $html .= $this->render("evaluation/semestre/pages/enotes.html.twig", ['enote'=>$enote, 'enotes'=>$enotes, 'count'=>$count])->getContent();
+            $count++;
+        }
+
+        return new response($html);
+    }
+    
+
+
     public function getStatut($inscription, $semestre, $statut)
     {
         $abreviation = $this->em->getRepository(ExSnotes::class)->getStatutByColumn($inscription, $semestre, $statut);
