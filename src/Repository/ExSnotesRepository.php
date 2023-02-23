@@ -6,6 +6,9 @@ use App\Entity\ExSnotes;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
+use App\Entity\TInscription;
+use App\Entity\AcAnnee;
+
 /**
  * @method ExSnotes|null find($id, $lockMode = null, $lockVersion = null)
  * @method ExSnotes|null findOneBy(array $criteria, array $orderBy = null)
@@ -52,16 +55,27 @@ class ExSnotesRepository extends ServiceEntityRepository
 
     public function findByAdmission($admission)
     {
-        return $this->createQueryBuilder('e')
+        $inscriptions = $this->em->getRepository(TInscription::class)->findby(['admission'=>$admission]);
+        $inscription = end($inscriptions);
+        $formation = $inscription->getPromotion()->getFormation();
+        $annee = $this->em->getRepository(AcAnnee::class)->getAnneeByFormation($formation);
+        
+
+        return  $this->createQueryBuilder('e')
             ->innerJoin("e.inscription", 'inscription')
             ->innerJoin("inscription.admission", 'admission')
             ->innerJoin("e.statutDef", 'statutDef')
+            ->innerJoin("inscription.annee", 'annee')
             ->where("admission = :admission")
             ->andWhere("statutDef = 72")
+            ->andWhere("annee.id >= :annee_id")
             ->setParameter('admission', $admission)
+            ->setParameter('annee_id', $annee->getId())
             ->getQuery()
             ->getResult()
         ;
+
+        // dd($return);
     }
 
     public function getStatutByColumn($inscription, $semestre, $statut)
