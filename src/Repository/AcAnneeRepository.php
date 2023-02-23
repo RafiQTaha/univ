@@ -36,6 +36,17 @@ class AcAnneeRepository extends ServiceEntityRepository
         ;
     }
     */
+    
+    public function getAnneeByFormation($formation)
+    {
+        return $this->createQueryBuilder('a')
+        ->innerJoin("a.formation", 'formation')
+        ->where("formation = :formation")
+        ->andWhere("a.designation = '2021/2022'")
+        ->setParameter('formation', $formation)
+        ->getQuery()
+        ->getOneOrNullResult();
+    }
 
     
     public function getActiveAnneeByFormation($formation): ?AcAnnee

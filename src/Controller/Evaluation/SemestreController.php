@@ -194,9 +194,7 @@ class SemestreController extends AbstractController
     #[Route('/impression_delib/{ins}', name: 'evaluation_semestre_impression_deliberation')]
     public function evaluationSemestreImpressionDeliberation(Request $request, $ins) 
     {         
-        // dd('test');
         $session = $request->getSession();
-        // dd($session);
         $semestre = $session->get('data_semestre')['semestre'];
         $modules = $session->get('data_semestre')['modules'];
         $inscription = $this->em->getRepository(TInscription::class)->find($ins);
