@@ -205,11 +205,11 @@ class SemestreController extends AbstractController
         $snotes = $this->em->getRepository(ExSnotes::class)->findByAdmission($inscription->getAdmission());
 
         // dd($snotes);
-        $derogation='no';
+        // $derogation='no';
 
-        if ($snotes) {
-            $derogation = 'yes';
-        }
+        // if ($snotes) {
+        //     $derogation = 'yes';
+        // }
 
         $count_module_non_aquis = $this->em->getRepository(ExMnotes::class)->getModuleNonAquis($semestre, $inscription);
         
@@ -218,7 +218,7 @@ class SemestreController extends AbstractController
         $annee = $this->em->getRepository(AcAnnee::class)->getActiveAnneeByFormation($semestre->getPromotion()->getFormation());
         $infos =  [
             'nbr_nonAcis'=> count($count_module_non_aquis),
-            'derogation' => $derogation,
+            'derogation' => count($snotes),
             'semestre' => $semestre,
             'snote' => $snote[0],
             'inscription' => $inscription,
