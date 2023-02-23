@@ -5,7 +5,7 @@
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => '734d5422de04e3453a12aea033378008fafe2045',
+        'reference' => 'b44a192805eae2ad57881ac53f469fe744c9f3fd',
         'name' => '__root__',
         'dev' => true,
     ),
@@ -16,7 +16,7 @@
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => '734d5422de04e3453a12aea033378008fafe2045',
+            'reference' => 'b44a192805eae2ad57881ac53f469fe744c9f3fd',
             'dev_requirement' => false,
         ),
         'composer/package-versions-deprecated' => array(
@@ -562,8 +562,8 @@
         'psr/log-implementation' => array(
             'dev_requirement' => false,
             'provided' => array(
-                0 => '1.0.0 || 2.0.0 || 3.0.0',
-                1 => '1.0|2.0|3.0',
+                0 => '1.0|2.0|3.0',
+                1 => '1.0.0 || 2.0.0 || 3.0.0',
             ),
         ),
         'psr/simple-cache' => array(

@@ -8,23 +8,34 @@
                             <td style="text-align: center ;  {% if enote.mcc >= 7 and  enote.mcc < 10  %} font-weight: bold {% endif %}"> {% if enote.mcc is defined %}  {{ enote.mcc|number_format(2, '.', ',') }}  {% else %} - {% endif %}  </td>
                             <td style="text-align: center ;  {% if enote.ccr >= 7 and  enote.ccr < 10  %} font-weight: bold {% endif %}"> {% if enote.ccr is defined %} {{ enote.ccr|number_format(2, '.', ',') }} {% else %} - {% endif %}  </td>
                             <td style="text-align: center ;"> {% if enote.ccRachat is defined  %} {{ enote.ccRachat|number_format(2, '.', ',') }} {% else %} - {% endif %}  </td>
-                            {% set ccetrachat = enote.ccRachat + enote.mcc  %}
+                            {% if enote.mcc >= enote.ccr %}
+                                {% set ccetrachat = enote.ccRachat + enote.mcc  %}
+                            {% else %}
+                                {% set ccetrachat = enote.ccRachat + enote.ccr  %}
+                            {% endif %}
                             <td style="text-align: center;{% if ccetrachat < 7 and ccetrachat > 0 %} {{ red_class }} ;{% elseif ccetrachat >= 7 and  ccetrachat < 10  %}  font-weight: bold ;{% endif %}">{% if enote.mcc is defined  and enote.ccr is defined  and enote.ccRachat is defined %}  {{ enote.mcc + enote.ccRachat|number_format(2, '.', ',')}} {% else %} - {% endif %} </td>
 
                             <td style="text-align: center;{% if enote.mtp >= 7 and  enote.mtp < 10   %} font-weight: bold {% endif %}">{% if enote.mtp is defined  %} {{ enote.mtp|number_format(2, '.', ',') }} {% else %} - {% endif %}</td>
                             <td style="text-align: center;{% if enote.tpr >= 7 and  enote.tpr < 10   %} font-weight: bold {% endif %}">{% if enote.tpr is defined  %} {{ enote.tpr|number_format(2, '.', ',') }} {% else %} - {% endif %}</td>
                             <td style="text-align: center;">{% if enote.tpRachat is defined  %} {{ enote.tpRachat|number_format(2, '.', ',') }} {% else %} - {% endif %}</td>
                             
+                            {% if enote.mtp >= enote.tpr %}
+                                {% set tpetrachat = enote.tpRachat + enote.mtp  %}
+                            {% else %}
+                                {% set tpetrachat = enote.ccRachat + enote.tpr  %}
+                            {% endif %}
 
-                            {% set tpetrachat = enote.tpRachat + enote.mtp  %}
                             <td style="text-align: center;{% if tpetrachat < 7 and tpetrachat > 0 %} {{ red_class }} ;{% elseif tpetrachat >= 7 and  tpetrachat < 10  %}  font-weight: bold ;{% endif %}">{% if enote.mtp is defined  and enote.tpr is defined  and enote.tpRachat is defined %}  {{ enote.mtp + enote.tpRachat|number_format(2, '.', ',')}} {% else %} - {% endif %} </td>
 
                             <td style="text-align: center;{% if enote.mef >= 7 and  enote.mef < 10   %} font-weight: bold {% endif %}">{% if enote.mef is defined  %} {{ enote.mef|number_format(2, '.', ',') }} {% else %} - {% endif %}</td>
                             <td style="text-align: center;{% if enote.efr >= 7 and  enote.efr < 10   %} font-weight: bold {% endif %}">{% if enote.efr is defined  %} {{ enote.efr|number_format(2, '.', ',') }} {% else %} - {% endif %}</td>
                             <td style="text-align: center;">{% if enote.efRachat is defined  %} {{ enote.efRachat|number_format(2, '.', ',') }} {% else %} - {% endif %}</td>
-
-
-                            {% set efetrachat = enote.efRachat + enote.mef  %}
+                            
+                            {% if enote.mef >= enote.efr %}
+                                {% set efetrachat = enote.tpRachat + enote.mef  %}
+                            {% else %}
+                                {% set efetrachat = enote.ccRachat + enote.efr  %}
+                            {% endif %}
                             <td style="text-align: center;{% if efetrachat < 7 and efetrachat > 0 %} {{ red_class }} ;{% elseif efetrachat >= 7 and  efetrachat < 10  %}  font-weight: bold ;{% endif %}">{% if enote.mef is defined  and enote.efr is defined  and enote.efRachat is defined %}  {{ enote.mef + enote.efRachat|number_format(2, '.', ',')}} {% else %} - {% endif %} </td>
 
                             <td style="text-align: center;{% if enote.noteIni < 7 and  enote.noteIni > 0 %} {{red_element_class}} ; {% elseif enote.noteIni >= 7 and  enote.noteIni < 10 %} color: #ea56e6 {% endif %}">{% if enote.noteIni is defined %} {{ enote.noteIni|number_format(2,'.',',') }} {% else %} - {% endif %}</td>

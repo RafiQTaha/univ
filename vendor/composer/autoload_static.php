@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit7468324633506efa388cb0210cfbb49f
+class ComposerStaticInit88b32876d0f61340c450e7ef2b72e155
 {
     public static $files = array (
         '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
@@ -192,8 +192,8 @@ class ComposerStaticInit7468324633506efa388cb0210cfbb49f
         'phpDocumentor\\Reflection\\' => 
         array (
             0 => __DIR__ . '/..' . '/phpdocumentor/reflection-common/src',
-            1 => __DIR__ . '/..' . '/phpdocumentor/reflection-docblock/src',
-            2 => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src',
+            1 => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src',
+            2 => __DIR__ . '/..' . '/phpdocumentor/reflection-docblock/src',
         ),
         'ZipStream\\' => 
         array (
@@ -497,8 +497,8 @@ class ComposerStaticInit7468324633506efa388cb0210cfbb49f
         ),
         'Psr\\Http\\Message\\' => 
         array (
-            0 => __DIR__ . '/..' . '/psr/http-factory/src',
-            1 => __DIR__ . '/..' . '/psr/http-message/src',
+            0 => __DIR__ . '/..' . '/psr/http-message/src',
+            1 => __DIR__ . '/..' . '/psr/http-factory/src',
         ),
         'Psr\\Http\\Client\\' => 
         array (
@@ -622,8 +622,8 @@ class ComposerStaticInit7468324633506efa388cb0210cfbb49f
         ),
         'Doctrine\\Common\\' => 
         array (
-            0 => __DIR__ . '/..' . '/doctrine/common/lib/Doctrine/Common',
-            1 => __DIR__ . '/..' . '/doctrine/event-manager/lib/Doctrine/Common',
+            0 => __DIR__ . '/..' . '/doctrine/event-manager/lib/Doctrine/Common',
+            1 => __DIR__ . '/..' . '/doctrine/common/lib/Doctrine/Common',
         ),
         'Doctrine\\Bundle\\MigrationsBundle\\' => 
         array (
@@ -662,18 +662,23 @@ class ComposerStaticInit7468324633506efa388cb0210cfbb49f
     );
 
     public static $classMap = array (
+        'App\\Controller\\AdministrationEpreuve\\ControleController' => __DIR__ . '/../..' . '/src/Controller/AdministrationEpreuve/ControleController.php',
         'App\\Controller\\AdministrationEpreuve\\EpreuveController' => __DIR__ . '/../..' . '/src/Controller/AdministrationEpreuve/EpreuveController.php',
+        'App\\Controller\\AdministrationEpreuve\\EtatImpressionController' => __DIR__ . '/../..' . '/src/Controller/AdministrationEpreuve/EtatImpressionController.php',
         'App\\Controller\\AdministrationEpreuve\\ImpressionController' => __DIR__ . '/../..' . '/src/Controller/AdministrationEpreuve/ImpressionController.php',
+        'App\\Controller\\AdministrationEpreuve\\ImprimerController' => __DIR__ . '/../..' . '/src/Controller/AdministrationEpreuve/ImprimerController.php',
         'App\\Controller\\AdministrationEpreuve\\NoteEpreuveController' => __DIR__ . '/../..' . '/src/Controller/AdministrationEpreuve/NoteEpreuveController.php',
         'App\\Controller\\Admission\\AdmissionController' => __DIR__ . '/../..' . '/src/Controller/Admission/AdmissionController.php',
         'App\\Controller\\Admission\\GestionAdmissionController' => __DIR__ . '/../..' . '/src/Controller/Admission/GestionAdmissionController.php',
         'App\\Controller\\ApiController' => __DIR__ . '/../..' . '/src/Controller/ApiController.php',
         'App\\Controller\\DatatablesController' => __DIR__ . '/../..' . '/src/Controller/DatatablesController.php',
+        'App\\Controller\\Etudiant\\CentreDappelController' => __DIR__ . '/../..' . '/src/Controller/Etudiant/CentreDappelController.php',
         'App\\Controller\\Etudiant\\EtudiantController' => __DIR__ . '/../..' . '/src/Controller/Etudiant/EtudiantController.php',
         'App\\Controller\\Etudiant\\RechercheAvanceController' => __DIR__ . '/../..' . '/src/Controller/Etudiant/RechercheAvanceController.php',
         'App\\Controller\\Evaluation\\AnneeController' => __DIR__ . '/../..' . '/src/Controller/Evaluation/AnneeController.php',
         'App\\Controller\\Evaluation\\ElementController' => __DIR__ . '/../..' . '/src/Controller/Evaluation/ElementController.php',
         'App\\Controller\\Evaluation\\EpreuveController' => __DIR__ . '/../..' . '/src/Controller/Evaluation/EpreuveController.php',
+        'App\\Controller\\Evaluation\\FormationController' => __DIR__ . '/../..' . '/src/Controller/Evaluation/FormationController.php',
         'App\\Controller\\Evaluation\\ModuleController' => __DIR__ . '/../..' . '/src/Controller/Evaluation/ModuleController.php',
         'App\\Controller\\Evaluation\\SemestreController' => __DIR__ . '/../..' . '/src/Controller/Evaluation/SemestreController.php',
         'App\\Controller\\Evaluation\\SimulationDeliberationController' => __DIR__ . '/../..' . '/src/Controller/Evaluation/SimulationDeliberationController.php',
@@ -687,12 +692,24 @@ class ComposerStaticInit7468324633506efa388cb0210cfbb49f
         'App\\Controller\\IndexController' => __DIR__ . '/../..' . '/src/Controller/IndexController.php',
         'App\\Controller\\Inscription\\GestionGroupesController' => __DIR__ . '/../..' . '/src/Controller/Inscription/GestionGroupesController.php',
         'App\\Controller\\Inscription\\GestionInscriptionController' => __DIR__ . '/../..' . '/src/Controller/Inscription/GestionInscriptionController.php',
+        'App\\Controller\\Parametre\\AcademieController' => __DIR__ . '/../..' . '/src/Controller/Parametre/AcademieController.php',
+        'App\\Controller\\Parametre\\AnneeController' => __DIR__ . '/../..' . '/src/Controller/Parametre/AnneeController.php',
+        'App\\Controller\\Parametre\\BanqueController' => __DIR__ . '/../..' . '/src/Controller/Parametre/BanqueController.php',
         'App\\Controller\\Parametre\\ElementController' => __DIR__ . '/../..' . '/src/Controller/Parametre/ElementController.php',
+        'App\\Controller\\Parametre\\EnseignantController' => __DIR__ . '/../..' . '/src/Controller/Parametre/EnseignantController.php',
+        'App\\Controller\\Parametre\\EnseignantExceptController' => __DIR__ . '/../..' . '/src/Controller/Parametre/EnseignantExceptController.php',
         'App\\Controller\\Parametre\\EtablissementController' => __DIR__ . '/../..' . '/src/Controller/Parametre/EtablissementController.php',
+        'App\\Controller\\Parametre\\FiliereController' => __DIR__ . '/../..' . '/src/Controller/Parametre/FiliereController.php',
         'App\\Controller\\Parametre\\FormationController' => __DIR__ . '/../..' . '/src/Controller/Parametre/FormationController.php',
+        'App\\Controller\\Parametre\\FraisController' => __DIR__ . '/../..' . '/src/Controller/Parametre/FraisController.php',
+        'App\\Controller\\Parametre\\LanguesController' => __DIR__ . '/../..' . '/src/Controller/Parametre/LanguesController.php',
+        'App\\Controller\\Parametre\\ModalitesController' => __DIR__ . '/../..' . '/src/Controller/Parametre/ModalitesController.php',
         'App\\Controller\\Parametre\\ModuleController' => __DIR__ . '/../..' . '/src/Controller/Parametre/ModuleController.php',
+        'App\\Controller\\Parametre\\ProgrammationController' => __DIR__ . '/../..' . '/src/Controller/Parametre/ProgrammationController.php',
         'App\\Controller\\Parametre\\PromotionController' => __DIR__ . '/../..' . '/src/Controller/Parametre/PromotionController.php',
         'App\\Controller\\Parametre\\SemestreController' => __DIR__ . '/../..' . '/src/Controller/Parametre/SemestreController.php',
+        'App\\Controller\\Parametre\\SerieBacController' => __DIR__ . '/../..' . '/src/Controller/Parametre/SerieBacController.php',
+        'App\\Controller\\Parametre\\TypeBacController' => __DIR__ . '/../..' . '/src/Controller/Parametre/TypeBacController.php',
         'App\\Controller\\Parametre\\UserController' => __DIR__ . '/../..' . '/src/Controller/Parametre/UserController.php',
         'App\\Controller\\Planification\\GestionPlanificationController' => __DIR__ . '/../..' . '/src/Controller/Planification/GestionPlanificationController.php',
         'App\\Controller\\Planification\\PlanificationController' => __DIR__ . '/../..' . '/src/Controller/Planification/PlanificationController.php',
@@ -709,10 +726,15 @@ class ComposerStaticInit7468324633506efa388cb0210cfbb49f
         'App\\Entity\\AcModule' => __DIR__ . '/../..' . '/src/Entity/AcModule.php',
         'App\\Entity\\AcPromotion' => __DIR__ . '/../..' . '/src/Entity/AcPromotion.php',
         'App\\Entity\\AcSemestre' => __DIR__ . '/../..' . '/src/Entity/AcSemestre.php',
+        'App\\Entity\\AnoteExterne' => __DIR__ . '/../..' . '/src/Entity/AnoteExterne.php',
+        'App\\Entity\\Checkinout' => __DIR__ . '/../..' . '/src/Entity/Checkinout.php',
         'App\\Entity\\Color' => __DIR__ . '/../..' . '/src/Entity/Color.php',
+        'App\\Entity\\DDiplomes' => __DIR__ . '/../..' . '/src/Entity/DDiplomes.php',
+        'App\\Entity\\DPrediplomes' => __DIR__ . '/../..' . '/src/Entity/DPrediplomes.php',
         'App\\Entity\\ExAnotes' => __DIR__ . '/../..' . '/src/Entity/ExAnotes.php',
         'App\\Entity\\ExControle' => __DIR__ . '/../..' . '/src/Entity/ExControle.php',
         'App\\Entity\\ExEnotes' => __DIR__ . '/../..' . '/src/Entity/ExEnotes.php',
+        'App\\Entity\\ExFnotes' => __DIR__ . '/../..' . '/src/Entity/ExFnotes.php',
         'App\\Entity\\ExGnotes' => __DIR__ . '/../..' . '/src/Entity/ExGnotes.php',
         'App\\Entity\\ExMnotes' => __DIR__ . '/../..' . '/src/Entity/ExMnotes.php',
         'App\\Entity\\ExSnotes' => __DIR__ . '/../..' . '/src/Entity/ExSnotes.php',
@@ -720,8 +742,13 @@ class ComposerStaticInit7468324633506efa388cb0210cfbb49f
         'App\\Entity\\HHonens' => __DIR__ . '/../..' . '/src/Entity/HHonens.php',
         'App\\Entity\\HHonensAnnuler' => __DIR__ . '/../..' . '/src/Entity/HHonensAnnuler.php',
         'App\\Entity\\ISeance' => __DIR__ . '/../..' . '/src/Entity/ISeance.php',
+        'App\\Entity\\ISeanceSalle' => __DIR__ . '/../..' . '/src/Entity/ISeanceSalle.php',
+        'App\\Entity\\Machines' => __DIR__ . '/../..' . '/src/Entity/Machines.php',
+        'App\\Entity\\Mouchard' => __DIR__ . '/../..' . '/src/Entity/Mouchard.php',
         'App\\Entity\\NatureDemande' => __DIR__ . '/../..' . '/src/Entity/NatureDemande.php',
+        'App\\Entity\\PAnonymatActuel' => __DIR__ . '/../..' . '/src/Entity/PAnonymatActuel.php',
         'App\\Entity\\PBatiments' => __DIR__ . '/../..' . '/src/Entity/PBatiments.php',
+        'App\\Entity\\PDiplomes' => __DIR__ . '/../..' . '/src/Entity/PDiplomes.php',
         'App\\Entity\\PDocument' => __DIR__ . '/../..' . '/src/Entity/PDocument.php',
         'App\\Entity\\PEnseignant' => __DIR__ . '/../..' . '/src/Entity/PEnseignant.php',
         'App\\Entity\\PEnseignantExcept' => __DIR__ . '/../..' . '/src/Entity/PEnseignantExcept.php',
@@ -734,6 +761,7 @@ class ComposerStaticInit7468324633506efa388cb0210cfbb49f
         'App\\Entity\\PNatureEpreuve' => __DIR__ . '/../..' . '/src/Entity/PNatureEpreuve.php',
         'App\\Entity\\POrganisme' => __DIR__ . '/../..' . '/src/Entity/POrganisme.php',
         'App\\Entity\\PSalles' => __DIR__ . '/../..' . '/src/Entity/PSalles.php',
+        'App\\Entity\\PSignataire' => __DIR__ . '/../..' . '/src/Entity/PSignataire.php',
         'App\\Entity\\PSituation' => __DIR__ . '/../..' . '/src/Entity/PSituation.php',
         'App\\Entity\\PStatut' => __DIR__ . '/../..' . '/src/Entity/PStatut.php',
         'App\\Entity\\PeStatut' => __DIR__ . '/../..' . '/src/Entity/PeStatut.php',
@@ -741,11 +769,14 @@ class ComposerStaticInit7468324633506efa388cb0210cfbb49f
         'App\\Entity\\PlEmptimens' => __DIR__ . '/../..' . '/src/Entity/PlEmptimens.php',
         'App\\Entity\\PrProgrammation' => __DIR__ . '/../..' . '/src/Entity/PrProgrammation.php',
         'App\\Entity\\Semaine' => __DIR__ . '/../..' . '/src/Entity/Semaine.php',
+        'App\\Entity\\Semaines' => __DIR__ . '/../..' . '/src/Entity/Semaines.php',
         'App\\Entity\\TAdmission' => __DIR__ . '/../..' . '/src/Entity/TAdmission.php',
         'App\\Entity\\TAdmissionDocument' => __DIR__ . '/../..' . '/src/Entity/TAdmissionDocument.php',
         'App\\Entity\\TBrdpaiement' => __DIR__ . '/../..' . '/src/Entity/TBrdpaiement.php',
         'App\\Entity\\TEtudiant' => __DIR__ . '/../..' . '/src/Entity/TEtudiant.php',
         'App\\Entity\\TInscription' => __DIR__ . '/../..' . '/src/Entity/TInscription.php',
+        'App\\Entity\\TInscriptionImpControle' => __DIR__ . '/../..' . '/src/Entity/TInscriptionImpControle.php',
+        'App\\Entity\\TInscriptionImpLog' => __DIR__ . '/../..' . '/src/Entity/TInscriptionImpLog.php',
         'App\\Entity\\TOperationcab' => __DIR__ . '/../..' . '/src/Entity/TOperationcab.php',
         'App\\Entity\\TOperationdet' => __DIR__ . '/../..' . '/src/Entity/TOperationdet.php',
         'App\\Entity\\TPreinscription' => __DIR__ . '/../..' . '/src/Entity/TPreinscription.php',
@@ -756,12 +787,19 @@ class ComposerStaticInit7468324633506efa388cb0210cfbb49f
         'App\\Entity\\UsOperation' => __DIR__ . '/../..' . '/src/Entity/UsOperation.php',
         'App\\Entity\\UsSousModule' => __DIR__ . '/../..' . '/src/Entity/UsSousModule.php',
         'App\\Entity\\User' => __DIR__ . '/../..' . '/src/Entity/User.php',
+        'App\\Entity\\Userinfo' => __DIR__ . '/../..' . '/src/Entity/Userinfo.php',
         'App\\Entity\\XAcademie' => __DIR__ . '/../..' . '/src/Entity/XAcademie.php',
         'App\\Entity\\XBanque' => __DIR__ . '/../..' . '/src/Entity/XBanque.php',
         'App\\Entity\\XFiliere' => __DIR__ . '/../..' . '/src/Entity/XFiliere.php',
         'App\\Entity\\XLangue' => __DIR__ . '/../..' . '/src/Entity/XLangue.php',
         'App\\Entity\\XModalites' => __DIR__ . '/../..' . '/src/Entity/XModalites.php',
+        'App\\Entity\\XSerieBac' => __DIR__ . '/../..' . '/src/Entity/XSerieBac.php',
         'App\\Entity\\XTypeBac' => __DIR__ . '/../..' . '/src/Entity/XTypeBac.php',
+        'App\\Entity\\Xseance' => __DIR__ . '/../..' . '/src/Entity/Xseance.php',
+        'App\\Entity\\XseanceAbsences' => __DIR__ . '/../..' . '/src/Entity/XseanceAbsences.php',
+        'App\\Entity\\XseanceCapitaliser' => __DIR__ . '/../..' . '/src/Entity/XseanceCapitaliser.php',
+        'App\\Entity\\XseanceMotifAbs' => __DIR__ . '/../..' . '/src/Entity/XseanceMotifAbs.php',
+        'App\\Entity\\nuts' => __DIR__ . '/../..' . '/src/Entity/nuts.php',
         'App\\Kernel' => __DIR__ . '/../..' . '/src/Kernel.php',
         'App\\Repository\\AcAnneeRepository' => __DIR__ . '/../..' . '/src/Repository/AcAnneeRepository.php',
         'App\\Repository\\AcDepartementRepository' => __DIR__ . '/../..' . '/src/Repository/AcDepartementRepository.php',
@@ -772,11 +810,15 @@ class ComposerStaticInit7468324633506efa388cb0210cfbb49f
         'App\\Repository\\AcModuleRepository' => __DIR__ . '/../..' . '/src/Repository/AcModuleRepository.php',
         'App\\Repository\\AcPromotionRepository' => __DIR__ . '/../..' . '/src/Repository/AcPromotionRepository.php',
         'App\\Repository\\AcSemestreRepository' => __DIR__ . '/../..' . '/src/Repository/AcSemestreRepository.php',
-        'App\\Repository\\ActiveRepository' => __DIR__ . '/../..' . '/src/Repository/ActiveRepository.php',
+        'App\\Repository\\AnoteExterneRepository' => __DIR__ . '/../..' . '/src/Repository/AnoteExterneRepository.php',
+        'App\\Repository\\CheckinoutRepository' => __DIR__ . '/../..' . '/src/Repository/CheckinoutRepository.php',
         'App\\Repository\\ColorRepository' => __DIR__ . '/../..' . '/src/Repository/ColorRepository.php',
+        'App\\Repository\\DDiplomesRepository' => __DIR__ . '/../..' . '/src/Repository/DDiplomesRepository.php',
+        'App\\Repository\\DPrediplomesRepository' => __DIR__ . '/../..' . '/src/Repository/DPrediplomesRepository.php',
         'App\\Repository\\ExAnotesRepository' => __DIR__ . '/../..' . '/src/Repository/ExAnotesRepository.php',
         'App\\Repository\\ExControleRepository' => __DIR__ . '/../..' . '/src/Repository/ExControleRepository.php',
         'App\\Repository\\ExEnotesRepository' => __DIR__ . '/../..' . '/src/Repository/ExEnotesRepository.php',
+        'App\\Repository\\ExFnotesRepository' => __DIR__ . '/../..' . '/src/Repository/ExFnotesRepository.php',
         'App\\Repository\\ExGnotesRepository' => __DIR__ . '/../..' . '/src/Repository/ExGnotesRepository.php',
         'App\\Repository\\ExMnotesRepository' => __DIR__ . '/../..' . '/src/Repository/ExMnotesRepository.php',
         'App\\Repository\\ExSnotesRepository' => __DIR__ . '/../..' . '/src/Repository/ExSnotesRepository.php',
@@ -784,8 +826,13 @@ class ComposerStaticInit7468324633506efa388cb0210cfbb49f
         'App\\Repository\\HHonensAnnulerRepository' => __DIR__ . '/../..' . '/src/Repository/HHonensAnnulerRepository.php',
         'App\\Repository\\HHonensRepository' => __DIR__ . '/../..' . '/src/Repository/HHonensRepository.php',
         'App\\Repository\\ISeanceRepository' => __DIR__ . '/../..' . '/src/Repository/ISeanceRepository.php',
+        'App\\Repository\\ISeanceSalleRepository' => __DIR__ . '/../..' . '/src/Repository/ISeanceSalleRepository.php',
+        'App\\Repository\\MachinesRepository' => __DIR__ . '/../..' . '/src/Repository/MachinesRepository.php',
+        'App\\Repository\\MouchardRepository' => __DIR__ . '/../..' . '/src/Repository/MouchardRepository.php',
         'App\\Repository\\NatureDemandeRepository' => __DIR__ . '/../..' . '/src/Repository/NatureDemandeRepository.php',
+        'App\\Repository\\PAnonymatActuelRepository' => __DIR__ . '/../..' . '/src/Repository/PAnonymatActuelRepository.php',
         'App\\Repository\\PBatimentsRepository' => __DIR__ . '/../..' . '/src/Repository/PBatimentsRepository.php',
+        'App\\Repository\\PDiplomesRepository' => __DIR__ . '/../..' . '/src/Repository/PDiplomesRepository.php',
         'App\\Repository\\PDocumentRepository' => __DIR__ . '/../..' . '/src/Repository/PDocumentRepository.php',
         'App\\Repository\\PEnseignantExceptRepository' => __DIR__ . '/../..' . '/src/Repository/PEnseignantExceptRepository.php',
         'App\\Repository\\PEnseignantRepository' => __DIR__ . '/../..' . '/src/Repository/PEnseignantRepository.php',
@@ -798,6 +845,7 @@ class ComposerStaticInit7468324633506efa388cb0210cfbb49f
         'App\\Repository\\PNatureEpreuveRepository' => __DIR__ . '/../..' . '/src/Repository/PNatureEpreuveRepository.php',
         'App\\Repository\\POrganismeRepository' => __DIR__ . '/../..' . '/src/Repository/POrganismeRepository.php',
         'App\\Repository\\PSallesRepository' => __DIR__ . '/../..' . '/src/Repository/PSallesRepository.php',
+        'App\\Repository\\PSignataireRepository' => __DIR__ . '/../..' . '/src/Repository/PSignataireRepository.php',
         'App\\Repository\\PSituationRepository' => __DIR__ . '/../..' . '/src/Repository/PSituationRepository.php',
         'App\\Repository\\PStatutRepository' => __DIR__ . '/../..' . '/src/Repository/PStatutRepository.php',
         'App\\Repository\\PeStatutRepository' => __DIR__ . '/../..' . '/src/Repository/PeStatutRepository.php',
@@ -805,10 +853,13 @@ class ComposerStaticInit7468324633506efa388cb0210cfbb49f
         'App\\Repository\\PlEmptimensRepository' => __DIR__ . '/../..' . '/src/Repository/PlEmptimensRepository.php',
         'App\\Repository\\PrProgrammationRepository' => __DIR__ . '/../..' . '/src/Repository/PrProgrammationRepository.php',
         'App\\Repository\\SemaineRepository' => __DIR__ . '/../..' . '/src/Repository/SemaineRepository.php',
+        'App\\Repository\\SemainesRepository' => __DIR__ . '/../..' . '/src/Repository/SemainesRepository.php',
         'App\\Repository\\TAdmissionDocumentRepository' => __DIR__ . '/../..' . '/src/Repository/TAdmissionDocumentRepository.php',
         'App\\Repository\\TAdmissionRepository' => __DIR__ . '/../..' . '/src/Repository/TAdmissionRepository.php',
         'App\\Repository\\TBrdpaiementRepository' => __DIR__ . '/../..' . '/src/Repository/TBrdpaiementRepository.php',
         'App\\Repository\\TEtudiantRepository' => __DIR__ . '/../..' . '/src/Repository/TEtudiantRepository.php',
+        'App\\Repository\\TInscriptionImpControleRepository' => __DIR__ . '/../..' . '/src/Repository/TInscriptionImpControleRepository.php',
+        'App\\Repository\\TInscriptionImpLogRepository' => __DIR__ . '/../..' . '/src/Repository/TInscriptionImpLogRepository.php',
         'App\\Repository\\TInscriptionRepository' => __DIR__ . '/../..' . '/src/Repository/TInscriptionRepository.php',
         'App\\Repository\\TOperationcabRepository' => __DIR__ . '/../..' . '/src/Repository/TOperationcabRepository.php',
         'App\\Repository\\TOperationdetRepository' => __DIR__ . '/../..' . '/src/Repository/TOperationdetRepository.php',
@@ -820,12 +871,18 @@ class ComposerStaticInit7468324633506efa388cb0210cfbb49f
         'App\\Repository\\UsOperationRepository' => __DIR__ . '/../..' . '/src/Repository/UsOperationRepository.php',
         'App\\Repository\\UsSousModuleRepository' => __DIR__ . '/../..' . '/src/Repository/UsSousModuleRepository.php',
         'App\\Repository\\UserRepository' => __DIR__ . '/../..' . '/src/Repository/UserRepository.php',
+        'App\\Repository\\UserinfoRepository' => __DIR__ . '/../..' . '/src/Repository/UserinfoRepository.php',
         'App\\Repository\\XAcademieRepository' => __DIR__ . '/../..' . '/src/Repository/XAcademieRepository.php',
         'App\\Repository\\XBanqueRepository' => __DIR__ . '/../..' . '/src/Repository/XBanqueRepository.php',
         'App\\Repository\\XFiliereRepository' => __DIR__ . '/../..' . '/src/Repository/XFiliereRepository.php',
         'App\\Repository\\XLangueRepository' => __DIR__ . '/../..' . '/src/Repository/XLangueRepository.php',
         'App\\Repository\\XModalitesRepository' => __DIR__ . '/../..' . '/src/Repository/XModalitesRepository.php',
+        'App\\Repository\\XSerieBacRepository' => __DIR__ . '/../..' . '/src/Repository/XSerieBacRepository.php',
         'App\\Repository\\XTypeBacRepository' => __DIR__ . '/../..' . '/src/Repository/XTypeBacRepository.php',
+        'App\\Repository\\XseanceAbsencesRepository' => __DIR__ . '/../..' . '/src/Repository/XseanceAbsencesRepository.php',
+        'App\\Repository\\XseanceCapitaliserRepository' => __DIR__ . '/../..' . '/src/Repository/XseanceCapitaliserRepository.php',
+        'App\\Repository\\XseanceMotifAbsRepository' => __DIR__ . '/../..' . '/src/Repository/XseanceMotifAbsRepository.php',
+        'App\\Repository\\XseanceRepository' => __DIR__ . '/../..' . '/src/Repository/XseanceRepository.php',
         'App\\Security\\SecurityAuthenticator' => __DIR__ . '/../..' . '/src/Security/SecurityAuthenticator.php',
         'Collator' => __DIR__ . '/..' . '/symfony/polyfill-intl-icu/Resources/stubs/Collator.php',
         'Complex\\Complex' => __DIR__ . '/..' . '/markbaker/complex/classes/src/Complex.php',
@@ -7548,10 +7605,10 @@ class ComposerStaticInit7468324633506efa388cb0210cfbb49f
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit7468324633506efa388cb0210cfbb49f::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit7468324633506efa388cb0210cfbb49f::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInit7468324633506efa388cb0210cfbb49f::$prefixesPsr0;
-            $loader->classMap = ComposerStaticInit7468324633506efa388cb0210cfbb49f::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit88b32876d0f61340c450e7ef2b72e155::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit88b32876d0f61340c450e7ef2b72e155::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInit88b32876d0f61340c450e7ef2b72e155::$prefixesPsr0;
+            $loader->classMap = ComposerStaticInit88b32876d0f61340c450e7ef2b72e155::$classMap;
 
         }, null, ClassLoader::class);
     }
