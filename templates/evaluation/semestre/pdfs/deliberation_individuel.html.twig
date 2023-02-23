@@ -185,7 +185,7 @@
                 <td  style="text-align: center; background: #333f4f; color: #fff">{% if mnote.noteRachat %} - {% else %}  {{mnote.noteRachat|number_format(2, '.', ',')}} {% endif %}</td>
 
                 <td  style="text-align: center; background: #333f4f;color: #fff;{% if mnote.note < 8 and mnote.note > 0 %} {{red_module_class}} {% elseif mnote.note >= 8 and  mnote.note < 10 %} {{pink_module_class}} {% endif %}">{% if mnote.note is defined %} - {% else %} {{ mnote.note|number_format(2,'.',',') }} {% endif %}</td>
-                <td  style="text-align: center; background: #333f4f;color: #fff">{{ mnote.statutDef.abreviation }}</td>
+                <td  style="text-align: center; background: #333f4f;color: #fff">{{ mnote.statutAff.abreviation }}</td>
 
             </tr>
 
@@ -206,7 +206,7 @@
         </tr>
         <tr>
             <td  style="text-align: center; background: #333f4f;color: #fff">{{snote.note|number_format(2, '.', ',')}}</td>
-            <td  style="text-align: center; background: #333f4f;color: #fff">{{ snote.statutDef.abreviation }}</td>
+            <td  style="text-align: center; background: #333f4f;color: #fff">{{ snote.statutAff.abreviation }}</td>
 <!--            <td  style="text-align: center; background: #333f4f;color: #fff"><?php //echo number_format($data_ex_snotes['note_sec'], 2) ?></td>-->
             <td  style="text-align: center; background: #333f4f;color: #fff">{{snote.noteSec|number_format(2, '.', ',')}} </td>
         </tr>
