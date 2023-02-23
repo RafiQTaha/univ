@@ -48,7 +48,7 @@
                             {# <td></td> #}
                             <td style="text-align: center;">{% if enpte.noteRachat is defined %} {{enote.noteRachat|number_format(2, '.', ',')}} {% else %} - {% endif %}</td>
                             <td style="text-align: center;{% if enote.note < 7 and   enote.note >= 0 %} {{red_element_class}} {% elseif enote.note >= 7 and  enote.note < 10 %} {{pink_element_class}} {% endif %}">{% if enote.note is defined %} {{ enote.note|number_format(2,'.',',') }} {% else %} - {% endif %}</td>
-                            <td style="text-align: center">{{ enote.statutDef.abreviation }}</td>
+                            <td style="text-align: center">{{ enote.statutAff.abreviation }}</td>
 
                         {% endif %}
                     
