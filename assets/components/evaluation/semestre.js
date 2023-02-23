@@ -310,6 +310,10 @@ $(document).ready(function  () {
             });
         }
     })
+    
+    $('body').on('click','#extraction', function (){
+        window.open('/evaluation/semestre/extraction_semestre', '_blank');
+    })
 })
 
 

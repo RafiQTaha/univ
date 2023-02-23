@@ -266,6 +266,9 @@ $(document).ready(function  () {
             });
         }
     })
+    $('body').on('click','#extraction', function (){
+        window.open('/evaluation/module/extraction_module', '_blank');
+    })
    
 })
 

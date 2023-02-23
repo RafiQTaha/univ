@@ -17,6 +17,7 @@ class ExMnotesRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, ExMnotes::class);
+        $this->em = $registry->getManager();
     }
 
     // /**
@@ -187,5 +188,62 @@ class ExMnotesRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult()
         ;
+    }
+    
+    public function getModuleByCurrentYear($currentyear)
+    {
+        $sqls="SELECT ex.id, etab.code as code, etab.designation as etablissement, frm.code, 
+        frm.designation as formation, ann.code, ann.designation as annee, ins.code as code_ins, 
+        adm.code as code_adm, pre.code as code_preins, ins.code_anonymat as anonymat, 
+        st.code as statut, etu.nom, etu.prenom, prm.code, prm.designation as promotion, 
+        sem.code 'code_semestre', sem.designation as semestre,
+        
+        mdl.code 'code_module', mdl.designation as module, 
+        em.note 'mnote', em.note_ini 'mnote_ini',
+        em.note_rat 'mnote_rat', em.note_rachat 'mnote_rachat', stm2.id 'mstatut_s2',stm2.designation 'ms2_designation',stmdef.id 'mstatut_s2',stmdef.designation 'mdef_designation',
+        stmaff.id 'mstatut_aff',stmaff.designation 'maff_designation', 
+        
+        ele.code 'code_element', ele.designation as element, ele.coefficient, ele.coefficient_epreuve, 
+        ex.mcc , ex.mtp, ex.mef, ex.ccr , ex.tpr , ex.efr, ex.note_ini, ex.note, ex.note_rat, 
+        ex.note_rachat ,ex.cc_rachat, ex.tp_rachat, ex.ef_rachat,st1.id 'id_stat_s1',
+        st1.designation 'statut S1',st2.id 'id_stat_s2',st2.designation 'statut S2',
+        stdetf.id 'id_stat_def',stdetf.designation 'statut Def',staff.id 'id_stat_aff',
+        staff.designation 'statut Aff'
+        from ex_enotes ex
+        inner join ac_element ele on ele.id = ex.element_id
+        INNER JOIN ac_module mdl on mdl.id = ele.module_id
+        INNER JOIN ac_semestre sem on sem.id = mdl.semestre_id
+        INNER JOIN ac_promotion prm on sem.promotion_id = prm.id
+        inner join ac_formation frm on frm.id = prm.formation_id
+        INNER join ac_etablissement etab on etab.id = frm.etablissement_id
+        
+        inner join tinscription ins on ins.id = ex.inscription_id
+        inner join ac_annee ann on ann.id = ins.annee_id
+        INNER JOIN tadmission adm on ins.admission_id = adm.id
+        INNER JOIN tpreinscription pre on adm.preinscription_id = pre.id
+        INNER JOIN pstatut st on st.id = ins.statut_id
+        INNER JOIN tetudiant etu on pre.etudiant_id = etu.id
+
+        LEFT JOIN pe_statut st1 on st1.id = ex.statut_s1_id 
+        LEFT JOIN pe_statut st2 on st2.id = ex.statut_s2_id 
+        LEFT JOIN pe_statut stdetf on stdetf.id = ex.statut_def_id 
+        LEFT JOIN pe_statut staff on staff.id = ex.statut_aff_id 
+        
+        LEFT JOIN ex_mnotes em on em.module_id = mdl.id and em.inscription_id = ins.id 
+        LEFT JOIN pe_statut stm2 on stm2.id = em.statut_s2_id 
+        LEFT JOIN pe_statut stmdef on stmdef.id = em.statut_def_id 
+        LEFT JOIN pe_statut stmaff on stmaff.id = em.statut_aff_id 
+        
+        LEFT JOIN ex_snotes es on es.semestre_id = sem.id and es.inscription_id = ins.id 
+        LEFT JOIN pe_statut sts2 on sts2.id = es.statut_s2_id 
+        LEFT JOIN pe_statut stsdef on stsdef.id = es.statut_def_id 
+        LEFT JOIN pe_statut stsaff on stsaff.id = es.statut_aff_id
+        
+        where ann.designation = '$currentyear'";
+        // dd($sqls);
+        $stmts = $this->em->getConnection()->prepare($sqls);
+        $resultSets = $stmts->executeQuery();
+        $result = $resultSets->fetchAll();
+        return $result;
     }
 }

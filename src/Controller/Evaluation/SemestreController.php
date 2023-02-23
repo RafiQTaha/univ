@@ -15,10 +15,13 @@ use App\Entity\PeStatut;
 use App\Entity\TInscription;
 use Doctrine\Persistence\ManagerRegistry;
 use Mpdf\Mpdf;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\Routing\Annotation\Route;
 
 #[Route('/evaluation/semestre')]
@@ -191,6 +194,7 @@ class SemestreController extends AbstractController
     #[Route('/impression_delib/{ins}', name: 'evaluation_semestre_impression_deliberation')]
     public function evaluationSemestreImpressionDeliberation(Request $request, $ins) 
     {         
+        // dd('test');
         $session = $request->getSession();
         // dd($session);
         $semestre = $session->get('data_semestre')['semestre'];
@@ -670,5 +674,39 @@ class SemestreController extends AbstractController
         }
 
         return $categorie;
+    }
+    
+    #[Route('/extraction_semestre', name: 'evaluation_semestre_extraction_semestre')]
+    public function evaluationSemestreExtraction(Request $request) 
+    {   
+        $current_year = date('m') > 7 ? date('Y').'/'.date('Y')+1 :  date('Y') - 1 .'/' .date('Y');
+        // $elements = $this->em->getRepository(AcElement::class)->getElementByCurrentYear($current_year);
+        $semestres = $this->em->getRepository(ExSnotes::class)->getSemestreByCurrentYear($current_year);
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        $i=2;
+        $j=1;
+        // dump($gnotes);die;
+        $sheet->fromArray(
+            array_keys($semestres[0]),
+            null,
+            'A1'
+        );
+        foreach ($semestres as $semestre) {
+            $sheet->fromArray(
+                $semestre,
+                null,
+                'A'.$i
+            );
+            $i++;
+            $j++;
+        }
+        $writer = new Xlsx($spreadsheet);
+        $year = date('m') > 7 ? date('Y').'-'.date('Y')+1 : date('Y') - 1 .'-' .date('Y');
+        $fileName = "Extraction semestres $year.xlsx";
+        $temp_file = tempnam(sys_get_temp_dir(), $fileName);
+        $writer->save($temp_file);
+        return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);
+        
     }
 }

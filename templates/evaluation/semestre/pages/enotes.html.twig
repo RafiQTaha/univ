@@ -1,4 +1,8 @@
 
+{% set red_class = 'background: #e22424;color: #fff ;' %}
+{% set blue_class = 'font-weight: bold' %}
+{% set red_element_class = 'background: #e22424;color: #fff' %}
+{% set pink_element_class = 'color: #ea56e6' %}
                 <tr style="font-size: 9px ;">
                         {% if count == 0 %}
                             <td  style="width: 100px ; background: #333f4f; color:#fff;text-align: center" rowspan="{{ enotes|length }}">{{enote.element.module.designation}}</td>

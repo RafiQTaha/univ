@@ -14,11 +14,14 @@ use App\Controller\ApiController;
 use App\Entity\ExMnotes;
 use App\Entity\PeStatut;
 use Doctrine\Persistence\ManagerRegistry;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 
 #[Route('/evaluation/module')]
 class ModuleController extends AbstractController
@@ -493,4 +496,37 @@ class ModuleController extends AbstractController
         return $send_data;
     }
     
+    #[Route('/extraction_module', name: 'evaluation_module_extraction_module')]
+    public function evaluationModuleExtraction(Request $request) 
+    {   
+        $current_year = date('m') > 7 ? date('Y').'/'.date('Y')+1 :  date('Y') - 1 .'/' .date('Y');
+        // $elements = $this->em->getRepository(AcElement::class)->getElementByCurrentYear($current_year);
+        $modules = $this->em->getRepository(ExMnotes::class)->getModuleByCurrentYear($current_year);
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        $i=2;
+        $j=1;
+        // dump($gnotes);die;
+        $sheet->fromArray(
+            array_keys($modules[0]),
+            null,
+            'A1'
+        );
+        foreach ($modules as $module) {
+            $sheet->fromArray(
+                $module,
+                null,
+                'A'.$i
+            );
+            $i++;
+            $j++;
+        }
+        $writer = new Xlsx($spreadsheet);
+        $year = date('m') > 7 ? date('Y').'-'.date('Y')+1 : date('Y') - 1 .'-' .date('Y');
+        $fileName = "Extraction modules $year.xlsx";
+        $temp_file = tempnam(sys_get_temp_dir(), $fileName);
+        $writer->save($temp_file);
+        return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);
+        
+    }
 }

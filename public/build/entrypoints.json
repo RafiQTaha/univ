@@ -2,15 +2,13 @@
   "entrypoints": {
     "app": {
       "js": [
-        "/build/runtime.js",
-        "/build/vendors-node_modules_jquery_dist_jquery_js.js",
-        "/build/vendors-node_modules_core-js_modules_es_object_to-string_js-node_modules_core-js_modules_es_p-2de272.js",
-        "/build/vendors-node_modules_core-js_internals_fix-regexp-well-known-symbol-logic_js-node_modules_cor-b8bfb8.js",
-        "/build/vendors-node_modules_core-js_modules_es_array_find_js-node_modules_core-js_modules_es_array_i-c7a83c.js",
-        "/build/vendors-node_modules_core-js_modules_es_array_concat_js-node_modules_core-js_modules_es_strin-40879e.js",
-        "/build/vendors-node_modules_core-js_internals_inherit-if-required_js-node_modules_core-js_internals_-d805d8.js",
-        "/build/vendors-node_modules_symfony_stimulus-bridge_dist_index_js-node_modules_axios_index_js-node_m-67f53a.js",
-        "/build/app.js"
+        "/build/runtime.de6b8033.js",
+        "/build/9755.58d5f244.js",
+        "/build/8029.7c64de8b.js",
+        "/build/1224.858a7b1d.js",
+        "/build/725.12c5309c.js",
+        "/build/9639.fa237602.js",
+        "/build/app.f23447a0.js"
       ],
       "css": [
         "/build/vendors-node_modules_symfony_stimulus-bridge_dist_index_js-node_modules_axios_index_js-node_m-67f53a.css",
@@ -56,11 +54,10 @@
     },
     "epreuve": {
       "js": [
-        "/build/runtime.js",
-        "/build/vendors-node_modules_jquery_dist_jquery_js.js",
-        "/build/vendors-node_modules_core-js_modules_es_object_to-string_js-node_modules_core-js_modules_es_p-2de272.js",
-        "/build/vendors-node_modules_core-js_modules_es_array_find_js-node_modules_core-js_modules_es_array_i-c7a83c.js",
-        "/build/epreuve.js"
+        "/build/runtime.de6b8033.js",
+        "/build/9755.58d5f244.js",
+        "/build/8029.7c64de8b.js",
+        "/build/epreuve.c5e99582.js"
       ]
     },
     "impression": {
@@ -150,10 +147,10 @@
     },
     "evaluationModule": {
       "js": [
-        "/build/runtime.js",
-        "/build/vendors-node_modules_jquery_dist_jquery_js.js",
-        "/build/vendors-node_modules_core-js_modules_es_object_to-string_js-node_modules_core-js_modules_es_p-2de272.js",
-        "/build/evaluationModule.js"
+        "/build/runtime.de6b8033.js",
+        "/build/9755.58d5f244.js",
+        "/build/8029.7c64de8b.js",
+        "/build/evaluationModule.c030afcb.js"
       ]
     },
     "evaluationFormation": {
@@ -167,10 +164,10 @@
     },
     "evaluationSemestre": {
       "js": [
-        "/build/runtime.js",
-        "/build/vendors-node_modules_jquery_dist_jquery_js.js",
-        "/build/vendors-node_modules_core-js_modules_es_object_to-string_js-node_modules_core-js_modules_es_p-2de272.js",
-        "/build/evaluationSemestre.js"
+        "/build/runtime.de6b8033.js",
+        "/build/9755.58d5f244.js",
+        "/build/8029.7c64de8b.js",
+        "/build/evaluationSemestre.03ca70a4.js"
       ]
     },
     "evaluationSimulationDeliberation": {
