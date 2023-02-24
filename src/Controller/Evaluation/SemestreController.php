@@ -529,74 +529,10 @@ class SemestreController extends AbstractController
         }
         return $send_data;
     }
-    public function SemestreGetStatutCategories($data_module, $inscription, $annee, $semestre) {
-
-
-        // $SEMESTRE_note_rachat = 0;
-        // $cpt = 0;
-        // $ELM = FALSE;
-        // $ELM_MOD = FALSE;
-        // $ELM_EF = FALSE;
-        // $ELM_TP = FALSE;
-        // $ELM_CC = FALSE;
-
-        // // var_dump($code_inscription); 
-
-        // foreach ($data_module as $key => $value) {
-
-        //     //    echo $value['note']." ---- ".$value['statut_def'].'<br/>' ;
-        //     switch ($value->getStatutAff()->getId()) {
-        //         case 29:
-        //             $SEMESTRE_note_rachat = 10 - $value->getNote();
-        //             $cpt = $cpt + 1;
-        //             $ELM = true;
-
-                    
-        //             $data_elements = $this->em->getRepository(ExEnotes::class)->findByModule($value->getModule(), $inscription);
-        //             if ($data_elements) {
-        //                 foreach ($data_elements as $key2 => $value2) {
-        //                     if ($value2->getElement()->getNature()->getCode() == 'NE001' or $value2->getElement()->getNature()->getCode() == 'NE002') {
-        //                         if ($value->getNote() < 8) {
-        //                             $ELM_MOD = true;
-        //                         }
-        //                         if ($value2->getMef() < 7) {
-        //                             $ELM_EF = true;
-        //                         }
-        //                         if ($value2->getMtp() < 7) {
-        //                             $ELM_TP = true;
-        //                         }
-        //                         if ($value2->getMcc() < 7) {
-        //                             $ELM_CC = true;
-        //                         }
-        //                     } else {
-        //                         if ($value->getNote() < 10) {
-        //                             $ELM_MOD = true;
-        //                         }
-        //                         if ($value2->getMef() < 10) {
-        //                             $ELM_EF = true;
-        //                         }
-        //                         if ($value2->getMtp() < 10) {
-        //                             $ELM_TP = true;
-        //                         }
-        //                         if ($value2->getMcc() < 10) {
-        //                             $ELM_CC = true;
-        //                         }
-        //                     }
-        //                 }
-        //             }
-
-        //             break;
-        //         case 31:
-        //             $SEMESTRE_note_rachat = 10 - $value->getNote();
-        //             $cpt = $cpt + 1;
-        //             break;
-        //     }
-        // }
-
-
+    public function SemestreGetStatutCategories($data_module, $inscription, $annee, $semestre) 
+    {
         
         $data_snotes = $this->em->getRepository(ExSnotes::class)->findOneBy(["inscription" => $inscription, "semestre" => $semestre]);
-        // dd($data_snotes->getNote());
         $categorie = "";
         if ($data_snotes) {
             if ($data_snotes->getStatutAff()->getId() == 36 || $data_snotes->getStatutAff()->getId() == 71 ) {
@@ -616,65 +552,25 @@ class SemestreController extends AbstractController
                 }elseif ($data_snotes->getNote() >= 9 and $data_snotes->getNote() < 10) {
                     $categorie = 'E';
                 }
-            }
-            // elseif ($data_snotes->getStatutAff()->getId() == 39) {
-
-            //     $palier = 
-            // } 
-            
-            
-            
-            // else {
-            //     if ($SEMESTRE_note_rachat > 7) {
-            //         $categorie = 'E';
-            //     } else {
-
-            //         if ($ELM == false) {
-            //             if ($cpt > 2 && $data_snotes->getNote() >= 10) {
-            //                 $categorie = 'F';
-            //             } else {
-            //                 $categorie = 'G';
-            //             }
-            //         } else {
-            //             if ($data_snotes->getNote() >= 10) {
-            //                 if ($ELM_MOD == true) {
-            //                     $categorie = 'HA';
-            //                 }
-            //                 ELSE {
-            //                     if ($ELM_EF == true) {
-            //                         $categorie = 'HB';
-            //                     }
-            //                     else{
-            //                         if ($ELM_TP == true) {
-            //                             $categorie = 'HC';
-            //                         }
-            //                         else{
-            //                              if ($ELM_CC == true) {
-            //                                 $categorie = 'HD';
-            //                             }
-            //                         }
-            //                     }
-            //                 } 
-            //             } else {
-            //                 if ($ELM_MOD == true) {
-            //                     $categorie = 'IA';
-            //                 } else {
-            //                     if ($ELM_EF == true) {
-            //                         $categorie = 'IB';
-            //                     } else {
-            //                          if ($ELM_TP == true) {
-            //                             $categorie = 'IC';
-            //                         } else{
-            //                            if ($ELM_CC == true) {
-            //                                 $categorie = 'ID';
-            //                             } 
-            //                         }
-            //                     }
-            //                 }
-            //             }
-            //         }
-            //     }
-            // }
+            }elseif ($data_snotes->getStatutAff()->getId() == 57) {
+                $ModuleTheoriqueEliminatoire = $this->em->getRepository(ExMnotes::class)->getModulesTheoriqueBySemestre($semestre,$inscription);
+                $ModulePratiqueEliminatoire = $this->em->getRepository(ExMnotes::class)->getModulesPratiqueBySemestre($semestre,$inscription);
+                $noteAssiduite = $this->em->getRepository(ExMnotes::class)->getNotesModuleAssiduiteBySemestre($semestre,$inscription);
+                $palier = ($data_snotes->getNote() + $noteAssiduite->getNote()) / 2;
+                if ($data_snotes->getNote() >= 10 and $palier >= 10 and $ModuleTheoriqueEliminatoire) {
+                    $categorie = 'HA';
+                }elseif ($data_snotes->getNote() >= 10 and $palier >= 10 and $ModulePratiqueEliminatoire) {
+                    $categorie = 'HB';
+                }elseif ($data_snotes->getNote() >= 10 and $palier < 10) {
+                    $categorie = 'HC';
+                }elseif ($data_snotes->getNote() >= 10 and $ModulePratiqueEliminatoire) {
+                    $categorie = 'HD';
+                }elseif ($data_snotes->getNote() < 10 and $palier >= 10) {
+                    $categorie = 'IA';
+                }elseif ($data_snotes->getNote() < 10 and $palier < 10) {
+                    $categorie = 'IB';
+                }
+            } 
         }
 
         return $categorie;

@@ -206,6 +206,7 @@ $(document).ready(function  () {
         try {
             const request = await axios.post('/evaluation/module/recalculer');
             let response = request.data
+            $("#get_list_etudiant").trigger("click")
             icon.addClass('fa-redo-alt').removeClass("fa-spinner fa-spin");
             Toast.fire({
                 icon: 'success',
@@ -230,6 +231,7 @@ $(document).ready(function  () {
         try {
             const request = await axios.post('/evaluation/module/statut/avantrachat');
             let response = request.data
+            $("#get_list_etudiant").trigger("click")
             icon.addClass('fa-sync').removeClass("fa-spinner fa-spin");
             Toast.fire({
                 icon: 'success',
@@ -251,6 +253,7 @@ $(document).ready(function  () {
         try {
             const request = await axios.post('/evaluation/module/statut/apresrachat');
             let response = request.data
+            $("#get_list_etudiant").trigger("click")
             icon.addClass('fa-sync').removeClass("fa-spinner fa-spin");
             Toast.fire({
                 icon: 'success',

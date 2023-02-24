@@ -189,6 +189,57 @@ class ExMnotesRepository extends ServiceEntityRepository
             ->getResult()
         ;
     }
+    public function getNotesModuleAssiduiteBySemestre($semestre, $inscription) {
+        
+        return $this->createQueryBuilder('m')
+            ->innerJoin("m.inscription", 'inscription')
+            ->innerJoin("m.module", 'module')
+            ->where("inscription = :inscription")
+            ->andWhere('module.semestre = :semestre')
+            ->andWhere('module.type = :lettre')
+            ->setParameter('inscription', $inscription)
+            ->setParameter('semestre', $semestre)
+            ->setParameter('lettre', "A")
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
+    }
+    public function getModulesTheoriqueBySemestre($semestre, $inscription) {
+        
+        return $this->createQueryBuilder('m')
+            ->innerJoin("m.inscription", 'inscription')
+            ->innerJoin("m.statutDef", 'statdef')
+            ->innerJoin("m.module", 'module')
+            ->innerJoin("module.elements", 'element')
+            ->innerJoin("element.nature", 'nature')
+            ->where("inscription = :inscription")
+            ->andWhere('statdef.id = 29')
+            ->andWhere('module.semestre = :semestre')
+            ->andWhere('nature in (1,2)')
+            ->setParameter('inscription', $inscription)
+            ->setParameter('semestre', $semestre)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+    public function getModulesPratiqueBySemestre($semestre, $inscription) {
+        
+        return $this->createQueryBuilder('m')
+            ->innerJoin("m.inscription", 'inscription')
+            ->innerJoin("m.statutDef", 'statdef')
+            ->innerJoin("m.module", 'module')
+            ->innerJoin("module.elements", 'element')
+            ->innerJoin("element.nature", 'nature')
+            ->where("inscription = :inscription")
+            ->andWhere('statdef.id = 29')
+            ->andWhere('module.semestre = :semestre')
+            ->andWhere('nature in (3,4)')
+            ->setParameter('inscription', $inscription)
+            ->setParameter('semestre', $semestre)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
     
     public function getModuleByCurrentYear($currentyear)
     {
