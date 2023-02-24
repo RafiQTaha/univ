@@ -87,36 +87,42 @@ class SemestreController extends AbstractController
                 ]);
 
             }
-            $note_rachat_semstre = $this->em->getRepository(ExSnotes::class)->findOneBy(['inscription' => $inscription, 'semestre' => $semestre]);
-            // if($inscription->getId() == 8612) {
-            //     dd($note_rachat_semstre->getNoteRachat());
-            // }
-            if($note_rachat_semstre && $note_rachat_semstre->getNoteRachat()) {
+            $snote = $this->em->getRepository(ExSnotes::class)->findOneBy(['inscription' => $inscription, 'semestre' => $semestre]);
+            $categorie = $snote->getCategorie();
+            if($snote && $snote->getNoteRachat()) {
                 // dd('amine');
-                $note_rachat_semstre = $note_rachat_semstre->getNoteRachat();
+                $note_rachat_semstre = $snote->getNoteRachat();
             } else {
                 $note_rachat_semstre = 0;
             }
             $moyenneSec = number_format($moyenne / $total_coef, 2, '.', ' ');
             $moyenneNormal = number_format($moyenne_normal / $total_coef_normal, 2, '.', ' ');
             $noteRachat = $note_rachat / $total_coef_normal;
+            // dd($categorie);
+
             array_push($data_saved, [
                 'inscription' => $inscription,
                 'noteModules' => $noteModules,
                 'noteRachat' => $noteRachat, 
                 'noteRachatSemstre' => $note_rachat_semstre,
                 'moyenneNormal' =>$moyenneNormal, 
-                'moyenneSec' => $moyenneSec
+                'moyenneSec' => $moyenneSec,
+                'categorie' => $categorie 
             ]);
         }
-        // dd($data_saved);
+        
         if($order == 3) {
             $moyenne = array_column($data_saved, 'moyenneNormal');
             array_multisort($moyenne, SORT_DESC, $data_saved);
         } else if($order == 4){
             $moyenne = array_column($data_saved, 'moyenneNormal');
             array_multisort($moyenne, SORT_ASC, $data_saved);
+        }elseif ($order == 5) {
+            $categorieSort = array_column($data_saved, 'categorie');
+            $moyenne = array_column($data_saved, 'moyenneNormal');
+            array_multisort($categorieSort, SORT_ASC,$moyenne, SORT_DESC, $data_saved);
         }
+        // dd($data_saved);
         $session = $request->getSession();
         $session->set('data_semestre', [
             'data_saved' => $data_saved, 
