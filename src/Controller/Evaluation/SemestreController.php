@@ -87,8 +87,9 @@ class SemestreController extends AbstractController
                 ]);
 
             }
+            // $categorie="";
             $snote = $this->em->getRepository(ExSnotes::class)->findOneBy(['inscription' => $inscription, 'semestre' => $semestre]);
-            $categorie = $snote->getCategorie();
+            $categorie = $snote != null ? $snote->getCategorie() : "";
             if($snote && $snote->getNoteRachat()) {
                 // dd('amine');
                 $note_rachat_semstre = $snote->getNoteRachat();
