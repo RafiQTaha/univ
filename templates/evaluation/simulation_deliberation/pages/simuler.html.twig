@@ -25,9 +25,12 @@
             {% set colorRed = 0 %}
             {% if 'Stage' in mnote.module.designation or '(APP)' in mnote.module.designation or '(CSM)' in mnote.module.designation %}
                 {% set noteElminatoire = 10 %}
+                {# // for EIA Note validation c'est 12 et pour le reste c'est 10 #}
+                {# {% set noteElminatoire = mnote.inscription.annee.formation.etablissement.id == 26 ? 12 : 10 %} #}
             {% else %}
                 {% set noteElminatoire = 7 %}
                 {% set noteElminatoireModule = 8 %}
+                {# {% set noteElminatoireModule = mnote.inscription.annee.formation.etablissement.id == 26 ? 8 : 7 %} #}
             {% endif %}
             <div class="open mt-3 modules" data-id="{{mnote.id}}">
                 <h3 class="titleModule"  style="background-color: #6777ef;padding: 0.5rem 1rem;color:white; margin-top: 2.5rem;">
