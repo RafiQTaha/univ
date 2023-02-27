@@ -461,6 +461,9 @@ class SemestreController extends AbstractController
 
     public function SemestreGetStatutAvantRachat($snote, $note_eliminatoire, $note_validation, $min_module_statut_def, $max_module_statut_def, $max_module_statut_aff, $count_module_non_aquis) {
         $send_data = array();
+        
+        $etablissement_id = $snote->getInscription()->getAnnee()->getFormation()->getEtablissement()->getId();
+        $note_validation = $etablissement_id == 26 ? 12 : 10;
         // if ($min_module_statut_def == 29 || $count_module_non_aquis > 2) {
         if ($min_module_statut_def == 29) {
             $send_data['statut_s2'] = 57;
