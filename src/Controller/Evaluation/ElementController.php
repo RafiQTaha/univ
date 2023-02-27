@@ -592,7 +592,9 @@ class ElementController extends AbstractController
     }
     public function ElementGetStatutRachat_pratique($enote) {
         $send_data = array();
-        if ($enote->getNoteRachat() > 0 && $enote->getNote() >= 10) {
+        $etablissement_id = $enote->getInscription()->getAnnee()->getFormation()->getEtablissement()->getId();
+        $moy = $etablissement_id == 26 ? 12 : 10;
+        if ($enote->getNoteRachat() > 0 && $enote->getNote() >= $moy) {
             $send_data['statut_s2'] = 20;
             $send_data['statut_def'] = 20;
             $send_data['statut_aff'] = 20;
@@ -601,8 +603,10 @@ class ElementController extends AbstractController
     }
     public function ElementGetStatutRachat($enote) {
         $send_data = array();
+        $etablissement_id = $enote->getInscription()->getAnnee()->getFormation()->getEtablissement()->getId();
+        $moy = $etablissement_id == 26 ? 12 : 10;
         if ($enote->getNoteRachat() > 0) {
-            if ($enote->getNote() < 10) {
+            if ($enote->getNote() < $moy) {
                 $send_data['statut_rachat'] = 17;
                 $send_data['statut_def'] = 17;
                 $send_data['statut_aff'] = 17;
