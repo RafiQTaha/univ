@@ -539,6 +539,8 @@ class SemestreController extends AbstractController
     public function SemestreGetStatutCategories($data_module, $inscription, $annee, $semestre) 
     {
         
+        $etablissement_id = $annee->getFormation()->getEtablissement()->getId();
+        $moy = $etablissement_id == 26 ? 12 : 10;
         $data_snotes = $this->em->getRepository(ExSnotes::class)->findOneBy(["inscription" => $inscription, "semestre" => $semestre]);
         $categorie = "";
         if ($data_snotes) {
@@ -554,9 +556,9 @@ class SemestreController extends AbstractController
                 $categorie = 'D';
             } elseif ($data_snotes->getStatutAff()->getId() == 39) {
                 $count_module_non_aquis = $this->em->getRepository(ExMnotes::class)->getModuleNonAquis($semestre, $inscription);
-                if (count($count_module_non_aquis) > 2 and $data_snotes->getNote() >= 10 ) {
+                if (count($count_module_non_aquis) > 2 and $data_snotes->getNote() >= $moy ) {
                     $categorie = 'F';
-                }elseif ($data_snotes->getNote() >= 9 and $data_snotes->getNote() < 10) {
+                }elseif ($data_snotes->getNote() >= 9 and $data_snotes->getNote() < $moy) {
                     $categorie = 'E';
                 }
             }elseif ($data_snotes->getStatutAff()->getId() == 57) {
@@ -568,17 +570,17 @@ class SemestreController extends AbstractController
                 //     dd($ModuleTheoriqueEliminatoire);
                 // }
                 $palier = ($data_snotes->getNote() + $noteAssiduite->getNote()) / 2;
-                if ($data_snotes->getNote() >= 10 and $ModulePratiqueEliminatoire and count($derogations) > 0) {
+                if ($data_snotes->getNote() >= $moy and $ModulePratiqueEliminatoire and count($derogations) > 0) {
                     $categorie = 'HD';
-                }elseif ($data_snotes->getNote() >= 10 and $palier >= 10 and $ModulePratiqueEliminatoire) {
+                }elseif ($data_snotes->getNote() >= $moy and $palier >= 10 and $ModulePratiqueEliminatoire) {
                     $categorie = 'HB';
-                }elseif ($data_snotes->getNote() >= 10 and $palier >= 10 and $ModuleTheoriqueEliminatoire) {
+                }elseif ($data_snotes->getNote() >= $moy and $palier >= 10 and $ModuleTheoriqueEliminatoire) {
                     $categorie = 'HA';
-                }elseif ($data_snotes->getNote() >= 10 and $palier < 10) {
+                }elseif ($data_snotes->getNote() >= $moy and $palier < 10) {
                     $categorie = 'HC';
-                }elseif ($data_snotes->getNote() < 10 and $palier >= 10) {
+                }elseif ($data_snotes->getNote() < $moy and $palier >= 10) {
                     $categorie = 'IA';
-                }elseif ($data_snotes->getNote() < 10 and $palier < 10) {
+                }elseif ($data_snotes->getNote() < $moy and $palier < 10) {
                     $categorie = 'IB';
                 }
             } 
