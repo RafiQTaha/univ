@@ -563,18 +563,19 @@ class SemestreController extends AbstractController
                 $ModuleTheoriqueEliminatoire = $this->em->getRepository(ExMnotes::class)->getModulesTheoriqueBySemestre($semestre,$inscription);
                 $ModulePratiqueEliminatoire = $this->em->getRepository(ExMnotes::class)->getModulesPratiqueBySemestre($semestre,$inscription);
                 $noteAssiduite = $this->em->getRepository(ExMnotes::class)->getNotesModuleAssiduiteBySemestre($semestre,$inscription);
-                // if ($inscription->getId() == 14530  ) {
-                //     dd($ModuleTheoriqueEliminatoire,$ModulePratiqueEliminatoire);
+                $derogations = $this->em->getRepository(ExSnotes::class)->findByAdmission($inscription->getAdmission());
+                // if ($inscription->getId() == 15067  ) {
+                //     dd($ModuleTheoriqueEliminatoire);
                 // }
                 $palier = ($data_snotes->getNote() + $noteAssiduite->getNote()) / 2;
-                if ($data_snotes->getNote() >= 10 and $palier >= 10 and $ModulePratiqueEliminatoire) {
+                if ($data_snotes->getNote() >= 10 and $ModulePratiqueEliminatoire and count($derogations) > 0) {
+                    $categorie = 'HD';
+                }elseif ($data_snotes->getNote() >= 10 and $palier >= 10 and $ModulePratiqueEliminatoire) {
                     $categorie = 'HB';
                 }elseif ($data_snotes->getNote() >= 10 and $palier >= 10 and $ModuleTheoriqueEliminatoire) {
                     $categorie = 'HA';
                 }elseif ($data_snotes->getNote() >= 10 and $palier < 10) {
                     $categorie = 'HC';
-                }elseif ($data_snotes->getNote() >= 10 and $ModulePratiqueEliminatoire) {
-                    $categorie = 'HD';
                 }elseif ($data_snotes->getNote() < 10 and $palier >= 10) {
                     $categorie = 'IA';
                 }elseif ($data_snotes->getNote() < 10 and $palier < 10) {
