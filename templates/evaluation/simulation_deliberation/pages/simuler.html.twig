@@ -25,6 +25,7 @@
             {% set colorRed = 0 %}
             {% if 'Stage' in mnote.module.designation or '(APP)' in mnote.module.designation or '(CSM)' in mnote.module.designation %}
                 {% set noteElminatoire = 10 %}
+                {% set noteElminatoireModule = 8 %}
                 {# // for EIA Note validation c'est 12 et pour le reste c'est 10 #}
                 {# {% set noteElminatoire = mnote.inscription.annee.formation.etablissement.id == 26 ? 12 : 10 %} #}
             {% else %}

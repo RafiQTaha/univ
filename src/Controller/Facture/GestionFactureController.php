@@ -726,8 +726,8 @@ class GestionFactureController extends AbstractController
         return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);
     }
 
-    #[Route('/cloture', name: 'cloture_facture')]
-    public function cloture_facture(Request $request): Response
+    #[Route('/valider', name: 'valider_facture')]
+    public function valider_facture(Request $request): Response
     {   
         // dd($request->get('facture'));
         if (!$request->get('facture')) {
@@ -744,9 +744,9 @@ class GestionFactureController extends AbstractController
         //     $reglement->setSynFlag(1);
         // }
         $operationcab->setActive(0);
-        $operationcab->setSynFlag(1);
+        // $operationcab->setSynFlag(1);
         $this->em->flush();
-        return new JsonResponse('La facture est bien Cloturé!', 200);    
+        return new JsonResponse('La facture est bien Valider!', 200);    
     }
 
 }

@@ -420,7 +420,7 @@ $(document).ready(function () {
         // alert(annee);
         window.open('/facture/factures/extraction_factures_by_annee/'+annee, '_blank');
     });
-    $("#cloturer").on('click', async function(e) {
+    $("#valider").on('click', async function(e) {
         e.preventDefault();
         if(!id_facture){
             Toast.fire({
@@ -429,14 +429,14 @@ $(document).ready(function () {
             })
             return;
         }
-        const icon = $("#cloturer i");
+        const icon = $("#valider i");
         icon.removeClass('fa-lock').addClass("fa-spinner fa-spin");
         let formData = new FormData();
         formData.append("facture",  id_facture)
-        var res = confirm('Vous voulez vraiment cloturer cette facture ?');
+        var res = confirm('Vous voulez vraiment valider cette facture ?');
         if(res == 1){
             try {
-                const request = await axios.post('/facture/factures/cloture', formData);
+                const request = await axios.post('/facture/factures/valider', formData);
                 const response = request.data;    
                 icon.addClass('fa-lock').removeClass("fa-spinner fa-spin");
                 Toast.fire({
