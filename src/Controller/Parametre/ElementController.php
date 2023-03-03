@@ -45,7 +45,8 @@ class ElementController extends AbstractController
         $params = $request->query;
         // dd($params);
         $where = $totalRows = $sqlRequest = "";
-        $filtre = "where 1 = 1 and elm.active = 1";   
+        // $filtre = "where 1 = 1 and elm.active = 1";   
+        $filtre = "where 1 = 1 ";   
         // dd($params->all('columns')[0]);
         if (!empty($params->all('columns')[0]['search']['value'])) {
             $filtre .= " and etab.id = '" . $params->all('columns')[0]['search']['value'] . "' ";

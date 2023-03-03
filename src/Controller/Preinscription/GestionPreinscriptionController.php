@@ -430,24 +430,6 @@ class GestionPreinscriptionController extends AbstractController
         $mpdf->WriteHTML($html);
         $mpdf->Output("facture.pdf", "I");
         
-        // $reglementTotal = $this->em->getRepository(TReglement::class)->getSumMontantByCodeFacture($operationcab);
-        // $operationTotal = $this->em->getRepository(TOperationdet::class)->getSumMontantByCodeFacture($operationcab);
-        // // dd($reglement, $operationDetails);
-        // $html = $this->render("facture/pdfs/facture.html.twig", [
-        //     'reglementTotal' => $reglementTotal,
-        //     'operationTotal' => $operationTotal,
-        //     'operationcab' => $operationcab
-        // ])->getContent();
-        // $mpdf = new Mpdf();
-        // $mpdf->SetTitle('Facture');
-        // $mpdf->SetHTMLHeader(
-        //     $this->render("facture/pdfs/header.html.twig")->getContent()
-        // );
-        // $mpdf->SetHTMLFooter(
-        //     $this->render("facture/pdfs/footer.html.twig")->getContent()
-        // );
-        // $mpdf->WriteHTML($html);
-        // $mpdf->Output("facture.pdf", "I");
     }
 
     #[Route('/getEtudiantInfospreins/{preinscription}', name: 'getEtudiantInfospreins')]
@@ -506,20 +488,8 @@ class GestionPreinscriptionController extends AbstractController
             empty($request->get('nom')) || empty($request->get('prenom')) || 
             empty($request->get('date_naissance')) || empty($request->get('cin')) 
         ){return new JsonResponse("Merci de remplir tout les champs obligatoire!!",500); }
-        // if(
-        //     empty($request->get('nom')) || empty($request->get('prenom')) || 
-        //     empty($request->get('date_naissance')) || empty($request->get('lieu_naissance')) ||
-        //     empty($request->get('nat_demande'))  || empty($request->get('st_famille')) ||
-        //     empty($request->get('cin')) ||  empty($request->get('ville')) || 
-        //     empty($request->get('tel1')) || empty($request->get('tel2')) || 
-        //     empty($request->get('tel3')) || empty($request->get('mail1')) || empty($request->get('id_filiere')) || 
-        //     empty($request->get('id_type_bac')) || empty($request->get('annee_bac')) || 
-        //     empty($request->get('moyenne_bac')) || empty($request->get('moyen_regional')) ||
-        //     empty($request->get('moyen_national'))
-        // ){return new JsonResponse("Merci de remplir tout les champs obligatoire!!",500); }
         $preinscription->getEtudiant()->setNom(strtoupper($request->get('nom')));
         $preinscription->getEtudiant()->setPrenom(ucfirst(strtolower($request->get('prenom'))));
-        // $preinscription->getEtudiant()->setTitre($request->get('titre'));
         if ($request->get('date_naissance') != "") {
             $preinscription->getEtudiant()->setDateNaissance(new \DateTime($request->get('date_naissance')));
         }
@@ -529,6 +499,11 @@ class GestionPreinscriptionController extends AbstractController
             $preinscription->getEtudiant()->setStFamille($this->em->getRepository(PSituation::class)->find($request->get('st_famille')));
         }
         $preinscription->getEtudiant()->setNationalite(strtoupper($request->get('nationalite')));
+        if ($request->get('nationalite') != "" and $request->get('nationalite') != 'Morocco') {
+            $preinscription->getEtudiant()->setStrange(1);
+        }else{
+            $preinscription->getEtudiant()->setStrange(0);
+        }
         $preinscription->getEtudiant()->setCin(strtoupper($request->get('cin')));
         $preinscription->getEtudiant()->setPasseport(strtoupper($request->get('passeport')));
         $preinscription->getEtudiant()->setVille(strtoupper($request->get('ville')));

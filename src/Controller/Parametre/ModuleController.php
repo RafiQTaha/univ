@@ -41,7 +41,8 @@ class ModuleController extends AbstractController
         $params = $request->query;
         // dd($params);
         $where = $totalRows = $sqlRequest = "";
-        $filtre = "where 1 = 1 and mdl.active = 1";   
+        // $filtre = "where 1 = 1 and mdl.active = 1";   
+        $filtre = "where 1 = 1 ";   
         // dd($params->all('columns')[0]);
         if (!empty($params->all('columns')[0]['search']['value'])) {
             // dd("in");

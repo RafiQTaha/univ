@@ -276,6 +276,9 @@ class TEtudiant
     #[ORM\Column(type: 'string', length: 20, nullable: true)]
     private $choix;
 
+    #[ORM\Column(type: 'boolean', nullable: true)]
+    private $strange = 0;
+
     public function __construct()
     {
         $this->preinscriptions = new ArrayCollection();
@@ -1363,6 +1366,18 @@ class TEtudiant
     public function setChoix(?string $choix): self
     {
         $this->choix = $choix;
+
+        return $this;
+    }
+
+    public function isStrange(): ?bool
+    {
+        return $this->strange;
+    }
+
+    public function setStrange(?bool $strange): self
+    {
+        $this->strange = $strange;
 
         return $this;
     }

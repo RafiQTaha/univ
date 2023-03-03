@@ -428,14 +428,15 @@ class GestionFactureController extends AbstractController
     {   
         $formation = $operationcab->getPreinscription()->getAnnee()->getFormation();
         $categorie = $operationcab->getCategorie();
-        if ($categorie == 'hors inscription' || $categorie == 'inscription') {
-            $frais = $this->em->getRepository(PFrais::class)->findBy(['formation'=>$formation,'active'=>1]);
-        }elseif($formation->getEtablissement()->getAbreviation() == 'CFC'){
-            $frais = $this->em->getRepository(PFrais::class)->findBy(['formation'=>$formation,'active'=>1]);
-        }else{
-            $frais = $this->em->getRepository(PFrais::class)->findBy(['formation'=>$formation,'active'=>1]);
-            // $frais = $this->em->getRepository(PFrais::class)->findBy(['formation'=>$formation,'categorie'=>$categorie,'active'=>1]);
-        }
+        // if ($categorie == 'hors inscription' || $categorie == 'inscription') {
+        //     $frais = $this->em->getRepository(PFrais::class)->findBy(['formation'=>$formation,'active'=>1]);
+        // }elseif($formation->getEtablissement()->getAbreviation() == 'CFC'){
+        //     $frais = $this->em->getRepository(PFrais::class)->findBy(['formation'=>$formation,'active'=>1]);
+        // }else{
+        //     $frais = $this->em->getRepository(PFrais::class)->findBy(['formation'=>$formation,'active'=>1]);
+        //     // $frais = $this->em->getRepository(PFrais::class)->findBy(['formation'=>$formation,'categorie'=>$categorie,'active'=>1]);
+        // }
+        $frais = $this->em->getRepository(PFrais::class)->findBy(['formation'=>$formation,'active'=>1]);
         $data = "<option selected enabled value=''>Choix Fraix</option>";
         foreach ($frais as $frs) {
             $data .="<option value=".$frs->getId()." data-id=".$frs->getmontant().">".$frs->getDesignation()."</option>";
@@ -729,7 +730,6 @@ class GestionFactureController extends AbstractController
     #[Route('/valider', name: 'valider_facture')]
     public function valider_facture(Request $request): Response
     {   
-        // dd($request->get('facture'));
         if (!$request->get('facture')) {
             return new JsonResponse('Veuillez selection une facture!', 500);
         }
@@ -737,14 +737,14 @@ class GestionFactureController extends AbstractController
         if (!$operationcab) {
             return new JsonResponse('Facture Introuvable!', 500);   
         }
-        // foreach ($operationcab->getOperationdets() as $operationdet) {
-        //     $operationdet->setSynFlag(1);
-        // }
-        // foreach ($operationcab->getReglements() as $reglement) {
-        //     $reglement->setSynFlag(1);
-        // }
+        if ($operationcab->getActive() == 0) {
+            return new JsonResponse('Facture Déja Cloturée!', 500);   
+        }
+        if ($operationcab->getCategorie() == 'inscription') {
+            $operationCabHorsIns = $this->em->getRepository(TOperationcab::class)->findOneBy(['categorie'=>'hors inscription','preinscription'=>$operationcab->getPreinscription()]);
+            $operationCabHorsIns->setActive(1);
+        }
         $operationcab->setActive(0);
-        // $operationcab->setSynFlag(1);
         $this->em->flush();
         return new JsonResponse('La facture est bien Valider!', 200);    
     }

@@ -210,6 +210,16 @@ class PlanificationController extends AbstractController
                 'start' => $emptime->getStart()->format('Y-m-d H:i:s'),
                 'end' => $emptime->getEnd()->format('Y-m-d H:i:s'),
                 'color'=> $element->getModule()->getColor(),
+                // 'id' => $emptime->getId(),
+                // 'title' => $emptime->getCode() . "\n".
+                //         $enseingant . 
+                //         ' salle : '.$salle .
+                //         ' Niv : '.$nivs  .
+                //         ' Element :  '.$element->getDesignation() . "\n".
+                //         ' Type de Cours :  '.$natureEpreuve->getDesignation(),
+                // 'start' => $emptime->getStart()->format('Y-m-d H:i:s'),
+                // 'end' => $emptime->getEnd()->format('Y-m-d H:i:s'),
+                // 'color'=> $element->getModule()->getColor(),
             ];
             $nivs = "";
         }
