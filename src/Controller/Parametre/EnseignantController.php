@@ -15,6 +15,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 #[Route('/parametre/enseignant')]
 
@@ -179,5 +181,51 @@ class EnseignantController extends AbstractController
         $this->em->flush();
  
         return new JsonResponse(1);
+    }
+
+    #[Route('/extraction', name: 'parametre_enseignant_extraction')]
+    public function extraction() {
+        
+        $enseignants = $this->em->getRepository(PEnseignant::class)->findBy(['active'=>1]);
+        // dd($enseignant);
+
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        $sheet->setCellValue('A1', 'Id_ENSEIGNANT');
+        $sheet->setCellValue('B1', 'ID_GRADE');
+        $sheet->setCellValue('C1', 'DESIG_GRADE');
+        $sheet->setCellValue('D1', 'QUALITE');
+        $sheet->setCellValue('E1', 'CODE');
+        $sheet->setCellValue('F1', 'NOM');
+        $sheet->setCellValue('G1', 'PRENOM');
+        $sheet->setCellValue('H1', 'CIN');
+        $sheet->setCellValue('I1', 'RIB');
+        $i=2;
+        $j=1;
+
+        
+        foreach ($enseignants as $enseignant){
+            $grade =$enseignant->getGrade();
+
+            $sheet->setCellValue('A'.$i, $enseignant->getId());
+            $sheet->setCellValue('B'.$i, $grade->getId());
+            $sheet->setCellValue('C'.$i, $grade->getDesignation());
+            $sheet->setCellValue('D'.$i, $grade->getAbreviation());
+            $sheet->setCellValue('E'.$i, $enseignant->getCode());
+            $sheet->setCellValue('F'.$i, $enseignant->getNom());
+            $sheet->setCellValue('G'.$i, $enseignant->getPrenom());
+            $sheet->setCellValue('H'.$i, $enseignant->getCin());
+            $sheet->setCellValue('I'.$i, $enseignant->getRib());
+            $i++;
+            $j++;
+        }
+        
+
+        $writer = new Xlsx($spreadsheet);
+        $fileName = 'Extraction_Enseignant.xlsx';
+        // dd($fileName);
+        $writer->save($fileName);
+        // return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);
+        return new JsonResponse(['file' => $fileName]);
     }
 }

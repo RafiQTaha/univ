@@ -14,13 +14,13 @@ const Toast = Swal.mixin({
     $(document).ready(function  () {
     $('select').select2()
     let id_enseignant;
-    var table = $("#datatables_gestion_enseignant").DataTable({
+    var table = $("#datatables_gestion_salles").DataTable({
         lengthMenu: [
             [10, 15, 25, 50, 100, 20000000000000],
             [10, 15, 25, 50, 100, "All"],
         ],
         order: [[0, "desc"]],
-        ajax: "/parametre/enseignant/list",
+        ajax: "/parametre/salles/list",
         processing: true,
         serverSide: true,
         deferRender: true,
@@ -28,68 +28,41 @@ const Toast = Swal.mixin({
             url: "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/French.json",
         },
     });
-    $('body').on('click','#datatables_gestion_enseignant tbody tr',function () {
+    $('body').on('click','#datatables_gestion_salles tbody tr',function () {
         // const input = $(this).find("input");
         
         if($(this).hasClass('active_databales')) {
             $(this).removeClass('active_databales');
-            id_enseignant = null;
+            id_salle = null;
         } else {
-            $("#datatables_gestion_enseignant tbody tr").removeClass('active_databales');
+            $("#datatables_gestion_salles tbody tr").removeClass('active_databales');
             $(this).addClass('active_databales');
-            id_enseignant = $(this).attr('id');
+            id_salle = $(this).attr('id');
            
         }
-        
-    })
-    // $(this).val().length
-    $("body #save #rib").on("input", () => {
-        console.log($("body #save #rib").val().length )
-        if( $("body #save #rib").val().length === 24 ) { 
-            // alert('We have a winner!'); 
-            $("body #save .rib i").css('color','green')
-        }else { 
-            $("body #save .rib i").css('color','currentcolor')
-        }
-    })
-    $("body #update").on("input","#rib", () => {
-        console.log($("body #update #rib").val().length )
-        if( $("body #update #rib").val().length === 24 ) { 
-            // alert('We have a winner!'); 
-            $("body #update .rib i").css('color','green')
-        }else { 
-            $("body #update .rib i").css('color','currentcolor')
-        }
+        console.log(id_salle);
     })
     
-    $("body .update #rib").on("input", () => {
-        console.log($("body #rib").val().length )
-        if( $("body .update #rib").val().length === 24 ) {
-            $("body .update .rib i").css('color','green')
-        }else { 
-            $("body .update .rib i").css('color','currentcolor')
-        }
-    })
 
     $("#ajouter").on("click", () => {
         $("#ajout_modal").modal("show")
     })
-    // 
+    // // 
     $("#save").on("submit", async (e) => {
         e.preventDefault();
         var formData = new FormData($("#save")[0])
         const icon = $("#save button i");
         try {
             icon.remove('fa-check-circle').addClass("fa-spinner fa-spin ");
-            const request = await axios.post('/parametre/enseignant/new', formData);
+            const request = await axios.post('/parametre/salles/new', formData);
             const response = request.data;
             icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
             $('#save')[0].reset();
             table.ajax.reload();
-            id_enseignant = false;
+            id_salle = false;
             $("#ajout_modal").modal("hide")
             Toast.fire({
-                icon: 'succees',
+                icon: 'success',
                 title: message,
             })
         } catch (error) {
@@ -103,8 +76,9 @@ const Toast = Swal.mixin({
             
         }
     })
+
     $("#modifier").on("click", async function(){
-        if(!id_enseignant){
+        if(!id_salle){
             Toast.fire({
               icon: 'error',
               title: 'Veuillez selectioner une ligne!',
@@ -114,7 +88,7 @@ const Toast = Swal.mixin({
         const icon = $("#modifier i");
         icon.remove('fa-edit').addClass("fa-spinner fa-spin ");
         try {
-            const request = await axios.get('/parametre/enseignant/details/'+id_enseignant);
+            const request = await axios.get('/parametre/salles/details/'+id_salle);
             const response = request.data;
             console.log(response)
             icon.addClass('fa-edit').removeClass("fa-spinner fa-spin ");
@@ -132,7 +106,6 @@ const Toast = Swal.mixin({
         }
 
     })
-    $(this).val().length
     $("#update").on("submit", async (e) => {
         e.preventDefault();
         var formData = new FormData($("#update")[0])
@@ -140,12 +113,12 @@ const Toast = Swal.mixin({
 
         try {
             icon.remove('fa-check-circle').addClass("fa-spinner fa-spin ");
-            const request = await axios.post('/parametre/enseignant/update/'+id_enseignant, formData);
+            const request = await axios.post('/parametre/salles/update/'+id_salle, formData);
             const response = request.data;
             $('#update')[0].reset();
             icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
             table.ajax.reload();
-            id_enseignant = false;
+            id_salle = false;
             $("#modifier_modal").modal("hide")
             Toast.fire({
                 icon: 'success',
@@ -164,7 +137,7 @@ const Toast = Swal.mixin({
     })
 
     $("#supprimer").on("click", async function() {
-        if(!id_enseignant){
+        if(!id_salle){
             Toast.fire({
               icon: 'error',
               title: 'Veuillez selectioner une ligne!',
@@ -173,18 +146,18 @@ const Toast = Swal.mixin({
         }
         const icon = $("#supprimer i");
 
-        var res = confirm('Vous voulez vraiment supprimer cet enseignant ?');
+        var res = confirm('Vous voulez vraiment supprimer cette salle ?');
         if(res == 1){
             try {
                 icon.remove('fa-check-circle').addClass("fa-spinner fa-spin ");
-                const request = await axios.post('/parametre/enseignant/delete/'+id_enseignant);
+                const request = await axios.post('/parametre/salles/delete/'+id_salle);
                 const response = request.data;
                 table.ajax.reload();
-                id_enseignant = false
+                id_salle = false
                 icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
                 Toast.fire({
                     icon: 'success',
-                    title: 'Enseignant bien Supprimer',
+                    title: 'Salle bien Supprimer',
                 })
             } catch (error) {
                 console.log(error, error.response);
@@ -207,7 +180,7 @@ const Toast = Swal.mixin({
 
         try {
             const request = await axios.post(
-                "/parametre/enseignant/extraction"
+                "/parametre/salles/extraction"
             );
             const response = request.data;
 
