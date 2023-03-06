@@ -355,7 +355,7 @@ class GestionReglementsController extends AbstractController
         $reglement->setPaiement($this->em->getRepository(XModalites::class)->find($request->get('paiement')));
         $reglement->setDateReglement(new DateTime($request->get('d_reglement')));
         $reglement->setReference($request->get('reference'));
-        $reglement->setPayant($request->get('organisme'));
+        // $reglement->setPayant($request->get('organisme'));
         $reglement->setUserUpdated($this->getUser());
         $this->em->flush();
         return new JsonResponse('Reglement bien modifier', 200);        

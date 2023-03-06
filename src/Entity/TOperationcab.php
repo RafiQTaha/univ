@@ -54,6 +54,9 @@ class TOperationcab
     #[ORM\Column(type: 'integer', nullable: true)]
     private $dateContable;
 
+    #[ORM\Column(type: 'string', length: 25, nullable: true)]
+    private $organisme;
+
     public function __construct()
     {
         $this->reglements = new ArrayCollection();
@@ -253,6 +256,18 @@ class TOperationcab
     public function setDateContable(?int $dateContable): self
     {
         $this->dateContable = $dateContable;
+
+        return $this;
+    }
+
+    public function getOrganisme(): ?string
+    {
+        return $this->organisme;
+    }
+
+    public function setOrganisme(?string $organisme): self
+    {
+        $this->organisme = $organisme;
 
         return $this;
     }
