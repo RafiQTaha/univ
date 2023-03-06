@@ -120,10 +120,12 @@ $(document).ready(function () {
                 $('.modal-facture #add_detaille').css('display','none');
                 $('.modal-facture #add').css('display','none');
                 $('.modal-facture #detaille_active').css('display','none');
+                $('.modal-facture #delete_detaille').css('display','none');
             }else{
                 $('.modal-facture #add_detaille').css('display','block');
                 $('.modal-facture #add').css('display','flex');
                 $('.modal-facture #detaille_active').css('display','block');
+                $('.modal-facture #delete_detaille').css('display','block');
             }
             $('.table_detaille_facture tbody').html(success.data[1])
             icon.removeClass('fa-spinner fa-spin').addClass("fa-money-bill-alt");
