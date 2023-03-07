@@ -145,8 +145,8 @@ class EnseignantController extends AbstractController
 
        return new JsonResponse('Enseignant Bien Ajouté',200);
     }
-    #[Route('/details/{enseignant}', name: 'parametre_enseignant_details')]
-    public function details(PEnseignant $enseignant): Response
+    #[Route('/detailles/{enseignant}', name: 'parametre_enseignant_detailles')]
+    public function detailles(PEnseignant $enseignant): Response
     {
         $html = $this->render('parametre/enseignant/pages/modifier.html.twig', [
             'enseignant' => $enseignant,

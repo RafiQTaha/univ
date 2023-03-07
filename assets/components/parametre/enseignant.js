@@ -114,7 +114,7 @@ const Toast = Swal.mixin({
         const icon = $("#modifier i");
         icon.remove('fa-edit').addClass("fa-spinner fa-spin ");
         try {
-            const request = await axios.get('/parametre/enseignant/details/'+id_enseignant);
+            const request = await axios.get('/parametre/enseignant/detailles/'+id_enseignant);
             const response = request.data;
             console.log(response)
             icon.addClass('fa-edit').removeClass("fa-spinner fa-spin ");
