@@ -14,11 +14,14 @@ use App\Controller\ApiController;
 use App\Entity\ExMnotes;
 use App\Entity\PeStatut;
 use Doctrine\Persistence\ManagerRegistry;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 
 #[Route('/evaluation/module')]
 class ModuleController extends AbstractController
@@ -200,7 +203,7 @@ class ModuleController extends AbstractController
             'margin_left' => '5',
             'margin_right' => '5',
             'margin_top' => '35',
-            'margin_bottom' => '20',
+            'margin_bottom' => '10',
             'format' => 'A4-L',
             'margin_header' => '2',
             'margin_footer' => '2'
@@ -218,13 +221,18 @@ class ModuleController extends AbstractController
 
     public function getStatut($inscription, $module, $statut)
     {
-        return new Response($this->em->getRepository(ExMnotes::class)->getStatutByColumn($inscription, $module, $statut), 200, ['Content-Type' => 'text/html']);
+        $abreviation = $this->em->getRepository(ExMnotes::class)->getStatutByColumn($inscription, $module, $statut);
+        if ($abreviation != null) {
+        return new Response($abreviation['abreviation'], 200, ['Content-Type' => 'text/html']);
+        }else{
+            return new Response("");
+        }
     }
 
     #[Route('/valider', name: 'evaluation_module_valider')]
     public function evaluationModuleValider(Request $request) 
     {         
-        $session = $request->getSession();
+        $session = $request->getSession(); 
         $module = $session->get('data_module')['module'];
         $annee = $this->em->getRepository(AcAnnee::class)->getActiveAnneeByFormation($module->getSemestre()->getPromotion()->getFormation());
         $exControle = $this->em->getRepository(ExControle::class)->canValidateModule($module, $annee);
@@ -233,7 +241,7 @@ class ModuleController extends AbstractController
         }
         $this->em->getRepository(ExControle::class)->updateModuleByElement($module, $annee, 1);
         // ------------------ Mouchard à Verifier Apres ------------------------
-        ApiController::mouchard($this->getUser(), $this->em,$exControle, 'exControle', 'Validation Circuit MDL');
+        ApiController::mouchard($this->getUser(), $this->em,$module, 'exControle', 'Validation Circuit MDL');
         $this->em->flush();
         return new JsonResponse("Bien Valider", 200);
     }
@@ -395,10 +403,10 @@ class ModuleController extends AbstractController
 
 
         $send_data = array();
-//        if ($data->statut_aff == 60 || $data->statut_aff == 62) {
-//            
-//        }
-//        else{
+
+        $etablissement_id = $mnote->getInscription()->getAnnee()->getFormation()->getEtablissement()->getId();
+        $note_validation = $etablissement_id == 26 ? 12 : 10;
+        // $note_eliminatoire = $etablissement_id == 26 ? 8 : 7;
         if($min_element_module_statut_def == 52 || $max_element_module_statut_aff == 52){
             $send_data['statut_s2'] = 53;
             $send_data['statut_def'] = 53;
@@ -467,6 +475,9 @@ class ModuleController extends AbstractController
 
     public function ModuleGetStatutApresRachat($data, $mnote, $note_eliminatoire, $note_validation) {
         $send_data = array();
+        $etablissement_id = $mnote->getInscription()->getAnnee()->getFormation()->getEtablissement()->getId();
+        $note_validation = $etablissement_id == 26 ? 12 : 10;
+        // $note_eliminatoire = $etablissement_id == 26 ? 8 : 7;
         foreach ($data as $key => $value) {
             if ($value->getStatutAff()->getId() == 17 || $value->getStatutDef()->getId() == 20) {
                 if ($mnote->getNote() < $note_validation) {
@@ -485,4 +496,37 @@ class ModuleController extends AbstractController
         return $send_data;
     }
     
+    #[Route('/extraction_module', name: 'evaluation_module_extraction_module')]
+    public function evaluationModuleExtraction(Request $request) 
+    {   
+        $current_year = date('m') > 7 ? date('Y').'/'.date('Y')+1 :  date('Y') - 1 .'/' .date('Y');
+        // $elements = $this->em->getRepository(AcElement::class)->getElementByCurrentYear($current_year);
+        $modules = $this->em->getRepository(ExMnotes::class)->getModuleByCurrentYear($current_year);
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        $i=2;
+        $j=1;
+        // dump($gnotes);die;
+        $sheet->fromArray(
+            array_keys($modules[0]),
+            null,
+            'A1'
+        );
+        foreach ($modules as $module) {
+            $sheet->fromArray(
+                $module,
+                null,
+                'A'.$i
+            );
+            $i++;
+            $j++;
+        }
+        $writer = new Xlsx($spreadsheet);
+        $year = date('m') > 7 ? date('Y').'-'.date('Y')+1 : date('Y') - 1 .'-' .date('Y');
+        $fileName = "Extraction modules $year.xlsx";
+        $temp_file = tempnam(sys_get_temp_dir(), $fileName);
+        $writer->save($temp_file);
+        return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);
+        
+    }
 }

@@ -303,10 +303,10 @@
         <tr>
             <td style="width: 8%;padding: 3px;font-size: 8px;text-align: left;border: 0px;"><b>MODULE {{index}}</b></td>
             <td style="width: 38%;padding: 3px;font-size: 8px;text-align: left;border: 0px;">{{mnote.module.designation}}</td>
-            <td style="width: 9%;padding: 3px;font-size: 8px;text-align:center;border: 0px;">{% if mnote.statutAff.id == 35 %}  -  {% else %} {{mnote.noteIni|number_format(2)}}{% endif %}</td>
-            <td style="width: 9%;padding: 3px;font-size: 8px;text-align:center;border: 0px;">{% if mnote.statutAff.id == 34  or mnote.noteRat is null  %} -  {% else %} {{ mnote.noteRat|number_format(2)}}{% endif %}</td>
-            <td style="width: 9%;padding: 3px;font-size: 8px;text-align:center;border: 0px;">{% if mnote.statutAff.id == 35 %} -  {% else %} {{mnote.note|number_format(2)}} {% endif %}</td>
-            <td style="width: 15%;padding: 3px;font-size: 7px;text-align:left;border: 0px;">{{mnote.statutAff.designation}}</td>
+            <td style="width: 9%;padding: 3px;font-size: 8px;text-align:center;border: 0px;">{% if mnote.statutAff and mnote.statutAff.id == 35 %}  -  {% else %} {{mnote.noteIni|number_format(2)}}{% endif %}</td>
+            <td style="width: 9%;padding: 3px;font-size: 8px;text-align:center;border: 0px;">{% if mnote.statutAff and mnote.statutAff.id == 34  or mnote.noteRat is null  %} -  {% else %} {{ mnote.noteRat|number_format(2)}}{% endif %}</td>
+            <td style="width: 9%;padding: 3px;font-size: 8px;text-align:center;border: 0px;">{% if mnote.statutAff and mnote.statutAff.id == 35 %} -  {% else %} {{mnote.note|number_format(2)}} {% endif %}</td>
+            <td style="width: 15%;padding: 3px;font-size: 7px;text-align:left;border: 0px;">{% if mnote.statutAff  %} {{mnote.statutAff.designation}} {% else %} - {% endif %}</td>
             <td style="width: 10%;padding: 3px;font-size: 7px;text-align: left;border: 0px;">{{mnote.observation}}</td>
         </tr>
         {% set index = index + 1 %}

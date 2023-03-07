@@ -384,9 +384,31 @@ class GestionAdmissionController extends AbstractController
             $operationCab->setPreinscription($inscription->getAdmission()->getPreinscription());
             $operationCab->setUserCreated($this->getUser());
             $operationCab->setAnnee($inscription->getAnnee());
-            $i == 0 ? $operationCab->setCategorie('inscription') : $operationCab->setCategorie('hors inscription');
+            // switch ($i) {
+            //     case 1:
+            //         // "hors inscription" a remplacer par "ADD Inscription"
+            //         $operationCab->setCategorie('hors inscription');
+            //         $operationCab->setCategorie('hors inscription');
+            //         $operationCab->setActive(0);
+            //         $operationCab->setDateContable(date('Y') + 1);
+            //         break;
+            //     case 2:
+            //         $operationCab->setCategorie('hors inscription');
+            //         $operationCab->setActive(1);
+            //         $operationCab->setDateContable(date('Y'));
+            //         break;
+            //     default:
+            //         $operationCab->setCategorie('inscription');
+            //         $operationCab->setActive(1);
+            //         $operationCab->setDateContable(date('Y'));
+            //         break;
+            // }
+            // if ($i != 2) {
+                $i == 0 ? $operationCab->setCategorie('inscription') : $operationCab->setCategorie('hors inscription');
+                $i == 0 ? $operationCab->setActive(1) : $operationCab->setActive(0);
+                $i == 0 ? $operationCab->setDateContable(date('Y')) : $operationCab->setDateContable(date('Y') + 1);
+            // }
             $operationCab->setCreated(new \DateTime("now"));
-            $operationCab->setActive(1);
             $this->em->persist($operationCab);
             $this->em->flush();
             $operationCab->setCode(

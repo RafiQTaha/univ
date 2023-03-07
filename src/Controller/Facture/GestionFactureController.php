@@ -70,8 +70,6 @@ class GestionFactureController extends AbstractController
          
         $params = $request->query;
         $where = $totalRows = $sqlRequest = "";
-        // $filtre = " where 1=1 and (stat.designation = 'INSCRIT' or stat.designation = '' or stat.designation is null ) ";
-        // $filtre = " where 1=1 and (stat.id = 13 or stat.id = 14 or stat.id = 8) ";
         $filtre = " where 1=1 ";
         
         if (!empty($params->all('columns')[0]['search']['value'])) {
@@ -81,17 +79,27 @@ class GestionFactureController extends AbstractController
             $filtre .= " and frma.id = '" . $params->all('columns')[1]['search']['value'] . "' ";
         }
         if (!empty($params->all('columns')[2]['search']['value'])) {
-            if ($params->all('columns')[2]['search']['value'] == 'SD')
-            {
-                $filtre .= " and opdet.montant_facture = reg.montant_regle ";
+            switch ($params->all('columns')[2]['search']['value']) {
+                case 'SD':
+                    $filtre .= " and opdet.montant_facture = reg.montant_regle ";
+                    break;
+                case 'SE':
+                    $filtre .= " and opdet.montant_facture < reg.montant_regle ";
+                    break;
+                
+                default:
+                    $filtre .= " and opdet.montant_facture > reg.montant_regle ";
+                    break;
             }
-            else if($params->all('columns')[2]['search']['value'] == 'SE')
-            {
-                $filtre .= " and opdet.montant_facture < reg.montant_regle ";
-            }
-            else {
-                $filtre .= " and opdet.montant_facture > reg.montant_regle ";
-            }
+            // if ($params->all('columns')[2]['search']['value'] == 'SD'){
+            //     $filtre .= " and opdet.montant_facture = reg.montant_regle ";
+            // }
+            // else if($params->all('columns')[2]['search']['value'] == 'SE'){
+            //     $filtre .= " and opdet.montant_facture < reg.montant_regle ";
+            // }
+            // else {
+            //     $filtre .= " and opdet.montant_facture > reg.montant_regle ";
+            // }
         }  
         if (!empty($params->all('columns')[3]['search']['value'])) {
             $filtre .= " and org.id = '" . $params->all('columns')[3]['search']['value'] . "' ";
@@ -105,15 +113,9 @@ class GestionFactureController extends AbstractController
             array( 'db' => 'etu.prenom','dt' => 4),
             array( 'db' => 'etu.cin','dt' => 5),
             array( 'db' => 'etab.abreviation','dt' => 6),
-            // array( 'db' => 'Upper(frma.abreviation)','dt' => 7),
             array( 'db' => 'Upper(stat.designation)','dt' => 7),
-            // array( 'db' => 'nat.designation','dt' => 8),
             array( 'db' => 'upper(etu.nationalite)','dt' => 8),
             array( 'db' => 'opcab.categorie','dt' => 9),
-            // array( 'db' => 'montant_facture','dt' => 10),
-            // array( 'db' => 'montant_regle','dt' => 11),
-            // array( 'db' => '(IFNULL(montant_facture,0)-IFNULL(montant_regle,0)) as diff','dt' => 12),
-            // array( 'db' => 'Upper(org.abreviation)','dt' => 13),
             array( 'db' => 'opcab.active','dt' => 10),
         );
         $sql = "SELECT DISTINCT " . implode(", ", DatatablesController::Pluck($columns, 'db')) . "
@@ -126,17 +128,13 @@ class GestionFactureController extends AbstractController
         INNER JOIN tetudiant etu on etu.id = pre.etudiant_id
         INNER JOIN ac_formation frma on frma.id = an.formation_id
         INNER JOIN ac_etablissement etab on etab.id = frma.etablissement_id
-        -- LEFT JOIN porganisme org on org.id = opcab.organisme_id
-        LEFT JOIN nature_demande nat on nat.id = pre.nature_id 
-        -- LEFT JOIN (select operationcab_id, SUM(montant) as montant_facture from toperationdet where active = 1 group by operationcab_id ) opdet on opdet.operationcab_id = opcab.id
-        -- LEFT JOIN (select operation_id, SUM(montant) as montant_regle from treglement where annuler = 0 group by operation_id ) reg on reg.operation_id = opcab.id 
         $filtre ";
         // dd($sql);
         $totalRows .= $sql;
         $sqlRequest .= $sql;
-        $stmt = $this->em->getConnection()->prepare($sql);
-        $newstmt = $stmt->executeQuery();
-        $totalRecords = count($newstmt->fetchAll());
+        // $stmt = $this->em->getConnection()->prepare($sql);
+        // $newstmt = $stmt->executeQuery();
+        // $totalRecords = count($newstmt->fetchAll());
         
         $my_columns = DatatablesController::Pluck($columns, 'db');
         // unset($columns[12]);
@@ -170,18 +168,28 @@ class GestionFactureController extends AbstractController
                         $nestedData[] = $reglementTotal;
                         $nestedData[] = $operationTotal - $reglementTotal;
                         $orgpyt = $this->em->getRepository(TOperationdet::class)->findBy(['operationcab'=>$cd,'active'=>1,'organisme'=>103]);
-                        if (count($orgpyt)) {
+                        if ($orgpyt) {
                             $org = 'O/P';
                         }else{
-                            $pyt = $this->em->getRepository(TOperationdet::class)->findBy(['operationcab'=>$cd,'active'=>1,'organisme'=>7]);
-                            $org = $this->em->getRepository(TOperationdet::class)->FindDetNotPayant($cd);
-                            if (count($pyt) && count($org)) {
-                                $org = 'O/P';
-                            }elseif (!count($pyt) && count($org)) {
-                                $org = 'ORG';
-                            }else {
-                                $org = 'PYT';
-                            }
+                            // $operationCab = $this->em->getRepository(TOperationcab::class)->find($cd);
+                            // dd($cd);
+                            // if ($operationCab->getOrganisme() != null) {
+                            //     if ($org = 'Payant') {
+                            //         $org = 'PYT';
+                            //     }else{
+                            //         $org = 'ORG';
+                            //     }
+                            // }else{
+                                $pyt = $this->em->getRepository(TOperationdet::class)->findBy(['operationcab'=>$cd,'active'=>1,'organisme'=>7]);
+                                $org = $this->em->getRepository(TOperationdet::class)->FindDetNotPayant($cd);
+                                if ($pyt && $org) {
+                                    $org = 'O/P';
+                                }elseif (!$pyt && $org) {
+                                    $org = 'ORG';
+                                }else {
+                                    $org = 'PYT';
+                                }
+                            // }
                         }
                         $nestedData[] = $org;
                         $value = $value == 0 ? 'Cloture' : 'Ouverte';
@@ -194,10 +202,11 @@ class GestionFactureController extends AbstractController
             $data[] = $nestedData;
             $i++;
         }
+        // $allOPERATIONCAB = $this->em->getRepository(TOperationcab::class)->findAll();
         $json_data = array(
             "draw" => intval($params->get('draw')),
-            "recordsTotal" => intval($totalRecords),
-            "recordsFiltered" => intval($totalRecords),
+            // "recordsTotal" => intval(count($allOPERATIONCAB)),
+            // "recordsFiltered" => intval(count($allOPERATIONCAB)),
             "data" => $data   
         );
         return new Response(json_encode($json_data));
@@ -217,6 +226,7 @@ class GestionFactureController extends AbstractController
         //     return new JsonResponse('Le montant a réglé est '.$request->get('montant2').'DH', 500);
         // }
         
+        $org = $operationcab->getOrganisme() == 'Payant' ? 1 : 0;
         $etablissement = $operationcab->getPreinscription()->getAnnee()->getFormation()->getEtablissement()->getAbreviation();
         $reglement = New TReglement();
         $reglement->setOperation($operationcab);
@@ -229,7 +239,7 @@ class GestionFactureController extends AbstractController
         $reglement->setPaiement($this->em->getRepository(XModalites::class)->find($request->get('paiement')));
         $reglement->setDateReglement(new DateTime($request->get('d_reglement')));
         $reglement->setReference($request->get('reference'));
-        $reglement->setPayant($request->get('organisme'));
+        $reglement->setPayant($org);
         $reglement->setUserCreated($this->getUser());
         $this->em->persist($reglement);
         $this->em->flush();
@@ -263,7 +273,7 @@ class GestionFactureController extends AbstractController
         $operationTotal = $this->em->getRepository(TOperationdet::class)->getSumMontantByCodeFacture($operationcab);
         $inscription = $this->em->getRepository(TInscription::class)->findOneBy([
             'admission'=>$this->em->getRepository(TAdmission::class)->findBy([
-                'preinscription'=>$operationcab->getPreinscription()])]);
+                'preinscription'=>$operationcab->getPreinscription()])],['id'=>'DESC']);
                 // dd($inscription);
         $promotion = $inscription == NULL ? "" : $inscription->getPromotion()->getDesignation();
         $inscription = $inscription == NULL ? "" : $inscription->getCode();
@@ -428,14 +438,15 @@ class GestionFactureController extends AbstractController
     {   
         $formation = $operationcab->getPreinscription()->getAnnee()->getFormation();
         $categorie = $operationcab->getCategorie();
-        if ($categorie == 'hors inscription' || $categorie == 'inscription') {
-            $frais = $this->em->getRepository(PFrais::class)->findBy(['formation'=>$formation,'active'=>1]);
-        }elseif($formation->getEtablissement()->getAbreviation() == 'CFC'){
-            $frais = $this->em->getRepository(PFrais::class)->findBy(['formation'=>$formation,'active'=>1]);
-        }else{
-            $frais = $this->em->getRepository(PFrais::class)->findBy(['formation'=>$formation,'active'=>1]);
-            // $frais = $this->em->getRepository(PFrais::class)->findBy(['formation'=>$formation,'categorie'=>$categorie,'active'=>1]);
-        }
+        // if ($categorie == 'hors inscription' || $categorie == 'inscription') {
+        //     $frais = $this->em->getRepository(PFrais::class)->findBy(['formation'=>$formation,'active'=>1]);
+        // }elseif($formation->getEtablissement()->getAbreviation() == 'CFC'){
+        //     $frais = $this->em->getRepository(PFrais::class)->findBy(['formation'=>$formation,'active'=>1]);
+        // }else{
+        //     $frais = $this->em->getRepository(PFrais::class)->findBy(['formation'=>$formation,'active'=>1]);
+        //     // $frais = $this->em->getRepository(PFrais::class)->findBy(['formation'=>$formation,'categorie'=>$categorie,'active'=>1]);
+        // }
+        $frais = $this->em->getRepository(PFrais::class)->findBy(['formation'=>$formation,'active'=>1]);
         $data = "<option selected enabled value=''>Choix Fraix</option>";
         foreach ($frais as $frs) {
             $data .="<option value=".$frs->getId()." data-id=".$frs->getmontant().">".$frs->getDesignation()."</option>";
@@ -486,12 +497,20 @@ class GestionFactureController extends AbstractController
         if(empty($request->get('montant'))  || $request->get('montant') == ' ' || empty($request->get('frais')) || $request->get('frais') == "" ){
             return new JsonResponse('Merci de renseigner tous les champs!', 500);            
         }
-        if (empty($request->get('organisme_id'))) {
-            return new JsonResponse('Merci de choisir une Organisme!', 500);
+        // if (empty($request->get('organisme_id'))) {
+        //     return new JsonResponse('Merci de choisir une Organisme!', 500);
+        // }
+        if ($operationcab->getOrganisme() == null ) {
+            return new JsonResponse('Organisme Introuvable!', 500);
         }
         $frais =  $this->em->getRepository(PFrais::class)->find($request->get('frais'));
         if ($frais == null) {
             return new JsonResponse('Merci de verifier le frais!', 500);  
+        }
+        if ($operationcab->getOrganisme() == 'Payant' ) {
+            $org = $this->em->getRepository(POrganisme::class)->find(7);
+        }else {
+            $org = $this->em->getRepository(POrganisme::class)->find(1);
         }
         $operationDet = new TOperationdet();
         $operationDet->setOperationcab($operationcab);
@@ -502,7 +521,8 @@ class GestionFactureController extends AbstractController
         $operationDet->setRemise(0);
         $operationDet->setActive(1);
         $operationDet->setUserCreated($this->getUser());
-        $operationDet->setOrganisme($this->em->getRepository(POrganisme::class)->find($request->get('organisme_id')));
+        // $operationDet->setOrganisme($this->em->getRepository(POrganisme::class)->find($request->get('organisme_id')));
+        $operationDet->setOrganisme($org);
         $this->em->persist($operationDet);
         $this->em->flush();
         $operationDet->setCode(
@@ -726,10 +746,9 @@ class GestionFactureController extends AbstractController
         return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);
     }
 
-    #[Route('/cloture', name: 'cloture_facture')]
-    public function cloture_facture(Request $request): Response
+    #[Route('/valider', name: 'valider_facture')]
+    public function valider_facture(Request $request): Response
     {   
-        // dd($request->get('facture'));
         if (!$request->get('facture')) {
             return new JsonResponse('Veuillez selection une facture!', 500);
         }
@@ -737,16 +756,16 @@ class GestionFactureController extends AbstractController
         if (!$operationcab) {
             return new JsonResponse('Facture Introuvable!', 500);   
         }
-        // foreach ($operationcab->getOperationdets() as $operationdet) {
-        //     $operationdet->setSynFlag(1);
-        // }
-        // foreach ($operationcab->getReglements() as $reglement) {
-        //     $reglement->setSynFlag(1);
-        // }
+        if ($operationcab->getActive() == 0) {
+            return new JsonResponse('Facture Déja Cloturée!', 500);   
+        }
+        if ($operationcab->getCategorie() == 'inscription') {
+            $operationCabHorsIns = $this->em->getRepository(TOperationcab::class)->findOneBy(['categorie'=>'hors inscription','preinscription'=>$operationcab->getPreinscription()]);
+            $operationCabHorsIns->setActive(1);
+        }
         $operationcab->setActive(0);
-        $operationcab->setSynFlag(1);
         $this->em->flush();
-        return new JsonResponse('La facture est bien Cloturé!', 200);    
+        return new JsonResponse('La facture est bien Valider!', 200);    
     }
 
 }

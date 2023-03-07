@@ -15,7 +15,7 @@
         </thead>
         <tbody>
             {% for data in data_saved %}
-                <tr>
+                <tr id="{{data.inscription.id}}">
                     <td>{{loop.index}}</td>
                     <td>{{data.inscription.id}}</td>
                     <td>{{data.inscription.admission.preinscription.etudiant.nom}}</td>

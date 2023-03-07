@@ -13,10 +13,13 @@ const Toast = Swal.mixin({
 let check;
     
 $(document).ready(function  () {
-    $("#enregister, #valider, #devalider, #recalculer, #imprimer, #statut").attr('disabled', true)
+    let id_inscription = false;
+    $("#enregister, #valider, #devalider, #recalculer, #imprimer, #statut, #deliberation_individuelle").attr('disabled', true)
     const enableButtons = () => {
         $("#imprimer").removeClass('btn-secondary').addClass('btn-info').attr('disabled', false)
         $("#statut").removeClass('btn-secondary').addClass('btn-primary').attr('disabled', false)
+        $("#deliberation_individuelle").addClass('btn-primary').removeClass('btn-secondary').attr('disabled', false)
+
 
         if(check == 0) {
             $("#enregister").removeClass('btn-secondary').addClass('btn-primary').attr('disabled', false)
@@ -41,6 +44,32 @@ $(document).ready(function  () {
         }
         $('#formation').html(response).select2();
     })
+
+
+    // pop up triggre after double click tr
+    $("body").on("dblclick", "#list_epreuve_normal tbody tr", function () {
+        if($(this).hasClass('active_databales')) {
+            $(this).removeClass('active_databales');
+            id_inscription = null;
+            // console.log(id_inscription);
+        } else {
+            $("#list_epreuve_normal tbody tr").removeClass('active_databales');
+            $(this).addClass('active_databales');
+            id_inscription = $(this).attr('id');
+            // console.log(id_inscription);
+        }
+    });
+
+    // impression deliberation
+    $("#deliberation_individuelle").on('click', async function(){
+        
+        window.open('/evaluation/semestre/impression_delib/'+id_inscription, '_blank');
+        
+    })
+
+
+
+
     $("#formation").on('change', async function (){
         const id_formation = $(this).val();
         let response = ""
@@ -200,6 +229,7 @@ $(document).ready(function  () {
         try {
             const request = await axios.post('/evaluation/semestre/recalculer');
             let response = request.data
+            $("#get_list_etudiant").trigger("click")
             icon.addClass('fa-redo-alt').removeClass("fa-spinner fa-spin");
             Toast.fire({
                 icon: 'success',
@@ -224,6 +254,7 @@ $(document).ready(function  () {
         try {
             const request = await axios.post('/evaluation/semestre/statut/avantrachat');
             let response = request.data
+            $("#get_list_etudiant").trigger("click")
             icon.addClass('fa-sync').removeClass("fa-spinner fa-spin");
             Toast.fire({
                 icon: 'success',
@@ -245,6 +276,7 @@ $(document).ready(function  () {
         try {
             const request = await axios.post('/evaluation/semestre/statut/apresrachat');
             let response = request.data
+            $("#get_list_etudiant").trigger("click")
             icon.addClass('fa-sync').removeClass("fa-spinner fa-spin");
             Toast.fire({
                 icon: 'success',
@@ -266,6 +298,7 @@ $(document).ready(function  () {
         try {
             const request = await axios.post('/evaluation/semestre/statut/statutsemestrecategorie');
             let response = request.data
+            $("#get_list_etudiant").trigger("click")
             icon.addClass('fa-sync').removeClass("fa-spinner fa-spin");
             Toast.fire({
                 icon: 'success',
@@ -280,6 +313,10 @@ $(document).ready(function  () {
                 title: message,
             });
         }
+    })
+    
+    $('body').on('click','#extraction', function (){
+        window.open('/evaluation/semestre/extraction_semestre', '_blank');
     })
 })
 

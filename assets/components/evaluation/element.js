@@ -239,6 +239,7 @@ $(document).ready(function  () {
         try {
             const request = await axios.post('/evaluation/element/recalculer');
             let response = request.data
+            $("#get_list_etudiant").trigger("click")
             icon.addClass('fa-redo-alt').removeClass("fa-spinner fa-spin");
             Toast.fire({
                 icon: 'success',
@@ -267,6 +268,7 @@ $(document).ready(function  () {
         try {
             const request = await axios.post('/evaluation/element/statut/s1');
             let response = request.data
+            $("#get_list_etudiant").trigger("click")
             icon.addClass('fa-sync').removeClass("fa-spinner fa-spin");
             Toast.fire({
                 icon: 'success',
@@ -288,6 +290,7 @@ $(document).ready(function  () {
         try {
             const request = await axios.post('/evaluation/element/statut/s2');
             let response = request.data
+            $("#get_list_etudiant").trigger("click")
             icon.addClass('fa-sync').removeClass("fa-spinner fa-spin");
             Toast.fire({
                 icon: 'success',
@@ -309,6 +312,7 @@ $(document).ready(function  () {
         try {
             const request = await axios.post('/evaluation/element/statut/rachat');
             let response = request.data
+            $("#get_list_etudiant").trigger("click")
             icon.addClass('fa-sync').removeClass("fa-spinner fa-spin");
             Toast.fire({
                 icon: 'success',

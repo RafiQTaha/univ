@@ -12,6 +12,7 @@ use App\Entity\AcFormation;
 use App\Entity\TInscription;
 use App\Entity\AcEtablissement;
 use App\Controller\ApiController;
+use App\Entity\ExGnotes;
 use Doctrine\Persistence\ManagerRegistry;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
@@ -374,9 +375,9 @@ class ElementController extends AbstractController
             foreach ($dataSaved as $data) {
                 $inscription = $this->em->getRepository(TInscription::class)->find($data['inscription']->getId());
                 $enote = $this->em->getRepository(ExEnotes::class)->findOneBy(['element' => $element, 'inscription' => $inscription]);
-                $m_cc = $enote->getCcr() < $enote->getMcc() || !$enote->getCcr() ? $enote->getMcc() : $enote->getCcr();
-                $m_tp = $enote->getTpr() < $enote->getMtp() || !$enote->getTpr() ? $enote->getMtp() : $enote->getTpr();
-                $m_ef = $enote->getEfr() < $enote->getMef() || !$enote->getEfr() ? $enote->getMef() : $enote->getEfr();
+                $m_cc = $enote->getCcr() < $enote->getMcc() ?? 0 || !$enote->getCcr() ? $enote->getMcc() : $enote->getCcr() ;
+                $m_tp = $enote->getTpr() < $enote->getMtp() ?? 0 || !$enote->getTpr() ? $enote->getMtp() : $enote->getTpr();
+                $m_ef = $enote->getEfr() < $enote->getMef() ?? 0 || !$enote->getEfr() ? $enote->getMef() : $enote->getEfr() ;
                 if($element->getNature()->getCode() == "NE003" || $element->getNature()->getCode() == "NE004" || $element->getNature()->getCode() == "NE005"){
                     $result = $this->ElementGetStatutS2_pratique($enote, ['mcc' => $m_cc, 'mtp'=>$m_tp, 'mef'=>$m_ef], 10,10);
                 } else {
@@ -464,7 +465,12 @@ class ElementController extends AbstractController
         $moy = $etablissement_id == 26 ? 12 : 10;
         $moyIni = $etablissement_id == 26 ? 8 : 7;
         $send_data = array();
-        if ($enote->getNoteIni() < $moyIni) {
+        $capitaliser = $this->em->getRepository(ExGnotes::class)->checkIfModuleCapitaliser($enote);
+        if(count($capitaliser) > 0){
+            $send_data['statut_s1'] = 52;
+            $send_data['statut_def'] = 52;
+            $send_data['statut_aff'] = 52;
+        }elseif ($enote->getNoteIni() < $moyIni) {
             $send_data['statut_s1'] = 12;
             $send_data['statut_def'] = 12;
             $send_data['statut_aff'] = 12;
@@ -553,7 +559,7 @@ class ElementController extends AbstractController
                 $send_data['statut_aff'] = 21;
             }else {
 
-                if ((isset($noteComposantInitial['mcc']) && $noteComposantInitial['mcc'] < $moyIni) || (isset($noteComposantInitial['mtp']) && $noteComposantInitial['mtp'] < $moyIni ) || ( isset($noteComposantInitial['mef']) && $noteComposantInitial['mef'] < $moyIni ) || ( $enote->getNote() && $enote->getNote() < $note_eliminatoire )) {
+                if ((isset($noteComposantInitial['mcc']) && $noteComposantInitial['mcc'] < $moyIni) || (isset($noteComposantInitial['mtp']) && $noteComposantInitial['mtp'] < $moyIni ) || ( isset($noteComposantInitial['mef']) && $noteComposantInitial['mef'] < $moyIni ) || ( $enote->getNote() && $enote->getNote() == 0.0 ? 0 : $enote->getNote() < $note_eliminatoire )) {
                     $send_data['statut_s2'] = 16;
                     $send_data['statut_def'] = 16;
                     $send_data['statut_aff'] = 16;
@@ -586,7 +592,9 @@ class ElementController extends AbstractController
     }
     public function ElementGetStatutRachat_pratique($enote) {
         $send_data = array();
-        if ($enote->getNoteRachat() > 0 && $enote->getNote() >= 10) {
+        $etablissement_id = $enote->getInscription()->getAnnee()->getFormation()->getEtablissement()->getId();
+        $moy = $etablissement_id == 26 ? 12 : 10;
+        if ($enote->getNoteRachat() > 0 && $enote->getNote() >= $moy) {
             $send_data['statut_s2'] = 20;
             $send_data['statut_def'] = 20;
             $send_data['statut_aff'] = 20;
@@ -595,8 +603,10 @@ class ElementController extends AbstractController
     }
     public function ElementGetStatutRachat($enote) {
         $send_data = array();
+        $etablissement_id = $enote->getInscription()->getAnnee()->getFormation()->getEtablissement()->getId();
+        $moy = $etablissement_id == 26 ? 12 : 10;
         if ($enote->getNoteRachat() > 0) {
-            if ($enote->getNote() < 10) {
+            if ($enote->getNote() < $moy) {
                 $send_data['statut_rachat'] = 17;
                 $send_data['statut_def'] = 17;
                 $send_data['statut_aff'] = 17;

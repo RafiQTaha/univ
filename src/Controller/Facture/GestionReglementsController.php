@@ -182,7 +182,7 @@ class GestionReglementsController extends AbstractController
         $operationTotal = $this->em->getRepository(TOperationdet::class)->getSumMontantByCodeFacture($operationcab);
         $inscription = $this->em->getRepository(TInscription::class)->findOneBy([
             'admission'=>$this->em->getRepository(TAdmission::class)->findBy([
-                'preinscription'=>$operationcab->getPreinscription()])]);
+                'preinscription'=>$operationcab->getPreinscription()])],['id'=>'DESC']);
         $promotion = $inscription == NULL ? "" : $inscription->getPromotion()->getDesignation();
         $inscription = $inscription == NULL ? "" : $inscription->getCode();
         $html = "";
@@ -355,7 +355,7 @@ class GestionReglementsController extends AbstractController
         $reglement->setPaiement($this->em->getRepository(XModalites::class)->find($request->get('paiement')));
         $reglement->setDateReglement(new DateTime($request->get('d_reglement')));
         $reglement->setReference($request->get('reference'));
-        $reglement->setPayant($request->get('organisme'));
+        // $reglement->setPayant($request->get('organisme'));
         $reglement->setUserUpdated($this->getUser());
         $this->em->flush();
         return new JsonResponse('Reglement bien modifier', 200);        

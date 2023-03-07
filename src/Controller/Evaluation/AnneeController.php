@@ -250,7 +250,7 @@ class AnneeController extends AbstractController
             return new JsonResponse("Veuillez Valider Toutes les semestres pour valider cet annee ", 500);
         }
         $this->em->getRepository(ExControle::class)->updateAnneeByElement($promotion, $annee, 1);
-        ApiController::mouchard($this->getUser(), $this->em,$exControle, 'exControle', 'Validation Circuit Ann');
+        ApiController::mouchard($this->getUser(), $this->em,$annee, 'exControle', 'Validation Circuit Ann');
         $this->em->flush();
 
         return new JsonResponse("Bien Valider", 200);

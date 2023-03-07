@@ -121,6 +121,10 @@ class AnneeController extends AbstractController
     #[Route('/active_annee/{annee}', name: 'parametre_active_annee')]
     public function parametre_active_annee(Request $request,AcAnnee $annee): Response
     {
+        // dd($this->getUser()->getRoles());
+        if(!in_array('ROLE_ADMIN', $this->getUser()->getRoles())){
+            return new JsonResponse('Vous N\'avez pas l\'autorisation pour effectuer cette operation!',500);
+        }
         foreach ($annee->getFormation()->getAcAnnees() as $cannee) {
             $cannee->setClotureAcademique('oui');
             $cannee->setValidationAcademique('oui');
@@ -142,15 +146,21 @@ class AnneeController extends AbstractController
     public function new(Request $request): Response
     {
         // dd($request);
+       if($request->get('designation') == ""){
+            return new JsonResponse('Merci d\'entrez la designation',500);
+       }
+       $formation = $this->em->getRepository(AcFormation::class)->find($request->get("formation_id"));
+       $annee = $this->em->getRepository(AcAnnee::class)->findOneBy(['formation'=>$formation,'designation'=>$request->get('designation')]);
+       if($annee){
+            return new JsonResponse('Année déja exist!',500);
+       }
        $annee = new AcAnnee();
        $annee->setDesignation($request->get('designation'));
        $annee->setClotureAcademique('oui');
        $annee->setValidationAcademique('oui');
        $annee->setCreated(new \DateTime("now"));
        $annee->setActive(1);
-       $annee->setFormation(
-           $this->em->getRepository(AcFormation::class)->find($request->get("formation_id"))
-       );
+       $annee->setFormation($formation);
        $this->em->persist($annee);
        $this->em->flush();
        $annee->setCode("ANN".str_pad($annee->getId(), 8, '0', STR_PAD_LEFT));
@@ -161,6 +171,13 @@ class AnneeController extends AbstractController
     #[Route('/update/{annee}', name: 'parametre_annee_update')]
     public function update(Request $request, AcAnnee $annee): Response
     {
+        if($request->get('designation') == ""){
+            return new JsonResponse('Merci d\'entrez la designation',500);
+        }
+        $annee = $this->em->getRepository(AcAnnee::class)->findOneBy(['formation'=>$annee->getFormation(),'designation'=>$request->get('designation')]);
+        if($annee){
+            return new JsonResponse('Année déja exist!',500);
+        }
         $annee->setDesignation($request->get('designation'));
         $this->em->flush();
         

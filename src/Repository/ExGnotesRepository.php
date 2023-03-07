@@ -74,4 +74,20 @@ class ExGnotesRepository extends ServiceEntityRepository
                     ->getResult()
         ;
     }
+    public function checkIfModuleCapitaliser($enote)
+    {
+        return $this->createQueryBuilder('e')
+                    ->innerJoin('e.epreuve', "epreuve")
+                    ->innerJoin('epreuve.element', "element")
+                    ->innerJoin('e.inscription', "inscription")
+                    ->where('element= :element')
+                    ->andwhere('inscription= :inscription')
+                    ->andWhere("e.observation = 'CAP'")
+                    ->setParameter('element', $enote->getElement())
+                    ->setParameter('inscription', $enote->getInscription())
+                    ->getQuery()
+                    ->getResult()
+        ;
+    }
+    
 }

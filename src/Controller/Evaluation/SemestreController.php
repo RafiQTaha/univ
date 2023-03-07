@@ -15,10 +15,13 @@ use App\Entity\PeStatut;
 use App\Entity\TInscription;
 use Doctrine\Persistence\ManagerRegistry;
 use Mpdf\Mpdf;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\Routing\Annotation\Route;
 
 #[Route('/evaluation/semestre')]
@@ -84,36 +87,43 @@ class SemestreController extends AbstractController
                 ]);
 
             }
-            $note_rachat_semstre = $this->em->getRepository(ExSnotes::class)->findOneBy(['inscription' => $inscription, 'semestre' => $semestre]);
-            // if($inscription->getId() == 8612) {
-            //     dd($note_rachat_semstre->getNoteRachat());
-            // }
-            if($note_rachat_semstre && $note_rachat_semstre->getNoteRachat()) {
+            // $categorie="";
+            $snote = $this->em->getRepository(ExSnotes::class)->findOneBy(['inscription' => $inscription, 'semestre' => $semestre]);
+            $categorie = $snote != null ? $snote->getCategorie() : "";
+            if($snote && $snote->getNoteRachat()) {
                 // dd('amine');
-                $note_rachat_semstre = $note_rachat_semstre->getNoteRachat();
+                $note_rachat_semstre = $snote->getNoteRachat();
             } else {
                 $note_rachat_semstre = 0;
             }
             $moyenneSec = number_format($moyenne / $total_coef, 2, '.', ' ');
             $moyenneNormal = number_format($moyenne_normal / $total_coef_normal, 2, '.', ' ');
             $noteRachat = $note_rachat / $total_coef_normal;
+            // dd($categorie);
+
             array_push($data_saved, [
                 'inscription' => $inscription,
                 'noteModules' => $noteModules,
                 'noteRachat' => $noteRachat, 
                 'noteRachatSemstre' => $note_rachat_semstre,
                 'moyenneNormal' =>$moyenneNormal, 
-                'moyenneSec' => $moyenneSec
+                'moyenneSec' => $moyenneSec,
+                'categorie' => $categorie 
             ]);
         }
-        // dd($data_saved);
+        
         if($order == 3) {
             $moyenne = array_column($data_saved, 'moyenneNormal');
             array_multisort($moyenne, SORT_DESC, $data_saved);
         } else if($order == 4){
             $moyenne = array_column($data_saved, 'moyenneNormal');
             array_multisort($moyenne, SORT_ASC, $data_saved);
+        }elseif ($order == 5) {
+            $categorieSort = array_column($data_saved, 'categorie');
+            $moyenne = array_column($data_saved, 'moyenneNormal');
+            array_multisort($categorieSort, SORT_ASC,$moyenne, SORT_DESC, $data_saved);
         }
+        // dd($data_saved);
         $session = $request->getSession();
         $session->set('data_semestre', [
             'data_saved' => $data_saved, 
@@ -170,7 +180,7 @@ class SemestreController extends AbstractController
             'margin_left' => '5',
             'margin_right' => '5',
             'margin_top' => '35',
-            'margin_bottom' => '20',
+            'margin_bottom' => '25',
             'format' => 'A4-L',
             'margin_header' => '2',
             'margin_footer' => '2'
@@ -185,9 +195,87 @@ class SemestreController extends AbstractController
         $mpdf->WriteHTML($html);
         $mpdf->Output("semestre_deliberation_".$semestre->getId().".pdf", "I");
     }
+
+    // impression deliberation
+
+    #[Route('/impression_delib/{ins}', name: 'evaluation_semestre_impression_deliberation')]
+    public function evaluationSemestreImpressionDeliberation(Request $request, $ins) 
+    {         
+        $session = $request->getSession();
+        $semestre = $session->get('data_semestre')['semestre'];
+        $modules = $session->get('data_semestre')['modules'];
+        $inscription = $this->em->getRepository(TInscription::class)->find($ins);
+        $snote= $this->em->getRepository(ExSnotes::class)->findBy(['inscription'=>$inscription, 'semestre' =>$semestre]);
+
+        $snotes = $this->em->getRepository(ExSnotes::class)->findByAdmission($inscription->getAdmission());
+        $count_module_non_aquis = $this->em->getRepository(ExMnotes::class)->getModuleNonAquis($semestre, $inscription);
+        $annee = $this->em->getRepository(AcAnnee::class)->getActiveAnneeByFormation($semestre->getPromotion()->getFormation());
+        $infos =  [
+            'nbr_nonAcis'=> count($count_module_non_aquis),
+            'derogation' => count($snotes),
+            'semestre' => $semestre,
+            'snote' => $snote[0],
+            'inscription' => $inscription,
+            'modules' => $modules,
+            'statutModules' => $this->em->getRepository(PeStatut::class)->findBy(['type' => 'M']),
+            'statutSemestres' => $this->em->getRepository(PeStatut::class)->findBy(['type' => 'S']),
+            'etablissement' => $annee->getFormation()->getEtablissement(),
+        ];
+
+        $html = $this->render("evaluation/semestre/pdfs/deliberation_individuel.html.twig", $infos)->getContent();
+        
+        $html .= $this->render("evaluation/semestre/pdfs/footer.html.twig")->getContent();
+        $mpdf = new Mpdf([
+            'mode' => 'utf-8',
+            'margin_left' => '5',
+            'margin_right' => '5',
+            'margin_top' => '35',
+            'margin_bottom' => '20',
+            'format' => 'A4-L',
+            'margin_header' => '2',
+            'margin_footer' => '2'
+            ]);
+        $mpdf->SetHTMLHeader($this->render("evaluation/semestre/pdfs/header_deliberation_individuel.html.twig", [
+            'semestre' => $semestre,
+            'annee' => $annee
+        ])->getContent());
+        $mpdf->defaultfooterline = 0;
+        $mpdf->SetFooter('Page {PAGENO} / {nb}');
+        $mpdf->WriteHTML($html);
+        $mpdf->Output("semestre_deliberation_individuel".$semestre->getId().".pdf", "I");
+    }
+
+
+    // get enotes by module and inscription and semestre
+
+    public function getEnotesBySemestreAction($module, $inscription)
+    {
+
+        
+        $enotes = $this->em->getRepository(ExEnotes::class)->findByModule($module, $inscription);
+
+        $html = "";
+
+        $count = 0;
+
+        foreach ($enotes as $key => $enote) {
+            $html .= $this->render("evaluation/semestre/pages/enotes.html.twig", ['enote'=>$enote, 'enotes'=>$enotes, 'count'=>$count])->getContent();
+            $count++;
+        }
+
+        return new response($html);
+    }
+    
+
+
     public function getStatut($inscription, $semestre, $statut)
     {
-        return new Response($this->em->getRepository(ExSnotes::class)->getStatutByColumn($inscription, $semestre, $statut), 200, ['Content-Type' => 'text/html']);
+        $abreviation = $this->em->getRepository(ExSnotes::class)->getStatutByColumn($inscription, $semestre, $statut);
+        if ($abreviation != null) {
+            return new Response($this->em->getRepository(ExSnotes::class)->getStatutByColumn($inscription, $semestre, $statut)['abreviation'], 200, ['Content-Type' => 'text/html']);
+        }else{
+            return new Response("");
+        }
     }
     public function getStatutModule($inscription, $module)
     {
@@ -251,7 +339,7 @@ class SemestreController extends AbstractController
         }
         $this->em->getRepository(ExControle::class)->updateSemestreByElement($semestre, $annee, 1);
         
-        ApiController::mouchard($this->getUser(), $this->em,$exControle, 'exControle', 'Validation Circuit SEM');
+        ApiController::mouchard($this->getUser(), $this->em,$semestre, 'exControle', 'Validation Circuit SEM');
         $this->em->flush();
         return new JsonResponse("Bien Valider", 200);
     }
@@ -302,6 +390,7 @@ class SemestreController extends AbstractController
         if($type == 'avantrachat'){
             foreach ($dataSaved as $data) {
                 $inscription = $this->em->getRepository(TInscription::class)->find($data['inscription']->getId());
+                $count_module_non_aquis = $this->em->getRepository(ExMnotes::class)->getModuleNonAquis($semestre, $inscription);
                 $snote = $this->em->getRepository(ExSnotes::class)->findOneBy(['semestre' => $semestre, 'inscription' => $inscription]);
                 $data_module_min = $this->em->getRepository(ExMnotes::class)->GetModuleByCodeAnneeCodeSemstre($annee, $semestre, $inscription, 'min', 'statutDef');
                 $data_module_max = $this->em->getRepository(ExMnotes::class)->GetModuleByCodeAnneeCodeSemstre($annee, $semestre, $inscription, 'max', 'statutDef');
@@ -315,7 +404,7 @@ class SemestreController extends AbstractController
                     $max_module_statut_def = $data_module_max[0]->getStatutDef()->getId();
                     $max_module_statut_aff = $data_module_max_aff[0]->getStatutAff()->getId();
                 }
-                $result = $this->SemestreGetStatutAvantRachat($snote, 7, 10, $min_module_statut_def, $max_module_statut_def, $max_module_statut_aff, count($modules));
+                $result = $this->SemestreGetStatutAvantRachat($snote, 7, 10, $min_module_statut_def, $max_module_statut_def, $max_module_statut_aff, count($count_module_non_aquis));
 
                 if (isset($result) and !empty($result)) {
                     $snote->setStatutS2(
@@ -370,14 +459,19 @@ class SemestreController extends AbstractController
 
     }
 
-    public function SemestreGetStatutAvantRachat($snote, $note_eliminatoire, $note_validation, $min_module_statut_def, $max_module_statut_def, $max_module_statut_aff, $count_module) {
+    public function SemestreGetStatutAvantRachat($snote, $note_eliminatoire, $note_validation, $min_module_statut_def, $max_module_statut_def, $max_module_statut_aff, $count_module_non_aquis) {
         $send_data = array();
+        
+        $etablissement_id = $snote->getInscription()->getAnnee()->getFormation()->getEtablissement()->getId();
+        $note_validation = $etablissement_id == 26 ? 12 : 10;
+        // if ($min_module_statut_def == 29 || $count_module_non_aquis > 2) {
         if ($min_module_statut_def == 29) {
             $send_data['statut_s2'] = 57;
             $send_data['statut_def'] = 57;
             $send_data['statut_aff'] = 57;
         } else {
-            if ($snote->getNote() < $note_validation || $count_module > 2) {
+            // if ($snote->getNote() < $note_validation) {
+            if ($snote->getNote() < $note_validation || $count_module_non_aquis > 2) {
                 $send_data['statut_s2'] = 39;
                 $send_data['statut_def'] = 39;
                 $send_data['statut_aff'] = 39;
@@ -445,72 +539,11 @@ class SemestreController extends AbstractController
         }
         return $send_data;
     }
-    public function SemestreGetStatutCategories($data_module, $inscription, $annee, $semestre) {
-
-
-        $SEMESTRE_note_rachat = 0;
-        $cpt = 0;
-        $ELM = FALSE;
-        $ELM_MOD = FALSE;
-        $ELM_EF = FALSE;
-        $ELM_TP = FALSE;
-        $ELM_CC = FALSE;
-
-        // var_dump($code_inscription); 
-
-        foreach ($data_module as $key => $value) {
-
-            //    echo $value['note']." ---- ".$value['statut_def'].'<br/>' ;
-            switch ($value->getStatutAff()->getId()) {
-                case 29:
-                    $SEMESTRE_note_rachat = 10 - $value->getNote();
-                    $cpt = $cpt + 1;
-                    $ELM = true;
-
-                    
-                    $data_elements = $this->em->getRepository(ExEnotes::class)->findByModule($value->getModule(), $inscription);
-                    if ($data_elements) {
-                        foreach ($data_elements as $key2 => $value2) {
-                            if ($value2->getElement()->getNature()->getCode() == 'NE001' or $value2->getElement()->getNature()->getCode() == 'NE002') {
-                                if ($value->getNote() < 8) {
-                                    $ELM_MOD = true;
-                                }
-                                if ($value2->getMef() < 7) {
-                                    $ELM_EF = true;
-                                }
-                                if ($value2->getMtp() < 7) {
-                                    $ELM_TP = true;
-                                }
-                                if ($value2->getMcc() < 7) {
-                                    $ELM_CC = true;
-                                }
-                            } else {
-                                if ($value->getNote() < 10) {
-                                    $ELM_MOD = true;
-                                }
-                                if ($value2->getMef() < 10) {
-                                    $ELM_EF = true;
-                                }
-                                if ($value2->getMtp() < 10) {
-                                    $ELM_TP = true;
-                                }
-                                if ($value2->getMcc() < 10) {
-                                    $ELM_CC = true;
-                                }
-                            }
-                        }
-                    }
-
-                    break;
-                case 31:
-                    $SEMESTRE_note_rachat = 10 - $value->getNote();
-                    $cpt = $cpt + 1;
-                    break;
-            }
-        }
-
-
+    public function SemestreGetStatutCategories($data_module, $inscription, $annee, $semestre) 
+    {
         
+        $etablissement_id = $annee->getFormation()->getEtablissement()->getId();
+        $moy = $etablissement_id == 26 ? 12 : 10;
         $data_snotes = $this->em->getRepository(ExSnotes::class)->findOneBy(["inscription" => $inscription, "semestre" => $semestre]);
         $categorie = "";
         if ($data_snotes) {
@@ -520,62 +553,76 @@ class SemestreController extends AbstractController
                 $categorie = 'B';
             } elseif ($data_snotes->getStatutAff()->getId() == 37) {
                 $categorie = 'C';
-            } elseif ($data_snotes->getStatutAff()->getId() == 40) {
+            } elseif ($data_snotes->getStatutAff()->getId() == 38) {
+                $categorie = 'CR';
+            } elseif ($data_snotes->getStatutAff()->getId() == 72) {
                 $categorie = 'D';
-            } else {
-
-                if ($SEMESTRE_note_rachat > 7) {
+            } elseif ($data_snotes->getStatutAff()->getId() == 39) {
+                $count_module_non_aquis = $this->em->getRepository(ExMnotes::class)->getModuleNonAquis($semestre, $inscription);
+                if (count($count_module_non_aquis) > 2 and $data_snotes->getNote() >= $moy ) {
+                    $categorie = 'F';
+                }elseif ($data_snotes->getNote() >= 9 and $data_snotes->getNote() < $moy) {
                     $categorie = 'E';
-                } else {
-
-                    if ($ELM == false) {
-                        if ($cpt > 2 && $data_snotes->getNote() >= 10) {
-                            $categorie = 'F';
-                        } else {
-                            $categorie = 'G';
-                        }
-                    } else {
-                        if ($data_snotes->getNote() >= 10) {
-                            if ($ELM_MOD == true) {
-                                $categorie = 'HA';
-                            }
-                            ELSE {
-                                if ($ELM_EF == true) {
-                                    $categorie = 'HB';
-                                }
-                                else{
-                                    if ($ELM_TP == true) {
-                                        $categorie = 'HC';
-                                    }
-                                    else{
-                                         if ($ELM_CC == true) {
-                                            $categorie = 'HD';
-                                        }
-                                    }
-                                }
-                            } 
-                        } else {
-                            if ($ELM_MOD == true) {
-                                $categorie = 'IA';
-                            } else {
-                                if ($ELM_EF == true) {
-                                    $categorie = 'IB';
-                                } else {
-                                     if ($ELM_TP == true) {
-                                        $categorie = 'IC';
-                                    } else{
-                                       if ($ELM_CC == true) {
-                                            $categorie = 'ID';
-                                        } 
-                                    }
-                                }
-                            }
-                        }
-                    }
                 }
-            }
+            }elseif ($data_snotes->getStatutAff()->getId() == 57) {
+                $ModuleTheoriqueEliminatoire = $this->em->getRepository(ExMnotes::class)->getModulesTheoriqueBySemestre($semestre,$inscription);
+                $ModulePratiqueEliminatoire = $this->em->getRepository(ExMnotes::class)->getModulesPratiqueBySemestre($semestre,$inscription);
+                $noteAssiduite = $this->em->getRepository(ExMnotes::class)->getNotesModuleAssiduiteBySemestre($semestre,$inscription);
+                $derogations = $this->em->getRepository(ExSnotes::class)->findByAdmission($inscription->getAdmission());
+                // if ($inscription->getId() == 15067  ) {
+                //     dd($ModuleTheoriqueEliminatoire);
+                // }
+                $palier = ($data_snotes->getNote() + $noteAssiduite->getNote()) / 2;
+                if ($data_snotes->getNote() >= $moy and $ModulePratiqueEliminatoire and count($derogations) > 0) {
+                    $categorie = 'HD';
+                }elseif ($data_snotes->getNote() >= $moy and $palier >= 10 and $ModulePratiqueEliminatoire) {
+                    $categorie = 'HB';
+                }elseif ($data_snotes->getNote() >= $moy and $palier >= 10 and $ModuleTheoriqueEliminatoire) {
+                    $categorie = 'HA';
+                }elseif ($data_snotes->getNote() >= $moy and $palier < 10) {
+                    $categorie = 'HC';
+                }elseif ($data_snotes->getNote() < $moy and $palier >= 10) {
+                    $categorie = 'IA';
+                }elseif ($data_snotes->getNote() < $moy and $palier < 10) {
+                    $categorie = 'IB';
+                }
+            } 
         }
 
         return $categorie;
+    }
+    
+    #[Route('/extraction_semestre', name: 'evaluation_semestre_extraction_semestre')]
+    public function evaluationSemestreExtraction(Request $request) 
+    {   
+        $current_year = date('m') > 7 ? date('Y').'/'.date('Y')+1 :  date('Y') - 1 .'/' .date('Y');
+        // $elements = $this->em->getRepository(AcElement::class)->getElementByCurrentYear($current_year);
+        $semestres = $this->em->getRepository(ExSnotes::class)->getSemestreByCurrentYear($current_year);
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        $i=2;
+        $j=1;
+        // dump($gnotes);die;
+        $sheet->fromArray(
+            array_keys($semestres[0]),
+            null,
+            'A1'
+        );
+        foreach ($semestres as $semestre) {
+            $sheet->fromArray(
+                $semestre,
+                null,
+                'A'.$i
+            );
+            $i++;
+            $j++;
+        }
+        $writer = new Xlsx($spreadsheet);
+        $year = date('m') > 7 ? date('Y').'-'.date('Y')+1 : date('Y') - 1 .'-' .date('Y');
+        $fileName = "Extraction semestres $year.xlsx";
+        $temp_file = tempnam(sys_get_temp_dir(), $fileName);
+        $writer->save($temp_file);
+        return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);
+        
     }
 }

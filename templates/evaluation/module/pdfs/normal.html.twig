@@ -127,7 +127,7 @@
                     <td style="font-size: 9px; text-align: left">{{noteElement}}</td>  
                 {% endfor %}
                 <td style="font-size: 9px; background: #d8d8d8; text-align: center ; color: #000; font-weight: bold;"> 
-                    {{data.moyenneTot|number_format(2, '.', ',') }}
+                    {{data.moyenneTot|number_format(2, '.', ',') == -0.05 ? 0 : data.moyenneTot|number_format(2, '.', ',')  }}
                 </td>
                 <td style="font-size: 9px; background: #d8d8d8; text-align: center ; color: #000; font-weight: bold;"> 
                     {% if affichage == 0 %} 

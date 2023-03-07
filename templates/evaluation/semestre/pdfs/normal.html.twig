@@ -149,7 +149,7 @@
 </table>
 <br>
 
-<pagebreak />
+{# <pagebreak /> #}
 
 <table cellspacing="0" style="width: 100%; text-align: left; font-size: 12px" >
     <tr>
@@ -175,6 +175,7 @@
             <th style="width:80px; background-color: #525252;color: white; text-align: center;font-weight: 800">Moyenne Validation</th>
             <th style="width:80px; background-color: #525252;color: white; text-align: center;font-weight: 800">Moyenne Classement</th>
             <th style="width:80px; background-color: #525252;color: white; text-align: center;font-weight: 800">Statut</th>
+            <th style="width:80px; background-color: #525252;color: white; text-align: center;font-weight: 800">Categorie</th>
 
         </tr>
 
@@ -213,6 +214,9 @@
                         )) }}
                     {% else %}
                     {% endif %}
+                </td>
+                <td style="font-size: 9px; background: #d8d8d8; text-align: center ; color: #000; font-weight: bold;"> 
+                    {{data.categorie}}
                 </td>
             </tr>
         {% endfor %}
