@@ -357,8 +357,8 @@ class FormationController extends AbstractController
         return new JsonResponse(['message'=>"Bien Enregistre",'check' => $check],200);
     }
 
-    #[Route('/impression/{type}/{affichage}', name: 'evaluation_formation_impression')]
-    public function evaluationFormationImpression(Request $request, $type,$affichage) 
+    #[Route('/impression', name: 'evaluation_formation_impression')]
+    public function evaluationFormationImpression(Request $request) 
     {         
         $session = $request->getSession();
         $etudiantsArray = $session->get('data_fnotes')['etudiants'];
@@ -373,7 +373,7 @@ class FormationController extends AbstractController
         $stautsAnnee = $this->em->getRepository(PeStatut::class)->findBy(['type'=>'A']);
         // dd($session->get('data_fnotes')['etudiants'][0]['inscription']);
 
-        // dd($dataAnnee);
+        // dd($etudiantsArray);
         $infos =  [
             'infosGeneral' => $infosGeneral,
             'dataAnnee' => $dataAnnee,
@@ -381,18 +381,10 @@ class FormationController extends AbstractController
             'etudiantsArray' => $etudiantsArray,
             'stautsFormation' => $stautsFormation,
             'stautsSemestre' => $stautsSemestre,
-            'stautsAnnee' => $stautsAnnee,
-            'affichage' => $affichage,
+            'stautsAnnee' => $stautsAnnee
 
         ];
-        if($type == "normal"){
-            $html = $this->render("evaluation/formation/pdfs/normal.html.twig", $infos)->getContent();
-        } else if ($type == "anonymat") {
-            $html = $this->render("evaluation/formation/pdfs/anonymat.html.twig", $infos)->getContent();
-        }
-        else if ($type == "clair") {
-            $html = $this->render("evaluation/formation/pdfs/clair.html.twig", $infos)->getContent();
-        }
+        $html = $this->render("evaluation/formation/pdfs/normal.html.twig", $infos)->getContent();
         
         $html .= $this->render("evaluation/formation/pdfs/footer.html.twig")->getContent();
         $mpdf = new Mpdf([
@@ -407,8 +399,7 @@ class FormationController extends AbstractController
             ]);
         $mpdf->SetHTMLHeader($this->render("evaluation/formation/pdfs/header.html.twig", [
             'infosGeneral' => $infosGeneral,
-            'annee' => $annee,
-            'affichage' => $affichage
+            'annee' => $annee
         ])->getContent());
         $mpdf->SetFooter('Page {PAGENO} / {nb}');
         $mpdf->WriteHTML($html);

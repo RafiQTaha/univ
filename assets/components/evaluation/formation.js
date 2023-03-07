@@ -293,28 +293,28 @@ $(document).ready(function () {
     });
 
     $("#imprimer").on("click", () => {
-        $("#imprimer_list").modal("show");
+        window.open('/evaluation/formation/impression', '_blank');
     });
 
-    $("#affichage").on("change", function () {
-        let affichage = $(this).val();
-        $("#impression_list").attr(
-            "href",
-            $("#impression_list").attr("href").slice(0, -1) + affichage
-        );
-        $("#impression_clair").attr(
-            "href",
-            $("#impression_clair").attr("href").slice(0, -1) + affichage
-        );
-        $("#impression_anonymat").attr(
-            "href",
-            $("#impression_anonymat").attr("href").slice(0, -1) + affichage
-        );
-        $("#impression_rat").attr(
-            "href",
-            $("#impression_rat").attr("href").slice(0, -1) + affichage
-        );
-    });
+    // $("#affichage").on("change", function () {
+    //     let affichage = $(this).val();
+    //     $("#impression_list").attr(
+    //         "href",
+    //         $("#impression_list").attr("href").slice(0, -1) + affichage
+    //     );
+    //     $("#impression_clair").attr(
+    //         "href",
+    //         $("#impression_clair").attr("href").slice(0, -1) + affichage
+    //     );
+    //     $("#impression_anonymat").attr(
+    //         "href",
+    //         $("#impression_anonymat").attr("href").slice(0, -1) + affichage
+    //     );
+    //     $("#impression_rat").attr(
+    //         "href",
+    //         $("#impression_rat").attr("href").slice(0, -1) + affichage
+    //     );
+    // });
 
     $("#recalculer").on("click", async function () {
         const icon = $("#recalculer i");
