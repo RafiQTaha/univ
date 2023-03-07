@@ -191,13 +191,13 @@ class EnseignantController extends AbstractController
 
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
-        $sheet->setCellValue('A1', 'Id_ENSEIGNANT');
-        $sheet->setCellValue('B1', 'ID_GRADE');
-        $sheet->setCellValue('C1', 'DESIG_GRADE');
-        $sheet->setCellValue('D1', 'QUALITE');
-        $sheet->setCellValue('E1', 'CODE');
-        $sheet->setCellValue('F1', 'NOM');
-        $sheet->setCellValue('G1', 'PRENOM');
+        $sheet->setCellValue('A1', 'Id');
+        $sheet->setCellValue('B1', 'CODE');
+        $sheet->setCellValue('C1', 'NOM');
+        $sheet->setCellValue('D1', 'PRENOM');
+        $sheet->setCellValue('E1', 'ID_GRADE');
+        $sheet->setCellValue('F1', 'GRADE');
+        $sheet->setCellValue('G1', 'ABREVIATION');
         $sheet->setCellValue('H1', 'CIN');
         $sheet->setCellValue('I1', 'RIB');
         $i=2;
@@ -206,14 +206,13 @@ class EnseignantController extends AbstractController
         
         foreach ($enseignants as $enseignant){
             $grade =$enseignant->getGrade();
-
             $sheet->setCellValue('A'.$i, $enseignant->getId());
             $sheet->setCellValue('B'.$i, $grade->getId());
-            $sheet->setCellValue('C'.$i, $grade->getDesignation());
-            $sheet->setCellValue('D'.$i, $grade->getAbreviation());
-            $sheet->setCellValue('E'.$i, $enseignant->getCode());
-            $sheet->setCellValue('F'.$i, $enseignant->getNom());
-            $sheet->setCellValue('G'.$i, $enseignant->getPrenom());
+            $sheet->setCellValue('C'.$i, $enseignant->getCode());
+            $sheet->setCellValue('D'.$i, $enseignant->getNom());
+            $sheet->setCellValue('E'.$i, $enseignant->getPrenom());
+            $sheet->setCellValue('F'.$i, $grade->getDesignation());
+            $sheet->setCellValue('G'.$i, $grade->getAbreviation());
             $sheet->setCellValue('H'.$i, $enseignant->getCin());
             $sheet->setCellValue('I'.$i, $enseignant->getRib());
             $i++;
