@@ -177,6 +177,7 @@ class EnseignantController extends AbstractController
     #[Route('/delete/{enseignant}', name: 'parametre_enseignant_delete')]
     public function delete(Request $request, PEnseignant $enseignant): Response
     {
+        dd('test');
         $enseignant->setActive(0);
         $this->em->flush();
  

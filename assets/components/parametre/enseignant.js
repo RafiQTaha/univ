@@ -175,13 +175,13 @@ const Toast = Swal.mixin({
 
         var res = confirm('Vous voulez vraiment supprimer cet enseignant ?');
         if(res == 1){
+            icon.removeClass('fa-trash').addClass("fa-spinner fa-spin ");
             try {
-                icon.remove('fa-check-circle').addClass("fa-spinner fa-spin ");
                 const request = await axios.post('/parametre/enseignant/delete/'+id_enseignant);
                 const response = request.data;
                 table.ajax.reload();
                 id_enseignant = false
-                icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
+                icon.addClass('fa-trash').removeClass("fa-spinner fa-spin ");
                 Toast.fire({
                     icon: 'success',
                     title: 'Enseignant bien Supprimer',
@@ -193,7 +193,7 @@ const Toast = Swal.mixin({
                     icon: 'error',
                     title: message,
                 })
-                icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
+                icon.addClass('fa-trash').removeClass("fa-spinner fa-spin ");
                 
             }
         }
