@@ -338,6 +338,7 @@ class GestionAdmissionController extends AbstractController
     #[Route('/inscription/{admission}', name: 'admission_inscription')]
     public function inscriptionAction(Request $request, TAdmission $admission)
     {
+        // dd($admission->getPreinscription()->getNature());
         $annee = $this->em->getRepository(AcAnnee::class)->find($request->get('annee_inscription'));
         $inscription = $this->em->getRepository(TInscription::class)->getActiveInscriptionByAnnee($admission,$annee);
         if ($inscription != null) {
@@ -378,7 +379,12 @@ class GestionAdmissionController extends AbstractController
                 $operationcab->setActive(0);
             }   
         }
-        
+        $isBoursier = 0;
+        if ($admission->getPreinscription()->getNature() and $admission->getPreinscription()->getNature()->getId() == 4) {
+            $isBoursier = 1;
+        }
+        $k = $isBoursier == 0 ? 2 : 4 ;
+        // for ($i=0; $i < $k; $i++) { 
         for ($i=0; $i < 2; $i++) { 
             $operationCab = new TOperationcab();
             $operationCab->setPreinscription($inscription->getAdmission()->getPreinscription());
@@ -386,7 +392,7 @@ class GestionAdmissionController extends AbstractController
             $operationCab->setAnnee($inscription->getAnnee());
             // switch ($i) {
             //     case 1:
-            //         // "hors inscription" a remplacer par "ADD Inscription"
+            //         // "hors inscription" à remplacer par "ADD Inscription"
             //         $operationCab->setCategorie('hors inscription');
             //         $operationCab->setCategorie('hors inscription');
             //         $operationCab->setActive(0);

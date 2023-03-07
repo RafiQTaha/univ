@@ -745,7 +745,7 @@ class GestionFactureController extends AbstractController
         $writer->save($temp_file);
         return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);
     }
-
+    
     #[Route('/valider', name: 'valider_facture')]
     public function valider_facture(Request $request): Response
     {   
@@ -766,6 +766,29 @@ class GestionFactureController extends AbstractController
         $operationcab->setActive(0);
         $this->em->flush();
         return new JsonResponse('La facture est bien Valider!', 200);    
+    }
+    
+    #[Route('/new_fac_organisme', name: 'new_fac_organisme')]
+    public function new_fac_organisme(Request $request): Response
+    {   
+        dd($request->get('facture'));
+        // if (!$request->get('facture')) {
+        //     return new JsonResponse('Veuillez selection une facture!', 500);
+        // }
+        // $operationcab = $this->em->getRepository(TOperationcab::class)->find($request->get('facture'));
+        // if (!$operationcab) {
+        //     return new JsonResponse('Facture Introuvable!', 500);   
+        // }
+        // if ($operationcab->getActive() == 0) {
+        //     return new JsonResponse('Facture Déja Cloturée!', 500);   
+        // }
+        // if ($operationcab->getCategorie() == 'inscription') {
+        //     $operationCabHorsIns = $this->em->getRepository(TOperationcab::class)->findOneBy(['categorie'=>'hors inscription','preinscription'=>$operationcab->getPreinscription()]);
+        //     $operationCabHorsIns->setActive(1);
+        // }
+        // $operationcab->setActive(0);
+        // $this->em->flush();
+        // return new JsonResponse('La facture est bien Valider!', 200);    
     }
 
 }

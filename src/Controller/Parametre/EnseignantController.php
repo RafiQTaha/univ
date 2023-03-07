@@ -115,7 +115,7 @@ class EnseignantController extends AbstractController
         // die;
         return new Response(json_encode($json_data));
     }
-    #[Route('/new', name: 'parametre_enseignant_new')]
+    #[Route('/new', name: 'parametre_enseignant_news')]
     public function new(Request $request): Response
     {
     //    dd($request);

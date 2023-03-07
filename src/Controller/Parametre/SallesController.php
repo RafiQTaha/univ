@@ -2,8 +2,6 @@
 
 namespace App\Controller\Parametre;
 
-use App\Entity\PGrade;
-use App\Entity\PEnseignant;
 use App\Controller\ApiController;
 use App\Controller\DatatablesController;
 use App\Entity\PSalles;
@@ -111,7 +109,7 @@ class SallesController extends AbstractController
         // die;
         return new Response(json_encode($json_data));
     }
-    #[Route('/new', name: 'parametre_enseignant_new')]
+    #[Route('/new', name: 'parametre_salle_new')]
     public function new(Request $request): Response
     {
     //    dd($request);
@@ -131,7 +129,7 @@ class SallesController extends AbstractController
        return new JsonResponse('Salle Bien Ajouté',200);
     }
 
-    #[Route('/details/{salle}', name: 'parametre_enseignant_details')]
+    #[Route('/details/{salle}', name: 'parametre_salle_details')]
     public function details(PSalles $salle): Response
     {
         $html = $this->render('parametre/salles/pages/modifier.html.twig', [
@@ -149,10 +147,10 @@ class SallesController extends AbstractController
         $salle->setAbreviation($request->get('abreviation'));
         $this->em->flush();
  
-        return new JsonResponse('Enseignant bien modifier!',200);
+        return new JsonResponse('Salle bien modifier!',200);
     }
 
-    #[Route('/delete/{salle}', name: 'parametre_enseignant_delete')]
+    #[Route('/delete/{salle}', name: 'parametre_salle_delete')]
     public function delete(Request $request, PSalles $salle): Response
     {
         $salle->setActive(0);
@@ -165,7 +163,7 @@ class SallesController extends AbstractController
     public function extraction() {
         
         $salles = $this->em->getRepository(PSalles::class)->findBy(['active'=>1]);
-        // dd($enseignant);
+        // dd($salle);
 
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
