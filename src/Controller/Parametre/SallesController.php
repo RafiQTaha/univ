@@ -158,7 +158,7 @@ class SallesController extends AbstractController
         $salle->setActive(0);
         $this->em->flush();
  
-        return new JsonResponse(1);
+        return new JsonResponse('Salle bien Supprimer');
     }
 
     #[Route('/extraction', name: 'parametre_salle_extraction')]

@@ -148,16 +148,16 @@ const Toast = Swal.mixin({
 
         var res = confirm('Vous voulez vraiment supprimer cette salle ?');
         if(res == 1){
+            icon.removeClass('fa-trash').addClass("fa-spinner fa-spin ");
             try {
-                icon.remove('fa-check-circle').addClass("fa-spinner fa-spin ");
                 const request = await axios.post('/parametre/salles/delete/'+id_salle);
                 const response = request.data;
                 table.ajax.reload();
                 id_salle = false
-                icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
+                icon.addClass('fa-trash').removeClass("fa-spinner fa-spin ");
                 Toast.fire({
                     icon: 'success',
-                    title: 'Salle bien Supprimer',
+                    title: response,
                 })
             } catch (error) {
                 console.log(error, error.response);
@@ -166,7 +166,7 @@ const Toast = Swal.mixin({
                     icon: 'error',
                     title: message,
                 })
-                icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
+                icon.addClass('fa-trash').removeClass("fa-spinner fa-spin ");
                 
             }
         }
