@@ -63,6 +63,7 @@ Encore
     .addEntry('preinscription', './assets/components/preinscription/preinscription.js')
     .addEntry('gestionPreinscription', './assets/components/preinscription/gestionpreinscription.js')
     .addEntry('enseignant', './assets/components/parametre/enseignant.js')
+    .addEntry('salles', './assets/components/parametre/salles.js')
     .addEntry('enseignantexcept', './assets/components/parametre/enseignantexcept.js')
     .addEntry('frais', './assets/components/parametre/frais.js')
     .addEntry('academie', './assets/components/parametre/academie.js')

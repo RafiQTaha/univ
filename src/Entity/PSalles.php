@@ -45,6 +45,9 @@ class PSalles
     #[ORM\OneToMany(mappedBy: 'xsalle', targetEntity: PlEmptime::class)]
     private $plEmptimes;
 
+    #[ORM\Column(type: 'integer', nullable: true)]
+    private $active = 1;
+
     public function __construct()
     {
         $this->emptimes = new ArrayCollection();
@@ -208,6 +211,18 @@ class PSalles
                 $plEmptime->setXsalle(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getActive(): ?int
+    {
+        return $this->active;
+    }
+
+    public function setActive(?int $active): self
+    {
+        $this->active = $active;
 
         return $this;
     }
