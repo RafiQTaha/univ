@@ -465,6 +465,8 @@ class PlanificationController extends AbstractController
                 $iseance->setStatut(5);
             }
             $emptime->setActive(0);
+            $emptime->setDeleted(new \DateTime('now'));
+            $emptime->setUserDeleted($this->getUser());
             $this->em->flush();
             return new Response('Planification bien supprimée',200);
         }

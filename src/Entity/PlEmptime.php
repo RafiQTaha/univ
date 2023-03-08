@@ -89,6 +89,12 @@ class PlEmptime
 
     #[ORM\ManyToOne(targetEntity: PSalles::class, inversedBy: 'plEmptimes')]
     private $xsalle;
+
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'plEmptimes')]
+    private $userDeleted;
+
+    #[ORM\Column(type: 'datetime', nullable: true)]
+    private $deleted;
     
     public function __construct()
     {
@@ -452,6 +458,30 @@ class PlEmptime
     public function setXsalle(?PSalles $xsalle): self
     {
         $this->xsalle = $xsalle;
+
+        return $this;
+    }
+
+    public function getUserDeleted(): ?User
+    {
+        return $this->userDeleted;
+    }
+
+    public function setUserDeleted(?User $userDeleted): self
+    {
+        $this->userDeleted = $userDeleted;
+
+        return $this;
+    }
+
+    public function getDeleted(): ?\DateTimeInterface
+    {
+        return $this->deleted;
+    }
+
+    public function setDeleted(?\DateTimeInterface $deleted): self
+    {
+        $this->deleted = $deleted;
 
         return $this;
     }

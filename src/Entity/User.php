@@ -82,6 +82,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'userCreated', targetEntity: TOperationdet::class)]
     private $tOperationDets;
 
+    #[ORM\OneToMany(mappedBy: 'userDeleted', targetEntity: PlEmptime::class)]
+    private $plEmptimes;
+
 
     public function __construct()
     {
@@ -99,6 +102,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->tInscriptionImpLogs = new ArrayCollection();
         $this->tInscriptionImpControles = new ArrayCollection();
         $this->tOperationDets = new ArrayCollection();
+        $this->plEmptimes = new ArrayCollection();
     }
 
     
@@ -642,6 +646,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($tOperationDet->getUserCreated() === $this) {
                 $tOperationDet->setUserCreated(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, PlEmptime>
+     */
+    public function getPlEmptimes(): Collection
+    {
+        return $this->plEmptimes;
+    }
+
+    public function addPlEmptime(PlEmptime $plEmptime): self
+    {
+        if (!$this->plEmptimes->contains($plEmptime)) {
+            $this->plEmptimes[] = $plEmptime;
+            $plEmptime->setUserDeleted($this);
+        }
+
+        return $this;
+    }
+
+    public function removePlEmptime(PlEmptime $plEmptime): self
+    {
+        if ($this->plEmptimes->removeElement($plEmptime)) {
+            // set the owning side to null (unless already changed)
+            if ($plEmptime->getUserDeleted() === $this) {
+                $plEmptime->setUserDeleted(null);
             }
         }
 

@@ -401,11 +401,12 @@ $(document).ready(function () {
 
     $('body').on('click','#planning_delete', async function(e) {
         e.preventDefault();
+        const icon = $("body #planning_delete i");
         if(id_planning){
             var res = confirm('Vous voulez vraiment supprimer cette enregistrement ?');
             if(res == 1){
-                const icon = $("#planning_enregistre .update_planning i");
-                icon.removeClass('fa-check-circle').addClass("fa-spinner fa-spin");
+                // const icon = $("#planning_enregistre .update_planning i");
+                icon.removeClass('fa-trash').addClass("fa-spinner fa-spin");
                 try {
                     const request = await axios.post('/planification/planifications/delete_planning/'+id_planning);
                     const response = request.data;
@@ -414,14 +415,14 @@ $(document).ready(function () {
                         title: response,
                     })
                     alltimes()
-                    icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
+                    icon.addClass('fa-trash').removeClass("fa-spinner fa-spin ");
                 } catch (error) {
                     const message = error.response.data;
                     Toast.fire({
                         icon: 'error',
                         title: message,
                     })
-                    icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
+                    icon.addClass('fa-trash').removeClass("fa-spinner fa-spin ");
                 }
                 setTimeout(() => {
                     $('#updateform_planif-modal').modal("hide");

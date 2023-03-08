@@ -208,6 +208,8 @@ class GestionPlanificationController extends AbstractController
                 foreach($iseances as $iseance){
                     $iseance->setStatut(5);
                 }
+                $emptime->setDeleted(new \DateTime('now'));
+                $emptime->setUserDeleted($this->getUser());
                 $emptime->setActive(0);
                 $this->em->flush();
             }
