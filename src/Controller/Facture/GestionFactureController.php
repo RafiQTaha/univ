@@ -171,15 +171,15 @@ class GestionFactureController extends AbstractController
                         if ($orgpyt) {
                             $org = 'O/P';
                         }else{
-                            // $operationCab = $this->em->getRepository(TOperationcab::class)->find($cd);
+                            $operationCab = $this->em->getRepository(TOperationcab::class)->find($cd);
                             // dd($cd);
-                            // if ($operationCab->getOrganisme() != null) {
-                            //     if ($org = 'Payant') {
-                            //         $org = 'PYT';
-                            //     }else{
-                            //         $org = 'ORG';
-                            //     }
-                            // }else{
+                            if ($operationCab->getOrganisme() != null) {
+                                if ($org = 'Payant') {
+                                    $org = 'PYT';
+                                }else{
+                                    $org = 'ORG';
+                                }
+                            }else{
                                 $pyt = $this->em->getRepository(TOperationdet::class)->findBy(['operationcab'=>$cd,'active'=>1,'organisme'=>7]);
                                 $org = $this->em->getRepository(TOperationdet::class)->FindDetNotPayant($cd);
                                 if ($pyt && $org) {
@@ -189,7 +189,7 @@ class GestionFactureController extends AbstractController
                                 }else {
                                     $org = 'PYT';
                                 }
-                            // }
+                            }
                         }
                         $nestedData[] = $org;
                         $value = $value == 0 ? 'Cloture' : 'Ouverte';
