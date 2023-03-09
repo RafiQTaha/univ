@@ -174,7 +174,7 @@ class GestionFactureController extends AbstractController
                             $operationCab = $this->em->getRepository(TOperationcab::class)->find($cd);
                             // dd($cd);
                             if ($operationCab->getOrganisme() != null) {
-                                if ($org = 'Payant') {
+                                if ($operationCab->getOrganisme() ==  'Payant') {
                                     $org = 'PYT';
                                 }else{
                                     $org = 'ORG';
