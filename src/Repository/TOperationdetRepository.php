@@ -47,6 +47,30 @@ class TOperationdetRepository extends ServiceEntityRepository
         ;
     }
     */
+    
+    public function getSumMontantCAByPreinsAndAnnee($annee,$preinscription)
+    {
+        $request = $this->createQueryBuilder('t')
+            ->select("SUM(t.montant) as total")
+            ->innerJoin('t.operationcab','operationcab')
+            ->innerJoin('operationcab.preinscription','preinscription')
+            ->innerJoin('operationcab.annee','annee')
+            ->innerJoin('t.organisme','organisme')
+            ->Where('annee = :annee')
+            ->andWhere('preinscription = :preinscription')
+            ->andWhere('t.active = 1')
+            ->andWhere('organisme.id = 7')
+            ->setParameter('annee', $annee)
+            ->setParameter('preinscription', $preinscription)
+            // ->groupBy('t.operationcab')
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
+        if(!$request) {
+            return ['total' => 0];
+        } 
+        return $request;
+    }
     public function getSumMontantNonOrganismeByCodeFacture($operation)
     {
         $request = $this->createQueryBuilder('t')

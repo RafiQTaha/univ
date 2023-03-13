@@ -85,6 +85,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'userDeleted', targetEntity: PlEmptime::class)]
     private $plEmptimes;
 
+    #[ORM\OneToMany(mappedBy: 'userUpdated', targetEntity: TOperationdet::class)]
+    private $tOperationdets;
+
 
     public function __construct()
     {
@@ -103,6 +106,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->tInscriptionImpControles = new ArrayCollection();
         $this->tOperationDets = new ArrayCollection();
         $this->plEmptimes = new ArrayCollection();
+        $this->tOperationdets = new ArrayCollection();
     }
 
     

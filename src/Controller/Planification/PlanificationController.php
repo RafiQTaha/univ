@@ -185,7 +185,7 @@ class PlanificationController extends AbstractController
                     $nivs .= $niv->getGroupe()->getGroupe()->getNiveau(). ' - ' .$niv->getGroupe()->getNiveau().' - ' .$niv->getNiveau() . "\n";
                 }
             }
-            if ($nivs == "" )  $nivs .= "\n";
+            // if ($nivs != "" )  $nivs .= "\n";
             
             $emptimens = $this->em->getRepository(PlEmptimens::class)->findBy(['seance'=>$emptime]);
             // dd($enseignants[0]->getEnseignant()->getNom().' '.$emptime->getEmptimens()[0]->getPrenom(););
@@ -200,26 +200,26 @@ class PlanificationController extends AbstractController
             $natureEpreuve = $emptime->getProgrammation()->getNatureEpreuve();
             $salle = $emptime->getSalle() == null ? "" : $emptime->getSalle()->getDesignation();
             $times[] = [
-                'id' => $emptime->getId(),
-                'title' => $emptime->getCode() . "\n".
-                        ' Element :  '.$element->getDesignation() . "\n".
-                        ' Type de Cours :  '.$natureEpreuve->getDesignation() . "\n".
-                        $enseingant .
-                        'Niv : '.$nivs  . 
-                        'salle : '.$salle ,
-                'start' => $emptime->getStart()->format('Y-m-d H:i:s'),
-                'end' => $emptime->getEnd()->format('Y-m-d H:i:s'),
-                'color'=> $element->getModule()->getColor(),
                 // 'id' => $emptime->getId(),
                 // 'title' => $emptime->getCode() . "\n".
-                //         $enseingant . 
-                //         ' salle : '.$salle .
-                //         ' Niv : '.$nivs  .
                 //         ' Element :  '.$element->getDesignation() . "\n".
-                //         ' Type de Cours :  '.$natureEpreuve->getDesignation(),
+                //         ' Type de Cours :  '.$natureEpreuve->getDesignation() . "\n".
+                //         $enseingant .
+                //         'Niv : '.$nivs  . 
+                //         'salle : '.$salle ,
                 // 'start' => $emptime->getStart()->format('Y-m-d H:i:s'),
                 // 'end' => $emptime->getEnd()->format('Y-m-d H:i:s'),
                 // 'color'=> $element->getModule()->getColor(),
+                'id' => $emptime->getId(),
+                'title' => $emptime->getId() . "\n".
+                        ' '.$nivs  . 
+                        ' '.$salle . "\n".
+                        ' '.$enseingant .
+                        ' '.$element->getDesignation() . "\n".
+                        ' '.$natureEpreuve->getDesignation(),
+                'start' => $emptime->getStart()->format('Y-m-d H:i:s'),
+                'end' => $emptime->getEnd()->format('Y-m-d H:i:s'),
+                'color'=> $element->getModule()->getColor(),
             ];
             $nivs = "";
         }
@@ -297,21 +297,21 @@ class PlanificationController extends AbstractController
         $groupes = [];
         foreach ($inscriptions as $inscription) {
             $groupe = $inscription->getGroupe();
-                if ($groupe->getGroupe() == Null) {
-                    if (!in_array($groupe, $groupes)){
-                        array_push($groupes,$groupe);
-                    }
-                }elseif ($groupe->getGroupe()->getGroupe() == Null) {
-                    $groupe = $groupe->getGroupe();
-                    if (!in_array($groupe, $groupes)){
-                        array_push($groupes,$groupe);
-                    }
-                }else {
-                    $groupe = $groupe->getGroupe()->getGroupe();
-                    if (!in_array($groupe, $groupes)){
-                        array_push($groupes,$groupe);
-                    }
+            if ($groupe->getGroupe() == Null) {
+                if (!in_array($groupe, $groupes)){
+                    array_push($groupes,$groupe);
                 }
+            }elseif ($groupe->getGroupe()->getGroupe() == Null) {
+                $groupe = $groupe->getGroupe();
+                if (!in_array($groupe, $groupes)){
+                    array_push($groupes,$groupe);
+                }
+            }else {
+                $groupe = $groupe->getGroupe()->getGroupe();
+                if (!in_array($groupe, $groupes)){
+                    array_push($groupes,$groupe);
+                }
+            }
         }
         $html = $this->render("planification/pages/update_form.html.twig", [
             'emptime' => $emptime,

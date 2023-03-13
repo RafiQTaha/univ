@@ -399,6 +399,7 @@ class EtudiantController extends AbstractController
         $this->em->flush();
         $etab = $preinscription->getAnnee()->getFormation()->getEtablissement()->getAbreviation();
         $operationcab->setCode($etab.'-FAC'.str_pad($operationcab->getId(), 8, '0', STR_PAD_LEFT).'/'.date('Y'));
+        $operationcab->setDateContable(date('Y'));
         $this->em->flush();
         
         return new JsonResponse('Bien Enregistrer');

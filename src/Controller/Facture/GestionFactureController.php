@@ -171,15 +171,15 @@ class GestionFactureController extends AbstractController
                         if ($orgpyt) {
                             $org = 'O/P';
                         }else{
-                            $operationCab = $this->em->getRepository(TOperationcab::class)->find($cd);
-                            // dd($cd);
-                            if ($operationCab->getOrganisme() != null) {
-                                if ($operationCab->getOrganisme() ==  'Payant') {
-                                    $org = 'PYT';
-                                }else{
-                                    $org = 'ORG';
-                                }
-                            }else{
+                            // $operationCab = $this->em->getRepository(TOperationcab::class)->find($cd);
+                            // // dd($cd);
+                            // if ($operationCab->getOrganisme() != null) {
+                            //     if ($operationCab->getOrganisme() ==  'Payant') {
+                            //         $org = 'PYT';
+                            //     }else{
+                            //         $org = 'ORG';
+                            //     }
+                            // }else{
                                 $pyt = $this->em->getRepository(TOperationdet::class)->findBy(['operationcab'=>$cd,'active'=>1,'organisme'=>7]);
                                 $org = $this->em->getRepository(TOperationdet::class)->FindDetNotPayant($cd);
                                 if ($pyt && $org) {
@@ -189,7 +189,7 @@ class GestionFactureController extends AbstractController
                                 }else {
                                     $org = 'PYT';
                                 }
-                            }
+                            // }
                         }
                         $nestedData[] = $org;
                         $value = $value == 0 ? 'Cloture' : 'Ouverte';
@@ -538,6 +538,7 @@ class GestionFactureController extends AbstractController
     {   
         $operationdet->setActive(0);
         $operationdet->setUpdated(new \DateTime("now"));
+        $operationdet->setUserUpdated($this->getUser());
         $noperationdet = clone $operationdet;
         $noperationdet->setMontant($operationdet->getMontant() * -1);
         $noperationdet->setCreated(new DateTime('now'));
@@ -561,6 +562,7 @@ class GestionFactureController extends AbstractController
             if ($operationdet->getActive() == 1) {
                 $operationdet->setActive(0);
                 $operationdet->setUpdated(new \DateTime("now"));
+                $operationdet->setUserUpdated($this->getUser());
                 $noperationdet = clone $operationdet;
                 $noperationdet->setMontant($operationdet->getMontant() * -1);
                 $noperationdet->setCreated(new DateTime('now'));

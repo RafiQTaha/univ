@@ -23,6 +23,28 @@ class TReglementRepository extends ServiceEntityRepository
     //  * @return TReglement[] Returns an array of TReglement objects
     //  */
     
+    public function getSumMontantReglementByPreinsAndAnnee($annee,$preinscription)
+    {
+        $request = $this->createQueryBuilder('t')
+            ->select("SUM(t.montant) as total")
+            ->innerJoin('t.operation','operation')
+            ->innerJoin('operation.preinscription','preinscription')
+            ->innerJoin('operation.annee','annee')
+            ->Where('annee = :annee')
+            ->andWhere('preinscription = :preinscription')
+            ->andWhere('t.annuler = 0')
+            ->setParameter('annee', $annee)
+            ->setParameter('preinscription', $preinscription)
+            // ->groupBy('t.operationcab')
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
+        if(!$request) {
+            return ['total' => 0];
+        } 
+        return $request;
+    }
+
     public function getSumMontantByCodeFacture($operation)
     {
         $request = $this->createQueryBuilder('t')

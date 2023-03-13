@@ -49,6 +49,9 @@ class TOperationdet
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'tOperationDets')]
     private $userCreated;
 
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'tOperationdets')]
+    private $userUpdated;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -194,6 +197,18 @@ class TOperationdet
     public function setUserCreated(?User $userCreated): self
     {
         $this->userCreated = $userCreated;
+
+        return $this;
+    }
+
+    public function getUserUpdated(): ?User
+    {
+        return $this->userUpdated;
+    }
+
+    public function setUserUpdated(?User $userUpdated): self
+    {
+        $this->userUpdated = $userUpdated;
 
         return $this;
     }

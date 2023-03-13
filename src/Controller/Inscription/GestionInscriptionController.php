@@ -162,17 +162,23 @@ class GestionInscriptionController extends AbstractController
     #[Route('/updatestatut/{inscription}', name: 'gestion_statut_update')]
     public function inscriptionStatutUpdate(Request $request, TInscription $inscription): Response
     {
-        $cabs = $this->em->getRepository(TOperationcab::class)->findBy(['annee'=>$inscription->getAnnee(),'preinscription'=>$inscription->getAdmission()->getPreinscription()]);
+        // $cabs = $this->em->getRepository(TOperationcab::class)->findBy(['annee'=>$inscription->getAnnee(),'preinscription'=>$inscription->getAdmission()->getPreinscription()]);
+        $totalfacture = $this->em->getRepository(TOperationdet::class)->getSumMontantCAByPreinsAndAnnee($inscription->getAnnee(),$inscription->getAdmission()->getPreinscription())['total'];
+        $totalreglement = $this->em->getRepository(TReglement::class)->getSumMontantReglementByPreinsAndAnnee($inscription->getAnnee(),$inscription->getAdmission()->getPreinscription())['total'];
+        if ($totalfacture - $totalreglement != 0) {
+            return new JsonResponse("Facture non reglé, Merci de contacter le service Financière !", 500);
+        }
+        // dd($montantDet['total'] - $montantReg['total'] );
         // $cabs = $inscription->getAdmission()->getPreinscription()->getOperationcabs();
         // dd($cabs);
         $valide = 0;
-        foreach ($cabs as $cab) {
-            $totalfacture = $this->em->getRepository(TOperationdet::class)->getSumMontantNonOrganismeByCodeFacture($cab)['total'];
-            $totalreglement = $this->em->getRepository(TReglement::class)->getSumMontantByCodeFacture($cab)['total'];
-            if ($totalfacture - $totalreglement != 0) {
-                return new JsonResponse("Facture non reglé, Merci de contacter le service Financière !", 500);
-            }
-        }
+        // foreach ($cabs as $cab) {
+        //     $totalfacture = $this->em->getRepository(TOperationdet::class)->getSumMontantNonOrganismeByCodeFacture($cab)['total'];
+        //     $totalreglement = $this->em->getRepository(TReglement::class)->getSumMontantByCodeFacture($cab)['total'];
+        //     if ($totalfacture - $totalreglement != 0) {
+        //         return new JsonResponse("Facture non reglé, Merci de contacter le service Financière !", 500);
+        //     }
+        // }
 
         if ($request->get('statut_inscription') == "") {
             return new JsonResponse("Merci de choisir un statut!", 500);
