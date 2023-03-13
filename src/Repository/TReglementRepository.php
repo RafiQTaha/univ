@@ -23,7 +23,7 @@ class TReglementRepository extends ServiceEntityRepository
     //  * @return TReglement[] Returns an array of TReglement objects
     //  */
     
-    public function getSumMontantReglementByPreinsAndAnnee($annee,$preinscription)
+    public function getSumMontantReglementByPreins($annee,$preinscription)
     {
         $request = $this->createQueryBuilder('t')
             ->select("SUM(t.montant) as total")

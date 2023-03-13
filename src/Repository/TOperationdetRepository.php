@@ -48,7 +48,7 @@ class TOperationdetRepository extends ServiceEntityRepository
     }
     */
     
-    public function getSumMontantCAByPreinsAndAnnee($annee,$preinscription)
+    public function getSumMontantCAByPreins($annee,$preinscription)
     {
         $request = $this->createQueryBuilder('t')
             ->select("SUM(t.montant) as total")

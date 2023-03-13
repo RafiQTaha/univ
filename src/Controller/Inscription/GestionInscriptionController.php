@@ -163,8 +163,8 @@ class GestionInscriptionController extends AbstractController
     public function inscriptionStatutUpdate(Request $request, TInscription $inscription): Response
     {
         // $cabs = $this->em->getRepository(TOperationcab::class)->findBy(['annee'=>$inscription->getAnnee(),'preinscription'=>$inscription->getAdmission()->getPreinscription()]);
-        $totalfacture = $this->em->getRepository(TOperationdet::class)->getSumMontantCAByPreinsAndAnnee($inscription->getAnnee(),$inscription->getAdmission()->getPreinscription())['total'];
-        $totalreglement = $this->em->getRepository(TReglement::class)->getSumMontantReglementByPreinsAndAnnee($inscription->getAnnee(),$inscription->getAdmission()->getPreinscription())['total'];
+        $totalfacture = $this->em->getRepository(TOperationdet::class)->getSumMontantCAByPreins($inscription->getAdmission()->getPreinscription())['total'];
+        $totalreglement = $this->em->getRepository(TReglement::class)->getSumMontantReglementByPreins($inscription->getAdmission()->getPreinscription())['total'];
         if ($totalfacture - $totalreglement != 0) {
             return new JsonResponse("Facture non reglé, Merci de contacter le service Financière !", 500);
         }
