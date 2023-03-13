@@ -48,7 +48,7 @@ class TOperationdetRepository extends ServiceEntityRepository
     }
     */
     
-    public function getSumMontantCAByPreins($annee,$preinscription)
+    public function getSumMontantCAByPreins($preinscription)
     {
         $request = $this->createQueryBuilder('t')
             ->select("SUM(t.montant) as total")
@@ -56,11 +56,9 @@ class TOperationdetRepository extends ServiceEntityRepository
             ->innerJoin('operationcab.preinscription','preinscription')
             ->innerJoin('operationcab.annee','annee')
             ->innerJoin('t.organisme','organisme')
-            ->Where('annee = :annee')
             ->andWhere('preinscription = :preinscription')
             ->andWhere('t.active = 1')
             ->andWhere('organisme.id = 7')
-            ->setParameter('annee', $annee)
             ->setParameter('preinscription', $preinscription)
             // ->groupBy('t.operationcab')
             ->getQuery()
