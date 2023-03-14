@@ -171,15 +171,19 @@ class GestionFactureController extends AbstractController
                         if ($orgpyt) {
                             $org = 'O/P';
                         }else{
-                            // $operationCab = $this->em->getRepository(TOperationcab::class)->find($cd);
-                            // // dd($cd);
+                            $operationCab = $this->em->getRepository(TOperationcab::class)->find($cd);
+                            // dd($cd);
                             // if ($operationCab->getOrganisme() != null) {
                             //     if ($operationCab->getOrganisme() ==  'Payant') {
                             //         $org = 'PYT';
                             //     }else{
                             //         $org = 'ORG';
                             //     }
-                            // }else{
+                            if ($operationCab->getOrganisme() ==  'Payant') {
+                                $org = 'PYT';
+                            }elseif($operationCab->getOrganisme() ==  'Organisme'){
+                                $org = 'ORG';
+                            }else{
                                 $pyt = $this->em->getRepository(TOperationdet::class)->findBy(['operationcab'=>$cd,'active'=>1,'organisme'=>7]);
                                 $org = $this->em->getRepository(TOperationdet::class)->FindDetNotPayant($cd);
                                 if ($pyt && $org) {
@@ -189,7 +193,7 @@ class GestionFactureController extends AbstractController
                                 }else {
                                     $org = 'PYT';
                                 }
-                            // }
+                            }
                         }
                         $nestedData[] = $org;
                         $value = $value == 0 ? 'Cloture' : 'Ouverte';
@@ -774,16 +778,19 @@ class GestionFactureController extends AbstractController
     public function new_fac_organisme(Request $request): Response
     {   
         dd($request->get('facture'));
-        // if (!$request->get('facture')) {
-        //     return new JsonResponse('Veuillez selection une facture!', 500);
-        // }
-        // $operationcab = $this->em->getRepository(TOperationcab::class)->find($request->get('facture'));
-        // if (!$operationcab) {
-        //     return new JsonResponse('Facture Introuvable!', 500);   
-        // }
-        // if ($operationcab->getActive() == 0) {
-        //     return new JsonResponse('Facture Déja Cloturée!', 500);   
-        // }
+        if (!$request->get('facture')) {
+            return new JsonResponse('Veuillez selection une Facture Inscription "Payant"!', 500);
+        }
+        $operationcab = $this->em->getRepository(TOperationcab::class)->find($request->get('facture'));
+        if (!$operationcab) {
+            return new JsonResponse('Facture Introuvable!', 500);   
+        }
+        if ($operationcab->getActive() == 1) {
+            return new JsonResponse('Cette Facture Ouverte', 500);   
+        }
+        if (!in_array($operationcab->getCategorie(), ['inscription','hors inscription'])) {
+            return new JsonResponse('Veuillez selection une Facture "inscription"', 500); 
+        }
         // if ($operationcab->getCategorie() == 'inscription') {
         //     $operationCabHorsIns = $this->em->getRepository(TOperationcab::class)->findOneBy(['categorie'=>'hors inscription','preinscription'=>$operationcab->getPreinscription()]);
         //     $operationCabHorsIns->setActive(1);
@@ -792,5 +799,28 @@ class GestionFactureController extends AbstractController
         // $this->em->flush();
         // return new JsonResponse('La facture est bien Valider!', 200);    
     }
+    
+    // #[Route('/new_fac_organisme', name: 'new_fac_organisme')]
+    // public function new_fac_organisme(Request $request): Response
+    // {   
+    //     dd($request->get('facture'));
+    //     if (!$request->get('facture')) {
+    //         return new JsonResponse('Veuillez selection une Facture Inscription "Payant"!', 500);
+    //     }
+    //     // $operationcab = $this->em->getRepository(TOperationcab::class)->find($request->get('facture'));
+    //     // if (!$operationcab) {
+    //     //     return new JsonResponse('Facture Introuvable!', 500);   
+    //     // }
+    //     // if ($operationcab->getActive() == 0) {
+    //     //     return new JsonResponse('Facture Déja Cloturée!', 500);   
+    //     // }
+    //     // if ($operationcab->getCategorie() == 'inscription') {
+    //     //     $operationCabHorsIns = $this->em->getRepository(TOperationcab::class)->findOneBy(['categorie'=>'hors inscription','preinscription'=>$operationcab->getPreinscription()]);
+    //     //     $operationCabHorsIns->setActive(1);
+    //     // }
+    //     // $operationcab->setActive(0);
+    //     // $this->em->flush();
+    //     // return new JsonResponse('La facture est bien Valider!', 200);    
+    // }
 
 }
