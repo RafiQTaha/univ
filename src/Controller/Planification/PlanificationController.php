@@ -200,26 +200,26 @@ class PlanificationController extends AbstractController
             $natureEpreuve = $emptime->getProgrammation()->getNatureEpreuve();
             $salle = $emptime->getSalle() == null ? "" : $emptime->getSalle()->getDesignation();
             $times[] = [
-                // 'id' => $emptime->getId(),
-                // 'title' => $emptime->getCode() . "\n".
-                //         ' Element :  '.$element->getDesignation() . "\n".
-                //         ' Type de Cours :  '.$natureEpreuve->getDesignation() . "\n".
-                //         $enseingant .
-                //         'Niv : '.$nivs  . 
-                //         'salle : '.$salle ,
-                // 'start' => $emptime->getStart()->format('Y-m-d H:i:s'),
-                // 'end' => $emptime->getEnd()->format('Y-m-d H:i:s'),
-                // 'color'=> $element->getModule()->getColor(),
                 'id' => $emptime->getId(),
-                'title' => $emptime->getId() . "\n".
-                        ' '.$nivs  . 
-                        ' '.$salle . "\n".
-                        ' '.$enseingant .
-                        ' '.$element->getDesignation() . "\n".
-                        ' '.$natureEpreuve->getDesignation(),
+                'title' => $emptime->getCode() . "\n".
+                        ' Element :  '.$element->getDesignation() . "\n".
+                        ' Type de Cours :  '.$natureEpreuve->getDesignation() . "\n".
+                        $enseingant .
+                        'Niv : '.$nivs  . 
+                        'salle : '.$salle ,
                 'start' => $emptime->getStart()->format('Y-m-d H:i:s'),
                 'end' => $emptime->getEnd()->format('Y-m-d H:i:s'),
                 'color'=> $element->getModule()->getColor(),
+                // 'id' => $emptime->getId(),
+                // 'title' => $emptime->getId() . "\n".
+                //         ' '.$nivs  . 
+                //         ' '.$salle . "\n".
+                //         ' '.$enseingant .
+                //         ' '.$element->getDesignation() . "\n".
+                //         ' '.$natureEpreuve->getDesignation(),
+                // 'start' => $emptime->getStart()->format('Y-m-d H:i:s'),
+                // 'end' => $emptime->getEnd()->format('Y-m-d H:i:s'),
+                // 'color'=> $element->getModule()->getColor(),
             ];
             $nivs = "";
         }
