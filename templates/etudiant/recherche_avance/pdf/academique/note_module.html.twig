@@ -240,13 +240,13 @@
     </tr>
     {% for mnote in noteModulesBySemestre %}
         <tr>
-            <td style="width: 8%;padding: 3px;font-size: 8px;text-align: left;border: 0px;"><b>MODULE {{index}}</b></td>
-            <td style="width: 38%;padding: 3px;font-size: 8px;text-align: left;border: 0px;">{{mnote.module.designation}}</td>
-            <td style="width: 9%;padding: 3px;font-size: 8px;text-align:center;border: 0px;">{% if mnote.statutAff.id == 35 %} -  {% else %} {{mnote.noteIni|number_format(2)}}{% endif %}</td>
-            <td style="width: 9%;padding: 3px;font-size: 8px;text-align:center;border: 0px;">{% if mnote.statutAff.id == 34 or mnote.noteRat is null %} -  {% else %} {{ mnote.noteRat|number_format(2)}}{% endif %}</td>
-            <td style="width: 9%;padding: 3px;font-size: 8px;text-align:center;border: 0px;">{% if mnote.statutAff.id == 35 %} -  {% else %} {{mnote.note|number_format(2)}}{% endif %}</td>
-            <td style="width: 15%;padding: 3px;font-size: 7px;text-align:left;border: 0px;">{{mnote.statutAff.designation}}</td>
-            <td style="width: 10%;padding: 3px;font-size: 7px;text-align: left;border: 0px;">{{mnote.observation}}</td>
+            <td style="width: 10%;padding: 3px;font-size: 10px;text-align: left;background-color: #f7f7f7;font-weight: 800 !important;"><b>Module {{loop.index}}</b></td>
+            <td style="width: 40%;padding: 3px;font-size: 10px;text-align: left;background-color: #f7f7f7;font-weight: 800 !important;"><b>{{mnote.module.designation}}</b></td>
+            <td style="width: 10%;padding: 3px;font-size: 10px;text-align:center;background-color: #f7f7f7;font-weight: 800 !important;"><b>{% if mnote.statutAff.id == 35 %} -  {% else %} {{mnote.noteIni|number_format(2)}}{% endif %}</b></td>
+            <td style="width: 10%;padding: 3px;font-size: 10px;text-align:center;background-color: #f7f7f7;font-weight: 800 !important;"><b>{% if mnote.statutAff.id == 34 or mnote.noteRat is null %} -  {% else %} {{ mnote.noteRat|number_format(2)}}{% endif %}</b></td>
+           <td style="width: 10%;padding: 3px;font-size: 10px;text-align:center;background-color: #f7f7f7;font-weight: 800 !important;"><b>{% if mnote.statutAff.id == 35 %} -  {% else %} {{mnote.note|number_format(2)}}{% endif %}</b></td>
+           <td style="width: 10%;padding: 3px;font-size: 9px;text-align:left;background-color: #f7f7f7;font-weight: 800 !important;"><b>{{mnote.statutAff.designation}}</b></td>
+           <td style="width: 10%;padding: 3px;font-size: 10px;text-align: left;background-color: #f7f7f7;font-weight: 800 !important;"><b>{{mnote.observation}}</b></td>
             {# <td style="width: 10%;padding: 3px;font-size: 10px;text-align: left;background-color: #f7f7f7;font-weight: 800 !important;"><b>Module {{loop.index}}</b></td>
             <td style="width: 40%;padding: 3px;font-size: 10px;text-align: left;background-color: #f7f7f7;font-weight: 800 !important;"><b>{{mnote.module.designation}}</b></td>
             <td style="width: 10%;padding: 3px;font-size: 10px;text-align:center;background-color: #f7f7f7;font-weight: 800 !important;"><b>{{mnote.noteIni|number_format(2)}}</b></td>
