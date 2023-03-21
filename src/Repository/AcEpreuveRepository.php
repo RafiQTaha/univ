@@ -91,7 +91,7 @@ class AcEpreuveRepository extends ServiceEntityRepository
         inner join tetudiant etu on etu.id = pre.etudiant_id
         inner join pnature_epreuve pr on pr.id = epv.nature_epreuve_id
         inner join pstatut stat on stat.id = ins.statut_id
-        where ann.designation = '$currentyear' and epv.statut_id = 30 and (sem.designation like '%2' or sem.designation like '%4' or sem.designation like '%6' or sem.designation like '%8')";
+        where ann.designation = '$currentyear' and epv.statut_id = 30 and (sem.designation like '%2' or sem.designation like '%4' or sem.designation like '%6' or sem.designation like '%8' or sem.designation like '%10' or sem.designation like '%12' or sem.designation like '%14')";
         // dd($sqls);
         $stmts = $this->em->getConnection()->prepare($sqls);
         $resultSets = $stmts->executeQuery();
