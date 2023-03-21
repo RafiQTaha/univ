@@ -385,11 +385,15 @@ class GestionAdmissionController extends AbstractController
         }
         $k = $isBoursier == 0 ? 2 : 4 ;
         // for ($i=0; $i < $k; $i++) { 
-        for ($i=0; $i < 2; $i++) { 
+        // for ($i=0; $i < 2; $i++) { 
             $operationCab = new TOperationcab();
             $operationCab->setPreinscription($inscription->getAdmission()->getPreinscription());
             $operationCab->setUserCreated($this->getUser());
             $operationCab->setAnnee($inscription->getAnnee());
+            $operationCab->setCategorie('inscription');
+            $operationCab->setActive(0);
+            $operationCab->setDateContable(date('Y'));
+            $operationCab->setOrganisme('Payant');
             // switch ($i) {
             //     case 1:
             //         // "hors inscription" à remplacer par "ADD Inscription"
@@ -410,9 +414,9 @@ class GestionAdmissionController extends AbstractController
             //         break;
             // }
             // if ($i != 2) {
-                $i == 0 ? $operationCab->setCategorie('inscription') : $operationCab->setCategorie('hors inscription');
-                $i == 0 ? $operationCab->setActive(1) : $operationCab->setActive(0);
-                $i == 0 ? $operationCab->setDateContable(date('Y')) : $operationCab->setDateContable(date('Y') + 1);
+                // $i == 0 ? $operationCab->setCategorie('inscription') : $operationCab->setCategorie('hors inscription');
+                // $i == 0 ? $operationCab->setActive(1) : $operationCab->setActive(0);
+                // $i == 0 ? $operationCab->setDateContable(date('Y')) : $operationCab->setDateContable(date('Y') + 1);
             // }
             $operationCab->setCreated(new \DateTime("now"));
             $this->em->persist($operationCab);
@@ -421,7 +425,7 @@ class GestionAdmissionController extends AbstractController
                 $inscription->getAnnee()->getFormation()->getEtablissement()->getAbreviation()."-FAC".str_pad($operationCab->getId(), 8, '0', STR_PAD_LEFT)."/".date('Y')
             );
             $this->em->flush();
-        }
+        // }
         return new JsonResponse("Bien Enregistre code inscription: " . $inscription->getCode(), 200);
     }
     #[Route('/listadmission/{annee}', name: 'admission_list_admis')]
