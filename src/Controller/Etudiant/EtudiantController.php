@@ -386,22 +386,32 @@ class EtudiantController extends AbstractController
         $this->em->flush();
         $preinscription->setCode('PRE-'.$formation->getAbreviation().str_pad($preinscription->getId(), 8, '0', STR_PAD_LEFT).'/'.date('Y'));
         $this->em->flush();
-
         $operationcab = new TOperationcab();
         $operationcab->setPreinscription($preinscription);
         $operationcab->setAnnee($preinscription->getAnnee());
-        // $operationcab->setOrganisme($this->em->getRepository(POrganisme::class)->find(7));
         $operationcab->setCategorie('pré-inscription');
         $operationcab->setCreated(new DateTime('now'));
         $operationcab->setUserCreated($this->getUser());
         $operationcab->setActive(1);
+        $operationcab->setDateContable(date('Y'));
         $this->em->persist($operationcab);
         $this->em->flush();
         $etab = $preinscription->getAnnee()->getFormation()->getEtablissement()->getAbreviation();
         $operationcab->setCode($etab.'-FAC'.str_pad($operationcab->getId(), 8, '0', STR_PAD_LEFT).'/'.date('Y'));
-        $operationcab->setDateContable(date('Y'));
+        if ($preinscription->getNature()->getId() == 4) {
+            $operationcabOrganisme = new TOperationcab();
+            $operationcabOrganisme->setPreinscription($preinscription);
+            $operationcabOrganisme->setAnnee($preinscription->getAnnee());
+            $operationcabOrganisme->setCategorie('pré-inscription');
+            $operationcabOrganisme->setCreated(new DateTime('now'));
+            $operationcabOrganisme->setUserCreated($this->getUser());
+            $operationcabOrganisme->setActive(1);
+            $operationcabOrganisme->setDateContable(date('Y'));
+            $this->em->persist($operationcabOrganisme);
+            $this->em->flush();
+            $operationcabOrganisme->setCode($etab.'-FAC'.str_pad($operationcabOrganisme->getId(), 8, '0', STR_PAD_LEFT).'/'.date('Y'));
+        }
         $this->em->flush();
-        
         return new JsonResponse('Bien Enregistrer');
     }
     

@@ -10,12 +10,20 @@
       </div>
       <div class="modal-body">
             <div class="row mb-4 " id="add">
-                <div class="col-md-5">
+                <div class="col-md-4" id="orgDiv">
+                    <label for="organismeType">Organisme (*):</label>
+                    <select class="form-control" name="organismeType" id="organismeType">
+                      <option value="">Choix Organisme</option>
+                      <option value="Payant">Payant</option>
+                      <option value="Organisme">Organisme</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
                     <label for="frais">Frais (*):</label>
                     <select class="form-control" name="frais" id="frais">
                     </select>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-4">
                     <label for="montant">Montant(*):</label>
                     <input type="text" class="form-control" id='montantt' value="">
                 </div>

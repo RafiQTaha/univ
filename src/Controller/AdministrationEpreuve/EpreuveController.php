@@ -756,6 +756,38 @@ class EpreuveController extends AbstractController
         return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);
     }
     
+    #[Route('/extraction_epreuve_valide_s2', name: 'extraction_epreuve_valide_s2')]
+    public function extraction_epreuve_valide_s2()
+    {   
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        $i=2;
+        $j=1;
+        $currentyear = date('m') > 7 ? date('Y').'/'.date('Y')+1 : date('Y') - 1 .'/' .date('Y');
+        $epreuves = $this->em->getRepository(AcEpreuve::class)->findEpreuveValideS2ByCurrentYear($currentyear);
+        // dd($epreuves);
+        $sheet->fromArray(
+            array_keys($epreuves[0]),
+            null,
+            'A1'
+        );
+        foreach ($epreuves as $epreuve) {
+            $sheet->fromArray(
+                $epreuve,
+                null,
+                'A'.$i
+            );
+            $i++;
+            $j++;
+        }
+        $writer = new Xlsx($spreadsheet);
+        $currentyear = date('m') > 7 ? date('Y').'-'.date('Y')+1 : date('Y') - 1 .'-' .date('Y');
+        $fileName = 'Extraction Epreuves Valide Session 2 '.$currentyear.'.xlsx';
+        $temp_file = tempnam(sys_get_temp_dir(), $fileName);
+        $writer->save($temp_file);
+        return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);
+    }
+    
     #[Route('/extraction_emargement/{epreuve}', name: 'administration_epreuve_emargement')]
     public function administration_epreuve_emargement(AcEpreuve $epreuve) 
     {

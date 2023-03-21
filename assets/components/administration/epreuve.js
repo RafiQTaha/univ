@@ -673,6 +673,11 @@ $(document).ready(function  () {
         const icon = $("#extraction_epv_valide i");
         window.open('/administration/epreuve/extraction_epreuve_valide', '_blank');
     })
+    $('body').on('click','#extraction_epv_valide_s2', async function (e) {
+        e.preventDefault();
+        const icon = $("#extraction_epv_valide_s2 i");
+        window.open('/administration/epreuve/extraction_epreuve_valide_s2', '_blank');
+    })
     $('body').on('click','#open_upload_file', async function (e) {
         e.preventDefault();
         $('body #inscriptions_ids').click();

@@ -170,6 +170,8 @@ class ModuleController extends AbstractController
     public function delete(Request $request, AcModule $module): Response
     {
         $module->setActive('0');
+        $module->setUpdated(new \DateTime("now"));
+        $module->setUserUpdated($this->getUser());
         $this->em->flush();
  
         return new JsonResponse(1);

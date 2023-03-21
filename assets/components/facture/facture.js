@@ -50,9 +50,9 @@ $(document).ready(function () {
             if ($("#reglement") && $("#reglement").val() != "") {
                 table_facture.columns(2).search($("#reglement").val())
             }
-            if ($("#organisme").val() != "") {
-                table_facture.columns(3).search($("#organisme").val())
-            }
+            // if ($("#organisme").val() != "") {
+            //     table_facture.columns(3).search($("#organisme").val())
+            // }
             table_facture.columns(0).search(id_etab).draw();
             const request = await axios.get('/api/formation/'+id_etab);
             response = request.data
@@ -61,9 +61,9 @@ $(document).ready(function () {
             if ($("#reglement") && $("#reglement").val() != "") {
                 table_facture.columns(2).search($("#reglement").val())
             }
-            if ($("#organisme").val() != "") {
-                table_facture.columns(3).search($("#organisme").val())
-            }
+            // if ($("#organisme").val() != "") {
+            //     table_facture.columns(3).search($("#organisme").val())
+            // }
         }
         $('#formation').html(response).select2();
     })
@@ -73,9 +73,9 @@ $(document).ready(function () {
         if ($("#reglement") && $("#reglement").val() != "") {
             table_facture.columns(2).search($("#reglement").val())
         }
-        if ($("#organisme").val() != "") {
-            table_facture.columns(3).search($("#organisme").val());
-        }
+        // if ($("#organisme").val() != "") {
+        //     table_facture.columns(3).search($("#organisme").val());
+        // }
         let response = ""
         if(id_formation != "") {
             table_facture.columns(1).search(id_formation).draw();
@@ -89,10 +89,10 @@ $(document).ready(function () {
         const id_reglement = $(this).val();
         table_facture.columns(2).search(id_reglement).draw();
     })
-    $("#organisme").on('change', async function (){
-        const id_organisme = $(this).val();
-        table_facture.columns(3).search(id_organisme).draw();
-    })
+    // $("#organisme").on('change', async function (){
+    //     const id_organisme = $(this).val();
+    //     table_facture.columns(3).search(id_organisme).draw();
+    // })
     let reglement = false;
     const getMontant = () => {
         axios.get('/facture/factures/getMontant/'+id_facture)
@@ -147,7 +147,13 @@ $(document).ready(function () {
         if(id_facture){
             axios.get('/facture/factures/article_frais/'+id_facture)
             .then(success => {
-                $('#detail_facture_modal #frais').html(success.data).select2();
+                console.log(success.data[0])
+                if (success.data[0] == 0) {
+                    $('#detail_facture_modal #orgDiv').css('display','block');
+                } else {
+                    $('#detail_facture_modal #orgDiv').css('display','none');
+                }
+                $('#detail_facture_modal #frais').html(success.data[1]).select2();
                 $('#detail_facture_modal #montantt').val('');
             })
             .catch(err => {
@@ -210,16 +216,16 @@ $(document).ready(function () {
         e.preventDefault();
         const icon = $(this).find('i');
         icon.removeClass('fa-plus').addClass("fa-spinner fa-spin");
-        let organisme_id  = $('.select-organ #org').val();
-        if ($("input[name='organ']:checked").val() == 1) {
-            organisme_id = 7
-        }
+        // let organisme_id  = $('.select-organ #org').val();
+        // if ($("input[name='organ']:checked").val() == 1) {
+        //     organisme_id = 7
+        // }
         
         let formData = new FormData();
         formData.append('frais', $('#frais').val());
         formData.append('montant', $('#montantt').val());
         formData.append('ice', $('#ice').val());
-        formData.append('organisme_id', organisme_id);
+        formData.append('organismeType', $('#organismeType').val());
 
         let modalAlert =  $(".modal-facture .modal-body .alert");
         modalAlert.remove();

@@ -172,13 +172,6 @@ class GestionFactureController extends AbstractController
                             $org = 'O/P';
                         }else{
                             $operationCab = $this->em->getRepository(TOperationcab::class)->find($cd);
-                            // dd($cd);
-                            // if ($operationCab->getOrganisme() != null) {
-                            //     if ($operationCab->getOrganisme() ==  'Payant') {
-                            //         $org = 'PYT';
-                            //     }else{
-                            //         $org = 'ORG';
-                            //     }
                             if ($operationCab->getOrganisme() ==  'Payant') {
                                 $org = 'PYT';
                             }elseif($operationCab->getOrganisme() ==  'Organisme'){
@@ -190,8 +183,10 @@ class GestionFactureController extends AbstractController
                                     $org = 'O/P';
                                 }elseif (!$pyt && $org) {
                                     $org = 'ORG';
-                                }else {
+                                }elseif($pyt && !$org) {
                                     $org = 'PYT';
+                                }else {
+                                    $org = '-';
                                 }
                             }
                         }
@@ -455,7 +450,8 @@ class GestionFactureController extends AbstractController
         foreach ($frais as $frs) {
             $data .="<option value=".$frs->getId()." data-id=".$frs->getmontant().">".$frs->getDesignation()."</option>";
         }
-        return new JsonResponse($data, 200);
+        $check = $operationcab->getOrganisme() == null ? 0 : 1;
+        return new JsonResponse([$check,$data], 200);
     }
     
     #[Route('/detaille_facture/{id}', name: 'detaille_facture')]
@@ -498,15 +494,20 @@ class GestionFactureController extends AbstractController
         if($operationcab->getActive() == 0){
             return new JsonResponse('Cette Facture Est Cloture', 500);  
         }
-        if(empty($request->get('montant'))  || $request->get('montant') == ' ' || empty($request->get('frais')) || $request->get('frais') == "" ){
+        // dd($request);
+        if(empty($request->get('montant'))  || $request->get('montant') == ' ' || empty($request->get('frais')) || $request->get('frais') == "" || ($operationcab->getOrganisme() == null and empty($request->get('organismeType')))){
             return new JsonResponse('Merci de renseigner tous les champs!', 500);            
+        }
+        if ($operationcab->getOrganisme() == null ) {
+            $operationcab->setOrganisme($request->get('organismeType'));
+            $this->em->flush();
         }
         // if (empty($request->get('organisme_id'))) {
         //     return new JsonResponse('Merci de choisir une Organisme!', 500);
         // }
-        if ($operationcab->getOrganisme() == null ) {
-            return new JsonResponse('Organisme Introuvable!', 500);
-        }
+        // if ($operationcab->getOrganisme() == null ) {
+        //     return new JsonResponse('Organisme Introuvable!', 500);
+        // }
         $frais =  $this->em->getRepository(PFrais::class)->find($request->get('frais'));
         if ($frais == null) {
             return new JsonResponse('Merci de verifier le frais!', 500);  
@@ -777,7 +778,7 @@ class GestionFactureController extends AbstractController
     #[Route('/new_fac_organisme', name: 'new_fac_organisme')]
     public function new_fac_organisme(Request $request): Response
     {   
-        dd($request->get('facture'));
+        // dd($request->get('facture'));
         if (!$request->get('facture')) {
             return new JsonResponse('Veuillez selection une Facture Inscription "Payant"!', 500);
         }
@@ -786,18 +787,36 @@ class GestionFactureController extends AbstractController
             return new JsonResponse('Facture Introuvable!', 500);   
         }
         if ($operationcab->getActive() == 1) {
-            return new JsonResponse('Cette Facture Ouverte', 500);   
+            return new JsonResponse('Cette Facture est Ouverte', 500);   
         }
         if (!in_array($operationcab->getCategorie(), ['inscription','hors inscription'])) {
-            return new JsonResponse('Veuillez selection une Facture "inscription"', 500); 
+            return new JsonResponse('Veuillez selection une Facture "Inscription"', 500); 
         }
-        // if ($operationcab->getCategorie() == 'inscription') {
-        //     $operationCabHorsIns = $this->em->getRepository(TOperationcab::class)->findOneBy(['categorie'=>'hors inscription','preinscription'=>$operationcab->getPreinscription()]);
-        //     $operationCabHorsIns->setActive(1);
-        // }
-        // $operationcab->setActive(0);
-        // $this->em->flush();
-        // return new JsonResponse('La facture est bien Valider!', 200);    
+        $check = $this->em->getRepository(TOperationcab::class)->findBy([
+            'preinscription'=>$operationcab->getPreinscription(),
+            'annee'=>$operationcab->getAnnee(),
+            'dateContable'=>$operationcab->getdateContable() + 1,
+            'organisme'=>'Organisme',
+            'categorie'=>'inscription organisme',
+        ]);
+        if($check){
+            return new JsonResponse('la Facture Organisme est déja crée!', 500); 
+        }
+        $OrganismeOrganisme = clone $operationcab;
+        $OrganismeOrganisme->setCategorie('inscription organisme'); 
+        $OrganismeOrganisme->setCreated(new \Datetime('now')); 
+        $OrganismeOrganisme->setuserCreated($this->getUser()); 
+        $OrganismeOrganisme->setActive(1); 
+        $OrganismeOrganisme->setSynFlag(0); 
+        $OrganismeOrganisme->setDateContable($operationcab->getDateContable() + 1); 
+        $OrganismeOrganisme->setOrganisme('Organisme');
+        $this->em->persist($OrganismeOrganisme);
+        $this->em->flush();
+        $etab = $OrganismeOrganisme->getAnnee()->getFormation()->getEtablissement()->getAbreviation();
+        $OrganismeOrganisme->setCode($etab.'-FAC'.str_pad($OrganismeOrganisme->getId(), 8, '0', STR_PAD_LEFT).'/'.date('Y'));
+        $this->em->flush();
+        // dd($OrganismeOrganisme);
+        return new JsonResponse('La facture organisme est bien Cree!', 200);    
     }
     
     // #[Route('/new_fac_organisme', name: 'new_fac_organisme')]

@@ -630,7 +630,7 @@ class ElementController extends AbstractController
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
         $i=2;
-        $j=1;
+        // $j=1;
         // dump($gnotes);die;
         $sheet->fromArray(
             array_keys($elements[0]),
@@ -644,7 +644,7 @@ class ElementController extends AbstractController
                 'A'.$i
             );
             $i++;
-            $j++;
+            // $j++;
         }
         $writer = new Xlsx($spreadsheet);
         $year = date('m') > 7 ? date('Y').'-'.date('Y')+1 : date('Y') - 1 .'-' .date('Y');
