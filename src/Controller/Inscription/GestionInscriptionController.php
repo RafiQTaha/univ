@@ -186,6 +186,8 @@ class GestionInscriptionController extends AbstractController
         $inscription->setStatut(
             $this->em->getRepository(PStatut::class)->find($request->get("statut_inscription"))
         );
+        $inscription->setUpdated(new \DateTime('now'));
+        $inscription->setUserUpdated($this->getUser());
         $this->em->flush();
         return new JsonResponse("Bien Enregistre", 200);
     }
