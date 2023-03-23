@@ -86,7 +86,7 @@ $(document).ready(function  () {
 
     // filters for session normale
 
-    $("body #etablissement").select2();
+    $("#etablissement").select2();
     $("body #etablissement").on('change', async function (){
         const id_etab = $(this).val();
         tableEpreuveNormal.columns().search("");
@@ -192,6 +192,7 @@ $(document).ready(function  () {
     })
     $("#dateEpreuve").on('change', async function (){
         const dateEpreuve = $(this).val();
+        console.log(dateEpreuve);
         tableEpreuveNormal.columns(6).search(dateEpreuve).draw();
     })
 
@@ -642,61 +643,61 @@ $(document).ready(function  () {
         }
     })
 
-    $('select').select2();
-    $("#etablissement").on('change', async function (){
-        const id_etab = $(this).val();
-        let response = ""
-        if(id_etab != "") {
-            const request = await axios.get('/api/formation/'+id_etab);
-            response = request.data
-        }
-        $('#element').html('').select2();
-        $('#module').html('').select2();
-        $('#semestre').html('').select2();
-        $('#promotion').html('').select2();
-        $('#formation').html(response).select2();
-    })
-    $("#formation").on('change', async function (){
-        const id_formation = $(this).val();
-        let response = ""
-        if(id_formation != "") {
-            const request = await axios.get('/api/promotion/'+id_formation);
-            response = request.data
-        }
-        $('#element').html('').select2();
-        $('#module').html('').select2();
-        $('#semestre').html('').select2();
-        $('#promotion').html(response).select2();
-    })
-    $("#promotion").on('change', async function (){
-        const id_promotion = $(this).val();
-        if(id_promotion != "") {
-            const request = await axios.get('/api/semestre/'+id_promotion);
-            response = request.data
-            const requestt = await axios.get('/api/niv1/'+id_promotion);
-            niv1 = requestt.data 
-        }
-        $('#element').html('').select2();
-        $('#module').html('').select2();
-        $('#semestre').html(response).select2();
-    })
-    $("#semestre").on('change', async function (){
-        const id_semestre = $(this).val();
-        if(id_semestre != "") {
-            const request = await axios.get('/api/module/'+id_semestre);
-            response = request.data
-        }
-        $('#element').html('').select2();
-        $('#module').html(response).select2();
-    })
-    $("#module").on('change', async function (){
-        const id_module = $(this).val();
-        if(id_module != "") {
-            const request = await axios.get('/api/element/'+id_module);
-            response = request.data
-        }
-        $('#element').html(response).select2();
-    })
+    // $('select').select2();
+    // $("#etablissement").on('change', async function (){
+    //     const id_etab = $(this).val();
+    //     let response = ""
+    //     if(id_etab != "") {
+    //         const request = await axios.get('/api/formation/'+id_etab);
+    //         response = request.data
+    //     }
+    //     $('#element').html('').select2();
+    //     $('#module').html('').select2();
+    //     $('#semestre').html('').select2();
+    //     $('#promotion').html('').select2();
+    //     $('#formation').html(response).select2();
+    // })
+    // $("#formation").on('change', async function (){
+    //     const id_formation = $(this).val();
+    //     let response = ""
+    //     if(id_formation != "") {
+    //         const request = await axios.get('/api/promotion/'+id_formation);
+    //         response = request.data
+    //     }
+    //     $('#element').html('').select2();
+    //     $('#module').html('').select2();
+    //     $('#semestre').html('').select2();
+    //     $('#promotion').html(response).select2();
+    // })
+    // $("#promotion").on('change', async function (){
+    //     const id_promotion = $(this).val();
+    //     if(id_promotion != "") {
+    //         const request = await axios.get('/api/semestre/'+id_promotion);
+    //         response = request.data
+    //         const requestt = await axios.get('/api/niv1/'+id_promotion);
+    //         niv1 = requestt.data 
+    //     }
+    //     $('#element').html('').select2();
+    //     $('#module').html('').select2();
+    //     $('#semestre').html(response).select2();
+    // })
+    // $("#semestre").on('change', async function (){
+    //     const id_semestre = $(this).val();
+    //     if(id_semestre != "") {
+    //         const request = await axios.get('/api/module/'+id_semestre);
+    //         response = request.data
+    //     }
+    //     $('#element').html('').select2();
+    //     $('#module').html(response).select2();
+    // })
+    // $("#module").on('change', async function (){
+    //     const id_module = $(this).val();
+    //     if(id_module != "") {
+    //         const request = await axios.get('/api/element/'+id_module);
+    //         response = request.data
+    //     }
+    //     $('#element').html(response).select2();
+    // })
     
     $("#ajouter_epreuve").on("click", function(e){  
         e.preventDefault();
