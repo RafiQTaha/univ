@@ -81,7 +81,30 @@ class EpreuveController extends AbstractController
         // }    
         // if (!empty($params->all('columns')[3]['search']['value'])) {
         //     $filtre .= " and an.id = '" . $params->all('columns')[3]['search']['value'] . "' ";
-        // }    
+        // }   
+        
+        if (!empty($params->all('columns')[0]['search']['value'])) {
+            $filtre .= " and etab.id = '" . $params->all('columns')[0]['search']['value'] . "' ";
+        }
+        if (!empty($params->all('columns')[1]['search']['value'])) {
+            $filtre .= " and frm.id = '" . $params->all('columns')[1]['search']['value'] . "' ";
+        }   
+        if (!empty($params->all('columns')[2]['search']['value'])) {
+            $filtre .= " and prm.id = '" . $params->all('columns')[2]['search']['value'] . "' ";
+        }   
+        if (!empty($params->all('columns')[3]['search']['value'])) {
+            $filtre .= " and sem.id = '" . $params->all('columns')[3]['search']['value'] . "' ";
+        }   
+        if (!empty($params->all('columns')[4]['search']['value'])) {
+            $filtre .= " and mdl.id = '" . $params->all('columns')[4]['search']['value'] . "' ";
+        }   
+        if (!empty($params->all('columns')[5]['search']['value'])) {
+            $filtre .= " and ele.id = '" . $params->all('columns')[5]['search']['value'] . "' ";
+        }   
+        if (!empty($params->all('columns')[6]['search']['value'])) {
+            $filtre .= " and epv.date_epreuve = '" . $params->all('columns')[6]['search']['value'] . "' ";
+        }
+
         $columns = array(
             array( 'db' => 'epv.id','dt' => 0),
             array( 'db' => 'right (epv.code , 10)','dt' => 1),
@@ -193,7 +216,30 @@ class EpreuveController extends AbstractController
         // }    
         // if (!empty($params->all('columns')[3]['search']['value'])) {
         //     $filtre .= " and an.id = '" . $params->all('columns')[3]['search']['value'] . "' ";
-        // }    
+        // }
+        
+        if (!empty($params->all('columns')[0]['search']['value'])) {
+            $filtre .= " and etab.id = '" . $params->all('columns')[0]['search']['value'] . "' ";
+        }
+        if (!empty($params->all('columns')[1]['search']['value'])) {
+            $filtre .= " and frm.id = '" . $params->all('columns')[1]['search']['value'] . "' ";
+        }   
+        if (!empty($params->all('columns')[2]['search']['value'])) {
+            $filtre .= " and prm.id = '" . $params->all('columns')[2]['search']['value'] . "' ";
+        }   
+        if (!empty($params->all('columns')[3]['search']['value'])) {
+            $filtre .= " and sem.id = '" . $params->all('columns')[3]['search']['value'] . "' ";
+        }   
+        if (!empty($params->all('columns')[4]['search']['value'])) {
+            $filtre .= " and mdl.id = '" . $params->all('columns')[4]['search']['value'] . "' ";
+        }   
+        if (!empty($params->all('columns')[5]['search']['value'])) {
+            $filtre .= " and ele.id = '" . $params->all('columns')[5]['search']['value'] . "' ";
+        }   
+        if (!empty($params->all('columns')[6]['search']['value'])) {
+            $filtre .= " and epv.date_epreuve = '" . $params->all('columns')[6]['search']['value'] . "' ";
+        }
+
         $columns = array(
             array( 'db' => 'epv.id','dt' => 0),
             array( 'db' => 'right (epv.code , 10)','dt' => 1),
@@ -273,7 +319,7 @@ class EpreuveController extends AbstractController
             }
             $nestedData[] = $username;
             $nestedData["DT_RowId"] = $cd;
-            $nestedData["DT_RowClass"] = $cd;
+            // $nestedData["DT_RowClass"] = $cd;
             $data[] = $nestedData;
             $i++;
         }
