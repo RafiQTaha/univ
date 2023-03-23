@@ -62,6 +62,9 @@ class AcEpreuve
     #[ORM\ManyToOne(targetEntity: User::class)]
     private $userValidated;
 
+    #[ORM\Column(type: 'datetime', nullable: true)]
+    private $validated;
+
     public function __construct()
     {
         $this->gnotes = new ArrayCollection();
@@ -280,6 +283,18 @@ class AcEpreuve
     public function setUserValidated(?User $userValidated): self
     {
         $this->userValidated = $userValidated;
+
+        return $this;
+    }
+
+    public function getValidated(): ?\DateTimeInterface
+    {
+        return $this->validated;
+    }
+
+    public function setValidated(?\DateTimeInterface $validated): self
+    {
+        $this->validated = $validated;
 
         return $this;
     }

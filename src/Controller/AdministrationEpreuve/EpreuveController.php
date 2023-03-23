@@ -563,6 +563,7 @@ class EpreuveController extends AbstractController
                     $this->em->getRepository(PStatut::class)->find(30) //Valider
                 );
                 $epreuve->setUserValidated($this->getUser());
+                $epreuve->setValidated(new \DateTime('now'));
                 ApiController::mouchard($this->getUser(), $this->em,$epreuve, 'AcEpreuve', 'Valider Epreuve');
             }
         }
