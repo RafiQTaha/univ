@@ -83,6 +83,234 @@ $(document).ready(function  () {
             url: "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/French.json",
         },
     });
+    // filters for session normale
+
+    $("#etablissement").select2();
+    $("body #etablissement").on('change', async function (){
+        const id_etab = $(this).val();
+        tableEpreuveNormal.columns().search("");
+       
+        let response = ""
+        if(id_etab != "") {
+            if ($("#dateEpreuve").val() != "") {
+                tableEpreuveNormal.columns(6).search($("#dateEpreuve").val())
+            }
+            tableEpreuveNormal.columns(0).search(id_etab).draw();
+            const request = await axios.get('/api/formation/'+id_etab);
+            response = request.data
+        }else{
+            if ($("#dateEpreuve").val() != "") {
+                tableEpreuveNormal.columns(6).search($("#dateEpreuve").val()).draw();
+            }else{
+                tableEpreuveNormal.columns().search("").draw();
+            }
+        }
+        $('body #semestre').html('').select2();
+        $('body #module').html('').select2();
+        $('body #element').html('').select2();
+        $('body #promotion').html('').select2();
+        $('body #formation').html(response).select2();
+    })
+    $("body #formation").on('change', async function (){
+        const id_formation = $(this).val();
+        tableEpreuveNormal.columns().search("");
+        if ($("#dateEpreuve").val() != "") {
+            tableEpreuveNormal.columns(6).search($("#dateEpreuve").val());
+        }
+        let response = ""
+        if(id_formation != "") {
+            tableEpreuveNormal.columns(1).search(id_formation).draw();
+            const request = await axios.get('/api/promotion/'+id_formation);
+            response = request.data
+        }else{
+            tableEpreuveNormal.columns(0).search($("body #etablissement").val()).draw();
+        }
+        $('body #semestre').html('').select2();
+        $('body #module').html('').select2();
+        $('body #element').html('').select2();
+        $('body #promotion').html(response).select2();
+    })
+    $("body #promotion").on('change', async function (){
+        const id_promotion = $(this).val();
+        tableEpreuveNormal.columns().search("");
+        if ($("#dateEpreuve").val() != "") {
+            tableEpreuveNormal.columns(6).search($("#dateEpreuve").val());
+        }
+        if(id_promotion != "") {
+            tableEpreuveNormal.columns(2).search(id_promotion).draw();
+            const request = await axios.get('/api/semestre/'+id_promotion);
+            response = request.data
+        }else{
+            tableEpreuveNormal.columns(1).search($("body #formation").val()).draw();
+        }
+        $('body #semestre').html('').select2();
+        $('body #module').html('').select2();
+        $('body #element').html('').select2();
+        $('body #semestre').html(response).select2();
+    })
+    $("body #semestre").on('change', async function (){
+        const id_semestre = $(this).val();
+        tableEpreuveNormal.columns().search("");
+        if ($("#dateEpreuve").val() != "") {
+            tableEpreuveNormal.columns(6).search($("#dateEpreuve").val())
+        }
+        if(id_semestre != "") {
+            const request = await axios.get('/api/module/'+id_semestre);
+            tableEpreuveNormal.columns(3).search(id_semestre).draw();
+            response = request.data
+        }else{
+            tableEpreuveNormal.columns(2).search($("body #promotion").val()).draw();
+        }
+        $('body #module').html('').select2();
+        $('body #element').html('').select2();
+        $('body #module').html(response).select2();
+    })
+    $("body #module").on('change', async function (){
+        const id_module = $(this).val();
+        tableEpreuveNormal.columns().search("");
+        if ($("#dateEpreuve").val() != "") {
+            tableEpreuveNormal.columns(6).search($("#dateEpreuve").val())
+        }
+        if(id_module != "") {
+            tableEpreuveNormal.columns(4).search(id_module).draw();
+            const request = await axios.get('/api/element/'+id_module);
+            response = request.data
+        }else{
+            tableEpreuveNormal.columns(3).search($("body #semestre").val()).draw();
+        }
+
+        $('body #element').html(response).select2();
+    })
+    $("body #element").on('change', async function (){
+        const id_element = $(this).val();
+        tableEpreuveNormal.columns().search("");
+        if ($("#dateEpreuve").val() != "") {
+            tableEpreuveNormal.columns(6).search($("#dateEpreuve").val())
+        }
+        tableEpreuveNormal.columns(5).search(id_element).draw();
+    })
+    $("#dateEpreuve").on('change', async function (){
+        const dateEpreuve = $(this).val();
+        console.log(dateEpreuve);
+        tableEpreuveNormal.columns(6).search(dateEpreuve).draw();
+    })
+
+    // end filters session normale
+
+
+    // filters for session rattrapage
+
+    $("body #etablissementRatt").select2();
+    $("body #etablissementRatt").on('change', async function (){
+        const id_etab = $(this).val();
+        tableEpreuveRattrapage.columns().search("");
+       
+        let response = ""
+        if(id_etab != "") {
+            if ($("#dateEpreuveRatt").val() != "") {
+                tableEpreuveRattrapage.columns(6).search($("#dateEpreuveRatt").val())
+            }
+            tableEpreuveRattrapage.columns(0).search(id_etab).draw();
+            const request = await axios.get('/api/formation/'+id_etab);
+            response = request.data
+        }else{
+            if ($("#dateEpreuveRatt").val() != "") {
+                tableEpreuveRattrapage.columns(6).search($("#dateEpreuveRatt").val()).draw();
+            }else{
+                tableEpreuveRattrapage.columns().search("").draw();
+            }
+        }
+        $('body #semestreRatt').html('').select2();
+        $('body #moduleRatt').html('').select2();
+        $('body #elementRatt').html('').select2();
+        $('body #promotionRatt').html('').select2();
+        $('body #formationRatt').html(response).select2();
+    })
+    $("body #formationRatt").on('change', async function (){
+        const id_formation = $(this).val();
+        tableEpreuveRattrapage.columns().search("");
+        if ($("#dateEpreuveRatt").val() != "") {
+            tableEpreuveRattrapage.columns(6).search($("#dateEpreuveRatt").val());
+        }
+        let response = ""
+        if(id_formation != "") {
+            tableEpreuveRattrapage.columns(1).search(id_formation).draw();
+            const request = await axios.get('/api/promotion/'+id_formation);
+            response = request.data
+        }else{
+            tableEpreuveRattrapage.columns(0).search($("body #etablissementRatt").val()).draw();
+        }
+        $('body #semestreRatt').html('').select2();
+        $('body #moduleRatt').html('').select2();
+        $('body #elementRatt').html('').select2();
+        $('body #promotionRatt').html(response).select2();
+    })
+    $("body #promotionRatt").on('change', async function (){
+        const id_promotion = $(this).val();
+        tableEpreuveRattrapage.columns().search("");
+        if ($("#dateEpreuveRatt").val() != "") {
+            tableEpreuveRattrapage.columns(6).search($("#dateEpreuveRatt").val());
+        }
+        if(id_promotion != "") {
+            tableEpreuveRattrapage.columns(2).search(id_promotion).draw();
+            const request = await axios.get('/api/semestre/'+id_promotion);
+            response = request.data
+        }else{
+            tableEpreuveRattrapage.columns(1).search($("body #formationRatt").val()).draw();
+        }
+        $('body #semestreRatt').html('').select2();
+        $('body #moduleRatt').html('').select2();
+        $('body #elementRatt').html('').select2();
+        $('body #semestreRatt').html(response).select2();
+    })
+    $("body #semestreRatt").on('change', async function (){
+        const id_semestre = $(this).val();
+        tableEpreuveRattrapage.columns().search("");
+        if ($("#dateEpreuveRatt").val() != "") {
+            tableEpreuveRattrapage.columns(6).search($("#dateEpreuveRatt").val())
+        }
+        if(id_semestre != "") {
+            const request = await axios.get('/api/module/'+id_semestre);
+            tableEpreuveRattrapage.columns(3).search(id_semestre).draw();
+            response = request.data
+        }else{
+            tableEpreuveRattrapage.columns(2).search($("body #promotionRatt").val()).draw();
+        }
+        $('body #moduleRatt').html('').select2();
+        $('body #elementRatt').html('').select2();
+        $('body #moduleRatt').html(response).select2();
+    })
+    $("body #moduleRatt").on('change', async function (){
+        const id_module = $(this).val();
+        tableEpreuveRattrapage.columns().search("");
+        if ($("#dateEpreuveRatt").val() != "") {
+            tableEpreuveRattrapage.columns(6).search($("#dateEpreuveRatt").val())
+        }
+        if(id_module != "") {
+            tableEpreuveRattrapage.columns(4).search(id_module).draw();
+            const request = await axios.get('/api/element/'+id_module);
+            response = request.data
+        }else{
+            tableEpreuveRattrapage.columns(3).search($("body #semestreRatt").val()).draw();
+        }
+
+        $('body #elementRatt').html(response).select2();
+    })
+    $("body #elementRatt").on('change', async function (){
+        const id_element = $(this).val();
+        tableEpreuveRattrapage.columns().search("");
+        if ($("#dateEpreuveRatt").val() != "") {
+            tableEpreuveRattrapage.columns(6).search($("#dateEpreuveRatt").val())
+        }
+        tableEpreuveRattrapage.columns(5).search(id_element).draw();
+    })
+    $("#dateEpreuveRatt").on('change', async function (){
+        const dateEpreuve = $(this).val();
+        tableEpreuveRattrapage.columns(6).search(dateEpreuve).draw();
+    })
+
+    // end filters session rattrappage
+    
     $('body').on('click','#list_epreuve_normal tbody tr',function () {
         const input = $(this).find("input");
         if(input.is(":checked")){
@@ -413,61 +641,61 @@ $(document).ready(function  () {
         }
     })
 
-    $('select').select2();
-    $("#etablissement").on('change', async function (){
-        const id_etab = $(this).val();
-        let response = ""
-        if(id_etab != "") {
-            const request = await axios.get('/api/formation/'+id_etab);
-            response = request.data
-        }
-        $('#element').html('').select2();
-        $('#module').html('').select2();
-        $('#semestre').html('').select2();
-        $('#promotion').html('').select2();
-        $('#formation').html(response).select2();
-    })
-    $("#formation").on('change', async function (){
-        const id_formation = $(this).val();
-        let response = ""
-        if(id_formation != "") {
-            const request = await axios.get('/api/promotion/'+id_formation);
-            response = request.data
-        }
-        $('#element').html('').select2();
-        $('#module').html('').select2();
-        $('#semestre').html('').select2();
-        $('#promotion').html(response).select2();
-    })
-    $("#promotion").on('change', async function (){
-        const id_promotion = $(this).val();
-        if(id_promotion != "") {
-            const request = await axios.get('/api/semestre/'+id_promotion);
-            response = request.data
-            const requestt = await axios.get('/api/niv1/'+id_promotion);
-            niv1 = requestt.data 
-        }
-        $('#element').html('').select2();
-        $('#module').html('').select2();
-        $('#semestre').html(response).select2();
-    })
-    $("#semestre").on('change', async function (){
-        const id_semestre = $(this).val();
-        if(id_semestre != "") {
-            const request = await axios.get('/api/module/'+id_semestre);
-            response = request.data
-        }
-        $('#element').html('').select2();
-        $('#module').html(response).select2();
-    })
-    $("#module").on('change', async function (){
-        const id_module = $(this).val();
-        if(id_module != "") {
-            const request = await axios.get('/api/element/'+id_module);
-            response = request.data
-        }
-        $('#element').html(response).select2();
-    })
+    // $('select').select2();
+    // $("#etablissement").on('change', async function (){
+    //     const id_etab = $(this).val();
+    //     let response = ""
+    //     if(id_etab != "") {
+    //         const request = await axios.get('/api/formation/'+id_etab);
+    //         response = request.data
+    //     }
+    //     $('#element').html('').select2();
+    //     $('#module').html('').select2();
+    //     $('#semestre').html('').select2();
+    //     $('#promotion').html('').select2();
+    //     $('#formation').html(response).select2();
+    // })
+    // $("#formation").on('change', async function (){
+    //     const id_formation = $(this).val();
+    //     let response = ""
+    //     if(id_formation != "") {
+    //         const request = await axios.get('/api/promotion/'+id_formation);
+    //         response = request.data
+    //     }
+    //     $('#element').html('').select2();
+    //     $('#module').html('').select2();
+    //     $('#semestre').html('').select2();
+    //     $('#promotion').html(response).select2();
+    // })
+    // $("#promotion").on('change', async function (){
+    //     const id_promotion = $(this).val();
+    //     if(id_promotion != "") {
+    //         const request = await axios.get('/api/semestre/'+id_promotion);
+    //         response = request.data
+    //         const requestt = await axios.get('/api/niv1/'+id_promotion);
+    //         niv1 = requestt.data 
+    //     }
+    //     $('#element').html('').select2();
+    //     $('#module').html('').select2();
+    //     $('#semestre').html(response).select2();
+    // })
+    // $("#semestre").on('change', async function (){
+    //     const id_semestre = $(this).val();
+    //     if(id_semestre != "") {
+    //         const request = await axios.get('/api/module/'+id_semestre);
+    //         response = request.data
+    //     }
+    //     $('#element').html('').select2();
+    //     $('#module').html(response).select2();
+    // })
+    // $("#module").on('change', async function (){
+    //     const id_module = $(this).val();
+    //     if(id_module != "") {
+    //         const request = await axios.get('/api/element/'+id_module);
+    //         response = request.data
+    //     }
+    //     $('#element').html(response).select2();
+    // })
     
     $("#ajouter_epreuve").on("click", function(e){  
         e.preventDefault();
