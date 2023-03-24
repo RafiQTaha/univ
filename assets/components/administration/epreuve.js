@@ -105,11 +105,11 @@ $(document).ready(function  () {
                 tableEpreuveNormal.columns().search("").draw();
             }
         }
-        $('body #semestre').html('').select2();
-        $('body #module').html('').select2();
-        $('body #element').html('').select2();
-        $('body #promotion').html('').select2();
-        $('body #formation').html(response).select2();
+        $('#semestre').html('').select2();
+        $('#module').html('').select2();
+        $('#element').html('').select2();
+        $('#promotion').html('').select2();
+        $('#formation').html(response).select2();
     })
     $("body #formation").on('change', async function (){
         const id_formation = $(this).val();
@@ -125,10 +125,10 @@ $(document).ready(function  () {
         }else{
             tableEpreuveNormal.columns(0).search($("body #etablissement").val()).draw();
         }
-        $('body #semestre').html('').select2();
-        $('body #module').html('').select2();
-        $('body #element').html('').select2();
-        $('body #promotion').html(response).select2();
+        $('#semestre').html('').select2();
+        $('#module').html('').select2();
+        $('#element').html('').select2();
+        $('#promotion').html(response).select2();
     })
     $("body #promotion").on('change', async function (){
         const id_promotion = $(this).val();
@@ -143,10 +143,10 @@ $(document).ready(function  () {
         }else{
             tableEpreuveNormal.columns(1).search($("body #formation").val()).draw();
         }
-        $('body #semestre').html('').select2();
-        $('body #module').html('').select2();
-        $('body #element').html('').select2();
-        $('body #semestre').html(response).select2();
+        $('#semestre').html('').select2();
+        $('#module').html('').select2();
+        $('#element').html('').select2();
+        $('#semestre').html(response).select2();
     })
     $("body #semestre").on('change', async function (){
         const id_semestre = $(this).val();
@@ -161,9 +161,9 @@ $(document).ready(function  () {
         }else{
             tableEpreuveNormal.columns(2).search($("body #promotion").val()).draw();
         }
-        $('body #module').html('').select2();
-        $('body #element').html('').select2();
-        $('body #module').html(response).select2();
+        $('#module').html('').select2();
+        $('#element').html('').select2();
+        $('#module').html(response).select2();
     })
     $("body #module").on('change', async function (){
         const id_module = $(this).val();
@@ -179,7 +179,7 @@ $(document).ready(function  () {
             tableEpreuveNormal.columns(3).search($("body #semestre").val()).draw();
         }
 
-        $('body #element').html(response).select2();
+        $('#element').html(response).select2();
     })
     $("body #element").on('change', async function (){
         const id_element = $(this).val();
@@ -191,7 +191,7 @@ $(document).ready(function  () {
     })
     $("#dateEpreuve").on('change', async function (){
         const dateEpreuve = $(this).val();
-        console.log(dateEpreuve);
+        // console.log(dateEpreuve);
         tableEpreuveNormal.columns(6).search(dateEpreuve).draw();
     })
 
@@ -220,11 +220,11 @@ $(document).ready(function  () {
                 tableEpreuveRattrapage.columns().search("").draw();
             }
         }
-        $('body #semestreRatt').html('').select2();
-        $('body #moduleRatt').html('').select2();
-        $('body #elementRatt').html('').select2();
-        $('body #promotionRatt').html('').select2();
-        $('body #formationRatt').html(response).select2();
+        $('#semestreRatt').html('').select2();
+        $('#moduleRatt').html('').select2();
+        $('#elementRatt').html('').select2();
+        $('#promotionRatt').html('').select2();
+        $('#formationRatt').html(response).select2();
     })
     $("body #formationRatt").on('change', async function (){
         const id_formation = $(this).val();
@@ -240,10 +240,10 @@ $(document).ready(function  () {
         }else{
             tableEpreuveRattrapage.columns(0).search($("body #etablissementRatt").val()).draw();
         }
-        $('body #semestreRatt').html('').select2();
-        $('body #moduleRatt').html('').select2();
-        $('body #elementRatt').html('').select2();
-        $('body #promotionRatt').html(response).select2();
+        $('#semestreRatt').html('').select2();
+        $('#moduleRatt').html('').select2();
+        $('#elementRatt').html('').select2();
+        $('#promotionRatt').html(response).select2();
     })
     $("body #promotionRatt").on('change', async function (){
         const id_promotion = $(this).val();
@@ -258,10 +258,10 @@ $(document).ready(function  () {
         }else{
             tableEpreuveRattrapage.columns(1).search($("body #formationRatt").val()).draw();
         }
-        $('body #semestreRatt').html('').select2();
-        $('body #moduleRatt').html('').select2();
-        $('body #elementRatt').html('').select2();
-        $('body #semestreRatt').html(response).select2();
+        $('#semestreRatt').html('').select2();
+        $('#moduleRatt').html('').select2();
+        $('#elementRatt').html('').select2();
+        $('#semestreRatt').html(response).select2();
     })
     $("body #semestreRatt").on('change', async function (){
         const id_semestre = $(this).val();
@@ -276,9 +276,9 @@ $(document).ready(function  () {
         }else{
             tableEpreuveRattrapage.columns(2).search($("body #promotionRatt").val()).draw();
         }
-        $('body #moduleRatt').html('').select2();
-        $('body #elementRatt').html('').select2();
-        $('body #moduleRatt').html(response).select2();
+        $('#moduleRatt').html('').select2();
+        $('#elementRatt').html('').select2();
+        $('#moduleRatt').html(response).select2();
     })
     $("body #moduleRatt").on('change', async function (){
         const id_module = $(this).val();
@@ -294,7 +294,7 @@ $(document).ready(function  () {
             tableEpreuveRattrapage.columns(3).search($("body #semestreRatt").val()).draw();
         }
 
-        $('body #elementRatt').html(response).select2();
+        $('#elementRatt').html(response).select2();
     })
     $("body #elementRatt").on('change', async function (){
         const id_element = $(this).val();
