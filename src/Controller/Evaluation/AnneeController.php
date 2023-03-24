@@ -188,7 +188,7 @@ class AnneeController extends AbstractController
     public function getStatut($inscription, $statut)
     {
         $abreviation = $this->em->getRepository(ExAnotes::class)->getStatutByColumn($inscription, $statut);
-        if ($abreviation != null) {
+        if ($abreviation != null) { 
         return new Response($abreviation['abreviation'], 200, ['Content-Type' => 'text/html']);
         }else{
             return new Response("");
