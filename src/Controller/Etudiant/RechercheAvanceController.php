@@ -320,7 +320,71 @@ class RechercheAvanceController extends AbstractController
         $mpdf->WriteHTML($html);
         
         $mpdf->Output("releve_annee.pdf", "I");
-       
-      
+    }
+    
+    #[Route('/attestation/bonne_conduite/{inscription}', name: 'etudiant_recherche_attestation_bonne_conduite')]
+    public function attestation_bonne_conduite(TInscription $inscription): Response
+    {
+        $html = $this->render("etudiant/recherche_avance/pdf/attestations/bonne_conduite.html.twig", [
+            'inscription' => $inscription,
+        ])->getContent();
+        // dd($html);
+        $mpdf = new Mpdf([
+            'margin_left' => 15,
+            'margin_right' => 15,
+        ]);
+        // $mpdf->SetHTMLHeader(
+        //     $this->render("etudiant/recherche_avance/pdf/attestations/header.html.twig")->getContent()
+        // );
+        $mpdf->SetHTMLFooter(
+            $this->render("etudiant/recherche_avance/pdf/attestations/footer.html.twig")->getContent()
+        );
+        $mpdf->WriteHTML($html);
+        
+        $mpdf->Output("bonne_conduite.pdf", "I");
+    }
+    #[Route('/attestation/hebergement/{inscription}', name: 'etudiant_recherche_attestation_hebergement')]
+    public function attestation_hebergement(TInscription $inscription): Response
+    {
+        // die("l'attestation d'hebergement est en cours de developpement");
+        $html = $this->render("etudiant/recherche_avance/pdf/attestations/hebergement.html.twig", [
+            'inscription' => $inscription,
+        ])->getContent();
+        // dd($html);
+        $mpdf = new Mpdf([
+            'margin_left' => 15,
+            'margin_right' => 15,
+        ]);
+        // $mpdf->SetHTMLHeader(
+        //     $this->render("etudiant/recherche_avance/pdf/attestations/header.html.twig")->getContent()
+        // );
+        $mpdf->SetHTMLFooter(
+            $this->render("etudiant/recherche_avance/pdf/attestations/footer.html.twig")->getContent()
+        );
+        $mpdf->WriteHTML($html);
+        
+        $mpdf->Output("Hebergement.pdf", "I");
+    }
+    #[Route('/attestation/cursus/{inscription}', name: 'etudiant_recherche_attestation_cursus')]
+    public function attestation_cursus(TInscription $inscription): Response
+    {
+        die("l'attestation de reussite (cursus) est en cours de developpement");
+        $html = $this->render("etudiant/recherche_avance/pdf/attestations/reussite.html.twig", [
+            'inscription' => $inscription,
+        ])->getContent();
+        // dd($html);
+        $mpdf = new Mpdf([
+            'margin_left' => 5,
+            'margin_right' => 5,
+        ]);
+        // $mpdf->SetHTMLHeader(
+        //     $this->render("etudiant/recherche_avance/pdf/attestations/header.html.twig")->getContent()
+        // );
+        $mpdf->SetHTMLFooter(
+            $this->render("etudiant/recherche_avance/pdf/attestations/footer.html.twig")->getContent()
+        );
+        $mpdf->WriteHTML($html);
+        
+        $mpdf->Output("reussite.pdf", "I");
     }
 }

@@ -383,17 +383,28 @@ class GestionAdmissionController extends AbstractController
         if ($admission->getPreinscription()->getNature() and $admission->getPreinscription()->getNature()->getId() == 4) {
             $isBoursier = 1;
         }
-        $k = $isBoursier == 0 ? 2 : 4 ;
+        $k = $isBoursier == 0 ? 1 : 2 ;
         // for ($i=0; $i < $k; $i++) { 
         // for ($i=0; $i < 2; $i++) { 
-            $operationCab = new TOperationcab();
-            $operationCab->setPreinscription($inscription->getAdmission()->getPreinscription());
-            $operationCab->setUserCreated($this->getUser());
-            $operationCab->setAnnee($inscription->getAnnee());
-            $operationCab->setCategorie('inscription');
-            $operationCab->setActive(0);
-            $operationCab->setDateContable(date('Y'));
-            $operationCab->setOrganisme('Payant');
+            for ($i=1; $i <= $k; $i++) { 
+                $operationCab = new TOperationcab();
+                $operationCab->setPreinscription($inscription->getAdmission()->getPreinscription());
+                $operationCab->setUserCreated($this->getUser());
+                $operationCab->setAnnee($inscription->getAnnee());
+                $operationCab->setActive(0);
+                $operationCab->setDateContable(date('Y'));
+                $categorie = $k == 1 ? 'inscription' : 'inscription organisme';
+                $organisme = $k == 1 ? 'Payant' : 'Organisme';
+                $operationCab->setCategorie($categorie);
+                $operationCab->setOrganisme($organisme);
+                $operationCab->setCreated(new \DateTime("now"));
+                $this->em->persist($operationCab);
+                $this->em->flush();
+                $operationCab->setCode(
+                    $inscription->getAnnee()->getFormation()->getEtablissement()->getAbreviation()."-FAC".str_pad($operationCab->getId(), 8, '0', STR_PAD_LEFT)."/".date('Y')
+                );
+                $this->em->flush();
+            }
             // switch ($i) {
             //     case 1:
             //         // "hors inscription" à remplacer par "ADD Inscription"
@@ -418,13 +429,6 @@ class GestionAdmissionController extends AbstractController
                 // $i == 0 ? $operationCab->setActive(1) : $operationCab->setActive(0);
                 // $i == 0 ? $operationCab->setDateContable(date('Y')) : $operationCab->setDateContable(date('Y') + 1);
             // }
-            $operationCab->setCreated(new \DateTime("now"));
-            $this->em->persist($operationCab);
-            $this->em->flush();
-            $operationCab->setCode(
-                $inscription->getAnnee()->getFormation()->getEtablissement()->getAbreviation()."-FAC".str_pad($operationCab->getId(), 8, '0', STR_PAD_LEFT)."/".date('Y')
-            );
-            $this->em->flush();
         // }
         return new JsonResponse("Bien Enregistre code inscription: " . $inscription->getCode(), 200);
     }

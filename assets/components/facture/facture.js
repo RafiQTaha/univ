@@ -231,7 +231,7 @@ $(document).ready(function () {
         modalAlert.remove();
         try{
             const request = await axios.post('/facture/factures/add_detaille/'+id_facture,formData)
-            getFacture();            
+            getFacture(); load_frais_preins();           
             $(".modal-facture .modal-body").prepend(
                 `<div class="alert alert-success">Facture Bien Ajouter</div>`
             );
@@ -423,6 +423,7 @@ $(document).ready(function () {
                 
             }
         }
+        icon.addClass('fa-lock').removeClass("fa-spinner fa-spin");
     })
     $("#new_fac_organisme").on('click', async function(e) {
         e.preventDefault();

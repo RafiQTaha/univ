@@ -766,12 +766,37 @@ class GestionFactureController extends AbstractController
         if ($operationcab->getActive() == 0) {
             return new JsonResponse('Facture Déja Cloturée!', 500);   
         }
-        if ($operationcab->getCategorie() == 'inscription') {
-            $operationCabHorsIns = $this->em->getRepository(TOperationcab::class)->findOneBy(['categorie'=>'hors inscription','preinscription'=>$operationcab->getPreinscription()]);
-            $operationCabHorsIns->setActive(1);
+        if (!in_array($operationcab->getCategorie(), ['inscription','inscription organisme'])) {
+            return new JsonResponse('Veuillez selection une facture "Inscription"!', 500); 
         }
-        $operationcab->setActive(0);
-        $this->em->flush();
+        // if (in_array($operationcab->getCategorie(), ['inscription','inscription organisme'])) {
+            $operationcab->setActive(0);
+            $year = $operationcab->getDateContable() + 1;
+             
+            $operationCabHorsIns = new TOperationcab();
+            $operationCabHorsIns->setPreinscription($operationcab->getPreinscription());
+            $operationCabHorsIns->setUserCreated($this->getUser());
+            $operationCabHorsIns->setAnnee($operationcab->getAnnee());
+            $operationCabHorsIns->setActive(1);
+            $operationCabHorsIns->setDateContable($year);
+            $categorie = $operationcab->getCategorie() == 'inscription' ? 'hors inscription' : 'hors inscription org';
+            $organisme = $operationcab->getCategorie() == 'inscription' ? 'Payant' : 'Organisme';
+            $operationCabHorsIns->setCategorie($categorie);
+            $operationCabHorsIns->setOrganisme($organisme);
+            $operationCabHorsIns->setCreated(new \DateTime("now"));
+            $this->em->persist($operationCabHorsIns);
+            $this->em->flush();
+            $operationCabHorsIns->setCode(
+                $operationcab->getAnnee()->getFormation()->getEtablissement()->getAbreviation()."-FAC".str_pad($operationCabHorsIns->getId(), 8, '0', STR_PAD_LEFT)."/".date('Y')
+            );
+            $this->em->flush();
+        // }
+        // if ($operationcab->getCategorie() == 'inscription') {
+        //     $operationCabHorsIns = $this->em->getRepository(TOperationcab::class)->findOneBy(['categorie'=>'hors inscription','preinscription'=>$operationcab->getPreinscription()]);
+        //     $operationCabHorsIns->setActive(1);
+        // }
+        // $operationcab->setActive(0);
+        // $this->em->flush();
         return new JsonResponse('La facture est bien Valider!', 200);    
     }
     
