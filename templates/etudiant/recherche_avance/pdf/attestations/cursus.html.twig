@@ -26,7 +26,10 @@
     .slh tr td {
         border-bottom: 1px solid #8d8d8d;
     }
-    
+    .tableAnnee  td,.tableAnnee  th {
+        border-bottom: 1px solid black;
+        border-right: 1px solid black;
+    }
     .txt {
         width: 100%;
         text-align: left;
@@ -95,7 +98,6 @@
 
 </table>
 <br>
-<br>
 
 
 <table style="width: 100%;font-size:12px;"  cellspacing="0">   
@@ -116,7 +118,7 @@
 
             </td>
             <td style="width: 70%; text-align: left;line-height: 30px">
-                <span style="font-size:11px;font-weight: bold;color:#000;"> </span> 
+                <span style="font-size:11px;font-weight: bold;color:#000;">N° d’inscription </span> : {{inscription.code}}
             </td>
             <td style="width: 20%; text-align: left;line-height: 30px">
                 <span style="font-size:11px;font-weight: bold;color:#000;"> </span>
@@ -140,18 +142,6 @@
 
             </td>
             <td style="width: 70%; text-align: left;line-height: 30px">
-                <span style="font-size:11px;font-weight: bold;color:#000;"> </span> 
-            </td>
-            <td style="width: 20%; text-align: left;line-height: 30px">
-                <span style="font-size:11px;font-weight: bold;color:#000;"> </span>
-            </td> 
-        </tr>
-        
-        <tr>
-            <td style="width: 10%; text-align: left;line-height: 30px">
-
-            </td>
-            <td style="width: 70%; text-align: left;line-height: 30px">
                 <span style="font-size:11px;font-weight: bold;color:#000;">CIN/Passeport </span> : {{inscription.admission.preinscription.etudiant.cin}}
             </td>
             <td style="width: 20%; text-align: left;line-height: 30px">
@@ -159,39 +149,47 @@
             </td>
         </tr>
         
-        
-        
-    </tbody>
+        <tr>
+            <td style="width: 10%; text-align: left;line-height: 30px">
 
+            </td>
+            <td style="width: 70%; text-align: left;line-height: 30px">
+                <span style="font-size:11px;font-weight: bold;color:#000;">Filière  </span> : {{inscription.annee.formation.designation}}
+            </td>
+            <td style="width: 20%; text-align: left;line-height: 30px">
+
+            </td>
+        </tr>
+    </tbody>
 </table>
 <br>
 <p style="line-height: 1.8; margin: 10px 30px;font-size:11px;">
-    
-    {% set a =' à la ' %}
-    {% if inscription.annee.formation.etablissement.id == 25 %}
-       {% set a =' au ' %}
-    {% endif %} 
-    
-   Est inscrit(e){{a}}  <span style="font-size:12px;font-weight: bold;color:black;">{{inscription.annee.formation.etablissement.designation}}</span>
-                sous le N° <span style="font-size:12px;font-weight: bold;color:black;">{{inscription.code}}</span> en <span style="font-size:12px;font-weight: bold;color:black;">{{inscription.annee.formation.designation}}</span>
-                    , et a réussi avec succès les examens du 
-                    {% set i = 1 %}
-                    {% for semestre in inscription.promotion.semestres %}
-                       {% if semestre.active == 1 %}
-                        {% if i > 1 %}
-                            et {{semestre.designation}}
-                        {% else %}
-                            {{semestre.designation}}
-                            {% set i = i + 1 %}
-                        {% endif %}
-                       {% endif %}
-                    {% endfor %}
-                    au titre de l’année universitaire <span style="font-size:12px;font-weight: bold;color:black;">{{inscription.annee.designation}}</span>.
-                    
-                <br><br><br>
-
-                Cette attestation est délivrée à l'intéressé(e) pour servir et valoir ce que de droit.
-           
+    A suivi avec succès le cursus de Médecine Générale et a cumulé les moyennes suivantes :     
+</p>
+<table style="width: 100%;font-size:12px;border: 1px solid #000;margin: 10px 30px;" class="tableAnnee"  cellspacing="0">   
+    <thead>
+        <tr>
+            <th style="text-align: center;line-height: 30px">ANNEE UNIVERSITAIRE</th>
+            <th style="text-align: center;line-height: 30px">NIVEAU</th>
+            <th style="text-align: center;line-height: 30px">MOYENNE ANNUELLE (/20)</th>
+            <th style="text-align: center;line-height: 30px">STATUT ANNÉE</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for inscription in inscription.admission.inscriptions %}
+            {% if inscription.anotes is not null and inscription.anotes.statutAff.id not in [44,45,46] %}
+                <tr>
+                    <td style="text-align: center;line-height: 30px">{{inscription.annee.designation}}</td>
+                    <td style="text-align: center;line-height: 30px">{{inscription.promotion.designation}}</td>
+                    <td style="text-align: center;line-height: 30px">{{inscription.anotes.note}}</td>
+                    <td style="text-align: center;line-height: 30px">{{inscription.anotes.statutAff.designation}}</td>
+                </tr>
+            {% endif %}
+        {% endfor %}
+    </tbody>
+</table>
+<p style="line-height: 1.8; margin: 10px 30px;font-size:11px;">
+    Cette attestation est délivrée à l&#39;intéressé(e) pour servir et valoir ce que de droit.     
 </p>
 
 <br>

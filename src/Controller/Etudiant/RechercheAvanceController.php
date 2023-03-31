@@ -368,8 +368,9 @@ class RechercheAvanceController extends AbstractController
     #[Route('/attestation/cursus/{inscription}', name: 'etudiant_recherche_attestation_cursus')]
     public function attestation_cursus(TInscription $inscription): Response
     {
-        die("l'attestation de reussite (cursus) est en cours de developpement");
-        $html = $this->render("etudiant/recherche_avance/pdf/attestations/reussite.html.twig", [
+        // dd($inscription->getAnotes());
+        // die("l'attestation de reussite (cursus) est en cours de developpement");
+        $html = $this->render("etudiant/recherche_avance/pdf/attestations/cursus.html.twig", [
             'inscription' => $inscription,
         ])->getContent();
         // dd($html);
@@ -385,6 +386,6 @@ class RechercheAvanceController extends AbstractController
         );
         $mpdf->WriteHTML($html);
         
-        $mpdf->Output("reussite.pdf", "I");
+        $mpdf->Output("reussite (cursus).pdf", "I");
     }
 }
