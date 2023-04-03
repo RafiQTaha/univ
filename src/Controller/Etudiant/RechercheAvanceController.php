@@ -341,14 +341,21 @@ class RechercheAvanceController extends AbstractController
         );
         $mpdf->WriteHTML($html);
         
-        $mpdf->Output("bonne_conduite.pdf", "I");
+        $mpdf->Output("Bonne conduite.pdf", "I");
     }
     #[Route('/attestation/hebergement/{inscription}', name: 'etudiant_recherche_attestation_hebergement')]
     public function attestation_hebergement(TInscription $inscription): Response
     {
         // die("l'attestation d'hebergement est en cours de developpement");
+        // dd(->getCin());
+        $etudiant = $inscription->getAdmission()->getPreinscription()->getEtudiant();
+        $passeportType = $etudiant->getCin() != null ? "Cin n° " : "Passeport n° ";
+        $passeport = $etudiant->getCin() != null ? $etudiant->getCin() : $etudiant->getPasseport();
+        // $passeport = "Passeport n° <b>".$etudiant->getPasseport()."</b>";
         $html = $this->render("etudiant/recherche_avance/pdf/attestations/hebergement.html.twig", [
             'inscription' => $inscription,
+            'passeport' => $passeport,
+            'passeportType' => $passeportType,
         ])->getContent();
         // dd($html);
         $mpdf = new Mpdf([
@@ -386,6 +393,6 @@ class RechercheAvanceController extends AbstractController
         );
         $mpdf->WriteHTML($html);
         
-        $mpdf->Output("reussite (cursus).pdf", "I");
+        $mpdf->Output("Reussite (cursus).pdf", "I");
     }
 }

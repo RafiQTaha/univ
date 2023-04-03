@@ -2,8 +2,9 @@
 
 <style type="text/Css">
     body{
-        font-family: 'Courier', sans-serif;
-        color: rgb(90, 90, 95) !important;
+        font-family: Arial, sans-serif;
+        /* font-family: 'Courier', sans-serif; */
+        /* color: rgb(90, 90, 95) !important; */
     }
     footer {
         /* font-family: 'Courier', Courier; */
@@ -36,7 +37,8 @@
         padding-left: 30px ;
         padding-right:  30px ;
         text-align: justify; 
-        font-size : 10.5px;
+        /* font-size : 11.5px; */
+        font-size : 11.5px;
         font-weight: normal ;
     }
     .txt span {
@@ -67,6 +69,10 @@
             </tr>
         </table>
 </div>
+<br>
+<br>
+<br>
+<br>
 <p style="text-align:center;font-size:20px;font-weight: bold;color:#0c2842;">ATTESTATION D’HEBERGEMENT</p>
 <br/>
 <br/><br/>
@@ -74,8 +80,14 @@
     <tbody>
         <tr>
         {% set lastinscription = inscription.admission.inscriptions|last %}
+        {# {% if inscription.admission.preinscription.etudiant.Cin != null  %}
+            {% set passeport = "Cin n° <b>"{{inscription.admission.preinscription.etudiant.Cin}}"</b>" %}
+        {% else %}
+            {% set passeport = "Passeport n° <b>"{{inscription.admission.preinscription.etudiant.Passeport}}"</b>" %}
+        {% endif %} #}
+        
             <td class="txt">
-                Nous soussignés, <b>L’Université Internationale Abulcasis des Sciences de la Santé (UIASS)</b>, sise à Madinat Al Irfane, Bâtiment B, avenue Allal El Fassi, Rabat, atteste par la présente que l’étudiant(e) <b> {{inscription.admission.preinscription.etudiant.nom}} {{inscription.admission.preinscription.etudiant.prenom}}</b> de Nationalité <b>{{inscription.admission.preinscription.etudiant.nationalite}}</b> Passeport n° <b>{{inscription.admission.preinscription.etudiant.Passeport}}</b> est inscrit(e) en <b>{{lastinscription.promotion.designation}} et {{lastinscription.annee.formation.designation}}</b> au titre de l’année académique <b>{{lastinscription.annee.designation}}</b>, bénéficie d’un logement Universitaire à la Fondation Cheikh Zaïd à l’adresse suivante : Avenue Allal El Fassi, Madinat Al Irfane, Hay Riad,Rabat Maroc.<br>
+                Nous soussignés, <b>L’Université Internationale Abulcasis des Sciences de la Santé (UIASS)</b>, sise à Madinat Al Irfane, Bâtiment B, avenue Allal El Fassi, Rabat, atteste par la présente que l’étudiant(e) <b> {{inscription.admission.preinscription.etudiant.nom}} {{inscription.admission.preinscription.etudiant.prenom}}</b> de Nationalité <b>{{inscription.admission.preinscription.etudiant.nationalite}}</b> {{passeportType}} <b>{{passeport}}</b> est inscrit(e) en <b>{{lastinscription.promotion.designation}} et {{lastinscription.annee.formation.designation}}</b> au titre de l’année académique <b>{{lastinscription.annee.designation}}</b>, bénéficie d’un logement Universitaire à la Fondation Cheikh Zaïd à l’adresse suivante : Avenue Allal El Fassi, Madinat Al Irfane, Hay Riad,Rabat Maroc.<br>
                 En foi de quoi la présente attestation est délivrée à l’intéressé pour servir et valoir ce que à de droit.
             </td>
         </tr>
@@ -83,11 +95,8 @@
 
 </table>
 <br>
-<br>
 
-<br>
-
-<table style="width: 100%;" align="center" cellspacing="0">
+<table style="width: 100%;" cellspacing="0">
     <thead>
         <tr>
             <th style="width: 30%; text-align: left;"></th>
@@ -98,10 +107,15 @@
         <tr>
             <td style="width: 100%; text-align: left;">
                 <br><br><br>
-                <span style="font-size:12px;color:#111;"> L’université Internationale Abulcasis Des Sciences de la Santé</span>
+                <span style="font-size:11px;color:#000;font-weight:bold;"> Université Internationale Abulcasis</span>
 
             </td>
+        </tr>
+        <tr>
+            <td style="width: 100%; text-align: left;">
+                <span style="font-size:11px;color:#000;font-weight:bold;"> Des Sciences de la Santé</span>
 
+            </td>
         </tr>
     </tbody>
 
