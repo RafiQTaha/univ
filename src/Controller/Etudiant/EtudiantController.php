@@ -353,7 +353,7 @@ class EtudiantController extends AbstractController
         $id_formation = $request->get('formation');
         $nature = $this->em->getRepository(NatureDemande::class)->find($request->get('naturedemande'));
         $formation = $this->em->getRepository(AcFormation::class)->find($id_formation);
-        if(strpos($formation->getDesignation(), 'Résidanat') === false){
+        if(strpos($formation->getDesignation(), 'Résidanat') === false && $formation->getEtablissement()->getId() != 25){
             $currentYear = date('Y') - 1 .'/'.date('Y');  // means current college year
             if($currentMonth >= 4) { // april and above
                 $currentYear = date('Y') . '/'.date('Y')+1; // means next college year
@@ -364,7 +364,7 @@ class EtudiantController extends AbstractController
             $annee = $this->em->getRepository(AcAnnee::class)->find($id_annee);
         }
         if(!$annee) {
-            return new JsonResponse('Annee untrouvable!', 500);
+            return new JsonResponse('Annee Introuvable!', 500);
         }
         $exist = count($this->em->getRepository(TPreinscription::class)->findBy(['etudiant'=>$etudiant,'annee'=>$annee]));
         // dd($exist);
