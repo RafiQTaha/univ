@@ -391,7 +391,7 @@ class GestionAdmissionController extends AbstractController
                 $operationCab->setPreinscription($inscription->getAdmission()->getPreinscription());
                 $operationCab->setUserCreated($this->getUser());
                 $operationCab->setAnnee($inscription->getAnnee());
-                $operationCab->setActive(0);
+                $operationCab->setActive(1);
                 $operationCab->setDateContable(date('Y'));
                 $categorie = $k == 1 ? 'inscription' : 'inscription organisme';
                 $organisme = $k == 1 ? 'Payant' : 'Organisme';
