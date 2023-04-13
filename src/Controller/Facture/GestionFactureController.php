@@ -228,7 +228,7 @@ class GestionFactureController extends AbstractController
             return new JsonResponse('Vous ne pouvez pas reglé une Facture Organisme', 500);
         }
         // $org = $operationcab->getOrganisme() == 'Payant' ? 1 : 0;
-        $org = 0;
+        $org = 1;
         $etablissement = $operationcab->getPreinscription()->getAnnee()->getFormation()->getEtablissement()->getAbreviation();
         $reglement = New TReglement();
         $reglement->setOperation($operationcab);
