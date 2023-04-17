@@ -252,7 +252,7 @@ class ExMnotesRepository extends ServiceEntityRepository
         mdl.code 'code_module', mdl.designation as module, 
         em.note 'mnote', em.note_ini 'mnote_ini',
         em.note_rat 'mnote_rat', em.note_rachat 'mnote_rachat', stm2.id 'mstatut_s2',stm2.designation 'ms2_designation',stmdef.id 'mstatut_s2',stmdef.designation 'mdef_designation',
-        stmaff.id 'mstatut_aff',stmaff.designation 'maff_designation', 
+        stmaff.id 'mstatut_aff',stmaff.designation 'maff_designation', em.observation 'module OBS',
         
         ele.code 'code_element', ele.designation as element, ele.coefficient, ele.coefficient_epreuve, 
         ex.mcc , ex.mtp, ex.mef, ex.ccr , ex.tpr , ex.efr, ex.note_ini, ex.note, ex.note_rat, 
