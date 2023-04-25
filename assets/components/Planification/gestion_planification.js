@@ -506,6 +506,11 @@ $(document).ready(function () {
         const icon = $("#extraction i");
         window.open('/planification/gestions/extraction_planning', '_blank');
     })
+    $('body').on('click','#extraction_semaine', async function (e) {
+        e.preventDefault();
+        const icon = $("#extraction_semaine i");
+        window.open('/planification/gestions/extraction_Week', '_blank');
+    })
      
     
     $('body').on('click','#devalidation', async function (e) {

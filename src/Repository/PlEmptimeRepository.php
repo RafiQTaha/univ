@@ -389,32 +389,34 @@ class PlEmptimeRepository extends ServiceEntityRepository
         return $result;
     }
 
-    // public function findSeanceByCurrentYears($currentyear)
-    // {
-    //     return $this->createQueryBuilder('ep')
-    //     ->select("DISTINCT ep.id as seance_id,ep.code,sm.id as semaine_id,sm.nsemaine,ann.id as annee_id,ann.designation as Annee,etab.id as etablissement_id,etab.designation as Etablissement, frm.id as formation_id,frm.designation as Formation,prm.id as promotion_id,prm.designation as Promotion,sem.id as semesre_id,sem.designation as Semestre,mdl.id as module_id,mdl.designation as Module,ele.id as element_id,ele.code as Code_element,ele.designation as Element,ne.id as nat_epreuve_id,ne.designation as Nature_epreuve,te.id as Id_Type,te.designation as Type,ep.start as DateSeance,ep.start as Date_debut,ep.end as Date_fin,ep.valider,ep.generer,ep.annuler,ep.motif_annuler,s.id as salle_id,s.code as code_salle,s.designation as Salle,grp.id as groupe_id,grp.niveau,epe.id as enseignant_id,epe.code as code_enseignant,epe.nom,epe.prenom,gr.id as grade_id,gr.code as code_grade,gr.abreviation as Grade")
-    //     ->innerJoin("ep.programmation","pr")
-    //     ->innerJoin("pr.nature_epreuve","ne")
-    //     ->innerJoin("pr.element", "ele")
-    //     ->innerJoin("ele.nature", "te")
-    //     ->innerJoin("ele.module", "mdl")
-    //     ->innerJoin("mdl.semestre", "sem")
-    //     ->innerJoin("sem.promotion", "prm")
-    //     ->innerJoin("prm.formation","frm")
-    //     ->innerJoin("pr.annee","ann")
-    //     ->innerJoin("frm.etablissement","etab")
-    //     ->innerJoin("ep.semaine","sm")
-    //     ->leftJoin("ep.emptimens", "emen")
-    //     ->leftJoin("emen.enseignant", "epe")
-    //     ->leftJoin("epe.grade", "gr")
-    //     ->leftJoin("ep.salle","s")
-    //     ->leftJoin("ep.groupe","grp")
-    //     ->Where("ann.designation = :currentyear")
-    //     ->andWhere("ep.active = 1")
-    //     ->setParameter("currentyear", $currentyear)
-    //     ->getQuery()
-    //     ->getResult();
-    // }
+    public function findSeanceByCurrentYearsAndWeek($currentyear,$semaine_id)
+    {
+        $sqls="SELECT DISTINCT ep.id 'seance_id',ep.code,sm.id 'semaine_id',sm.nsemaine,ann.id 'annee_id',ann.designation 'Année',etab.id 'etablissement_id',etab.designation 'Etablissement',
+        frm.id 'formation_id',frm.designation 'Formation',prm.id 'promotion_id',prm.designation 'Promotion',sem.id 'semesre_id',sem.designation 'Semestre',mdl.id 'module_id',mdl.designation 'Module',ele.id 'element_id',ele.code 'Code_element',ele.designation 'Element',ne.id 'nat_epreuve_id',ne.designation 'Nature_epreuve',te.id 'Id_Type',te.designation 'Type',date(start) 'DateSeance',ep.start 'Date_début',ep.end 'Date_fin',ep.valider,ep.generer,ep.annuler,ep.motif_annuler,s.id 'salle_id',s.code as code_salle,s.designation 'Salle',grp.id 'groupe_id',grp.niveau,epe.id 'enseignant_id',epe.code as code_enseignant,epe.nom,epe.prenom,gr.id 'grade_id',gr.code as code_grade,gr.abreviation 'Grade'
+        FROM pl_emptime ep
+        INNER join pr_programmation pr on pr.id = ep.programmation_id
+        INNER join pnature_epreuve ne on ne.id = pr.nature_epreuve_id
+        INNER join ac_element ele on ele.id = pr.element_id
+        INNER JOIN type_element te on te.id = ele.nature_id
+        INNER join ac_module mdl on mdl.id = ele.module_id
+        INNER join ac_semestre sem on sem.id = mdl.semestre_id
+        INNER join ac_promotion prm on prm.id = sem.promotion_id
+        inner join ac_formation frm on frm.id = prm.formation_id
+        INNER JOIN ac_annee ann ON ann.id = pr.annee_id
+        INNER join ac_etablissement etab on etab.id = frm.etablissement_id
+        INNER join semaine sm on sm.id = ep.semaine_id
+        left join pl_emptimens emen on emen.seance_id = ep.id
+        left join penseignant epe on epe.id = emen.enseignant_id
+        left join pgrade gr on gr.id = epe.grade_id
+        LEFT JOIN psalles s ON s.id = ep.salle_id
+        LEFT JOIN pgroupe grp ON grp.id = ep.groupe_id
+        WHERE ann.designation= '$currentyear' and ep.active = 1 and sm.id = $semaine_id ";
+        // dd($sqls);
+        $stmts = $this->em->getConnection()->prepare($sqls);
+        $resultSets = $stmts->executeQuery();
+        $result = $resultSets->fetchAll();
+        return $result;
+    }
     
     
     

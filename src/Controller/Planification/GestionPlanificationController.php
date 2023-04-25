@@ -404,6 +404,39 @@ class GestionPlanificationController extends AbstractController
         $writer->save($temp_file);
         return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);
     }
+    
+    #[Route('/extraction_Week', name: 'extraction_Week')]
+    public function extraction_Week()
+    {   
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        $i=2;
+        $j=1;
+        $semaine_id = $this->em->getRepository(Semaine::class)->findSemaine(date('Y-m-d'))->getId();
+        $currentyear = date('m') > 7 ? $current_year = date('Y').'/'.date('Y')+1 : $current_year = date('Y') - 1 .'/' .date('Y');
+        $seances = $this->em->getRepository(PlEmptime::class)->findSeanceByCurrentYearsAndWeek($currentyear,$semaine_id);
+        // dd($seances);
+        $sheet->fromArray(
+            array_keys($seances[0]),
+            null,
+            'A1'
+        );
+        foreach ($seances as $seance) {
+            $sheet->fromArray(
+                $seance,
+                null,
+                'A'.$i
+            );
+            $i++;
+            $j++;
+        }
+        $writer = new Xlsx($spreadsheet);
+        // $currentyear = date('m') > 7 ? $current_year = date('Y').'-'.date('Y')+1 : $current_year = date('Y') - 1 .'-' .date('Y');
+        $fileName = 'Extraction Seances semaine '.date('d-m-Y').'.xlsx';
+        $temp_file = tempnam(sys_get_temp_dir(), $fileName);
+        $writer->save($temp_file);
+        return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);
+    }
     // #[Route('/findSemainePlanning', name: 'findSemainePlanning')]
     // public function findSemainePlanning(Request $request): Response
     // {
