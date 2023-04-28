@@ -93,7 +93,7 @@ class RechercheAvanceController extends AbstractController
             $this->render("etudiant/recherche_avance/pdf/attestations/footer.html.twig")->getContent()
         );
         $mpdf->WriteHTML($html);
-        
+        $mpdf->SetTitle('Attestation d\'inscription');
         $mpdf->Output("attestaion.pdf", "I");
         
     }
@@ -116,7 +116,7 @@ class RechercheAvanceController extends AbstractController
             $this->render("etudiant/recherche_avance/pdf/attestations/footer.html.twig")->getContent()
         );
         $mpdf->WriteHTML($html);
-        
+        $mpdf->SetTitle('Attestation de scolarité');
         $mpdf->Output("scolarite.pdf", "I");
     }
     
@@ -139,7 +139,7 @@ class RechercheAvanceController extends AbstractController
             $this->render("etudiant/recherche_avance/pdf/attestations/footer.html.twig")->getContent()
         );
         $mpdf->WriteHTML($html);
-        
+        $mpdf->SetTitle('Attestation de scolarité LAZ');
         $mpdf->Output("scolarite.pdf", "I");
     }
     #[Route('/attestation/scolariteAnglais/{inscription}', name: 'etudiant_recherche_attestation_scolarite_anglais')]
@@ -161,7 +161,7 @@ class RechercheAvanceController extends AbstractController
             $this->render("etudiant/recherche_avance/pdf/attestations/footer.html.twig")->getContent()
         );
         $mpdf->WriteHTML($html);
-        
+        $mpdf->SetTitle('Attestation de scolarité (Anglais)');
         $mpdf->Output("scolarite.pdf", "I");
     }
     
@@ -184,7 +184,7 @@ class RechercheAvanceController extends AbstractController
             $this->render("etudiant/recherche_avance/pdf/attestations/footer.html.twig")->getContent()
         );
         $mpdf->WriteHTML($html);
-        
+        $mpdf->SetTitle('Attestation de scolarité LAZ (Anglais)');
         $mpdf->Output("scolarite.pdf", "I");
     }
 
@@ -213,7 +213,7 @@ class RechercheAvanceController extends AbstractController
             $this->render("etudiant/recherche_avance/pdf/attestations/footer.html.twig")->getContent()
         );
         $mpdf->WriteHTML($html);
-        
+        $mpdf->SetTitle('Attestation de réussite');
         $mpdf->Output("reussite.pdf", "I");
     }
 
@@ -238,7 +238,7 @@ class RechercheAvanceController extends AbstractController
             $this->render("etudiant/recherche_avance/pdf/attestations/footer.html.twig")->getContent()
         );
         $mpdf->WriteHTML($html);
-        
+        $mpdf->SetTitle('Attestation de réussite Avec Moyenne');
         $mpdf->Output("reussite.pdf", "I");
        
         
@@ -271,10 +271,8 @@ class RechercheAvanceController extends AbstractController
             $this->render("etudiant/recherche_avance/pdf/academique/footer.html.twig")->getContent()
         );
         $mpdf->WriteHTML($html);
-        
+        $mpdf->SetTitle('Relevé de note modulaire');
         $mpdf->Output("releve_module.pdf", "I");
-       
-      
     }
     #[Route('/attestation/releve/annee/{inscription}/{assiduite}', name: 'etudiant_recherche_releve_annee')]
     public function attestationReleveAnnee(TInscription $inscription, $assiduite): Response
@@ -318,7 +316,7 @@ class RechercheAvanceController extends AbstractController
             $this->render("etudiant/recherche_avance/pdf/academique/footer.html.twig")->getContent()
         );
         $mpdf->WriteHTML($html);
-        
+        $mpdf->SetTitle('Relevé de note annuel');
         $mpdf->Output("releve_annee.pdf", "I");
     }
     
@@ -340,7 +338,7 @@ class RechercheAvanceController extends AbstractController
             $this->render("etudiant/recherche_avance/pdf/attestations/footer.html.twig")->getContent()
         );
         $mpdf->WriteHTML($html);
-        
+        $mpdf->SetTitle('Attestation de bonne conduite');
         $mpdf->Output("Bonne conduite.pdf", "I");
     }
     #[Route('/attestation/hebergement/{inscription}', name: 'etudiant_recherche_attestation_hebergement')]
@@ -369,7 +367,7 @@ class RechercheAvanceController extends AbstractController
             $this->render("etudiant/recherche_avance/pdf/attestations/footer.html.twig")->getContent()
         );
         $mpdf->WriteHTML($html);
-        
+        $mpdf->SetTitle('Attestation d’hebergement');
         $mpdf->Output("Hebergement.pdf", "I");
     }
     #[Route('/attestation/cursus/{inscription}', name: 'etudiant_recherche_attestation_cursus')]
@@ -392,7 +390,7 @@ class RechercheAvanceController extends AbstractController
             $this->render("etudiant/recherche_avance/pdf/attestations/footer.html.twig")->getContent()
         );
         $mpdf->WriteHTML($html);
-        
+        $mpdf->SetTitle('Attestation de réussite (cursus)');
         $mpdf->Output("Reussite (cursus).pdf", "I");
     }
 }
