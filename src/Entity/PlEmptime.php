@@ -69,8 +69,8 @@ class PlEmptime
     #[ORM\ManyToOne(targetEntity: PSalles::class, inversedBy: 'emptimes')]
     private $salle;
 
-    #[ORM\ManyToOne(targetEntity: Color::class, inversedBy: 'emptimes')]
-    private $color;
+    // #[ORM\ManyToOne(targetEntity: Color::class, inversedBy: 'emptimes')]
+    // private $color;
 
     #[ORM\ManyToOne(targetEntity: PGroupe::class, inversedBy: 'emptimes')]
     private $groupe;
@@ -324,17 +324,17 @@ class PlEmptime
         return $this;
     }
 
-    public function getColor(): ?Color
-    {
-        return $this->color;
-    }
+    // public function getColor(): ?Color
+    // {
+    //     return $this->color;
+    // }
 
-    public function setColor(?Color $color): self
-    {
-        $this->color = $color;
+    // public function setColor(?Color $color): self
+    // {
+    //     $this->color = $color;
 
-        return $this;
-    }
+    //     return $this;
+    // }
 
     public function getGroupe(): ?PGroupe
     {
