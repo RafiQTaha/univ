@@ -1,0 +1,78 @@
+<div class="modal" tabindex="-1" role="dialog" id="date-d-appel-modal" aria-modal="true"> 
+<div class="modal-dialog modal-md" style="max-width: 400px !important;" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Date Dernier Appel</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"> 
+        <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <!-- <div class="alert alert-info">Veuillez selectionner un ligne Pour Continuer Cette opération !!</div> -->
+        <form id="date_appele_save">
+            <label> STATUT APPEL:</label>
+            <select class="form-control chosen-select" name="statut_appel" id ='statut_appel'>
+                <option value="" selected>Choix Statut Appel</option>
+                {% for i in 0..5 %}
+                    <option value="{{i}}">{{i}}</option>
+                {% endfor %}
+            </select>
+            <label> STATUT CANDIDAT:</label>
+            <select class="form-control chosen-select" name="statut_condidat" id ='statut_condidat'>
+                <option value="" selected>Choix Statut Condidat</option>
+                <option value="NV PROSPECT">NV PROSPECT</option>
+                <option value="INDECIS">INDECIS</option>
+                <option value="INTERESSE SANS RDV">INTERESSE SANS RDV</option>
+                <option value="INTERESSE AVEC RDV">INTERESSE AVEC RDV</option>
+                <option value="DESISTEMENT">DESISTEMENT</option>
+            </select>
+            <label> STATUT RDV:</label>
+            <select class="form-control chosen-select" name="statut_rdv" id ='statut_rdv'>
+                <option value="" selected>Choix Statut Rdv</option>
+                <option value="PRIS">PRIS</option>
+                <option value="A PRENDRE">A PRENDRE</option>
+                <option value="-">-</option>
+            </select>
+            <label for="">DATE</label>
+            <input class="form-control" type="date" name="dateappelle" id="dateappelle">
+            <label> RDV:</label>
+            <select class="form-control chosen-select" name="rdv" id ='rdv'>
+                <option value="" selected>Choix Rdv</option>
+                <option value="MATIN">MATIN</option>
+                <option value="MIDI">MIDI</option>
+                <option value="APRES MIDI">APRES MIDI</option>
+            </select>
+            <div class="col-md-12 row">
+                <div class="col-md-6">
+                    <label for="etablissement">Etablissement:</label>
+                    <select class="form-control" name="etablissement" id="etablissement">
+                        <option value="">Choix etablissement</option>
+                        {% for etablissement in etablissements %}
+                            <option value="{{etablissement.id}}">{{etablissement.designation}}</option>
+                        {% endfor %}
+                    </select>
+                </div> 
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="formation">Formation:</label>
+                        <select class="form-control" name="formation" id="formation">
+                           
+                        </select>
+                    </div>
+                </div>
+            </div>
+          {# <label> Choix :</label><br> #}
+          <div class="d-flex">
+              {# <div class="d-flex" style='justify-content: center;align-items: center;'>
+                  <input type="radio" name="choix" id="choixu" value="UIASS" checked=""> 
+                  <label style="margin: 0px 10px 0px 10px;"  for="choixu"> UIASS </label>   
+                  <input type="radio" name="choix" id="choixc" value="CPGE"> 
+                  <label style="margin:0 10px" for="choixc"> CPGE </label> 
+              </div>  #}
+              <button type="submit" class="btn btn-success mt-2 ml-auto"><i class="fas fa-check-circle"></i> Enregistrer</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

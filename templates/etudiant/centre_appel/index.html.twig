@@ -25,7 +25,26 @@
             <table id="datables_etudiant" class="table table-striped" style="width:100%">
                 <thead>
                     <tr>
-                        <th>id</th>
+                        <th>ID</th>
+                        <th>NOM</th>
+                        <th>Prenom</th>
+                        <th>CIN</th>
+                        <th>TEL CANDIDAT</th>
+                        <th>TEL MERE</th>
+                        <th>STATUT APPEL</th>
+                        <th>STATUT CANDIDAT</th>
+                        <th>STATUT RDV</th>
+                        <th style="text-align:center">DATE <br> RDV / RELANCE</th>
+                        <th> RDV</th>
+                        {# <th>Annee Bac</th>
+                        <th>Note</th>
+                        <th>Type de bac</th>
+                        <th>Filiere</th>
+                        <th>Statut</th>
+                        <th>Observation</th>
+                        <th>RDV1</th>
+                        <th>RDV2</th> #}
+                        {# <th>id</th>
                         <th>Nom</th>
                         <th>Prenom</th>
                         <th>Télé1</th>
@@ -38,7 +57,7 @@
                         <th>Statut</th>
                         <th>Observation</th>
                         <th>RDV1</th>
-                        <th>RDV2</th>
+                        <th>RDV2</th> #}
                     </tr>
                 </thead>
                 <tbody>
@@ -46,20 +65,17 @@
                 </tbody>
                 <tfoot>
                     <tr>
-                        <th>id</th>
-                        <th>Nom</th>
+                        <th>ID</th>
+                        <th>NOM</th>
                         <th>Prenom</th>
-                        <th>Télé1</th>
-                        <th>Télé2</th>
-                        <th>Télé3</th>
-                        <th>Annee Bac</th>
-                        <th>Note</th>
-                        <th>Type de bac</th>
-                        <th>Filiere</th>
-                        <th>Statut</th>
-                        <th>Observation</th>
-                        <th>RDV1</th>
-                        <th>RDV2</th>
+                        <th>CIN</th>
+                        <th>TEL CANDIDAT</th>
+                        <th>TEL MERE</th>
+                        <th>STATUT APPEL</th>
+                        <th>STATUT CANDIDAT</th>
+                        <th>STATUT RDV</th>
+                        <th>"DATE RDV / RELANCE"</th>
+                        <th> RDV</th>
                     </tr>
                 </tfoot>
             </table>
@@ -73,7 +89,8 @@
 
 
 <!--Modal Import Group-->
-{% include 'etudiant/centre_appel/modals/date_d_appel.html.twig' %}
+{% include 'etudiant/centre_appel/modals/date_d_appel2.html.twig' %}
+{# {% include 'etudiant/centre_appel/modals/date_d_appel.html.twig' %} #}
 
 {% endblock %}
 

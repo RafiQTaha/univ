@@ -60,6 +60,9 @@ class AcFormation
     #[ORM\OneToMany(mappedBy: 'formation', targetEntity: PEnseignantExcept::class)]
     private $enseignantexcepts;
 
+    #[ORM\OneToMany(mappedBy: 'formationSouhaitee', targetEntity: TEtudiant::class)]
+    private $tEtudiants;
+
     public function __construct()
     {
         $this->acPromotions = new ArrayCollection();
@@ -67,6 +70,7 @@ class AcFormation
         $this->frais = new ArrayCollection();
         $this->ensgrilles = new ArrayCollection();
         $this->enseignantexcepts = new ArrayCollection();
+        $this->tEtudiants = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -338,6 +342,36 @@ class AcFormation
             // set the owning side to null (unless already changed)
             if ($enseignantexcept->getFormation() === $this) {
                 $enseignantexcept->setFormation(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, TEtudiant>
+     */
+    public function getTEtudiants(): Collection
+    {
+        return $this->tEtudiants;
+    }
+
+    public function addTEtudiant(TEtudiant $tEtudiant): self
+    {
+        if (!$this->tEtudiants->contains($tEtudiant)) {
+            $this->tEtudiants[] = $tEtudiant;
+            $tEtudiant->setFormationSouhaitee($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTEtudiant(TEtudiant $tEtudiant): self
+    {
+        if ($this->tEtudiants->removeElement($tEtudiant)) {
+            // set the owning side to null (unless already changed)
+            if ($tEtudiant->getFormationSouhaitee() === $this) {
+                $tEtudiant->setFormationSouhaitee(null);
             }
         }
 

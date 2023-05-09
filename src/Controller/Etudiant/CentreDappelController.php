@@ -7,6 +7,8 @@ use DateTime;
 use App\Entity\PStatut;
 use App\Entity\XTypeBac;
 use App\Entity\TEtudiant;
+use App\Entity\AcEtablissement;
+use App\Entity\AcFormation;
 use App\Entity\TPreinscription;
 use App\Entity\XAcademie;
 use App\Entity\NatureDemande;
@@ -40,6 +42,7 @@ class CentreDappelController extends AbstractController
     {
         // dd('test');
         //check if user has access to this page
+        $etablissements =  $this->em->getRepository(AcEtablissement::class)->findBy(['active'=>1]);
         $operations = ApiController::check($this->getUser(), 'centre_appel_index', $this->em, $request);
         // dd($operations);
         if(!$operations) {
@@ -51,6 +54,7 @@ class CentreDappelController extends AbstractController
             'operations' => $operations,
             'filieres' => $filieres,
             'typebacs' => $typebacs,
+            'etablissements' => $etablissements
         ]);
     }
     
@@ -64,21 +68,35 @@ class CentreDappelController extends AbstractController
         //     $filtre .= " and grp.id = '" . $params->all('columns')[0]['search']['value'] . "' ";
         // }
         
+        // $columns = array(
+        //     array( 'db' => 'etu.id','dt' => 0 ),
+        //     array( 'db' => 'etu.nom','dt' => 1),
+        //     array( 'db' => 'etu.prenom','dt' => 2),
+        //     array( 'db' => 'etu.tel1','dt' => 3),
+        //     array( 'db' => 'etu.tel_pere','dt' => 4),
+        //     array( 'db' => 'etu.tel_mere','dt' => 5),
+        //     array( 'db' => 'etu.annee_bac','dt' => 6),
+        //     array( 'db' => 'etu.moyenne_bac','dt' => 7),
+        //     array( 'db' => 'LOWER(xtb.designation)','dt' => 8),
+        //     array( 'db' => 'UPPER(fil.abreviation)','dt' => 9),
+        //     array( 'db' => 'etu.tele_liste','dt' => 10),
+        //     array( 'db' => 'etu.obs','dt' => 11),
+        //     array( 'db' => 'etu.rdv1','dt' => 12),
+        //     array( 'db' => 'etu.rdv2','dt' => 13)
+        // );
         $columns = array(
             array( 'db' => 'etu.id','dt' => 0 ),
             array( 'db' => 'etu.nom','dt' => 1),
             array( 'db' => 'etu.prenom','dt' => 2),
-            array( 'db' => 'etu.tel1','dt' => 3),
-            array( 'db' => 'etu.tel_pere','dt' => 4),
-            array( 'db' => 'etu.tel_mere','dt' => 5),
-            array( 'db' => 'etu.annee_bac','dt' => 6),
-            array( 'db' => 'etu.moyenne_bac','dt' => 7),
-            array( 'db' => 'LOWER(xtb.designation)','dt' => 8),
-            array( 'db' => 'UPPER(fil.abreviation)','dt' => 9),
-            array( 'db' => 'etu.tele_liste','dt' => 10),
-            array( 'db' => 'etu.obs','dt' => 11),
-            array( 'db' => 'etu.rdv1','dt' => 12),
-            array( 'db' => 'etu.rdv2','dt' => 13)
+            array( 'db' => 'etu.cin','dt' => 3),
+            array( 'db' => 'REPLACE(etu.tel1, " ", "")','dt' => 4),
+            array( 'db' => 'REPLACE(etu.tel_mere, " ", "")','dt' => 5),
+            // array( 'db' => 'etu.tel_mere','dt' => 5),
+            array( 'db' => 'etu.statut_appel','dt' => 6),
+            array( 'db' => 'etu.statut_condidat','dt' => 7),
+            array( 'db' => 'etu.statut_rdv','dt' => 8),
+            array( 'db' => 'etu.rdv1','dt' => 9),
+            array( 'db' => 'etu.rdv','dt' => 10),
         );
         // dd($columns);
         $sql = "SELECT " . implode(", ", DatatablesController::Pluck($columns, 'db')) . "
@@ -134,12 +152,18 @@ class CentreDappelController extends AbstractController
     #[Route('/getAppelRdv_appel/{etudiant}', name: 'getAppelRdv_appel')]
     public function getAppelRdv_appel(Request $request, TEtudiant $etudiant) 
     {
-        $rdv1 = $etudiant->getRdv1() == Null ? "" : $etudiant->getRdv1()->format('Y-m-j');
-        $rdv2 = $etudiant->getRdv2() == Null ? "" : $etudiant->getRdv2()->format('Y-m-j');
+        $rdv1 = $etudiant->getRdv1() == Null ? "" : $etudiant->getRdv1()->format('Y-m-d');
+        // $rdv2 = $etudiant->getRdv2() == Null ? "" : $etudiant->getRdv2()->format('Y-m-j');
+        // dd($rdv1);
         $appelrdv = [ 
-                'rdv1' => $rdv1,
-                'rdv2' => $rdv2,
-                // 'statut_appel' => $etudiant->getStatut(),
+                // 'dateappelle' => $etudiant->getStatutAppel(),
+                'statut_appel' => $etudiant->getStatutAppel(),
+                'statut_condidat' => $etudiant->getStatutCondidat(),
+                'statut_rdv' => $etudiant->getStatutRdv(),
+                'date' => $rdv1,
+                'rdv' => $etudiant->getRdv(),
+                // 'rdv1' => $rdv1,
+                // 'rdv2' => $rdv2,
                 // 'obs' => $$etudiant->getObs(),
         ];
         return new JsonResponse($appelrdv);
@@ -148,18 +172,18 @@ class CentreDappelController extends AbstractController
     #[Route('/rdvappel/{etudiant}', name: 'rdvappel')]
     public function rdvappel(Request $request, TEtudiant $etudiant) 
     {
-        // // dd($request);
+        // dd($request);
         // if (empty($request->get('dateappelle')) || empty($request->get('rdv1')) ||
         //  empty($request->get('rdv2')) || empty($request->get('statut_appel')) || empty($request->get('Observation'))) {
         //     return new JsonResponse('Merci de choisir l')
         // }
-        $etudiant->setTeleListe($request->get('dateappelle'));
-        $rdv1 = $request->get('rdv1') == "" ? NULL : new \DateTime($request->get('rdv1'));
-        $rdv2 = $request->get('rdv1') == "" ? NULL : new \DateTime($request->get('rdv1'));
-        $etudiant->setRdv1($rdv1);
-        $etudiant->setRdv2($rdv2);
-        $etudiant->setTeleListe($request->get('statut_appel'));
-        $etudiant->setObs($request->get('Observation'));
+        // $etudiant->setTeleListe($request->get('dateappelle'));
+        // $rdv1 = $request->get('rdv1') == "" ? NULL : new \DateTime($request->get('rdv1'));
+        // $rdv2 = $request->get('rdv2') == "" ? NULL : new \DateTime($request->get('rdv2'));
+        // $etudiant->setRdv1($rdv1);
+        // $etudiant->setRdv2($rdv2);
+        // $etudiant->setTeleListe($request->get('statut_appel'));
+        // $etudiant->setObs($request->get('Observation'));
 
         // if ($request->get('annee_bac') != "") {
         //     $etudiant->setAnneeBac($request->get('annee_bac'));
@@ -173,7 +197,13 @@ class CentreDappelController extends AbstractController
         // if ($request->get('filiere') != "") {
         //     $etudiant->setFiliere($this->em->getRepository(XFiliere::class)->find($request->get('filiere')));
         // }
-        $etudiant->setChoix($request->get('choix'));
+        $rdv1 = $request->get('rdv1') == "" ? NULL : new \DateTime($request->get('dateappelle'));
+        $etudiant->setStatutAppel($request->get('statut_appel'));
+        $etudiant->setStatutCondidat($request->get('statut_condidat'));
+        $etudiant->setStatutRdv($request->get('statut_rdv'));
+        $etudiant->setRdv1($rdv1);
+        $etudiant->setFormationSouhaitee($this->em->getRepository(AcFormation::class)->find($request->get('formation')));
+        // $etudiant->setChoix($request->get('choix'));
         $etudiant->setOperateur($this->getUser());
         $this->em->flush();
         return new JsonResponse("Bien enregistre");

@@ -279,6 +279,21 @@ class TEtudiant
     #[ORM\Column(type: 'boolean', nullable: true)]
     private $strange = 0;
 
+    #[ORM\Column(type: 'float', nullable: true)]
+    private $statutAppel;
+
+    #[ORM\Column(type: 'string', length: 25, nullable: true)]
+    private $statutCondidat;
+
+    #[ORM\Column(type: 'string', length: 15, nullable: true)]
+    private $statutRdv;
+
+    #[ORM\Column(type: 'string', length: 10, nullable: true)]
+    private $rdv;
+
+    #[ORM\ManyToOne(targetEntity: AcFormation::class, inversedBy: 'tEtudiants')]
+    private $formationSouhaitee;
+
     public function __construct()
     {
         $this->preinscriptions = new ArrayCollection();
@@ -1378,6 +1393,66 @@ class TEtudiant
     public function setStrange(?bool $strange): self
     {
         $this->strange = $strange;
+
+        return $this;
+    }
+
+    public function getStatutAppel(): ?float
+    {
+        return $this->statutAppel;
+    }
+
+    public function setStatutAppel(?float $statutAppel): self
+    {
+        $this->statutAppel = $statutAppel;
+
+        return $this;
+    }
+
+    public function getStatutCondidat(): ?string
+    {
+        return $this->statutCondidat;
+    }
+
+    public function setStatutCondidat(?string $statutCondidat): self
+    {
+        $this->statutCondidat = $statutCondidat;
+
+        return $this;
+    }
+
+    public function getStatutRdv(): ?string
+    {
+        return $this->statutRdv;
+    }
+
+    public function setStatutRdv(?string $statutRdv): self
+    {
+        $this->statutRdv = $statutRdv;
+
+        return $this;
+    }
+
+    public function getRdv(): ?string
+    {
+        return $this->rdv;
+    }
+
+    public function setRdv(?string $rdv): self
+    {
+        $this->rdv = $rdv;
+
+        return $this;
+    }
+
+    public function getFormationSouhaitee(): ?AcFormation
+    {
+        return $this->formationSouhaitee;
+    }
+
+    public function setFormationSouhaitee(?AcFormation $formationSouhaitee): self
+    {
+        $this->formationSouhaitee = $formationSouhaitee;
 
         return $this;
     }

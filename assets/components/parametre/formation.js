@@ -39,9 +39,7 @@ const Toast = Swal.mixin({
             $("#datatables_gestion_formation tbody tr").removeClass('active_databales');
             $(this).addClass('active_databales');
             id_formation = $(this).attr('id');
-           
         }
-        
     })
     $("#etablissement").on("change", function(){
         if($(this).val() != ""){

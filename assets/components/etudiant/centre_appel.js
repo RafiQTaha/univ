@@ -42,12 +42,12 @@ $(document).ready(function  () {
             url: "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/French.json",
         },
     });
-    let id_etudiant = false;
     $('select').select2();
+    let id_etudiant = false;
 
     const getAppelRdv = async () => {
-        $('#rdv1').val("");
-        $('#rdv2').val("");
+        // $('#rdv1').val("");
+        // $('#rdv2').val("");
         $('#statut_appel').val("");
         $('#Observation').val("");
         const icon = $("#date-d-appel i");
@@ -55,8 +55,15 @@ $(document).ready(function  () {
         try {
             const request = await axios.get('/etudiant/appel/getAppelRdv_appel/'+id_etudiant);
             const data = request.data;
-            $('#rdv1').val(data['rdv1']);
-            $('#rdv2').val(data['rdv2']);
+            console.log(data['rdv'])
+            $('#statut_appel').val(data['statut_appel']).trigger('change.select2');
+            $('#statut_condidat').val(data['statut_condidat']).trigger('change.select2');
+            $('#statut_rdv').val(data['statut_rdv']).trigger('change.select2');
+            $('#dateappelle').val(data['date']);
+            $('#rdv').val(data['rdv']).trigger('change.select2');
+            // $('#rdv').val(data['rdv']);
+            // $('#rdv1').val(data['rdv1']);
+            // $('#rdv2').val(data['rdv2']);
             icon.addClass('fa-edit').removeClass("fa-spinner fa-spin");
 
         } catch (error) {
@@ -75,7 +82,15 @@ $(document).ready(function  () {
         id_etudiant = $(this).attr('id');
         getAppelRdv()
     })
-
+    $("#etablissement").on("change",async function(){
+        const id_etab = $(this).val();
+        let response = ""
+        if(id_etab != "") {
+            const request = await axios.get('/api/formation/'+id_etab);
+            response = request.data
+        }
+        $('#formation').html(response).select2();
+    })
     $("#date-d-appel").on("click", () => {
         if(!id_etudiant){
             Toast.fire({
