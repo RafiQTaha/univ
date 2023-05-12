@@ -119,6 +119,28 @@ class RechercheAvanceController extends AbstractController
         $mpdf->SetTitle('Attestation de scolarité');
         $mpdf->Output("scolarite.pdf", "I");
     }
+    #[Route('/attestation/suiviFr/{inscription}', name: 'etudiant_recherche_attestation_suivi')]
+    public function attestationSiuvi(TInscription $inscription): Response
+    {
+        $html = $this->render("etudiant/recherche_avance/pdf/attestations/suivifr.html.twig", [
+            'inscription' => $inscription,
+            'laz' => 0
+        ])->getContent();
+        // dd($html);
+        $mpdf = new Mpdf([
+            'margin_left' => 5,
+            'margin_right' => 5,
+        ]);
+        // $mpdf->SetHTMLHeader(
+        //     $this->render("etudiant/recherche_avance/pdf/attestations/header.html.twig")->getContent()
+        // );
+        $mpdf->SetHTMLFooter(
+            $this->render("etudiant/recherche_avance/pdf/attestations/footer.html.twig")->getContent()
+        );
+        $mpdf->WriteHTML($html);
+        $mpdf->SetTitle('ATTESTATION DU SUIVI d\'ETUDES EN LANGUE FRANCAISE');
+        $mpdf->Output("suivi.pdf", "I");
+    }
     
     #[Route('/attestation/scolariteLaz/{inscription}', name: 'etudiant_recherche_attestation_scolarite_laz')]
     public function attestationScolariteLaz(TInscription $inscription): Response

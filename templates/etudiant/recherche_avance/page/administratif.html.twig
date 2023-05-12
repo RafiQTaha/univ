@@ -25,6 +25,9 @@
                 </li>
             {% endif %}
             <li>
+                <a target="_blank" href="{{path('etudiant_recherche_attestation_suivi', {inscription: inscription.id})}}">        Attestation du suivi d’etudes	en langue francaise</a>
+            </li>
+            <li>
                <a target="_blank" href="{{path('etudiant_recherche_attestation_reussite', {inscription: inscription.id})}}">     Attestation de réussite </a>
             </li>
             <li>
