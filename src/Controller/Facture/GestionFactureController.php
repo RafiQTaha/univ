@@ -756,6 +756,93 @@ class GestionFactureController extends AbstractController
         return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);
     }
     
+    
+    #[Route('/extraction_factures_nonInscrits/{annee}', name: 'extraction_factures_nonInscrits')]
+    public function extraction_factures_nonInscrits($annee)
+    {   
+        // dd($annee.'/'.$annee+1);
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        $sheet->setCellValue('A1', 'ORD');
+        $sheet->setCellValue('B1', 'CODE PRE-INSCRIPTION');
+        $sheet->setCellValue('C1', 'CODE FACTURE');
+        $sheet->setCellValue('D1', 'ANNEE UNIVERSITAIRE');
+        $sheet->setCellValue('E1', 'NOM');
+        $sheet->setCellValue('F1', 'PRENOM');
+        $sheet->setCellValue('G1', 'NATIONALITE');
+        $sheet->setCellValue('H1', 'ETABLISSEMENT');
+        $sheet->setCellValue('I1', 'FORMATION');
+        $sheet->setCellValue('J1', 'PROMOTION');
+        $sheet->setCellValue('K1', 'statut');
+        $sheet->setCellValue('L1', 'SOURCE');
+        $sheet->setCellValue('M1', 'FRAIS');
+        $sheet->setCellValue('N1', 'MT FACTURE PYT');
+        $sheet->setCellValue('O1', 'MT FACTURE ORG');
+        $sheet->setCellValue('P1', 'MT REGLE');
+        $sheet->setCellValue('Q1', 'REST');
+        $sheet->setCellValue('R1', 'D-CREATION');
+        $i=2;
+        $j=1;
+        // $currentyear = '2022/2023';
+        $currentyear = $annee.'/'.$annee+1;
+        $operationcabs = $this->em->getRepository(TOperationcab::class)->getFacturesByCurrentYearNonInscrits($currentyear);
+        // dd($operationcabs);
+        foreach ($operationcabs as $operationcab) {
+            // if ($operationcab['id'] == 48912) {
+                $montant = $this->em->getRepository(TOperationdet::class)->getSumMontantByCodeFacture($operationcab['id']);
+                $operationdets = $this->em->getRepository(TOperationdet::class)->FindDetGroupByFrais($operationcab['id']);
+                $montant_reglement = $this->em->getRepository(TReglement::class)->getSumMontantByCodeFacture($operationcab['id']);
+                $regcount = 0;
+                foreach ($operationdets as $operationdet) {
+                    // dd($operationdet);
+                    $sheet->setCellValue('A'.$i, $j);
+                    $sheet->setCellValue('B'.$i, $operationcab['code_preins']);
+                    $sheet->setCellValue('C'.$i, $operationcab['code_facture']);
+                    $sheet->setCellValue('D'.$i, $operationcab['annee']);
+                    $sheet->setCellValue('E'.$i, $operationcab['nom']);
+                    $sheet->setCellValue('F'.$i, $operationcab['prenom']);
+                    $sheet->setCellValue('G'.$i, $operationcab['nationalite']);
+                    $sheet->setCellValue('H'.$i, $operationcab['etablissement']);
+                    $sheet->setCellValue('I'.$i, $operationcab['formation']);
+                    $sheet->setCellValue('J'.$i, $operationcab['promotion']);
+                    $sheet->setCellValue('K'.$i, $operationcab['statut']);
+                    $frais = $operationdet->getFrais();
+                    $SumByOrg = $this->em->getRepository(TOperationdet::class)->getSumMontantByCodeFactureAndOrganisme($operationcab['id'],$frais);
+                    $SumByPayant = $this->em->getRepository(TOperationdet::class)->getSumMontantByCodeFactureAndPayant($operationcab['id'],$frais);
+                    if ($SumByPayant != 0 && $SumByOrg != 0) {
+                        $source = "O/P";
+                    }elseif ($SumByPayant != 0 && $SumByOrg == 0) {
+                        $source = "PYT";
+                    }else {
+                        $source = "ORG";
+                    }
+                    $total = $SumByPayant + $SumByOrg;
+                    $sheet->setCellValue('L'.$i, $source);
+                    $sheet->setCellValue('M'.$i, $operationdet->getFrais()->getDesignation());
+                    $sheet->setCellValue('N'.$i, $SumByPayant);
+                    $sheet->setCellValue('O'.$i, $SumByOrg);
+                    if ($regcount == 0) {
+                        $sheet->setCellValue('P'.$i, $montant_reglement['total']);
+                        $sheet->setCellValue('Q'.$i, $montant['total'] - $montant_reglement['total']);
+                    }
+                    if ($operationcab['created'] != "") {
+                        $sheet->setCellValue('R'.$i, $operationcab['created']->format('d-m-Y'));
+                    }
+                    $i++;
+                    $j++;
+                    $regcount++;
+                }
+            // }
+        }
+        $writer = new Xlsx($spreadsheet);
+        $now = date('Y-m-d h:m:s');
+        $year = $annee.'-'.$annee+1;
+        $fileName = "Extraction Des Articles $year -- $now (non Inscrits).xlsx";
+        $temp_file = tempnam(sys_get_temp_dir(), $fileName);
+        $writer->save($temp_file);
+        return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);
+    }
+    
     #[Route('/valider', name: 'valider_facture')]
     public function valider_facture(Request $request): Response
     {   

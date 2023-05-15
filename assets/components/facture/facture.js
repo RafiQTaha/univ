@@ -386,6 +386,12 @@ $(document).ready(function () {
         // alert(annee);
         window.open('/facture/factures/extraction_factures_by_annee/'+annee, '_blank');
     });
+    $('body').on('click','#export_non_inscrit',function (e) {
+        e.preventDefault();
+        let annee = $('#annee').val();
+        // alert(annee);
+        window.open('/facture/factures/extraction_factures_nonInscrits/'+annee, '_blank');
+    });
     $("#valider").on('click', async function(e) {
         e.preventDefault();
         if(!id_facture){

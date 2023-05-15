@@ -75,6 +75,28 @@ public function getFacturesByCurrentYear($currentyear)
         ->getResult()
     ;
 }
+public function getFacturesByCurrentYearNonInscrits($currentyear)
+{
+    return $this->createQueryBuilder('cab')
+        ->select("DISTINCT cab.id as id,pre.code as code_preins, cab.code as code_facture, ann.designation as annee, etu.nom as nom, etu.prenom as prenom,etu.nationalite as nationalite, etab.designation as etablissement, frm.designation as formation, prm.designation as promotion, cab.categorie as categorie, stat.designation as statut,cab.created as created,adm.code as code_adm,ins.code as code_ins,etu.code as code_etu")
+        ->innerJoin("cab.preinscription","pre")
+        ->innerJoin("pre.etudiant","etu")
+        ->leftJoin("pre.admissions","adm")
+        ->leftJoin("adm.inscriptions","ins")
+        ->leftJoin("ins.promotion","prm")
+        ->leftJoin("ins.statut","stat")
+        ->innerJoin("cab.annee","ann")
+        ->leftJoin("ins.annee","anne")
+        ->leftJoin("ann.formation","frm")
+        ->leftJoin("frm.etablissement","etab")
+        ->Where("ann.designation = :annee")
+        ->AndWhere("ins.id is null")
+        ->setParameter("annee", $currentyear)
+        ->orderby('pre.id','DESC')
+        ->getQuery()
+        ->getResult()
+    ;
+}
 public function getFacturesDetByPreinscription($preinscription)
 {
     return $this->createQueryBuilder('cab')
