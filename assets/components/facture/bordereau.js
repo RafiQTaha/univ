@@ -110,7 +110,7 @@ $(document).ready(function () {
                         icon.addClass('fa-trash').removeClass("fa-spinner fa-spin");
                         Toast.fire({
                             icon: 'error',
-                            title: 'Some Error',
+                            title: message,
                         })
                     }
                 }

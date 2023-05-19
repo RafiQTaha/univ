@@ -159,7 +159,7 @@ class BordereauController extends AbstractController
             return new JsonResponse('Bordereau Introuvable!', 500); 
         }
         $reglements = $bordereau->getReglements();
-        if(count($reglements) > 1){
+        if(count($reglements) > 0){
             foreach($reglements as $reglement){
                 $reglement->setBordereau(Null);
             }

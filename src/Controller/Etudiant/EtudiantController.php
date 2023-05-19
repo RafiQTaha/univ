@@ -262,33 +262,33 @@ class EtudiantController extends AbstractController
                     // if ($sheet[50] == "oui") {
                     //     $etudiant->setCpgem(1);
                     // }
-                    if ($sheet[29] == "oui") {
-                        $etudiant->setCpge2(1);
-                    }                    
-                    if ($sheet[30] == "oui") {
-                        $etudiant->setCpge1(1);
-                    }
-                    // if ($sheet[53] == "oui") {
-                    //     $etudiant->setVet(1);
+                    // if ($sheet[29] == "oui") {
+                    //     $etudiant->setCpge2(1);
+                    // }                    
+                    // if ($sheet[30] == "oui") {
+                    //     $etudiant->setCpge1(1);
                     // }
-                    if ($sheet[31] == "oui") {
-                        $etudiant->setCam(1);
-                    }
-                    if ($sheet[32] == "oui") {
-                        $etudiant->setIst(1);
-                    }
-                    if ($sheet[33] == "oui") {
-                        $etudiant->setIp(1);
-                    }                    
-                    if ($sheet[34] == "oui") {
-                        $etudiant->setFpa(1);
-                    }
-                    if ($sheet[35] == "oui") {
-                        $etudiant->setFma(1);
-                    }
-                    if ($sheet[36] == "oui") {
-                        $etudiant->setFda(1);
-                    }                   
+                    // // if ($sheet[53] == "oui") {
+                    // //     $etudiant->setVet(1);
+                    // // }
+                    // if ($sheet[31] == "oui") {
+                    //     $etudiant->setCam(1);
+                    // }
+                    // if ($sheet[32] == "oui") {
+                    //     $etudiant->setIst(1);
+                    // }
+                    // if ($sheet[33] == "oui") {
+                    //     $etudiant->setIp(1);
+                    // }                    
+                    // if ($sheet[34] == "oui") {
+                    //     $etudiant->setFpa(1);
+                    // }
+                    // if ($sheet[35] == "oui") {
+                    //     $etudiant->setFma(1);
+                    // }
+                    // if ($sheet[36] == "oui") {
+                    //     $etudiant->setFda(1);
+                    // }                   
                 
                     $etudiant->setSourceSite(1);
                     $etudiant->setUserCreated($this->getUser());
