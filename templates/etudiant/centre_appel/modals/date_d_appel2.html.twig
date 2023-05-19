@@ -20,6 +20,7 @@
             <label> STATUT CANDIDAT:</label>
             <select class="form-control chosen-select" name="statut_condidat" id ='statut_condidat'>
                 <option value="" selected>Choix Statut Condidat</option>
+                {# <option value="PRE-INSCRIT">PRE-INSCRIT</option> #}
                 <option value="NV PROSPECT">NV PROSPECT</option>
                 <option value="INDECIS">INDECIS</option>
                 <option value="INTERESSE SANS RDV">INTERESSE SANS RDV</option>
@@ -35,13 +36,26 @@
             </select>
             <label for="">DATE</label>
             <input class="form-control" type="date" name="dateappelle" id="dateappelle">
-            <label> RDV:</label>
-            <select class="form-control chosen-select" name="rdv" id ='rdv'>
-                <option value="" selected>Choix Rdv</option>
-                <option value="MATIN">MATIN</option>
-                <option value="MIDI">MIDI</option>
-                <option value="APRES MIDI">APRES MIDI</option>
-            </select>
+            <div class="col-md-12 row">
+                <div class="col-md-6">
+                    <label> RDV:</label>
+                    <select class="form-control chosen-select" name="rdv" id ='rdv'>
+                        <option value="" selected>Choix Rdv</option>
+                        <option value="MATIN">MATIN</option>
+                        <option value="MIDI">MIDI</option>
+                        <option value="APRES MIDI">APRES MIDI</option>
+                    </select>
+                </div> 
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="noteBac">Formation:</label>
+                        <input class="form-control" type="float" name="noteBac" id="noteBac">
+                        {# <select class="form-control" name="noteBac" id="noteBac">
+                           
+                        </select> #}
+                    </div>
+                </div>
+            </div>
             <div class="col-md-12 row">
                 <div class="col-md-6">
                     <label for="etablissement">Etablissement:</label>

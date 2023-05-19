@@ -52,7 +52,8 @@ class TEtudiantRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('etu')
             ->where('etu.created LIKE :date')
-            ->setParameter('date', '2023-05%')
+            ->setParameter('date', $annee.'%')
+            ->orderBy('etu.id', 'DESC')
             ->getQuery()
             ->getResult()
         ;

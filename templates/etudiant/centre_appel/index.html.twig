@@ -21,7 +21,30 @@
             <h4>Tableau des etudiants</h4>
             </div>
             <div class="card-body">
-
+                <div class="card-search" style="margin-bottom: 1.5rem;">
+                    <div class="row">
+                        <div class="col-md-2">
+                            <label for="filtre_stat_condidat">Statut Condidat:</label>
+                            <select class="form-control" name="filtre_stat_condidat" id="filtre_stat_condidat">
+                                <option value="" selected>Choix Statut Condidat</option>
+                                <option value="NV PROSPECT">NV PROSPECT</option>
+                                <option value="INDECIS">INDECIS</option>
+                                <option value="INTERESSE SANS RDV">INTERESSE SANS RDV</option>
+                                <option value="INTERESSE AVEC RDV">INTERESSE AVEC RDV</option>
+                                <option value="DESISTEMENT">DESISTEMENT</option>
+                            </select>
+                        </div>
+                        {# <div class="col-md-2">
+                            <label for="etablissement">Etablissement:</label>
+                            <select class="form-control" name="etablissement" id="etablissement">
+                                <option value="">Choix Etablissement</option>
+                                {% for etablissement in etablissements %}
+                                    <option value="{{etablissement.id}}">{{etablissement.designation}}</option>
+                                {% endfor %} 
+                            </select>
+                        </div> #}
+                    </div>
+                </div>
             <table id="datables_etudiant" class="table table-striped" style="width:100%">
                 <thead>
                     <tr>

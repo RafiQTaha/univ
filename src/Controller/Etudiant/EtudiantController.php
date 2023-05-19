@@ -372,6 +372,7 @@ class EtudiantController extends AbstractController
             return new JsonResponse("Etudiant déja une preinscription dans cette année / formation", 500);
         }
         // dd($etudiant->getStatut());
+        $etudiant->setStatutCondidat("PRE-INSCRIT");
         $preinscription = new TPreinscription();
         $preinscription->setStatut($etudiant->getStatut());
         $preinscription->setEtudiant($etudiant);

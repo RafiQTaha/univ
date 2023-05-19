@@ -44,28 +44,29 @@ $(document).ready(function  () {
     });
     $('select').select2();
     let id_etudiant = false;
+    
+    $("#filtre_stat_condidat").on('change', async function (){
+        const stat_condidat = $(this).val();
+        table.columns(0).search(stat_condidat).draw();
+    })
 
     const getAppelRdv = async () => {
-        // $('#rdv1').val("");
-        // $('#rdv2').val("");
-        $('#statut_appel').val("");
-        $('#Observation').val("");
+        $('select').val("").trigger('change.select2');
+        $('#dateappelle').val("");
+        $('#noteBac').val("");
         const icon = $("#date-d-appel i");
         icon.removeClass('fa-edit').addClass("fa-spinner fa-spin");
         try {
             const request = await axios.get('/etudiant/appel/getAppelRdv_appel/'+id_etudiant);
             const data = request.data;
-            console.log(data['rdv'])
+            console.log(data['date'])
             $('#statut_appel').val(data['statut_appel']).trigger('change.select2');
             $('#statut_condidat').val(data['statut_condidat']).trigger('change.select2');
             $('#statut_rdv').val(data['statut_rdv']).trigger('change.select2');
             $('#dateappelle').val(data['date']);
+            $('#noteBac').val(data['noteBac']);
             $('#rdv').val(data['rdv']).trigger('change.select2');
-            // $('#rdv').val(data['rdv']);
-            // $('#rdv1').val(data['rdv1']);
-            // $('#rdv2').val(data['rdv2']);
             icon.addClass('fa-edit').removeClass("fa-spinner fa-spin");
-
         } catch (error) {
             // console.log(error.response.data);
         }  
@@ -118,8 +119,10 @@ $(document).ready(function  () {
             <p>${response}</p>
             </div>`
         );
-        document.getElementById("date_appele_save").reset();
-        $('select').val("");
+        // document.getElementById("date_appele_save").reset();
+        // $('select').val("").trigger('change.select2');
+        // $('#dateappelle').val("");
+        // $('#noteBac').val("");
         icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
         table.ajax.reload(null, false)
     } catch (error) {
