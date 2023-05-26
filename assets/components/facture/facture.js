@@ -505,4 +505,14 @@ $(document).ready(function () {
             }
         }
     })
+
+    $('#annee').on('input', function() {
+        var inputYear = parseInt($(this).val());
+        var yearPlusOne = inputYear + 1;
+        if (!isNaN(yearPlusOne)) {
+          $('#year_plus_one').text(yearPlusOne);
+        } else {
+          $('#year_plus_one').text('');
+        }
+    });
 });
