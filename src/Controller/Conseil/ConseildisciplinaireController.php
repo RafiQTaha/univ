@@ -169,9 +169,10 @@ class ConseildisciplinaireController extends AbstractController
         if ($request->get('date_incident') > date('Y-m-d')) {
             return new JsonResponse("Merci de choisir une date d'incident inferieur ou egale à Aujourd'hui !",500);
         }
-        if (new DateTime($request->get('date_reunion')) < new DateTime('now')) {
-            return new JsonResponse("Merci de choisir une date de reunion superieur ou egale à Aujourd'hui !",500);
-        }
+        // JE NE CHECK PAS LA DATE DE REUNION POUR QU'ILS PUISSENT ENTRER LES ENCIENNES CONVOCATION ET CES DATES DE REUNIONS.
+        // if (new DateTime($request->get('date_reunion')) < new DateTime('now')) {
+        //     return new JsonResponse("Merci de choisir une date de reunion superieur ou egale à Aujourd'hui !",500);
+        // }
         $inscription = $this->em->getRepository(TInscription::class)->find($request->get('annee2'));
         if (!$inscription) {
             return new JsonResponse("Inscription Introuvable !",500);
@@ -325,79 +326,38 @@ class ConseildisciplinaireController extends AbstractController
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
         $sheet->setCellValue('A1', 'ORD');
-        $sheet->setCellValue('B1', 'CODE CONDIDAT');
-        $sheet->setCellValue('C1', 'CODE PREINSCRIPTION');
-        $sheet->setCellValue('D1', 'CODE ADMISSION');
-        $sheet->setCellValue('E1', 'ID INSCRIPTION');
-        $sheet->setCellValue('F1', 'CODE INSCRIPTION');
-        $sheet->setCellValue('G1', 'ANNEE');
-        $sheet->setCellValue('H1', 'NOM');
-        $sheet->setCellValue('I1', 'PRENOM');
-        $sheet->setCellValue('J1', 'SEXE');
-        $sheet->setCellValue('K1', 'DATE NAISSANCE');
-        $sheet->setCellValue('L1', 'CIN');
-        $sheet->setCellValue('M1', 'PASSEPORT');
-        $sheet->setCellValue('N1', 'NATIONALITE');
-        $sheet->setCellValue('O1', 'TEL CANDIDAT');
-        $sheet->setCellValue('P1', 'MAIL CANDIDAT');
-        $sheet->setCellValue('Q1', 'ETABLISSEMENT');
-        $sheet->setCellValue('R1', 'CODE_ETAB');
-        $sheet->setCellValue('S1', 'FORMATION');
-        $sheet->setCellValue('T1', 'CODE_FORMATION');
-        $sheet->setCellValue('U1', "PROMOTION");
-        $sheet->setCellValue('V1', "CODE_PROMO");
-        $sheet->setCellValue('W1', 'TYPE DE BAC');
-        $sheet->setCellValue('X1', 'ANNEE BAC');
-        $sheet->setCellValue('Y1', 'FILIERE');
-        $sheet->setCellValue('Z1', 'MOYENNE GENERALE');
-        $sheet->setCellValue('AA1', 'MOYENNE NATIONALE');
-        $sheet->setCellValue('AB1', 'MOYENNE REGIONALE');
-        $sheet->setCellValue('AC1', 'D-INSCRIPTION');
-        $sheet->setCellValue('AD1', 'STATUT');
+        $sheet->setCellValue('B1', 'CODE ADMISSION');
+        $sheet->setCellValue('C1', 'NOM');
+        $sheet->setCellValue('D1', 'PRENOM');
+        $sheet->setCellValue('E1', 'ETABLISSEMENT');
+        $sheet->setCellValue('F1', 'FORMATION');
+        $sheet->setCellValue('G1', 'PROMOTION');
+        $sheet->setCellValue('H1', 'DATE D\'INCIDENT');
+        $sheet->setCellValue('I1', 'MOTIF DE L\'INCIDENT');
+        $sheet->setCellValue('J1', 'DATE DU CONSEIL');
+        $sheet->setCellValue('K1', 'DÉCISION DU CONSEIL');
+        $sheet->setCellValue('L1', 'ANNEE UNIVERSITAIRE');
         $i=2;
         $j=1;
         // Avoir une list d'historique des notifications et des convocations d'un etudiant specific. 
-        // $inscriptions = $this->em->getRepository(TInscription::class)->getActiveInscriptionByCurrentAnnee($current_year);
-        $InsSanctionner = $this->em->getRepository(InsSanctionner::class)->getHistoriqueDesActivesConvocations($insSanction->getInscription());
-        dd($InsSanctionner);
-        // foreach ($inscriptions as $inscription) {
-        //     $sheet->setCellValue('A'.$i, $j);
-        //     $sheet->setCellValue('B'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getCode());
-        //     $sheet->setCellValue('C'.$i, $inscription->getAdmission()->getPreinscription()->getCode());
-        //     $sheet->setCellValue('D'.$i, $inscription->getAdmission()->getCode());
-        //     $sheet->setCellValue('E'.$i, $inscription->getId());
-        //     $sheet->setCellValue('F'.$i, $inscription->getCode());
-        //     if ($inscription->getAdmission()->getPreinscription()->getNature() != null) {
-        //         $sheet->setCellValue('G'.$i, $inscription->getAdmission()->getPreinscription()->getNature()->getDesignation());
-        //     }
-        //     $sheet->setCellValue('H'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getNom());
-        //     $sheet->setCellValue('I'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getPrenom());
-        //     $sheet->setCellValue('J'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getSexe());
-        //     $sheet->setCellValue('K'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getDateNaissance());
-        //     $sheet->setCellValue('L'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getCin());
-        //     $sheet->setCellValue('M'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getPasseport());
-        //     $sheet->setCellValue('N'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getNationalite());
-        //     $sheet->setCellValue('O'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getTel1());
-        //     $sheet->setCellValue('P'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getMail1());
-        //     $sheet->setCellValue('Q'.$i, $inscription->getAnnee()->getFormation()->getEtablissement()->getDesignation());
-            
-        //     $sheet->setCellValue('R'.$i, $inscription->getAnnee()->getFormation()->getEtablissement()->getCode());
-        //     $sheet->setCellValue('S'.$i, $inscription->getAnnee()->getFormation()->getDesignation());
-        //     $sheet->setCellValue('T'.$i, $inscription->getAnnee()->getFormation()->getCode());
-        //     $sheet->setCellValue('U'.$i, $inscription->getPromotion()->getDesignation());
-        //     $sheet->setCellValue('V'.$i, $inscription->getPromotion()->getCode());
-        //     $sheet->setCellValue('W'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getTypeBac() == Null ? "" : $inscription->getAdmission()->getPreinscription()->getEtudiant()->getTypeBac()->getDesignation());
-        //     $sheet->setCellValue('X'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getAnneeBac());
-        //     $filiere = $inscription->getAdmission()->getPreinscription()->getEtudiant()->getFiliere();
-        //     $sheet->setCellValue('Y'.$i, $filiere != null ? $filiere->getDesignation() : "");
-        //     $sheet->setCellValue('Z'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getMoyenneBac());
-        //     $sheet->setCellValue('AA'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getMoyenNational());
-        //     $sheet->setCellValue('AB'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getMoyenRegional());
-        //     $sheet->setCellValue('AC'.$i, $inscription->getCreated());
-        //     $sheet->setCellValue('AD'.$i, $inscription->getStatut()->GetDesignation());
-        //     $i++;
-        //     $j++;
-        // }
+        $InsSanctionners = $this->em->getRepository(InsSanctionner::class)->getHistoriqueDesActivesConvocations($insSanction->getInscription());
+        dd($InsSanctionners[0]->getInscription());
+        foreach ($InsSanctionners as $InsSanctionner) {
+            $sheet->setCellValue('A'.$i, $j);
+            $sheet->setCellValue('B'.$i, $InsSanctionner->getInscription()->getAdmission()->getCode());
+            $sheet->setCellValue('C'.$i, $InsSanctionner->getInscription()->getAdmission()->getPreinscription()->getEtudiant()->getNom());
+            $sheet->setCellValue('D'.$i, $InsSanctionner->getInscription()->getAdmission()->getPreinscription()->getEtudiant()->getPrenom());
+            $sheet->setCellValue('E'.$i, $InsSanctionner->getInscription()->getAnnee()->getFormation()->getDesignation());
+            $sheet->setCellValue('F'.$i, $InsSanctionner->getInscription()->getAnnee()->getFormation()->getDesignation());
+            $sheet->setCellValue('G'.$i, $InsSanctionner->getInscription()->getPromotion()->getDesignation());
+            $sheet->setCellValue('H'.$i, $InsSanctionner->getDateIncidence());
+            if ($InsSanctionner->getAgression()) {
+                $sheet->setCellValue('I'.$i, $InsSanctionner->getInscription()->getAdmission()->getPreinscription()->getNature()->getDesignation());
+            }
+            $sheet->setCellValue('J'.$i, $InsSanctionner->getDateReunion());
+            $i++;
+            $j++;
+        }
         $writer = new Xlsx($spreadsheet);
         $current_year = date('m') > 7 ? date('Y').'-'.date('Y')+1 : date('Y') - 1 .'-' .date('Y');
         $fileName = "Extraction Inscription $current_year.xlsx";
