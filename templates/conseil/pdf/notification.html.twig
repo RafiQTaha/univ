@@ -148,7 +148,13 @@
 
         <tr>
             <td class="txt">
-                Par le présent courrier de notification, nous avons le regret de vous informer de la décision prononcée à votre égard suite au conseil de discipline ayant traité votre «<span style="font-size:12px;font-weight: bold;color:black;">{{ insSanction.Agression.Designation }}</span>».
+                Par le présent courrier de notification, nous avons le regret de vous informer de la décision prononcée à votre égard suite au conseil de discipline ayant traité votre «<span style="font-size:12px;font-weight: bold;color:black;">
+                    {% if insSanction.AutreAgression != null %}
+                        {{ insSanction.AutreAgression }}
+                    {% else %}
+                        {{ insSanction.Agression.Designation }}
+                    {% endif %}
+                </span>».
             </td>   
         </tr>
         <tr>

@@ -221,10 +221,16 @@ class ConseildisciplinaireController extends AbstractController
     #[Route('/ajouter_notification/{insSanction}', name: 'ajouter_notification')]
     public function ajouter_notification(InsSanctionner $insSanction,Request $request): Response
     {
-        if ($request->get('incident') == "" || ( !$request->get('sanction') && $request->get('newSanctions') == "" )) {
+        if (($request->get('incident') == "" && $request->get('autre_incident') == "") || ( !$request->get('sanction') && $request->get('newSanctions') == "" )) {
             return new JsonResponse("Merci de remplir tout les champs!",500);
         }
-        $insSanction->setAgression($this->em->getRepository(SousAgression::class)->find($request->get('incident')));
+        if ($request->get('autre_incident') != "") {
+            $insSanction->setAutreAgression($request->get('autre_incident'));
+            $insSanction->setAgression(null);
+        }else{
+            $insSanction->setAutreAgression(null);
+            $insSanction->setAgression($this->em->getRepository(SousAgression::class)->find($request->get('incident')));
+        }
         if ($insSanction->getValide() == 0) {
             return new JsonResponse("Merci de valider la convocation!",500);
         }
@@ -243,7 +249,7 @@ class ConseildisciplinaireController extends AbstractController
         $insSanction->setUserUpdated($this->getUser());
         $insSanction->setUpdated(new DateTime('now'));
         $this->em->flush();
-        return new JsonResponse("Convocation bien cree",200);
+        return new JsonResponse("Notification bien ajouter",200);
     }
     #[Route('/etatConvocation/{insSanction}', name: 'etatConvocation')]
     public function etatConvocation(InsSanctionner $insSanction)
@@ -281,7 +287,7 @@ class ConseildisciplinaireController extends AbstractController
     #[Route('/verification_notification/{insSanction}', name: 'verification_notification')]
     public function verification_notification(InsSanctionner $insSanction)
     {
-        if ($insSanction->getAgression() == null || !$insSanction) {
+        if ( ($insSanction->getAgression() == null && $insSanction->getAutreAgression() == null) || !$insSanction) {
             return new JsonResponse("Merci d'ajouter les sanctions d'abord !",500);
         }
         return new JsonResponse("C'est bon",200);
@@ -341,7 +347,6 @@ class ConseildisciplinaireController extends AbstractController
         $j=1;
         // Avoir une list d'historique des notifications et des convocations d'un etudiant specific. 
         $InsSanctionners = $this->em->getRepository(InsSanctionner::class)->getHistoriqueDesActivesConvocations($insSanction->getInscription());
-        // dd($InsSanctionners[0]->getAutreSanction()[0]);
         foreach ($InsSanctionners as $InsSanctionner) {
             if (count($InsSanctionner->getSanction()) > 0 || count($InsSanctionner->getAutreSanction()) > 0) {
                 foreach ($InsSanctionner->getSanction() as $sanction) {
@@ -353,7 +358,9 @@ class ConseildisciplinaireController extends AbstractController
                     $sheet->setCellValue('F'.$i, $InsSanctionner->getInscription()->getAnnee()->getFormation()->getDesignation());
                     $sheet->setCellValue('G'.$i, $InsSanctionner->getInscription()->getPromotion()->getDesignation());
                     $sheet->setCellValue('H'.$i, $InsSanctionner->getDateIncident()->format('d/m/Y'));
-                    if ($InsSanctionner->getAgression()) {
+                    if ($InsSanctionner->getAgression() == null) {
+                        $sheet->setCellValue('I'.$i, $InsSanctionner->getAutreAgression());
+                    }else{
                         $sheet->setCellValue('I'.$i, $InsSanctionner->getAgression()->getDesignation());
                     }
                     $sheet->setCellValue('J'.$i, $InsSanctionner->getDateReunion()->format('d/m/Y h:i:s'));
@@ -371,7 +378,9 @@ class ConseildisciplinaireController extends AbstractController
                     $sheet->setCellValue('F'.$i, $InsSanctionner->getInscription()->getAnnee()->getFormation()->getDesignation());
                     $sheet->setCellValue('G'.$i, $InsSanctionner->getInscription()->getPromotion()->getDesignation());
                     $sheet->setCellValue('H'.$i, $InsSanctionner->getDateIncident()->format('d/m/Y'));
-                    if ($InsSanctionner->getAgression()) {
+                    if ($InsSanctionner->getAgression() == null) {
+                        $sheet->setCellValue('I'.$i, $InsSanctionner->getAutreAgression());
+                    }else{
                         $sheet->setCellValue('I'.$i, $InsSanctionner->getAgression()->getDesignation());
                     }
                     $sheet->setCellValue('J'.$i, $InsSanctionner->getDateReunion()->format('d/m/Y H:i:s'));
@@ -389,7 +398,9 @@ class ConseildisciplinaireController extends AbstractController
                 $sheet->setCellValue('F'.$i, $InsSanctionner->getInscription()->getAnnee()->getFormation()->getDesignation());
                 $sheet->setCellValue('G'.$i, $InsSanctionner->getInscription()->getPromotion()->getDesignation());
                 $sheet->setCellValue('H'.$i, $InsSanctionner->getDateIncident()->format('d/m/Y'));
-                if ($InsSanctionner->getAgression()) {
+                if ($InsSanctionner->getAgression() == null) {
+                    $sheet->setCellValue('I'.$i, $InsSanctionner->getAutreAgression());
+                }else{
                     $sheet->setCellValue('I'.$i, $InsSanctionner->getAgression()->getDesignation());
                 }
                 $sheet->setCellValue('L'.$i, $InsSanctionner->getInscription()->getAnnee()->getDesignation());
@@ -397,6 +408,8 @@ class ConseildisciplinaireController extends AbstractController
                 $j++;
             }
         }
+        
+        // die('die');
         $writer = new Xlsx($spreadsheet);
         // dd($writer);
         $current_year = date('m') > 7 ? date('Y').'-'.date('Y')+1 : date('Y') - 1 .'-' .date('Y');

@@ -54,6 +54,9 @@ class InsSanctionner
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $code;
 
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private $autreAgression;
+
     public function __construct()
     {
         $this->sanction = new ArrayCollection();
@@ -228,6 +231,18 @@ class InsSanctionner
     public function setCode(?string $code): self
     {
         $this->code = $code;
+
+        return $this;
+    }
+
+    public function getAutreAgression(): ?string
+    {
+        return $this->autreAgression;
+    }
+
+    public function setAutreAgression(?string $autreAgression): self
+    {
+        $this->autreAgression = $autreAgression;
 
         return $this;
     }
