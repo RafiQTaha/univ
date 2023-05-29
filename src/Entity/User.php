@@ -88,6 +88,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'userUpdated', targetEntity: TOperationdet::class)]
     private $tOperationdets;
 
+    #[ORM\OneToMany(mappedBy: 'userCreated', targetEntity: InsSanctionner::class)]
+    private $insSanctionners;
+
 
     public function __construct()
     {
@@ -107,6 +110,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->tOperationDets = new ArrayCollection();
         $this->plEmptimes = new ArrayCollection();
         $this->tOperationdets = new ArrayCollection();
+        $this->insSanctionners = new ArrayCollection();
     }
 
     
@@ -680,6 +684,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($plEmptime->getUserDeleted() === $this) {
                 $plEmptime->setUserDeleted(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, InsSanctionner>
+     */
+    public function getInsSanctionners(): Collection
+    {
+        return $this->insSanctionners;
+    }
+
+    public function addInsSanctionner(InsSanctionner $insSanctionner): self
+    {
+        if (!$this->insSanctionners->contains($insSanctionner)) {
+            $this->insSanctionners[] = $insSanctionner;
+            $insSanctionner->setUserCreated($this);
+        }
+
+        return $this;
+    }
+
+    public function removeInsSanctionner(InsSanctionner $insSanctionner): self
+    {
+        if ($this->insSanctionners->removeElement($insSanctionner)) {
+            // set the owning side to null (unless already changed)
+            if ($insSanctionner->getUserCreated() === $this) {
+                $insSanctionner->setUserCreated(null);
             }
         }
 

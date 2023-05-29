@@ -87,6 +87,9 @@ class TInscription
     #[ORM\OneToMany(mappedBy: 'inscription', targetEntity: TInscriptionImpControle::class)]
     private $tInscriptionImpControles;
 
+    #[ORM\OneToMany(mappedBy: 'inscription', targetEntity: InsSanctionner::class)]
+    private $insSanctionners;
+
     public function __construct()
     {
         $this->gnotes = new ArrayCollection();
@@ -95,6 +98,7 @@ class TInscription
         $this->snotes = new ArrayCollection();
         $this->tInscriptionImpLogs = new ArrayCollection();
         $this->tInscriptionImpControles = new ArrayCollection();
+        $this->insSanctionners = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -503,6 +507,36 @@ class TInscription
             // set the owning side to null (unless already changed)
             if ($tInscriptionImpControle->getInscription() === $this) {
                 $tInscriptionImpControle->setInscription(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, InsSanctionner>
+     */
+    public function getInsSanctionners(): Collection
+    {
+        return $this->insSanctionners;
+    }
+
+    public function addInsSanctionner(InsSanctionner $insSanctionner): self
+    {
+        if (!$this->insSanctionners->contains($insSanctionner)) {
+            $this->insSanctionners[] = $insSanctionner;
+            $insSanctionner->setInscription($this);
+        }
+
+        return $this;
+    }
+
+    public function removeInsSanctionner(InsSanctionner $insSanctionner): self
+    {
+        if ($this->insSanctionners->removeElement($insSanctionner)) {
+            // set the owning side to null (unless already changed)
+            if ($insSanctionner->getInscription() === $this) {
+                $insSanctionner->setInscription(null);
             }
         }
 

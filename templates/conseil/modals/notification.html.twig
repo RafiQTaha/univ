@@ -1,0 +1,43 @@
+<div class="modal" role="dialog" id="notification_modal" aria-modal="true"> 
+    <div class="modal-dialog modal-md" style="max-width: 400px !important;" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Notification</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"> 
+          <span aria-hidden="true">×</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <!-- <div class="alert alert-info">Veuillez selectionner un ligne Pour Continuer Cette opération !!</div> -->
+          <form id="notification_save">
+              <label for="agressions">Agressions:</label>
+              <select class="form-control" name="agressions" id="agressions">
+                <option value="">Choix Agression</option>
+                {% for agression in agressions %}
+                      {# <optgroup label="{{agression.designation}}"> #}
+                    <option value="{{agression.id}}">{{agression.designation}}</option>
+                {% endfor %}
+              </select>
+              
+              <label for="incident">Incident:</label>
+              <select class="form-control" name="incident" id="incident">
+              
+              </select>
+
+              <label for="sanction">Sanction:</label>
+              <select class="form-control chosen-select" name="sanction[]" id="sanction" multiple="multiple" >
+              
+              </select>
+              <label for="autre_sanction">Autre Sanction:</label>
+              <div id="autre_sanction_text" class="autre_sanction_text">
+                <div class="d-flex">
+                  <input type="text" name="autre_sanction" id="autre_sanction" class="form-control" placeholder="Autre Sanction">
+                  <button type="button" class="btn btn-success ml-2" id="newSanction"><i class="fas fa-plus"></i></button>
+                </div>
+              </div>
+              <button type="submit" class="btn btn-success mt-4 submitBtn"><i class="fas fa-check-circle"></i> Enregister</button>
+          </form>
+        </div>
+      </div>
+    </div>
+</div>

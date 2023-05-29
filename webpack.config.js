@@ -73,6 +73,7 @@ Encore
     .addEntry('modalites', './assets/components/parametre/modalites.js')
     .addEntry('serieBac', './assets/components/parametre/serieBac.js')
     .addEntry('typeBac', './assets/components/parametre/typeBac.js')
+    .addEntry('conseil_disciplinaire', './assets/components/conseil/conseil_disciplinaire.js')
 
 
     // .addStyleEntry('login', './assets/styles/components/login/login.scss')

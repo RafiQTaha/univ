@@ -1,0 +1,29 @@
+<div class="modal" role="dialog" id="convocation_modal" aria-modal="true"> 
+<div class="modal-dialog modal-md" style="max-width: 400px !important;" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Convocation</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"> 
+        <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <!-- <div class="alert alert-info">Veuillez selectionner un ligne Pour Continuer Cette opération !!</div> -->
+        <form id="convocation_save">
+            <label for="etudiant">Etudiant:</label>
+            <select name="etudiant" id="etudiant">
+
+            </select>
+            <label for="annee2">Année:</label>
+            <select class="form-control" name="annee2" id="annee2">
+            </select>
+            <label for="convocation_inscription">Date d'incident:</label>
+            <input type="date" name="date_incident" id="date_incident" class="form-control">
+            <label for="convocation_inscription">Date de reunion:</label>
+            <input type="datetime-local" name="date_reunion" id="date_reunion" class="form-control">
+            <button type="submit" class="btn btn-success mt-4"><i class="fas fa-check-circle"></i> Enregister</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

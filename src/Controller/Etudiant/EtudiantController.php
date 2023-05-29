@@ -186,9 +186,8 @@ class EtudiantController extends AbstractController
         $exist_array = [];
         // dd($spreadSheetArys);
         foreach ($spreadSheetArys as $sheet) {
-            if ($sheet[8] != "" || empty($sheet[8])) {
-                $etudiantExist = $this->em->getRepository(TEtudiant::class)->findOneBy(['cin' => $sheet[8],'nom'=>$sheet[2]]);
-            
+            if ($sheet[7] != "" || empty($sheet[7])) {
+                $etudiantExist = $this->em->getRepository(TEtudiant::class)->findOneBy(['cin' => $sheet[7],'nom'=>$sheet[1]]);
                 // dd($etudiantExist);
                 if($etudiantExist != null) {
                     $exist++;
@@ -196,60 +195,69 @@ class EtudiantController extends AbstractController
                         $etudiantExist->getId()
                     ]);
                 } else {
+                    // dd($sheet[3]);
                     $etudiant = new TEtudiant();
-                    $etudiant->setNom(strtoupper($sheet[2]));
-                    $etudiant->setPrenom(ucfirst(strtolower($sheet[3])));
+                    $etudiant->setNom(strtoupper($sheet[1]));
+                    $etudiant->setPrenom(ucfirst(strtolower($sheet[2])));
                     $date = new DateTime();
-                    $etudiant->setDateNaissance($date->setTimestamp(strtotime($sheet[4])));
-                    $etudiant->setLieuNaissance($sheet[5]);
-                    $etudiant->setSexe($sheet[6]);
+                    $etudiant->setDateNaissance($date->setTimestamp(strtotime($sheet[3])));
+                    $etudiant->setLieuNaissance($sheet[4]);
+                    $etudiant->setSexe($sheet[5]);
                     $etudiant->setTeleListe('Intéressé');
                     // $etudiant->setStFamille();
                     // $etudiant->setStFamilleParent();
-                    $etudiant->setNationalite($sheet[7]);
-                    $etudiant->setCin($sheet[8]);
-                    $etudiant->setVille($sheet[9]);
-                    $etudiant->setTel1($sheet[10]);
-                    $etudiant->setMail1($sheet[11]);
+                    $etudiant->setNationalite($sheet[6]);
+                    if ($sheet[6] != 'Morocco') {
+                        $etudiant->setStrange(1);
+                    }else{
+                        $etudiant->setStrange(0);
+                    }
+                    $etudiant->setNationalite($sheet[6]);
+                    $etudiant->setCin($sheet[7]);
+                    $etudiant->setVille($sheet[8]);
+                    $etudiant->setTel1($sheet[9]);
+                    $etudiant->setMail1($sheet[10]);
                     // $etudiant->setPasseport($sheet[11]);
                     // $etudiant->setAdresse($sheet[12]);
-                    $etudiant->setNomPere($sheet[12]);
-                    $etudiant->setPrenomPere($sheet[13]);
-                    $etudiant->setTelPere($sheet[14]);
-                    $etudiant->setMailPere($sheet[15]);
+                    // $etudiant->setNomPere($sheet[12]);
+                    // $etudiant->setPrenomPere($sheet[13]);
+                    $etudiant->setTelPere($sheet[11]);
+                    // $etudiant->setMailPere($sheet[12]);
                     // $etudiant->setNationalitePere($sheet[21]);
                     // $etudiant->setProfessionPere($sheet[22]);
                     // $etudiant->setEmployePere($sheet[23]);
                     // $etudiant->setCategoriePere($sheet[24]);
                     // $etudiant->setSalairePere($sheet[27]);
-                    $etudiant->setNomMere($sheet[16]);
-                    $etudiant->setPrenomMere($sheet[17]);
+                    // $etudiant->setNomMere($sheet[16]);
+                    // $etudiant->setPrenomMere($sheet[17]);
                     // $etudiant->setNationaliteMere($sheet[30]);
                     // $etudiant->setProfessionMere($sheet[31]);
                     // $etudiant->setEmployeMere($sheet[32]);
                     // $etudiant->setCategorieMere($sheet[33]);
-                    $etudiant->setTelMere($sheet[18]);
-                    $etudiant->setMailMere($sheet[19]);
+                    $etudiant->setTelMere($sheet[12]);
+                    // $etudiant->setMailMere($sheet[19]);
                     // $etudiant->setSalaireMere($sheet[36]);
-                    $etudiant->setCne($sheet[20]);
-                    $etudiant->setAcademie(
-                        $this->em->getRepository(XAcademie::class)->findOneBy(['code' => $sheet[21]])
-                    );
-                    $etudiant->setEtablissement($sheet[22]);
+                    $etudiant->setCne($sheet[13]);
+                    // $etudiant->setAcademie(
+                    //     $this->em->getRepository(XAcademie::class)->findOneBy(['code' => $sheet[21]])
+                    // );
+                    $etudiant->setEtablissement($sheet[14]);
                     $etudiant->setFiliere(
-                        $this->em->getRepository(XFiliere::class)->findOneBy(["designation" => $sheet[23]])
+                        $this->em->getRepository(XFiliere::class)->findOneBy(["designation" => $sheet[15]])
                     );
                     $etudiant->setTypeBac(
-                        $this->em->getRepository(XTypeBac::class)->findOneBy(['code' => $sheet[24]])
+                        $this->em->getRepository(XTypeBac::class)->findOneBy(['code' => $sheet[16]])
                     );
-                    $etudiant->setAnneeBac($sheet[25]);
-                    $etudiant->setMoyenneBac(str_replace(',', '.', $sheet[26]));
+                    $etudiant->setAnneeBac($sheet[17]);
+                    $etudiant->setMoyenneBac(str_replace(',', '.', $sheet[18]));
                     // $etudiant->setMoyenneRegional(str_replace(',', '.', $sheet[27]));
                     // $etudiant->setLangueConcours($sheet[44]);
                     // $etudiant->setNombreEnfants($sheet[45]);
-                    $etudiant->setNatureDemande(
-                        $this->em->getRepository(NatureDemande::class)->findOneBy(['code' => $sheet[27]])
-                    );
+
+                    // $etudiant->setNatureDemande(
+                    //     $this->em->getRepository(NatureDemande::class)->findOneBy(['code' => $sheet[27]])
+                    // );
+
                     // if ($sheet[47] == "oui") {
                     //     $etudiant->setBourse(1);
                     // }

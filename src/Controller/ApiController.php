@@ -24,9 +24,12 @@ use App\Entity\NatureDemande;
 use App\Entity\TOperationcab;
 use App\Entity\PNatureEpreuve;
 use App\Entity\AcEtablissement;
+use App\Entity\Agression;
 use App\Entity\Mouchard;
 use App\Entity\PAnonymatActuel;
 use App\Entity\PrProgrammation;
+use App\Entity\Sanction;
+use App\Entity\SousAgression;
 use DateTime;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Serializer\Serializer;
@@ -329,6 +332,26 @@ class ApiController extends AbstractController
         return new JsonResponse($an_actuel,200);
     }
     
+    #[Route('/sousagression/{agression}', name: 'getsousagression')]
+    public function getsousagression(Agression $agression): Response
+    {   
+        $sousagression = $this->em->getRepository(SousAgression::class)->findBy(['agression'=>$agression, 'active' => 1],['designation'=>'ASC']);
+        $data = self::dropdown($sousagression,'Incident');
+        return new JsonResponse($data);
+    }
+    #[Route('/sanction/{agression}', name: 'getsanction')]
+    public function getsanction(Agression $agression): Response
+    {   
+        $sanctions = $this->em->getRepository(Sanction::class)->findBy(['agression'=>$agression, 'active' => 1],['designation'=>'ASC']);
+        // $data = self::dropdown($sanctions,'Sanction');
+        // $data = "<option selected enabled value=''>Choix ".$choix."</option>";
+        $data ="";
+        foreach ($sanctions as $sanction) {
+            $data .="<option value=".$sanction->getId().">".$sanction->getDesignation()."</option>";
+         }
+        //  return $data;
+        return new JsonResponse($data);
+    }
     
     // #[Route('/findSemaine', name: 'findSemaine')]
     // public function findSemaine(Request $request): Response

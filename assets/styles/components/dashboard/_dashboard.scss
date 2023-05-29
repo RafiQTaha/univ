@@ -6528,3 +6528,7 @@ table.dataTable th.dt-center, table.dataTable td.dt-center, table.dataTable td.d
 // .rib_icon i{
 //   color : none
 // }
+.autre_sanction_text{
+  max-height: 260px !important;
+  overflow-y: auto !important;
+}

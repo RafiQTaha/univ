@@ -1,0 +1,181 @@
+<link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro" rel="stylesheet">
+
+<style type="text/Css">
+    body{
+        font-family: 'Courier', sans-serif;
+        color: rgb(90, 90, 95) !important;
+    }
+    footer {
+        /* font-family: 'Courier', Courier; */
+
+    }
+    .titre-reb{
+        width: 100%;
+        background: #1f4f7a;
+        font-size: 9px ;
+        padding:3px 10px;
+        color: #f1f1f1;
+        /* font-weight: bold */
+    }
+    div.zone_over
+    {
+        display: block;
+        width: 40%;
+        word-wrap:break-word !important;
+    }
+    .slh tr td {
+        border-bottom: 1px solid #8d8d8d;
+    }
+    
+    .txt {
+        width: 100%;
+        text-align: left;
+        line-height: 30px; 
+        padding-top: 0px ;  
+        padding-bottom:  0px ;
+        padding-left: 30px ;
+        padding-right:  30px ;
+        text-align: justify; 
+        font-size : 10.5px;
+        font-weight: normal ;
+    }
+    .txt span {
+        /* font-size:11px; */
+        /* font-weight: bold; */
+        /* color:black; */
+        margin-left: 5px ; 
+        margin-right: 5px ; 
+    }
+    
+    {# ul {
+        margin-top: 20px;
+        margin-bottom: 20px;
+        margin-left: 30px;
+        margin-right: 30px;
+    } #}
+</style>
+<div style="text-align: center;">
+        <table style="width: 100% ;" cellspacing="0">
+            <tr>
+                <th style="width: 100% ; font-size: 13px ;font-weight: 200;font-weight: bold;padding:0 4px;color:rgb(3, 35, 68);">
+                    {# {% if insSanction.inscription.annee.formation.etablissement.id == 28 %}
+                        <img src="./assets/img/logo/cpge.jpg" style=" width: 400px; margin: 0 auto;">                
+                    {% endif %} #}
+                </th>
+                <th style="width: 100% ; font-size: 13px ;font-weight: 200;font-weight: bold;padding:0 4px;color:rgb(3, 35, 68);">
+                    {% if insSanction.inscription.annee.formation.etablissement.id == 28 %}
+                            <img src="./assets/img/logo/cpge.svg" style=" width: 600px; margin: 0 auto;"> 
+                    {% elseif insSanction.inscription.annee.formation.etablissement.id == 5 %}
+                            <img src="./assets/img/logo/logo_lez.png" style=" width: 600px; margin: 0 auto;">
+                    {% else %}                
+                            <img src="./assets/img/logo/Logo_UIASS_bkack2.png" style=" width: 600px; margin: 0 auto;">
+                    {% endif %}
+                    {# <img src="./assets/img/logo/Logo_UIASS_bkack2.png" style=" width: 400px; margin: 0 auto;"> #}
+                </th>
+                <th style="width: 100% ; font-size: 13px ;font-weight: 200;font-weight: bold;padding:0 4px;color:rgb(3, 35, 68);">
+                    {# {% if insSanction.inscription.annee.formation.etablissement.id == 28 %}               
+                        <img src="./assets/img/logo/Logo_UIASS_bkack2.png" style=" width: 400px; margin: 0 auto;">
+                    {% endif %} #}
+                </th>                    
+            </tr>
+        </table>
+    {# <img src="./assets/img/logo/Logo_UIASS_bkack2.png" style=" width: 180px; margin: 0 auto;"> #}
+    {# <img src="./assets/img/logo/cpge.jpg" style=" width: 250px; margin: 0 auto;"> #}
+</div>
+{# <br><br><br><br><br><br><br> #}
+<br/>
+<br/>
+
+<table style="width: 50%;margin-left:25px;color:black" cellspacing="0">
+    <tbody>
+        <tr>
+            <td class="txt" style="text-align: left;" >
+                <b>Rèf :</b> {{insSanction.code}}
+            </td>
+            <td class="txt" style="float:right;text-align: right;">
+                <b>Date</b> {{"now"|date('d/m/Y')}}
+            </td>
+        </tr>
+        <tr>
+            <td class="txt" style="text-align: left;" >
+                <b>Nom & Prenom : </b> {{insSanction.inscription.admission.preinscription.etudiant.nom}}  {{insSanction.inscription.admission.preinscription.etudiant.prenom}}
+            </td>
+            <td class="txt" style="float:right;text-align: right;">
+                
+            </td>
+        </tr>
+        <tr>
+            <td class="txt" style="text-align: left;" >
+                <b>ID-Admission : </b> {{insSanction.inscription.admission.code}}
+            </td>
+            <td class="txt" style="float:right;text-align: right;">
+                
+            </td>
+        </tr>
+        <tr>
+            <td class="txt" style="text-align: left;" >
+                <b>Promotion : </b> {{insSanction.inscription.promotion.designation}}
+            </td>
+            <td class="txt" style="float:right;text-align: right;">
+                
+            </td>
+        </tr>
+        <tr>
+            <td class="txt" style="text-align: left;" >
+                <b>Filiere : </b> {{insSanction.inscription.annee.formation.etablissement.abreviation}}
+            </td>
+            <td class="txt" style="float:right;text-align: right;">
+                
+            </td>
+        </tr>
+    </tbody>
+</table>
+<p style="text-align:center;font-size:16px;font-weight: bold;color:black;">COURRIER DE NOTIFICATION</p>
+<br/>
+
+<p style="margin-left:60px;font-size:13px;color:black;">
+    <span style="font-weight: bold;">Objet : </span> Décision du conseil de discipline.
+</p>
+<br>
+<table style="width: 100%;"  cellspacing="0">
+
+    <tbody>
+        <tr>
+            <td class="txt" style="font-weight: bold;">
+                Cher(e) étudiant(e),
+            </td>
+        </tr>
+
+        <tr>
+            <td class="txt">
+                Par le présent courrier de notification, nous avons le regret de vous informer de la décision prononcée à votre égard suite au conseil de discipline ayant traité votre «<span style="font-size:12px;font-weight: bold;color:black;">{{ insSanction.Agression.Designation }}</span>».
+            </td>   
+        </tr>
+        <tr>
+            <td class="txt" style="padding-left:50px;">
+                <ul> 
+                    {% for sanction in insSanction.getSanction %}
+                    <li>{{sanction.designation}}</li>
+                    {% endfor %}
+                    {% for autresanction in insSanction.getAutreSanction %}
+                        <li>{{autresanction}}</li>
+                    {% endfor %}
+                </ul> 
+            </td>
+        </tr>
+        <tr>
+            <td class="txt">
+                Cette décision prend effet à compter du <span style="font-size:12px;font-weight: bold;color:black;">{{insSanction.dateReunion|date('d/m/Y')}}</span>. Pour tout complément d’information, nous vous invitons à vous
+                adresser à l’administration.
+                Veuillez agréer, cher(e) étudiant(e), l’expression de nos salutations distinguées.
+            </td>
+        </tr>
+    </tbody>
+
+</table>
+
+<br><br>
+
+<p style="margin-left:40px;font-size:10px;color:black;font-weight:bold">
+    L’Université Internationale Abulcasis des Sciences de la Santé.
+</p>
