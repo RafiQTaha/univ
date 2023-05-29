@@ -358,12 +358,6 @@ const Toast = Swal.mixin({
     })
     $('body').on('click','#extraction_historique',function (e) {
         e.preventDefault();
-        
-        Toast.fire({
-            icon: 'error',
-            title: 'En cours de developpement!!!',
-          })
-        return;
         if(!id_sanction){
           Toast.fire({
             icon: 'error',

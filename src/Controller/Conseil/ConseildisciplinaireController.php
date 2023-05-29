@@ -341,26 +341,66 @@ class ConseildisciplinaireController extends AbstractController
         $j=1;
         // Avoir une list d'historique des notifications et des convocations d'un etudiant specific. 
         $InsSanctionners = $this->em->getRepository(InsSanctionner::class)->getHistoriqueDesActivesConvocations($insSanction->getInscription());
-        dd($InsSanctionners[0]->getInscription());
+        // dd($InsSanctionners[0]->getAutreSanction()[0]);
         foreach ($InsSanctionners as $InsSanctionner) {
-            $sheet->setCellValue('A'.$i, $j);
-            $sheet->setCellValue('B'.$i, $InsSanctionner->getInscription()->getAdmission()->getCode());
-            $sheet->setCellValue('C'.$i, $InsSanctionner->getInscription()->getAdmission()->getPreinscription()->getEtudiant()->getNom());
-            $sheet->setCellValue('D'.$i, $InsSanctionner->getInscription()->getAdmission()->getPreinscription()->getEtudiant()->getPrenom());
-            $sheet->setCellValue('E'.$i, $InsSanctionner->getInscription()->getAnnee()->getFormation()->getDesignation());
-            $sheet->setCellValue('F'.$i, $InsSanctionner->getInscription()->getAnnee()->getFormation()->getDesignation());
-            $sheet->setCellValue('G'.$i, $InsSanctionner->getInscription()->getPromotion()->getDesignation());
-            $sheet->setCellValue('H'.$i, $InsSanctionner->getDateIncidence());
-            if ($InsSanctionner->getAgression()) {
-                $sheet->setCellValue('I'.$i, $InsSanctionner->getInscription()->getAdmission()->getPreinscription()->getNature()->getDesignation());
+            if (count($InsSanctionner->getSanction()) > 0 || count($InsSanctionner->getAutreSanction()) > 0) {
+                foreach ($InsSanctionner->getSanction() as $sanction) {
+                    $sheet->setCellValue('A'.$i, $j);
+                    $sheet->setCellValue('B'.$i, $InsSanctionner->getInscription()->getAdmission()->getCode());
+                    $sheet->setCellValue('C'.$i, $InsSanctionner->getInscription()->getAdmission()->getPreinscription()->getEtudiant()->getNom());
+                    $sheet->setCellValue('D'.$i, $InsSanctionner->getInscription()->getAdmission()->getPreinscription()->getEtudiant()->getPrenom());
+                    $sheet->setCellValue('E'.$i, $InsSanctionner->getInscription()->getAnnee()->getFormation()->getDesignation());
+                    $sheet->setCellValue('F'.$i, $InsSanctionner->getInscription()->getAnnee()->getFormation()->getDesignation());
+                    $sheet->setCellValue('G'.$i, $InsSanctionner->getInscription()->getPromotion()->getDesignation());
+                    $sheet->setCellValue('H'.$i, $InsSanctionner->getDateIncident()->format('d/m/Y'));
+                    if ($InsSanctionner->getAgression()) {
+                        $sheet->setCellValue('I'.$i, $InsSanctionner->getAgression()->getDesignation());
+                    }
+                    $sheet->setCellValue('J'.$i, $InsSanctionner->getDateReunion()->format('d/m/Y h:i:s'));
+                    $sheet->setCellValue('K'.$i, $sanction->getDesignation());
+                    $sheet->setCellValue('L'.$i, $InsSanctionner->getInscription()->getAnnee()->getDesignation());
+                    $i++;
+                    $j++;
+                }
+                foreach ($InsSanctionner->getAutreSanction() as $sanction) {
+                    $sheet->setCellValue('A'.$i, $j);
+                    $sheet->setCellValue('B'.$i, $InsSanctionner->getInscription()->getAdmission()->getCode());
+                    $sheet->setCellValue('C'.$i, $InsSanctionner->getInscription()->getAdmission()->getPreinscription()->getEtudiant()->getNom());
+                    $sheet->setCellValue('D'.$i, $InsSanctionner->getInscription()->getAdmission()->getPreinscription()->getEtudiant()->getPrenom());
+                    $sheet->setCellValue('E'.$i, $InsSanctionner->getInscription()->getAnnee()->getFormation()->getDesignation());
+                    $sheet->setCellValue('F'.$i, $InsSanctionner->getInscription()->getAnnee()->getFormation()->getDesignation());
+                    $sheet->setCellValue('G'.$i, $InsSanctionner->getInscription()->getPromotion()->getDesignation());
+                    $sheet->setCellValue('H'.$i, $InsSanctionner->getDateIncident()->format('d/m/Y'));
+                    if ($InsSanctionner->getAgression()) {
+                        $sheet->setCellValue('I'.$i, $InsSanctionner->getAgression()->getDesignation());
+                    }
+                    $sheet->setCellValue('J'.$i, $InsSanctionner->getDateReunion()->format('d/m/Y H:i:s'));
+                    $sheet->setCellValue('K'.$i, $sanction);
+                    $sheet->setCellValue('L'.$i, $InsSanctionner->getInscription()->getAnnee()->getDesignation());
+                    $i++;
+                    $j++;
+                }
+            }else{
+                $sheet->setCellValue('A'.$i, $j);
+                $sheet->setCellValue('B'.$i, $InsSanctionner->getInscription()->getAdmission()->getCode());
+                $sheet->setCellValue('C'.$i, $InsSanctionner->getInscription()->getAdmission()->getPreinscription()->getEtudiant()->getNom());
+                $sheet->setCellValue('D'.$i, $InsSanctionner->getInscription()->getAdmission()->getPreinscription()->getEtudiant()->getPrenom());
+                $sheet->setCellValue('E'.$i, $InsSanctionner->getInscription()->getAnnee()->getFormation()->getDesignation());
+                $sheet->setCellValue('F'.$i, $InsSanctionner->getInscription()->getAnnee()->getFormation()->getDesignation());
+                $sheet->setCellValue('G'.$i, $InsSanctionner->getInscription()->getPromotion()->getDesignation());
+                $sheet->setCellValue('H'.$i, $InsSanctionner->getDateIncident()->format('d/m/Y'));
+                if ($InsSanctionner->getAgression()) {
+                    $sheet->setCellValue('I'.$i, $InsSanctionner->getAgression()->getDesignation());
+                }
+                $sheet->setCellValue('L'.$i, $InsSanctionner->getInscription()->getAnnee()->getDesignation());
+                $i++;
+                $j++;
             }
-            $sheet->setCellValue('J'.$i, $InsSanctionner->getDateReunion());
-            $i++;
-            $j++;
         }
         $writer = new Xlsx($spreadsheet);
+        // dd($writer);
         $current_year = date('m') > 7 ? date('Y').'-'.date('Y')+1 : date('Y') - 1 .'-' .date('Y');
-        $fileName = "Extraction Inscription $current_year.xlsx";
+        $fileName = "Extraction Historique Convocation disciplinaire.xlsx";
         $temp_file = tempnam(sys_get_temp_dir(), $fileName);
         $writer->save($temp_file);
         return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);
