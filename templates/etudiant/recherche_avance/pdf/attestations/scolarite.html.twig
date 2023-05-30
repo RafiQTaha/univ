@@ -93,11 +93,11 @@
 {% if inscription.annee.formation.etablissement.designation =='Centre de Simulation Médicale' %}
 Université Internationale Abulcasis des Sciences de la Santé
 {% elseif laz == 1 %}
-Lycée AL-ZAHRAWI
+Lycée d'excellence AL-ZAHRAWI
 {% else %} 
 {{inscription.annee.formation.etablissement.designation}}
 {% endif %}
-</span>, sise à Madinat Al Irfane, Bâtiment B, avenue Allal El Fassi, Rabat, atteste par la présente que:
+</span>, sis à Madinat Al Irfane, avenue Allal El Fassi, Rabat, atteste par la présente que:
             </td>
         </tr>
     </tbody>
@@ -184,7 +184,7 @@ Lycée AL-ZAHRAWI
             </td>
             <td style="width: 70%; text-align: left;line-height: 30px">
                 {% if laz == 1 %}
-                        <span style="font-size:11px;font-weight: bold;color:#000;">Etablissement </span> : Lycée AL-ZAHRAWI
+                        <span style="font-size:11px;font-weight: bold;color:#000;">Etablissement </span> : Lycée d'excellence AL-ZAHRAWI
                     {% else %}
                         <span style="font-size:11px;font-weight: bold;color:#000;">Etablissement </span> : {{inscription.annee.formation.etablissement.designation}}
                 {% endif %}
