@@ -65,7 +65,7 @@ class InsSanctionnerRepository extends ServiceEntityRepository
 //        ;
 //    }
 
-   public function getHistoriqueDesActivesConvocations($inscription)
+   public function getHistoriqueDesActivesConvocations()
    {
        return $this->createQueryBuilder('insSanctionner')
             ->innerJoin("insSanctionner.inscription","inscription")
@@ -76,9 +76,7 @@ class InsSanctionnerRepository extends ServiceEntityRepository
             ->innerJoin("inscription.annee","annee")
             ->LeftJoin("insSanctionner.agression","agression")
             ->LeftJoin("insSanctionner.sanction","sanction")
-            ->Where('admission = :admission')
             ->andWhere('insSanctionner.active = 1')
-            ->setParameter('admission', $inscription->getAdmission())
             ->getQuery()
             ->getResult()
        ;

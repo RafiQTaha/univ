@@ -325,10 +325,10 @@ class ConseildisciplinaireController extends AbstractController
         $mpdf->SetTitle('Notification');
         $mpdf->Output("Notification.pdf", "I");
     }
-    #[Route('/extraction_historique/{insSanction}', name: 'extraction_historique')]
-    public function extraction_historique(InsSanctionner $insSanction)
+    #[Route('/extraction_historique', name: 'extraction_historique')]
+    public function extraction_historique()
     {
-        // les champs excel d'historique des notifications et des convocations d'un etudiant specific. 
+        // les champs excel d'historique des notifications et des convocations des etudiants. 
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
         $sheet->setCellValue('A1', 'ORD');
@@ -345,8 +345,8 @@ class ConseildisciplinaireController extends AbstractController
         $sheet->setCellValue('L1', 'ANNEE UNIVERSITAIRE');
         $i=2;
         $j=1;
-        // Avoir une list d'historique des notifications et des convocations d'un etudiant specific. 
-        $InsSanctionners = $this->em->getRepository(InsSanctionner::class)->getHistoriqueDesActivesConvocations($insSanction->getInscription());
+        // Avoir une list d'historique des notifications et des convocations des etudiants. 
+        $InsSanctionners = $this->em->getRepository(InsSanctionner::class)->getHistoriqueDesActivesConvocations();
         foreach ($InsSanctionners as $InsSanctionner) {
             if (count($InsSanctionner->getSanction()) > 0 || count($InsSanctionner->getAutreSanction()) > 0) {
                 foreach ($InsSanctionner->getSanction() as $sanction) {

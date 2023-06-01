@@ -358,14 +358,7 @@ const Toast = Swal.mixin({
     })
     $('body').on('click','#extraction_historique',function (e) {
         e.preventDefault();
-        if(!id_sanction){
-          Toast.fire({
-            icon: 'error',
-            title: 'Veuillez selection une ligne!',
-          })
-          return;
-        }
-        window.open('/conseil/disciplinaire/extraction_historique/'+id_sanction, '_blank');
+        window.open('/conseil/disciplinaire/extraction_historique', '_blank');
     });
     $('body').on('click','#annuler_convocation', async function (){
         if(!id_sanction){
