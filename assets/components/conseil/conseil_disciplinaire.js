@@ -221,6 +221,8 @@ const Toast = Swal.mixin({
         try {
             const request = await axios.post('/conseil/disciplinaire/convocation_validation/'+id_sanction);
             const response = request.data;
+            id_sanction = false;
+            table.ajax.reload(null, false)
             Toast.fire({
                 icon: 'success',
                 title: response,
@@ -236,6 +238,43 @@ const Toast = Swal.mixin({
           icon.addClass('fa-check').removeClass("fa-spinner fa-spin ");
         }
         
+    })
+    
+    $("#devalidation").on("click", async () => {     
+        if(!id_sanction){
+          Toast.fire({
+            icon: 'error',
+            title: 'Veuillez selection une ligne!',
+          })
+          return;
+        }
+        var confirmation = confirm('Vous voulez vraiment devalider cette convocation ?');
+        if (confirmation == 1) {
+            const icon = $("#devalidation i");
+            icon.removeClass('fa-times').addClass("fa-spinner fa-spin");
+            
+            let formData = new FormData();
+            formData.append("id_sanction",  id_sanction);
+            try {
+                const request = await axios.post('/conseil/disciplinaire/convocation_devalidation',formData);
+                const response = request.data;
+                id_sanction = false;
+                table.ajax.reload(null, false)
+                icon.addClass('fa-times').removeClass("fa-spinner fa-spin");
+                Toast.fire({
+                    icon: 'success',
+                    title: response,
+                })
+            }catch (error) {
+                const message = error.response.data;
+                console.log(error, error.response);
+                Toast.fire({
+                    icon: 'error',
+                    title: message,
+                })
+                icon.addClass('fa-times').removeClass("fa-spinner fa-spin");
+            }
+        }
     })
     $("#notification").on("click", () => {
         if(!id_sanction){
@@ -368,7 +407,7 @@ const Toast = Swal.mixin({
           })
           return;
         }
-        var confirmation = confirm('Vous voulez vraiment modifier cette enregistrement ?');
+        var confirmation = confirm('Vous voulez vraiment annuler cette enregistrement ?');
         if (confirmation == 1) {
             const icon = $("#annuler_convocation i");
             icon.removeClass('fa-trash').addClass("fa-spinner fa-spin");

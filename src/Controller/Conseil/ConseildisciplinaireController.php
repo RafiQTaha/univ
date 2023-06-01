@@ -169,7 +169,7 @@ class ConseildisciplinaireController extends AbstractController
         if ($request->get('date_incident') > date('Y-m-d')) {
             return new JsonResponse("Merci de choisir une date d'incident inferieur ou egale à Aujourd'hui !",500);
         }
-        // JE NE CHECK PAS LA DATE DE REUNION POUR QU'ILS PUISSENT ENTRER LES ENCIENNES CONVOCATION ET CES DATES DE REUNIONS.
+        // JE NE CHECK PAS LA DATE DE REUNION POUR QU'ILS PUISSENT ENTRER LES ENCIENNES CONVOCATIONS ET CES DATES DE REUNIONS.
         // if (new DateTime($request->get('date_reunion')) < new DateTime('now')) {
         //     return new JsonResponse("Merci de choisir une date de reunion superieur ou egale à Aujourd'hui !",500);
         // }
@@ -203,6 +203,20 @@ class ConseildisciplinaireController extends AbstractController
         $insSanction->setValide(1);
         $this->em->flush();
         return new JsonResponse("Convocation bien valide",200);
+    }
+
+
+    #[Route('/convocation_devalidation', name: 'convocation_devalidation')]
+    public function convocation_devalidation(Request $request): Response
+    {
+        // dd($request);
+        $insSanction = $this->em->getRepository(InsSanctionner::class)->find($request->get('id_sanction'));
+        if (!$insSanction || $insSanction->getActive() == 0) {
+            return new JsonResponse("Convocation Introuvable ou déja annuler!",500);
+        }
+        $insSanction->setValide(0);
+        $this->em->flush();
+        return new JsonResponse("Convocation bien devalide",200);
     }
 
     #[Route('/annuler_convocation', name: 'annuler_convocation')]
