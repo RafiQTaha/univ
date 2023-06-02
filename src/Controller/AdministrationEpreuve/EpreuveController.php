@@ -560,7 +560,86 @@ class EpreuveController extends AbstractController
         return new JsonResponse("Bien Enregistre", 200);
 
     }
-   
+   ///////////////////////////////
+    #[Route('/affiliation_rattrapage_Automatique', name: 'administration_epreuve_affiliation_rattrapage_Automatique')]
+    public function administrationEpreuveAffiliationRattrapageAuto(Request $request) {
+        $idEpreuves = json_decode($request->get("epreuves"));
+        // dd($idEpreuves);
+        $zip = new ZipArchive();
+        $zipname = 'affilation_epreuves_rattrapage'.uniqid().'.zip';
+        $totalEpreuves = 0;
+        $zip->open($zipname, ZipArchive::CREATE);
+        foreach($idEpreuves as $idEpreuve) {
+            $epreuve = $this->em->getRepository(AcEpreuve::class)->find($idEpreuve);
+            if($epreuve->getStatut()->getId() == 28) {
+                $spreadsheet = new Spreadsheet();
+                $sheet = $spreadsheet->getActiveSheet();
+                $sheet->setCellValue('A1', 'Code Epreuve');
+                $sheet->setCellValue('B1', 'Inscription');
+                if($epreuve->getAnonymat() == 1) {
+                    $sheet->setCellValue('C1', 'Anonymat');
+                }
+                $i = 2;
+                $inscriptions = $this->em->getRepository(TInscription::class)->getInscriptionsByEpreuve($epreuve);
+                $natureEpreuveNormal = "";
+                // dd($epreuve->getNatureEpreuve()->getAbreviation());
+                switch ($epreuve->getNatureEpreuve()->getId()) {
+                    case 4:
+                        $natureEpreuveNormal = 3;
+                        break;
+                    case 7:
+                        $natureEpreuveNormal = 1;
+                        break;
+                    case 12:
+                        $natureEpreuveNormal = 2;
+                        break;
+                    default:
+                        $natureEpreuveNormal = "";
+                        break;
+                }
+                
+                if ($natureEpreuveNormal != "") {
+                    $EpreuveNormal = $this->em->getRepository(AcEpreuve::class)->findOneBy([
+                        'element'=>$epreuve->getElement(),
+                        'annee'=>$epreuve->getAnnee(),
+                        'natureEpreuve' => $natureEpreuveNormal,
+                    ]);
+                    $moy = $epreuve->getAnnee()->getFormation()->getEtablissement()->getId() == 26 ? 12 : 10;
+                    // dd($inscriptions);
+                    foreach($inscriptions as $inscription) {
+                        $moyen = $this->em->getRepository(ExGnotes::class)->findOneBy(['inscription'=>$inscription,'epreuve'=>$EpreuveNormal])->getNote();
+                        // dd($moyen->getNote());
+                        if ($moyen < $moy) {
+                            $gnote = new ExGnotes();
+                            $gnote->setEpreuve($epreuve);
+                            $gnote->setInscription($inscription);
+                            $gnote->setUserCreated($this->getUser());
+                            $gnote->setCreated(new \DateTime("now"));
+                            $this->em->persist($gnote);
+                            $sheet->setCellValue('A'.$i, $epreuve->getId());
+                            $sheet->setCellValue('B'.$i, $inscription->getId());
+                            $i++;
+                        }
+                    }
+                    $epreuve->setStatut(
+                        $this->em->getRepository(PStatut::class)->find(29)
+                    );
+                    $this->em->flush();
+                    ApiController::mouchard($this->getUser(), $this->em,$epreuve, 'AcEpreuve', 'Affiliation Epreuve Ratt');
+                    $writer = new Xlsx($spreadsheet);
+                    $fileName = 'affiliation_'.$epreuve->getId().'.xlsx';
+                    // $temp_file = tempnam(sys_get_temp_dir(), $fileName);
+                    $writer->save($fileName);
+                    $zip->addFile($fileName);
+                    $totalEpreuves++;
+                }
+            }
+        }
+        $zip->close();
+        array_map('unlink', glob( "*.xlsx"));
+        return new JsonResponse(['zipname' => $zipname, 'total' => $totalEpreuves]);
+   }
+   //////////////////////////////
     #[Route('/add_epreuve', name: 'administration_epreuve_add_epreuve')]
     public function administrationEpreuveaddepreuve(Request $request) 
     {
