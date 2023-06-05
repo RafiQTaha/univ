@@ -530,37 +530,38 @@ class EpreuveController extends AbstractController
         }
         return new JsonResponse($html);
     }
-    #[Route('/affiliation_rattrapage', name: 'administration_epreuve_affiliation_rattrapage')]
-    public function administrationEpreuveAffiliationRattrapage(Request $request) {
-        $idInscriptions = json_decode($request->get("idInscriptions"));
-        $epreuve = $this->em->getRepository(AcEpreuve::class)->find($request->get("idEpreuve"));
-        foreach ($idInscriptions as $idInscription) {
-            $inscription = $this->em->getRepository(TInscription::class)->find($idInscription);
-            $gnote = new ExGnotes();
-            $gnote->setEpreuve($epreuve);
-            $gnote->setInscription($inscription);
-            $gnote->setUserCreated($this->getUser());
-            $gnote->setCreated(new \DateTime("now"));
-            if($epreuve->getAnonymat() == 1) {
-                if($epreuve->getNatureEpreuve()->getNature() == 'normale') {
-                    $gnote->setAnonymat($inscription->getCodeAnonymat());                    
-                } else {
-                    $gnote->setAnonymat($inscription->getCodeAnonymatRat());
-                }
-            }
-            $this->em->persist($gnote);
-        }
-        $epreuve->setStatut(
-            $this->em->getRepository(PStatut::class)->find(29)
-        );
-        $this->em->flush();
+    
+    // #[Route('/affiliation_rattrapage', name: 'administration_epreuve_affiliation_rattrapage')]
+    // public function administrationEpreuveAffiliationRattrapage(Request $request) {
+    //     $idInscriptions = json_decode($request->get("idInscriptions"));
+    //     $epreuve = $this->em->getRepository(AcEpreuve::class)->find($request->get("idEpreuve"));
+    //     foreach ($idInscriptions as $idInscription) {
+    //         $inscription = $this->em->getRepository(TInscription::class)->find($idInscription);
+    //         $gnote = new ExGnotes();
+    //         $gnote->setEpreuve($epreuve);
+    //         $gnote->setInscription($inscription);
+    //         $gnote->setUserCreated($this->getUser());
+    //         $gnote->setCreated(new \DateTime("now"));
+    //         if($epreuve->getAnonymat() == 1) {
+    //             if($epreuve->getNatureEpreuve()->getNature() == 'normale') {
+    //                 $gnote->setAnonymat($inscription->getCodeAnonymat());                    
+    //             } else {
+    //                 $gnote->setAnonymat($inscription->getCodeAnonymatRat());
+    //             }
+    //         }
+    //         $this->em->persist($gnote);
+    //     }
+    //     $epreuve->setStatut(
+    //         $this->em->getRepository(PStatut::class)->find(29)
+    //     );
+    //     $this->em->flush();
         
-        ApiController::mouchard($this->getUser(), $this->em,$epreuve, 'AcEpreuve', 'Affiliation Rattrapage');
+    //     ApiController::mouchard($this->getUser(), $this->em,$epreuve, 'AcEpreuve', 'Affiliation Rattrapage');
 
-        return new JsonResponse("Bien Enregistre", 200);
+    //     return new JsonResponse("Bien Enregistre", 200);
 
-    }
-   ///////////////////////////////
+    // }
+
     #[Route('/affiliation_rattrapage_Automatique', name: 'administration_epreuve_affiliation_rattrapage_Automatique')]
     public function administrationEpreuveAffiliationRattrapageAuto(Request $request) {
         $idEpreuves = json_decode($request->get("epreuves"));
@@ -639,7 +640,6 @@ class EpreuveController extends AbstractController
         array_map('unlink', glob( "*.xlsx"));
         return new JsonResponse(['zipname' => $zipname, 'total' => $totalEpreuves]);
    }
-   //////////////////////////////
     #[Route('/add_epreuve', name: 'administration_epreuve_add_epreuve')]
     public function administrationEpreuveaddepreuve(Request $request) 
     {
