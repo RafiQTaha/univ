@@ -607,16 +607,17 @@ class EpreuveController extends AbstractController
                     ]);
                     $moy = $epreuve->getAnnee()->getFormation()->getEtablissement()->getId() == 26 ? 12 : 10;
                     foreach($inscriptions as $inscription) {
-                        $moyen = false;
+                        // $moyen = false;
                         if (count($EpreuveNormals) == 1) {
                             $moyen = $this->em->getRepository(ExGnotes::class)->findOneBy(['inscription'=>$inscription,'epreuve'=>$EpreuveNormals[0]])->getNote();
                         }elseif (count($EpreuveNormals) == 2) {
+                            $moyen = 0;
                             foreach ($EpreuveNormals as $EpreuveNormal) {
                                 $moyen += $this->em->getRepository(ExGnotes::class)->findOneBy(['inscription'=>$inscription,'epreuve'=>$EpreuveNormal])->getNote();
                             }
                             $moyen = $moyen / 2;
                         }
-                        if ($moyen && $moyen < $moy) {
+                        if ($moyen < $moy) {
                             $gnote = new ExGnotes();
                             $gnote->setEpreuve($epreuve);
                             $gnote->setInscription($inscription);
