@@ -55,8 +55,8 @@ class GenerationHonoraireController extends AbstractController
          
         $params = $request->query;
         $where = $totalRows = $sqlRequest = "";
-        $filtre = " where ann.validation_academique = 'non' and emp.valider = '1' and emp.active = '1' and emp.generer = '1' and emp.annuler = 0 and (hon.annuler != 0 or hon.id is null or (select count(seance_id) from hhonens where seance_id = emp.id and statut ='E') < (SELECT count(seance_id) FROM `pl_emptimens` where seance_id = emp.id)) ";
-        // or (select count(seance_id) from hhonens where seance_id = emp.id and statut ='E') > 0
+        $filtre = " where ann.validation_academique = 'non' and emp.valider = '1' and emp.active = '1' and emp.generer = '1' and emp.annuler = 0 and (hon.annuler != 0 or hon.id is null) ";
+        //  or (select count(seance_id) from hhonens where seance_id = emp.id and statut ='E') < (SELECT count(seance_id) FROM `pl_emptimens` where seance_id = emp.id)
         if (!empty($params->all('columns')[0]['search']['value'])) {
             $filtre .= " and etab.id = '" . $params->all('columns')[0]['search']['value'] . "' ";
         }
@@ -124,7 +124,7 @@ class GenerationHonoraireController extends AbstractController
         inner join pgrade grd ON grd.id = ens.grade_id
         left join pgroupe grp ON grp.id = emp.groupe_id
         $filtre ";
-        // dd($sql);
+        dd($sql);
         $totalRows .= $sql;
         $sqlRequest .= $sql;
         $stmt = $this->em->getConnection()->prepare($sql);
