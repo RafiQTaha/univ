@@ -172,7 +172,8 @@
         </tr>
         <tr>
             <td class="txt">
-                Cette décision prend effet à compter du <span style="font-size:12px;font-weight: bold;color:black;">{{insSanction.dateReunion|date('d/m/Y')}}</span>. Pour tout complément d’information, nous vous invitons à vous
+                Cette décision prend effet à compter du <span style="font-size:12px;font-weight: bold;color:black;">{% if insSanction.dateDecision %}{{insSanction.dateDecision|date('d/m/Y')}}{% else %}{{insSanction.dateReunion|date('d/m/Y')}}
+                    {% endif %}</span>. Pour tout complément d’information, nous vous invitons à vous
                 adresser à l’administration.
                 Veuillez agréer, cher(e) étudiant(e), l’expression de nos salutations distinguées.
             </td>

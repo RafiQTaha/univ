@@ -276,6 +276,40 @@ const Toast = Swal.mixin({
             }
         }
     })
+
+    $("#sans_suite").on("click", async () => {
+        if(!id_sanction){
+          Toast.fire({
+            icon: 'error',
+            title: 'Veuillez selection une ligne!',
+          })
+          return;
+        }
+        const icon = $("#sans_suite  i");
+        icon.removeClass('fa-undo').addClass("fa-spinner fa-spin");
+        
+        try {
+            const request = await axios.post('/conseil/disciplinaire/convocation_sans_suite/'+id_sanction);
+            const response = request.data;
+            // id_sanction = false;
+            // table.ajax.reload(null, false)
+            Toast.fire({
+                icon: 'success',
+                title: response,
+            })
+            icon.addClass('fa-undo').removeClass("fa-spinner fa-spin ");
+        } catch (error) {
+          const message = error.response.data;
+          console.log(error, error.response);
+          Toast.fire({
+            icon: 'error',
+            title: message,
+          })
+          icon.addClass('fa-undo').removeClass("fa-spinner fa-spin ");
+        }
+        
+    })
+
     $("#notification").on("click", () => {
         if(!id_sanction){
           Toast.fire({

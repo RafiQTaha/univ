@@ -10,6 +10,9 @@
         <div class="modal-body">
           <!-- <div class="alert alert-info">Veuillez selectionner un ligne Pour Continuer Cette opération !!</div> -->
           <form id="notification_save">
+              <label for="date_decision">Date de decision:</label>
+              <input type="date" name="date_decision" id="date_decision" class="form-control">
+
               <label for="agressions">Agressions:</label>
               <select class="form-control" name="agressions" id="agressions">
                 <option value="">Choix Agression</option>
@@ -30,6 +33,7 @@
               <select class="form-control chosen-select" name="sanction[]" id="sanction" multiple="multiple" >
               
               </select>
+              
               <label for="autre_sanction">Autre Sanction:</label>
               <div id="autre_sanction_text" class="autre_sanction_text">
                 <div class="d-flex">

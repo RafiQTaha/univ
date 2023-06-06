@@ -24,6 +24,9 @@ class InsSanctionner
     #[ORM\Column(type: 'datetime', nullable: true)]
     private $dateReunion;
 
+    #[ORM\Column(type: 'datetime', nullable: true)]
+    private $dateDecision;
+
     #[ORM\Column(type: 'float', nullable: true)]
     private $active;
 
@@ -56,6 +59,9 @@ class InsSanctionner
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $autreAgression;
+
+    #[ORM\Column(type: 'float', nullable: true)]
+    private $sansSuite;
 
     public function __construct()
     {
@@ -99,6 +105,18 @@ class InsSanctionner
     public function setDateReunion(?\DateTimeInterface $dateReunion): self
     {
         $this->dateReunion = $dateReunion;
+
+        return $this;
+    }
+
+    public function getDateDecision(): ?\DateTimeInterface
+    {
+        return $this->dateDecision;
+    }
+
+    public function setDateDecision(?\DateTimeInterface $dateDecision): self
+    {
+        $this->dateDecision = $dateDecision;
 
         return $this;
     }
@@ -243,6 +261,18 @@ class InsSanctionner
     public function setAutreAgression(?string $autreAgression): self
     {
         $this->autreAgression = $autreAgression;
+
+        return $this;
+    }
+
+    public function getSansSuite(): ?float
+    {
+        return $this->sansSuite;
+    }
+
+    public function setSansSuite(?float $sansSuite): self
+    {
+        $this->sansSuite = $sansSuite;
 
         return $this;
     }
