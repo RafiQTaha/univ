@@ -73,6 +73,9 @@ class TReglement
     #[ORM\Column(type: 'float', nullable: true)]
     private $synFlag = 0;
 
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private $ice;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -314,6 +317,18 @@ class TReglement
     public function setSynFlag(?float $synFlag): self
     {
         $this->synFlag = $synFlag;
+
+        return $this;
+    }
+
+    public function getIce(): ?string
+    {
+        return $this->ice;
+    }
+
+    public function setIce(?string $ice): self
+    {
+        $this->ice = $ice;
 
         return $this;
     }

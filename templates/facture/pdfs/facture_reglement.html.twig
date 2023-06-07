@@ -171,19 +171,6 @@
 </tr>
 
 </table>
-
-
-{# <table style="width: 100%;margin-top:.5px;">
-<tr>
-    <td style="width:16%;border:1px solid #ddd;background:#eee;padding:5px;font-size:8px">DATE DE REGLEMENT</td>
-    <td style="width:0.67%;"></td>
-    <td style="width:83.33%;border:1px solid #ddd;background:white;padding:5px;font-size:8px">
-        {{reglement.DateReglement|date("d/m/Y")}}
-    </td>
-
-</tr>
-
-</table> #}
 <table style="width: 100%;margin-top:.5px;">
 <tr>
     <td style="width:16%;border:1px solid #ddd;background:#eee;padding:5px;font-size:8px">TYPE DE PAIEMENT</td>
@@ -195,7 +182,26 @@
 </tr>
 
 </table>
+
 <table style="width: 100%;margin-top:.5px;">
+<tr>
+    <td style="width:16%;border:1px solid #ddd;background:#eee;padding:5px;font-size:8px">BANQUE</td>
+    <td style="width:0.67%;"></td>
+    <td style="width:32.80%;border:1px solid #ddd;background:white;padding:5px;font-size:8px">
+        {{reglement.banque.designation}}
+    </td>
+    {# /////////////////////////////// #}
+    <td style="width:0.67%;"></td>
+    <td style="width:16%;border:1px solid #ddd;background:#eee;padding:5px;font-size:8px">REFERENCE DE CHEQUE </td>
+    <td style="width:0.67%;"></td>
+    <td style="width:33.3%;border:1px solid #ddd;background:white;padding:5px;font-size:8px">{{reglement.reference}}</td>
+    
+    {# /////////////////////////////// #}
+
+</tr>
+
+</table>
+{# <table style="width: 100%;margin-top:.5px;">
 <tr>
     <td style="width:16%;border:1px solid #ddd;background:#eee;padding:5px;font-size:8px">BANQUE</td>
     <td style="width:0.67%;"></td>
@@ -205,7 +211,7 @@
 
 </tr>
 
-</table>
+</table> #}
 <table style="width: 100%;margin-top:.5px;">
 <tr>
     <td style="width:16%;border:1px solid #ddd;background:#eee;padding:5px;font-size:8px">MONTANT A PAYER</td>
@@ -230,11 +236,16 @@
 </table>
 <table style="width: 100%;margin-top:.5px;">
 <tr>
-    <td style="width:16%;border:1px solid #ddd;background:#eee;padding:5px;font-size:8px">REFERENCE DE CHEQUE</td>
+    <td style="width:16%;border:1px solid #ddd;background:#eee;padding:5px;font-size:8px">ICE</td>
     <td style="width:0.67%;"></td>
     <td style="width:83.33%;border:1px solid #ddd;background:white;padding:5px;font-size:8px">
-        {{reglement.reference}}
+       {{reglement.ice}}
     </td>
+    {# /////////////////////////////// #}
+    {# <td style="width:0.67%;"></td>
+    <td style="width:16%;border:1px solid #ddd;background:#eee;padding:5px;font-size:8px">ICE</td>
+    <td style="width:0.67%;"></td>
+    <td style="width:33.3%;border:1px solid #ddd;background:white;padding:5px;font-size:8px"></td> #}
 
 </tr>
 

@@ -234,6 +234,7 @@ class GestionFactureController extends AbstractController
         $reglement->setOperation($operationcab);
         $reglement->setCreated(new DateTime('now'));
         $reglement->setMontant($request->get('montant'));
+        $reglement->setIce($request->get('ice'));
         // $reglement->setMProvisoir($request->get('montant_provisoir'));
         $reglement->setMDevis($request->get('montant_devis'));
         $reglement->setRemise(0);
