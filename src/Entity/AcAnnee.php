@@ -69,6 +69,9 @@ class AcAnnee
     #[ORM\OneToMany(mappedBy: 'annee', targetEntity: AnoteExterne::class)]
     private $anoteExternes;
 
+    #[ORM\OneToMany(mappedBy: 'annee', targetEntity: Pv::class)]
+    private $pvs;
+
     public function __construct()
     {
         $this->preinscriptions = new ArrayCollection();
@@ -79,6 +82,7 @@ class AcAnnee
         $this->programmations = new ArrayCollection();
         $this->note = new ArrayCollection();
         $this->anoteExternes = new ArrayCollection();
+        $this->pvs = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -422,6 +426,36 @@ class AcAnnee
             // set the owning side to null (unless already changed)
             if ($anoteExterne->getAnnee() === $this) {
                 $anoteExterne->setAnnee(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Pv>
+     */
+    public function getPvs(): Collection
+    {
+        return $this->pvs;
+    }
+
+    public function addPv(Pv $pv): self
+    {
+        if (!$this->pvs->contains($pv)) {
+            $this->pvs[] = $pv;
+            $pv->setAnnee($this);
+        }
+
+        return $this;
+    }
+
+    public function removePv(Pv $pv): self
+    {
+        if ($this->pvs->removeElement($pv)) {
+            // set the owning side to null (unless already changed)
+            if ($pv->getAnnee() === $this) {
+                $pv->setAnnee(null);
             }
         }
 

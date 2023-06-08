@@ -48,9 +48,13 @@ class AcSemestre
     #[ORM\OneToMany(mappedBy: 'semestre', targetEntity: AcModule::class)]
     private $modules;
 
+    #[ORM\OneToMany(mappedBy: 'semestre', targetEntity: Pv::class)]
+    private $pvs;
+
     public function __construct()
     {
         $this->modules = new ArrayCollection();
+        $this->pvs = new ArrayCollection();
     }
     public function getId(): ?int
     {
@@ -201,6 +205,36 @@ class AcSemestre
             // set the owning side to null (unless already changed)
             if ($module->getSemestre() === $this) {
                 $module->setSemestre(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Pv>
+     */
+    public function getPvs(): Collection
+    {
+        return $this->pvs;
+    }
+
+    public function addPv(Pv $pv): self
+    {
+        if (!$this->pvs->contains($pv)) {
+            $this->pvs[] = $pv;
+            $pv->setSemestre($this);
+        }
+
+        return $this;
+    }
+
+    public function removePv(Pv $pv): self
+    {
+        if ($this->pvs->removeElement($pv)) {
+            // set the owning side to null (unless already changed)
+            if ($pv->getSemestre() === $this) {
+                $pv->setSemestre(null);
             }
         }
 

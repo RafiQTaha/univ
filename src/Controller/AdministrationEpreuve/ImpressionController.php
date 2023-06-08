@@ -106,13 +106,13 @@ class ImpressionController extends AbstractController
 
         unset($spreadSheetArys[0]);
         $sheetCount = count($spreadSheetArys);
-
+        // dd($spreadSheetArys);
         foreach ($spreadSheetArys as $sheet) {
             $inscription = $this->em->getRepository(TInscription::class)->find($sheet[0]);
             if ($inscription == null) {
                 return new JsonResponse("Id Inscription '". $sheet[0] .  "' est Introuvable!",500);
             }
-                // dd($sheet[0]);
+            // dd($sheet[0]);
             $inscription->setCodeAnonymat($sheet[1]);
             $inscription->setCodeAnonymatRat($sheet[2]);
             if($sheet[4] == 0){
@@ -125,6 +125,7 @@ class ImpressionController extends AbstractController
             }else{
                 $inscription->setSalle($type."-".$inscription->getAnnee()->getFormation()->getAbreviation());
             }
+            // dd($inscription->getSalle(),$inscription->getAnnee()->getFormation()->getAbreviation());
         }
         $this->em->flush();
         return new JsonResponse("Bien Enregistre",200);

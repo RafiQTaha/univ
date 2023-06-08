@@ -305,7 +305,8 @@ class ApiController extends AbstractController
         $data = "<option selected enabled value=''>Choix Salle</option>";
         foreach ($salles as $salle) {
             $sallearray = explode("-", $salle['salle']);
-            $data .="<option value=".$salle['salle'].">".$sallearray[0]." ". $sallearray[1] ."</option>";
+            $data .="<option value='".$salle['salle']."'>".$sallearray[0]." ". $sallearray[1] ."</option>";
+            // dd($data);
          }
         return new JsonResponse($data);
     }

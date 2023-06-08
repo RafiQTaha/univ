@@ -22,17 +22,33 @@ Encore
      */
     .addEntry('app', './assets/app.js')
     .addEntry('login', './assets/components/login/login.js')
+    
     .addEntry('etudiant', './assets/components/etudiant/etudiant.js')
     .addEntry('rechercheavance', './assets/components/etudiant/rechercheavance.js')
     .addEntry('centreappel', './assets/components/etudiant/centre_appel.js')
+
+    .addEntry('conseil_disciplinaire', './assets/components/conseil/conseil_disciplinaire.js')
+
+    .addEntry('preinscription', './assets/components/preinscription/preinscription.js')
+    .addEntry('gestionPreinscription', './assets/components/preinscription/gestionpreinscription.js')
+
+    .addEntry('admission', './assets/components/admission/admissions.js')
+    .addEntry('gestionadmission', './assets/components/admission/gestionadmission.js')
+
+    .addEntry('gestionGroupe', './assets/components/inscription/gestiongroupe.js')
+    .addEntry('inscription', './assets/components/inscription/gestioninscription.js')
+
+    .addEntry('facture', './assets/components/facture/facture.js')
+    .addEntry('bordereau', './assets/components/facture/bordereau.js')
+    .addEntry('reglement', './assets/components/facture/reglement.js')
+
     .addEntry('epreuve', './assets/components/administration/epreuve.js')
     .addEntry('impression', './assets/components/administration/impression.js')
     .addEntry('etat_impression', './assets/components/administration/etat_impression.js')
     .addEntry('imprimer', './assets/components/administration/imprimer.js')
     .addEntry('controle', './assets/components/administration/controle.js')
     .addEntry('note', './assets/components/administration/note.js')
-    .addEntry('admission', './assets/components/admission/admissions.js')
-    .addEntry('gestionadmission', './assets/components/admission/gestionadmission.js')
+
     .addEntry('evaluationAnnee', './assets/components/evaluation/annee.js')
     .addEntry('evaluationElement', './assets/components/evaluation/element.js')
     .addEntry('evaluationEpreuve', './assets/components/evaluation/epreuve.js')
@@ -40,15 +56,16 @@ Encore
     .addEntry('evaluationFormation', './assets/components/evaluation/formation.js')
     .addEntry('evaluationSemestre', './assets/components/evaluation/semestre.js')
     .addEntry('evaluationSimulationDeliberation', './assets/components/evaluation/simulationdeliberation.js')
-    .addEntry('facture', './assets/components/facture/facture.js')
-    .addEntry('bordereau', './assets/components/facture/bordereau.js')
-    .addEntry('reglement', './assets/components/facture/reglement.js')
+    .addEntry('evaluationPv', './assets/components/evaluation/pv.js')
+    
+    .addEntry('gestionPlanification', './assets/components/planification/gestion_planification.js')
+    .addEntry('planification', './assets/components/planification/planification.js')
+
     .addEntry('creationBordereaux', './assets/components/honoraire/creation_borderaux.js')
     .addEntry('generationHonoraire', './assets/components/honoraire/generation_honoraire.js')
     .addEntry('gestionBorderaux', './assets/components/honoraire/gestion_borderaux.js')
     .addEntry('gestionHonoraire', './assets/components/honoraire/gestion_honoraire.js')
-    .addEntry('gestionGroupe', './assets/components/inscription/gestiongroupe.js')
-    .addEntry('inscription', './assets/components/inscription/gestioninscription.js')
+
     .addEntry('etablissement', './assets/components/parametre/etablissement.js')
     .addEntry('module', './assets/components/parametre/module.js')
     .addEntry('element', './assets/components/parametre/element.js')
@@ -58,10 +75,6 @@ Encore
     .addEntry('annee', './assets/components/parametre/annee.js')
     .addEntry('semestre', './assets/components/parametre/semestre.js')
     .addEntry('user', './assets/components/parametre/user.js')
-    .addEntry('gestionPlanification', './assets/components/planification/gestion_planification.js')
-    .addEntry('planification', './assets/components/planification/planification.js')
-    .addEntry('preinscription', './assets/components/preinscription/preinscription.js')
-    .addEntry('gestionPreinscription', './assets/components/preinscription/gestionpreinscription.js')
     .addEntry('enseignant', './assets/components/parametre/enseignant.js')
     .addEntry('salles', './assets/components/parametre/salles.js')
     .addEntry('enseignantexcept', './assets/components/parametre/enseignantexcept.js')
@@ -73,7 +86,6 @@ Encore
     .addEntry('modalites', './assets/components/parametre/modalites.js')
     .addEntry('serieBac', './assets/components/parametre/serieBac.js')
     .addEntry('typeBac', './assets/components/parametre/typeBac.js')
-    .addEntry('conseil_disciplinaire', './assets/components/conseil/conseil_disciplinaire.js')
 
 
     // .addStyleEntry('login', './assets/styles/components/login/login.scss')
