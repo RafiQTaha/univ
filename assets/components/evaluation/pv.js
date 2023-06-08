@@ -18,7 +18,7 @@ $(document).ready(function () {
             [10, 15, 25, 50, 100, "All"],
         ],
         order: [[0, "desc"]],
-        ajax: "/administration/note/list",
+        ajax: "/evaluation/pv/list",
         processing: true,
         serverSide: true,
         deferRender: true,
