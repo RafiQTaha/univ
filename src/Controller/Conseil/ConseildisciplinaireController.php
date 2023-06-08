@@ -191,6 +191,36 @@ class ConseildisciplinaireController extends AbstractController
         $this->em->flush();
         return new JsonResponse("Convocation bien cree",200);
     }
+    
+    #[Route('/getconvocationInfos/{insSanction}', name: 'getconvocationInfos')]
+    public function getconvocationInfos(InsSanctionner $insSanction): Response
+    {
+        $html = $this->render('conseil/pages/update_convocation.html.twig', [
+            'convocation' => $insSanction,
+        ])->getContent();
+        return new JsonResponse($html, 200);
+    }
+
+    #[Route('/modifier_convocation/{id}', name: 'modifier_convocation')]
+    public function modifier_convocation(Request $request,InsSanctionner $insSanction): Response
+    { 
+        if ($insSanction->getActive() == 0 || $insSanction->getValide() == 1 ) {
+            return new JsonResponse('Convocation est déja valide ou bien Annuler!', 500);
+        }
+        if ($request->get('date_incident') == "" || $request->get('date_reunion') == "") {
+            return new JsonResponse("Merci de remplir tout les champs!",500);
+        }
+        if ($request->get('date_incident') > date('Y-m-d')) {
+            return new JsonResponse("Merci de choisir une date d'incident inferieur ou egale à Aujourd'hui !",500);
+        }
+        $insSanction->setDateIncident(new DateTime($request->get('date_incident')));
+        $insSanction->setDateReunion(new DateTime($request->get('date_reunion')));
+        $insSanction->setUserUpdated($this->getUser());
+        $insSanction->setUpdated(new DateTime('now'));
+        $this->em->flush();
+        return new JsonResponse('Convocation bien modifier', 200);        
+    }
+
     #[Route('/convocation_validation/{insSanction}', name: 'convocation_validation')]
     public function convocation_validation(InsSanctionner $insSanction): Response
     {

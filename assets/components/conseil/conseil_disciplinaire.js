@@ -167,6 +167,7 @@ const Toast = Swal.mixin({
             $("#datatables_disciplinaire_inscription tbody tr").removeClass('active_databales');
             $(this).addClass('active_databales');
             id_sanction = $(this).attr('id');
+            getConvocationInfos()
         }
         console.log(id_sanction)
         
@@ -470,11 +471,68 @@ const Toast = Swal.mixin({
         }
     })
     
-    // $('body').on('click','#export_inscription',function (e) {
-    //     e.preventDefault();
-    //     let annee = $('#annee_export').val();
-    //     // alert(annee);
-    //     window.open('/inscription/gestion/extraction_ins_annee/'+annee, '_blank');
-    // });
+    /////////// start Updating Convocation Block ///////////////
+
+    const getConvocationInfos = () => {
+        let modalAlert =  $("#modifier_org-modal .modal-body .alert");
+        modalAlert.remove();
+        const icon = $("#modifier_convocation i");
+        icon.removeClass('fa-edit').addClass("fa-spinner fa-spin");
+        axios.get('/conseil/disciplinaire/getconvocationInfos/'+id_sanction)
+        .then(success => {
+            icon.removeClass('fa-spinner fa-spin').addClass("fa-edit");
+            // console.log(success);
+            $('#convocation_update_modal #convocation_update').html(success.data)
+            $('#convocation_update_modal #convocation_update select').select2()
+        })
+        .catch(err => {
+            // console.log(err)
+            icon.removeClass('fa-spinner fa-spin ').addClass("fa-edit");
+        })
+    }
+    $('body').on('click','#modifier_convocation',function (e) {
+        e.preventDefault();
+        if(!id_sanction){
+            Toast.fire({
+                icon: 'error',
+                title: 'Veuillez selection une ligne!',
+            })
+            return;
+        }
+        $("#convocation_update_modal").modal('show');
+    });
+    
+    $("body").on("submit", '#convocation_update', async function (e) {
+        e.preventDefault();
+        // alert('test');
+        let formdata = $(this).serialize()
+        let modalAlert =  $("#convocation_update_modal .modal-body .alert");
+        modalAlert.remove();
+        const icon = $("#convocation_update .btn i");
+        icon.removeClass('fa-check-circle').addClass("fa-spinner fa-spin");
+        try{
+            const request = await  axios.post('/conseil/disciplinaire/modifier_convocation/'+id_sanction,formdata)
+            const data = request.data;
+            $("#convocation_update_modal .modal-body").prepend(
+                `<div class="alert alert-success">${data}</div>`
+            ); 
+            icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin");
+            // id_sanction = false;
+            // table_reglement.ajax.reload(null, false);
+            // window.open('/conseil/disciplinaire/reglementprint/'+id_reglement, '_blank');
+        }catch(error){
+            const message = error.response.data;
+            console.log(error, error.response);
+            modalAlert.remove();
+            $("#convocation_update_modal .modal-body").prepend(
+                `<div class="alert alert-danger">${message}</div>`
+            );
+            icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
+        }
+        setTimeout(() => {
+           $("#convocation_update_modal .modal-body .alert").remove();
+        }, 4000);
+    });
+    /////////// End Updating Convocation Block ///////////////
 })
 

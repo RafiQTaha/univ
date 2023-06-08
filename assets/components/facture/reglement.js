@@ -133,7 +133,7 @@ $(document).ready(function () {
     //     e.preventDefault();
     //     const input = $(this).find("input");
     //     // const input = $(this);
-    //     if (input.hasClass('check_reg')) {
+    //     if (input.hasClass('check_reg')) {getReglementInfos
     //         return;
     //     }
     //     else{

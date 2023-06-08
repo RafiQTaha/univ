@@ -1,0 +1,22 @@
+<div class="d-flex justify-content-around">
+    <b>{{convocation.inscription.admission.preinscription.etudiant.nom}} {{convocation.inscription.admission.preinscription.etudiant.prenom}}</b>
+    <b>{{convocation.inscription.admission.code}}</b>
+    <b>{{convocation.inscription.annee.designation}}</b>
+</div>
+{# <label for="etudiant_update">Etudiant:</label>
+<select name="etudiant_update" id="etudiant_update">
+
+</select>
+
+<label for="annee_update">Année:</label>
+<select class="form-control" name="annee_update" id="annee_update">
+
+</select> #}
+
+<label for="convocation_inscription">Date d'incident:</label>
+<input type="date" name="date_incident" id="date_incident" class="form-control" value="{{convocation.dateIncident | date('Y-m-d')}}">
+
+<label for="convocation_inscription">Date de reunion:</label>
+<input type="datetime-local" name="date_reunion" id="date_reunion" class="form-control" value="{{convocation.dateReunion | date('Y-m-d H:i:s')}}">
+
+<button type="submit" class="btn btn-success mt-4"><i class="fas fa-check-circle"></i> Enregister</button>
