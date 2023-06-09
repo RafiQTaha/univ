@@ -34,7 +34,7 @@ class PvController extends AbstractController
        ]);
     }
 
-    #[Route('/list', name: 'list_note_epreuve')]
+    #[Route('/list', name: 'list_pvs')]
     public function list_gestion_preinscription(Request $request): Response
     {   
          
