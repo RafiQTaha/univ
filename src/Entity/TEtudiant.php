@@ -294,6 +294,9 @@ class TEtudiant
     #[ORM\ManyToOne(targetEntity: AcFormation::class, inversedBy: 'tEtudiants')]
     private $formationSouhaitee;
 
+    #[ORM\Column(type: 'integer', nullable: true)]
+    private $codeAssurance;
+
     public function __construct()
     {
         $this->preinscriptions = new ArrayCollection();
@@ -1453,6 +1456,18 @@ class TEtudiant
     public function setFormationSouhaitee(?AcFormation $formationSouhaitee): self
     {
         $this->formationSouhaitee = $formationSouhaitee;
+
+        return $this;
+    }
+
+    public function getCodeAssurance(): ?int
+    {
+        return $this->codeAssurance;
+    }
+
+    public function setCodeAssurance(?int $codeAssurance): self
+    {
+        $this->codeAssurance = $codeAssurance;
 
         return $this;
     }
