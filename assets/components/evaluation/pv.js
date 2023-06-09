@@ -86,6 +86,7 @@ $(document).ready(function () {
         }else{
             datable_pvs.columns().search("").draw();
         }
+        $('#annee').html('').select2();
         $('#semestre').html('').select2();
         $('#promotion').html('').select2();
         $('#formation').html(response).select2();
@@ -98,11 +99,14 @@ $(document).ready(function () {
             datable_pvs.columns(1).search(id_formation).draw();
             const request = await axios.get('/api/promotion/'+id_formation);
             response = request.data
+            const requestannee = await axios.get('/api/annee/'+id_formation);
+            responseannee = requestannee.data
         }else{
             datable_pvs.columns(0).search($("#etablissement").val()).draw();
         }
         $('#semestre').html('').select2();
         $('#promotion').html(response).select2();
+        $('#annee').html(responseannee).select2();
     })
     $("#promotion").on('change', async function (){
         const id_promotion = $(this).val();
@@ -121,43 +125,65 @@ $(document).ready(function () {
         const id_semestre = $(this).val();
         datable_pvs.columns().search("");
         if(id_semestre != "") {
-            const request = await axios.get('/api/module/'+id_semestre);
             datable_pvs.columns(3).search(id_semestre).draw();
-            response = request.data
         }else{
             datable_pvs.columns(2).search($("#promotion").val()).draw();
         }
     })
+    $("#annee").on('change', async function (){
+        const id_annee = $(this).val();
+        datable_pvs.columns().search("");
+        if(id_annee != "") {
+            datable_pvs.columns(4).search(id_annee).draw();
+        }else{
+            datable_pvs.columns(1).search($("#formation").val()).draw();
+        }
+    })
 
-    // $("#note").on('click', async function (e){
-    //     e.preventDefault();
-    //     if(!id_pv){
-    //         Toast.fire({
-    //           icon: 'error',
-    //           title: 'Veuillez selection une ligne!',
-    //         })
-    //         return;
-    //     }
-    //     $('#notesmodal').modal("show");
-    // })
-    // $('body').on('submit','.save_note', async function (e){
-    //     e.preventDefault();
-    //     let id_exgnotes = $(this).find('input').attr('id');
-    //     if( $(this).find('input').val() < 0 || $(this).find('input').val() > 20){
-    //         Toast.fire({
-    //             icon: 'error',
-    //             title: 'La Note doit etre entre 0 et 20',
-    //           })
-    //           return;
-    //     }
-    //     $(this).find('input').blur();
-    //     var formData = new FormData($(this)[0]);
-    //     $(this).parent().parent().next('tr').find('.input_note').focus();
-    //     const request = await axios.post('/administration/note/note_update/'+id_exgnotes, formData);
-    //     response = request.data
-    //     const data = await request.data;
-    //     table_notes_epreuve.ajax.reload(null,false);
-    // })
+    $("#ajouter").on('click', async function (e){
+        e.preventDefault();
+        // if($("#annee").val() == "" || $("#semestre").val() == ""){
+        //     Toast.fire({
+        //       icon: 'error',
+        //       title: 'Veuillez selection une annee et une semestre!',
+        //     })
+        //     return;
+        // }
+        $('#ajout_pv_modal').modal("show");
+    })
+    
+    $("#pv_save").on("submit", async function (e){
+        e.preventDefault();
+        let modalAlert = $("#ajout_pv_modal .modal-body .alert")
+        modalAlert.remove();
+        const icon = $("#pv_save .btn i");
+        icon.removeClass('fa-check-circle').addClass("fa-spinner fa-spin");
+        
+        try {
+            let formData = new FormData($(this)[0]);
+            formData.append('annee',$("#annee").val())
+            formData.append('semestre',$("#semestre").val())
+            const request = await axios.post('/evaluation/pv/ajouter_pv', formData);
+            const response = request.data;
+            $("#ajout_pv_modal .modal-body").prepend(
+                `<div class="alert alert-success">
+                    <p>${response}</p>
+                </div>`
+            );
+            icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
+            $("#pv_save")[0].reset();
+            table.ajax.reload(null, false)
+            $('#ajout_pv_modal').modal("hide");
+        } catch (error) {
+            const message = error.response.data;
+            console.log(error, error.response);
+            modalAlert.remove();
+            $("#ajout_pv_modal .modal-body").prepend(
+                `<div class="alert alert-danger">${message}</div>`
+            );
+            icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
+        }
+    })
     // $('body').on('submit','.save_obs', async function (e){
     //     e.preventDefault();
     //     $(this).find('input').blur();

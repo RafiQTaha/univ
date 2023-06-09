@@ -38,6 +38,12 @@
                             </select>
                         </div>
                         <div class="col-md-2">
+                            <label for="annee">Annee:</label>
+                            <select class="form-control" name="annee" id="annee">
+                                <option value="">Choix Annee</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
                             <label for="promotion">Promotion:</label>
                             <select class="form-control" name="promotion" id="promotion">
                                 <option value="">Choix Promotion</option>
@@ -49,7 +55,7 @@
                                 <option value="">Choix Semestre</option>
                             </select>
                         </div>
-                        <div class="col-md-2">
+                        {# <div class="col-md-2">
                             <label for="module">Module:</label>
                             <select class="form-control" name="module" id="module">
                                 <option value="">Choix Module</option>
@@ -60,7 +66,7 @@
                             <select class="form-control" name="element" id="element">
                                 <option value="">Choix Elément</option>
                             </select>
-                        </div>
+                        </div> #}
                     </div>
                 </div>
             <table id="datables_pvs" class="table table-striped" style="width:100%">
@@ -71,6 +77,7 @@
                         <th >Date</th>
                         <th>Etablissement</th>
                         <th>Formation</th>
+                        <th>Annee</th>
                         <th width="8%">Promotion</th>
                         <th>Semestre</th>
                         <th>President</th>
@@ -87,6 +94,7 @@
                         <th >Date</th>
                         <th>Etablissement</th>
                         <th>Formation</th>
+                        <th>Annee</th>
                         <th width="8%">Promotion</th>
                         <th>Semestre</th>
                         <th>President</th>
@@ -104,9 +112,9 @@
 
 
 <!--Modal Import Group-->
-{# {% include 'administration_epreuve/modals/notes.html.twig' %}
-{% include 'administration_epreuve/modals/import.html.twig' %}
-{% include 'administration_epreuve/modals/imprimer.html.twig' %} #}
+{% include 'evaluation/pv/modals/ajouter.html.twig' %}
+{% include 'evaluation/pv/modals/update_pv.html.twig' %}
+{# {% include 'evaluation/pv/modals/imprimer.html.twig' %} #}
 
 {% endblock %}
 

@@ -7,6 +7,7 @@ use App\Controller\DatatablesController;
 use App\Entity\AcEtablissement;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -40,7 +41,7 @@ class PvController extends AbstractController
          
         $params = $request->query;
         $where = $totalRows = $sqlRequest = "";
-        $filtre = " and pv.active = 1 ";
+        $filtre = " pv.active = 1 ";
         
         if (!empty($params->all('columns')[0]['search']['value'])) {
             $filtre .= " and etab.id = '" . $params->all('columns')[0]['search']['value'] . "' ";
@@ -54,6 +55,9 @@ class PvController extends AbstractController
         if (!empty($params->all('columns')[3]['search']['value'])) {
             $filtre .= " and sem.id = '" . $params->all('columns')[3]['search']['value'] . "' ";
         }  
+        if (!empty($params->all('columns')[4]['search']['value'])) {
+            $filtre .= " and ann.id = '" . $params->all('columns')[4]['search']['value'] . "' ";
+        }  
 
         $columns = array(
             array( 'db' => 'pv.id','dt' => 0 ),
@@ -61,11 +65,12 @@ class PvController extends AbstractController
             array( 'db' => 'etab.abreviation','dt' => 2),
             array( 'db' => 'upper(etab.abreviation)','dt' => 3),
             array( 'db' => 'upper(forma.abreviation)','dt' => 4),
-            array( 'db' => 'upper(prm.designation)','dt' => 5),
+            array( 'db' => 'upper(ann.designation)','dt' => 5),
             array( 'db' => 'upper(prm.designation)','dt' => 6),
-            array( 'db' => 'upper(sem.designation)','dt' => 7),
-            array( 'db' => 'pv.president','dt' => 8),
-            array( 'db' => 'pv.coordonnateur','dt' => 9),
+            array( 'db' => 'upper(prm.designation)','dt' => 7),
+            array( 'db' => 'upper(sem.designation)','dt' => 8),
+            array( 'db' => 'pv.president','dt' => 9),
+            array( 'db' => 'pv.coordonnateur','dt' => 10),
         );
         $sql = "SELECT " . implode(", ", DatatablesController::Pluck($columns, 'db')) . "
         FROM pv
@@ -74,13 +79,7 @@ class PvController extends AbstractController
         INNER JOIN ac_formation forma ON forma.id = prm.formation_id
         INNER JOIN ac_etablissement etab ON etab.id = forma.etablissement_id
         INNER JOIN ac_annee ann on ann.id = pv.annee_id
-        Where 1=1 $filtre";
-
-        // INNER JOIN (SELECT epreuve_id,COUNT(id) nbr_effectif FROM ex_gnotes GROUP BY epreuve_id) ne ON ne.epreuve_id = epv.id 
-        // LEFT JOIN (SELECT epreuve_id,COUNT(id) nbr_absence FROM ex_gnotes WHERE absence = '1' GROUP BY epreuve_id) na ON na.epreuve_id = epv.id
-        // LEFT JOIN (SELECT epreuve_id, COUNT(id) nbr_saisi FROM ex_gnotes WHERE (absence = '0' or absence is null)  AND (note IS NOT NULL AND note <> '') GROUP BY epreuve_id) ni ON ni.epreuve_id = epv.id 
-        // LEFT JOIN (SELECT epreuve_id, COUNT(id) nbr_non_saisi FROM ex_gnotes WHERE (absence = '0' or absence is null) AND (note IS NULL OR note = '' ) GROUP BY epreuve_id) nni ON nni.epreuve_id = epv.id 
-        
+        Where $filtre";
         // dd($sql);
         $totalRows .= $sql;
         $sqlRequest .= $sql;
@@ -106,33 +105,10 @@ class PvController extends AbstractController
             // dump($row);die;
             $nestedData = array();
             $cd = $row['id'];
-            // $nbr_effectif = count($this->em->getRepository(ExGnotes::class)->findBy(['epreuve' => $cd]));
-            // $nbr_absence = count($this->em->getRepository(ExGnotes::class)->findBy(['epreuve' => $cd, 'absence' => 1]));
-            // $nbr_saisi = count($this->em->getRepository(ExGnotes::class)->getNombreSaisi($cd));
-            // $nbr_non_saisi = count($this->em->getRepository(ExGnotes::class)->getNombreNonSaisi($cd));
-            
-            // dd($nbr_non_saisi);
-            // $nestedData[] = "<input type ='checkbox' class='check_admissible' id ='$cd' >";
-            // $nestedData[] = $i;
             $etat_bg="";
             foreach (array_values($row) as $key => $value) { 
                 $nestedData[] = $value;
             }
-            // $nestedData[] = $nbr_effectif;
-            // $nestedData[] = $nbr_absence;
-            // $nestedData[] = $nbr_saisi;
-            // $nestedData[] = $nbr_non_saisi;
-
-            ///lst add*
-
-            // if ($nbr_saisi == 0) {
-            //     $etat_bg = 'etat_bg_nf';
-            // } elseif ($nbr_saisi > 0 AND $nbr_saisi < ($nbr_effectif - $nbr_absence)) {
-            //     $etat_bg = '';
-            // } else {
-            //     $etat_bg = 'etat_bg_reg';
-                
-            // }
             $nestedData["DT_RowId"] = $cd;
             $nestedData["DT_RowClass"] = $etat_bg;
             $data[] = $nestedData;
@@ -145,5 +121,33 @@ class PvController extends AbstractController
             "data" => $data   
         );
         return new Response(json_encode($json_data));
+    }
+    
+    #[Route('/ajouter_pv', name: 'ajouter_pv')]
+    public function ajouter_pv(Request $request)
+    {
+        dd($request);
+        if ($request->get('coordonnateur') == "" || $request->get('president') == "" || $request->get('membres') == "" || $request->get('annee') == "" || $request->get('semestre') == "") {
+            return new JsonResponse("Merci de remplir tout les champs!",500);
+        }
+
+        $inscription = $this->em->getRepository(TInscription::class)->find($request->get('annee2'));
+        if (!$inscription) {
+            return new JsonResponse("Inscription Introuvable !",500);
+        }
+        
+        // $insSanction = new InsSanctionner();
+        // $insSanction->setInscription($inscription);
+        // $insSanction->setDateIncident(new DateTime($request->get('date_incident')));
+        // $insSanction->setDateReunion(new DateTime($request->get('date_reunion')));
+        // $insSanction->setActive(1);
+        // $insSanction->setValide(0);
+        // $insSanction->setUserCreated($this->getUser());
+        // $insSanction->setCreated(new DateTime('now'));
+        // $this->em->persist($insSanction);
+        // $this->em->flush();
+        // $insSanction->setCode('UIA_'.$inscription->getAnnee()->getFormation()->getEtablissement()->getAbreviation().'_'.str_pad($insSanction->getId(), 4, '0', STR_PAD_LEFT).'/'.date('Y'));
+        // $this->em->flush();
+        return new JsonResponse("PV bien cree",200);
     }
 }
