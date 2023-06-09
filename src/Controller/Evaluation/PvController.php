@@ -126,15 +126,15 @@ class PvController extends AbstractController
     #[Route('/ajouter_pv', name: 'ajouter_pv')]
     public function ajouter_pv(Request $request)
     {
-        dd($request);
         if ($request->get('coordonnateur') == "" || $request->get('president') == "" || $request->get('membres') == "" || $request->get('annee') == "" || $request->get('semestre') == "") {
             return new JsonResponse("Merci de remplir tout les champs!",500);
         }
 
-        $inscription = $this->em->getRepository(TInscription::class)->find($request->get('annee2'));
-        if (!$inscription) {
-            return new JsonResponse("Inscription Introuvable !",500);
-        }
+        
+        // $inscription = $this->em->getRepository(TInscription::class)->find($request->get('annee2'));
+        // if (!$inscription) {
+        //     return new JsonResponse("Inscription Introuvable !",500);
+        // }
         
         // $insSanction = new InsSanctionner();
         // $insSanction->setInscription($inscription);

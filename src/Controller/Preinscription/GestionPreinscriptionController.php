@@ -20,6 +20,7 @@ use App\Controller\ApiController;
 use App\Controller\DatatablesController;
 use App\Entity\PSituation;
 use App\Entity\TAdmission;
+use App\Entity\TEtudiant;
 use App\Entity\TInscription;
 use App\Entity\XAcademie;
 use App\Entity\XFiliere;
@@ -515,6 +516,9 @@ class GestionPreinscriptionController extends AbstractController
         $preinscription->getEtudiant()->setMail1(strtoupper($request->get('mail1')));
         $preinscription->getEtudiant()->setMail2(strtoupper($request->get('mail2')));
         $preinscription->getEtudiant()->setAdresse(strtoupper($request->get('adresse')));
+        if ($request->get('code_assurance') != "" && $this->em->getRepository(TEtudiant::class)->findOneBy(['codeAssurance'=>$request->get('code_assurance')])) {
+            return new JsonResponse("Le code Assurance Exist déja!!",500);
+        }
         $preinscription->getEtudiant()->setCodeAssurance($request->get('code_assurance'));
 
         if ($request->get('situation_parents') != "") {
