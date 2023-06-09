@@ -480,6 +480,7 @@ class GestionPreinscriptionController extends AbstractController
     #[Route('/edit_infos_preins/{preinscription}', name: 'edit_infos_preins')]
     public function edit_infos_preins(Request $request, TPreinscription $preinscription) 
     {
+        // dd($request->get('code_assurance'));
         if(!$preinscription){
             return new JsonResponse("Etudiant Introuvable!!",500);
         }
@@ -514,6 +515,7 @@ class GestionPreinscriptionController extends AbstractController
         $preinscription->getEtudiant()->setMail1(strtoupper($request->get('mail1')));
         $preinscription->getEtudiant()->setMail2(strtoupper($request->get('mail2')));
         $preinscription->getEtudiant()->setAdresse(strtoupper($request->get('adresse')));
+        $preinscription->getEtudiant()->setCodeAssurance($request->get('code_assurance'));
 
         if ($request->get('situation_parents') != "") {
             $preinscription->getEtudiant()->setStFamilleParent($this->em->getRepository(PSituation::class)->find($request->get('situation_parents')));
