@@ -519,8 +519,9 @@ class GestionPreinscriptionController extends AbstractController
         if ($request->get('code_assurance') != "" && $this->em->getRepository(TEtudiant::class)->findOneBy(['codeAssurance'=>$request->get('code_assurance')])) {
             return new JsonResponse("Le code Assurance Exist déja!!",500);
         }
-        $preinscription->getEtudiant()->setCodeAssurance($request->get('code_assurance'));
-
+        if ($request->get('code_assurance') != "") {
+            $preinscription->getEtudiant()->setCodeAssurance($request->get('code_assurance'));
+        }
         if ($request->get('situation_parents') != "") {
             $preinscription->getEtudiant()->setStFamilleParent($this->em->getRepository(PSituation::class)->find($request->get('situation_parents')));
         }

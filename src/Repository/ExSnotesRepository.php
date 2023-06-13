@@ -230,4 +230,40 @@ class ExSnotesRepository extends ServiceEntityRepository
         $result = $resultSets->fetchAll();
         return $result;
     }
+
+    //GETING INSCRIPTIONS SNOTES BY ANNEE AND SEMESTRE
+    public function GetSnotesByAnneeAndSemestre($annee, $semestre)
+    {
+        return $this->createQueryBuilder('s')
+            ->innerJoin("s.inscription", 'inscription')
+            ->innerJoin("s.semestre", 'semestre')
+            ->where("semestre = :semestre")
+            ->andWhere('inscription.annee = :annee')            
+            ->setParameter('semestre', $semestre)
+            ->setParameter('annee', $annee)
+            // ->groupBy('s.statutDef')
+            ->orderBy("s.semestre", "asc")
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
+    //GETING INSCRIPTIONS SNOTES BY ANNEE AND SEMESTRE AND STATUT
+    public function GetSnotesByAnneeAndSemestreAndStatut($annee, $semestre,$statut)
+    {
+        return $this->createQueryBuilder('s')
+            ->innerJoin("s.inscription", 'inscription')
+            ->innerJoin("s.semestre", 'semestre')
+            ->innerJoin("s.statutDef", 'def')
+            ->where("semestre = :semestre")
+            ->andWhere('inscription.annee = :annee')            
+            ->andWhere('def.id in (:statut)')            
+            ->setParameter('semestre', $semestre)
+            ->setParameter('annee', $annee)
+            ->setParameter('statut', $statut)
+            ->orderBy("s.semestre", "asc")
+            ->getQuery()
+            ->getResult()
+        ;
+    }
 }

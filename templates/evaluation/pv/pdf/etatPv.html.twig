@@ -1,0 +1,312 @@
+<link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro" rel="stylesheet">
+<style type="text/Css">
+    body{
+        font-family: 'Source Sans Pro', sans-serif;
+    }
+    .titre-reb{
+        width: 100%;
+        background: #1f4f7a;
+        font-size: 9px ;
+        padding:3px 10px;
+        color: #f1f1f1;
+        font-weight: bold
+    }
+    div.zone_over
+    {
+        display: block;
+        width: 40%;
+        word-wrap:break-word !important;
+    }
+    .slh tr td {
+        border-bottom: 1px solid #292929;
+    }
+    .titre-para{
+        background :#c0bebe;
+    }
+</style>
+<br>
+<table style="width: 100%;" cellspacing="0">
+    <tbody>
+        <tr>
+            <td style="width:25%; text-align:center"><img style="width:80px;margin: 0 auto;" src="./assets/img/logo/Logo_UIASS_bkack2.png" alt="Logo"></td>
+            <td style="width:1%;"></td>
+            <td style="width:70%;"><p style="margin-left:10px;margin-top:25px;width:5px;text-align:center;font-weight:bold;">UNIVERSITE INTERNATIONALE ABULCASIS DES SCIENCES DE LA SANTE</p></td>
+        </tr>
+    
+    </tbody>
+
+</table>
+<table style="width: 100% ;text-align: center;border: 1px solid #292929; border-bottom: none;" cellspacing="0">
+<tr>
+    <td style="width: 30% ; border-bottom: 1px solid #292929 ;">
+        <table style="width: 100% ;" cellspacing="0">
+            <tr>
+                <th style="width: 100% ; font-size: 13px ;font-weight: 200;font-weight: bold;padding:2px;color:rgb(3, 35, 68);">CODE PV </th>
+            </tr>
+            <tr>
+
+                <td style="border-bottom: 1px solid #292929 ;width: 100%"></td>
+            </tr>
+
+            <tr>
+                <td style="width: 100% ; font-size: 11px ;padding:2px;color:rgb(31, 79, 122);">{{pv.code}}</td>
+            </tr>
+        </table>
+    </td>
+    <td style="width: 40% ;font-size: 20px;font-weight: bold ; border-left: 1px solid #292929 ;border-right: 1px solid #292929; border-bottom: 1px solid #292929 ;color:rgb(3, 35, 68);">PV de Délibération </td>
+    <td style="width: 30% ;border-bottom: 1px solid #292929 ;">
+        <table style="width: 100% ; background: #FFFFFF; text-align: center" cellspacing="0">
+            <tr>
+                <th style="width: 100% ; font-size: 13px ;font-weight: 200;font-weight: bold;padding:2px;color:rgb(3, 35, 68);">DATE</th>
+            </tr>
+            <tr>
+                <td style="border-bottom: 1px solid  #292929 ;width: 100%"></td>
+            </tr>
+
+            <tr>
+                <td style="width: 100% ; font-size: 11px ;padding:2px;color:rgb(3, 35, 68);">{{ 'now'|date("d/m/Y") }}</td>
+            </tr>
+        </table>
+    </td>
+
+</tr>
+
+
+</table>
+<table style="width: 100%;border-top: 1px solid#292929">
+    <tr>
+        <td style="width: 100% ; height: 10px;"></td>
+    </tr>
+</table>
+
+<table cellspacing="0" style="width: 100%; text-align: left; font-size: 12px" >
+    <tr class="titre-para">
+        <td style="font-weight: bold;padding:2px 0px 5px 2px;width:70%"> INFORMATIONS SUR L'ETABLISSEMENT</td> 
+        <td style="font-weight: bold;padding:2px 0px 5px 2px;"></td> 
+    </tr> 
+</table>
+
+<table style="width: 100%;margin-top:.5px;">
+    <tr>
+        <td style="width:30%;border:1px solid #ddd;background:#eee;padding:5px;font-size:10px">ETABLISSEMENT</td>
+        <td style="width:0.5%;"></td>
+        <td style="width:69.5%;border:1px solid #ddd;background:white;padding:5px;font-size:10px">
+            {{pv.annee.formation.etablissement.designation}}
+        </td>
+    </tr>
+    <tr>
+        <td style="width:24%;border:1px solid #ddd;background:#eee;padding:5px;font-size:10px">ANNEE - SEMESTRE</td>
+        <td style="width:0.5%;"></td>
+        <td style="width:69.5%;border:1px solid #ddd;background:white;padding:5px;font-size:10px">
+            {{pv.annee.designation}} - {{pv.semestre.designation}}
+        </td>
+    </tr>
+    <tr>
+        <td style="width:24%;border:1px solid #ddd;background:#eee;padding:5px;font-size:10px">COORDONNATEUR DE L'ANNEE</td>
+        <td style="width:0.5%;"></td>
+        <td style="width:69.5%;border:1px solid #ddd;background:white;padding:5px;font-size:10px">
+            {{pv.coordonnateur}}
+        </td>
+    </tr>
+    <tr>
+        <td style="width:24%;border:1px solid #ddd;background:#eee;padding:5px;font-size:10px">PRESIDENT DU JURY DE SEMESTRE</td>
+        <td style="width:0.5%;"></td>
+        <td style="width:69.5%;border:1px solid #ddd;background:white;padding:5px;font-size:10px">
+            {{pv.President}}
+        </td>
+    </tr>
+    <tr style="height:150px">
+        <td style="width:24%;border:1px solid #ddd;background:#eee;padding:5px;font-size:10px;height:150px">Membres du Jury </td>
+        <td style="width:0.5%;"></td>
+        <td style="width:69.5%;border:1px solid #ddd;background:white;padding:5px;font-size:10px">
+            {{pv.membres}}
+        </td>
+    </tr>
+</table>
+
+<table style="width: 100%;border-top: 1px solid#292929">
+    <tr>
+        <td style="width: 100% ; height: 10px;"></td>
+    </tr>
+</table>
+
+<table cellspacing="0" style="width: 100%; text-align: left; font-size: 12px" >
+    <tr class="titre-para">
+        <td style="font-weight: bold;padding:2px 0px 5px 2px;width:70%"> INFORMATIONS DETAILLEES</td> 
+        <td style="font-weight: bold;padding:2px 0px 5px 2px;"></td> 
+    </tr> 
+</table>
+
+
+    {% set snotesCount = snotes | length %}
+    {% set snoteReussiCount = snoteReussi | length %}
+<table style="width: 100%;margin-top:.5px;">
+    <tr>
+        <td style="width:30%;border:1px solid #ddd;background:#eee;padding:5px;font-size:10px">Nombre Total de Candidats</td>
+        <td style="width:0.5%;"></td>
+        <td style="width:69.5%;border:1px solid #ddd;background:white;padding:5px;font-size:10px;text-align:center">
+            {{snotesCount}}
+        </td>
+    </tr>
+    <tr>
+        <td style="width:30%;border:1px solid #ddd;background:#eee;padding:5px;font-size:10px">Seuil de rachat</td>
+        <td style="width:0.5%;"></td>
+        <td style="width:69.5%;border:1px solid #ddd;background:white;padding:5px;font-size:10px;text-align:center">
+            12.00/20
+        </td>
+    </tr>
+    <tr>
+        <td style="width:30%;border:1px solid #ddd;background:#eee;padding:5px;font-size:10px">Nbre de Condidats ayant réussi</td>
+        <td style="width:0.5%;"></td>
+        <td style="width:69.5%;background:white">
+            <table cellspacing="0" style="width: 100%; text-align: left; font-size: 12px" >
+                <tr>
+                    <td style="width:49.5%;border:1px solid #ddd;background:white;padding:5px;font-size:10px;text-align:center">{{snoteReussi | length}}</td>
+                    <td style="width:0.5%;"></td>
+                    <td style="width:49.5%;border:1px solid #ddd;background:white;padding:5px;font-size:10px;text-align:center">{{((snoteReussi | length) * 100 / snotesCount) | round}}%</td>
+                </tr> 
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td style="width:30%;border:1px solid #ddd;background:#eee;padding:5px;font-size:10px">Nbre de Condidats rachetés</td>
+        <td style="width:0.5%;"></td>
+        <td style="width:69.5%;background:white">
+            <table cellspacing="0" style="width: 100%; text-align: left; font-size: 12px" >
+                <tr>
+                    <td style="width:49.5%;border:1px solid #ddd;background:white;padding:5px;font-size:10px;text-align:center">{{snoteRachetes | length}}</td>
+                    <td style="width:0.5%;"></td>
+                    <td style="width:49.5%;border:1px solid #ddd;background:white;padding:5px;font-size:10px;text-align:center">{{((snoteRachetes | length) * 100 / snotesCount) | round}}%</td>
+                </tr> 
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td style="width:30%;border:1px solid #ddd;background:#eee;padding:5px;font-size:10px">Nbre de Demandes de dérogation rachetés</td>
+        <td style="width:0.5%;"></td>
+        <td style="width:69.5%;background:white">
+            <table cellspacing="0" style="width: 100%; text-align: left; font-size: 12px" >
+                <tr>
+                    <td style="width:49.5%;border:1px solid #ddd;background:white;padding:5px;font-size:10px;text-align:center">{{snoteDerogations | length}}</td>
+                    <td style="width:0.5%;"></td>
+                    <td style="width:49.5%;border:1px solid #ddd;background:white;padding:5px;font-size:10px;text-align:center">{{((snoteDerogations | length) * 100 / snotesCount) | round}}%</td>
+                </tr> 
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td style="width:30%;border:1px solid #ddd;background:#eee;padding:5px;font-size:10px">Nbre de Condidats recalés</td>
+        <td style="width:0.5%;"></td>
+        <td style="width:69.5%;background:white">
+            <table cellspacing="0" style="width: 100%; text-align: left; font-size: 12px" >
+                <tr>
+                    <td style="width:49.5%;border:1px solid #ddd;background:white;padding:5px;font-size:10px;text-align:center">{{snoteRecalés | length}}</td>
+                    <td style="width:0.5%;"></td>
+                    <td style="width:49.5%;border:1px solid #ddd;background:white;padding:5px;font-size:10px;text-align:center">{{((snoteRecalés | length) * 100 / snotesCount) | round}}%</td>
+                </tr> 
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td style="width:30%;border:1px solid #ddd;background:#eee;padding:5px;font-size:10px">Nbre de Condidats fraudeurs</td>
+        <td style="width:0.5%;"></td>
+        <td style="width:69.5%;background:white">
+            <table cellspacing="0" style="width: 100%; text-align: left; font-size: 12px" >
+                <tr>
+                    <td style="width:49.5%;border:1px solid #ddd;background:white;padding:5px;font-size:10px;text-align:center">{{snoteFraudeurs | length}}</td>
+                    <td style="width:0.5%;"></td>
+                    <td style="width:49.5%;border:1px solid #ddd;background:white;padding:5px;font-size:10px;text-align:center">{{((snoteFraudeurs | length) * 100 / snotesCount) | round}}%</td>
+                </tr> 
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td style="width:30%;border:1px solid #ddd;background:#eee;padding:5px;font-size:10px">Nbre de Condidats Absents</td>
+        <td style="width:0.5%;"></td>
+        <td style="width:69.5%;background:white">
+            <table cellspacing="0" style="width: 100%; text-align: left; font-size: 12px" >
+                <tr>
+                    <td style="width:49.5%;border:1px solid #ddd;background:white;padding:5px;font-size:10px;text-align:center">{{snoteAbsents | length}}</td>
+                    <td style="width:0.5%;"></td>
+                    <td style="width:49.5%;border:1px solid #ddd;background:white;padding:5px;font-size:10px;text-align:center">{{((snoteAbsents | length) * 100 / snotesCount) | round}}%</td>
+                </tr> 
+            </table>
+        </td>
+    </tr>
+</table>
+
+<table style="width: 100%">
+    <tr>
+        <td style="width: 100% ; height: 10px;"></td>
+    </tr>
+</table>
+
+<table cellspacing="0" style="width: 100%; text-align: left; font-size: 12px" >
+    <tr class="titre-para">
+        <td style="font-weight: bold;padding:2px 0px 5px 2px;width:70%"> MENTIONS SPECIFIQUES (Seuil de rachat)</td> 
+        <td style="font-weight: bold;padding:2px 0px 5px 2px;"></td> 
+    </tr> 
+</table>
+
+<table style="width: 100%">
+    <tr>
+        <td style="width: 100% ;"></td>
+    </tr>
+</table>
+
+<table style="width: 100%;border: 1px solid #ddd">
+    <tr style="width: 100%;">
+        <td style="width: 100% ; font-size: 12px;height:100px; vertical-align:top">
+            {% if snoteDerogations | length > 0 %}
+                Le jury a demandé une dérogation pour attribuer des points de rachat au profit des étudiants portants le code anonymat: 
+                {% for snoteDerogation in snoteDerogations %}
+                    {{snoteDerogation.inscription.codeAnonymat}} 
+                    {% if loop.index < snoteDerogations | length %},{% endif %}
+                {% endfor %}
+            {% endif %}
+        </td>
+    </tr>
+</table>
+
+<table style="width: 100%">
+    <tr>
+        <td style="width: 100% ; height: 10px;"></td>
+    </tr>
+</table>
+
+<table cellspacing="0" style="width: 100%;" >
+    <tr class="titre-para">
+        <td style="font-weight: bold;padding:2px 0px 5px 2px;width:70%"> SIGNATURES</td> 
+        <td style="font-weight: bold;padding:2px 0px 5px 2px;"></td> 
+    </tr> 
+</table>
+
+<table style="width: 100%">
+    <tr>
+        <td style="width: 100% ;"></td>
+    </tr>
+</table>
+
+<table style="width: 100%;border: 1px solid #ddd">
+    <tr style="width: 100%;">
+        <td style="width: 100% ; font-size: 10px;">
+            <b>Fait à Rabat, le: {{ 'now'|date("d/m/Y") }}</b>
+        </td>
+        <td style="font-weight: bold;padding:0px 2px 0px 2px;"></td> 
+    </tr>
+    <tr style="width: 100%;">
+        <td style="width: 100%;font-size: 10px;height: 147px; vertical-align:top">
+            <table cellspacing="0" style="width: 100%;" >
+                <tr style="width: 100% ;padding:0 2px 0 2px; ">
+                    <td style="font-weight: bold;padding:0px 2px 0px 2px;"></td> 
+                    <td style="border:1px solid #000;background:#eee;text-align:center;width:30%;font-size: 10px;padding:5px 0;font-weight: bold;"> <div>Signature du Président de Jury</div></td> 
+                    <td style="font-weight: bold;padding:0px 2px 0px 2px;"></td> 
+                    <td style="border:1px solid #000;background:#eee;text-align:center;width:30%;font-size: 10px;padding:5px 0;font-weight: bold;"> <div>Coordonnateur de l'Année</div></td> 
+                    <td style="font-weight: bold;padding:0px 2px 0px 2px;"></td> 
+                    <td style="border:1px solid #000;background:#eee;text-align:center;width:30%;font-size: 10px;padding:5px 0;font-weight: bold;"> <div>Chef de l'Etablissement</div></td> 
+                    <td style="font-weight: bold;padding:0px 2px 0px 2px;"></td> 
+                </tr> 
+            </table>
+        </td>
+    </tr>
+</table>

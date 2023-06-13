@@ -4,8 +4,13 @@ namespace App\Controller\Evaluation;
 
 use App\Controller\ApiController;
 use App\Controller\DatatablesController;
+use App\Entity\AcAnnee;
 use App\Entity\AcEtablissement;
+use App\Entity\AcSemestre;
+use App\Entity\ExSnotes;
+use App\Entity\Pv;
 use Doctrine\Persistence\ManagerRegistry;
+use Mpdf\Mpdf;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -123,31 +128,75 @@ class PvController extends AbstractController
         return new Response(json_encode($json_data));
     }
     
-    #[Route('/ajouter_pv', name: 'ajouter_pv')]
-    public function ajouter_pv(Request $request)
+    #[Route('/modifier_pv/{id_pv}', name: 'modifier_pv')]
+    public function modifier_pv(Request $request,Pv $id_pv)
     {
-        if ($request->get('coordonnateur') == "" || $request->get('president') == "" || $request->get('membres') == "" || $request->get('annee') == "" || $request->get('semestre') == "") {
+        if ($request->get('president') == "") {
             return new JsonResponse("Merci de remplir tout les champs!",500);
         }
 
-        
-        // $inscription = $this->em->getRepository(TInscription::class)->find($request->get('annee2'));
-        // if (!$inscription) {
-        //     return new JsonResponse("Inscription Introuvable !",500);
+        // $existPv = $this->em->getRepository(Pv::class)->findOneBy([
+        //     'annee'=> $request->get('annee'),
+        //     'semestre'=> $request->get('semestre')
+        // ]);
+        // if ($existPv) {
+        //     return new JsonResponse("ce PV est déja cree sous le Code: ".$existPv->getCode(),500);
         // }
-        
-        // $insSanction = new InsSanctionner();
-        // $insSanction->setInscription($inscription);
-        // $insSanction->setDateIncident(new DateTime($request->get('date_incident')));
-        // $insSanction->setDateReunion(new DateTime($request->get('date_reunion')));
-        // $insSanction->setActive(1);
-        // $insSanction->setValide(0);
-        // $insSanction->setUserCreated($this->getUser());
-        // $insSanction->setCreated(new DateTime('now'));
-        // $this->em->persist($insSanction);
-        // $this->em->flush();
-        // $insSanction->setCode('UIA_'.$inscription->getAnnee()->getFormation()->getEtablissement()->getAbreviation().'_'.str_pad($insSanction->getId(), 4, '0', STR_PAD_LEFT).'/'.date('Y'));
-        // $this->em->flush();
+        dd($existPv);
+        $pv = new Pv();
+        $pv->setAnnee($this->em->getRepository(AcAnnee::class)->find($request->get('annee')));
+        $pv->setSemestre($this->em->getRepository(AcSemestre::class)->find($request->get('semestre')));
+        $pv->setCoordonnateur($request->get('coordonnateur'));
+        $pv->setPresident($request->get('president'));
+        $pv->setMembres($request->get('membres'));
+        $pv->setUserCreated($this->getUser());
+        $pv->setCreated(new \DateTime('now'));
+        $pv->setActive(1);
+        $this->em->persist($pv);
+        $this->em->flush();
+        $pv->setCode('PV-'.$pv->getAnnee()->getFormation()->getEtablissement()->getAbreviation().'_'.str_pad($pv->getId(), 6, '0', STR_PAD_LEFT).'/'.date('Y'));
+        $this->em->flush();
         return new JsonResponse("PV bien cree",200);
     }
+
+    
+    #[Route('/impressionPv/{pv}', name: 'impressionPv')]
+    public function impressionPv(Pv $pv)
+    {
+        // dd($pv);
+        $snotes = $this->em->getRepository(ExSnotes::class)->GetSnotesByAnneeAndSemestre($pv->getAnnee(),$pv->getSemestre());
+        // dd($snotes);
+        $snoteReussi = $this->em->getRepository(ExSnotes::class)->GetSnotesByAnneeAndSemestreAndStatut($pv->getAnnee(),$pv->getSemestre(),[36,56,37]);
+        $snoteRachetes = $this->em->getRepository(ExSnotes::class)->GetSnotesByAnneeAndSemestreAndStatut($pv->getAnnee(),$pv->getSemestre(),[38,78]);
+        $snoteDerogations = $this->em->getRepository(ExSnotes::class)->GetSnotesByAnneeAndSemestreAndStatut($pv->getAnnee(),$pv->getSemestre(),[72]);
+        $snoteRecalés = $this->em->getRepository(ExSnotes::class)->GetSnotesByAnneeAndSemestreAndStatut($pv->getAnnee(),$pv->getSemestre(),[39,40,57]);
+        $snoteFraudeurs = $this->em->getRepository(ExSnotes::class)->GetSnotesByAnneeAndSemestreAndStatut($pv->getAnnee(),$pv->getSemestre(),[]);
+        $snoteAbsents = $this->em->getRepository(ExSnotes::class)->GetSnotesByAnneeAndSemestreAndStatut($pv->getAnnee(),$pv->getSemestre(),[]);
+        // dd($snoteReussi);
+        $html = $this->render("evaluation/pv/pdf/etatPv.html.twig", [
+            'pv' => $pv,
+            'snotes' => $snotes,
+            'snoteReussi' => $snoteReussi,
+            'snoteRachetes' => $snoteRachetes,
+            'snoteDerogations' => $snoteDerogations,
+            'snoteRecalés' => $snoteRecalés,
+            'snoteFraudeurs' => $snoteFraudeurs,
+            'snoteAbsents' => $snoteAbsents,
+        ])->getContent();
+        $mpdf = new Mpdf([
+            'mode' => 'utf-8', 
+            'margin_top' => 5,
+            'margin_left' => 5,
+            'margin_right' => 5,
+        ]);
+        $mpdf->SetHTMLFooter(
+            $this->render("evaluation/pv/pdf/footer.html.twig")->getContent()
+        );
+        $mpdf->WriteHTML($html);
+        $mpdf->SetTitle("Pv de Délibération ".$pv->getAnnee()->getFormation()->getEtablissement()->getAbreviation()." ".$pv->getSemestre()->getDesignation());
+        $mpdf->Output("Pv de Délibération ".$pv->getAnnee()->getFormation()->getEtablissement()->getAbreviation()." ".$pv->getSemestre()->getDesignation().".pdf", "I");
+    }
+
+
+
 }

@@ -69,7 +69,7 @@ $(document).ready(function () {
             // const icon = $('#note i');
             // icon.removeClass('fa-newspaper').addClass('fa-spinner fa-spin');
             id_pv = $(this).attr('id');
-            table_note_inscription()
+            // table_note_inscription()
             // icon.addClass('fa-newspaper').removeClass('fa-spinner fa-spin')
         }
     })
@@ -117,7 +117,7 @@ $(document).ready(function () {
             const request = await axios.get('/api/semestre/'+id_promotion);
             response = request.data
         }else{
-            datable_pvs.columns(1).search($("#formation").val()).draw();
+                datable_pvs.columns(1).search($("#formation").val()).draw();
         }
         $('#semestre').html(response).select2();
     })
@@ -142,13 +142,13 @@ $(document).ready(function () {
 
     $("#ajouter").on('click', async function (e){
         e.preventDefault();
-        // if($("#annee").val() == "" || $("#semestre").val() == ""){
-        //     Toast.fire({
-        //       icon: 'error',
-        //       title: 'Veuillez selection une annee et une semestre!',
-        //     })
-        //     return;
-        // }
+        if($("#annee").val() == "" || $("#semestre").val() == ""){
+            Toast.fire({
+              icon: 'error',
+              title: 'Veuillez selection une annee et une semestre!',
+            })
+            return;
+        }
         $('#ajout_pv_modal').modal("show");
     })
     
@@ -172,7 +172,7 @@ $(document).ready(function () {
             );
             icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
             $("#pv_save")[0].reset();
-            table.ajax.reload(null, false)
+            datable_pvs.ajax.reload(null, false)
             $('#ajout_pv_modal').modal("hide");
         } catch (error) {
             const message = error.response.data;
@@ -184,213 +184,82 @@ $(document).ready(function () {
             icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
         }
     })
-    // $('body').on('submit','.save_obs', async function (e){
-    //     e.preventDefault();
-    //     $(this).find('input').blur();
-    //     let id_exgnotes = $(this).find('input').attr('id');
-    //     var formData = new FormData($(this)[0]);
-    //     $(this).parent().parent().next('tr').find('.input_obs').focus();
-    //     const request = await axios.post('/administration/note/observation_update/'+id_exgnotes, formData);
-    //     const data = await request.data;
-    // })
-    // $('body').on('click','.check_note_ins', async function (){
-    //     var formData = new FormData();
-    //     let id_exgnotes = $(this).attr('id');
-    //     if ($(this).prop('checked') == true) {
-    //         formData.append('absence',true);
-    //         const request = await axios.post('/administration/note/absence_update/'+id_exgnotes, formData);
-    //         const data = await request.data;
-    //         table_notes_epreuve.ajax.reload(null,false);
-    //     }else{
-    //         formData.append('absence',false);
-    //         const request = await axios.post('/administration/note/absence_update/'+id_exgnotes, formData);
-    //         const data = await request.data;
-    //         table_notes_epreuve.ajax.reload(null,false);
-    //     }
-    // })
-    // $("#import").on('click', async function (e){
-    //     e.preventDefault();
-    //     if(!id_epreuve){
-    //         Toast.fire({
-    //           icon: 'error',
-    //           title: 'Veuillez selection une ligne!',
-    //         })
-    //         return;
-    //     }
-    //     $('#import_en_masse').modal("show");
-    // })
-    // $('body').on('click','#epreuve_canvas', function (){
-    //     window.open('/administration/note/canvas/'+id_epreuve, '_blank');
-    // })
-    // $("#import_epreuve_save").on("submit", async function(e) {
-    //     e.preventDefault();
-    //     let formData = new FormData($(this)[0]);
-    //     let modalAlert = $("#import_en_masse .modal-body .alert")
     
-    //     modalAlert.remove();
-    //     const icon = $("#epreuve_enregistre i");
-    //     icon.removeClass('fa-check-circle').addClass("fa-spinner fa-spin");
-        
-    //     try {
-    //       const request = await axios.post('/administration/note/import/'+id_epreuve, formData);
-    //       const response = request.data;
-    //       $("#import_en_masse .modal-body").prepend(
-    //         `<div class="alert alert-success">
-    //             <p>${response}</p>
-    //           </div>`
-    //       );
-    //       icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
-    //       table_note_inscription()
-    //       table_notes_epreuve.ajax.reload(null,false);
-    //     } catch (error) {
-    //       const message = error.response.data;
-    //       console.log(error, error.response);
-    //       modalAlert.remove();
-    //       $("#import_en_masse .modal-body").prepend(
-    //         `<div class="alert alert-danger">${message}</div>`
-    //       );
-    //       icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
-          
-    //     }
-    // })
-    // // -------------------- FROM idEpreuves.JS  --------------------------------
-    // $("#cloture_epreuve").on('click', async function(e) {
-    //     e.preventDefault();
-    //     if(!id_epreuve){
-    //         Toast.fire({
-    //           icon: 'error',
-    //           title: 'Veuillez selection une ligne!',
-    //         })
-    //         return;
-    //     }
-    //     let idEpreuves = [];
-    //     idEpreuves.push(id_epreuve);
-    //     const icon = $("#cloture_epreuve i");
-    //     icon.removeClass('fa-lock').addClass("fa-spinner fa-spin");
-    //     let formData = new FormData();
-    //     formData.append("idEpreuves",  JSON.stringify(idEpreuves))
-    //     try {
-    //         const request = await axios.post('/administration/epreuve/cloture', formData);
-    //         const response = request.data;    
-    //         icon.addClass('fa-lock').removeClass("fa-spinner fa-spin");
-    //         Toast.fire({
-    //             icon: 'success',
-    //             title: response,
-    //         }) 
-    //         idEpreuves = []
-    //         table_notes_epreuve.ajax.reload(null, false);
-    //     } catch (error) {
-    //         console.log(error)
-    //         const message = error.response.data;
-    //         icon.addClass('fa-lock').removeClass("fa-spinner fa-spin");
-    //         Toast.fire({
-    //             icon: 'error',
-    //             title: message,
-    //         })
-    //     }
-    // })
-    // $('#capitaliser_etudiant').on('click', async function(e){
-    //     e.preventDefault();
-    //     if(!id_epreuve){
-    //         Toast.fire({
-    //           icon: 'error',
-    //           title: 'Veuillez selection une ligne!',
-    //         })
-    //         return;
-    //     }
-    //     let idEpreuves = [];
-    //     idEpreuves.push(id_epreuve);
-    //     const icon = $("#capitaliser_etudiant i");
-    //     icon.removeClass('fab fa-get-pocket').addClass("fa fa-spinner fa-spin");
-    //     let formData = new FormData();
-    //     formData.append('idEpreuves', JSON.stringify(idEpreuves))
-    //     try {
-    //         const request = await axios.post('/administration/epreuve/capitaliser', formData);
-    //         const response = request.data;
-    //         console.log(response)
-    //         icon.addClass('fab fa-get-pocket').removeClass("fa fa-spinner fa-spin ");
-    //         if(response.count>0) {
-    //             idEpreuves = [];
-    //             table_notes_epreuve.ajax.reload(null, false);
-    //             window.open("/"+response.fileName ,"_blank");
-    //         }else {
-    //             Toast.fire({
-    //                 icon: 'info',
-    //                 title: "Epreuves non capitaliser",
-    //             }) 
-    //         }
-    //     } catch (error) {
-    //         console.log(error)
-    //         const message = error.response.data;
-    //         Toast.fire({
-    //             icon: 'error',
-    //             title: message,
-    //         }) 
-    //         icon.addClass('fab fa-get-pocket').removeClass("fa fa-spinner fa-spin ");
-    //     }
-    // })
+    const getPvInfos = () => {
+        let modalAlert =  $("#modifier_pv_modal .modal-body .alert");
+        modalAlert.remove();
+        const icon = $("#modifier i");
+        icon.removeClass('fa-edit').addClass("fa-spinner fa-spin");
+        axios.get('/evaluation/pv/getPvInfos/'+id_pv)
+        .then(success => {
+            icon.removeClass('fa-spinner fa-spin').addClass("fa-edit");
+            // console.log(success);
+            $('#modifier_pv_modal #pv_modifier').html(success.data)
+        })
+        .catch(err => {
+            // console.log(err)
+            icon.removeClass('fa-spinner fa-spin ').addClass("fa-edit");
+        })
+    }
+    $("#modifier").on('click', async function (e){
+        e.preventDefault();
+        if(id_pv == false){
+            Toast.fire({
+              icon: 'error',
+              title: 'Veuillez selection une ligne!',
+            })
+            return;
+        }
+        getPvInfos()
+        $('#modifier_pv_modal').modal("show");
+    })
     
-    // $('#epreuve_imprimer').on('click', async function(e){
-    //     e.preventDefault();
-    //     if(!id_epreuve) {
-    //         Toast.fire({
-    //             icon: 'error',
-    //             title: 'Veuillez selection une ligne!',
-    //         })
-    //         return;
-    //     }
-    //     const icon = $("#epreuve_imprimer i");
-    //     icon.removeClass('fa-copy').addClass("fa-spinner fa-spin");
-
-    //     try {
-    //         const request = await axios.get('/administration/epreuve/checkifanonymat/'+id_epreuve);
-    //         const response = request.data;
-    //         console.log(response)
-    //         icon.addClass('fa-copy').removeClass("fa-spinner fa-spin ");
-    //         $("#imprimer_epreuve").modal("show")
-    //         $('#imprimer_epreuve .etudiant_info').html(response.html);
-    //         $('#imprimer_epreuve .epreuve_title').html(response.id);
-    //         if(response.anonymat == "oui") {
-    //             $('#imprimer_epreuve .actions').html(
-    //                 `<a href="#" class="btn btn-success mt-3" id="impression_clair">Impression Clair</a>
-    //                 <a href="#" class="btn btn-secondary mt-3" id="impression_anonymat">Impression Anonymat</a>
-    //                 <a href="#" class="btn btn-success mt-3" id="extraction_emargement">Extraction Emargement</a>`
-    //             );
-    //         } else {
-    //             $('#imprimer_epreuve .actions').html(
-    //                 `<a href="#" class="btn btn-success mt-3" id="impression_clair">Impression Clair</a>
-    //                 <a href="#" class="btn btn-success mt-3" id="extraction_emargement">Extraction Emargement</a>`
-    //             );
-    //         }
-
-    //     } catch (error) {
-    //         console.log(error)
-    //         const message = error.response.data;
-    //         Toast.fire({
-    //             icon: 'error',
-    //             title: message,
-    //         }) 
-    //         icon.addClass('fa-copy').removeClass("fa-spinner fa-spin ");
-
-    //     }
-    // })
-    // $('body').on('click', '#impression_clair', function(e){
-    //     e.preventDefault();
-    //     window.open("/administration/epreuve/impression/"+id_epreuve+"/0", '_blank');
-    // })
-    // $('body').on('click', '#impression_anonymat', function(e){
-    //     e.preventDefault();
-    //     window.open("/administration/epreuve/impression/"+id_epreuve+"/1", '_blank');
-    // })
-    // $('body').on('click', '#extraction_emargement', function(e){
-    //     e.preventDefault();
-    //     if(!id_epreuve) {
-    //         Toast.fire({
-    //             icon: 'error',
-    //             title: 'Veuillez selection une ligne!',
-    //         })
-    //         return;
-    //     }
-    //     window.open('/administration/epreuve/extraction_emargement/'+id_epreuve, '_blank');
-    // })
+    $("#pv_modifier").on("submit", async function (e){
+        e.preventDefault();
+        let modalAlert = $("#modifier_pv_modal .modal-body .alert")
+        modalAlert.remove();
+        if(id_pv == false){
+            Toast.fire({
+              icon: 'error',
+              title: 'Veuillez selection une ligne!',
+            })
+            return;
+        }
+        try {
+            const icon = $("#pv_modifier .btn i");
+            icon.removeClass('fa-check-circle').addClass("fa-spinner fa-spin");
+            let formData = new FormData($(this)[0]);
+            // formData.append('IDPv',id_pv)
+            const request = await axios.post('/evaluation/pv/modifier_pv/'+id_pv, formData);
+            const response = request.data;
+            $("#modifier_pv_modal .modal-body").prepend(
+                `<div class="alert alert-success">
+                    <p>${response}</p>
+                </div>`
+            );
+            icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
+            $("#pv_modifier")[0].reset();
+            datable_pvs.ajax.reload(null, false)
+            $('#modifier_pv_modal').modal("hide");
+        } catch (error) {
+            const message = error.response.data;
+            console.log(error, error.response);
+            modalAlert.remove();
+            $("#modifier_pv_modal .modal-body").prepend(
+                `<div class="alert alert-danger">${message}</div>`
+            );
+            icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
+        }
+    })
+    
+    $('body').on('click','#imprimer', function (){
+        if(!id_pv){
+          Toast.fire({
+            icon: 'error',
+            title: 'Veuillez selection une ligne!',
+          })
+          return;
+        }
+        window.open('/evaluation/pv/impressionPv/'+id_pv, '_blank');
+    })
 });
