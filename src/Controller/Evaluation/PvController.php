@@ -216,8 +216,7 @@ class PvController extends AbstractController
         $safeFilename = $slugger->slug($originalFilename);
         $annee = $pv->getAnnee();
         $etab = $annee->getFormation()->getEtablissement()->getAbreviation();
-        $newFilename = "PV_".$etab."_".$pv->getSemestre()->getDesignation()."_".$annee->getdesignation().'-'.uniqid().'_'.$this->getUser()->getUserIdentifier().'.'.$file->guessExtension();
-        // $newFilename = $safeFilename.'-'.uniqid().'_'.$this->getUser()->getUserIdentifier().'.'.$file->guessExtension();
+        $newFilename = "PV_".$etab."_".$pv->getSemestre()->getDesignation()."_".str_replace("/", "-", $annee->getDesignation())."_".uniqid()."_".$pv->getId()."_".$this->getUser()->getUserIdentifier().'.'.$file->guessExtension();
 
         // Move the file to the directory where brochures are stored
         try {
@@ -230,13 +229,7 @@ class PvController extends AbstractController
         }
         $pv->setDocAsso($newFilename);
         $this->em->flush();
-        return new JsonResponse("PV est bien Importer",200);
-        // $path = $newFilename;
-        // dd($newFilename);
-        // return new JsonResponse([
-        //     // 'inserted' => $inserted,
-        //     // 'existed' => $exist
-        // ]);
+        return new JsonResponse("Le PV est bien Importer",200);
     }
 
 }

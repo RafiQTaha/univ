@@ -600,17 +600,24 @@ class EpreuveController extends AbstractController
                 }
                 
                 if ($natureEpreuveNormal != "") {
-                    $EpreuveNormals = $this->em->getRepository(AcEpreuve::class)->findBy([
-                        'element'=>$epreuve->getElement(),
-                        'annee'=>$epreuve->getAnnee(),
-                        'natureEpreuve' => $natureEpreuveNormal,
-                    ]);
+                    if ($natureEpreuveNormal == 2) {
+                        $EpreuveNormals = $this->em->getRepository(AcEpreuve::class)->findBy([
+                            'element'=>$epreuve->getElement(),
+                            'annee'=>$epreuve->getAnnee(),
+                            'natureEpreuve' => $natureEpreuveNormal,
+                            'nature' => 'Journal de bord',
+                        ]);
+                    }else {
+                        $EpreuveNormals = $this->em->getRepository(AcEpreuve::class)->findBy([
+                            'element'=>$epreuve->getElement(),
+                            'annee'=>$epreuve->getAnnee(),
+                            'natureEpreuve' => $natureEpreuveNormal,
+                        ]);
+                    }
                     $moy = $epreuve->getAnnee()->getFormation()->getEtablissement()->getId() == 26 ? 12 : 10;
                     foreach($inscriptions as $inscription) {
                         // $moyen = false;
-                        if ($EpreuveNormals == 2) {
-                            $moyen = $this->em->getRepository(ExGnotes::class)->findOneBy(['inscription'=>$inscription,'epreuve'=>$EpreuveNormals[0],'nature'=>'Journal de bord'])->getNote();
-                        }elseif (count($EpreuveNormals) == 1) {
+                        if (count($EpreuveNormals) == 1) {
                             $moyen = $this->em->getRepository(ExGnotes::class)->findOneBy(['inscription'=>$inscription,'epreuve'=>$EpreuveNormals[0]])->getNote();
                         }elseif (count($EpreuveNormals) == 2) {
                             $moyen = 0;
@@ -634,6 +641,7 @@ class EpreuveController extends AbstractController
                     $epreuve->setStatut(
                         $this->em->getRepository(PStatut::class)->find(29)
                     );
+                    // dd('nop');
                     $this->em->flush();
                     ApiController::mouchard($this->getUser(), $this->em,$epreuve, 'AcEpreuve', 'Affiliation Epreuve Ratt');
                     $writer = new Xlsx($spreadsheet);

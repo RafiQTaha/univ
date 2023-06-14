@@ -414,4 +414,31 @@ $(document).ready(function () {
             icon.addClass("fa-check-circle").removeClass("fa-spinner fa-spin ");
         }
     });
+    
+    // $('body').on('click','#imprimer_diplome', async function (){
+    //     if(!id_sanction){
+    //       Toast.fire({
+    //         icon: 'error',
+    //         title: 'Veuillez selection un etudiant!',
+    //       })
+    //       return;
+    //     }
+        
+    //     const icon = $("#etat_notification i");
+    //     icon.removeClass('fa-print').addClass("fa-spinner fa-spin");
+    //     try {
+    //         const request = await axios.post('/conseil/disciplinaire/verification_notification/'+id_sanction);
+    //         const response = request.data;
+    //         icon.addClass('fa-print').removeClass("fa-spinner fa-spin ");
+    //         window.open('/conseil/disciplinaire/etatNotification/'+id_sanction, '_blank');
+    //       } catch (error) {
+    //         const message = error.response.data;
+    //         console.log(error, error.response);
+    //         Toast.fire({
+    //           icon: 'error',
+    //           title: message,
+    //         })
+    //         icon.addClass('fa-print').removeClass("fa-spinner fa-spin ");
+    //       }
+    // })
 });
