@@ -12,10 +12,13 @@ use App\Entity\Pv;
 use Doctrine\Persistence\ManagerRegistry;
 use Mpdf\Mpdf;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\CssSelector\Parser\Reader;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\String\Slugger\SluggerInterface;
 
 #[Route('/evaluation/pv')]
 class PvController extends AbstractController
@@ -128,35 +131,33 @@ class PvController extends AbstractController
         return new Response(json_encode($json_data));
     }
     
-    #[Route('/modifier_pv/{id_pv}', name: 'modifier_pv')]
-    public function modifier_pv(Request $request,Pv $id_pv)
+    #[Route('/getPvInfos/{pv}', name: 'getPvInfos')]
+    public function getPvInfos(Pv $pv)
+    {  
+        $html = $this->render('evaluation/pv/pages/update_pv.html.twig', [
+            'pv' => $pv,
+        ])->getContent();
+        // dd($html);
+        return new JsonResponse($html, 200); 
+    }
+
+    #[Route('/modifier_pv/{pv}', name: 'modifier_pv')]
+    public function modifier_pv(Request $request,Pv $pv)
     {
         if ($request->get('president') == "") {
             return new JsonResponse("Merci de remplir tout les champs!",500);
         }
-
-        // $existPv = $this->em->getRepository(Pv::class)->findOneBy([
-        //     'annee'=> $request->get('annee'),
-        //     'semestre'=> $request->get('semestre')
-        // ]);
-        // if ($existPv) {
-        //     return new JsonResponse("ce PV est déja cree sous le Code: ".$existPv->getCode(),500);
-        // }
-        dd($existPv);
-        $pv = new Pv();
-        $pv->setAnnee($this->em->getRepository(AcAnnee::class)->find($request->get('annee')));
-        $pv->setSemestre($this->em->getRepository(AcSemestre::class)->find($request->get('semestre')));
+        if ($pv->getDocAsso() != null) {
+            return new JsonResponse("Vous avez déja importé le Pv. Vous ne pouvez pas le modifier!",500);
+        }
         $pv->setCoordonnateur($request->get('coordonnateur'));
         $pv->setPresident($request->get('president'));
         $pv->setMembres($request->get('membres'));
-        $pv->setUserCreated($this->getUser());
-        $pv->setCreated(new \DateTime('now'));
-        $pv->setActive(1);
+        $pv->setUserUpdated($this->getUser());
+        $pv->setUpdated(new \DateTime('now'));
         $this->em->persist($pv);
         $this->em->flush();
-        $pv->setCode('PV-'.$pv->getAnnee()->getFormation()->getEtablissement()->getAbreviation().'_'.str_pad($pv->getId(), 6, '0', STR_PAD_LEFT).'/'.date('Y'));
-        $this->em->flush();
-        return new JsonResponse("PV bien cree",200);
+        return new JsonResponse("PV bien modifier",200);
     }
 
     
@@ -197,6 +198,45 @@ class PvController extends AbstractController
         $mpdf->Output("Pv de Délibération ".$pv->getAnnee()->getFormation()->getEtablissement()->getAbreviation()." ".$pv->getSemestre()->getDesignation().".pdf", "I");
     }
 
+    
 
+  
+    #[Route('/importPv/{pv}', name: 'importPv')]
+    public function importPv(Request $request, SluggerInterface $slugger,Pv $pv) {
+        $file = $request->files->get('file');
+        if(!$file){
+            return new JsonResponse('Prière d\'importer le fichier', 500);
+        }
+        if($file->guessExtension() !== 'pdf'){
+            return new JsonResponse('Prière d\'enregister un fichier pdf', 500);            
+        }
+
+        $originalFilename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+        // this is needed to safely include the file name as part of the URL
+        $safeFilename = $slugger->slug($originalFilename);
+        $annee = $pv->getAnnee();
+        $etab = $annee->getFormation()->getEtablissement()->getAbreviation();
+        $newFilename = "PV_".$etab."_".$pv->getSemestre()->getDesignation()."_".$annee->getdesignation().'-'.uniqid().'_'.$this->getUser()->getUserIdentifier().'.'.$file->guessExtension();
+        // $newFilename = $safeFilename.'-'.uniqid().'_'.$this->getUser()->getUserIdentifier().'.'.$file->guessExtension();
+
+        // Move the file to the directory where brochures are stored
+        try {
+            $file->move(
+                $this->getParameter('pv'),
+                $newFilename
+            );
+        } catch (FileException $e) {
+            return new JsonResponse($e, 500);
+        }
+        $pv->setDocAsso($newFilename);
+        $this->em->flush();
+        return new JsonResponse("PV est bien Importer",200);
+        // $path = $newFilename;
+        // dd($newFilename);
+        // return new JsonResponse([
+        //     // 'inserted' => $inserted,
+        //     // 'existed' => $exist
+        // ]);
+    }
 
 }

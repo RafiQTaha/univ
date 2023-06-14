@@ -1,11 +1,11 @@
 
 <label for="coordonnateur">Coordonnateur :</label>
-<input type="text" name="coordonnateur" id="coordonnateur" class="form-control" placeholder="Coordonnateur" value="">
+<input type="text" name="coordonnateur" id="coordonnateur" class="form-control" placeholder="Coordonnateur" value="{{pv.coordonnateur}}">
 
 <label for="president">President du Jury de Semestre :</label>
-<input type="text" name="president" id="president" class="form-control" placeholder="President du Jury de Semestre" value="">
+<input type="text" name="president" id="president" class="form-control" placeholder="President du Jury de Semestre" value="{{pv.president}}">
 
 <label for="membres">Membres du Jury : </label>
-<textarea name="membres" id="membres" cols="30" rows="10"  class="form-control"></textarea>
+<textarea name="membres" id="membres" cols="30" rows="10"  class="form-control">{{pv.membres}}</textarea>
 
 <button type="submit" class="btn btn-success mt-4"><i class="fas fa-check-circle"></i> Enregister</button>

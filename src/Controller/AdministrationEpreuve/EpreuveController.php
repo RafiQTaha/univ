@@ -608,7 +608,9 @@ class EpreuveController extends AbstractController
                     $moy = $epreuve->getAnnee()->getFormation()->getEtablissement()->getId() == 26 ? 12 : 10;
                     foreach($inscriptions as $inscription) {
                         // $moyen = false;
-                        if (count($EpreuveNormals) == 1) {
+                        if ($EpreuveNormals == 2) {
+                            $moyen = $this->em->getRepository(ExGnotes::class)->findOneBy(['inscription'=>$inscription,'epreuve'=>$EpreuveNormals[0],'nature'=>'Journal de bord'])->getNote();
+                        }elseif (count($EpreuveNormals) == 1) {
                             $moyen = $this->em->getRepository(ExGnotes::class)->findOneBy(['inscription'=>$inscription,'epreuve'=>$EpreuveNormals[0]])->getNote();
                         }elseif (count($EpreuveNormals) == 2) {
                             $moyen = 0;

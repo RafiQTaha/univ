@@ -12,6 +12,7 @@ parameters:
     honoraire_export_directory: '%kernel.project_dir%/public/uploads/honoraire'
     inscription_groupes_directory: '%kernel.project_dir%/public/uploads/inscription_groupes'
     inscriptions_affiliation_directory: '%kernel.project_dir%/public/uploads/inscription_groupes'
+    pv: '%kernel.project_dir%/public/uploads/pv'
 
     
 

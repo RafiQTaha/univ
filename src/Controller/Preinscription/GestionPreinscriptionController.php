@@ -621,7 +621,7 @@ class GestionPreinscriptionController extends AbstractController
         // $sheet->setCellValue('AC1', 'U-REGLEMENT');
         $i=2;
         $j=1;
-        $current_year = date('m') > 7 ? $current_year = date('Y').'/'.date('Y')+1 : $current_year = date('Y') - 1 .'/' .date('Y');
+        $current_year = date('m') >= 6 ? $current_year = date('Y').'/'.date('Y')+1 : $current_year = date('Y') - 1 .'/' .date('Y');
         // $current_year = "2022/2023";
         $preinscriptions = $this->em->getRepository(TPreinscription::class)->getPreinsByCurrentYear($current_year);
         foreach ($preinscriptions as $preinscription) {
