@@ -625,34 +625,34 @@ class GestionPreinscriptionController extends AbstractController
         // $current_year = "2022/2023";
         $preinscriptions = $this->em->getRepository(TPreinscription::class)->getPreinsByCurrentYear($current_year);
         foreach ($preinscriptions as $preinscription) {
-            $etudiant = $preinscription->getEtudiant();
-            $natutre = $etudiant->getNatureDemande();
-            $annee = $preinscription->getAnnee();
-            $formation = $annee->getFormation();
-            $sheet->setCellValue('A'.$i, $j);
-            $sheet->setCellValue('B'.$i, $preinscription->getEtudiant()->getCode());
-            $sheet->setCellValue('C'.$i, $preinscription->getCode());
-            $sheet->setCellValue('D'.$i, $preinscription->getEtudiant()->getNom());
-            $sheet->setCellValue('E'.$i, $preinscription->getEtudiant()->getPrenom());
-            $sheet->setCellValue('F'.$i, $preinscription->getEtudiant()->getDateNaissance());
-            $sheet->setCellValue('G'.$i, $preinscription->getEtudiant()->getCin());
-            $sheet->setCellValue('H'.$i, $preinscription->getEtudiant()->getTel1());
-            $sheet->setCellValue('I'.$i, $preinscription->getEtudiant()->getMail1());
-            $sheet->setCellValue('J'.$i, $formation->getEtablissement()->getDesignation());
-            $sheet->setCellValue('K'.$i, $formation->getDesignation());
-            $sheet->setCellValue('L'.$i, $preinscription->getEtudiant()->getCategoriePreinscription());
-            if ($etudiant->getNatureDemande()) {
-                $sheet->setCellValue('M'.$i, $preinscription->getNature()->getDesignation());
-            }
-            $sheet->setCellValue('N'.$i, $etudiant->getTypeBac() == Null ? "" : $etudiant->getTypeBac()->getDesignation());
-            $sheet->setCellValue('O'.$i, $etudiant->getAnneeBac());
-            $sheet->setCellValue('P'.$i, $etudiant->getMoyenneBac());
-            // $spreadsheet->getActiveSheet()->getStyle('P'.$i)->getFill()
-            // ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('ff0000');
-            $sheet->setCellValue('Q'.$i, $etudiant->getMoyenNational());
-            $sheet->setCellValue('R'.$i, $etudiant->getMoyenRegional());
-            $facture = $this->em->getRepository(TOperationcab::class)->findOneBy(['categorie'=>'pré-inscription','preinscription'=>$preinscription]);
-            if ($facture) {
+            $factures = $this->em->getRepository(TOperationcab::class)->findBy(['categorie'=>'pré-inscription','preinscription'=>$preinscription]);
+            foreach ($factures as $facture) {
+                $etudiant = $preinscription->getEtudiant();
+                $natutre = $etudiant->getNatureDemande();
+                $annee = $preinscription->getAnnee();
+                $formation = $annee->getFormation();
+                $sheet->setCellValue('A'.$i, $j);
+                $sheet->setCellValue('B'.$i, $preinscription->getEtudiant()->getCode());
+                $sheet->setCellValue('C'.$i, $preinscription->getCode());
+                $sheet->setCellValue('D'.$i, $preinscription->getEtudiant()->getNom());
+                $sheet->setCellValue('E'.$i, $preinscription->getEtudiant()->getPrenom());
+                $sheet->setCellValue('F'.$i, $preinscription->getEtudiant()->getDateNaissance());
+                $sheet->setCellValue('G'.$i, $preinscription->getEtudiant()->getCin());
+                $sheet->setCellValue('H'.$i, $preinscription->getEtudiant()->getTel1());
+                $sheet->setCellValue('I'.$i, $preinscription->getEtudiant()->getMail1());
+                $sheet->setCellValue('J'.$i, $formation->getEtablissement()->getDesignation());
+                $sheet->setCellValue('K'.$i, $formation->getDesignation());
+                $sheet->setCellValue('L'.$i, $preinscription->getEtudiant()->getCategoriePreinscription());
+                if ($etudiant->getNatureDemande()) {
+                    $sheet->setCellValue('M'.$i, $preinscription->getNature()->getDesignation());
+                }
+                $sheet->setCellValue('N'.$i, $etudiant->getTypeBac() == Null ? "" : $etudiant->getTypeBac()->getDesignation());
+                $sheet->setCellValue('O'.$i, $etudiant->getAnneeBac());
+                $sheet->setCellValue('P'.$i, $etudiant->getMoyenneBac());
+                // $spreadsheet->getActiveSheet()->getStyle('P'.$i)->getFill()
+                // ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('ff0000');
+                $sheet->setCellValue('Q'.$i, $etudiant->getMoyenNational());
+                $sheet->setCellValue('R'.$i, $etudiant->getMoyenRegional());
                 $sheet->setCellValue('S'.$i, $facture->getCode());
                 $sommefacture = $this->em->getRepository(TOperationdet::class)->getSumMontantByCodeFacture($facture);
                 $sommefacture = $sommefacture == Null ? 0 : $sommefacture['total'];
@@ -672,9 +672,30 @@ class GestionPreinscriptionController extends AbstractController
                     $sheet->setCellValue('Z'.$i, $reglement->getCreated());
                     $sheet->setCellValue('AA'.$i, $reglement->getDateReglement());
                 }
+                $i++;
+                $j++;
             }
-            $i++;
-            $j++;
+            // if ($facture) {
+            //     $sheet->setCellValue('S'.$i, $facture->getCode());
+            //     $sommefacture = $this->em->getRepository(TOperationdet::class)->getSumMontantByCodeFacture($facture);
+            //     $sommefacture = $sommefacture == Null ? 0 : $sommefacture['total'];
+            //     $sheet->setCellValue('T'.$i, $sommefacture);
+            //     $sommereglement = $this->em->getRepository(TReglement::class)->getSumMontantByCodeFacture($facture);
+            //     $sommereglement = $sommereglement == Null ? 0 : $sommereglement['total'];
+            //     $sheet->setCellValue('U'.$i, $sommereglement);
+            //     $reste = $sommefacture - $sommereglement;
+            //     $sheet->setCellValue('V'.$i, $reste);
+            //     $reglement = $this->em->getRepository(TReglement::class)->findOneBy(['operation'=>$facture],['id'=>'DESC']);
+            //     if ($reglement) {
+            //         $sheet->setCellValue('W'.$i, $reglement->getPaiement()->getDesignation());
+            //         $sheet->setCellValue('X'.$i, $reglement->getCode());
+            //     }
+            //     $sheet->setCellValue('Y'.$i, $facture->getCreated());
+            //     if ($reglement) {
+            //         $sheet->setCellValue('Z'.$i, $reglement->getCreated());
+            //         $sheet->setCellValue('AA'.$i, $reglement->getDateReglement());
+            //     }
+            // }
         }
         $writer = new Xlsx($spreadsheet);
         $fileName = 'Extraction Preinscription.xlsx';
