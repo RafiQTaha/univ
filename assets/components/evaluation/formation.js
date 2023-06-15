@@ -23,7 +23,7 @@ $(document).ready(function () {
 
     typeSearch = 'all';
     console.log(typeSearch);
-
+    $("#notes").removeClass("btn-secondary").addClass("btn-info").attr("disabled", false);
     const enableButtons = () => {
         if (check == 1) {
             $("#enregistrer").removeClass("btn-secondary").addClass("btn-info").attr("disabled", false);
@@ -131,7 +131,7 @@ $(document).ready(function () {
             });
         }
     });
-
+    var id_admission = "";
     // get etudiant notes
     const getEtudiantNotes = async () => {
         $('#editNotes #candidat_notes').html('');
@@ -150,10 +150,26 @@ $(document).ready(function () {
 
     // pop up triggre after double click tr
     $("body").on("dblclick", "#list_etu tbody tr", function () {
-        // alert('hi');
-        id_admission = $(this).attr('id');
-        getEtudiantNotes();
-        $('#editNotes').modal('show');
+        if (id_admission) {
+            $("#" + id_admission).removeClass('active_databales');
+            id_admission = "";
+        }else{
+            id_admission = $(this).attr("id");
+            $(this).addClass('active_databales');
+        }
+        
+    });
+
+    $("#notes").on("click", async function (e) {
+        if (id_admission == "") {
+            Toast.fire({
+                icon: "error",
+                title: "Veuillez selectionner un etudiant!",
+            });
+        }else{
+            getEtudiantNotes();
+            $('#editNotes').modal('show');
+        }
     });
 
     // Insertion des notes or modification
@@ -183,6 +199,7 @@ $(document).ready(function () {
                 });
                 check = response.check;
                 enableButtons();
+                $("#recherche").trigger("click");
             } catch (error) {
                 console.log(error);
                 icon.addClass("fa-times").removeClass("fa-spinner fa-spin");
