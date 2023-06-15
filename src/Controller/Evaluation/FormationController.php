@@ -23,6 +23,7 @@ use App\Entity\TInscription;
 use App\Entity\AcEtablissement;
 use App\Controller\ApiController;
 use App\Entity\AnoteExterne;
+use App\Entity\TEtudiant;
 use Doctrine\Persistence\ManagerRegistry;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
@@ -59,6 +60,7 @@ class FormationController extends AbstractController
     public function evaluationFormationList(Request $request, AcAnnee $annee): Response
     {   
 
+        // dd($this->em->getRepository(TEtudiant::class)->find(10721));
         $typeSearch = $request->get("typeSearch");
 
         $dataInfosGenerales = $this->em->getRepository(AcAnnee::class)->getInfosGenerales($annee);
@@ -69,7 +71,7 @@ class FormationController extends AbstractController
         
         $promotion = $this->em->getRepository(AcPromotion::class)->findOneBy(['formation'=>$annee->getFormation(),'ordre'=>$nbr_annee]);
         $inscriptions = $this->em->getRepository(TInscription::class)->findBy(['annee'=>$annee,'promotion'=>$promotion,'statut'=>13]);
-
+        $lastYear = $annee->getId();
        
         $array_etudiants = [];
         $array_informations = [];
@@ -85,6 +87,7 @@ class FormationController extends AbstractController
             foreach ($admissions as $admission) {
                 // if($admission->getCode() == 'ADM-FMA_MG00000238'){
                     $etudiant = $admission->getPreinscription()->getEtudiant();
+                    // dd($etudiant);
                     $array_informations['etudiantInfo'] = $etudiant;
                     $array_informations['admission'] = $admission;
                     $moyenne = 0;
@@ -101,7 +104,7 @@ class FormationController extends AbstractController
                         if(!$anote){
                             array_push($array_notes , 'Actuellement');
                         }else{
-                            $lastYear = $annee->getId();
+                            
                             if($anote->getStatutAff()->getId() != 44){
                                 $moyenne =($moyenne + $anote->getNote());
                                 $moyenneSec =($moyenneSec + $anote->getNoteSec());
