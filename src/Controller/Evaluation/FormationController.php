@@ -501,7 +501,7 @@ class FormationController extends AbstractController
                 ])->getContent();   //dd($etudiant);
             }
         }
-        $info_etudiant = [ 'candidats_notes' => $candidats_notes];
+        $info_etudiant = ['candidats_notes' => $candidats_notes];
         return new JsonResponse($info_etudiant);
     }
 
@@ -661,5 +661,34 @@ class FormationController extends AbstractController
             }
         }
         dd('done');  
+    }
+
+    
+    #[Route('/impressionDiplome/{admission}', name: 'impressionDiplome')]
+    public function impressionDiplome(TAdmission $admission)
+    {
+        // dd($pv);
+        // dd($admission);
+        $html = $this->render("evaluation/formation/pdfs/diplome.html.twig", [
+            'admission' => $admission,
+        ])->getContent();
+        $mpdf = new Mpdf([
+            'mode' => 'utf-8', 
+            'format' => 'A4-L',
+            'margin_top' => 0,
+            'margin_left' => 5,
+            'margin_right' => 5,
+            // 'default_font' => 'dejavusans'
+        ]);
+        // $mpdf->SetFont('Arial');
+        $mpdf->SetFont('ArialMT', '', 14);
+        $mpdf->autoScriptToLang = true;
+        $mpdf->autoLangToFont = true;
+        // $mpdf->SetHTMLFooter(
+        //     $this->render("evaluation/formation/pdf/footer.html.twig")->getContent()
+        // );
+        $mpdf->WriteHTML($html);
+        $mpdf->SetTitle("Diplome");
+        $mpdf->Output("Diplome ".$admission->getCode().".pdf", "I");
     }
 }
