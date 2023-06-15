@@ -159,7 +159,6 @@ class PvController extends AbstractController
         $this->em->flush();
         return new JsonResponse("PV bien modifier",200);
     }
-
     
     #[Route('/impressionPv/{pv}', name: 'impressionPv')]
     public function impressionPv(Pv $pv)
@@ -198,9 +197,6 @@ class PvController extends AbstractController
         $mpdf->Output("Pv de Délibération ".$pv->getAnnee()->getFormation()->getEtablissement()->getAbreviation()." ".$pv->getSemestre()->getDesignation().".pdf", "I");
     }
 
-    
-
-  
     #[Route('/importPv/{pv}', name: 'importPv')]
     public function importPv(Request $request, SluggerInterface $slugger,Pv $pv) {
         $file = $request->files->get('file');

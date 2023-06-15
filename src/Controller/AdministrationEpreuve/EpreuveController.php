@@ -606,14 +606,17 @@ class EpreuveController extends AbstractController
                             'annee'=>$epreuve->getAnnee(),
                             'natureEpreuve' => $natureEpreuveNormal,
                             'nature' => 'Journal de bord',
+                            'statut' => 30
                         ]);
                     }else {
                         $EpreuveNormals = $this->em->getRepository(AcEpreuve::class)->findBy([
                             'element'=>$epreuve->getElement(),
                             'annee'=>$epreuve->getAnnee(),
                             'natureEpreuve' => $natureEpreuveNormal,
+                            'statut' => 30
                         ]);
                     }
+                    // dd($EpreuveNormals);
                     $moy = $epreuve->getAnnee()->getFormation()->getEtablissement()->getId() == 26 ? 12 : 10;
                     foreach($inscriptions as $inscription) {
                         // $moyen = false;
@@ -637,6 +640,9 @@ class EpreuveController extends AbstractController
                             $sheet->setCellValue('B'.$i, $inscription->getId());
                             $i++;
                         }
+                        // if ($inscription->getId() == 16326) {
+                        //     dd( $moyen,$moy);
+                        // }
                     }
                     $epreuve->setStatut(
                         $this->em->getRepository(PStatut::class)->find(29)
