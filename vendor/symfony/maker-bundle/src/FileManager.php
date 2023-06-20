@@ -15,6 +15,7 @@ use Symfony\Bundle\MakerBundle\Util\AutoloaderUtil;
 use Symfony\Bundle\MakerBundle\Util\MakerFileLinkFormatter;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Finder\Finder;
 
 /**
  * @author Javier Eguiluz <javier.eguiluz@gmail.com>
@@ -24,15 +25,26 @@ use Symfony\Component\Filesystem\Filesystem;
  */
 class FileManager
 {
-    private ?SymfonyStyle $io = null;
+    private $fs;
+    private $autoloaderUtil;
+    private $makerFileLinkFormatter;
+    private $rootDirectory;
+    /** @var SymfonyStyle */
+    private $io;
+    private $twigDefaultPath;
 
     public function __construct(
-        private Filesystem $fs,
-        private AutoloaderUtil $autoloaderUtil,
-        private MakerFileLinkFormatter $makerFileLinkFormatter,
-        private string $rootDirectory,
-        private ?string $twigDefaultPath = null,
+        Filesystem $fs,
+        AutoloaderUtil $autoloaderUtil,
+        MakerFileLinkFormatter $makerFileLinkFormatter,
+        string $rootDirectory,
+        string $twigDefaultPath = null
     ) {
+        // move FileManagerTest stuff
+        // update EntityRegeneratorTest to mock the autoloader
+        $this->fs = $fs;
+        $this->autoloaderUtil = $autoloaderUtil;
+        $this->makerFileLinkFormatter = $makerFileLinkFormatter;
         $this->rootDirectory = rtrim($this->realPath($this->normalizeSlashes($rootDirectory)), '/');
         $this->twigDefaultPath = $twigDefaultPath ? rtrim($this->relativizePath($twigDefaultPath), '/') : null;
     }
@@ -65,11 +77,13 @@ class FileManager
         $this->fs->dumpFile($absolutePath, $content);
         $relativePath = $this->relativizePath($filename);
 
-        $this->io?->comment(sprintf(
-            '%s: %s',
-            $comment,
-            $this->makerFileLinkFormatter->makeLinkedPath($absolutePath, $relativePath)
-        ));
+        if ($this->io) {
+            $this->io->comment(sprintf(
+                '%s: %s',
+                $comment,
+                $this->makerFileLinkFormatter->makeLinkedPath($absolutePath, $relativePath)
+            ));
+        }
     }
 
     public function fileExists($path): bool
@@ -80,14 +94,16 @@ class FileManager
     /**
      * Attempts to make the path relative to the root directory.
      *
+     * @param string $absolutePath
+     *
      * @throws \Exception
      */
-    public function relativizePath(string $absolutePath): string
+    public function relativizePath($absolutePath): string
     {
         $absolutePath = $this->normalizeSlashes($absolutePath);
 
         // see if the path is even in the root
-        if (!str_contains($absolutePath, $this->rootDirectory)) {
+        if (false === strpos($absolutePath, $this->rootDirectory)) {
             return $absolutePath;
         }
 
@@ -95,7 +111,7 @@ class FileManager
 
         // str_replace but only the first occurrence
         $relativePath = ltrim(implode('', explode($this->rootDirectory, $absolutePath, 2)), '/');
-        if (str_starts_with($relativePath, './')) {
+        if (0 === strpos($relativePath, './')) {
             $relativePath = substr($relativePath, 2);
         }
 
@@ -111,17 +127,22 @@ class FileManager
         return file_get_contents($this->absolutizePath($path));
     }
 
+    public function createFinder(string $in): Finder
+    {
+        $finder = new Finder();
+        $finder->in($this->absolutizePath($in));
+
+        return $finder;
+    }
+
     public function isPathInVendor(string $path): bool
     {
-        return str_starts_with(
-            $this->normalizeSlashes($path),
-            $this->normalizeSlashes($this->rootDirectory.'/vendor/')
-        );
+        return 0 === strpos($this->normalizeSlashes($path), $this->normalizeSlashes($this->rootDirectory.'/vendor/'));
     }
 
     public function absolutizePath($path): string
     {
-        if (str_starts_with($path, '/')) {
+        if (0 === strpos($path, '/')) {
             return $path;
         }
 
@@ -169,8 +190,10 @@ class FileManager
 
     /**
      * Resolve '../' in paths (like real_path), but for non-existent files.
+     *
+     * @param string $absolutePath
      */
-    private function realPath(string $absolutePath): string
+    private function realPath($absolutePath): string
     {
         $finalParts = [];
         $currentIndex = -1;
@@ -196,10 +219,12 @@ class FileManager
         $finalPath = implode('/', $finalParts);
         // Normalize: // => /
         // Normalize: /./ => /
-        return str_replace(['//', '/./'], '/', $finalPath);
+        $finalPath = str_replace(['//', '/./'], '/', $finalPath);
+
+        return $finalPath;
     }
 
-    private function normalizeSlashes(string $path): string
+    private function normalizeSlashes(string $path)
     {
         return str_replace('\\', '/', $path);
     }

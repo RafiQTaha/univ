@@ -824,7 +824,7 @@ return [
         ],
         'QAR' => [
             0 => 'QAR',
-            1 => 'Qatari Riyal',
+            1 => 'Qatari Rial',
         ],
         'RHD' => [
             0 => 'RHD',
@@ -900,11 +900,11 @@ return [
         ],
         'SLE' => [
             0 => 'SLE',
-            1 => 'Sierra Leonean Leone',
+            1 => 'Sierra Leonean New Leone',
         ],
         'SLL' => [
             0 => 'SLL',
-            1 => 'Sierra Leonean Leone (1964—2022)',
+            1 => 'Sierra Leonean Leone',
         ],
         'SOS' => [
             0 => 'SOS',

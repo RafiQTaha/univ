@@ -11,7 +11,7 @@ use Doctrine\ORM\PersistentCollection;
 class ReadOnlyCachedCollectionPersister extends NonStrictReadWriteCachedCollectionPersister
 {
      /**
-      * {@inheritDoc}
+      * {@inheritdoc}
       */
     public function update(PersistentCollection $collection)
     {

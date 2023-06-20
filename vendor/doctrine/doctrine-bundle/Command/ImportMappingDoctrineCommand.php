@@ -31,7 +31,7 @@ use function str_replace;
 class ImportMappingDoctrineCommand extends DoctrineCommand
 {
     /** @var string[] */
-    private array $bundles;
+    private $bundles;
 
     /** @param string[] $bundles */
     public function __construct(ManagerRegistry $doctrine, array $bundles)
@@ -48,6 +48,7 @@ class ImportMappingDoctrineCommand extends DoctrineCommand
             ->addArgument('name', InputArgument::REQUIRED, 'The bundle or namespace to import the mapping information to')
             ->addArgument('mapping-type', InputArgument::OPTIONAL, 'The mapping type to export the imported mapping information to')
             ->addOption('em', null, InputOption::VALUE_OPTIONAL, 'The entity manager to use for this command')
+            ->addOption('shard', null, InputOption::VALUE_REQUIRED, 'The shard connection to use for this command')
             ->addOption('filter', null, InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'A string pattern used to match entities that should be mapped.')
             ->addOption('force', null, InputOption::VALUE_NONE, 'Force to overwrite existing mapping files.')
             ->addOption('path', null, InputOption::VALUE_REQUIRED, 'The path where the files would be generated (not used when a bundle is passed).')
@@ -119,7 +120,7 @@ EOT
             $exporter->setEntityGenerator($entityGenerator);
         }
 
-        $em = $this->getEntityManager($input->getOption('em'));
+        $em = $this->getEntityManager($input->getOption('em'), $input->getOption('shard'));
 
         $databaseDriver = new DatabaseDriver($em->getConnection()->getSchemaManager());
         $em->getConfiguration()->setMetadataDriverImpl($databaseDriver);

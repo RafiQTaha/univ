@@ -31,7 +31,7 @@ class Literal extends Node
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function dispatch($walker)
     {

@@ -13,19 +13,16 @@ use Doctrine\Common\Annotations\Annotation\NamedArgumentConstructor;
  * @Target("PROPERTY")
  */
 #[Attribute(Attribute::TARGET_PROPERTY)]
-final class GeneratedValue implements MappingAttribute
+final class GeneratedValue implements Annotation
 {
     /**
-     * The type of ID generator.
+     * The type of Id generator.
      *
      * @var string
-     * @psalm-var 'AUTO'|'SEQUENCE'|'IDENTITY'|'NONE'|'CUSTOM'
-     * @readonly
      * @Enum({"AUTO", "SEQUENCE", "TABLE", "IDENTITY", "NONE", "UUID", "CUSTOM"})
      */
     public $strategy = 'AUTO';
 
-    /** @psalm-param 'AUTO'|'SEQUENCE'|'IDENTITY'|'NONE'|'CUSTOM' $strategy */
     public function __construct(string $strategy = 'AUTO')
     {
         $this->strategy = $strategy;

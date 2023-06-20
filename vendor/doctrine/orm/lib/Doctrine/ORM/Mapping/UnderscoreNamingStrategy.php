@@ -53,7 +53,9 @@ class UnderscoreNamingStrategy implements NamingStrategy
         $this->pattern = $numberAware ? self::NUMBER_AWARE_PATTERN : self::DEFAULT_PATTERN;
     }
 
-    /** @return int CASE_LOWER | CASE_UPPER */
+    /**
+     * @return int CASE_LOWER | CASE_UPPER
+     */
     public function getCase()
     {
         return $this->case;
@@ -73,7 +75,7 @@ class UnderscoreNamingStrategy implements NamingStrategy
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function classToTableName($className)
     {
@@ -85,7 +87,7 @@ class UnderscoreNamingStrategy implements NamingStrategy
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function propertyToColumnName($propertyName, $className = null)
     {
@@ -93,7 +95,7 @@ class UnderscoreNamingStrategy implements NamingStrategy
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function embeddedFieldToColumnName($propertyName, $embeddedColumnName, $className = null, $embeddedClassName = null)
     {
@@ -101,7 +103,7 @@ class UnderscoreNamingStrategy implements NamingStrategy
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function referenceColumnName()
     {
@@ -109,10 +111,7 @@ class UnderscoreNamingStrategy implements NamingStrategy
     }
 
     /**
-     * {@inheritDoc}
-     *
-     * @param string       $propertyName
-     * @param class-string $className
+     * {@inheritdoc}
      */
     public function joinColumnName($propertyName, $className = null)
     {
@@ -120,7 +119,7 @@ class UnderscoreNamingStrategy implements NamingStrategy
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function joinTableName($sourceEntity, $targetEntity, $propertyName = null)
     {
@@ -128,7 +127,7 @@ class UnderscoreNamingStrategy implements NamingStrategy
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function joinKeyColumnName($entityName, $referencedColumnName = null)
     {

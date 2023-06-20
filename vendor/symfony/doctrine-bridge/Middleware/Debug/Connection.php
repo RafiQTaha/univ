@@ -24,15 +24,18 @@ use Symfony\Component\Stopwatch\Stopwatch;
  */
 final class Connection extends AbstractConnectionMiddleware
 {
-    private int $nestingLevel = 0;
+    private $nestingLevel = 0;
+    private $debugDataHolder;
+    private $stopwatch;
+    private $connectionName;
 
-    public function __construct(
-        ConnectionInterface $connection,
-        private DebugDataHolder $debugDataHolder,
-        private ?Stopwatch $stopwatch,
-        private string $connectionName,
-    ) {
+    public function __construct(ConnectionInterface $connection, DebugDataHolder $debugDataHolder, ?Stopwatch $stopwatch, string $connectionName)
+    {
         parent::__construct($connection);
+
+        $this->debugDataHolder = $debugDataHolder;
+        $this->stopwatch = $stopwatch;
+        $this->connectionName = $connectionName;
     }
 
     public function prepare(string $sql): DriverStatement
@@ -41,7 +44,7 @@ final class Connection extends AbstractConnectionMiddleware
             parent::prepare($sql),
             $this->debugDataHolder,
             $this->connectionName,
-            $sql,
+            $sql
         );
     }
 
@@ -49,14 +52,20 @@ final class Connection extends AbstractConnectionMiddleware
     {
         $this->debugDataHolder->addQuery($this->connectionName, $query = new Query($sql));
 
-        $this->stopwatch?->start('doctrine', 'doctrine');
+        if (null !== $this->stopwatch) {
+            $this->stopwatch->start('doctrine', 'doctrine');
+        }
+
         $query->start();
 
         try {
             $result = parent::query($sql);
         } finally {
             $query->stop();
-            $this->stopwatch?->stop('doctrine');
+
+            if (null !== $this->stopwatch) {
+                $this->stopwatch->stop('doctrine');
+            }
         }
 
         return $result;
@@ -66,14 +75,20 @@ final class Connection extends AbstractConnectionMiddleware
     {
         $this->debugDataHolder->addQuery($this->connectionName, $query = new Query($sql));
 
-        $this->stopwatch?->start('doctrine', 'doctrine');
+        if (null !== $this->stopwatch) {
+            $this->stopwatch->start('doctrine', 'doctrine');
+        }
+
         $query->start();
 
         try {
             $affectedRows = parent::exec($sql);
         } finally {
             $query->stop();
-            $this->stopwatch?->stop('doctrine');
+
+            if (null !== $this->stopwatch) {
+                $this->stopwatch->stop('doctrine');
+            }
         }
 
         return $affectedRows;
@@ -86,14 +101,24 @@ final class Connection extends AbstractConnectionMiddleware
             $this->debugDataHolder->addQuery($this->connectionName, $query = new Query('"START TRANSACTION"'));
         }
 
-        $this->stopwatch?->start('doctrine', 'doctrine');
-        $query?->start();
+        if (null !== $this->stopwatch) {
+            $this->stopwatch->start('doctrine', 'doctrine');
+        }
+
+        if (null !== $query) {
+            $query->start();
+        }
 
         try {
             $ret = parent::beginTransaction();
         } finally {
-            $query?->stop();
-            $this->stopwatch?->stop('doctrine');
+            if (null !== $query) {
+                $query->stop();
+            }
+
+            if (null !== $this->stopwatch) {
+                $this->stopwatch->stop('doctrine');
+            }
         }
 
         return $ret;
@@ -106,14 +131,24 @@ final class Connection extends AbstractConnectionMiddleware
             $this->debugDataHolder->addQuery($this->connectionName, $query = new Query('"COMMIT"'));
         }
 
-        $this->stopwatch?->start('doctrine', 'doctrine');
-        $query?->start();
+        if (null !== $this->stopwatch) {
+            $this->stopwatch->start('doctrine', 'doctrine');
+        }
+
+        if (null !== $query) {
+            $query->start();
+        }
 
         try {
             $ret = parent::commit();
         } finally {
-            $query?->stop();
-            $this->stopwatch?->stop('doctrine');
+            if (null !== $query) {
+                $query->stop();
+            }
+
+            if (null !== $this->stopwatch) {
+                $this->stopwatch->stop('doctrine');
+            }
         }
 
         return $ret;
@@ -126,14 +161,24 @@ final class Connection extends AbstractConnectionMiddleware
             $this->debugDataHolder->addQuery($this->connectionName, $query = new Query('"ROLLBACK"'));
         }
 
-        $this->stopwatch?->start('doctrine', 'doctrine');
-        $query?->start();
+        if (null !== $this->stopwatch) {
+            $this->stopwatch->start('doctrine', 'doctrine');
+        }
+
+        if (null !== $query) {
+            $query->start();
+        }
 
         try {
             $ret = parent::rollBack();
         } finally {
-            $query?->stop();
-            $this->stopwatch?->stop('doctrine');
+            if (null !== $query) {
+                $query->stop();
+            }
+
+            if (null !== $this->stopwatch) {
+                $this->stopwatch->stop('doctrine');
+            }
         }
 
         return $ret;

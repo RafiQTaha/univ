@@ -4,18 +4,10 @@ declare(strict_types=1);
 
 namespace Doctrine\ORM\Query;
 
-use Doctrine\Deprecations\Deprecation;
 use Doctrine\ORM\AbstractQuery;
-use Doctrine\ORM\Mapping\ClassMetadata;
-use LogicException;
 
 use function array_diff;
 use function array_keys;
-use function debug_backtrace;
-use function is_a;
-use function sprintf;
-
-use const DEBUG_BACKTRACE_IGNORE_ARGS;
 
 /**
  * An adapter implementation of the TreeWalker interface. The methods in this class
@@ -30,90 +22,60 @@ abstract class TreeWalkerAdapter implements TreeWalker
      *
      * @var AbstractQuery
      */
-    private $query;
+    private $_query;
 
     /**
      * The ParserResult of the original query that was produced by the Parser.
      *
      * @var ParserResult
      */
-    private $parserResult;
+    private $_parserResult;
 
     /**
      * The query components of the original query (the "symbol table") that was produced by the Parser.
      *
      * @psalm-var array<string, QueryComponent>
      */
-    private $queryComponents;
+    private $_queryComponents;
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function __construct($query, $parserResult, array $queryComponents)
     {
-        $this->query           = $query;
-        $this->parserResult    = $parserResult;
-        $this->queryComponents = $queryComponents;
+        $this->_query           = $query;
+        $this->_parserResult    = $parserResult;
+        $this->_queryComponents = $queryComponents;
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getQueryComponents()
     {
-        return $this->queryComponents;
+        return $this->_queryComponents;
     }
 
     /**
-     * Sets or overrides a query component for a given dql alias.
-     *
-     * @internal This method will be protected in 3.0.
-     *
-     * @param string               $dqlAlias       The DQL alias.
-     * @param array<string, mixed> $queryComponent
-     * @psalm-param QueryComponent $queryComponent
-     *
-     * @return void
+     * {@inheritdoc}
      */
     public function setQueryComponent($dqlAlias, array $queryComponent)
     {
-        $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2);
-        if (! isset($trace[1]['class']) || ! is_a($trace[1]['class'], self::class, true)) {
-            Deprecation::trigger(
-                'doctrine/orm',
-                'https://github.com/doctrine/orm/pull/9551',
-                'Method %s will be protected in 3.0. Calling it publicly is deprecated.',
-                __METHOD__
-            );
-        }
-
         $requiredKeys = ['metadata', 'parent', 'relation', 'map', 'nestingLevel', 'token'];
 
         if (array_diff($requiredKeys, array_keys($queryComponent))) {
             throw QueryException::invalidQueryComponent($dqlAlias);
         }
 
-        $this->queryComponents[$dqlAlias] = $queryComponent;
+        $this->_queryComponents[$dqlAlias] = $queryComponent;
     }
 
     /**
-     * Returns internal queryComponents array.
-     *
-     * @deprecated Call {@see getQueryComponents()} instead.
-     *
-     * @return array<string, array<string, mixed>>
-     * @psalm-return array<string, QueryComponent>
+     * {@inheritDoc}
      */
     protected function _getQueryComponents()
     {
-        Deprecation::triggerIfCalledFromOutside(
-            'doctrine/orm',
-            'https://github.com/doctrine/orm/pull/9551',
-            'Method %s is deprecated, call getQueryComponents() instead.',
-            __METHOD__
-        );
-
-        return $this->queryComponents;
+        return $this->_queryComponents;
     }
 
     /**
@@ -123,7 +85,7 @@ abstract class TreeWalkerAdapter implements TreeWalker
      */
     protected function _getQuery()
     {
-        return $this->query;
+        return $this->_query;
     }
 
     /**
@@ -133,685 +95,429 @@ abstract class TreeWalkerAdapter implements TreeWalker
      */
     protected function _getParserResult()
     {
-        return $this->parserResult;
+        return $this->_parserResult;
     }
 
+    /**
+     * {@inheritdoc}
+     *
+     * @return void
+     */
     public function walkSelectStatement(AST\SelectStatement $AST)
     {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      *
-     * @deprecated This method will be removed in 3.0.
+     * @return void
      */
     public function walkSelectClause($selectClause)
     {
-        Deprecation::trigger(
-            'doctrine/orm',
-            'https://github.com/doctrine/orm/pull/9551',
-            'Method "%s" is deprecated and will be removed in ORM 3.0 without replacement.',
-            __METHOD__
-        );
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      *
-     * @deprecated This method will be removed in 3.0.
+     * @return void
      */
     public function walkFromClause($fromClause)
     {
-        Deprecation::trigger(
-            'doctrine/orm',
-            'https://github.com/doctrine/orm/pull/9551',
-            'Method "%s" is deprecated and will be removed in ORM 3.0 without replacement.',
-            __METHOD__
-        );
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      *
-     * @deprecated This method will be removed in 3.0.
+     * @return void
      */
     public function walkFunction($function)
     {
-        Deprecation::trigger(
-            'doctrine/orm',
-            'https://github.com/doctrine/orm/pull/9551',
-            'Method "%s" is deprecated and will be removed in ORM 3.0 without replacement.',
-            __METHOD__
-        );
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      *
-     * @deprecated This method will be removed in 3.0.
+     * @return void
      */
     public function walkOrderByClause($orderByClause)
     {
-        Deprecation::trigger(
-            'doctrine/orm',
-            'https://github.com/doctrine/orm/pull/9551',
-            'Method "%s" is deprecated and will be removed in ORM 3.0 without replacement.',
-            __METHOD__
-        );
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      *
-     * @deprecated This method will be removed in 3.0.
+     * @return void
      */
     public function walkOrderByItem($orderByItem)
     {
-        Deprecation::trigger(
-            'doctrine/orm',
-            'https://github.com/doctrine/orm/pull/9551',
-            'Method "%s" is deprecated and will be removed in ORM 3.0 without replacement.',
-            __METHOD__
-        );
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      *
-     * @deprecated This method will be removed in 3.0.
+     * @return void
      */
     public function walkHavingClause($havingClause)
     {
-        Deprecation::trigger(
-            'doctrine/orm',
-            'https://github.com/doctrine/orm/pull/9551',
-            'Method "%s" is deprecated and will be removed in ORM 3.0 without replacement.',
-            __METHOD__
-        );
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      *
-     * @deprecated This method will be removed in 3.0.
+     * @return void
      */
     public function walkJoin($join)
     {
-        Deprecation::trigger(
-            'doctrine/orm',
-            'https://github.com/doctrine/orm/pull/9551',
-            'Method "%s" is deprecated and will be removed in ORM 3.0 without replacement.',
-            __METHOD__
-        );
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      *
-     * @deprecated This method will be removed in 3.0.
+     * @return void
      */
     public function walkSelectExpression($selectExpression)
     {
-        Deprecation::trigger(
-            'doctrine/orm',
-            'https://github.com/doctrine/orm/pull/9551',
-            'Method "%s" is deprecated and will be removed in ORM 3.0 without replacement.',
-            __METHOD__
-        );
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      *
-     * @deprecated This method will be removed in 3.0.
+     * @return void
      */
     public function walkQuantifiedExpression($qExpr)
     {
-        Deprecation::trigger(
-            'doctrine/orm',
-            'https://github.com/doctrine/orm/pull/9551',
-            'Method "%s" is deprecated and will be removed in ORM 3.0 without replacement.',
-            __METHOD__
-        );
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      *
-     * @deprecated This method will be removed in 3.0.
+     * @return void
      */
     public function walkSubselect($subselect)
     {
-        Deprecation::trigger(
-            'doctrine/orm',
-            'https://github.com/doctrine/orm/pull/9551',
-            'Method "%s" is deprecated and will be removed in ORM 3.0 without replacement.',
-            __METHOD__
-        );
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      *
-     * @deprecated This method will be removed in 3.0.
+     * @return void
      */
     public function walkSubselectFromClause($subselectFromClause)
     {
-        Deprecation::trigger(
-            'doctrine/orm',
-            'https://github.com/doctrine/orm/pull/9551',
-            'Method "%s" is deprecated and will be removed in ORM 3.0 without replacement.',
-            __METHOD__
-        );
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      *
-     * @deprecated This method will be removed in 3.0.
+     * @return void
      */
     public function walkSimpleSelectClause($simpleSelectClause)
     {
-        Deprecation::trigger(
-            'doctrine/orm',
-            'https://github.com/doctrine/orm/pull/9551',
-            'Method "%s" is deprecated and will be removed in ORM 3.0 without replacement.',
-            __METHOD__
-        );
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      *
-     * @deprecated This method will be removed in 3.0.
+     * @return void
      */
     public function walkSimpleSelectExpression($simpleSelectExpression)
     {
-        Deprecation::trigger(
-            'doctrine/orm',
-            'https://github.com/doctrine/orm/pull/9551',
-            'Method "%s" is deprecated and will be removed in ORM 3.0 without replacement.',
-            __METHOD__
-        );
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      *
-     * @deprecated This method will be removed in 3.0.
+     * @return void
      */
     public function walkAggregateExpression($aggExpression)
     {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      *
-     * @deprecated This method will be removed in 3.0.
+     * @return void
      */
     public function walkGroupByClause($groupByClause)
     {
-        Deprecation::trigger(
-            'doctrine/orm',
-            'https://github.com/doctrine/orm/pull/9551',
-            'Method "%s" is deprecated and will be removed in ORM 3.0 without replacement.',
-            __METHOD__
-        );
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      *
-     * @deprecated This method will be removed in 3.0.
+     * @return void
      */
     public function walkGroupByItem($groupByItem)
     {
-        Deprecation::trigger(
-            'doctrine/orm',
-            'https://github.com/doctrine/orm/pull/9551',
-            'Method "%s" is deprecated and will be removed in ORM 3.0 without replacement.',
-            __METHOD__
-        );
     }
 
+    /**
+     * {@inheritdoc}
+     *
+     * @return void
+     */
     public function walkUpdateStatement(AST\UpdateStatement $AST)
     {
     }
 
+    /**
+     * {@inheritdoc}
+     *
+     * @return void
+     */
     public function walkDeleteStatement(AST\DeleteStatement $AST)
     {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      *
-     * @deprecated This method will be removed in 3.0.
+     * @return void
      */
     public function walkDeleteClause(AST\DeleteClause $deleteClause)
     {
-        Deprecation::trigger(
-            'doctrine/orm',
-            'https://github.com/doctrine/orm/pull/9551',
-            'Method "%s" is deprecated and will be removed in ORM 3.0 without replacement.',
-            __METHOD__
-        );
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      *
-     * @deprecated This method will be removed in 3.0.
+     * @return void
      */
     public function walkUpdateClause($updateClause)
     {
-        Deprecation::trigger(
-            'doctrine/orm',
-            'https://github.com/doctrine/orm/pull/9551',
-            'Method "%s" is deprecated and will be removed in ORM 3.0 without replacement.',
-            __METHOD__
-        );
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      *
-     * @deprecated This method will be removed in 3.0.
+     * @return void
      */
     public function walkUpdateItem($updateItem)
     {
-        Deprecation::trigger(
-            'doctrine/orm',
-            'https://github.com/doctrine/orm/pull/9551',
-            'Method "%s" is deprecated and will be removed in ORM 3.0 without replacement.',
-            __METHOD__
-        );
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      *
-     * @deprecated This method will be removed in 3.0.
+     * @return void
      */
     public function walkWhereClause($whereClause)
     {
-        Deprecation::trigger(
-            'doctrine/orm',
-            'https://github.com/doctrine/orm/pull/9551',
-            'Method "%s" is deprecated and will be removed in ORM 3.0 without replacement.',
-            __METHOD__
-        );
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      *
-     * @deprecated This method will be removed in 3.0.
+     * @return void
      */
     public function walkConditionalExpression($condExpr)
     {
-        Deprecation::trigger(
-            'doctrine/orm',
-            'https://github.com/doctrine/orm/pull/9551',
-            'Method "%s" is deprecated and will be removed in ORM 3.0 without replacement.',
-            __METHOD__
-        );
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      *
-     * @deprecated This method will be removed in 3.0.
+     * @return void
      */
     public function walkConditionalTerm($condTerm)
     {
-        Deprecation::trigger(
-            'doctrine/orm',
-            'https://github.com/doctrine/orm/pull/9551',
-            'Method "%s" is deprecated and will be removed in ORM 3.0 without replacement.',
-            __METHOD__
-        );
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      *
-     * @deprecated This method will be removed in 3.0.
+     * @return void
      */
     public function walkConditionalFactor($factor)
     {
-        Deprecation::trigger(
-            'doctrine/orm',
-            'https://github.com/doctrine/orm/pull/9551',
-            'Method "%s" is deprecated and will be removed in ORM 3.0 without replacement.',
-            __METHOD__
-        );
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      *
-     * @deprecated This method will be removed in 3.0.
+     * @return void
      */
     public function walkConditionalPrimary($primary)
     {
-        Deprecation::trigger(
-            'doctrine/orm',
-            'https://github.com/doctrine/orm/pull/9551',
-            'Method "%s" is deprecated and will be removed in ORM 3.0 without replacement.',
-            __METHOD__
-        );
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      *
-     * @deprecated This method will be removed in 3.0.
+     * @return void
      */
     public function walkExistsExpression($existsExpr)
     {
-        Deprecation::trigger(
-            'doctrine/orm',
-            'https://github.com/doctrine/orm/pull/9551',
-            'Method "%s" is deprecated and will be removed in ORM 3.0 without replacement.',
-            __METHOD__
-        );
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      *
-     * @deprecated This method will be removed in 3.0.
+     * @return void
      */
     public function walkCollectionMemberExpression($collMemberExpr)
     {
-        Deprecation::trigger(
-            'doctrine/orm',
-            'https://github.com/doctrine/orm/pull/9551',
-            'Method "%s" is deprecated and will be removed in ORM 3.0 without replacement.',
-            __METHOD__
-        );
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      *
-     * @deprecated This method will be removed in 3.0.
+     * @return void
      */
     public function walkEmptyCollectionComparisonExpression($emptyCollCompExpr)
     {
-        Deprecation::trigger(
-            'doctrine/orm',
-            'https://github.com/doctrine/orm/pull/9551',
-            'Method "%s" is deprecated and will be removed in ORM 3.0 without replacement.',
-            __METHOD__
-        );
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      *
-     * @deprecated This method will be removed in 3.0.
+     * @return void
      */
     public function walkNullComparisonExpression($nullCompExpr)
     {
-        Deprecation::trigger(
-            'doctrine/orm',
-            'https://github.com/doctrine/orm/pull/9551',
-            'Method "%s" is deprecated and will be removed in ORM 3.0 without replacement.',
-            __METHOD__
-        );
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      *
-     * @deprecated This method will be removed in 3.0.
+     * @return void
      */
     public function walkInExpression($inExpr)
     {
-        Deprecation::trigger(
-            'doctrine/orm',
-            'https://github.com/doctrine/orm/pull/9551',
-            'Method "%s" is deprecated and will be removed in ORM 3.0 without replacement.',
-            __METHOD__
-        );
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      *
-     * @deprecated This method will be removed in 3.0.
+     * @return void
      */
     public function walkInstanceOfExpression($instanceOfExpr)
     {
-        Deprecation::trigger(
-            'doctrine/orm',
-            'https://github.com/doctrine/orm/pull/9551',
-            'Method "%s" is deprecated and will be removed in ORM 3.0 without replacement.',
-            __METHOD__
-        );
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      *
-     * @deprecated This method will be removed in 3.0.
+     * @return void
      */
     public function walkLiteral($literal)
     {
-        Deprecation::trigger(
-            'doctrine/orm',
-            'https://github.com/doctrine/orm/pull/9551',
-            'Method "%s" is deprecated and will be removed in ORM 3.0 without replacement.',
-            __METHOD__
-        );
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      *
-     * @deprecated This method will be removed in 3.0.
+     * @return void
      */
     public function walkBetweenExpression($betweenExpr)
     {
-        Deprecation::trigger(
-            'doctrine/orm',
-            'https://github.com/doctrine/orm/pull/9551',
-            'Method "%s" is deprecated and will be removed in ORM 3.0 without replacement.',
-            __METHOD__
-        );
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      *
-     * @deprecated This method will be removed in 3.0.
+     * @return void
      */
     public function walkLikeExpression($likeExpr)
     {
-        Deprecation::trigger(
-            'doctrine/orm',
-            'https://github.com/doctrine/orm/pull/9551',
-            'Method "%s" is deprecated and will be removed in ORM 3.0 without replacement.',
-            __METHOD__
-        );
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      *
-     * @deprecated This method will be removed in 3.0.
+     * @return void
      */
     public function walkStateFieldPathExpression($stateFieldPathExpression)
     {
-        Deprecation::trigger(
-            'doctrine/orm',
-            'https://github.com/doctrine/orm/pull/9551',
-            'Method "%s" is deprecated and will be removed in ORM 3.0 without replacement.',
-            __METHOD__
-        );
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      *
-     * @deprecated This method will be removed in 3.0.
+     * @return void
      */
     public function walkComparisonExpression($compExpr)
     {
-        Deprecation::trigger(
-            'doctrine/orm',
-            'https://github.com/doctrine/orm/pull/9551',
-            'Method "%s" is deprecated and will be removed in ORM 3.0 without replacement.',
-            __METHOD__
-        );
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      *
-     * @deprecated This method will be removed in 3.0.
+     * @return void
      */
     public function walkInputParameter($inputParam)
     {
-        Deprecation::trigger(
-            'doctrine/orm',
-            'https://github.com/doctrine/orm/pull/9551',
-            'Method "%s" is deprecated and will be removed in ORM 3.0 without replacement.',
-            __METHOD__
-        );
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      *
-     * @deprecated This method will be removed in 3.0.
+     * @return void
      */
     public function walkArithmeticExpression($arithmeticExpr)
     {
-        Deprecation::trigger(
-            'doctrine/orm',
-            'https://github.com/doctrine/orm/pull/9551',
-            'Method "%s" is deprecated and will be removed in ORM 3.0 without replacement.',
-            __METHOD__
-        );
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      *
-     * @deprecated This method will be removed in 3.0.
+     * @return void
      */
     public function walkArithmeticTerm($term)
     {
-        Deprecation::trigger(
-            'doctrine/orm',
-            'https://github.com/doctrine/orm/pull/9551',
-            'Method "%s" is deprecated and will be removed in ORM 3.0 without replacement.',
-            __METHOD__
-        );
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      *
-     * @deprecated This method will be removed in 3.0.
+     * @return void
      */
     public function walkStringPrimary($stringPrimary)
     {
-        Deprecation::trigger(
-            'doctrine/orm',
-            'https://github.com/doctrine/orm/pull/9551',
-            'Method "%s" is deprecated and will be removed in ORM 3.0 without replacement.',
-            __METHOD__
-        );
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      *
-     * @deprecated This method will be removed in 3.0.
+     * @return void
      */
     public function walkArithmeticFactor($factor)
     {
-        Deprecation::trigger(
-            'doctrine/orm',
-            'https://github.com/doctrine/orm/pull/9551',
-            'Method "%s" is deprecated and will be removed in ORM 3.0 without replacement.',
-            __METHOD__
-        );
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      *
-     * @deprecated This method will be removed in 3.0.
+     * @return void
      */
     public function walkSimpleArithmeticExpression($simpleArithmeticExpr)
     {
-        Deprecation::trigger(
-            'doctrine/orm',
-            'https://github.com/doctrine/orm/pull/9551',
-            'Method "%s" is deprecated and will be removed in ORM 3.0 without replacement.',
-            __METHOD__
-        );
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      *
-     * @deprecated This method will be removed in 3.0.
+     * @return void
      */
     public function walkPathExpression($pathExpr)
     {
-        Deprecation::trigger(
-            'doctrine/orm',
-            'https://github.com/doctrine/orm/pull/9551',
-            'Method "%s" is deprecated and will be removed in ORM 3.0 without replacement.',
-            __METHOD__
-        );
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      *
-     * @deprecated This method will be removed in 3.0.
+     * @return void
      */
     public function walkResultVariable($resultVariable)
     {
-        Deprecation::trigger(
-            'doctrine/orm',
-            'https://github.com/doctrine/orm/pull/9551',
-            'Method "%s" is deprecated and will be removed in ORM 3.0 without replacement.',
-            __METHOD__
-        );
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      *
-     * @deprecated This method will be removed in 3.0.
+     * @return void
      */
     public function getExecutor($AST)
     {
-        Deprecation::trigger(
-            'doctrine/orm',
-            'https://github.com/doctrine/orm/pull/9551',
-            'Method "%s" is deprecated and will be removed in ORM 3.0 without replacement.',
-            __METHOD__
-        );
-
-        return null;
-    }
-
-    final protected function getMetadataForDqlAlias(string $dqlAlias): ClassMetadata
-    {
-        $metadata = $this->_getQueryComponents()[$dqlAlias]['metadata'] ?? null;
-
-        if ($metadata === null) {
-            throw new LogicException(sprintf('No metadata for DQL alias: %s', $dqlAlias));
-        }
-
-        return $metadata;
     }
 }

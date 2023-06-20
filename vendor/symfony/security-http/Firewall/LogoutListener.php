@@ -32,11 +32,11 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
  */
 class LogoutListener extends AbstractListener
 {
-    private TokenStorageInterface $tokenStorage;
+    private $tokenStorage;
     private array $options;
-    private HttpUtils $httpUtils;
-    private ?CsrfTokenManagerInterface $csrfTokenManager;
-    private EventDispatcherInterface $eventDispatcher;
+    private $httpUtils;
+    private $csrfTokenManager;
+    private $eventDispatcher;
 
     /**
      * @param array $options An array of options to process a logout attempt
@@ -86,7 +86,8 @@ class LogoutListener extends AbstractListener
         $logoutEvent = new LogoutEvent($request, $this->tokenStorage->getToken());
         $this->eventDispatcher->dispatch($logoutEvent);
 
-        if (!$response = $logoutEvent->getResponse()) {
+        $response = $logoutEvent->getResponse();
+        if (!$response instanceof Response) {
             throw new \RuntimeException('No logout listener set the Response, make sure at least the DefaultLogoutListener is registered.');
         }
 

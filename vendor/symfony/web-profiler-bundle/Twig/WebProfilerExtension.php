@@ -90,19 +90,13 @@ class WebProfilerExtension extends ProfilerExtension
         $message = twig_escape_filter($env, $message);
         $message = preg_replace('/&quot;(.*?)&quot;/', '&quot;<b>$1</b>&quot;', $message);
 
-        $replacements = [];
-        foreach ($context ?? [] as $k => $v) {
-            $k = '{'.twig_escape_filter($env, $k).'}';
-            if (str_contains($message, $k)) {
-                $replacements[$k] = $v;
-            }
-        }
-
-        if (!$replacements) {
+        if (null === $context || !str_contains($message, '{')) {
             return '<span class="dump-inline">'.$message.'</span>';
         }
 
-        foreach ($replacements as $k => $v) {
+        $replacements = [];
+        foreach ($context as $k => $v) {
+            $k = '{'.twig_escape_filter($env, $k).'}';
             $replacements['&quot;<b>'.$k.'</b>&quot;'] = $replacements['&quot;'.$k.'&quot;'] = $replacements[$k] = $this->dumpData($env, $v);
         }
 

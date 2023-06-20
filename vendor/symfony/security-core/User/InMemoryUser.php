@@ -43,11 +43,17 @@ final class InMemoryUser implements UserInterface, PasswordAuthenticatedUserInte
         return $this->getUserIdentifier();
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getRoles(): array
     {
         return $this->roles;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPassword(): ?string
     {
         return $this->password;
@@ -76,10 +82,16 @@ final class InMemoryUser implements UserInterface, PasswordAuthenticatedUserInte
         return $this->enabled;
     }
 
-    public function eraseCredentials(): void
+    /**
+     * {@inheritdoc}
+     */
+    public function eraseCredentials()
     {
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function isEqualTo(UserInterface $user): bool
     {
         if (!$user instanceof self) {

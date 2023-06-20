@@ -12,6 +12,7 @@ use function array_combine;
 use function array_filter;
 use function array_map;
 use function array_merge;
+use function call_user_func_array;
 
 /**
  * Utility class to retrieve all reflection instance properties of a given class, including
@@ -44,9 +45,10 @@ final class ReflectionPropertiesGetter
             return $this->properties[$className];
         }
 
-        return $this->properties[$className] = array_merge(
+        return $this->properties[$className] = call_user_func_array(
+            'array_merge',
             // first merge because `array_merge` expects >= 1 params
-            ...array_merge(
+            array_merge(
                 [[]],
                 array_map(
                     [$this, 'getClassProperties'],

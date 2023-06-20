@@ -18,14 +18,16 @@ class SimpleSelectExpression extends Node
     /** @var string */
     public $fieldIdentificationVariable;
 
-    /** @param Node|string $expression */
+    /**
+     * @param Node|string $expression
+     */
     public function __construct($expression)
     {
         $this->expression = $expression;
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function dispatch($sqlWalker)
     {

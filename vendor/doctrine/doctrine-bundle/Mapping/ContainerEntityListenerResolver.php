@@ -15,13 +15,14 @@ use function trim;
 /** @final */
 class ContainerEntityListenerResolver implements EntityListenerServiceResolver
 {
-    private ContainerInterface $container;
+    /** @var ContainerInterface */
+    private $container;
 
     /** @var object[] Map to store entity listener instances. */
-    private array $instances = [];
+    private $instances = [];
 
     /** @var string[] Map to store registered service ids */
-    private array $serviceIds = [];
+    private $serviceIds = [];
 
     /** @param ContainerInterface $container a service locator for listeners */
     public function __construct(ContainerInterface $container)

@@ -68,7 +68,7 @@ return [
         ],
         'BOB' => [
             0 => 'BOB',
-            1 => 'Bolivian boliviano',
+            1 => 'Boliviano',
         ],
         'BRL' => [
             0 => 'BRL',
@@ -97,6 +97,10 @@ return [
         'CLP' => [
             0 => 'CLP',
             1 => 'Chilean Peso',
+        ],
+        'CNH' => [
+            0 => 'CNH',
+            1 => 'CNH',
         ],
         'CNY' => [
             0 => 'CNY',
@@ -426,6 +430,10 @@ return [
             0 => 'SHP',
             1 => 'St Helena Pound',
         ],
+        'SLL' => [
+            0 => 'SLL',
+            1 => 'Sierra Leonean Leone',
+        ],
         'SOS' => [
             0 => 'SOS',
             1 => 'Somali Shilling',
@@ -500,7 +508,7 @@ return [
         ],
         'VES' => [
             0 => 'VES',
-            1 => 'Venezuelan bolívar',
+            1 => 'VES',
         ],
         'VND' => [
             0 => 'VND',

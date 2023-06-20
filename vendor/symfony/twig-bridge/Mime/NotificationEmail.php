@@ -229,7 +229,7 @@ class NotificationEmail extends TemplatedEmail
      */
     public function __serialize(): array
     {
-        return [$this->context, $this->theme, parent::__serialize()];
+        return [$this->context, parent::__serialize()];
     }
 
     /**
@@ -237,12 +237,7 @@ class NotificationEmail extends TemplatedEmail
      */
     public function __unserialize(array $data): void
     {
-        if (3 === \count($data)) {
-            [$this->context, $this->theme, $parentData] = $data;
-        } else {
-            // Backwards compatibility for deserializing data structures that were serialized without the theme
-            [$this->context, $parentData] = $data;
-        }
+        [$this->context, $parentData] = $data;
 
         parent::__unserialize($parentData);
     }

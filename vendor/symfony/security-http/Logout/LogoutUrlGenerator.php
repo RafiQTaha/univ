@@ -24,9 +24,9 @@ use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
  */
 class LogoutUrlGenerator
 {
-    private ?RequestStack $requestStack;
-    private ?UrlGeneratorInterface $router;
-    private ?TokenStorageInterface $tokenStorage;
+    private $requestStack;
+    private $router;
+    private $tokenStorage;
     private array $listeners = [];
     private ?string $currentFirewallName = null;
     private ?string $currentFirewallContext = null;
@@ -93,10 +93,6 @@ class LogoutUrlGenerator
             }
 
             $request = $this->requestStack->getCurrentRequest();
-
-            if (!$request) {
-                throw new \LogicException('Unable to generate the logout URL without a Request.');
-            }
 
             $url = UrlGeneratorInterface::ABSOLUTE_URL === $referenceType ? $request->getUriForPath($logoutPath) : $request->getBaseUrl().$logoutPath;
 

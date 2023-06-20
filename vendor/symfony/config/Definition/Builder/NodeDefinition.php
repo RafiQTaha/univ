@@ -106,13 +106,7 @@ abstract class NodeDefinition implements NodeParentInterface
         }
 
         if (null !== $this->normalization) {
-            $allowedTypes = [];
-            foreach ($this->normalization->before as $expr) {
-                $allowedTypes[] = $expr->allowedTypes;
-            }
-            $allowedTypes = array_unique($allowedTypes);
             $this->normalization->before = ExprBuilder::buildExpressions($this->normalization->before);
-            $this->normalization->declaredTypes = $allowedTypes;
         }
 
         if (null !== $this->validation) {
@@ -290,7 +284,11 @@ abstract class NodeDefinition implements NodeParentInterface
      */
     protected function validation(): ValidationBuilder
     {
-        return $this->validation ??= new ValidationBuilder($this);
+        if (null === $this->validation) {
+            $this->validation = new ValidationBuilder($this);
+        }
+
+        return $this->validation;
     }
 
     /**
@@ -298,7 +296,11 @@ abstract class NodeDefinition implements NodeParentInterface
      */
     protected function merge(): MergeBuilder
     {
-        return $this->merge ??= new MergeBuilder($this);
+        if (null === $this->merge) {
+            $this->merge = new MergeBuilder($this);
+        }
+
+        return $this->merge;
     }
 
     /**
@@ -306,7 +308,11 @@ abstract class NodeDefinition implements NodeParentInterface
      */
     protected function normalization(): NormalizationBuilder
     {
-        return $this->normalization ??= new NormalizationBuilder($this);
+        if (null === $this->normalization) {
+            $this->normalization = new NormalizationBuilder($this);
+        }
+
+        return $this->normalization;
     }
 
     /**

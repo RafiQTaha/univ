@@ -103,20 +103,24 @@ class FileLockRegion implements ConcurrentRegion
         return $this->directory . DIRECTORY_SEPARATOR . $key->hash . '.' . self::LOCK_EXTENSION;
     }
 
-    /** @return string|false */
+    /**
+     * @return string|false
+     */
     private function getLockContent(string $filename)
     {
         return @file_get_contents($filename);
     }
 
-    /** @return int|false */
+    /**
+     * @return int|false
+     */
     private function getLockTime(string $filename)
     {
         return @fileatime($filename);
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getName()
     {
@@ -124,7 +128,7 @@ class FileLockRegion implements ConcurrentRegion
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function contains(CacheKey $key)
     {
@@ -136,7 +140,7 @@ class FileLockRegion implements ConcurrentRegion
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function get(CacheKey $key)
     {
@@ -148,7 +152,7 @@ class FileLockRegion implements ConcurrentRegion
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getMultiple(CollectionCacheEntry $collection)
     {
@@ -160,7 +164,7 @@ class FileLockRegion implements ConcurrentRegion
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function put(CacheKey $key, CacheEntry $entry, ?Lock $lock = null)
     {
@@ -172,7 +176,7 @@ class FileLockRegion implements ConcurrentRegion
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function evict(CacheKey $key)
     {
@@ -184,7 +188,7 @@ class FileLockRegion implements ConcurrentRegion
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function evictAll()
     {
@@ -202,7 +206,7 @@ class FileLockRegion implements ConcurrentRegion
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function lock(CacheKey $key)
     {
@@ -223,7 +227,7 @@ class FileLockRegion implements ConcurrentRegion
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function unlock(CacheKey $key, Lock $lock)
     {

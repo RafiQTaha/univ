@@ -9,10 +9,6 @@
  * file that was distributed with this source code.
  */
 
-if ('cli' !== \PHP_SAPI) {
-    throw new Exception('This script must be run from the command line.');
-}
-
 $operators = ['not', '!', 'or', '||', '&&', 'and', '|', '^', '&', '==', '===', '!=', '!==', '<', '>', '>=', '<=', 'not in', 'in', '..', '+', '-', '~', '*', '/', '%', 'matches', '**'];
 $operators = array_combine($operators, array_map('strlen', $operators));
 arsort($operators);

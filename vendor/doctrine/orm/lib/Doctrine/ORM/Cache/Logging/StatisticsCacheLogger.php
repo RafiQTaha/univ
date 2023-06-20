@@ -25,7 +25,7 @@ class StatisticsCacheLogger implements CacheLogger
     private $cachePutCountMap = [];
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function collectionCacheMiss($regionName, CollectionCacheKey $key)
     {
@@ -34,7 +34,7 @@ class StatisticsCacheLogger implements CacheLogger
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function collectionCacheHit($regionName, CollectionCacheKey $key)
     {
@@ -43,7 +43,7 @@ class StatisticsCacheLogger implements CacheLogger
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function collectionCachePut($regionName, CollectionCacheKey $key)
     {
@@ -52,7 +52,7 @@ class StatisticsCacheLogger implements CacheLogger
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function entityCacheMiss($regionName, EntityCacheKey $key)
     {
@@ -61,7 +61,7 @@ class StatisticsCacheLogger implements CacheLogger
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function entityCacheHit($regionName, EntityCacheKey $key)
     {
@@ -70,7 +70,7 @@ class StatisticsCacheLogger implements CacheLogger
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function entityCachePut($regionName, EntityCacheKey $key)
     {
@@ -79,7 +79,7 @@ class StatisticsCacheLogger implements CacheLogger
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function queryCacheHit($regionName, QueryCacheKey $key)
     {
@@ -88,7 +88,7 @@ class StatisticsCacheLogger implements CacheLogger
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function queryCacheMiss($regionName, QueryCacheKey $key)
     {
@@ -97,7 +97,7 @@ class StatisticsCacheLogger implements CacheLogger
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function queryCachePut($regionName, QueryCacheKey $key)
     {
@@ -141,19 +141,25 @@ class StatisticsCacheLogger implements CacheLogger
         return $this->cachePutCountMap[$regionName] ?? 0;
     }
 
-    /** @return array<string, int> */
+    /**
+     * @return array<string, int>
+     */
     public function getRegionsMiss()
     {
         return $this->cacheMissCountMap;
     }
 
-    /** @return array<string, int> */
+    /**
+     * @return array<string, int>
+     */
     public function getRegionsHit()
     {
         return $this->cacheHitCountMap;
     }
 
-    /** @return array<string, int> */
+    /**
+     * @return array<string, int>
+     */
     public function getRegionsPut()
     {
         return $this->cachePutCountMap;

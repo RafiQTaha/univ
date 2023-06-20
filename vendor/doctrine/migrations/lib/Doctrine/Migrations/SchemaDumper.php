@@ -78,7 +78,7 @@ class SchemaDumper
         bool $formatted = false,
         int $lineLength = 120
     ): string {
-        $schema = $this->schemaManager->introspectSchema();
+        $schema = $this->schemaManager->createSchema();
 
         $up   = [];
         $down = [];
@@ -150,8 +150,7 @@ class SchemaDumper
      *
      * @internal
      *
-     * @param mixed[]                                                 $matches
-     * @param int-mask-of<PREG_OFFSET_CAPTURE|PREG_UNMATCHED_AS_NULL> $flags
+     * @param mixed[] $matches
      */
     private static function pregMatch(string $pattern, string $subject, ?array &$matches = null, int $flags = 0, int $offset = 0): int
     {

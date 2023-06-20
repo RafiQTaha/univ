@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Doctrine\ORM\Query\Expr;
 
 use InvalidArgumentException;
-use Stringable;
 
 use function count;
 use function get_class;
@@ -31,13 +30,15 @@ abstract class Base
     /** @var string */
     protected $postSeparator = ')';
 
-    /** @var list<class-string> */
+    /** @psalm-var list<class-string> */
     protected $allowedClasses = [];
 
-    /** @var list<string|Stringable> */
+    /** @psalm-var list<string|object> */
     protected $parts = [];
 
-    /** @param mixed $args */
+    /**
+     * @param mixed $args
+     */
     public function __construct($args = [])
     {
         $this->addMultiple($args);
@@ -91,7 +92,9 @@ abstract class Base
         return count($this->parts);
     }
 
-    /** @return string */
+    /**
+     * @return string
+     */
     public function __toString()
     {
         if ($this->count() === 1) {

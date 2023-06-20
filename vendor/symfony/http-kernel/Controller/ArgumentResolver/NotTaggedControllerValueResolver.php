@@ -24,7 +24,7 @@ use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
  */
 final class NotTaggedControllerValueResolver implements ArgumentValueResolverInterface
 {
-    private ContainerInterface $container;
+    private $container;
 
     public function __construct(ContainerInterface $container)
     {
@@ -69,9 +69,8 @@ final class NotTaggedControllerValueResolver implements ArgumentValueResolverInt
         }
 
         if (!$this->container->has($controller)) {
-            $controller = (false !== $i = strrpos($controller, ':'))
-                ? substr($controller, 0, $i).strtolower(substr($controller, $i))
-                : $controller.'::__invoke';
+            $i = strrpos($controller, ':');
+            $controller = substr($controller, 0, $i).strtolower(substr($controller, $i));
         }
 
         $what = sprintf('argument $%s of "%s()"', $argument->getName(), $controller);

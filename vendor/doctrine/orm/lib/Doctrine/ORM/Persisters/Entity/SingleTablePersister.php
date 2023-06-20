@@ -10,9 +10,6 @@ use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\Utility\PersisterHelper;
 
 use function array_flip;
-use function array_intersect;
-use function array_map;
-use function array_unshift;
 use function implode;
 
 /**
@@ -26,7 +23,7 @@ class SingleTablePersister extends AbstractEntityInheritancePersister
     use SQLResultCasing;
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     protected function getDiscriminatorColumnTableName()
     {
@@ -34,7 +31,7 @@ class SingleTablePersister extends AbstractEntityInheritancePersister
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     protected function getSelectColumnsSQL()
     {
@@ -97,7 +94,7 @@ class SingleTablePersister extends AbstractEntityInheritancePersister
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     protected function getInsertColumnList()
     {
@@ -110,7 +107,7 @@ class SingleTablePersister extends AbstractEntityInheritancePersister
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     protected function getSQLTableAlias($className, $assocName = '')
     {
@@ -118,7 +115,7 @@ class SingleTablePersister extends AbstractEntityInheritancePersister
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     protected function getSelectConditionSQL(array $criteria, $assoc = null)
     {
@@ -132,7 +129,7 @@ class SingleTablePersister extends AbstractEntityInheritancePersister
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     protected function getSelectConditionCriteriaSQL(Criteria $criteria)
     {
@@ -145,16 +142,21 @@ class SingleTablePersister extends AbstractEntityInheritancePersister
         return $conditionSql . $this->getSelectConditionDiscriminatorValueSQL();
     }
 
-    /** @return string */
+    /**
+     * @return string
+     */
     protected function getSelectConditionDiscriminatorValueSQL()
     {
-        $values = array_map(
-            [$this->conn, 'quote'],
-            array_flip(array_intersect($this->class->discriminatorMap, $this->class->subClasses))
-        );
+        $values = [];
 
         if ($this->class->discriminatorValue !== null) { // discriminators can be 0
-            array_unshift($values, $this->conn->quote($this->class->discriminatorValue));
+            $values[] = $this->conn->quote($this->class->discriminatorValue);
+        }
+
+        $discrValues = array_flip($this->class->discriminatorMap);
+
+        foreach ($this->class->subClasses as $subclassName) {
+            $values[] = $this->conn->quote($discrValues[$subclassName]);
         }
 
         $discColumnName = $this->class->getDiscriminatorColumn()['name'];
@@ -166,7 +168,7 @@ class SingleTablePersister extends AbstractEntityInheritancePersister
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     protected function generateFilterConditionSQL(ClassMetadata $targetEntity, $targetTableAlias)
     {

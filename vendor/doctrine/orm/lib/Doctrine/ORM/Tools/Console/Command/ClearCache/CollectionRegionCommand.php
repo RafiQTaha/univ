@@ -20,7 +20,9 @@ use function sprintf;
  */
 class CollectionRegionCommand extends AbstractEntityManagerCommand
 {
-    /** @return void */
+    /**
+     * {@inheritdoc}
+     */
     protected function configure()
     {
         $this->setName('orm:clear-cache:region:collection')
@@ -59,13 +61,13 @@ EOT
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      *
      * @return int
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $ui = (new SymfonyStyle($input, $output))->getErrorStyle();
+        $ui = new SymfonyStyle($input, $output);
 
         $em         = $this->getEntityManager($input);
         $ownerClass = $input->getArgument('owner-class');

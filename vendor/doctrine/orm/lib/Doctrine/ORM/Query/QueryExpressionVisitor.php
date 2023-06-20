@@ -12,7 +12,6 @@ use Doctrine\Common\Collections\Expr\Value;
 use RuntimeException;
 
 use function count;
-use function defined;
 use function str_replace;
 use function str_starts_with;
 
@@ -38,7 +37,9 @@ class QueryExpressionVisitor extends ExpressionVisitor
     /** @var list<mixed> */
     private $parameters = [];
 
-    /** @param mixed[] $queryAliases */
+    /**
+     * @param mixed[] $queryAliases
+     */
     public function __construct($queryAliases)
     {
         $this->queryAliases = $queryAliases;
@@ -97,11 +98,6 @@ class QueryExpressionVisitor extends ExpressionVisitor
                 return new Expr\Orx($expressionList);
 
             default:
-                // Multiversion support for `doctrine/collections` before and after v2.1.0
-                if (defined(CompositeExpression::class . '::TYPE_NOT') && $expr->getType() === CompositeExpression::TYPE_NOT) {
-                    return $this->expr->not($expressionList[0]);
-                }
-
                 throw new RuntimeException('Unknown composite ' . $expr->getType());
         }
     }

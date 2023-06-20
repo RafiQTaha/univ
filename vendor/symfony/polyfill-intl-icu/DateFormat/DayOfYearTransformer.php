@@ -20,6 +20,9 @@ namespace Symfony\Polyfill\Intl\Icu\DateFormat;
  */
 class DayOfYearTransformer extends Transformer
 {
+    /**
+     * {@inheritdoc}
+     */
     public function format(\DateTime $dateTime, int $length): string
     {
         $dayOfYear = (int) $dateTime->format('z') + 1;
@@ -27,11 +30,17 @@ class DayOfYearTransformer extends Transformer
         return $this->padLeft($dayOfYear, $length);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getReverseMatchingRegExp(int $length): string
     {
         return '\d{'.$length.'}';
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function extractDateOptions(string $matched, int $length): array
     {
         return [];

@@ -11,12 +11,8 @@ class <?= $class_name ?> extends AbstractType
         $builder
             ->add('plainPassword', RepeatedType::class, [
                 'type' => PasswordType::class,
-                'options' => [
-                    'attr' => [
-                        'autocomplete' => 'new-password',
-                    ],
-                ],
                 'first_options' => [
+                    'attr' => ['autocomplete' => 'new-password'],
                     'constraints' => [
                         new NotBlank([
                             'message' => 'Please enter a password',
@@ -31,6 +27,7 @@ class <?= $class_name ?> extends AbstractType
                     'label' => 'New password',
                 ],
                 'second_options' => [
+                    'attr' => ['autocomplete' => 'new-password'],
                     'label' => 'Repeat Password',
                 ],
                 'invalid_message' => 'The password fields must match.',

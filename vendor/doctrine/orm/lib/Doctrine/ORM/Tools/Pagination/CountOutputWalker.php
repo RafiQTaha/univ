@@ -30,10 +30,6 @@ use function sprintf;
  * Works with composite keys but cannot deal with queries that have multiple
  * root entities (e.g. `SELECT f, b from Foo, Bar`)
  *
- * Note that the ORDER BY clause is not removed. Many SQL implementations (e.g. MySQL)
- * are able to cache subqueries. By keeping the ORDER BY clause intact, the limitSubQuery
- * that will most likely be executed next can be read from the native SQL cache.
- *
  * @psalm-import-type QueryComponent from Parser
  */
 class CountOutputWalker extends SqlWalker
@@ -63,7 +59,15 @@ class CountOutputWalker extends SqlWalker
     }
 
     /**
-     * {@inheritDoc}
+     * Walks down a SelectStatement AST node, wrapping it in a COUNT (SELECT DISTINCT).
+     *
+     * Note that the ORDER BY clause is not removed. Many SQL implementations (e.g. MySQL)
+     * are able to cache subqueries. By keeping the ORDER BY clause intact, the limitSubQuery
+     * that will most likely be executed next can be read from the native SQL cache.
+     *
+     * @return string
+     *
+     * @throws RuntimeException
      */
     public function walkSelectStatement(SelectStatement $AST)
     {

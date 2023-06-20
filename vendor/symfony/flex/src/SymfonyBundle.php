@@ -107,9 +107,6 @@ class SymfonyBundle
         }
 
         // heuristic that should work in almost all cases
-        $classContents = file_get_contents($classPath);
-
-        return (false !== strpos($classContents, 'Symfony\Component\HttpKernel\Bundle\Bundle'))
-            || (false !== strpos($classContents, 'Symfony\Component\HttpKernel\Bundle\AbstractBundle'));
+        return false !== strpos(file_get_contents($classPath), 'Symfony\Component\HttpKernel\Bundle\Bundle');
     }
 }

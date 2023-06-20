@@ -21,7 +21,9 @@ class Lock
         $this->time  = $time ?: time();
     }
 
-    /** @return Lock */
+    /**
+     * @return Lock
+     */
     public static function createLockRead()
     {
         return new self(uniqid((string) time(), true));

@@ -34,7 +34,7 @@ final class UserClassBuilder
 
         $this->addPasswordImplementation($manipulator, $userClassConfig);
 
-        $this->addEraseCredentials($manipulator);
+        $this->addEraseCredentials($manipulator, $userClassConfig);
     }
 
     private function addPasswordImplementation(ClassSourceManipulator $manipulator, UserClassConfiguration $userClassConfig): void
@@ -70,9 +70,7 @@ final class UserClassBuilder
             );
         } else {
             // add normal property
-            $manipulator->addProperty(
-                name: $userClassConfig->getIdentityPropertyName()
-            );
+            $manipulator->addProperty($userClassConfig->getIdentityPropertyName());
 
             $manipulator->addGetter(
                 $userClassConfig->getIdentityPropertyName(),
@@ -128,8 +126,9 @@ final class UserClassBuilder
         } else {
             // add normal property
             $manipulator->addProperty(
-                name: 'roles',
-                defaultValue: new Node\Expr\Array_([], ['kind' => Node\Expr\Array_::KIND_SHORT])
+                'roles',
+                [],
+                new Node\Expr\Array_([], ['kind' => Node\Expr\Array_::KIND_SHORT])
             );
 
             $manipulator->addGetter(
@@ -231,10 +230,7 @@ final class UserClassBuilder
             );
         } else {
             // add normal property
-            $manipulator->addProperty(
-                name: 'password',
-                comments: [$propertyDocs]
-            );
+            $manipulator->addProperty('password', [$propertyDocs]);
 
             $manipulator->addGetter(
                 'password',
@@ -299,12 +295,12 @@ final class UserClassBuilder
         $manipulator->addMethodBuilder($builder);
     }
 
-    private function addEraseCredentials(ClassSourceManipulator $manipulator): void
+    private function addEraseCredentials(ClassSourceManipulator $manipulator, UserClassConfiguration $userClassConfig): void
     {
         // add eraseCredentials: always empty
         $builder = $manipulator->createMethodBuilder(
             'eraseCredentials',
-            'void',
+            null,
             false,
             ['@see UserInterface']
         );

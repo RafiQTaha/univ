@@ -12,7 +12,6 @@
 namespace Symfony\Component\HttpKernel\DependencyInjection;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\DependencyInjection\Attribute\Target;
 use Symfony\Component\DependencyInjection\ChildDefinition;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
@@ -25,7 +24,6 @@ use Symfony\Component\DependencyInjection\LazyProxy\ProxyHelper;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\DependencyInjection\TypedReference;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 /**
@@ -50,8 +48,6 @@ class RegisterControllerArgumentLocatorsPass implements CompilerPassInterface
                 $publicAliases[(string) $alias][] = $id;
             }
         }
-
-        $emptyAutowireAttributes = class_exists(Autowire::class) ? null : [];
 
         foreach ($container->findTaggedServiceIds('controller.service_arguments', true) as $id => $tags) {
             $def = $container->getDefinition($id);
@@ -126,7 +122,6 @@ class RegisterControllerArgumentLocatorsPass implements CompilerPassInterface
                     /** @var \ReflectionParameter $p */
                     $type = ltrim($target = (string) ProxyHelper::getTypeHint($r, $p), '\\');
                     $invalidBehavior = ContainerInterface::IGNORE_ON_INVALID_REFERENCE;
-                    $autowireAttributes = $autowire ? $emptyAutowireAttributes : [];
 
                     if (isset($arguments[$r->name][$p->name])) {
                         $target = $arguments[$r->name][$p->name];
@@ -143,10 +138,17 @@ class RegisterControllerArgumentLocatorsPass implements CompilerPassInterface
                         [$bindingValue, $bindingId, , $bindingType, $bindingFile] = $binding->getValues();
                         $binding->setValues([$bindingValue, $bindingId, true, $bindingType, $bindingFile]);
 
-                        $args[$p->name] = $bindingValue;
+                        if (!$bindingValue instanceof Reference) {
+                            $args[$p->name] = new Reference('.value.'.$container->hash($bindingValue));
+                            $container->register((string) $args[$p->name], 'mixed')
+                                ->setFactory('current')
+                                ->addArgument([$bindingValue]);
+                        } else {
+                            $args[$p->name] = $bindingValue;
+                        }
 
                         continue;
-                    } elseif (!$autowire || (!($autowireAttributes ??= $p->getAttributes(Autowire::class)) && (!$type || '\\' !== $target[0]))) {
+                    } elseif (!$type || !$autowire || '\\' !== $target[0]) {
                         continue;
                     } elseif (is_subclass_of($type, \UnitEnum::class)) {
                         // do not attempt to register enum typed arguments if not already present in bindings
@@ -155,22 +157,7 @@ class RegisterControllerArgumentLocatorsPass implements CompilerPassInterface
                         $invalidBehavior = ContainerInterface::RUNTIME_EXCEPTION_ON_INVALID_REFERENCE;
                     }
 
-                    if (Request::class === $type || SessionInterface::class === $type || Response::class === $type) {
-                        continue;
-                    }
-
-                    if ($autowireAttributes) {
-                        $value = $autowireAttributes[0]->newInstance()->value;
-
-                        if ($value instanceof Reference) {
-                            $args[$p->name] = $type ? new TypedReference($value, $type, $invalidBehavior, $p->name) : new Reference($value, $invalidBehavior);
-                        } else {
-                            $args[$p->name] = new Reference('.value.'.$container->hash($value));
-                            $container->register((string) $args[$p->name], 'mixed')
-                                ->setFactory('current')
-                                ->addArgument([$value]);
-                        }
-
+                    if (Request::class === $type || SessionInterface::class === $type) {
                         continue;
                     }
 

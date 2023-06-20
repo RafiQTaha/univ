@@ -46,10 +46,12 @@ class DebugUnitOfWorkListener
         $this->context = $context;
     }
 
-    /** @return void */
+    /**
+     * @return void
+     */
     public function onFlush(OnFlushEventArgs $args)
     {
-        $this->dumpIdentityMap($args->getObjectManager());
+        $this->dumpIdentityMap($args->getEntityManager());
     }
 
     /**
@@ -117,7 +119,9 @@ class DebugUnitOfWorkListener
         fclose($fh);
     }
 
-    /** @param mixed $var */
+    /**
+     * @param mixed $var
+     */
     private function getType($var): string
     {
         if (is_object($var)) {
@@ -129,7 +133,9 @@ class DebugUnitOfWorkListener
         return gettype($var);
     }
 
-    /** @param object $entity */
+    /**
+     * @param object $entity
+     */
     private function getIdString($entity, UnitOfWork $uow): string
     {
         if ($uow->isInIdentityMap($entity)) {

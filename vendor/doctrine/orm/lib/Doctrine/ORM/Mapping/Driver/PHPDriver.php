@@ -15,7 +15,9 @@ use Doctrine\Persistence\Mapping\Driver\PHPDriver as CommonPHPDriver;
  */
 class PHPDriver extends CommonPHPDriver
 {
-    /** @param string|string[]|FileLocator $locator */
+    /**
+     * @param string|string[]|FileLocator $locator
+     */
     public function __construct($locator)
     {
         Deprecation::trigger(

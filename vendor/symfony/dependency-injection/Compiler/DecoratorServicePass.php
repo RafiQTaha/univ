@@ -40,10 +40,6 @@ class DecoratorServicePass extends AbstractRecursivePass
         }
         $decoratingDefinitions = [];
 
-        $tagsToKeep = $container->hasParameter('container.behavior_describing_tags')
-            ? $container->getParameter('container.behavior_describing_tags')
-            : ['container.do_not_inline', 'container.service_locator', 'container.service_subscriber', 'container.service_subscriber.locator'];
-
         foreach ($definitions as [$id, $definition]) {
             $decoratedService = $definition->getDecoratedService();
             [$inner, $renamedId] = $decoratedService;
@@ -84,7 +80,7 @@ class DecoratorServicePass extends AbstractRecursivePass
                 throw new ServiceNotFoundException($inner, $id);
             }
 
-            if ($decoratedDefinition?->isSynthetic()) {
+            if ($decoratedDefinition && $decoratedDefinition->isSynthetic()) {
                 throw new InvalidArgumentException(sprintf('A synthetic service cannot be decorated: service "%s" cannot decorate "%s".', $id, $inner));
             }
 
@@ -94,8 +90,8 @@ class DecoratorServicePass extends AbstractRecursivePass
                 $decoratingTags = $decoratingDefinition->getTags();
                 $resetTags = [];
 
-                // Behavior-describing tags must not be transferred out to decorators
-                foreach ($tagsToKeep as $containerTag) {
+                // container.service_locator and container.service_subscriber have special logic and they must not be transferred out to decorators
+                foreach (['container.service_locator', 'container.service_subscriber'] as $containerTag) {
                     if (isset($decoratingTags[$containerTag])) {
                         $resetTags[$containerTag] = $decoratingTags[$containerTag];
                         unset($decoratingTags[$containerTag]);

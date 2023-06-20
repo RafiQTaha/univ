@@ -423,10 +423,6 @@ abstract class AbstractHydrator
                     $type     = $cacheKeyInfo['type'];
                     $value    = $type->convertToPHPValue($value, $this->_platform);
 
-                    if ($value !== null && isset($cacheKeyInfo['enumType'])) {
-                        $value = $this->buildEnum($value, $cacheKeyInfo['enumType']);
-                    }
-
                     $rowData['newObjects'][$objIndex]['class']           = $cacheKeyInfo['class'];
                     $rowData['newObjects'][$objIndex]['args'][$argIndex] = $value;
                     break;
@@ -435,8 +431,16 @@ abstract class AbstractHydrator
                     $type  = $cacheKeyInfo['type'];
                     $value = $type->convertToPHPValue($value, $this->_platform);
 
+                    // Reimplement ReflectionEnumProperty code
                     if ($value !== null && isset($cacheKeyInfo['enumType'])) {
-                        $value = $this->buildEnum($value, $cacheKeyInfo['enumType']);
+                        $enumType = $cacheKeyInfo['enumType'];
+                        if (is_array($value)) {
+                            $value = array_map(static function ($value) use ($enumType): BackedEnum {
+                                return $enumType::from($value);
+                            }, $value);
+                        } else {
+                            $value = $enumType::from($value);
+                        }
                     }
 
                     $rowData['scalars'][$fieldName] = $value;
@@ -467,10 +471,6 @@ abstract class AbstractHydrator
                     $rowData['data'][$dqlAlias][$fieldName] = $type
                         ? $type->convertToPHPValue($value, $this->_platform)
                         : $value;
-
-                    if ($rowData['data'][$dqlAlias][$fieldName] !== null && isset($cacheKeyInfo['enumType'])) {
-                        $rowData['data'][$dqlAlias][$fieldName] = $this->buildEnum($rowData['data'][$dqlAlias][$fieldName], $cacheKeyInfo['enumType']);
-                    }
 
                     if ($cacheKeyInfo['isIdentifier'] && $value !== null) {
                         $id[$dqlAlias]                .= '|' . $value;
@@ -551,7 +551,6 @@ abstract class AbstractHydrator
                     'fieldName'    => $fieldName,
                     'type'         => Type::getType($fieldMapping['type']),
                     'dqlAlias'     => $ownerMap,
-                    'enumType'     => $this->_rsm->enumMappings[$key] ?? null,
                 ];
 
                 // the current discriminator value must be saved in order to disambiguate fields hydration,
@@ -581,7 +580,6 @@ abstract class AbstractHydrator
                     'argIndex'             => $mapping['argIndex'],
                     'objIndex'             => $mapping['objIndex'],
                     'class'                => new ReflectionClass($mapping['className']),
-                    'enumType'             => $this->_rsm->enumMappings[$key] ?? null,
                 ];
 
             case isset($this->_rsm->scalarMappings[$key], $this->_hints[LimitSubqueryWalker::FORCE_DBAL_TYPE_CONVERSION]):
@@ -617,7 +615,6 @@ abstract class AbstractHydrator
                     'fieldName'    => $fieldName,
                     'type'         => $type,
                     'dqlAlias'     => $dqlAlias,
-                    'enumType'     => $this->_rsm->enumMappings[$key] ?? null,
                 ];
         }
 
@@ -690,22 +687,5 @@ abstract class AbstractHydrator
         }
 
         $this->_em->getUnitOfWork()->registerManaged($entity, $id, $data);
-    }
-
-    /**
-     * @param mixed                    $value
-     * @param class-string<BackedEnum> $enumType
-     *
-     * @return BackedEnum|array<BackedEnum>
-     */
-    final protected function buildEnum($value, string $enumType)
-    {
-        if (is_array($value)) {
-            return array_map(static function ($value) use ($enumType): BackedEnum {
-                return $enumType::from($value);
-            }, $value);
-        }
-
-        return $enumType::from($value);
     }
 }

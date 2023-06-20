@@ -20,7 +20,7 @@ use Symfony\Component\Process\Process;
  */
 final class MakerTestProcess
 {
-    private Process $process;
+    private $process;
 
     private function __construct($commandLine, $cwd, array $envVars, $timeout)
     {

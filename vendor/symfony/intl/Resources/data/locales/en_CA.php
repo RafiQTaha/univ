@@ -2,7 +2,6 @@
 
 return [
     'Names' => [
-        'ar_PS' => 'Arabic (Palestinian territories)',
         'bn' => 'Bengali',
         'bn_BD' => 'Bengali (Bangladesh)',
         'bn_IN' => 'Bengali (India)',
@@ -15,9 +14,7 @@ return [
         'en_SH' => 'English (Saint Helena)',
         'en_TC' => 'English (Turks and Caicos Islands)',
         'en_TT' => 'English (Trinidad and Tobago)',
-        'en_UM' => 'English (US Outlying Islands)',
         'en_VC' => 'English (Saint Vincent and the Grenadines)',
-        'en_VI' => 'English (US Virgin Islands)',
         'fr_BL' => 'French (Saint-Barthélemy)',
         'fr_MF' => 'French (Saint Martin)',
         'fr_PM' => 'French (Saint-Pierre-et-Miquelon)',

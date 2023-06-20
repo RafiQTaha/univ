@@ -2,11 +2,10 @@
 
 return [
     'Names' => [
-        'Adlm' => 'adlam',
         'Afak' => 'afaka',
         'Aghb' => 'kavkazskoalbánské',
         'Arab' => 'arabské',
-        'Aran' => 'nastalik',
+        'Aran' => 'nastaliq',
         'Armi' => 'aramejské (imperiální)',
         'Armn' => 'arménské',
         'Avst' => 'avestánské',
@@ -123,7 +122,6 @@ return [
         'Prti' => 'parthské klínové',
         'Qaag' => 'zawgyi',
         'Rjng' => 'redžanské',
-        'Rohg' => 'hanifi',
         'Roro' => 'rongorongo',
         'Runr' => 'runové',
         'Samr' => 'samařské',

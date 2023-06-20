@@ -134,7 +134,7 @@ class EntrypointLookup implements EntrypointLookupInterface, IntegrityDataProvid
             throw new \InvalidArgumentException(sprintf('Could not find an "entrypoints" key in the "%s" file', $this->entrypointJsonPath));
         }
 
-        if (isset($cached)) {
+        if ($this->cache) {
             $this->cache->save($cached->set($this->entriesData));
         }
 

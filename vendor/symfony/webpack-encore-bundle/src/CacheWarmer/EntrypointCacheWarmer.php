@@ -24,6 +24,9 @@ class EntrypointCacheWarmer extends AbstractPhpFileCacheWarmer
         parent::__construct($phpArrayFile);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     protected function doWarmUp($cacheDir, ArrayAdapter $arrayAdapter): bool
     {
         foreach ($this->cacheKeys as $cacheKey => $path) {

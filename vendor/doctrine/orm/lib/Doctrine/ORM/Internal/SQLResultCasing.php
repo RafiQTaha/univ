@@ -13,7 +13,9 @@ use function method_exists;
 use function strtolower;
 use function strtoupper;
 
-/** @internal */
+/**
+ * @internal
+ */
 trait SQLResultCasing
 {
     private function getSQLResultCasing(AbstractPlatform $platform, string $column): string

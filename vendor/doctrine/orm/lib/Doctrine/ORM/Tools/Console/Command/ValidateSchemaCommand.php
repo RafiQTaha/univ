@@ -20,7 +20,9 @@ use function sprintf;
  */
 class ValidateSchemaCommand extends AbstractEntityManagerCommand
 {
-    /** @return void */
+    /**
+     * {@inheritdoc}
+     */
     protected function configure()
     {
         $this->setName('orm:validate-schema')
@@ -32,13 +34,13 @@ class ValidateSchemaCommand extends AbstractEntityManagerCommand
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      *
      * @return int
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $ui = (new SymfonyStyle($input, $output))->getErrorStyle();
+        $ui = new SymfonyStyle($input, $output);
 
         $em        = $this->getEntityManager($input);
         $validator = new SchemaValidator($em);

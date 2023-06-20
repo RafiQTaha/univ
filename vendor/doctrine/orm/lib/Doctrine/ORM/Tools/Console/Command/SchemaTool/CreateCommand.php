@@ -19,7 +19,9 @@ use function sprintf;
  */
 class CreateCommand extends AbstractCommand
 {
-    /** @return void */
+    /**
+     * {@inheritdoc}
+     */
     protected function configure()
     {
         $this->setName('orm:schema-tool:create')
@@ -39,7 +41,7 @@ EOT
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     protected function executeSchemaCommand(InputInterface $input, OutputInterface $output, SchemaTool $schemaTool, array $metadatas, SymfonyStyle $ui)
     {
@@ -47,24 +49,24 @@ EOT
 
         if ($dumpSql) {
             $sqls = $schemaTool->getCreateSchemaSql($metadatas);
+            $ui->text('The following SQL statements will be executed:');
+            $ui->newLine();
 
             foreach ($sqls as $sql) {
-                $ui->writeln(sprintf('%s;', $sql));
+                $ui->text(sprintf('    %s;', $sql));
             }
 
             return 0;
         }
 
-        $notificationUi = $ui->getErrorStyle();
+        $ui->caution('This operation should not be executed in a production environment!');
 
-        $notificationUi->caution('This operation should not be executed in a production environment!');
-
-        $notificationUi->text('Creating database schema...');
-        $notificationUi->newLine();
+        $ui->text('Creating database schema...');
+        $ui->newLine();
 
         $schemaTool->createSchema($metadatas);
 
-        $notificationUi->success('Database schema created successfully!');
+        $ui->success('Database schema created successfully!');
 
         return 0;
     }

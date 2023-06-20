@@ -155,13 +155,13 @@ class GraphvizDumper extends Dumper
         foreach ($container->getDefinitions() as $id => $definition) {
             $class = $definition->getClass();
 
-            if (str_starts_with($class, '\\')) {
+            if ('\\' === substr($class, 0, 1)) {
                 $class = substr($class, 1);
             }
 
             try {
                 $class = $this->container->getParameterBag()->resolveValue($class);
-            } catch (ParameterNotFoundException) {
+            } catch (ParameterNotFoundException $e) {
             }
 
             $nodes[$id] = ['class' => str_replace('\\', '\\\\', $class), 'attributes' => array_merge($this->options['node.definition'], ['style' => $definition->isShared() ? 'filled' : 'dotted'])];

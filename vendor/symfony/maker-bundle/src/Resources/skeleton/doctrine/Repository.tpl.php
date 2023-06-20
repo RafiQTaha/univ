@@ -19,7 +19,7 @@ class <?= $class_name; ?> extends ServiceEntityRepository<?= $with_password_upgr
         parent::__construct($registry, <?= $entity_class_name; ?>::class);
     }
 
-    public function save(<?= $entity_class_name ?> $entity, bool $flush = false): void
+    public function add(<?= $entity_class_name ?> $entity, bool $flush = false): void
     {
         $this->getEntityManager()->persist($entity);
 
@@ -46,12 +46,12 @@ class <?= $class_name; ?> extends ServiceEntityRepository<?= $with_password_upgr
     public function upgradePassword(<?= sprintf('%s ', $password_upgrade_user_interface->getShortName()); ?>$user, string $newHashedPassword): void
     {
         if (!$user instanceof <?= $entity_class_name ?>) {
-            throw new UnsupportedUserException(sprintf('Instances of "%s" are not supported.', $user::class));
+            throw new UnsupportedUserException(sprintf('Instances of "%s" are not supported.', \get_class($user)));
         }
 
         $user->setPassword($newHashedPassword);
 
-        $this->save($user, true);
+        $this->add($user, true);
     }
 
 <?php endif ?>

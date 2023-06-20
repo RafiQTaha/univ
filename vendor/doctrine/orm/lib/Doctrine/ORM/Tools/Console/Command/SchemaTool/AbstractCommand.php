@@ -25,7 +25,7 @@ abstract class AbstractCommand extends AbstractEntityManagerCommand
     abstract protected function executeSchemaCommand(InputInterface $input, OutputInterface $output, SchemaTool $schemaTool, array $metadatas, SymfonyStyle $ui);
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      *
      * @return int
      */
@@ -38,7 +38,7 @@ abstract class AbstractCommand extends AbstractEntityManagerCommand
         $metadatas = $em->getMetadataFactory()->getAllMetadata();
 
         if (empty($metadatas)) {
-            $ui->getErrorStyle()->success('No Metadata Classes to process.');
+            $ui->success('No Metadata Classes to process.');
 
             return 0;
         }

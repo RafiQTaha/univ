@@ -67,13 +67,9 @@ class ChainDecoder implements ContextAwareDecoderInterface
             return $this->decoders[$this->decoderByFormat[$format]];
         }
 
-        $cache = true;
         foreach ($this->decoders as $i => $decoder) {
-            $cache = $cache && !$decoder instanceof ContextAwareDecoderInterface;
             if ($decoder->supportsDecoding($format, $context)) {
-                if ($cache) {
-                    $this->decoderByFormat[$format] = $i;
-                }
+                $this->decoderByFormat[$format] = $i;
 
                 return $decoder;
             }

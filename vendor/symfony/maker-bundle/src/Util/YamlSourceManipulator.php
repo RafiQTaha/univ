@@ -38,6 +38,8 @@ class YamlSourceManipulator
      * @var LoggerInterface|null
      */
     private $logger;
+
+    private $contents;
     private $currentData;
 
     private $currentPosition = 0;
@@ -48,9 +50,9 @@ class YamlSourceManipulator
     private $arrayFormatForDepths = [];
     private $arrayTypeForDepths = [];
 
-    public function __construct(
-        private string $contents,
-    ) {
+    public function __construct(string $contents)
+    {
+        $this->contents = $contents;
         $this->currentData = Yaml::parse($contents);
 
         if (!\is_array($this->currentData)) {
@@ -265,6 +267,9 @@ class YamlSourceManipulator
      *
      * The position should be set *right* where this new key
      * should be inserted.
+     *
+     * @param mixed $key
+     * @param mixed $value
      */
     private function addNewKeyToYaml($key, $value)
     {
@@ -467,14 +472,14 @@ class YamlSourceManipulator
         // In case of multiline, $value is converted as plain string like "Foo\nBar"
         // We need to keep it "as is"
         $newYamlValue = $isMultilineValue ? rtrim($value, "\n") : $this->convertToYaml($value);
-        if ((!\is_array($originalVal) && \is_array($value))
-            || ($this->isMultilineString($originalVal) && $this->isMultilineString($value))
+        if ((!\is_array($originalVal) && \is_array($value)) ||
+            ($this->isMultilineString($originalVal) && $this->isMultilineString($value))
         ) {
             // we're converting from a scalar to a (multiline) array
             // this means we need to break onto the next line
 
             // increase(override) the indentation
-            $newYamlValue = "\n".$this->indentMultilineYamlArray($newYamlValue, $this->indentationForDepths[$this->depth] + $this->getPreferredIndentationSize());
+            $newYamlValue = "\n".$this->indentMultilineYamlArray($newYamlValue, ($this->indentationForDepths[$this->depth] + $this->getPreferredIndentationSize()));
         } elseif ($this->isCurrentArrayMultiline() && $this->isCurrentArraySequence()) {
             // we are a multi-line sequence, so drop to next line, indent and add "- " in front
             $newYamlValue = "\n".$this->indentMultilineYamlArray('- '.$newYamlValue);
@@ -623,7 +628,7 @@ class YamlSourceManipulator
         }
 
         // find either a line break or a , that is the end of the previous key
-        while (\in_array($char = substr($this->contents, $startOfKey - 1, 1), [',', "\n"])) {
+        while (\in_array(($char = substr($this->contents, $startOfKey - 1, 1)), [',', "\n"])) {
             --$startOfKey;
         }
 
@@ -800,6 +805,8 @@ class YamlSourceManipulator
      * This could fail if the currentPath is for new data.
      *
      * @param int $limitLevels If set to 1, the data 1 level up will be returned
+     *
+     * @return mixed
      */
     private function getCurrentData(int $limitLevels = 0)
     {
@@ -918,7 +925,7 @@ class YamlSourceManipulator
             return;
         }
 
-        if (str_contains($advancedContent, "\n")) {
+        if (false !== strpos($advancedContent, "\n")) {
             $lines = explode("\n", $advancedContent);
             if (!empty($lines)) {
                 $lastLine = $lines[\count($lines) - 1];
@@ -961,7 +968,7 @@ class YamlSourceManipulator
         }
 
         $context = [
-            'key' => $this->currentPath[$this->depth] ?? 'n/a',
+            'key' => isset($this->currentPath[$this->depth]) ? $this->currentPath[$this->depth] : 'n/a',
             'depth' => $this->depth,
             'position' => $this->currentPosition,
             'indentation' => $this->indentationForDepths[$this->depth],
@@ -1125,7 +1132,7 @@ class YamlSourceManipulator
                 unset($data[$key]);
             }
 
-            if (null !== $val && str_starts_with($val, self::COMMENT_PLACEHOLDER_VALUE)) {
+            if (null !== $val && 0 === strpos($val, self::COMMENT_PLACEHOLDER_VALUE)) {
                 unset($data[$key]);
             }
         }
@@ -1329,6 +1336,6 @@ class YamlSourceManipulator
 
     private function isMultilineString($value): bool
     {
-        return \is_string($value) && str_contains($value, "\n");
+        return \is_string($value) && false !== strpos($value, "\n");
     }
 }

@@ -20,8 +20,33 @@ use Symfony\Bundle\MakerBundle\FileManager;
  */
 class PhpCompatUtil
 {
-    public function __construct(private FileManager $fileManager)
+    /** @var FileManager */
+    private $fileManager;
+
+    public function __construct(FileManager $fileManager)
     {
+        $this->fileManager = $fileManager;
+    }
+
+    public function canUseAttributes(): bool
+    {
+        $version = $this->getPhpVersion();
+
+        return version_compare($version, '8alpha', '>=');
+    }
+
+    public function canUseTypedProperties(): bool
+    {
+        $version = $this->getPhpVersion();
+
+        return version_compare($version, '7.4', '>=');
+    }
+
+    public function canUseUnionTypes(): bool
+    {
+        $version = $this->getPhpVersion();
+
+        return version_compare($version, '8alpha', '>=');
     }
 
     protected function getPhpVersion(): string

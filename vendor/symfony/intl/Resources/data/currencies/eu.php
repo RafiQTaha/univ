@@ -898,10 +898,6 @@ return [
             0 => 'SKK',
             1 => 'koroa eslovakiarra',
         ],
-        'SLE' => [
-            0 => 'SLE',
-            1 => 'leone sierraleonar berria',
-        ],
         'SLL' => [
             0 => 'SLL',
             1 => 'leone sierraleonarra',
@@ -1049,10 +1045,6 @@ return [
         'VEB' => [
             0 => 'VEB',
             1 => 'Venezuelako bolivarra (1871–2008)',
-        ],
-        'VED' => [
-            0 => 'VED',
-            1 => 'bolivar subiraua',
         ],
         'VEF' => [
             0 => 'VEF',

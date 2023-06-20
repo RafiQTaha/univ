@@ -25,8 +25,6 @@ use Twig\Extension\OptimizerExtension;
 use Twig\Loader\ArrayLoader;
 use Twig\Loader\ChainLoader;
 use Twig\Loader\LoaderInterface;
-use Twig\Node\Expression\Binary\AbstractBinary;
-use Twig\Node\Expression\Unary\AbstractUnary;
 use Twig\Node\ModuleNode;
 use Twig\Node\Node;
 use Twig\NodeVisitor\NodeVisitorInterface;
@@ -40,10 +38,10 @@ use Twig\TokenParser\TokenParserInterface;
  */
 class Environment
 {
-    public const VERSION = '3.6.1';
-    public const VERSION_ID = 30601;
+    public const VERSION = '3.4.1';
+    public const VERSION_ID = 30401;
     public const MAJOR_VERSION = 3;
-    public const MINOR_VERSION = 6;
+    public const MINOR_VERSION = 4;
     public const RELEASE_VERSION = 1;
     public const EXTRA_VERSION = '';
 
@@ -55,7 +53,6 @@ class Environment
     private $lexer;
     private $parser;
     private $compiler;
-    /** @var array<string, mixed> */
     private $globals = [];
     private $resolvedGlobals;
     private $loadedTemplates;
@@ -778,8 +775,6 @@ class Environment
 
     /**
      * @internal
-     *
-     * @return array<string, mixed>
      */
     public function getGlobals(): array
     {
@@ -809,8 +804,6 @@ class Environment
 
     /**
      * @internal
-     *
-     * @return array<string, array{precedence: int, class: class-string<AbstractUnary>}>
      */
     public function getUnaryOperators(): array
     {
@@ -819,8 +812,6 @@ class Environment
 
     /**
      * @internal
-     *
-     * @return array<string, array{precedence: int, class: class-string<AbstractBinary>, associativity: ExpressionParser::OPERATOR_*}>
      */
     public function getBinaryOperators(): array
     {

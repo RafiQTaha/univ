@@ -15,22 +15,20 @@ use Doctrine\ORM\EntityRepository;
  * @template T of object
  */
 #[Attribute(Attribute::TARGET_CLASS)]
-final class Entity implements MappingAttribute
+final class Entity implements Annotation
 {
     /**
      * @var string|null
      * @psalm-var class-string<EntityRepository<T>>|null
-     * @readonly
      */
     public $repositoryClass;
 
-    /**
-     * @var bool
-     * @readonly
-     */
+    /** @var bool */
     public $readOnly = false;
 
-    /** @psalm-param class-string<EntityRepository<T>>|null $repositoryClass */
+    /**
+     * @psalm-param class-string<EntityRepository<T>>|null $repositoryClass
+     */
     public function __construct(?string $repositoryClass = null, bool $readOnly = false)
     {
         $this->repositoryClass = $repositoryClass;

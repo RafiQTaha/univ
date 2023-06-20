@@ -63,7 +63,7 @@ class NotCompromisedPasswordValidator extends ConstraintValidator
             return;
         }
 
-        if (null !== $value && !\is_scalar($value) && !$value instanceof \Stringable) {
+        if (null !== $value && !is_scalar($value) && !$value instanceof \Stringable) {
             throw new UnexpectedValueException($value, 'string');
         }
 
@@ -91,10 +91,6 @@ class NotCompromisedPasswordValidator extends ConstraintValidator
         }
 
         foreach (explode("\r\n", $result) as $line) {
-            if (!str_contains($line, ':')) {
-                continue;
-            }
-
             [$hashSuffix, $count] = explode(':', $line);
 
             if ($hashPrefix.$hashSuffix === $hash && $constraint->threshold <= (int) $count) {

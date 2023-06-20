@@ -27,7 +27,9 @@ use function sprintf;
  */
 class GenerateRepositoriesCommand extends AbstractEntityManagerCommand
 {
-    /** @return void */
+    /**
+     * {@inheritdoc}
+     */
     protected function configure()
     {
         $this->setName('orm:generate-repositories')
@@ -40,13 +42,13 @@ class GenerateRepositoriesCommand extends AbstractEntityManagerCommand
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      *
      * @return int
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $ui = (new SymfonyStyle($input, $output))->getErrorStyle();
+        $ui = new SymfonyStyle($input, $output);
         $ui->warning('Command ' . $this->getName() . ' is deprecated and will be removed in Doctrine ORM 3.0.');
 
         $em = $this->getEntityManager($input);

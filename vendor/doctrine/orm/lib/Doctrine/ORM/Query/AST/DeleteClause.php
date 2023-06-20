@@ -17,14 +17,16 @@ class DeleteClause extends Node
     /** @var string */
     public $aliasIdentificationVariable;
 
-    /** @param string $abstractSchemaName */
+    /**
+     * @param string $abstractSchemaName
+     */
     public function __construct($abstractSchemaName)
     {
         $this->abstractSchemaName = $abstractSchemaName;
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function dispatch($sqlWalker)
     {

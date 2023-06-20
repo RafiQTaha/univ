@@ -25,7 +25,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  */
 final class ConsoleErrorSubscriber implements EventSubscriberInterface
 {
-    private bool $setExitCode = false;
+    private $setExitCode = false;
 
     public function onConsoleError(ConsoleErrorEvent $event): void
     {

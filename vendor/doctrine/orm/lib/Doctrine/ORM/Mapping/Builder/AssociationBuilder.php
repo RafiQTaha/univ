@@ -56,7 +56,9 @@ class AssociationBuilder
         return $this;
     }
 
-    /** @return $this */
+    /**
+     * @return $this
+     */
     public function cascadeAll()
     {
         $this->mapping['cascade'] = ['ALL'];
@@ -64,7 +66,9 @@ class AssociationBuilder
         return $this;
     }
 
-    /** @return $this */
+    /**
+     * @return $this
+     */
     public function cascadePersist()
     {
         $this->mapping['cascade'][] = 'persist';
@@ -72,7 +76,9 @@ class AssociationBuilder
         return $this;
     }
 
-    /** @return $this */
+    /**
+     * @return $this
+     */
     public function cascadeRemove()
     {
         $this->mapping['cascade'][] = 'remove';
@@ -80,7 +86,9 @@ class AssociationBuilder
         return $this;
     }
 
-    /** @return $this */
+    /**
+     * @return $this
+     */
     public function cascadeMerge()
     {
         $this->mapping['cascade'][] = 'merge';
@@ -88,7 +96,9 @@ class AssociationBuilder
         return $this;
     }
 
-    /** @return $this */
+    /**
+     * @return $this
+     */
     public function cascadeDetach()
     {
         $this->mapping['cascade'][] = 'detach';
@@ -96,7 +106,9 @@ class AssociationBuilder
         return $this;
     }
 
-    /** @return $this */
+    /**
+     * @return $this
+     */
     public function cascadeRefresh()
     {
         $this->mapping['cascade'][] = 'refresh';
@@ -104,7 +116,9 @@ class AssociationBuilder
         return $this;
     }
 
-    /** @return $this */
+    /**
+     * @return $this
+     */
     public function fetchExtraLazy()
     {
         $this->mapping['fetch'] = ClassMetadata::FETCH_EXTRA_LAZY;
@@ -112,7 +126,9 @@ class AssociationBuilder
         return $this;
     }
 
-    /** @return $this */
+    /**
+     * @return $this
+     */
     public function fetchEager()
     {
         $this->mapping['fetch'] = ClassMetadata::FETCH_EAGER;
@@ -120,7 +136,9 @@ class AssociationBuilder
         return $this;
     }
 
-    /** @return $this */
+    /**
+     * @return $this
+     */
     public function fetchLazy()
     {
         $this->mapping['fetch'] = ClassMetadata::FETCH_LAZY;

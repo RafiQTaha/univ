@@ -33,14 +33,16 @@ class CacheLoggerChain implements CacheLogger
         return $this->loggers[$name] ?? null;
     }
 
-    /** @return array<string, CacheLogger> */
+    /**
+     * @return array<string, CacheLogger>
+     */
     public function getLoggers()
     {
         return $this->loggers;
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function collectionCacheHit($regionName, CollectionCacheKey $key)
     {
@@ -50,7 +52,7 @@ class CacheLoggerChain implements CacheLogger
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function collectionCacheMiss($regionName, CollectionCacheKey $key)
     {
@@ -60,7 +62,7 @@ class CacheLoggerChain implements CacheLogger
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function collectionCachePut($regionName, CollectionCacheKey $key)
     {
@@ -70,7 +72,7 @@ class CacheLoggerChain implements CacheLogger
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function entityCacheHit($regionName, EntityCacheKey $key)
     {
@@ -80,7 +82,7 @@ class CacheLoggerChain implements CacheLogger
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function entityCacheMiss($regionName, EntityCacheKey $key)
     {
@@ -90,7 +92,7 @@ class CacheLoggerChain implements CacheLogger
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function entityCachePut($regionName, EntityCacheKey $key)
     {
@@ -100,7 +102,7 @@ class CacheLoggerChain implements CacheLogger
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function queryCacheHit($regionName, QueryCacheKey $key)
     {
@@ -110,7 +112,7 @@ class CacheLoggerChain implements CacheLogger
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function queryCacheMiss($regionName, QueryCacheKey $key)
     {
@@ -120,7 +122,7 @@ class CacheLoggerChain implements CacheLogger
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function queryCachePut($regionName, QueryCacheKey $key)
     {

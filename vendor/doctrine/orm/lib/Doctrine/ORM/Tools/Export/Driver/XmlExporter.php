@@ -28,7 +28,7 @@ class XmlExporter extends AbstractExporter
     protected $_extension = '.dcm.xml';
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function exportClassMetadata(ClassMetadataInfo $metadata)
     {
@@ -57,7 +57,7 @@ class XmlExporter extends AbstractExporter
             $root->addAttribute('schema', $metadata->table['schema']);
         }
 
-        if ($metadata->inheritanceType !== ClassMetadataInfo::INHERITANCE_TYPE_NONE) {
+        if ($metadata->inheritanceType && $metadata->inheritanceType !== ClassMetadataInfo::INHERITANCE_TYPE_NONE) {
             $root->addAttribute('inheritance-type', $this->_getInheritanceTypeString($metadata->inheritanceType));
         }
 
@@ -82,7 +82,7 @@ class XmlExporter extends AbstractExporter
 
             foreach ($metadata->discriminatorMap as $value => $className) {
                 $discriminatorMappingXml = $discriminatorMapXml->addChild('discriminator-mapping');
-                $discriminatorMappingXml->addAttribute('value', (string) $value);
+                $discriminatorMappingXml->addAttribute('value', $value);
                 $discriminatorMappingXml->addAttribute('class', $className);
             }
         }
@@ -458,7 +458,9 @@ class XmlExporter extends AbstractExporter
         $this->generateEntityListenerXml($metadata, $entityListenersXmlMap, $entityListenersXml);
     }
 
-    /** @param mixed[] $entityListenersXmlMap */
+    /**
+     * @param mixed[] $entityListenersXmlMap
+     */
     private function generateEntityListenerXml(
         ClassMetadataInfo $metadata,
         array $entityListenersXmlMap,

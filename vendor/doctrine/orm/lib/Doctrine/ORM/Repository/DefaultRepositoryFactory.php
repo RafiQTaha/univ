@@ -25,7 +25,7 @@ final class DefaultRepositoryFactory implements RepositoryFactory
     private $repositoryList = [];
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getRepository(EntityManagerInterface $entityManager, $entityName): ObjectRepository
     {

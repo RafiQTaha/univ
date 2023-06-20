@@ -39,6 +39,7 @@ return [
         'America/Creston' => 'पहाड़ी वक्त (ڪريسٽن)',
         'America/Curacao' => 'अटलांटिक वक्त (ڪيوراسائو)',
         'America/Danmarkshavn' => 'ग्रीनविच मीन वक्तु (ڊينمارڪ شون)',
+        'America/Dawson' => 'ڪينيڊا वक्त (ڊاوسن)',
         'America/Dawson_Creek' => 'पहाड़ी वक्त (ڊاوسن ڪريڪ)',
         'America/Denver' => 'पहाड़ी वक्त (ڊينور)',
         'America/Detroit' => 'ओभरी वक्त (ڊيٽرائيٽ)',
@@ -113,6 +114,7 @@ return [
         'America/Toronto' => 'ओभरी वक्त (ٽورنٽو)',
         'America/Tortola' => 'अटलांटिक वक्त (ٽورٽولا)',
         'America/Vancouver' => 'पेसिफिक वक्त (وينڪوور)',
+        'America/Whitehorse' => 'ڪينيڊا वक्त (وائيٽ هائوس)',
         'America/Winnipeg' => 'मरकज़ी वक्त (وني پيگ)',
         'America/Yellowknife' => 'पहाड़ी वक्त (ييلو نائيف)',
         'Antarctica/Casey' => 'انٽارڪٽيڪا वक्त (ڪيسي)',
@@ -197,6 +199,5 @@ return [
         'PST8PDT' => 'पेसिफिक वक्त',
     ],
     'Meta' => [
-        'GmtFormat' => 'जीएमटी%s',
     ],
 ];

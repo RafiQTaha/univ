@@ -6,8 +6,12 @@ namespace Doctrine\ORM\Mapping;
 
 use BackedEnum;
 use BadMethodCallException;
+use DateInterval;
+use DateTime;
+use DateTimeImmutable;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\Deprecations\Deprecation;
 use Doctrine\Instantiator\Instantiator;
 use Doctrine\Instantiator\InstantiatorInterface;
@@ -19,6 +23,7 @@ use Doctrine\Persistence\Mapping\ReflectionService;
 use InvalidArgumentException;
 use LogicException;
 use ReflectionClass;
+use ReflectionEnum;
 use ReflectionNamedType;
 use ReflectionProperty;
 use RuntimeException;
@@ -68,11 +73,30 @@ use const PHP_VERSION_ID;
  *
  * @template-covariant T of object
  * @template-implements ClassMetadata<T>
- * @psalm-import-type AssociationMapping from \Doctrine\ORM\Mapping\ClassMetadata
- * @psalm-import-type FieldMapping from \Doctrine\ORM\Mapping\ClassMetadata
- * @psalm-import-type EmbeddedClassMapping from \Doctrine\ORM\Mapping\ClassMetadata
- * @psalm-import-type JoinColumnData from \Doctrine\ORM\Mapping\ClassMetadata
- * @psalm-import-type DiscriminatorColumnMapping from \Doctrine\ORM\Mapping\ClassMetadata
+ * @psalm-type FieldMapping = array{
+ *      type: string,
+ *      fieldName: string,
+ *      columnName: string,
+ *      length?: int,
+ *      id?: bool,
+ *      nullable?: bool,
+ *      notInsertable?: bool,
+ *      notUpdatable?: bool,
+ *      generated?: string,
+ *      enumType?: class-string<BackedEnum>,
+ *      columnDefinition?: string,
+ *      precision?: int,
+ *      scale?: int,
+ *      unique?: string,
+ *      inherited?: class-string,
+ *      originalClass?: class-string,
+ *      originalField?: string,
+ *      quoted?: bool,
+ *      requireSQLConversion?: bool,
+ *      declared?: class-string,
+ *      declaredField?: string,
+ *      options?: array<string, mixed>
+ * }
  */
 class ClassMetadataInfo implements ClassMetadata
 {
@@ -98,8 +122,6 @@ class ClassMetadataInfo implements ClassMetadata
     /**
      * TABLE_PER_CLASS means the class will be persisted according to the rules
      * of <tt>Concrete Table Inheritance</tt>.
-     *
-     * @deprecated
      */
     public const INHERITANCE_TYPE_TABLE_PER_CLASS = 4;
 
@@ -320,35 +342,14 @@ class ClassMetadataInfo implements ClassMetadata
     public $isEmbeddedClass = false;
 
     /**
-     * READ-ONLY: The names of the parent <em>entity</em> classes (ancestors), starting with the
-     * nearest one and ending with the root entity class.
+     * READ-ONLY: The names of the parent classes (ancestors).
      *
      * @psalm-var list<class-string>
      */
     public $parentClasses = [];
 
     /**
-     * READ-ONLY: For classes in inheritance mapping hierarchies, this field contains the names of all
-     * <em>entity</em> subclasses of this class. These may also be abstract classes.
-     *
-     * This list is used, for example, to enumerate all necessary tables in JTI when querying for root
-     * or subclass entities, or to gather all fields comprised in an entity inheritance tree.
-     *
-     * For classes that do not use STI/JTI, this list is empty.
-     *
-     * Implementation note:
-     *
-     * In PHP, there is no general way to discover all subclasses of a given class at runtime. For that
-     * reason, the list of classes given in the discriminator map at the root entity is considered
-     * authoritative. The discriminator map must contain all <em>concrete</em> classes that can
-     * appear in the particular inheritance hierarchy tree. Since there can be no instances of abstract
-     * entity classes, users are not required to list such classes with a discriminator value.
-     *
-     * The possibly remaining "gaps" for abstract entity classes are filled after the class metadata for the
-     * root entity has been loaded.
-     *
-     * For subclasses of such root entities, the list can be reused/passed downwards, it only needs to
-     * be filtered accordingly (only keep remaining subclasses)
+     * READ-ONLY: The names of all subclasses (descendants).
      *
      * @psalm-var list<class-string>
      */
@@ -357,23 +358,7 @@ class ClassMetadataInfo implements ClassMetadata
     /**
      * READ-ONLY: The names of all embedded classes based on properties.
      *
-     * The value (definition) array may contain, among others, the following values:
-     *
-     * - <b>'inherited'</b> (string, optional)
-     * This is set when this embedded-class field is inherited by this class from another (inheritance) parent
-     * <em>entity</em> class. The value is the FQCN of the topmost entity class that contains
-     * mapping information for this field. (If there are transient classes in the
-     * class hierarchy, these are ignored, so the class property may in fact come
-     * from a class further up in the PHP class hierarchy.)
-     * Fields initially declared in mapped superclasses are
-     * <em>not</em> considered 'inherited' in the nearest entity subclasses.
-     *
-     * - <b>'declared'</b> (string, optional)
-     * This is set when the embedded-class field does not appear for the first time in this class, but is originally
-     * declared in another parent <em>entity or mapped superclass</em>. The value is the FQCN
-     * of the topmost non-transient class that contains mapping information for this field.
-     *
-     * @psalm-var array<string, EmbeddedClassMapping>
+     * @psalm-var array<string, mixed[]>
      */
     public $embeddedClasses = [];
 
@@ -487,22 +472,8 @@ class ClassMetadataInfo implements ClassMetadata
      * - <b>scale</b> (integer, optional, schema-only)
      * The scale of a decimal column. Only valid if the column type is decimal.
      *
-     * - <b>'unique'</b> (boolean, optional, schema-only)
+     * - <b>'unique'</b> (string, optional, schema-only)
      * Whether a unique constraint should be generated for the column.
-     *
-     * - <b>'inherited'</b> (string, optional)
-     * This is set when the field is inherited by this class from another (inheritance) parent
-     * <em>entity</em> class. The value is the FQCN of the topmost entity class that contains
-     * mapping information for this field. (If there are transient classes in the
-     * class hierarchy, these are ignored, so the class property may in fact come
-     * from a class further up in the PHP class hierarchy.)
-     * Fields initially declared in mapped superclasses are
-     * <em>not</em> considered 'inherited' in the nearest entity subclasses.
-     *
-     * - <b>'declared'</b> (string, optional)
-     * This is set when the field does not appear for the first time in this class, but is originally
-     * declared in another parent <em>entity or mapped superclass</em>. The value is the FQCN
-     * of the topmost non-transient class that contains mapping information for this field.
      *
      * @var mixed[]
      * @psalm-var array<string, FieldMapping>
@@ -548,9 +519,9 @@ class ClassMetadataInfo implements ClassMetadata
      *
      * @see discriminatorColumn
      *
-     * @var array<int|string, string>
+     * @var array<string, string>
      *
-     * @psalm-var array<int|string, class-string>
+     * @psalm-var array<string, class-string>
      */
     public $discriminatorMap = [];
 
@@ -558,8 +529,7 @@ class ClassMetadataInfo implements ClassMetadata
      * READ-ONLY: The definition of the discriminator column used in JOINED and SINGLE_TABLE
      * inheritance mappings.
      *
-     * @var array<string, mixed>
-     * @psalm-var DiscriminatorColumnMapping|null
+     * @psalm-var array<string, mixed>|null
      */
     public $discriminatorColumn;
 
@@ -606,11 +576,6 @@ class ClassMetadataInfo implements ClassMetadata
      * - <b>fieldName</b> (string)
      * The name of the field in the entity the association is mapped to.
      *
-     * - <b>sourceEntity</b> (string)
-     * The class name of the source entity. In the case of to-many associations initially
-     * present in mapped superclasses, the nearest <em>entity</em> subclasses will be
-     * considered the respective source entities.
-     *
      * - <b>targetEntity</b> (string)
      * The class name of the target entity. If it is fully-qualified it is used as is.
      * If it is a simple, unqualified class name the namespace is assumed to be the same
@@ -647,20 +612,6 @@ class ClassMetadataInfo implements ClassMetadata
      * This field HAS to be either the primary key or a unique column. Otherwise the collection
      * does not contain all the entities that are actually related.
      *
-     * - <b>'inherited'</b> (string, optional)
-     * This is set when the association is inherited by this class from another (inheritance) parent
-     * <em>entity</em> class. The value is the FQCN of the topmost entity class that contains
-     * this association. (If there are transient classes in the
-     * class hierarchy, these are ignored, so the class property may in fact come
-     * from a class further up in the PHP class hierarchy.)
-     * To-many associations initially declared in mapped superclasses are
-     * <em>not</em> considered 'inherited' in the nearest entity subclasses.
-     *
-     * - <b>'declared'</b> (string, optional)
-     * This is set when the association does not appear in the current class for the first time, but
-     * is initially declared in another parent <em>entity or mapped superclass</em>. The value is the FQCN
-     * of the topmost non-transient class that contains association information for this relationship.
-     *
      * A join table definition has the following structure:
      * <pre>
      * array(
@@ -670,7 +621,7 @@ class ClassMetadataInfo implements ClassMetadata
      * )
      * </pre>
      *
-     * @psalm-var array<string, AssociationMapping>
+     * @psalm-var array<string, array<string, mixed>>
      */
     public $associationMappings = [];
 
@@ -720,8 +671,8 @@ class ClassMetadataInfo implements ClassMetadata
      * )
      * </code>
      *
-     * @var array<string, mixed>|null
-     * @psalm-var array{sequenceName: string, allocationSize: string, initialValue: string, quoted?: mixed}|null
+     * @var array<string, mixed>
+     * @psalm-var array{sequenceName: string, allocationSize: string, initialValue: string, quoted?: mixed}
      * @todo Merge with tableGeneratorDefinition into generic generatorDefinition
      */
     public $sequenceGeneratorDefinition;
@@ -762,7 +713,7 @@ class ClassMetadataInfo implements ClassMetadata
     /**
      * READ-ONLY: The name of the field which is used for versioning in optimistic locking (if any).
      *
-     * @var string|null
+     * @var mixed
      */
     public $versionField;
 
@@ -804,9 +755,6 @@ class ClassMetadataInfo implements ClassMetadata
     /** @var InstantiatorInterface|null */
     private $instantiator;
 
-    /** @var TypedFieldMapper $typedFieldMapper */
-    private $typedFieldMapper;
-
     /**
      * Initializes a new ClassMetadata instance that will hold the object-relational mapping
      * metadata of the class with the given name.
@@ -814,13 +762,12 @@ class ClassMetadataInfo implements ClassMetadata
      * @param string $entityName The name of the entity class the new instance is used for.
      * @psalm-param class-string<T> $entityName
      */
-    public function __construct($entityName, ?NamingStrategy $namingStrategy = null, ?TypedFieldMapper $typedFieldMapper = null)
+    public function __construct($entityName, ?NamingStrategy $namingStrategy = null)
     {
-        $this->name             = $entityName;
-        $this->rootEntityName   = $entityName;
-        $this->namingStrategy   = $namingStrategy ?? new DefaultNamingStrategy();
-        $this->instantiator     = new Instantiator();
-        $this->typedFieldMapper = $typedFieldMapper ?? new DefaultTypedFieldMapper();
+        $this->name           = $entityName;
+        $this->rootEntityName = $entityName;
+        $this->namingStrategy = $namingStrategy ?: new DefaultNamingStrategy();
+        $this->instantiator   = new Instantiator();
     }
 
     /**
@@ -1097,7 +1044,6 @@ class ClassMetadataInfo implements ClassMetadata
 
         foreach ($this->embeddedClasses as $property => $embeddedClass) {
             if (isset($embeddedClass['declaredField'])) {
-                assert($embeddedClass['originalField'] !== null);
                 $childProperty = $this->getAccessibleProperty(
                     $reflService,
                     $this->embeddedClasses[$embeddedClass['declaredField']]['class'],
@@ -1285,7 +1231,7 @@ class ClassMetadataInfo implements ClassMetadata
     /**
      * @param string $fieldName
      * @param array  $cache
-     * @psalm-param array{usage?: int|null, region?: string|null} $cache
+     * @psalm-param array{usage?: int, region?: string|null} $cache
      *
      * @return int[]|string[]
      * @psalm-return array{usage: int, region: string|null}
@@ -1437,7 +1383,7 @@ class ClassMetadataInfo implements ClassMetadata
      *                          the object model.
      *
      * @return mixed[] The mapping.
-     * @psalm-return AssociationMapping
+     * @psalm-return array<string, mixed>
      *
      * @throws MappingException
      */
@@ -1453,7 +1399,7 @@ class ClassMetadataInfo implements ClassMetadata
     /**
      * Gets all association mappings of the class.
      *
-     * @psalm-return array<string, AssociationMapping>
+     * @psalm-return array<string, array<string, mixed>>
      */
     public function getAssociationMappings()
     {
@@ -1583,15 +1529,56 @@ class ClassMetadataInfo implements ClassMetadata
     /**
      * Validates & completes the given field mapping based on typed property.
      *
-     * @param  array{fieldName: string, type?: string} $mapping The field mapping to validate & complete.
+     * @param  mixed[] $mapping The field mapping to validate & complete.
      *
-     * @return array{fieldName: string, enumType?: class-string<BackedEnum>, type?: string} The updated mapping.
+     * @return mixed[] The updated mapping.
      */
     private function validateAndCompleteTypedFieldMapping(array $mapping): array
     {
-        $field = $this->reflClass->getProperty($mapping['fieldName']);
+        $type = $this->reflClass->getProperty($mapping['fieldName'])->getType();
 
-        $mapping = $this->typedFieldMapper->validateAndComplete($mapping, $field);
+        if ($type) {
+            if (
+                ! isset($mapping['type'])
+                && ($type instanceof ReflectionNamedType)
+            ) {
+                if (PHP_VERSION_ID >= 80100 && ! $type->isBuiltin() && enum_exists($type->getName())) {
+                    $mapping['enumType'] = $type->getName();
+
+                    $reflection = new ReflectionEnum($type->getName());
+                    $type       = $reflection->getBackingType();
+
+                    assert($type instanceof ReflectionNamedType);
+                }
+
+                switch ($type->getName()) {
+                    case DateInterval::class:
+                        $mapping['type'] = Types::DATEINTERVAL;
+                        break;
+                    case DateTime::class:
+                        $mapping['type'] = Types::DATETIME_MUTABLE;
+                        break;
+                    case DateTimeImmutable::class:
+                        $mapping['type'] = Types::DATETIME_IMMUTABLE;
+                        break;
+                    case 'array':
+                        $mapping['type'] = Types::JSON;
+                        break;
+                    case 'bool':
+                        $mapping['type'] = Types::BOOLEAN;
+                        break;
+                    case 'float':
+                        $mapping['type'] = Types::FLOAT;
+                        break;
+                    case 'int':
+                        $mapping['type'] = Types::INTEGER;
+                        break;
+                    case 'string':
+                        $mapping['type'] = Types::STRING;
+                        break;
+                }
+            }
+        }
 
         return $mapping;
     }
@@ -1599,7 +1586,7 @@ class ClassMetadataInfo implements ClassMetadata
     /**
      * Validates & completes the basic mapping information based on typed property.
      *
-     * @param array{type: self::ONE_TO_ONE|self::MANY_TO_ONE|self::ONE_TO_MANY|self::MANY_TO_MANY, fieldName: string, targetEntity?: class-string} $mapping The mapping.
+     * @param mixed[] $mapping The mapping.
      *
      * @return mixed[] The updated mapping.
      */
@@ -1621,15 +1608,9 @@ class ClassMetadataInfo implements ClassMetadata
     /**
      * Validates & completes the given field mapping.
      *
-     * @psalm-param array{
-     *     fieldName?: string,
-     *     columnName?: string,
-     *     id?: bool,
-     *     generated?: int,
-     *     enumType?: class-string,
-     * } $mapping The field mapping to validate & complete.
+     * @psalm-param array<string, mixed> $mapping The field mapping to validate & complete.
      *
-     * @return FieldMapping The updated mapping.
+     * @return mixed[] The updated mapping.
      *
      * @throws MappingException
      */
@@ -1725,7 +1706,25 @@ class ClassMetadataInfo implements ClassMetadata
      * @psalm-param array<string, mixed> $mapping The mapping.
      *
      * @return mixed[] The updated mapping.
-     * @psalm-return AssociationMapping
+     * @psalm-return array{
+     *                   mappedBy: mixed|null,
+     *                   inversedBy: mixed|null,
+     *                   isOwningSide: bool,
+     *                   sourceEntity: class-string,
+     *                   targetEntity: string,
+     *                   fieldName: mixed,
+     *                   fetch: mixed,
+     *                   cascade: array<array-key,string>,
+     *                   isCascadeRemove: bool,
+     *                   isCascadePersist: bool,
+     *                   isCascadeRefresh: bool,
+     *                   isCascadeMerge: bool,
+     *                   isCascadeDetach: bool,
+     *                   type: int,
+     *                   originalField: string,
+     *                   originalClass: class-string,
+     *                   ?orphanRemoval: bool
+     *               }
      *
      * @throws MappingException If something is wrong with the mapping.
      */
@@ -1853,9 +1852,34 @@ class ClassMetadataInfo implements ClassMetadata
      * Validates & completes a one-to-one association mapping.
      *
      * @psalm-param array<string, mixed> $mapping The mapping to validate & complete.
+     * @psalm-param array<string, mixed> $mapping The mapping to validate & complete.
      *
      * @return mixed[] The validated & completed mapping.
-     * @psalm-return AssociationMapping
+     * @psalm-return array{isOwningSide: mixed, orphanRemoval: bool, isCascadeRemove: bool}
+     * @psalm-return array{
+     *      mappedBy: mixed|null,
+     *      inversedBy: mixed|null,
+     *      isOwningSide: bool,
+     *      sourceEntity: class-string,
+     *      targetEntity: string,
+     *      fieldName: mixed,
+     *      fetch: mixed,
+     *      cascade: array<string>,
+     *      isCascadeRemove: bool,
+     *      isCascadePersist: bool,
+     *      isCascadeRefresh: bool,
+     *      isCascadeMerge: bool,
+     *      isCascadeDetach: bool,
+     *      type: int,
+     *      originalField: string,
+     *      originalClass: class-string,
+     *      joinColumns?: array{0: array{name: string, referencedColumnName: string}}|mixed,
+     *      id?: mixed,
+     *      sourceToTargetKeyColumns?: array,
+     *      joinColumnFieldNames?: array,
+     *      targetToSourceKeyColumns?: array<array-key>,
+     *      orphanRemoval: bool
+     * }
      *
      * @throws RuntimeException
      * @throws MappingException
@@ -1863,14 +1887,6 @@ class ClassMetadataInfo implements ClassMetadata
     protected function _validateAndCompleteOneToOneMapping(array $mapping)
     {
         $mapping = $this->_validateAndCompleteAssociationMapping($mapping);
-
-        if (isset($mapping['joinColumns']) && $mapping['joinColumns'] && ! $mapping['isOwningSide']) {
-            Deprecation::trigger(
-                'doctrine/orm',
-                'https://github.com/doctrine/orm/pull/10654',
-                'JoinColumn configuration is not allowed on the inverse side of one-to-one associations, and will throw a MappingException in Doctrine ORM 3.0'
-            );
-        }
 
         if (isset($mapping['joinColumns']) && $mapping['joinColumns']) {
             $mapping['isOwningSide'] = true;
@@ -1953,7 +1969,22 @@ class ClassMetadataInfo implements ClassMetadata
      * @psalm-param array<string, mixed> $mapping The mapping to validate and complete.
      *
      * @return mixed[] The validated and completed mapping.
-     * @psalm-return AssociationMapping
+     * @psalm-return array{
+     *                   mappedBy: mixed,
+     *                   inversedBy: mixed,
+     *                   isOwningSide: bool,
+     *                   sourceEntity: string,
+     *                   targetEntity: string,
+     *                   fieldName: mixed,
+     *                   fetch: int|mixed,
+     *                   cascade: array<array-key,string>,
+     *                   isCascadeRemove: bool,
+     *                   isCascadePersist: bool,
+     *                   isCascadeRefresh: bool,
+     *                   isCascadeMerge: bool,
+     *                   isCascadeDetach: bool,
+     *                   orphanRemoval: bool
+     *               }
      *
      * @throws MappingException
      * @throws InvalidArgumentException
@@ -1979,9 +2010,33 @@ class ClassMetadataInfo implements ClassMetadata
      * Validates & completes a many-to-many association mapping.
      *
      * @psalm-param array<string, mixed> $mapping The mapping to validate & complete.
+     * @psalm-param array<string, mixed> $mapping The mapping to validate & complete.
      *
      * @return mixed[] The validated & completed mapping.
-     * @psalm-return AssociationMapping
+     * @psalm-return array{
+     *      mappedBy: mixed,
+     *      inversedBy: mixed,
+     *      isOwningSide: bool,
+     *      sourceEntity: class-string,
+     *      targetEntity: string,
+     *      fieldName: mixed,
+     *      fetch: mixed,
+     *      cascade: array<string>,
+     *      isCascadeRemove: bool,
+     *      isCascadePersist: bool,
+     *      isCascadeRefresh: bool,
+     *      isCascadeMerge: bool,
+     *      isCascadeDetach: bool,
+     *      type: int,
+     *      originalField: string,
+     *      originalClass: class-string,
+     *      joinTable?: array{inverseJoinColumns: mixed}|mixed,
+     *      joinTableColumns?: list<mixed>,
+     *      isOnDeleteCascade?: true,
+     *      relationToSourceKeyColumns?: array,
+     *      relationToTargetKeyColumns?: array,
+     *      orphanRemoval: bool
+     * }
      *
      * @throws InvalidArgumentException
      */
@@ -2223,7 +2278,9 @@ class ClassMetadataInfo implements ClassMetadata
         return $this->generatorType !== self::GENERATOR_TYPE_NONE;
     }
 
-    /** @return bool */
+    /**
+     * @return bool
+     */
     public function isInheritanceTypeNone()
     {
         return $this->inheritanceType === self::INHERITANCE_TYPE_NONE;
@@ -2254,19 +2311,11 @@ class ClassMetadataInfo implements ClassMetadata
     /**
      * Checks whether the mapped class uses the TABLE_PER_CLASS inheritance mapping strategy.
      *
-     * @deprecated
-     *
      * @return bool TRUE if the class participates in a TABLE_PER_CLASS inheritance mapping,
      * FALSE otherwise.
      */
     public function isInheritanceTypeTablePerClass()
     {
-        Deprecation::triggerIfCalledFromOutside(
-            'doctrine/orm',
-            'https://github.com/doctrine/orm/pull/10414/',
-            'Concrete table inheritance has never been implemented, and its stubs will be removed in Doctrine ORM 3.0 with no replacement'
-        );
-
         return $this->inheritanceType === self::INHERITANCE_TYPE_TABLE_PER_CLASS;
     }
 
@@ -2284,8 +2333,6 @@ class ClassMetadataInfo implements ClassMetadata
      * Checks whether the class uses a sequence for id generation.
      *
      * @return bool TRUE if the class uses the SEQUENCE generator, FALSE otherwise.
-     *
-     * @psalm-assert-if-true !null $this->sequenceGeneratorDefinition
      */
     public function isIdGeneratorSequence()
     {
@@ -2418,8 +2465,7 @@ class ClassMetadataInfo implements ClassMetadata
     }
 
     /**
-     * Sets the parent class names. Only <em>entity</em> classes may be given.
-     *
+     * Sets the parent class names.
      * Assumes that the class names in the passed array are in the order:
      * directParent -> directParentParent -> directParentParentParent ... -> root.
      *
@@ -2473,16 +2519,12 @@ class ClassMetadataInfo implements ClassMetadata
 
         $mapping = $this->associationMappings[$fieldName];
 
-        if (isset($mapping['inherited'])) {
-            Deprecation::trigger(
-                'doctrine/orm',
-                'https://github.com/doctrine/orm/pull/10470',
-                'Overrides are only allowed for fields or associations declared in mapped superclasses or traits. This is not the case for %s::%s, which was inherited from %s. This is a misconfiguration and will be an error in Doctrine ORM 3.0.',
-                $this->name,
-                $fieldName,
-                $mapping['inherited']
-            );
-        }
+        //if (isset($mapping['inherited']) && (count($overrideMapping) !== 1 || ! isset($overrideMapping['fetch']))) {
+            // TODO: Deprecate overriding the fetch mode via association override for 3.0,
+            // users should do this with a listener and a custom attribute/annotation
+            // TODO: Enable this exception in 2.8
+            //throw MappingException::illegalOverrideOfInheritedProperty($this->name, $fieldName);
+        //}
 
         if (isset($overrideMapping['joinColumns'])) {
             $mapping['joinColumns'] = $overrideMapping['joinColumns'];
@@ -2542,17 +2584,10 @@ class ClassMetadataInfo implements ClassMetadata
 
         $mapping = $this->fieldMappings[$fieldName];
 
-        if (isset($mapping['inherited'])) {
-            Deprecation::trigger(
-                'doctrine/orm',
-                'https://github.com/doctrine/orm/pull/10470',
-                'Overrides are only allowed for fields or associations declared in mapped superclasses or traits. This is not the case for %s::%s, which was inherited from %s. This is a misconfiguration and will be an error in Doctrine ORM 3.0.',
-                $this->name,
-                $fieldName,
-                $mapping['inherited']
-            );
+        //if (isset($mapping['inherited'])) {
+            // TODO: Enable this exception in 2.8
             //throw MappingException::illegalOverrideOfInheritedProperty($this->name, $fieldName);
-        }
+        //}
 
         if (isset($mapping['id'])) {
             $overrideMapping['id'] = $mapping['id'];
@@ -2695,14 +2730,6 @@ class ClassMetadataInfo implements ClassMetadata
      */
     private function isInheritanceType(int $type): bool
     {
-        if ($type === self::INHERITANCE_TYPE_TABLE_PER_CLASS) {
-            Deprecation::trigger(
-                'doctrine/orm',
-                'https://github.com/doctrine/orm/pull/10414/',
-                'Concrete table inheritance has never been implemented, and its stubs will be removed in Doctrine ORM 3.0 with no replacement'
-            );
-        }
-
         return $type === self::INHERITANCE_TYPE_NONE ||
                 $type === self::INHERITANCE_TYPE_SINGLE_TABLE ||
                 $type === self::INHERITANCE_TYPE_JOINED ||
@@ -2735,7 +2762,7 @@ class ClassMetadataInfo implements ClassMetadata
      * Adds an association mapping without completing/validating it.
      * This is mainly used to add inherited association mappings to derived classes.
      *
-     * @psalm-param AssociationMapping $mapping
+     * @psalm-param array<string, mixed> $mapping
      *
      * @return void
      *
@@ -2755,7 +2782,7 @@ class ClassMetadataInfo implements ClassMetadata
      * Adds a field mapping without completing/validating it.
      * This is mainly used to add inherited field mappings to derived classes.
      *
-     * @psalm-param FieldMapping $fieldMapping
+     * @psalm-param array<string, mixed> $fieldMapping
      *
      * @return void
      */
@@ -2991,7 +3018,7 @@ class ClassMetadataInfo implements ClassMetadata
     /**
      * Stores the association mapping.
      *
-     * @psalm-param AssociationMapping $assocMapping
+     * @psalm-param array<string, mixed> $assocMapping
      *
      * @return void
      *
@@ -3143,7 +3170,7 @@ class ClassMetadataInfo implements ClassMetadata
      * @see getDiscriminatorColumn()
      *
      * @param mixed[]|null $columnDef
-     * @psalm-param array{name: string|null, fieldName?: string, type?: string, length?: int, columnDefinition?: string|null, enumType?: class-string<BackedEnum>|null, options?: array<string, mixed>}|null $columnDef
+     * @psalm-param array<string, mixed>|null $columnDef
      *
      * @return void
      *
@@ -3178,7 +3205,6 @@ class ClassMetadataInfo implements ClassMetadata
 
     /**
      * @return array<string, mixed>
-     * @psalm-return DiscriminatorColumnMapping
      */
     final public function getDiscriminatorColumn(): array
     {
@@ -3193,7 +3219,7 @@ class ClassMetadataInfo implements ClassMetadata
      * Sets the discriminator values used by this class.
      * Used for JOINED and SINGLE_TABLE inheritance mapping strategies.
      *
-     * @param array<int|string, string> $map
+     * @psalm-param array<string, class-string> $map
      *
      * @return void
      */
@@ -3207,8 +3233,9 @@ class ClassMetadataInfo implements ClassMetadata
     /**
      * Adds one entry of the discriminator map with a new class and corresponding name.
      *
-     * @param int|string $name
-     * @param string     $className
+     * @param string $name
+     * @param string $className
+     * @psalm-param class-string $className
      *
      * @return void
      *
@@ -3231,21 +3258,6 @@ class ClassMetadataInfo implements ClassMetadata
             throw MappingException::invalidClassInDiscriminatorMap($className, $this->name);
         }
 
-        $this->addSubClass($className);
-    }
-
-    /** @param array<class-string> $classes */
-    public function addSubClasses(array $classes): void
-    {
-        foreach ($classes as $className) {
-            $this->addSubClass($className);
-        }
-    }
-
-    public function addSubClass(string $className): void
-    {
-        // By ignoring classes that are not subclasses of the current class, we simplify inheriting
-        // the subclass list from a parent class at the beginning of \Doctrine\ORM\Mapping\ClassMetadataFactory::doLoadMetadata.
         if (is_subclass_of($className, $this->name) && ! in_array($className, $this->subClasses, true)) {
             $this->subClasses[] = $className;
         }
@@ -3507,7 +3519,7 @@ class ClassMetadataInfo implements ClassMetadata
      * Sets the name of the field that is to be used for versioning if this class is
      * versioned for optimistic locking.
      *
-     * @param string|null $versionField
+     * @param string $versionField
      *
      * @return void
      */
@@ -3697,6 +3709,7 @@ class ClassMetadataInfo implements ClassMetadata
 
     /**
      * @param string|null $className
+     * @psalm-param string|class-string|null $className
      *
      * @return string|null null if the input value is null
      * @psalm-return class-string|null
@@ -3748,16 +3761,8 @@ class ClassMetadataInfo implements ClassMetadata
             }
         }
 
-        if (! (isset($mapping['class']) && $mapping['class'])) {
-            throw MappingException::missingEmbeddedClass($mapping['fieldName']);
-        }
-
-        $fqcn = $this->fullyQualifiedClassName($mapping['class']);
-
-        assert($fqcn !== null);
-
         $this->embeddedClasses[$mapping['fieldName']] = [
-            'class' => $fqcn,
+            'class' => $this->fullyQualifiedClassName($mapping['class']),
             'columnPrefix' => $mapping['columnPrefix'] ?? null,
             'declaredField' => $mapping['declaredField'] ?? null,
             'originalField' => $mapping['originalField'] ?? null,
@@ -3797,7 +3802,9 @@ class ClassMetadataInfo implements ClassMetadata
         }
     }
 
-    /** @throws MappingException */
+    /**
+     * @throws MappingException
+     */
     private function assertFieldNotMapped(string $fieldName): void
     {
         if (
@@ -3849,7 +3856,9 @@ class ClassMetadataInfo implements ClassMetadata
         return $sequencePrefix;
     }
 
-    /** @psalm-param AssociationMapping $mapping */
+    /**
+     * @psalm-param array<string, mixed> $mapping
+     */
     private function assertMappingOrderBy(array $mapping): void
     {
         if (isset($mapping['orderBy']) && ! is_array($mapping['orderBy'])) {
@@ -3857,19 +3866,14 @@ class ClassMetadataInfo implements ClassMetadata
         }
     }
 
-    /** @psalm-param class-string $class */
+    /**
+     * @psalm-param class-string $class
+     */
     private function getAccessibleProperty(ReflectionService $reflService, string $class, string $field): ?ReflectionProperty
     {
         $reflectionProperty = $reflService->getAccessibleProperty($class, $field);
         if ($reflectionProperty !== null && PHP_VERSION_ID >= 80100 && $reflectionProperty->isReadOnly()) {
-            $declaringClass = $reflectionProperty->getDeclaringClass()->name;
-            if ($declaringClass !== $class) {
-                $reflectionProperty = $reflService->getAccessibleProperty($declaringClass, $field);
-            }
-
-            if ($reflectionProperty !== null) {
-                $reflectionProperty = new ReflectionReadonlyProperty($reflectionProperty);
-            }
+            $reflectionProperty = new ReflectionReadonlyProperty($reflectionProperty);
         }
 
         return $reflectionProperty;

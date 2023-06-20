@@ -375,7 +375,7 @@ return [
             1 => 'etiopski bir',
         ],
         'EUR' => [
-            0 => '€',
+            0 => 'EUR',
             1 => 'euro',
         ],
         'FIM' => [

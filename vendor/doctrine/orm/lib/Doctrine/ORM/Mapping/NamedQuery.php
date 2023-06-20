@@ -8,7 +8,7 @@ namespace Doctrine\ORM\Mapping;
  * @Annotation
  * @Target("ANNOTATION")
  */
-final class NamedQuery implements MappingAttribute
+final class NamedQuery implements Annotation
 {
     /** @var string */
     public $name;

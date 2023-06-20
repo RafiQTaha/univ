@@ -2,7 +2,6 @@
 
 return [
     'Names' => [
-        'Adlm' => 'adlam',
         'Afak' => 'afaka',
         'Aghb' => 'albanese caucasico',
         'Arab' => 'arabo',
@@ -22,7 +21,7 @@ return [
         'Bugi' => 'buginese',
         'Buhd' => 'buhid',
         'Cakm' => 'chakma',
-        'Cans' => 'sillabario aborigeno canadese unificato',
+        'Cans' => 'simboli aborigeni canadesi unificati',
         'Cari' => 'carian',
         'Cham' => 'cham',
         'Cher' => 'cherokee',
@@ -119,7 +118,6 @@ return [
         'Prti' => 'partico delle iscrizioni',
         'Qaag' => 'zawgyi',
         'Rjng' => 'rejang',
-        'Rohg' => 'hanifi',
         'Roro' => 'rongorongo',
         'Runr' => 'runico',
         'Samr' => 'samaritano',
@@ -134,7 +132,7 @@ return [
         'Sora' => 'sora sompeng',
         'Sund' => 'sundanese',
         'Sylo' => 'syloti nagri',
-        'Syrc' => 'siriaco',
+        'Syrc' => 'siriano',
         'Syre' => 'siriaco estrangelo',
         'Syrj' => 'siriaco occidentale',
         'Syrn' => 'siriaco orientale',
@@ -154,7 +152,7 @@ return [
         'Tibt' => 'tibetano',
         'Tirh' => 'tirhuta',
         'Ugar' => 'ugarita',
-        'Vaii' => 'vai',
+        'Vaii' => 'vaii',
         'Visp' => 'alfabeto visivo',
         'Wara' => 'varang kshiti',
         'Wole' => 'woleai',
