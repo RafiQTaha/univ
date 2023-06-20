@@ -441,7 +441,6 @@ return [
         'sd' => 'Sindi',
         'sd_Arab' => 'Sindi (Araab)',
         'sd_Arab_PK' => 'Sindi (Araab, Pakistaŋ)',
-        'sd_IN' => 'Sindi (End)',
         'sd_PK' => 'Sindi (Pakistaŋ)',
         'se' => 'Penku Sami',
         'se_FI' => 'Penku Sami (Finlànd)',

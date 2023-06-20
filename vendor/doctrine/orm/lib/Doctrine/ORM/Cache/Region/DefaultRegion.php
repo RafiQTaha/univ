@@ -31,7 +31,9 @@ use function strtr;
  */
 class DefaultRegion implements Region
 {
-    /** @internal since 2.11, this constant will be private in 3.0. */
+    /**
+     * @internal since 2.11, this constant will be private in 3.0.
+     */
     public const REGION_KEY_SEPARATOR = '_';
     private const REGION_PREFIX       = 'DC2_REGION_';
 
@@ -59,7 +61,9 @@ class DefaultRegion implements Region
     /** @var CacheItemPoolInterface */
     private $cacheItemPool;
 
-    /** @param CacheItemPoolInterface $cacheItemPool */
+    /**
+     * @param CacheItemPoolInterface $cacheItemPool
+     */
     public function __construct(string $name, $cacheItemPool, int $lifetime = 0)
     {
         if ($cacheItemPool instanceof LegacyCache) {
@@ -91,7 +95,7 @@ class DefaultRegion implements Region
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getName()
     {
@@ -109,7 +113,7 @@ class DefaultRegion implements Region
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function contains(CacheKey $key)
     {
@@ -117,7 +121,7 @@ class DefaultRegion implements Region
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function get(CacheKey $key)
     {
@@ -132,7 +136,7 @@ class DefaultRegion implements Region
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getMultiple(CollectionCacheEntry $collection)
     {
@@ -164,7 +168,7 @@ class DefaultRegion implements Region
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      *
      * @return bool
      */
@@ -182,7 +186,7 @@ class DefaultRegion implements Region
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      *
      * @return bool
      */
@@ -192,7 +196,7 @@ class DefaultRegion implements Region
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      *
      * @return bool
      */

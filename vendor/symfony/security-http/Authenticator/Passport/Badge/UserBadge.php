@@ -30,7 +30,7 @@ class UserBadge implements BadgeInterface
     private string $userIdentifier;
     /** @var callable|null */
     private $userLoader;
-    private UserInterface $user;
+    private $user;
 
     /**
      * Initializes the user badge.
@@ -61,7 +61,7 @@ class UserBadge implements BadgeInterface
      */
     public function getUser(): UserInterface
     {
-        if (isset($this->user)) {
+        if (null !== $this->user) {
             return $this->user;
         }
 

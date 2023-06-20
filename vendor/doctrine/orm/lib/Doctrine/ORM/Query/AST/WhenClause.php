@@ -12,7 +12,7 @@ namespace Doctrine\ORM\Query\AST;
 class WhenClause extends Node
 {
     /** @var ConditionalExpression */
-    public $caseConditionExpression;
+    public $caseConditionExpression = null;
 
     /** @var mixed */
     public $thenScalarExpression = null;
@@ -28,7 +28,7 @@ class WhenClause extends Node
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function dispatch($sqlWalker)
     {

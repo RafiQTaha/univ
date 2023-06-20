@@ -260,7 +260,7 @@ return [
         ],
         'FJD' => [
             0 => 'FJD',
-            1 => 'fídjískur dalur',
+            1 => 'fidjeyskur dalur',
         ],
         'FKP' => [
             0 => 'FKP',
@@ -359,7 +359,7 @@ return [
             1 => 'íranskt ríal',
         ],
         'ISK' => [
-            0 => 'kr.',
+            0 => 'ISK',
             1 => 'íslensk króna',
         ],
         'ITL' => [
@@ -760,7 +760,7 @@ return [
         ],
         'TND' => [
             0 => 'TND',
-            1 => 'túniskur denari',
+            1 => 'túnískur denari',
         ],
         'TOP' => [
             0 => 'TOP',

@@ -34,11 +34,11 @@ class PackageResolver
         $packages = [];
         foreach ($arguments as $i => $argument) {
             if ((false !== $pos = strpos($argument, ':')) || (false !== $pos = strpos($argument, '='))) {
-                $package = $this->resolvePackageName(substr($argument, 0, $pos), $i, $isRequire);
+                $package = $this->resolvePackageName(substr($argument, 0, $pos), $i);
                 $version = substr($argument, $pos + 1);
                 $packages[] = $package.':'.$version;
             } else {
-                $packages[] = $this->resolvePackageName($argument, $i, $isRequire);
+                $packages[] = $this->resolvePackageName($argument, $i);
             }
         }
 
@@ -84,15 +84,9 @@ class PackageResolver
         return ':'.$version;
     }
 
-    private function resolvePackageName(string $argument, int $position, bool $isRequire): string
+    private function resolvePackageName(string $argument, int $position): string
     {
-        $skippedPackages = ['mirrors', 'nothing', ''];
-
-        if (!$isRequire) {
-            $skippedPackages[] = 'lock';
-        }
-
-        if (false !== strpos($argument, '/') || preg_match(PlatformRepository::PLATFORM_PACKAGE_REGEX, $argument) || preg_match('{(?<=[a-z0-9_/-])\*|\*(?=[a-z0-9_/-])}i', $argument) || \in_array($argument, $skippedPackages)) {
+        if (false !== strpos($argument, '/') || preg_match(PlatformRepository::PLATFORM_PACKAGE_REGEX, $argument) || preg_match('{(?<=[a-z0-9_/-])\*|\*(?=[a-z0-9_/-])}i', $argument) || \in_array($argument, ['lock', 'mirrors', 'nothing', ''])) {
             return $argument;
         }
 

@@ -13,36 +13,21 @@ use Doctrine\Common\Annotations\Annotation\NamedArgumentConstructor;
  * @Target("ANNOTATION")
  */
 #[Attribute(Attribute::TARGET_CLASS | Attribute::IS_REPEATABLE)]
-final class Index implements MappingAttribute
+final class Index implements Annotation
 {
-    /**
-     * @var string|null
-     * @readonly
-     */
+    /** @var string|null */
     public $name;
 
-    /**
-     * @var array<string>|null
-     * @readonly
-     */
+    /** @var array<string>|null */
     public $columns;
 
-    /**
-     * @var array<string>|null
-     * @readonly
-     */
+    /** @var array<string>|null */
     public $fields;
 
-    /**
-     * @var array<string>|null
-     * @readonly
-     */
+    /** @var array<string>|null */
     public $flags;
 
-    /**
-     * @var array<string,mixed>|null
-     * @readonly
-     */
+    /** @var array<string,mixed>|null */
     public $options;
 
     /**

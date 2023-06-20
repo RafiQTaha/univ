@@ -13,12 +13,9 @@ use Doctrine\Common\Annotations\Annotation\NamedArgumentConstructor;
  * @Target("PROPERTY")
  */
 #[Attribute(Attribute::TARGET_PROPERTY)]
-final class CustomIdGenerator implements MappingAttribute
+final class CustomIdGenerator implements Annotation
 {
-    /**
-     * @var string|null
-     * @readonly
-     */
+    /** @var string|null */
     public $class;
 
     public function __construct(?string $class = null)

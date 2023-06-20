@@ -76,8 +76,7 @@ return static function (ContainerConfigurator $container) {
 
         // Normalizer
         ->set('serializer.normalizer.constraint_violation_list', ConstraintViolationListNormalizer::class)
-            ->args([1 => service('serializer.name_converter.metadata_aware')])
-            ->autowire(true)
+            ->args([[], service('serializer.name_converter.metadata_aware')])
             ->tag('serializer.normalizer', ['priority' => -915])
 
         ->set('serializer.normalizer.mime_message', MimeMessageNormalizer::class)
@@ -99,7 +98,7 @@ return static function (ContainerConfigurator $container) {
 
         ->set('serializer.normalizer.json_serializable', JsonSerializableNormalizer::class)
             ->args([null, null])
-            ->tag('serializer.normalizer', ['priority' => -950])
+            ->tag('serializer.normalizer', ['priority' => -900])
 
         ->set('serializer.normalizer.problem', ProblemNormalizer::class)
             ->args([param('kernel.debug')])
@@ -123,6 +122,7 @@ return static function (ContainerConfigurator $container) {
                 service('property_info')->ignoreOnInvalid(),
                 service('serializer.mapping.class_discriminator_resolver')->ignoreOnInvalid(),
                 null,
+                [],
             ])
             ->tag('serializer.normalizer', ['priority' => -1000])
 
@@ -135,6 +135,7 @@ return static function (ContainerConfigurator $container) {
                 service('property_info')->ignoreOnInvalid(),
                 service('serializer.mapping.class_discriminator_resolver')->ignoreOnInvalid(),
                 null,
+                [],
             ])
 
         ->alias(PropertyNormalizer::class, 'serializer.normalizer.property')
@@ -173,7 +174,6 @@ return static function (ContainerConfigurator $container) {
             ->tag('serializer.encoder')
 
         ->set('serializer.encoder.json', JsonEncoder::class)
-            ->args([null, null])
             ->tag('serializer.encoder')
 
         ->set('serializer.encoder.yaml', YamlEncoder::class)

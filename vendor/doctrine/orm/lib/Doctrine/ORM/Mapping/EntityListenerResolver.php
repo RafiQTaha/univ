@@ -12,7 +12,7 @@ interface EntityListenerResolver
     /**
      * Clear all instances from the set, or a specific instance when given its identifier.
      *
-     * @param string|null $className May be any arbitrary string. Name kept for BC only.
+     * @param string $className May be any arbitrary string. Name kept for BC only.
      *
      * @return void
      */
@@ -31,8 +31,6 @@ interface EntityListenerResolver
      * Register a entity listener instance.
      *
      * @param object $object An entity listener
-     *
-     * @return void
      */
     public function register($object);
 }

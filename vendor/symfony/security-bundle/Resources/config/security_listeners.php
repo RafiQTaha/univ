@@ -102,7 +102,6 @@ return static function (ContainerConfigurator $container) {
             ->args([
                 service('security.http_utils'),
                 [], // Options
-                service('logger')->nullOnInvalid(),
             ])
 
         ->set('security.authentication.custom_failure_handler', CustomAuthenticationFailureHandler::class)

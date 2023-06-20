@@ -26,7 +26,10 @@ class LocateFunction extends FunctionNode
     /** @var SimpleArithmeticExpression|bool */
     public $simpleArithmeticExpression = false;
 
-    /** @inheritDoc */
+    /**
+     * @override
+     * @inheritdoc
+     */
     public function getSql(SqlWalker $sqlWalker)
     {
         $platform = $sqlWalker->getConnection()->getDatabasePlatform();
@@ -45,7 +48,10 @@ class LocateFunction extends FunctionNode
         return $platform->getLocateExpression($secondString, $firstString);
     }
 
-    /** @inheritDoc */
+    /**
+     * @override
+     * @inheritdoc
+     */
     public function parse(Parser $parser)
     {
         $parser->match(Lexer::T_IDENTIFIER);

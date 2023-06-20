@@ -13,24 +13,15 @@ use Doctrine\Common\Annotations\Annotation\NamedArgumentConstructor;
  * @Target("PROPERTY")
  */
 #[Attribute(Attribute::TARGET_PROPERTY)]
-final class SequenceGenerator implements MappingAttribute
+final class SequenceGenerator implements Annotation
 {
-    /**
-     * @var string|null
-     * @readonly
-     */
+    /** @var string */
     public $sequenceName;
 
-    /**
-     * @var int
-     * @readonly
-     */
+    /** @var int */
     public $allocationSize = 1;
 
-    /**
-     * @var int
-     * @readonly
-     */
+    /** @var int */
     public $initialValue = 1;
 
     public function __construct(

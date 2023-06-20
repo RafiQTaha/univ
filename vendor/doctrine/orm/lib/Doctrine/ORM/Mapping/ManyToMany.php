@@ -14,58 +14,37 @@ use Doctrine\Deprecations\Deprecation;
  * @Target("PROPERTY")
  */
 #[Attribute(Attribute::TARGET_PROPERTY)]
-final class ManyToMany implements MappingAttribute
+final class ManyToMany implements Annotation
 {
-    /**
-     * @var class-string|null
-     * @readonly
-     */
+    /** @var class-string|null */
     public $targetEntity;
 
-    /**
-     * @var string|null
-     * @readonly
-     */
+    /** @var string|null */
     public $mappedBy;
 
-    /**
-     * @var string|null
-     * @readonly
-     */
+    /** @var string|null */
     public $inversedBy;
 
-    /**
-     * @var string[]|null
-     * @readonly
-     */
+    /** @var string[]|null */
     public $cascade;
 
     /**
      * The fetching strategy to use for the association.
      *
      * @var string
-     * @psalm-var 'LAZY'|'EAGER'|'EXTRA_LAZY'
-     * @readonly
      * @Enum({"LAZY", "EAGER", "EXTRA_LAZY"})
      */
     public $fetch = 'LAZY';
 
-    /**
-     * @var bool
-     * @readonly
-     */
+    /** @var bool */
     public $orphanRemoval = false;
 
-    /**
-     * @var string|null
-     * @readonly
-     */
+    /** @var string|null */
     public $indexBy;
 
     /**
      * @param class-string|null $targetEntity
      * @param string[]|null     $cascade
-     * @psalm-param 'LAZY'|'EAGER'|'EXTRA_LAZY' $fetch
      */
     public function __construct(
         ?string $targetEntity = null,

@@ -2,7 +2,6 @@
 
 return [
     'Names' => [
-        'Adlm' => 'adlam',
         'Afak' => 'afaka',
         'Aghb' => 'kaukasus-albansk',
         'Ahom' => 'ahom',
@@ -126,7 +125,6 @@ return [
         'Prti' => 'inskripsjonsparthisk',
         'Qaag' => 'zawgyi',
         'Rjng' => 'rejang',
-        'Rohg' => 'hanifi',
         'Roro' => 'rongorongo',
         'Runr' => 'runer',
         'Samr' => 'samaritansk',

@@ -35,6 +35,7 @@ use InvalidArgumentException;
 use Throwable;
 
 use function array_keys;
+use function call_user_func;
 use function class_exists;
 use function get_debug_type;
 use function gettype;
@@ -54,14 +55,14 @@ use function strpos;
  * the static create() method. The quickest way to obtain a fully
  * configured EntityManager is:
  *
- *     use Doctrine\ORM\Tools\ORMSetup;
+ *     use Doctrine\ORM\Tools\Setup;
  *     use Doctrine\ORM\EntityManager;
  *
- *     $paths = ['/path/to/entity/mapping/files'];
+ *     $paths = array('/path/to/entity/mapping/files');
  *
- *     $config = ORMSetup::createAttributeMetadataConfiguration($paths);
- *     $connection = DriverManager::getConnection(['driver' => 'pdo_sqlite', 'memory' => true], $config);
- *     $entityManager = new EntityManager($connection, $config);
+ *     $config = Setup::createAnnotationMetadataConfiguration($paths);
+ *     $dbParams = array('driver' => 'pdo_sqlite', 'memory' => true);
+ *     $entityManager = EntityManager::create($dbParams, $config);
  *
  * For more information see
  * {@link http://docs.doctrine-project.org/projects/doctrine-orm/en/stable/reference/configuration.html}
@@ -70,10 +71,8 @@ use function strpos;
  * is not a valid extension point for the EntityManager. Instead you
  * should take a look at the {@see \Doctrine\ORM\Decorator\EntityManagerDecorator}
  * and wrap your entity manager in a decorator.
- *
- * @final
  */
-class EntityManager implements EntityManagerInterface
+/* final */class EntityManager implements EntityManagerInterface
 {
     /**
      * The used Configuration.
@@ -156,15 +155,11 @@ class EntityManager implements EntityManagerInterface
      * Creates a new EntityManager that operates on the given database connection
      * and uses the given Configuration and EventManager implementations.
      */
-    public function __construct(Connection $conn, Configuration $config, ?EventManager $eventManager = null)
+    protected function __construct(Connection $conn, Configuration $config, EventManager $eventManager)
     {
-        if (! $config->getMetadataDriverImpl()) {
-            throw MissingMappingDriverImplementation::create();
-        }
-
         $this->conn         = $conn;
         $this->config       = $config;
-        $this->eventManager = $eventManager ?? $conn->getEventManager();
+        $this->eventManager = $eventManager;
 
         $metadataFactoryClassName = $config->getClassMetadataFactoryName();
 
@@ -247,7 +242,7 @@ class EntityManager implements EntityManagerInterface
         $this->conn->beginTransaction();
 
         try {
-            $return = $func($this);
+            $return = call_user_func($func, $this);
 
             $this->flush();
             $this->conn->commit();
@@ -693,16 +688,14 @@ class EntityManager implements EntityManagerInterface
      * Refreshes the persistent state of an entity from the database,
      * overriding any local changes that have not yet been persisted.
      *
-     * @param object $entity The entity to refresh
-     * @psalm-param LockMode::*|null $lockMode
+     * @param object $entity The entity to refresh.
      *
      * @return void
      *
      * @throws ORMInvalidArgumentException
      * @throws ORMException
-     * @throws TransactionRequiredException
      */
-    public function refresh($entity, ?int $lockMode = null)
+    public function refresh($entity)
     {
         if (! is_object($entity)) {
             throw ORMInvalidArgumentException::invalidObject('EntityManager#refresh()', $entity);
@@ -710,7 +703,7 @@ class EntityManager implements EntityManagerInterface
 
         $this->errorIfClosed();
 
-        $this->unitOfWork->refresh($entity, $lockMode);
+        $this->unitOfWork->refresh($entity);
     }
 
     /**
@@ -769,8 +762,6 @@ class EntityManager implements EntityManagerInterface
 
     /**
      * {@inheritDoc}
-     *
-     * @psalm-return never
      */
     public function copy($entity, $deep = false)
     {
@@ -814,7 +805,7 @@ class EntityManager implements EntityManagerInterface
                     $entityName
                 );
             } else {
-                throw NotSupported::createForPersistence3(sprintf(
+                NotSupported::createForPersistence3(sprintf(
                     'Using short namespace alias "%s" when calling %s',
                     $entityName,
                     __METHOD__
@@ -956,8 +947,6 @@ class EntityManager implements EntityManagerInterface
     /**
      * Factory method to create EntityManager instances.
      *
-     * @deprecated Use {@see DriverManager::getConnection()} to bootstrap the connection and call the constructor.
-     *
      * @param mixed[]|Connection $connection   An array with the connection parameters or an existing Connection instance.
      * @param Configuration      $config       The Configuration instance to use.
      * @param EventManager|null  $eventManager The EventManager instance to use.
@@ -970,24 +959,17 @@ class EntityManager implements EntityManagerInterface
      */
     public static function create($connection, Configuration $config, ?EventManager $eventManager = null)
     {
-        Deprecation::trigger(
-            'doctrine/orm',
-            'https://github.com/doctrine/orm/pull/9961',
-            '%s() is deprecated. To boostrap a DBAL connection, call %s::getConnection() instead. Use the constructor to create an instance of %s.',
-            __METHOD__,
-            DriverManager::class,
-            self::class
-        );
+        if (! $config->getMetadataDriverImpl()) {
+            throw MissingMappingDriverImplementation::create();
+        }
 
         $connection = static::createConnection($connection, $config, $eventManager);
 
-        return new EntityManager($connection, $config);
+        return new EntityManager($connection, $config, $connection->getEventManager());
     }
 
     /**
      * Factory method to create Connection instances.
-     *
-     * @deprecated Use {@see DriverManager::getConnection()} to bootstrap the connection.
      *
      * @param mixed[]|Connection $connection   An array with the connection parameters or an existing Connection instance.
      * @param Configuration      $config       The Configuration instance to use.
@@ -1001,14 +983,6 @@ class EntityManager implements EntityManagerInterface
      */
     protected static function createConnection($connection, Configuration $config, ?EventManager $eventManager = null)
     {
-        Deprecation::triggerIfCalledFromOutside(
-            'doctrine/orm',
-            'https://github.com/doctrine/orm/pull/9961',
-            '%s() is deprecated, call %s::getConnection() instead.',
-            __METHOD__,
-            DriverManager::class
-        );
-
         if (is_array($connection)) {
             return DriverManager::getConnection($connection, $config, $eventManager ?: new EventManager());
         }

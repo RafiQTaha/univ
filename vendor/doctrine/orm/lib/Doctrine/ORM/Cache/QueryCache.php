@@ -12,7 +12,9 @@ use Doctrine\ORM\Query\ResultSetMapping;
  */
 interface QueryCache
 {
-    /** @return bool */
+    /**
+     * @return bool
+     */
     public function clear();
 
     /**
@@ -30,6 +32,8 @@ interface QueryCache
      */
     public function get(QueryCacheKey $key, ResultSetMapping $rsm, array $hints = []);
 
-    /** @return Region */
+    /**
+     * @return Region
+     */
     public function getRegion();
 }

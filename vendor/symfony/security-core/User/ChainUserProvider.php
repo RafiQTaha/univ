@@ -59,7 +59,7 @@ class ChainUserProvider implements UserProviderInterface, PasswordUpgraderInterf
         foreach ($this->providers as $provider) {
             try {
                 return $provider->loadUserByIdentifier($identifier);
-            } catch (UserNotFoundException) {
+            } catch (UserNotFoundException $e) {
                 // try next one
             }
         }
@@ -69,6 +69,9 @@ class ChainUserProvider implements UserProviderInterface, PasswordUpgraderInterf
         throw $ex;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function refreshUser(UserInterface $user): UserInterface
     {
         $supportedUserFound = false;
@@ -80,9 +83,9 @@ class ChainUserProvider implements UserProviderInterface, PasswordUpgraderInterf
                 }
 
                 return $provider->refreshUser($user);
-            } catch (UnsupportedUserException) {
+            } catch (UnsupportedUserException $e) {
                 // try next one
-            } catch (UserNotFoundException) {
+            } catch (UserNotFoundException $e) {
                 $supportedUserFound = true;
                 // try next one
             }
@@ -98,6 +101,9 @@ class ChainUserProvider implements UserProviderInterface, PasswordUpgraderInterf
         }
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function supportsClass(string $class): bool
     {
         foreach ($this->providers as $provider) {
@@ -109,13 +115,16 @@ class ChainUserProvider implements UserProviderInterface, PasswordUpgraderInterf
         return false;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function upgradePassword(PasswordAuthenticatedUserInterface $user, string $newHashedPassword): void
     {
         foreach ($this->providers as $provider) {
             if ($provider instanceof PasswordUpgraderInterface) {
                 try {
                     $provider->upgradePassword($user, $newHashedPassword);
-                } catch (UnsupportedUserException) {
+                } catch (UnsupportedUserException $e) {
                     // ignore: password upgrades are opportunistic
                 }
             }

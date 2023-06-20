@@ -13,7 +13,6 @@ use Doctrine\ORM\Tools\SchemaValidator;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Persistence\Mapping\AbstractClassMetadataFactory;
 use Symfony\Bridge\Doctrine\DataCollector\DoctrineDataCollector as BaseCollector;
-use Symfony\Bridge\Doctrine\Middleware\Debug\DebugDataHolder;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Throwable;
@@ -50,30 +49,33 @@ use function usort;
  */
 class DoctrineDataCollector extends BaseCollector
 {
-    private ManagerRegistry $registry;
-    private ?int $invalidEntityCount = null;
+    /** @var ManagerRegistry */
+    private $registry;
+
+    /** @var int|null */
+    private $invalidEntityCount;
 
     /**
-     * @var mixed[][]|null
+     * @var mixed[][]
      * @psalm-var ?array<string, list<QueryType&array{count: int, index: int, executionPercent: float}>>
      */
-    private ?array $groupedQueries = null;
+    private $groupedQueries;
 
-    private bool $shouldValidateSchema;
+    /** @var bool */
+    private $shouldValidateSchema;
 
-    public function __construct(ManagerRegistry $registry, bool $shouldValidateSchema = true, ?DebugDataHolder $debugDataHolder = null)
+    public function __construct(ManagerRegistry $registry, bool $shouldValidateSchema = true)
     {
         $this->registry             = $registry;
         $this->shouldValidateSchema = $shouldValidateSchema;
 
-        if ($debugDataHolder === null) {
-            parent::__construct($registry);
-        } else {
-            parent::__construct($registry, $debugDataHolder);
-        }
+        parent::__construct($registry);
     }
 
-    public function collect(Request $request, Response $response, ?Throwable $exception = null): void
+    /**
+     * {@inheritdoc}
+     */
+    public function collect(Request $request, Response $response, ?Throwable $exception = null)
     {
         parent::collect($request, $response, $exception);
 
@@ -111,12 +113,7 @@ class DoctrineDataCollector extends BaseCollector
                     }
 
                     $classErrors                        = $validator->validateClass($class);
-                    $r                                  = $class->getReflectionClass();
-                    $entities[$name][$class->getName()] = [
-                        'class' => $class->getName(),
-                        'file' => $r->getFileName(),
-                        'line' => $r->getStartLine(),
-                    ];
+                    $entities[$name][$class->getName()] = $class->getName();
 
                     if (empty($classErrors)) {
                         continue;
@@ -238,7 +235,11 @@ class DoctrineDataCollector extends BaseCollector
     /** @return int */
     public function getInvalidEntityCount()
     {
-        return $this->invalidEntityCount ??= array_sum(array_map('count', $this->data['errors']));
+        if ($this->invalidEntityCount === null) {
+            $this->invalidEntityCount = array_sum(array_map('count', $this->data['errors']));
+        }
+
+        return $this->invalidEntityCount;
     }
 
     /**

@@ -12,8 +12,9 @@
 namespace Symfony\Bridge\PhpUnit;
 
 use PHPUnit\Framework\Constraint\Constraint;
+use ReflectionClass;
 
-$r = new \ReflectionClass(Constraint::class);
+$r = new ReflectionClass(Constraint::class);
 if ($r->getProperty('exporter')->isProtected()) {
     trait ConstraintTrait
     {

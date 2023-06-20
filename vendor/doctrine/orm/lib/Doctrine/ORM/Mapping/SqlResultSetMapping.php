@@ -11,7 +11,7 @@ namespace Doctrine\ORM\Mapping;
  * @Annotation
  * @Target("ANNOTATION")
  */
-final class SqlResultSetMapping implements MappingAttribute
+final class SqlResultSetMapping implements Annotation
 {
     /**
      * The name given to the result set mapping, and used to refer to it in the methods of the Query API.

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Doctrine\ORM\Cache;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Proxy\Proxy;
 use Doctrine\ORM\Cache;
 use Doctrine\ORM\Cache\Exception\FeatureNotImplemented;
 use Doctrine\ORM\Cache\Exception\NonCacheableEntity;
@@ -16,7 +17,6 @@ use Doctrine\ORM\PersistentCollection;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\Query\ResultSetMapping;
 use Doctrine\ORM\UnitOfWork;
-use Doctrine\Persistence\Proxy;
 
 use function array_map;
 use function array_shift;
@@ -29,8 +29,6 @@ use function reset;
 
 /**
  * Default query cache implementation.
- *
- * @psalm-import-type AssociationMapping from ClassMetadata
  */
 class DefaultQueryCache implements QueryCache
 {
@@ -68,7 +66,7 @@ class DefaultQueryCache implements QueryCache
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function get(QueryCacheKey $key, ResultSetMapping $rsm, array $hints = [])
     {
@@ -227,7 +225,7 @@ class DefaultQueryCache implements QueryCache
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function put(QueryCacheKey $key, ResultSetMapping $rsm, $result, array $hints = [])
     {
@@ -328,8 +326,8 @@ class DefaultQueryCache implements QueryCache
     }
 
     /**
-     * @param AssociationMapping $assoc
-     * @param mixed              $assocValue
+     * @param array<string,mixed> $assoc
+     * @param mixed               $assocValue
      *
      * @return mixed[]|null
      * @psalm-return array{targetEntity: class-string, type: mixed, list?: array[], identifier?: array}|null
@@ -450,7 +448,7 @@ class DefaultQueryCache implements QueryCache
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function clear()
     {
@@ -458,7 +456,7 @@ class DefaultQueryCache implements QueryCache
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getRegion()
     {

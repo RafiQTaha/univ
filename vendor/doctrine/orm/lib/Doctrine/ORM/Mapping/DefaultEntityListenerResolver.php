@@ -21,7 +21,7 @@ class DefaultEntityListenerResolver implements EntityListenerResolver
     private $instances = [];
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function clear($className = null)
     {
@@ -38,7 +38,7 @@ class DefaultEntityListenerResolver implements EntityListenerResolver
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function register($object)
     {
@@ -50,7 +50,7 @@ class DefaultEntityListenerResolver implements EntityListenerResolver
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function resolve($className)
     {

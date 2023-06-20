@@ -69,7 +69,7 @@ abstract class KernelTestCase extends TestCase
 
         $kernel = static::createKernel($options);
         $kernel->boot();
-        static::$kernel = $kernel;
+        self::$kernel = $kernel;
         static::$booted = true;
 
         return static::$kernel;

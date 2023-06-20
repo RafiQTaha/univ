@@ -51,7 +51,7 @@ class PathExpression extends Node
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function dispatch($walker)
     {

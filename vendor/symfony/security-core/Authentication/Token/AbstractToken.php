@@ -11,8 +11,8 @@
 
 namespace Symfony\Component\Security\Core\Authentication\Token;
 
-use Symfony\Component\Security\Core\User\InMemoryUser;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Core\User\InMemoryUser;
 
 /**
  * Base class for Token instances.
@@ -22,7 +22,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
  */
 abstract class AbstractToken implements TokenInterface, \Serializable
 {
-    private ?UserInterface $user = null;
+    private $user = null;
     private array $roleNames = [];
     private array $attributes = [];
 
@@ -38,6 +38,9 @@ abstract class AbstractToken implements TokenInterface, \Serializable
         }
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getRoleNames(): array
     {
         return $this->roleNames;
@@ -45,16 +48,19 @@ abstract class AbstractToken implements TokenInterface, \Serializable
 
     public function getUserIdentifier(): string
     {
-        return $this->user ? $this->user->getUserIdentifier() : '';
+        return $this->user->getUserIdentifier();
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getUser(): ?UserInterface
     {
         return $this->user;
     }
 
     /**
-     * @return void
+     * {@inheritdoc}
      */
     public function setUser(UserInterface $user)
     {
@@ -62,7 +68,7 @@ abstract class AbstractToken implements TokenInterface, \Serializable
     }
 
     /**
-     * @return void
+     * {@inheritdoc}
      */
     public function eraseCredentials()
     {
@@ -113,24 +119,33 @@ abstract class AbstractToken implements TokenInterface, \Serializable
         $this->user = \is_string($user) ? new InMemoryUser($user, '', $this->roleNames, false) : $user;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getAttributes(): array
     {
         return $this->attributes;
     }
 
     /**
-     * @return void
+     * {@inheritdoc}
      */
     public function setAttributes(array $attributes)
     {
         $this->attributes = $attributes;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function hasAttribute(string $name): bool
     {
         return \array_key_exists($name, $this->attributes);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getAttribute(string $name): mixed
     {
         if (!\array_key_exists($name, $this->attributes)) {
@@ -141,7 +156,7 @@ abstract class AbstractToken implements TokenInterface, \Serializable
     }
 
     /**
-     * @return void
+     * {@inheritdoc}
      */
     public function setAttribute(string $name, mixed $value)
     {
@@ -172,7 +187,7 @@ abstract class AbstractToken implements TokenInterface, \Serializable
     /**
      * @internal
      */
-    final public function unserialize(string $serialized): void
+    final public function unserialize(string $serialized)
     {
         $this->__unserialize(unserialize($serialized));
     }

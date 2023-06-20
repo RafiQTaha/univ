@@ -29,20 +29,22 @@ use Symfony\Component\VarDumper\Cloner\Stub;
  */
 class DoctrineDataCollector extends DataCollector
 {
+    private $registry;
     private array $connections;
     private array $managers;
+    private ?DebugDataHolder $debugDataHolder;
 
     /**
      * @var array<string, DebugStack>
      */
     private array $loggers = [];
 
-    public function __construct(
-        private ManagerRegistry $registry,
-        private ?DebugDataHolder $debugDataHolder = null,
-    ) {
+    public function __construct(ManagerRegistry $registry, DebugDataHolder $debugDataHolder = null)
+    {
+        $this->registry = $registry;
         $this->connections = $registry->getConnectionNames();
         $this->managers = $registry->getManagerNames();
+        $this->debugDataHolder = $debugDataHolder;
     }
 
     /**

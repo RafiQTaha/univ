@@ -31,7 +31,7 @@ class WebProcessor extends BaseWebProcessor implements EventSubscriberInterface
         parent::__construct([], $extraFields);
     }
 
-    public function onKernelRequest(RequestEvent $event): void
+    public function onKernelRequest(RequestEvent $event)
     {
         if ($event->isMainRequest()) {
             $this->serverData = $event->getRequest()->server->all();

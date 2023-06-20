@@ -4,10 +4,6 @@ declare(strict_types=1);
 
 namespace Doctrine\ORM\Query\AST;
 
-use Doctrine\Deprecations\Deprecation;
-
-use function func_num_args;
-
 /**
  * InstanceOfExpression ::= IdentificationVariable ["NOT"] "INSTANCE" ["OF"] (InstanceOfParameter | "(" InstanceOfParameter {"," InstanceOfParameter}* ")")
  * InstanceOfParameter  ::= AbstractSchemaName | InputParameter
@@ -22,31 +18,19 @@ class InstanceOfExpression extends Node
     /** @var string */
     public $identificationVariable;
 
-    /** @var non-empty-list<InputParameter|string> */
+    /** @var mixed[] */
     public $value;
 
     /**
-     * @param string                                $identVariable
-     * @param non-empty-list<InputParameter|string> $value
+     * @param string $identVariable
      */
-    public function __construct($identVariable, array $value = [], bool $not = false)
+    public function __construct($identVariable)
     {
-        if (func_num_args() < 2) {
-            Deprecation::trigger(
-                'doctrine/orm',
-                'https://github.com/doctrine/orm/pull/10267',
-                'Not passing a value for $value to %s() is deprecated.',
-                __METHOD__
-            );
-        }
-
         $this->identificationVariable = $identVariable;
-        $this->value                  = $value;
-        $this->not                    = $not;
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function dispatch($sqlWalker)
     {

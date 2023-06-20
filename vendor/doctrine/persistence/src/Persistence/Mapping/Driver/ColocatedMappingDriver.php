@@ -128,11 +128,12 @@ trait ColocatedMappingDriver
      * Returns whether the class with the specified name is transient. Only non-transient
      * classes, that is entities and mapped superclasses, should have their metadata loaded.
      *
+     * @param string $className
      * @psalm-param class-string $className
      *
      * @return bool
      */
-    abstract public function isTransient(string $className);
+    abstract public function isTransient($className);
 
     /**
      * Gets the names of all mapped classes known to this driver.

@@ -13,52 +13,34 @@ use Doctrine\Common\Annotations\Annotation\NamedArgumentConstructor;
  * @Target("PROPERTY")
  */
 #[Attribute(Attribute::TARGET_PROPERTY)]
-final class OneToMany implements MappingAttribute
+final class OneToMany implements Annotation
 {
-    /**
-     * @var string|null
-     * @readonly
-     */
+    /** @var string */
     public $mappedBy;
 
-    /**
-     * @var class-string|null
-     * @readonly
-     */
+    /** @var class-string|null */
     public $targetEntity;
 
-    /**
-     * @var array<string>|null
-     * @readonly
-     */
+    /** @var array<string> */
     public $cascade;
 
     /**
      * The fetching strategy to use for the association.
      *
      * @var string
-     * @psalm-var 'LAZY'|'EAGER'|'EXTRA_LAZY'
-     * @readonly
      * @Enum({"LAZY", "EAGER", "EXTRA_LAZY"})
      */
     public $fetch = 'LAZY';
 
-    /**
-     * @var bool
-     * @readonly
-     */
+    /** @var bool */
     public $orphanRemoval = false;
 
-    /**
-     * @var string|null
-     * @readonly
-     */
+    /** @var string */
     public $indexBy;
 
     /**
      * @param class-string|null $targetEntity
      * @param string[]|null     $cascade
-     * @psalm-param 'LAZY'|'EAGER'|'EXTRA_LAZY' $fetch
      */
     public function __construct(
         ?string $mappedBy = null,

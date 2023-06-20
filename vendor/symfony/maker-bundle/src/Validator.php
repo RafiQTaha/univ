@@ -146,20 +146,23 @@ final class Validator
         return $valueAsBool;
     }
 
-    public static function validatePropertyName(string $name): string
+    public static function validatePropertyName(string $name)
     {
         // check for valid PHP variable name
-        if (!Str::isValidPhpVariableName($name)) {
+        if (null !== $name && !Str::isValidPhpVariableName($name)) {
             throw new \InvalidArgumentException(sprintf('"%s" is not a valid PHP property name.', $name));
         }
 
         return $name;
     }
 
-    public static function validateDoctrineFieldName(string $name, ManagerRegistry|LegacyManagerRegistry $registry): string
+    /**
+     * @param ManagerRegistry|LegacyManagerRegistry $registry
+     */
+    public static function validateDoctrineFieldName(string $name, $registry)
     {
         if (!$registry instanceof ManagerRegistry && !$registry instanceof LegacyManagerRegistry) {
-            throw new \InvalidArgumentException(sprintf('Argument 2 to %s::validateDoctrineFieldName must be an instance of %s, %s passed.', __CLASS__, ManagerRegistry::class, \is_object($registry) ? $registry::class : \gettype($registry)));
+            throw new \InvalidArgumentException(sprintf('Argument 2 to %s::validateDoctrineFieldName must be an instance of %s, %s passed.', __CLASS__, ManagerRegistry::class, \is_object($registry) ? \get_class($registry) : \gettype($registry)));
         }
 
         // check reserved words
@@ -181,12 +184,12 @@ final class Validator
         return $email;
     }
 
-    public static function existsOrNull(string $className = null, array $entities = []): ?string
+    public static function existsOrNull(string $className = null, array $entities = [])
     {
         if (null !== $className) {
             self::validateClassName($className);
 
-            if (str_starts_with($className, '\\')) {
+            if (0 === strpos($className, '\\')) {
                 self::classExists($className);
             } else {
                 self::entityExists($className, $entities);
@@ -217,7 +220,7 @@ final class Validator
             throw new RuntimeCommandException('There are no registered entities; please create an entity before using this command.');
         }
 
-        if (str_starts_with($className, '\\')) {
+        if (0 === strpos($className, '\\')) {
             self::classExists($className, sprintf('Entity "%s" doesn\'t exist; please enter an existing one or create a new one.', $className));
         }
 

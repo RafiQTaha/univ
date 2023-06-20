@@ -16,19 +16,16 @@ use Doctrine\ORM\Query\ResultSetMapping;
 use Doctrine\ORM\QueryBuilder;
 use IteratorAggregate;
 use ReturnTypeWillChange;
-use Traversable;
 
 use function array_key_exists;
 use function array_map;
 use function array_sum;
-use function assert;
-use function is_string;
+use function count;
 
 /**
  * The paginator can handle various complex scenarios with DQL.
  *
- * @template-covariant T
- * @implements IteratorAggregate<array-key, T>
+ * @template T
  */
 class Paginator implements Countable, IteratorAggregate
 {
@@ -43,7 +40,7 @@ class Paginator implements Countable, IteratorAggregate
     /** @var bool|null */
     private $useOutputWalkers;
 
-    /** @var int|null */
+    /** @var int */
     private $count;
 
     /**
@@ -106,7 +103,7 @@ class Paginator implements Countable, IteratorAggregate
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      *
      * @return int
      */
@@ -125,10 +122,10 @@ class Paginator implements Countable, IteratorAggregate
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      *
-     * @return Traversable
-     * @psalm-return Traversable<array-key, T>
+     * @return ArrayIterator
+     * @psalm-return ArrayIterator<array-key, T>
      */
     #[ReturnTypeWillChange]
     public function getIterator()
@@ -159,12 +156,11 @@ class Paginator implements Countable, IteratorAggregate
             $ids          = array_map('current', $foundIdRows);
 
             $this->appendTreeWalker($whereInQuery, WhereInWalker::class);
-            $whereInQuery->setHint(WhereInWalker::HINT_PAGINATOR_HAS_IDS, true);
-            $whereInQuery->setFirstResult(0)->setMaxResults(null);
+            $whereInQuery->setHint(WhereInWalker::HINT_PAGINATOR_ID_COUNT, count($ids));
+            $whereInQuery->setFirstResult(null)->setMaxResults(null);
+            $whereInQuery->setParameter(WhereInWalker::PAGINATOR_ID_ALIAS, $ids);
             $whereInQuery->setCacheable($this->query->isCacheable());
-
-            $databaseIds = $this->convertWhereInIdentifiersToDatabaseValues($ids);
-            $whereInQuery->setParameter(WhereInWalker::PAGINATOR_ID_ALIAS, $databaseIds);
+            $whereInQuery->expireQueryCache();
 
             $result = $whereInQuery->getResult($this->query->getHydrationMode());
         } else {
@@ -245,7 +241,7 @@ class Paginator implements Countable, IteratorAggregate
             $this->unbindUnusedQueryParams($countQuery);
         }
 
-        $countQuery->setFirstResult(0)->setMaxResults(null);
+        $countQuery->setFirstResult(null)->setMaxResults(null);
 
         return $countQuery;
     }
@@ -266,24 +262,5 @@ class Paginator implements Countable, IteratorAggregate
         }
 
         $query->setParameters($parameters);
-    }
-
-    /**
-     * @param mixed[] $identifiers
-     *
-     * @return mixed[]
-     */
-    private function convertWhereInIdentifiersToDatabaseValues(array $identifiers): array
-    {
-        $query = $this->cloneQuery($this->query);
-        $query->setHint(Query::HINT_CUSTOM_OUTPUT_WALKER, RootTypeWalker::class);
-
-        $connection = $this->query->getEntityManager()->getConnection();
-        $type       = $query->getSQL();
-        assert(is_string($type));
-
-        return array_map(static function ($id) use ($connection, $type) {
-            return $connection->convertToDatabaseValue($id, $type);
-        }, $identifiers);
     }
 }

@@ -6,28 +6,28 @@ namespace Doctrine\ORM\Mapping;
 
 use Attribute;
 
-use function array_values;
 use function is_array;
 
 /**
- * This attribute is used to override association mappings of relationship properties.
+ * This annotation is used to override association mappings of relationship properties.
  *
  * @Annotation
  * @NamedArgumentConstructor()
  * @Target("CLASS")
  */
 #[Attribute(Attribute::TARGET_CLASS)]
-final class AssociationOverrides implements MappingAttribute
+final class AssociationOverrides implements Annotation
 {
     /**
      * Mapping overrides of relationship properties.
      *
-     * @var list<AssociationOverride>
-     * @readonly
+     * @var array<AssociationOverride>
      */
     public $overrides = [];
 
-    /** @param array<AssociationOverride>|AssociationOverride $overrides */
+    /**
+     * @param array<AssociationOverride>|AssociationOverride $overrides
+     */
     public function __construct($overrides)
     {
         if (! is_array($overrides)) {
@@ -38,8 +38,8 @@ final class AssociationOverrides implements MappingAttribute
             if (! ($override instanceof AssociationOverride)) {
                 throw MappingException::invalidOverrideType('AssociationOverride', $override);
             }
-        }
 
-        $this->overrides = array_values($overrides);
+            $this->overrides[] = $override;
+        }
     }
 }

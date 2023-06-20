@@ -9,14 +9,16 @@ class GroupByClause extends Node
     /** @var mixed[] */
     public $groupByItems = [];
 
-    /** @param mixed[] $groupByItems */
+    /**
+     * @param mixed[] $groupByItems
+     */
     public function __construct(array $groupByItems)
     {
         $this->groupByItems = $groupByItems;
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function dispatch($sqlWalker)
     {

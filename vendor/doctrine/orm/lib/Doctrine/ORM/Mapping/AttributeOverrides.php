@@ -6,28 +6,28 @@ namespace Doctrine\ORM\Mapping;
 
 use Attribute;
 
-use function array_values;
 use function is_array;
 
 /**
- * This attribute is used to override the mapping of a entity property.
+ * This annotation is used to override the mapping of a entity property.
  *
  * @Annotation
  * @NamedArgumentConstructor()
  * @Target("CLASS")
  */
 #[Attribute(Attribute::TARGET_CLASS)]
-final class AttributeOverrides implements MappingAttribute
+final class AttributeOverrides implements Annotation
 {
     /**
      * One or more field or property mapping overrides.
      *
-     * @var list<AttributeOverride>
-     * @readonly
+     * @var array<AttributeOverride>
      */
     public $overrides = [];
 
-    /** @param array<AttributeOverride>|AttributeOverride $overrides */
+    /**
+     * @param array<AttributeOverride>|AttributeOverride $overrides
+     */
     public function __construct($overrides)
     {
         if (! is_array($overrides)) {
@@ -38,8 +38,8 @@ final class AttributeOverrides implements MappingAttribute
             if (! ($override instanceof AttributeOverride)) {
                 throw MappingException::invalidOverrideType('AttributeOverride', $override);
             }
-        }
 
-        $this->overrides = array_values($overrides);
+            $this->overrides[] = $override;
+        }
     }
 }

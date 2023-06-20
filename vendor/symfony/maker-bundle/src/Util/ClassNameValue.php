@@ -16,12 +16,15 @@ use Symfony\Bundle\MakerBundle\Str;
 /**
  * @internal
  */
-final class ClassNameValue implements \Stringable
+final class ClassNameValue
 {
-    public function __construct(
-        private string $typeHint,
-        private string $fullClassName,
-    ) {
+    private $typeHint;
+    private $fullClassName;
+
+    public function __construct(string $typeHint, string $fullClassName)
+    {
+        $this->typeHint = $typeHint;
+        $this->fullClassName = $fullClassName;
     }
 
     public function getShortName(): string
@@ -38,7 +41,7 @@ final class ClassNameValue implements \Stringable
         return 'self' === $this->typeHint;
     }
 
-    public function __toString(): string
+    public function __toString()
     {
         return $this->getShortName();
     }

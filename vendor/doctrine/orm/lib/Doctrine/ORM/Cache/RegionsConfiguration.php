@@ -31,7 +31,9 @@ class RegionsConfiguration
         $this->defaultLockLifetime = (int) $defaultLockLifetime;
     }
 
-    /** @return int */
+    /**
+     * @return int
+     */
     public function getDefaultLifetime()
     {
         return $this->defaultLifetime;
@@ -47,7 +49,9 @@ class RegionsConfiguration
         $this->defaultLifetime = (int) $defaultLifetime;
     }
 
-    /** @return int */
+    /**
+     * @return int
+     */
     public function getDefaultLockLifetime()
     {
         return $this->defaultLockLifetime;

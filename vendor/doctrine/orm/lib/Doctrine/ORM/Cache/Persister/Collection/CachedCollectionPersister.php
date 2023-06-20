@@ -16,10 +16,14 @@ use Doctrine\ORM\Persisters\Collection\CollectionPersister;
  */
 interface CachedCollectionPersister extends CachedPersister, CollectionPersister
 {
-    /** @return ClassMetadata */
+    /**
+     * @return ClassMetadata
+     */
     public function getSourceEntityMetadata();
 
-    /** @return ClassMetadata */
+    /**
+     * @return ClassMetadata
+     */
     public function getTargetEntityMetadata();
 
     /**

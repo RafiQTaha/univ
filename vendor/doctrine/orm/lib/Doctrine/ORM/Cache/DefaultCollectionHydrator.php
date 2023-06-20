@@ -27,7 +27,9 @@ class DefaultCollectionHydrator implements CollectionHydrator
     /** @var array<string,mixed> */
     private static $hints = [Query::HINT_CACHE_ENABLED => true];
 
-    /** @param EntityManagerInterface $em The entity manager. */
+    /**
+     * @param EntityManagerInterface $em The entity manager.
+     */
     public function __construct(EntityManagerInterface $em)
     {
         $this->em  = $em;
@@ -35,7 +37,7 @@ class DefaultCollectionHydrator implements CollectionHydrator
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function buildCacheEntry(ClassMetadata $metadata, CollectionCacheKey $key, $collection)
     {
@@ -49,7 +51,7 @@ class DefaultCollectionHydrator implements CollectionHydrator
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function loadCacheEntry(ClassMetadata $metadata, CollectionCacheKey $key, CollectionCacheEntry $entry, PersistentCollection $collection)
     {

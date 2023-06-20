@@ -42,7 +42,9 @@ class MetadataFilter extends FilterIterator implements Countable
         return iterator_to_array($metadatas);
     }
 
-    /** @param mixed[]|string $filter */
+    /**
+     * @param mixed[]|string $filter
+     */
     public function __construct(ArrayIterator $metadata, $filter)
     {
         $this->filter = (array) $filter;
@@ -50,7 +52,9 @@ class MetadataFilter extends FilterIterator implements Countable
         parent::__construct($metadata);
     }
 
-    /** @return bool */
+    /**
+     * @return bool
+     */
     #[ReturnTypeWillChange]
     public function accept()
     {
@@ -78,7 +82,9 @@ class MetadataFilter extends FilterIterator implements Countable
         return false;
     }
 
-    /** @return ArrayIterator<int, ClassMetadata> */
+    /**
+     * @return ArrayIterator<int, ClassMetadata>
+     */
     #[ReturnTypeWillChange]
     public function getInnerIterator()
     {
@@ -89,7 +95,9 @@ class MetadataFilter extends FilterIterator implements Countable
         return $innerIterator;
     }
 
-    /** @return int */
+    /**
+     * @return int
+     */
     #[ReturnTypeWillChange]
     public function count()
     {

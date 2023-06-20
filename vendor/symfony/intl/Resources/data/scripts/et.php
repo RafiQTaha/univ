@@ -2,7 +2,6 @@
 
 return [
     'Names' => [
-        'Adlm' => 'adlami',
         'Afak' => 'afaka',
         'Aghb' => 'albaani',
         'Ahom' => 'ahomi',

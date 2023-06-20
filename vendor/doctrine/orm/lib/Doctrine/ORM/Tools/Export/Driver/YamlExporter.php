@@ -23,7 +23,7 @@ class YamlExporter extends AbstractExporter
     protected $_extension = '.dcm.yml';
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function exportClassMetadata(ClassMetadataInfo $metadata)
     {

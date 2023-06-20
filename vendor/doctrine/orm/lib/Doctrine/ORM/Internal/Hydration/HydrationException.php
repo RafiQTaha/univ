@@ -11,7 +11,9 @@ use function sprintf;
 
 class HydrationException extends ORMException
 {
-    /** @return HydrationException */
+    /**
+     * @return HydrationException
+     */
     public static function nonUniqueResult()
     {
         return new self('The result returned by the query was not unique.');
@@ -81,8 +83,9 @@ class HydrationException extends ORMException
     }
 
     /**
-     * @param string           $discrValue
-     * @param list<int|string> $discrValues
+     * @param string   $discrValue
+     * @param string[] $discrValues
+     * @psalm-param list<string> $discrValues
      *
      * @return HydrationException
      */

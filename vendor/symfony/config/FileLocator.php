@@ -31,7 +31,7 @@ class FileLocator implements FileLocatorInterface
     }
 
     /**
-     * @return string|array
+     * {@inheritdoc}
      */
     public function locate(string $name, string $currentPath = null, bool $first = true)
     {

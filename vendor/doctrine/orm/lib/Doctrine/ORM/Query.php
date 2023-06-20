@@ -33,7 +33,6 @@ use function assert;
 use function count;
 use function get_debug_type;
 use function in_array;
-use function is_int;
 use function ksort;
 use function md5;
 use function method_exists;
@@ -120,9 +119,8 @@ final class Query extends AbstractQuery
      * The current state of this query.
      *
      * @var int
-     * @psalm-var self::STATE_*
      */
-    private $state = self::STATE_DIRTY;
+    private $_state = self::STATE_DIRTY;
 
     /**
      * A snapshot of the parameter types the query was parsed with.
@@ -148,9 +146,9 @@ final class Query extends AbstractQuery
     /**
      * The first result to return (the "offset").
      *
-     * @var int
+     * @var int|null
      */
-    private $firstResult = 0;
+    private $firstResult = null;
 
     /**
      * The maximum number of results to return (the "limit").
@@ -176,7 +174,7 @@ final class Query extends AbstractQuery
     /**
      * The query cache lifetime.
      *
-     * @var int|null
+     * @var int
      */
     private $queryCacheTTL;
 
@@ -190,7 +188,9 @@ final class Query extends AbstractQuery
     /**
      * Gets the SQL query/queries that correspond to this DQL query.
      *
-     * @return list<string>|string The built sql query or an array of all sql queries.
+     * @return mixed The built sql query or an array of all sql queries.
+     *
+     * @override
      */
     public function getSQL()
     {
@@ -210,7 +210,7 @@ final class Query extends AbstractQuery
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      *
      * @return ResultSetMapping
      */
@@ -239,11 +239,11 @@ final class Query extends AbstractQuery
         }
 
         // Return previous parser result if the query and the filter collection are both clean
-        if ($this->state === self::STATE_CLEAN && $this->parsedTypes === $types && $this->_em->isFiltersStateClean()) {
+        if ($this->_state === self::STATE_CLEAN && $this->parsedTypes === $types && $this->_em->isFiltersStateClean()) {
             return $this->parserResult;
         }
 
-        $this->state       = self::STATE_CLEAN;
+        $this->_state      = self::STATE_CLEAN;
         $this->parsedTypes = $types;
 
         $queryCache = $this->queryCache ?? $this->_em->getConfiguration()->getQueryCache();
@@ -279,7 +279,7 @@ final class Query extends AbstractQuery
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     protected function _doExecute()
     {
@@ -537,7 +537,7 @@ final class Query extends AbstractQuery
     /**
      * Defines how long the query cache will be active before expire.
      *
-     * @param int|null $timeToLive How long the cache entry is valid.
+     * @param int $timeToLive How long the cache entry is valid.
      *
      * @return $this
      */
@@ -582,34 +582,28 @@ final class Query extends AbstractQuery
         return $this->expireQueryCache;
     }
 
+    /**
+     * @override
+     */
     public function free(): void
     {
         parent::free();
 
-        $this->dql   = null;
-        $this->state = self::STATE_CLEAN;
+        $this->dql    = null;
+        $this->_state = self::STATE_CLEAN;
     }
 
     /**
      * Sets a DQL query string.
      *
-     * @param string|null $dqlQuery DQL Query.
+     * @param string $dqlQuery DQL Query.
      */
     public function setDQL($dqlQuery): self
     {
-        if ($dqlQuery === null) {
-            Deprecation::trigger(
-                'doctrine/orm',
-                'https://github.com/doctrine/orm/pull/9784',
-                'Calling %s with null is deprecated and will result in a TypeError in Doctrine 3.0',
-                __METHOD__
-            );
-
-            return $this;
+        if ($dqlQuery !== null) {
+            $this->dql    = $dqlQuery;
+            $this->_state = self::STATE_DIRTY;
         }
-
-        $this->dql   = $dqlQuery;
-        $this->state = self::STATE_DIRTY;
 
         return $this;
     }
@@ -631,11 +625,10 @@ final class Query extends AbstractQuery
      * @see AbstractQuery::STATE_DIRTY
      *
      * @return int The query state.
-     * @psalm-return self::STATE_* The query state.
      */
     public function getState(): int
     {
-        return $this->state;
+        return $this->_state;
     }
 
     /**
@@ -657,31 +650,23 @@ final class Query extends AbstractQuery
      */
     public function setFirstResult($firstResult): self
     {
-        if (! is_int($firstResult)) {
-            Deprecation::trigger(
-                'doctrine/orm',
-                'https://github.com/doctrine/orm/pull/9809',
-                'Calling %s with %s is deprecated and will result in a TypeError in Doctrine 3.0. Pass an integer.',
-                __METHOD__,
-                get_debug_type($firstResult)
-            );
-
+        if ($firstResult !== null) {
             $firstResult = (int) $firstResult;
         }
 
         $this->firstResult = $firstResult;
-        $this->state       = self::STATE_DIRTY;
+        $this->_state      = self::STATE_DIRTY;
 
         return $this;
     }
 
     /**
      * Gets the position of the first result the query object was set to retrieve (the "offset").
-     * Returns 0 if {@link setFirstResult} was not applied to this query.
+     * Returns NULL if {@link setFirstResult} was not applied to this query.
      *
-     * @return int The position of the first result.
+     * @return int|null The position of the first result.
      */
-    public function getFirstResult(): int
+    public function getFirstResult(): ?int
     {
         return $this->firstResult;
     }
@@ -700,7 +685,7 @@ final class Query extends AbstractQuery
         }
 
         $this->maxResults = $maxResults;
-        $this->state      = self::STATE_DIRTY;
+        $this->_state     = self::STATE_DIRTY;
 
         return $this;
     }
@@ -743,21 +728,21 @@ final class Query extends AbstractQuery
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function setHint($name, $value): self
     {
-        $this->state = self::STATE_DIRTY;
+        $this->_state = self::STATE_DIRTY;
 
         return parent::setHint($name, $value);
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function setHydrationMode($hydrationMode): self
     {
-        $this->state = self::STATE_DIRTY;
+        $this->_state = self::STATE_DIRTY;
 
         return parent::setHydrationMode($hydrationMode);
     }
@@ -769,8 +754,6 @@ final class Query extends AbstractQuery
      *
      * @param int $lockMode
      * @psalm-param LockMode::* $lockMode
-     *
-     * @return $this
      *
      * @throws TransactionRequiredException
      */
@@ -831,6 +814,6 @@ final class Query extends AbstractQuery
     {
         parent::__clone();
 
-        $this->state = self::STATE_DIRTY;
+        $this->_state = self::STATE_DIRTY;
     }
 }

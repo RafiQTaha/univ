@@ -21,7 +21,10 @@ class SqrtFunction extends FunctionNode
     /** @var SimpleArithmeticExpression */
     public $simpleArithmeticExpression;
 
-    /** @inheritDoc */
+    /**
+     * @override
+     * @inheritdoc
+     */
     public function getSql(SqlWalker $sqlWalker)
     {
         return sprintf(
@@ -30,7 +33,10 @@ class SqrtFunction extends FunctionNode
         );
     }
 
-    /** @inheritDoc */
+    /**
+     * @override
+     * @inheritdoc
+     */
     public function parse(Parser $parser)
     {
         $parser->match(Lexer::T_IDENTIFIER);

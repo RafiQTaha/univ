@@ -13,7 +13,7 @@ namespace Doctrine\ORM\Mapping;
  * @Annotation
  * @Target("ANNOTATION")
  */
-final class EntityResult implements MappingAttribute
+final class EntityResult implements Annotation
 {
     /**
      * The class of the result.

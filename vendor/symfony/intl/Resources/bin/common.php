@@ -9,10 +9,6 @@
  * file that was distributed with this source code.
  */
 
-if ('cli' !== \PHP_SAPI) {
-    throw new Exception('This script must be run from the command line.');
-}
-
 define('LINE_WIDTH', 75);
 
 define('LINE', str_repeat('-', LINE_WIDTH)."\n");

@@ -30,26 +30,32 @@ use Symfony\Component\Yaml\Yaml;
  */
 final class MakeDockerDatabase extends AbstractMaker
 {
-    private string $composeFilePath;
-    private ?ComposeFileManipulator $composeFileManipulator = null;
+    private $fileManager;
+    private $composeFilePath;
 
     /**
-     * @var ?string type of database selected by the user
+     * @var ComposeFileManipulator
      */
-    private ?string $databaseChoice = null;
+    private $composeFileManipulator;
+
+    /**
+     * @var string type of database selected by the user
+     */
+    private $databaseChoice;
 
     /**
      * @var string Service identifier to be set in docker-compose.yaml
      */
-    private string $serviceName = 'database';
+    private $serviceName = 'database';
 
     /**
      * @var string Version set in docker-compose.yaml for the service. e.g. latest
      */
-    private string $serviceVersion = 'latest';
+    private $serviceVersion = 'latest';
 
-    public function __construct(private FileManager $fileManager)
+    public function __construct(FileManager $fileManager)
     {
+        $this->fileManager = $fileManager;
     }
 
     public static function getCommandName(): string

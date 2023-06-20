@@ -21,7 +21,10 @@ class LowerFunction extends FunctionNode
     /** @var Node */
     public $stringPrimary;
 
-    /** @inheritDoc */
+    /**
+     * @override
+     * @inheritdoc
+     */
     public function getSql(SqlWalker $sqlWalker)
     {
         return sprintf(
@@ -30,7 +33,10 @@ class LowerFunction extends FunctionNode
         );
     }
 
-    /** @inheritDoc */
+    /**
+     * @override
+     * @inheritdoc
+     */
     public function parse(Parser $parser)
     {
         $parser->match(Lexer::T_IDENTIFIER);

@@ -14,7 +14,6 @@ namespace Symfony\Component\DependencyInjection\Compiler;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Exception\ParameterNotFoundException;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 /**
  * Resolves all parameter placeholders "%somevalue%" to their real values.
@@ -23,7 +22,7 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
  */
 class ResolveParameterPlaceHoldersPass extends AbstractRecursivePass
 {
-    private ParameterBagInterface $bag;
+    private $bag;
 
     public function __construct(
         private bool $resolveArrays = true,
@@ -83,11 +82,6 @@ class ResolveParameterPlaceHoldersPass extends AbstractRecursivePass
             }
             if (isset($changes['file'])) {
                 $value->setFile($this->bag->resolveValue($value->getFile()));
-            }
-            $tags = $value->getTags();
-            if (isset($tags['proxy'])) {
-                $tags['proxy'] = $this->bag->resolveValue($tags['proxy']);
-                $value->setTags($tags);
             }
         }
 

@@ -17,7 +17,7 @@ class TimestampQueryCacheValidator implements QueryCacheValidator
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function isValid(QueryCacheKey $key, QueryCacheEntry $entry)
     {

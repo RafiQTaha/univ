@@ -98,7 +98,7 @@ abstract class AbstractEntityPersister implements CachedEntityPersister
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function addInsert($entity)
     {
@@ -106,7 +106,7 @@ abstract class AbstractEntityPersister implements CachedEntityPersister
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getInserts()
     {
@@ -114,7 +114,7 @@ abstract class AbstractEntityPersister implements CachedEntityPersister
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getSelectSQL($criteria, $assoc = null, $lockMode = null, $limit = null, $offset = null, ?array $orderBy = null)
     {
@@ -130,7 +130,7 @@ abstract class AbstractEntityPersister implements CachedEntityPersister
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getInsertSQL()
     {
@@ -138,7 +138,7 @@ abstract class AbstractEntityPersister implements CachedEntityPersister
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getResultSetMapping()
     {
@@ -146,7 +146,7 @@ abstract class AbstractEntityPersister implements CachedEntityPersister
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getSelectConditionStatementSQL($field, $value, $assoc = null, $comparison = null)
     {
@@ -154,7 +154,7 @@ abstract class AbstractEntityPersister implements CachedEntityPersister
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function exists($entity, ?Criteria $extraConditions = null)
     {
@@ -170,21 +170,23 @@ abstract class AbstractEntityPersister implements CachedEntityPersister
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getCacheRegion()
     {
         return $this->region;
     }
 
-    /** @return EntityHydrator */
+    /**
+     * @return EntityHydrator
+     */
     public function getEntityHydrator()
     {
         return $this->hydrator;
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function storeEntityCache($entity, EntityCacheKey $key)
     {
@@ -205,7 +207,9 @@ abstract class AbstractEntityPersister implements CachedEntityPersister
         return $cached;
     }
 
-    /** @param object $entity */
+    /**
+     * @param object $entity
+     */
     private function storeJoinedAssociations($entity): void
     {
         if ($this->joinedAssociations === null) {
@@ -246,7 +250,7 @@ abstract class AbstractEntityPersister implements CachedEntityPersister
      *
      * @param string            $query
      * @param string[]|Criteria $criteria
-     * @param string[]|null     $orderBy
+     * @param string[]          $orderBy
      * @param int|null          $limit
      * @param int|null          $offset
      *
@@ -262,7 +266,7 @@ abstract class AbstractEntityPersister implements CachedEntityPersister
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function expandParameters($criteria)
     {
@@ -270,7 +274,7 @@ abstract class AbstractEntityPersister implements CachedEntityPersister
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function expandCriteriaParameters(Criteria $criteria)
     {
@@ -278,7 +282,7 @@ abstract class AbstractEntityPersister implements CachedEntityPersister
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getClassMetadata()
     {
@@ -286,7 +290,7 @@ abstract class AbstractEntityPersister implements CachedEntityPersister
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getManyToManyCollection(array $assoc, $sourceEntity, $offset = null, $limit = null)
     {
@@ -294,7 +298,7 @@ abstract class AbstractEntityPersister implements CachedEntityPersister
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getOneToManyCollection(array $assoc, $sourceEntity, $offset = null, $limit = null)
     {
@@ -302,7 +306,7 @@ abstract class AbstractEntityPersister implements CachedEntityPersister
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getOwningTable($fieldName)
     {
@@ -310,7 +314,7 @@ abstract class AbstractEntityPersister implements CachedEntityPersister
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function executeInserts()
     {
@@ -320,7 +324,7 @@ abstract class AbstractEntityPersister implements CachedEntityPersister
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function load(array $criteria, $entity = null, $assoc = null, array $hints = [], $lockMode = null, $limit = null, ?array $orderBy = null)
     {
@@ -364,7 +368,7 @@ abstract class AbstractEntityPersister implements CachedEntityPersister
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function loadAll(array $criteria = [], ?array $orderBy = null, $limit = null, $offset = null)
     {
@@ -400,7 +404,7 @@ abstract class AbstractEntityPersister implements CachedEntityPersister
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function loadById(array $identifier, $entity = null)
     {
@@ -464,7 +468,7 @@ abstract class AbstractEntityPersister implements CachedEntityPersister
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function loadCriteria(Criteria $criteria)
     {
@@ -503,7 +507,7 @@ abstract class AbstractEntityPersister implements CachedEntityPersister
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function loadManyToManyCollection(array $assoc, $sourceEntity, PersistentCollection $collection)
     {
@@ -538,7 +542,7 @@ abstract class AbstractEntityPersister implements CachedEntityPersister
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function loadOneToManyCollection(array $assoc, $sourceEntity, PersistentCollection $collection)
     {
@@ -573,7 +577,7 @@ abstract class AbstractEntityPersister implements CachedEntityPersister
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function loadOneToOneEntity(array $assoc, $sourceEntity, array $identifier = [])
     {
@@ -581,7 +585,7 @@ abstract class AbstractEntityPersister implements CachedEntityPersister
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function lock(array $criteria, $lockMode)
     {
@@ -589,7 +593,7 @@ abstract class AbstractEntityPersister implements CachedEntityPersister
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function refresh(array $id, $entity, $lockMode = null)
     {

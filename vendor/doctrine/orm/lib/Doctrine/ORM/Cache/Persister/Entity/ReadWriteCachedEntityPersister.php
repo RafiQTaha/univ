@@ -21,7 +21,7 @@ class ReadWriteCachedEntityPersister extends AbstractEntityPersister
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function afterTransactionComplete()
     {
@@ -51,7 +51,7 @@ class ReadWriteCachedEntityPersister extends AbstractEntityPersister
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function afterTransactionRolledBack()
     {
@@ -71,7 +71,7 @@ class ReadWriteCachedEntityPersister extends AbstractEntityPersister
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function delete($entity)
     {
@@ -96,7 +96,7 @@ class ReadWriteCachedEntityPersister extends AbstractEntityPersister
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function update($entity)
     {

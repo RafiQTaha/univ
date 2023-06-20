@@ -13,7 +13,6 @@ namespace Symfony\Bundle\MakerBundle\Util;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Embedded;
 use Doctrine\ORM\Mapping\JoinColumn;
@@ -23,6 +22,7 @@ use Doctrine\ORM\Mapping\OneToMany;
 use Doctrine\ORM\Mapping\OneToOne;
 use PhpParser\Builder;
 use PhpParser\BuilderHelpers;
+use PhpParser\Comment\Doc;
 use PhpParser\Lexer;
 use PhpParser\Node;
 use PhpParser\NodeTraverser;
@@ -31,7 +31,6 @@ use PhpParser\Parser;
 use Symfony\Bundle\MakerBundle\ConsoleStyle;
 use Symfony\Bundle\MakerBundle\Doctrine\BaseCollectionRelation;
 use Symfony\Bundle\MakerBundle\Doctrine\BaseRelation;
-use Symfony\Bundle\MakerBundle\Doctrine\DoctrineHelper;
 use Symfony\Bundle\MakerBundle\Doctrine\RelationManyToMany;
 use Symfony\Bundle\MakerBundle\Doctrine\RelationManyToOne;
 use Symfony\Bundle\MakerBundle\Doctrine\RelationOneToMany;
@@ -46,24 +45,30 @@ final class ClassSourceManipulator
     private const CONTEXT_OUTSIDE_CLASS = 'outside_class';
     private const CONTEXT_CLASS = 'class';
     private const CONTEXT_CLASS_METHOD = 'class_method';
-    private const DEFAULT_VALUE_NONE = '__default_value_none';
 
-    private Parser\Php7 $parser;
-    private Lexer\Emulative $lexer;
-    private PrettyPrinter $printer;
-    private ?ConsoleStyle $io = null;
+    private $overwrite;
+    private $useAnnotations;
+    private $fluentMutators;
+    private $useAttributesForDoctrineMapping;
+    private $parser;
+    private $lexer;
+    private $printer;
+    /** @var ConsoleStyle|null */
+    private $io;
 
-    private ?array $oldStmts = null;
-    private array $oldTokens = [];
-    private array $newStmts = [];
+    private $sourceCode;
+    private $oldStmts;
+    private $oldTokens;
+    private $newStmts;
 
-    private array $pendingComments = [];
+    private $pendingComments = [];
 
-    public function __construct(
-        private string $sourceCode,
-        private bool $overwrite = false,
-        private bool $useAttributesForDoctrineMapping = true,
-    ) {
+    public function __construct(string $sourceCode, bool $overwrite = false, bool $useAnnotations = true, bool $fluentMutators = true, bool $useAttributesForDoctrineMapping = false)
+    {
+        $this->overwrite = $overwrite;
+        $this->useAnnotations = $useAnnotations;
+        $this->fluentMutators = $fluentMutators;
+        $this->useAttributesForDoctrineMapping = $useAttributesForDoctrineMapping;
         $this->lexer = new Lexer\Emulative([
             'usedAttributes' => [
                 'comments',
@@ -89,54 +94,30 @@ final class ClassSourceManipulator
 
     public function addEntityField(string $propertyName, array $columnOptions, array $comments = []): void
     {
-        $typeHint = DoctrineHelper::getPropertyTypeForColumn($columnOptions['type']);
-        if ($typeHint && DoctrineHelper::canColumnTypeBeInferredByPropertyType($columnOptions['type'], $typeHint)) {
-            unset($columnOptions['type']);
-        }
-
-        if (isset($columnOptions['type'])) {
-            $typeConstant = DoctrineHelper::getTypeConstant($columnOptions['type']);
-            if ($typeConstant) {
-                $this->addUseStatementIfNecessary(Types::class);
-                $columnOptions['type'] = $typeConstant;
-            }
-        }
-
-        // 2) USE property type on property below, nullable
-        // 3) If default value, then NOT nullable
-
+        $typeHint = $this->getEntityTypeHint($columnOptions['type']);
         $nullable = $columnOptions['nullable'] ?? false;
         $isId = (bool) ($columnOptions['id'] ?? false);
-        $attributes[] = $this->buildAttributeNode(Column::class, $columnOptions, 'ORM');
+        $attributes = [];
+
+        if ($this->useAttributesForDoctrineMapping) {
+            $attributes[] = $this->buildAttributeNode(Column::class, $columnOptions, 'ORM');
+        } else {
+            $comments[] = $this->buildAnnotationLine('@ORM\Column', $columnOptions);
+        }
 
         $defaultValue = null;
         if ('array' === $typeHint) {
             $defaultValue = new Node\Expr\Array_([], ['kind' => Node\Expr\Array_::KIND_SHORT]);
-        } elseif ($typeHint && '\\' === $typeHint[0] && false !== strpos($typeHint, '\\', 1)) {
-            $typeHint = $this->addUseStatementIfNecessary(substr($typeHint, 1));
         }
 
-        $propertyType = $typeHint;
-        if ($propertyType && !$defaultValue) {
-            // all property types
-            $propertyType = '?'.$propertyType;
-        }
-
-        $this->addProperty(
-            name: $propertyName,
-            defaultValue: $defaultValue,
-            attributes: $attributes,
-            comments: $comments,
-            propertyType: $propertyType
-        );
+        $this->addProperty($propertyName, $comments, $defaultValue, $attributes);
 
         $this->addGetter(
             $propertyName,
             $typeHint,
             // getter methods always have nullable return values
             // because even though these are required in the db, they may not be set yet
-            // unless there is a default value
-            null === $defaultValue
+            true
         );
 
         // don't generate setters for id fields
@@ -149,19 +130,29 @@ final class ClassSourceManipulator
     {
         $typeHint = $this->addUseStatementIfNecessary($className);
 
-        $attributes = [
-            $this->buildAttributeNode(
-                Embedded::class,
-                ['class' => new ClassNameValue($className, $typeHint)],
-                'ORM'
-            ),
-        ];
+        $annotations = [];
+        $attributes = [];
 
-        $this->addProperty(
-            name: $propertyName,
-            attributes: $attributes,
-            propertyType: $typeHint,
-        );
+        if (!$this->useAttributesForDoctrineMapping) {
+            $annotations = [
+                $this->buildAnnotationLine(
+                    '@ORM\\Embedded',
+                    [
+                        'class' => new ClassNameValue($className, $typeHint),
+                    ]
+                ),
+            ];
+        } else {
+            $attributes = [
+                $this->buildAttributeNode(
+                    Embedded::class,
+                    ['class' => new ClassNameValue($className, $typeHint)],
+                    'ORM'
+                ),
+            ];
+        }
+
+        $this->addProperty($propertyName, $annotations, null, $attributes);
 
         // logic to avoid re-adding the same ArrayCollection line
         $addEmbedded = true;
@@ -170,7 +161,7 @@ final class ClassSourceManipulator
             // look for "$this->propertyName = "
 
             $constructorString = $this->printer->prettyPrint([$this->getConstructorNode()]);
-            if (str_contains($constructorString, sprintf('$this->%s = ', $propertyName))) {
+            if (false !== strpos($constructorString, sprintf('$this->%s = ', $propertyName))) {
                 $addEmbedded = false;
             }
         }
@@ -266,7 +257,7 @@ final class ClassSourceManipulator
         $this->addCustomGetter($propertyName, $methodName, $returnType, $isReturnTypeNullable, $commentLines);
     }
 
-    public function addSetter(string $propertyName, ?string $type, bool $isNullable, array $commentLines = []): void
+    public function addSetter(string $propertyName, $type, bool $isNullable, array $commentLines = []): void
     {
         $builder = $this->createSetterNodeBuilder($propertyName, $type, $isNullable, $commentLines);
         $builder->addStmt(
@@ -350,7 +341,7 @@ final class ClassSourceManipulator
     /**
      * @param array<Node\Attribute|Node\AttributeGroup> $attributes
      */
-    public function addProperty(string $name, $defaultValue = self::DEFAULT_VALUE_NONE, array $attributes = [], array $comments = [], string $propertyType = null): void
+    public function addProperty(string $name, array $annotationLines = [], $defaultValue = null, array $attributes = []): void
     {
         if ($this->propertyExists($name)) {
             // we never overwrite properties
@@ -359,21 +350,15 @@ final class ClassSourceManipulator
 
         $newPropertyBuilder = (new Builder\Property($name))->makePrivate();
 
-        if (null !== $propertyType) {
-            $newPropertyBuilder->setType($propertyType);
-        }
-
         if ($this->useAttributesForDoctrineMapping) {
             foreach ($attributes as $attribute) {
                 $newPropertyBuilder->addAttribute($attribute);
             }
+        } elseif ($annotationLines && $this->useAnnotations) {
+            $newPropertyBuilder->setDocComment($this->createDocBlock($annotationLines));
         }
 
-        if ($comments) {
-            $newPropertyBuilder->setDocComment($this->createDocBlock($comments));
-        }
-
-        if (self::DEFAULT_VALUE_NONE !== $defaultValue) {
+        if (null !== $defaultValue) {
             $newPropertyBuilder->setDefault($defaultValue);
         }
         $newPropertyNode = $newPropertyBuilder->getNode();
@@ -389,6 +374,44 @@ final class ClassSourceManipulator
 
         $classNode->attrGroups[] = new Node\AttributeGroup([$this->buildAttributeNode($attributeClass, $options)]);
 
+        $this->updateSourceCodeFromNewStmts();
+    }
+
+    public function addAnnotationToClass(string $annotationClass, array $options): void
+    {
+        $annotationClassAlias = $this->addUseStatementIfNecessary($annotationClass);
+        $docComment = $this->getClassNode()->getDocComment();
+
+        $docLines = $docComment ? explode("\n", $docComment->getText()) : [];
+        if (0 === \count($docLines)) {
+            $docLines = ['/**', ' */'];
+        } elseif (1 === \count($docLines)) {
+            // /** inline doc syntax */
+            // imperfect way to try to find where to split the lines
+            $endOfOpening = strpos($docLines[0], '* ');
+            $endingPosition = strrpos($docLines[0], ' *', $endOfOpening);
+            $extraComments = trim(substr($docLines[0], $endOfOpening + 2, $endingPosition - $endOfOpening - 2));
+            $newDocLines = [
+                substr($docLines[0], 0, $endOfOpening + 1),
+            ];
+
+            if ($extraComments) {
+                $newDocLines[] = ' * '.$extraComments;
+            }
+
+            $newDocLines[] = substr($docLines[0], $endingPosition);
+            $docLines = $newDocLines;
+        }
+
+        array_splice(
+            $docLines,
+            \count($docLines) - 1,
+            0,
+            ' * '.$this->buildAnnotationLine('@'.$annotationClassAlias, $options)
+        );
+
+        $docComment = new Doc(implode("\n", $docLines));
+        $this->getClassNode()->setDocComment($docComment);
         $this->updateSourceCodeFromNewStmts();
     }
 
@@ -435,21 +458,80 @@ final class ClassSourceManipulator
 
         $paramBuilder = new Builder\Param($propertyName);
         if (null !== $type) {
-            $paramBuilder->setType($isNullable ? new Node\NullableType($type) : $type);
+            $paramBuilder->setTypeHint($isNullable ? new Node\NullableType($type) : $type);
         }
         $setterNodeBuilder->addParam($paramBuilder->getNode());
 
         return $setterNodeBuilder;
     }
 
+    /**
+     * @param string $annotationClass The annotation: e.g. "@ORM\Column"
+     * @param array  $options         Key-value pair of options for the annotation
+     */
+    private function buildAnnotationLine(string $annotationClass, array $options): string
+    {
+        $formattedOptions = array_map(function ($option, $value) {
+            if (\is_array($value)) {
+                if (!isset($value[0])) {
+                    return sprintf('%s={%s}', $option, implode(', ', array_map(function ($val, $key) {
+                        return sprintf('"%s" = %s', $key, $this->quoteAnnotationValue($val));
+                    }, $value, array_keys($value))));
+                }
+
+                return sprintf('%s={%s}', $option, implode(', ', array_map(function ($val) {
+                    return $this->quoteAnnotationValue($val);
+                }, $value)));
+            }
+
+            return sprintf('%s=%s', $option, $this->quoteAnnotationValue($value));
+        }, array_keys($options), array_values($options));
+
+        return sprintf('%s(%s)', $annotationClass, implode(', ', $formattedOptions));
+    }
+
+    private function quoteAnnotationValue($value)
+    {
+        if (\is_bool($value)) {
+            return $value ? 'true' : 'false';
+        }
+
+        if (null === $value) {
+            return 'null';
+        }
+
+        if (\is_int($value) || '0' === $value) {
+            return $value;
+        }
+
+        if ($value instanceof ClassNameValue) {
+            return sprintf('%s::class', $value->getShortName());
+        }
+
+        if (\is_array($value)) {
+            throw new \Exception('Invalid value: loop before quoting.');
+        }
+
+        if (\function_exists('enum_exists')) {
+            // do we have an enum ?
+            if (\is_object($value) && enum_exists(\get_class($value))) {
+                $value = $value->value;
+            }
+        }
+
+        return sprintf('"%s"', $value);
+    }
+
     private function addSingularRelation(BaseRelation $relation): void
     {
         $typeHint = $this->addUseStatementIfNecessary($relation->getTargetClassName());
-        if ($relation->getTargetClassName() === $this->getThisFullClassName()) {
+        if ($relation->getTargetClassName() == $this->getThisFullClassName()) {
             $typeHint = 'self';
         }
 
-        $annotationOptions = [];
+        $annotationOptions = [
+            'targetEntity' => new ClassNameValue($typeHint, $relation->getTargetClassName()),
+        ];
         if ($relation->isOwning()) {
             // sometimes, we don't map the inverse relation
             if ($relation->getMapInverseRelation()) {
@@ -459,40 +541,48 @@ final class ClassSourceManipulator
             $annotationOptions['mappedBy'] = $relation->getTargetPropertyName();
         }
 
-        if ('self' === $typeHint) {
-            // Doctrine does not currently resolve "self" correctly for targetEntity guessing
-            $annotationOptions['targetEntity'] = new ClassNameValue($typeHint, $relation->getTargetClassName());
-        }
-
         if ($relation instanceof RelationOneToOne) {
             $annotationOptions['cascade'] = ['persist', 'remove'];
         }
 
-        $attributes = [
-            $this->buildAttributeNode(
-                $relation instanceof RelationManyToOne ? ManyToOne::class : OneToOne::class,
-                $annotationOptions,
-                'ORM'
-            ),
-        ];
+        $annotations = [];
+        $attributes = [];
 
-        if (!$relation->isNullable() && $relation->isOwning()) {
-            $attributes[] = $this->buildAttributeNode(JoinColumn::class, ['nullable' => false], 'ORM');
+        if (!$this->useAttributesForDoctrineMapping) {
+            $annotations = [
+                $this->buildAnnotationLine(
+                    $relation instanceof RelationManyToOne ? '@ORM\\ManyToOne' : '@ORM\\OneToOne',
+                    $annotationOptions
+                ),
+            ];
+        } else {
+            $attributes = [
+                $this->buildAttributeNode(
+                    $relation instanceof RelationManyToOne ? ManyToOne::class : OneToOne::class,
+                    $annotationOptions,
+                    'ORM'
+                ),
+            ];
         }
 
-        $this->addProperty(
-            name: $relation->getPropertyName(),
-            defaultValue: null,
-            attributes: $attributes,
-            propertyType: '?'.$typeHint,
-        );
+        if (!$relation->isNullable() && $relation->isOwning()) {
+            if (!$this->useAttributesForDoctrineMapping) {
+                $annotations[] = $this->buildAnnotationLine('@ORM\\JoinColumn', [
+                    'nullable' => false,
+                ]);
+            } else {
+                $attributes[] = $this->buildAttributeNode(JoinColumn::class, ['nullable' => false], 'ORM');
+            }
+        }
+
+        $this->addProperty($relation->getPropertyName(), $annotations, null, $attributes);
 
         $this->addGetter(
             $relation->getPropertyName(),
-            $relation->getCustomReturnType() ?? $typeHint,
+            $relation->getCustomReturnType() ?: $typeHint,
             // getter methods always have nullable return values
             // unless this has been customized explicitly
-            !$relation->getCustomReturnType() || $relation->isCustomReturnTypeNullable()
+            $relation->getCustomReturnType() ? $relation->isCustomReturnTypeNullable() : true
         );
 
         if ($relation->shouldAvoidSetter()) {
@@ -550,19 +640,27 @@ final class ClassSourceManipulator
             $annotationOptions['orphanRemoval'] = true;
         }
 
-        $attributes = [
-            $this->buildAttributeNode(
-                $relation instanceof RelationManyToMany ? ManyToMany::class : OneToMany::class,
-                $annotationOptions,
-                'ORM'
-            ),
-        ];
+        $annotations = [];
+        $attributes = [];
 
-        $this->addProperty(
-            name: $relation->getPropertyName(),
-            attributes: $attributes,
-            propertyType: $collectionTypeHint,
-        );
+        if (!$this->useAttributesForDoctrineMapping) {
+            $annotations = [
+                $this->buildAnnotationLine(
+                    $relation instanceof RelationManyToMany ? '@ORM\\ManyToMany' : '@ORM\\OneToMany',
+                    $annotationOptions
+                ),
+            ];
+        } else {
+            $attributes = [
+                $this->buildAttributeNode(
+                    $relation instanceof RelationManyToMany ? ManyToMany::class : OneToMany::class,
+                    $annotationOptions,
+                    'ORM'
+                ),
+            ];
+        }
+
+        $this->addProperty($relation->getPropertyName(), $annotations, null, $attributes);
 
         // logic to avoid re-adding the same ArrayCollection line
         $addArrayCollection = true;
@@ -571,7 +669,7 @@ final class ClassSourceManipulator
             // look for "$this->propertyName = "
 
             $constructorString = $this->printer->prettyPrint([$this->getConstructorNode()]);
-            if (str_contains($constructorString, sprintf('$this->%s = ', $relation->getPropertyName()))) {
+            if (false !== strpos($constructorString, sprintf('$this->%s = ', $relation->getPropertyName()))) {
                 $addArrayCollection = false;
             }
         }
@@ -599,7 +697,7 @@ final class ClassSourceManipulator
         $adderNodeBuilder = (new Builder\Method($relation->getAdderMethodName()))->makePublic();
 
         $paramBuilder = new Builder\Param($argName);
-        $paramBuilder->setType($typeHint);
+        $paramBuilder->setTypeHint($typeHint);
         $adderNodeBuilder->addParam($paramBuilder->getNode());
 
         // if (!$this->avatars->contains($avatar))
@@ -615,10 +713,11 @@ final class ClassSourceManipulator
 
         // append the item
         $ifNotContainsStmt->stmts[] = new Node\Stmt\Expression(
-            new Node\Expr\MethodCall(
-                new Node\Expr\PropertyFetch(new Node\Expr\Variable('this'), $relation->getPropertyName()),
-                'add',
-                [new Node\Expr\Variable($argName)]
+            new Node\Expr\Assign(
+                new Node\Expr\ArrayDimFetch(
+                    new Node\Expr\PropertyFetch(new Node\Expr\Variable('this'), $relation->getPropertyName())
+                ),
+                new Node\Expr\Variable($argName)
             ));
 
         // set the owning side of the relationship
@@ -834,27 +933,12 @@ final class ClassSourceManipulator
      * @param array   $options         The named arguments for the attribute ($key = argument name, $value = argument value)
      * @param ?string $attributePrefix If a prefix is provided, the node is built using the prefix. E.g. #[ORM\Column()]
      */
-    public function buildAttributeNode(string $attributeClass, array $options, string $attributePrefix = null): Node\Attribute
+    public function buildAttributeNode(string $attributeClass, array $options, ?string $attributePrefix = null): Node\Attribute
     {
         $options = $this->sortOptionsByClassConstructorParameters($options, $attributeClass);
 
         $context = $this;
-        $nodeArguments = array_map(static function (string $option, mixed $value) use ($context) {
-            if (null === $value) {
-                return new Node\NullableType($option);
-            }
-
-            // Use the Doctrine Types constant
-            if ('type' === $option && str_starts_with($value, 'Types::')) {
-                return new Node\Arg(
-                    new Node\Expr\ConstFetch(new Node\Name($value)),
-                    false,
-                    false,
-                    [],
-                    new Node\Identifier($option)
-                );
-            }
-
+        $nodeArguments = array_map(static function ($option, $value) use ($context) {
             return new Node\Arg($context->buildNodeExprByValue($value), false, false, [], new Node\Identifier($option));
         }, array_keys($options), array_values($options));
 
@@ -883,7 +967,7 @@ final class ClassSourceManipulator
         foreach ($this->pendingComments as $i => $comment) {
             // sanity check
             $placeholder = sprintf('$__COMMENT__VAR_%d;', $i);
-            if (!str_contains($newCode, $placeholder)) {
+            if (false === strpos($newCode, $placeholder)) {
                 // this can happen if a comment is createSingleLineCommentNode()
                 // is called, but then that generated code is ultimately not added
                 continue;
@@ -972,22 +1056,21 @@ final class ClassSourceManipulator
         return $visitor->getFoundNodes();
     }
 
-    private function createBlankLineNode(string $context): Node\Stmt\Use_|Node|Node\Stmt\Property|Node\Expr\Variable
+    private function createBlankLineNode(string $context)
     {
-        return match ($context) {
-            self::CONTEXT_OUTSIDE_CLASS => (new Builder\Use_(
-                '__EXTRA__LINE',
-                Node\Stmt\Use_::TYPE_NORMAL
-            ))
-                ->getNode(),
-            self::CONTEXT_CLASS => (new Builder\Property('__EXTRA__LINE'))
-                ->makePrivate()
-                ->getNode(),
-            self::CONTEXT_CLASS_METHOD => new Node\Expr\Variable(
-                '__EXTRA__LINE'
-            ),
-            default => throw new \Exception('Unknown context: '.$context),
-        };
+        switch ($context) {
+            case self::CONTEXT_OUTSIDE_CLASS:
+                return (new Builder\Use_('__EXTRA__LINE', Node\Stmt\Use_::TYPE_NORMAL))
+                    ->getNode();
+            case self::CONTEXT_CLASS:
+                return (new Builder\Property('__EXTRA__LINE'))
+                    ->makePrivate()
+                    ->getNode();
+            case self::CONTEXT_CLASS_METHOD:
+                return new Node\Expr\Variable('__EXTRA__LINE');
+            default:
+                throw new \Exception('Unknown context: '.$context);
+        }
     }
 
     private function createSingleLineCommentNode(string $comment, string $context): Node\Stmt
@@ -1070,13 +1153,68 @@ final class ClassSourceManipulator
 
     private function makeMethodFluent(Builder\Method $methodBuilder): void
     {
+        if (!$this->fluentMutators) {
+            return;
+        }
+
         $methodBuilder
             ->addStmt($this->createBlankLineNode(self::CONTEXT_CLASS_METHOD))
             ->addStmt(new Node\Stmt\Return_(new Node\Expr\Variable('this')));
-        $methodBuilder->setReturnType('static');
+        $methodBuilder->setReturnType('self');
     }
 
-    private function isInSameNamespace(string $class): bool
+    private function getEntityTypeHint($doctrineType): ?string
+    {
+        switch ($doctrineType) {
+            case 'string':
+            case 'text':
+            case 'guid':
+            case 'bigint':
+            case 'decimal':
+                return 'string';
+
+            case 'array':
+            case 'simple_array':
+            case 'json':
+            case 'json_array':
+                return 'array';
+
+            case 'boolean':
+                return 'bool';
+
+            case 'integer':
+            case 'smallint':
+                return 'int';
+
+            case 'float':
+                return 'float';
+
+            case 'datetime':
+            case 'datetimetz':
+            case 'date':
+            case 'time':
+                return '\\'.\DateTimeInterface::class;
+
+            case 'datetime_immutable':
+            case 'datetimetz_immutable':
+            case 'date_immutable':
+            case 'time_immutable':
+                return '\\'.\DateTimeImmutable::class;
+
+            case 'dateinterval':
+                return '\\'.\DateInterval::class;
+
+            case 'object':
+                return 'object';
+
+            case 'binary':
+            case 'blob':
+            default:
+                return null;
+        }
+    }
+
+    private function isInSameNamespace($class): bool
     {
         $namespace = substr($class, 0, strrpos($class, '\\'));
 
@@ -1287,9 +1425,11 @@ final class ClassSourceManipulator
      * builds a PHPParser Expr Node based on the value given in $value
      * throws an Exception when the given $value is not resolvable by this method.
      *
+     * @param mixed $value
+     *
      * @throws \Exception
      */
-    private function buildNodeExprByValue(mixed $value): Node\Expr
+    private function buildNodeExprByValue($value): Node\Expr
     {
         switch (\gettype($value)) {
             case 'string':
@@ -1341,7 +1481,7 @@ final class ClassSourceManipulator
      */
     private function sortOptionsByClassConstructorParameters(array $options, string $classString): array
     {
-        if (str_starts_with($classString, 'ORM\\')) {
+        if ('ORM\\' === substr($classString, 0, 4)) {
             $classString = sprintf('Doctrine\\ORM\\Mapping\\%s', substr($classString, 4));
         }
 

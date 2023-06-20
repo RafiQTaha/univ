@@ -34,8 +34,13 @@ use Symfony\Component\Validator\Validation;
  */
 final class MakeForm extends AbstractMaker
 {
-    public function __construct(private DoctrineHelper $entityHelper, private FormTypeRenderer $formTypeRenderer)
+    private $entityHelper;
+    private $formTypeRenderer;
+
+    public function __construct(DoctrineHelper $entityHelper, FormTypeRenderer $formTypeRenderer)
     {
+        $this->entityHelper = $entityHelper;
+        $this->formTypeRenderer = $formTypeRenderer;
     }
 
     public static function getCommandName(): string
@@ -67,7 +72,7 @@ final class MakeForm extends AbstractMaker
             $entities = $this->entityHelper->getEntitiesForAutocomplete();
 
             $question = new Question($argument->getDescription());
-            $question->setValidator(fn ($answer) => Validator::existsOrNull($answer, $entities));
+            $question->setValidator(function ($answer) use ($entities) {return Validator::existsOrNull($answer, $entities); });
             $question->setAutocompleterValues($entities);
             $question->setMaxAttempts(3);
 

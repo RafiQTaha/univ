@@ -16,7 +16,7 @@ use function count;
 final class ScalarColumnHydrator extends AbstractHydrator
 {
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      *
      * @throws MultipleSelectorsFoundException
      * @throws Exception

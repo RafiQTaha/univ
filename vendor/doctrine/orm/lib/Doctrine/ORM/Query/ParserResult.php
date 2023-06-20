@@ -6,8 +6,6 @@ namespace Doctrine\ORM\Query;
 
 use Doctrine\ORM\Query\Exec\AbstractSqlExecutor;
 
-use function sprintf;
-
 /**
  * Encapsulates the resulting components from a DQL query parsing process that
  * can be serialized.
@@ -16,32 +14,26 @@ use function sprintf;
  */
 class ParserResult
 {
-    private const LEGACY_PROPERTY_MAPPING = [
-        'sqlExecutor' => '_sqlExecutor',
-        'resultSetMapping' => '_resultSetMapping',
-        'parameterMappings' => '_parameterMappings',
-    ];
-
     /**
      * The SQL executor used for executing the SQL.
      *
      * @var AbstractSqlExecutor
      */
-    private $sqlExecutor;
+    private $_sqlExecutor;
 
     /**
      * The ResultSetMapping that describes how to map the SQL result set.
      *
      * @var ResultSetMapping
      */
-    private $resultSetMapping;
+    private $_resultSetMapping;
 
     /**
      * The mappings of DQL parameter names/positions to SQL parameter positions.
      *
      * @psalm-var array<string|int, list<int>>
      */
-    private $parameterMappings = [];
+    private $_parameterMappings = [];
 
     /**
      * Initializes a new instance of the <tt>ParserResult</tt> class.
@@ -49,7 +41,7 @@ class ParserResult
      */
     public function __construct()
     {
-        $this->resultSetMapping = new ResultSetMapping();
+        $this->_resultSetMapping = new ResultSetMapping();
     }
 
     /**
@@ -59,7 +51,7 @@ class ParserResult
      */
     public function getResultSetMapping()
     {
-        return $this->resultSetMapping;
+        return $this->_resultSetMapping;
     }
 
     /**
@@ -69,7 +61,7 @@ class ParserResult
      */
     public function setResultSetMapping(ResultSetMapping $rsm)
     {
-        $this->resultSetMapping = $rsm;
+        $this->_resultSetMapping = $rsm;
     }
 
     /**
@@ -81,7 +73,7 @@ class ParserResult
      */
     public function setSqlExecutor($executor)
     {
-        $this->sqlExecutor = $executor;
+        $this->_sqlExecutor = $executor;
     }
 
     /**
@@ -91,7 +83,7 @@ class ParserResult
      */
     public function getSqlExecutor()
     {
-        return $this->sqlExecutor;
+        return $this->_sqlExecutor;
     }
 
     /**
@@ -105,7 +97,7 @@ class ParserResult
      */
     public function addParameterMapping($dqlPosition, $sqlPosition)
     {
-        $this->parameterMappings[$dqlPosition][] = $sqlPosition;
+        $this->_parameterMappings[$dqlPosition][] = $sqlPosition;
     }
 
     /**
@@ -115,7 +107,7 @@ class ParserResult
      */
     public function getParameterMappings()
     {
-        return $this->parameterMappings;
+        return $this->_parameterMappings;
     }
 
     /**
@@ -128,22 +120,6 @@ class ParserResult
      */
     public function getSqlParameterPositions($dqlPosition)
     {
-        return $this->parameterMappings[$dqlPosition];
-    }
-
-    public function __wakeup(): void
-    {
-        $this->__unserialize((array) $this);
-    }
-
-    /** @param array<string, mixed> $data */
-    public function __unserialize(array $data): void
-    {
-        foreach (self::LEGACY_PROPERTY_MAPPING as $property => $legacyProperty) {
-            $this->$property = $data[sprintf("\0%s\0%s", self::class, $legacyProperty)]
-                ?? $data[sprintf("\0%s\0%s", self::class, $property)]
-                ?? $this->$property
-                ?? null;
-        }
+        return $this->_parameterMappings[$dqlPosition];
     }
 }

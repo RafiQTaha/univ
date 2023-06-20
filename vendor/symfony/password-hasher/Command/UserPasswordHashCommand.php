@@ -38,7 +38,7 @@ use Symfony\Component\PasswordHasher\LegacyPasswordHasherInterface;
 #[AsCommand(name: 'security:hash-password', description: 'Hash a user password')]
 class UserPasswordHashCommand extends Command
 {
-    private PasswordHasherFactoryInterface $hasherFactory;
+    private $hasherFactory;
     private array $userClasses;
 
     public function __construct(PasswordHasherFactoryInterface $hasherFactory, array $userClasses = [])
@@ -49,7 +49,10 @@ class UserPasswordHashCommand extends Command
         parent::__construct();
     }
 
-    protected function configure(): void
+    /**
+     * {@inheritdoc}
+     */
+    protected function configure()
     {
         $this
             ->addArgument('password', InputArgument::OPTIONAL, 'The plain password to hash.')
@@ -97,6 +100,9 @@ EOF
         ;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
@@ -143,7 +149,7 @@ EOF
         $hashedPassword = $hasher->hash($password, $salt);
 
         $rows = [
-            ['Hasher used', $hasher::class],
+            ['Hasher used', \get_class($hasher)],
             ['Password hash', $hashedPassword],
         ];
         if (!$emptySalt) {

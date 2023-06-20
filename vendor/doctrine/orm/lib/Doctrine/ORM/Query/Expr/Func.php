@@ -32,19 +32,25 @@ class Func
         $this->arguments = (array) $arguments;
     }
 
-    /** @return string */
+    /**
+     * @return string
+     */
     public function getName()
     {
         return $this->name;
     }
 
-    /** @psalm-return list<mixed> */
+    /**
+     * @psalm-return list<mixed>
+     */
     public function getArguments()
     {
         return $this->arguments;
     }
 
-    /** @return string */
+    /**
+     * @return string
+     */
     public function __toString()
     {
         return $this->name . '(' . implode(', ', $this->arguments) . ')';

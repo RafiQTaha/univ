@@ -30,7 +30,7 @@ class PhpExporter extends AbstractExporter
     protected $_extension = '.php';
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function exportClassMetadata(ClassMetadataInfo $metadata)
     {
@@ -44,7 +44,9 @@ class PhpExporter extends AbstractExporter
             $lines[] = '$metadata->isMappedSuperclass = true;';
         }
 
-        $lines[] = '$metadata->setInheritanceType(ClassMetadataInfo::INHERITANCE_TYPE_' . $this->_getInheritanceTypeString($metadata->inheritanceType) . ');';
+        if ($metadata->inheritanceType) {
+            $lines[] = '$metadata->setInheritanceType(ClassMetadataInfo::INHERITANCE_TYPE_' . $this->_getInheritanceTypeString($metadata->inheritanceType) . ');';
+        }
 
         if ($metadata->customRepositoryClassName) {
             $lines[] = "\$metadata->customRepositoryClassName = '" . $metadata->customRepositoryClassName . "';";

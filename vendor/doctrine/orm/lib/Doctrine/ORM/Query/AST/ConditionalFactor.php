@@ -17,15 +17,16 @@ class ConditionalFactor extends Node
     /** @var ConditionalPrimary */
     public $conditionalPrimary;
 
-    /** @param ConditionalPrimary $conditionalPrimary */
-    public function __construct($conditionalPrimary, bool $not = false)
+    /**
+     * @param ConditionalPrimary $conditionalPrimary
+     */
+    public function __construct($conditionalPrimary)
     {
         $this->conditionalPrimary = $conditionalPrimary;
-        $this->not                = $not;
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function dispatch($sqlWalker)
     {

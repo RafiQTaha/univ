@@ -20,14 +20,14 @@ use Symfony\Component\Yaml\Dumper;
  * @author Jesse Rushlow <jr@rushlow.dev>
  *
  * @internal
- *
  * @final
  */
 class ComposeFileManipulator
 {
     public const COMPOSE_FILE_VERSION = '3.7';
 
-    private YamlSourceManipulator $manipulator;
+    /** @var YamlSourceManipulator */
+    private $manipulator;
 
     public function __construct(string $contents)
     {

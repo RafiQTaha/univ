@@ -23,16 +23,15 @@ class BetweenExpression extends Node
      * @param ArithmeticExpression $leftExpr
      * @param ArithmeticExpression $rightExpr
      */
-    public function __construct($expr, $leftExpr, $rightExpr, bool $not = false)
+    public function __construct($expr, $leftExpr, $rightExpr)
     {
         $this->expression             = $expr;
         $this->leftBetweenExpression  = $leftExpr;
         $this->rightBetweenExpression = $rightExpr;
-        $this->not                    = $not;
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function dispatch($sqlWalker)
     {

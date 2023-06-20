@@ -29,6 +29,9 @@ class VariableNodeDefinition extends NodeDefinition
         return new VariableNode($this->name, $this->parent, $this->pathSeparator);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     protected function createNode(): NodeInterface
     {
         $node = $this->instantiateNode();

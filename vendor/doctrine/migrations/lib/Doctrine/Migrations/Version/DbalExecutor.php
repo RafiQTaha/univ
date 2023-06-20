@@ -25,7 +25,6 @@ use Symfony\Component\Stopwatch\Stopwatch;
 use Throwable;
 
 use function count;
-use function method_exists;
 use function ucfirst;
 
 /**
@@ -204,10 +203,6 @@ final class DbalExecutor implements Executor
 
         if (! $configuration->isDryRun()) {
             $this->metadataStorage->complete($result);
-        } elseif (method_exists($this->metadataStorage, 'getSql')) {
-            foreach ($this->metadataStorage->getSql($result) as $sqlQuery) {
-                $this->addSql($sqlQuery);
-            }
         }
 
         if ($migration->isTransactional()) {

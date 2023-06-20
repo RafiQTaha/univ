@@ -23,15 +23,10 @@ class JsonEncoder implements EncoderInterface, DecoderInterface
     protected $encodingImpl;
     protected $decodingImpl;
 
-    private $defaultContext = [
-        JsonDecode::ASSOCIATIVE => true,
-    ];
-
-    public function __construct(JsonEncode $encodingImpl = null, JsonDecode $decodingImpl = null, array $defaultContext = [])
+    public function __construct(JsonEncode $encodingImpl = null, JsonDecode $decodingImpl = null)
     {
-        $this->defaultContext = array_merge($this->defaultContext, $defaultContext);
-        $this->encodingImpl = $encodingImpl ?? new JsonEncode($this->defaultContext);
-        $this->decodingImpl = $decodingImpl ?? new JsonDecode($this->defaultContext);
+        $this->encodingImpl = $encodingImpl ?? new JsonEncode();
+        $this->decodingImpl = $decodingImpl ?? new JsonDecode([JsonDecode::ASSOCIATIVE => true]);
     }
 
     /**
@@ -39,8 +34,6 @@ class JsonEncoder implements EncoderInterface, DecoderInterface
      */
     public function encode($data, string $format, array $context = [])
     {
-        $context = array_merge($this->defaultContext, $context);
-
         return $this->encodingImpl->encode($data, self::FORMAT, $context);
     }
 
@@ -49,8 +42,6 @@ class JsonEncoder implements EncoderInterface, DecoderInterface
      */
     public function decode(string $data, string $format, array $context = [])
     {
-        $context = array_merge($this->defaultContext, $context);
-
         return $this->decodingImpl->decode($data, self::FORMAT, $context);
     }
 

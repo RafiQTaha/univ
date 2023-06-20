@@ -14,7 +14,7 @@ use Doctrine\ORM\Cache\TimestampRegion;
 class UpdateTimestampCache extends DefaultRegion implements TimestampRegion
 {
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function update(CacheKey $key)
     {

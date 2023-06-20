@@ -20,8 +20,12 @@ use Symfony\Component\ErrorHandler\DebugClassLoader as ErrorHandlerDebugClassLoa
  */
 class ComposerAutoloaderFinder
 {
-    private array $rootNamespace;
-    private ?ClassLoader $classLoader = null;
+    private $rootNamespace;
+
+    /**
+     * @var ClassLoader|null
+     */
+    private $classLoader = null;
 
     public function __construct(string $rootNamespace)
     {
@@ -92,13 +96,13 @@ class ComposerAutoloaderFinder
             if ('Symfony\\Bundle\\MakerBundle\\' === $prefix) {
                 $makerClassLoader = $classLoader;
             }
-            if (str_starts_with($this->rootNamespace['psr4'], $prefix)) {
+            if (0 === strpos($this->rootNamespace['psr4'], $prefix)) {
                 return $classLoader;
             }
         }
 
         foreach ($classLoader->getPrefixes() as $prefix => $paths) {
-            if (str_starts_with($this->rootNamespace['psr0'], $prefix)) {
+            if (0 === strpos($this->rootNamespace['psr0'], $prefix)) {
                 return $classLoader;
             }
         }
