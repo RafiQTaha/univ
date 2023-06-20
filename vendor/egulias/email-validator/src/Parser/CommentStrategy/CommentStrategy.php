@@ -15,8 +15,4 @@ interface CommentStrategy
     public function endOfLoopValidations(EmailLexer $lexer) : Result;
 
     public function getWarnings() : array;
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca

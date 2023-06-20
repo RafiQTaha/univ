@@ -48,21 +48,13 @@ class ElasticsearchLogstashHandler extends AbstractHandler
     private string $endpoint;
     private string $index;
     private $client;
-<<<<<<< HEAD
-    private string $elasticsearchVersion;
-=======
->>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
 
     /**
      * @var \SplObjectStorage<ResponseInterface, null>
      */
     private \SplObjectStorage $responses;
 
-<<<<<<< HEAD
-    public function __construct(string $endpoint = 'http://127.0.0.1:9200', string $index = 'monolog', HttpClientInterface $client = null, string|int $level = Logger::DEBUG, bool $bubble = true, string $elasticsearchVersion = '1.0.0')
-=======
     public function __construct(string $endpoint = 'http://127.0.0.1:9200', string $index = 'monolog', HttpClientInterface $client = null, string|int $level = Logger::DEBUG, bool $bubble = true)
->>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
     {
         if (!interface_exists(HttpClientInterface::class)) {
             throw new \LogicException(sprintf('The "%s" handler needs an HTTP client. Try running "composer require symfony/http-client".', __CLASS__));

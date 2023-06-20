@@ -22,12 +22,6 @@ composer require maennchen/zipstream-php
 
 ## Usage and options
 
-<<<<<<< HEAD
-For detailed instructions, please check the
-[Documentation](https://maennchen.dev/ZipStream-PHP/).
-
-=======
->>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
 Here's a simple example:
 
 ```php
@@ -46,8 +40,6 @@ $zip->addFile('hello.txt', 'This is the contents of hello.txt');
 
 // add a file named 'some_image.jpg' from a local file 'path/to/image.jpg'
 $zip->addFileFromPath('some_image.jpg', 'path/to/image.jpg');
-<<<<<<< HEAD
-=======
 
 // add a file named 'goodbye.txt' from an open stream resource
 $fp = tmpfile();
@@ -55,24 +47,11 @@ fwrite($fp, 'The quick brown fox jumped over the lazy dog.');
 rewind($fp);
 $zip->addFileFromStream('goodbye.txt', $fp);
 fclose($fp);
->>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
 
 // finish the zip stream
 $zip->finish();
 ```
 
-<<<<<<< HEAD
-## Upgrade to version 2.0.0
-
-- Only the self opened streams will be closed (#139)
-  If you were relying on ZipStream to close streams that the library didn't open,
-  you'll need to close them yourself now.
-
-## Upgrade to version 1.0.0
-
-- All options parameters to all function have been moved from an `array` to structured option objects. See [the wiki](https://github.com/maennchen/ZipStream-PHP/wiki/Available-options) for examples.
-- The whole library has been refactored. The minimal PHP requirement has been raised to PHP 7.1.
-=======
 You can also add comments, modify file timestamps, and customize (or
 disable) the HTTP headers. It is also possible to specify the storage method when adding files,
 the current default storage method is 'deflate' i.e files are stored with Compression mode 0x08.
@@ -97,7 +76,6 @@ you'll need to close them yourself now.
 
 * All options parameters to all function have been moved from an `array` to structured option objects. See [the wiki](https://github.com/maennchen/ZipStream-PHP/wiki/Available-options) for examples.
 * The whole library has been refactored. The minimal PHP requirement has been raised to PHP 7.1.
->>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
 
 ## Usage with Symfony and S3
 

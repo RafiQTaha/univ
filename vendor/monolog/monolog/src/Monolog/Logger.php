@@ -92,7 +92,6 @@ class Logger implements LoggerInterface, ResettableInterface
      * @var int
      */
     public const API = 2;
-<<<<<<< HEAD
 
     /**
      * This is a static variable and not a constant to serve as an extension point for custom levels
@@ -110,38 +109,6 @@ class Logger implements LoggerInterface, ResettableInterface
         self::CRITICAL  => 'CRITICAL',
         self::ALERT     => 'ALERT',
         self::EMERGENCY => 'EMERGENCY',
-    ];
-=======
->>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
-
-    /**
-     * This is a static variable and not a constant to serve as an extension point for custom levels
-     *
-     * @var array<int, string> $levels Logging levels with the levels as key
-     *
-     * @phpstan-var array<Level, LevelName> $levels Logging levels with the levels as key
-     */
-<<<<<<< HEAD
-    private const RFC_5424_LEVELS = [
-        7 => self::DEBUG,
-        6 => self::INFO,
-        5 => self::NOTICE,
-        4 => self::WARNING,
-        3 => self::ERROR,
-        2 => self::CRITICAL,
-        1 => self::ALERT,
-        0 => self::EMERGENCY,
-=======
-    protected static $levels = [
-        self::DEBUG     => 'DEBUG',
-        self::INFO      => 'INFO',
-        self::NOTICE    => 'NOTICE',
-        self::WARNING   => 'WARNING',
-        self::ERROR     => 'ERROR',
-        self::CRITICAL  => 'CRITICAL',
-        self::ALERT     => 'ALERT',
-        self::EMERGENCY => 'EMERGENCY',
->>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
     ];
 
     /**
@@ -177,7 +144,6 @@ class Logger implements LoggerInterface, ResettableInterface
 
     /**
      * @var callable|null
-<<<<<<< HEAD
      */
     protected $exceptionHandler;
 
@@ -187,29 +153,6 @@ class Logger implements LoggerInterface, ResettableInterface
     private $logDepth = 0;
 
     /**
-     * @var \WeakMap<\Fiber, int>|null Keeps track of depth inside fibers to prevent infinite logging loops
-     */
-    private $fiberLogDepth;
-
-    /**
-     * @var bool Whether to detect infinite logging loops
-     *
-     * This can be disabled via {@see useLoggingLoopDetection} if you have async handlers that do not play well with this
-     */
-    private $detectCycles = true;
-
-    /**
-=======
-     */
-    protected $exceptionHandler;
-
-    /**
-     * @var int Keeps track of depth to prevent infinite logging loops
-     */
-    private $logDepth = 0;
-
-    /**
->>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
      * @psalm-param array<callable(array): array> $processors
      *
      * @param string             $name       The logging channel, a simple descriptive name that is attached to all log records
@@ -223,16 +166,6 @@ class Logger implements LoggerInterface, ResettableInterface
         $this->setHandlers($handlers);
         $this->processors = $processors;
         $this->timezone = $timezone ?: new DateTimeZone(date_default_timezone_get() ?: 'UTC');
-<<<<<<< HEAD
-
-        if (\PHP_VERSION_ID >= 80100) {
-            // Local variable for phpstan, see https://github.com/phpstan/phpstan/issues/6732#issuecomment-1111118412
-            /** @var \WeakMap<\Fiber, int> $fiberLogDepth */
-            $fiberLogDepth = new \WeakMap();
-            $this->fiberLogDepth = $fiberLogDepth;
-        }
-=======
->>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
     }
 
     public function getName(): string
@@ -361,31 +294,10 @@ class Logger implements LoggerInterface, ResettableInterface
      *
      * @phpstan-param Level $level
      */
-<<<<<<< HEAD
-    public function addRecord(int $level, string $message, array $context = [], DateTimeImmutable $datetime = null): bool
-    {
-        if (isset(self::RFC_5424_LEVELS[$level])) {
-            $level = self::RFC_5424_LEVELS[$level];
-        }
-
-        if ($this->detectCycles) {
-            if (\PHP_VERSION_ID >= 80100 && $fiber = \Fiber::getCurrent()) {
-                $this->fiberLogDepth[$fiber] = $this->fiberLogDepth[$fiber] ?? 0;
-                $logDepth = ++$this->fiberLogDepth[$fiber];
-            } else {
-                $logDepth = ++$this->logDepth;
-            }
-        } else {
-            $logDepth = 0;
-        }
-
-        if ($logDepth === 3) {
-=======
     public function addRecord(int $level, string $message, array $context = []): bool
     {
         $this->logDepth += 1;
         if ($this->logDepth === 3) {
->>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
             $this->warning('A possible infinite logging loop was detected and aborted. It appears some of your handler code is triggering logging, see the previous log record for a hint as to what may be the cause.');
             return false;
         } elseif ($this->logDepth >= 5) { // log depth 4 is let through so we can log the warning above
@@ -410,11 +322,7 @@ class Logger implements LoggerInterface, ResettableInterface
                         'level' => $level,
                         'level_name' => $levelName,
                         'channel' => $this->name,
-<<<<<<< HEAD
-                        'datetime' => $datetime ?? new DateTimeImmutable($this->microsecondTimestamps, $this->timezone),
-=======
                         'datetime' => new DateTimeImmutable($this->microsecondTimestamps, $this->timezone),
->>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
                         'extra' => [],
                     ];
 
@@ -605,13 +513,6 @@ class Logger implements LoggerInterface, ResettableInterface
             throw new \InvalidArgumentException('$level is expected to be a string or int');
         }
 
-<<<<<<< HEAD
-        if (isset(self::RFC_5424_LEVELS[$level])) {
-            $level = self::RFC_5424_LEVELS[$level];
-        }
-
-=======
->>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
         $level = static::toMonologLevel($level);
 
         $this->addRecord($level, (string) $message, $context);
@@ -754,43 +655,4 @@ class Logger implements LoggerInterface, ResettableInterface
 
         ($this->exceptionHandler)($e, $record);
     }
-<<<<<<< HEAD
-
-    /**
-     * @return array<string, mixed>
-     */
-    public function __serialize(): array
-    {
-        return [
-            'name' => $this->name,
-            'handlers' => $this->handlers,
-            'processors' => $this->processors,
-            'microsecondTimestamps' => $this->microsecondTimestamps,
-            'timezone' => $this->timezone,
-            'exceptionHandler' => $this->exceptionHandler,
-            'logDepth' => $this->logDepth,
-            'detectCycles' => $this->detectCycles,
-        ];
-    }
-
-    /**
-     * @param array<string, mixed> $data
-     */
-    public function __unserialize(array $data): void
-    {
-        foreach (['name', 'handlers', 'processors', 'microsecondTimestamps', 'timezone', 'exceptionHandler', 'logDepth', 'detectCycles'] as $property) {
-            if (isset($data[$property])) {
-                $this->$property = $data[$property];
-            }
-        }
-
-        if (\PHP_VERSION_ID >= 80100) {
-            // Local variable for phpstan, see https://github.com/phpstan/phpstan/issues/6732#issuecomment-1111118412
-            /** @var \WeakMap<\Fiber, int> $fiberLogDepth */
-            $fiberLogDepth = new \WeakMap();
-            $this->fiberLogDepth = $fiberLogDepth;
-        }
-    }
-=======
->>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
 }

@@ -47,14 +47,6 @@ class Property
         $this->array = false;
         $this->type = $type;
 
-<<<<<<< HEAD
-        if ('|scalar' === substr($type, -7)) {
-            $this->scalarsAllowed = true;
-            $this->type = $type = substr($type, 0, -7);
-        }
-
-=======
->>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
         if ('[]' === substr($type, -2)) {
             $this->array = true;
             $this->type = substr($type, 0, -2);

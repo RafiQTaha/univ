@@ -136,38 +136,8 @@ public function NAME(): string
         $class->addRequire($childClass);
         $this->classes[] = $childClass;
 
-<<<<<<< HEAD
-        $hasNormalizationClosures = $this->hasNormalizationClosures($node);
-        $property = $class->addProperty(
-            $node->getName(),
-            $this->getType($childClass->getFqcn(), $hasNormalizationClosures)
-        );
-        $body = $hasNormalizationClosures ? '
-/**
- * @return CLASS|$this
- */
-public function NAME(mixed $value = []): CLASS|static
-{
-    if (!\is_array($value)) {
-        $this->_usedProperties[\'PROPERTY\'] = true;
-        $this->PROPERTY = $value;
-
-        return $this;
-    }
-
-    if (!$this->PROPERTY instanceof CLASS) {
-        $this->_usedProperties[\'PROPERTY\'] = true;
-        $this->PROPERTY = new CLASS($value);
-    } elseif (0 < \func_num_args()) {
-        throw new InvalidConfigurationException(\'The node created by "NAME()" has already been initialized. You cannot pass values the second time you call NAME().\');
-    }
-
-    return $this->PROPERTY;
-}' : '
-=======
         $property = $class->addProperty($node->getName(), $childClass->getFqcn());
         $body = '
->>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
 public function NAME(array $value = []): CLASS
 {
     if (null === $this->PROPERTY) {
@@ -220,19 +190,11 @@ public function NAME(mixed $valueDEFAULT): static
                 // This is an array of values; don't use singular name
                 $body = '
 /**
-<<<<<<< HEAD
- * @param PHPDOC_TYPE $value
- *
- * @return $this
- */
-public function NAME(TYPE $value): static
-=======
  * @param ParamConfigurator|list<ParamConfigurator|TYPE> $value
  *
  * @return $this
  */
 public function NAME(ParamConfigurator|array $value): static
->>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
 {
     $this->_usedProperties[\'PROPERTY\'] = true;
     $this->PROPERTY = $value;
@@ -240,15 +202,7 @@ public function NAME(ParamConfigurator|array $value): static
     return $this;
 }';
 
-<<<<<<< HEAD
-                $class->addMethod($node->getName(), $body, [
-                    'PROPERTY' => $property->getName(),
-                    'TYPE' => $hasNormalizationClosures ? 'mixed' : 'ParamConfigurator|array',
-                    'PHPDOC_TYPE' => $hasNormalizationClosures ? 'mixed' : sprintf('ParamConfigurator|list<ParamConfigurator|%s>', '' === $parameterType ? 'mixed' : $parameterType),
-                ]);
-=======
                 $class->addMethod($node->getName(), $body, ['PROPERTY' => $property->getName(), 'TYPE' => '' === $parameterType ? 'mixed' : $parameterType]);
->>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
             } else {
                 $body = '
 /**
@@ -262,16 +216,7 @@ public function NAME(string $VAR, TYPE $VALUE): static
     return $this;
 }';
 
-<<<<<<< HEAD
-                $class->addMethod($methodName, $body, [
-                    'PROPERTY' => $property->getName(),
-                    'TYPE' => $hasNormalizationClosures || '' === $parameterType ? 'mixed' : 'ParamConfigurator|'.$parameterType,
-                    'VAR' => '' === $key ? 'key' : $key,
-                    'VALUE' => 'value' === $key ? 'data' : 'value',
-                ]);
-=======
                 $class->addMethod($methodName, $body, ['PROPERTY' => $property->getName(), 'TYPE' => '' === $parameterType ? 'mixed' : 'ParamConfigurator|'.$parameterType, 'VAR' => '' === $key ? 'key' : $key, 'VALUE' => 'value' === $key ? 'data' : 'value']);
->>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
             }
 
             return;
@@ -283,35 +228,10 @@ public function NAME(string $VAR, TYPE $VALUE): static
         }
         $class->addRequire($childClass);
         $this->classes[] = $childClass;
-<<<<<<< HEAD
-
-        $property = $class->addProperty(
-            $node->getName(),
-            $this->getType($childClass->getFqcn().'[]', $hasNormalizationClosures)
-        );
-
-        if (null === $key = $node->getKeyAttribute()) {
-            $body = $hasNormalizationClosures ? '
-/**
- * @return CLASS|$this
- */
-public function NAME(mixed $value = []): CLASS|static
-{
-    $this->_usedProperties[\'PROPERTY\'] = true;
-    if (!\is_array($value)) {
-        $this->PROPERTY[] = $value;
-
-        return $this;
-    }
-
-    return $this->PROPERTY[] = new CLASS($value);
-}' : '
-=======
         $property = $class->addProperty($node->getName(), $childClass->getFqcn().'[]');
 
         if (null === $key = $node->getKeyAttribute()) {
             $body = '
->>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
 public function NAME(array $value = []): CLASS
 {
     $this->_usedProperties[\'PROPERTY\'] = true;
@@ -320,32 +240,7 @@ public function NAME(array $value = []): CLASS
 }';
             $class->addMethod($methodName, $body, ['PROPERTY' => $property->getName(), 'CLASS' => $childClass->getFqcn()]);
         } else {
-<<<<<<< HEAD
-            $body = $hasNormalizationClosures ? '
-/**
- * @return CLASS|$this
- */
-public function NAME(string $VAR, mixed $VALUE = []): CLASS|static
-{
-    if (!\is_array($VALUE)) {
-        $this->_usedProperties[\'PROPERTY\'] = true;
-        $this->PROPERTY[$VAR] = $VALUE;
-
-        return $this;
-    }
-
-    if (!isset($this->PROPERTY[$VAR]) || !$this->PROPERTY[$VAR] instanceof CLASS) {
-        $this->_usedProperties[\'PROPERTY\'] = true;
-        $this->PROPERTY[$VAR] = new CLASS($VALUE);
-    } elseif (1 < \func_num_args()) {
-        throw new InvalidConfigurationException(\'The node created by "NAME()" has already been initialized. You cannot pass values the second time you call NAME().\');
-    }
-
-    return $this->PROPERTY[$VAR];
-}' : '
-=======
             $body = '
->>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
 public function NAME(string $VAR, array $VALUE = []): CLASS
 {
     if (!isset($this->PROPERTY[$VAR])) {
@@ -360,16 +255,7 @@ public function NAME(string $VAR, array $VALUE = []): CLASS
     throw new InvalidConfigurationException(\'The node created by "NAME()" has already been initialized. You cannot pass values the second time you call NAME().\');
 }';
             $class->addUse(InvalidConfigurationException::class);
-<<<<<<< HEAD
-            $class->addMethod($methodName, $body, [
-                'PROPERTY' => $property->getName(),
-                'CLASS' => $childClass->getFqcn(),
-                'VAR' => '' === $key ? 'key' : $key,
-                'VALUE' => 'value' === $key ? 'data' : 'value',
-            ]);
-=======
             $class->addMethod($methodName, $body, ['PROPERTY' => $property->getName(), 'CLASS' => $childClass->getFqcn(), 'VAR' => '' === $key ? 'key' : $key, 'VALUE' => 'value' === $key ? 'data' : 'value']);
->>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
         }
 
         $this->buildNode($prototype, $childClass, $namespace.'\\'.$childClass->getName());
@@ -583,24 +469,4 @@ public function NAME(string $key, mixed $value): static
     {
         return sprintf('%s\\%s', $rootClass->getNamespace(), substr($rootClass->getName(), 0, -6));
     }
-<<<<<<< HEAD
-
-    private function hasNormalizationClosures(NodeInterface $node): bool
-    {
-        try {
-            $r = new \ReflectionProperty($node, 'normalizationClosures');
-        } catch (\ReflectionException $e) {
-            return false;
-        }
-        $r->setAccessible(true);
-
-        return [] !== $r->getValue($node);
-    }
-
-    private function getType(string $classType, bool $hasNormalizationClosures): string
-    {
-        return $classType.($hasNormalizationClosures ? '|scalar' : '');
-    }
-=======
->>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
 }

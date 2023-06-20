@@ -131,11 +131,7 @@ class ResourceCheckerConfigCache implements ConfigCacheInterface
             }
         }
 
-<<<<<<< HEAD
-        if (\function_exists('opcache_invalidate') && filter_var(\ini_get('opcache.enable'), \FILTER_VALIDATE_BOOLEAN)) {
-=======
         if (\function_exists('opcache_invalidate') && filter_var(ini_get('opcache.enable'), \FILTER_VALIDATE_BOOLEAN)) {
->>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
             @opcache_invalidate($this->file, true);
         }
     }

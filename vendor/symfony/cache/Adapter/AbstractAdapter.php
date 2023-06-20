@@ -110,11 +110,7 @@ abstract class AbstractAdapter implements AdapterInterface, CacheInterface, Logg
             return $opcache;
         }
 
-<<<<<<< HEAD
-        if (\in_array(\PHP_SAPI, ['cli', 'phpdbg'], true) && !filter_var(\ini_get('apc.enable_cli'), \FILTER_VALIDATE_BOOLEAN)) {
-=======
         if (\in_array(\PHP_SAPI, ['cli', 'phpdbg'], true) && !filter_var(ini_get('apc.enable_cli'), \FILTER_VALIDATE_BOOLEAN)) {
->>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
             return $opcache;
         }
 

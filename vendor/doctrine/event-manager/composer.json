@@ -20,22 +20,11 @@
         {"name": "Marco Pivetta", "email": "ocramius@gmail.com"}
     ],
     "require": {
-<<<<<<< HEAD
-        "php": "^7.1 || ^8.0",
-        "doctrine/deprecations": "^0.5.3 || ^1"
-    },
-    "require-dev": {
-        "doctrine/coding-standard": "^9 || ^10",
-        "phpstan/phpstan": "~1.4.10 || ^1.8.8",
-        "phpunit/phpunit": "^7.5 || ^8.5 || ^9.5",
-        "vimeo/psalm": "^4.24"
-=======
         "php": "^7.1 || ^8.0"
     },
     "require-dev": {
         "doctrine/coding-standard": "^6.0",
         "phpunit/phpunit": "^7.0"
->>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
     },
     "conflict": {
         "doctrine/common": "<2.9@dev"

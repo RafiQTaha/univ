@@ -361,10 +361,7 @@ return array(
     'Doctrine\\Common\\Cache\\Psr6\\DoctrineProvider' => $vendorDir . '/doctrine/cache/lib/Doctrine/Common/Cache/Psr6/DoctrineProvider.php',
     'Doctrine\\Common\\Cache\\Psr6\\InvalidArgument' => $vendorDir . '/doctrine/cache/lib/Doctrine/Common/Cache/Psr6/InvalidArgument.php',
     'Doctrine\\Common\\Cache\\Psr6\\TypedCacheItem' => $vendorDir . '/doctrine/cache/lib/Doctrine/Common/Cache/Psr6/TypedCacheItem.php',
-<<<<<<< HEAD
-=======
     'Doctrine\\Common\\ClassLoader' => $vendorDir . '/doctrine/common/lib/Doctrine/Common/ClassLoader.php',
->>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
     'Doctrine\\Common\\Collections\\AbstractLazyCollection' => $vendorDir . '/doctrine/collections/lib/Doctrine/Common/Collections/AbstractLazyCollection.php',
     'Doctrine\\Common\\Collections\\ArrayCollection' => $vendorDir . '/doctrine/collections/lib/Doctrine/Common/Collections/ArrayCollection.php',
     'Doctrine\\Common\\Collections\\Collection' => $vendorDir . '/doctrine/collections/lib/Doctrine/Common/Collections/Collection.php',
@@ -376,13 +373,6 @@ return array(
     'Doctrine\\Common\\Collections\\Expr\\ExpressionVisitor' => $vendorDir . '/doctrine/collections/lib/Doctrine/Common/Collections/Expr/ExpressionVisitor.php',
     'Doctrine\\Common\\Collections\\Expr\\Value' => $vendorDir . '/doctrine/collections/lib/Doctrine/Common/Collections/Expr/Value.php',
     'Doctrine\\Common\\Collections\\ExpressionBuilder' => $vendorDir . '/doctrine/collections/lib/Doctrine/Common/Collections/ExpressionBuilder.php',
-<<<<<<< HEAD
-    'Doctrine\\Common\\Collections\\ReadableCollection' => $vendorDir . '/doctrine/collections/lib/Doctrine/Common/Collections/ReadableCollection.php',
-    'Doctrine\\Common\\Collections\\Selectable' => $vendorDir . '/doctrine/collections/lib/Doctrine/Common/Collections/Selectable.php',
-    'Doctrine\\Common\\EventArgs' => $vendorDir . '/doctrine/event-manager/src/EventArgs.php',
-    'Doctrine\\Common\\EventManager' => $vendorDir . '/doctrine/event-manager/src/EventManager.php',
-    'Doctrine\\Common\\EventSubscriber' => $vendorDir . '/doctrine/event-manager/src/EventSubscriber.php',
-=======
     'Doctrine\\Common\\Collections\\Selectable' => $vendorDir . '/doctrine/collections/lib/Doctrine/Common/Collections/Selectable.php',
     'Doctrine\\Common\\CommonException' => $vendorDir . '/doctrine/common/lib/Doctrine/Common/CommonException.php',
     'Doctrine\\Common\\Comparable' => $vendorDir . '/doctrine/common/lib/Doctrine/Common/Comparable.php',
@@ -401,7 +391,6 @@ return array(
     'Doctrine\\Common\\Proxy\\ProxyGenerator' => $vendorDir . '/doctrine/common/lib/Doctrine/Common/Proxy/ProxyGenerator.php',
     'Doctrine\\Common\\Util\\ClassUtils' => $vendorDir . '/doctrine/common/lib/Doctrine/Common/Util/ClassUtils.php',
     'Doctrine\\Common\\Util\\Debug' => $vendorDir . '/doctrine/common/lib/Doctrine/Common/Util/Debug.php',
->>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
     'Doctrine\\DBAL\\ArrayParameters\\Exception' => $vendorDir . '/doctrine/dbal/src/ArrayParameters/Exception.php',
     'Doctrine\\DBAL\\ArrayParameters\\Exception\\MissingNamedParameter' => $vendorDir . '/doctrine/dbal/src/ArrayParameters/Exception/MissingNamedParameter.php',
     'Doctrine\\DBAL\\ArrayParameters\\Exception\\MissingPositionalParameter' => $vendorDir . '/doctrine/dbal/src/ArrayParameters/Exception/MissingPositionalParameter.php',
@@ -2845,10 +2834,7 @@ return array(
     'PhpOffice\\PhpSpreadsheet\\Chart\\Title' => $vendorDir . '/phpoffice/phpspreadsheet/src/PhpSpreadsheet/Chart/Title.php',
     'PhpOffice\\PhpSpreadsheet\\Collection\\Cells' => $vendorDir . '/phpoffice/phpspreadsheet/src/PhpSpreadsheet/Collection/Cells.php',
     'PhpOffice\\PhpSpreadsheet\\Collection\\CellsFactory' => $vendorDir . '/phpoffice/phpspreadsheet/src/PhpSpreadsheet/Collection/CellsFactory.php',
-<<<<<<< HEAD
-=======
     'PhpOffice\\PhpSpreadsheet\\Collection\\Memory' => $vendorDir . '/phpoffice/phpspreadsheet/src/PhpSpreadsheet/Collection/Memory.php',
->>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
     'PhpOffice\\PhpSpreadsheet\\Comment' => $vendorDir . '/phpoffice/phpspreadsheet/src/PhpSpreadsheet/Comment.php',
     'PhpOffice\\PhpSpreadsheet\\DefinedName' => $vendorDir . '/phpoffice/phpspreadsheet/src/PhpSpreadsheet/DefinedName.php',
     'PhpOffice\\PhpSpreadsheet\\Document\\Properties' => $vendorDir . '/phpoffice/phpspreadsheet/src/PhpSpreadsheet/Document/Properties.php',
@@ -3088,10 +3074,7 @@ return array(
     'PhpOffice\\PhpSpreadsheet\\Writer\\Xlsx\\Workbook' => $vendorDir . '/phpoffice/phpspreadsheet/src/PhpSpreadsheet/Writer/Xlsx/Workbook.php',
     'PhpOffice\\PhpSpreadsheet\\Writer\\Xlsx\\Worksheet' => $vendorDir . '/phpoffice/phpspreadsheet/src/PhpSpreadsheet/Writer/Xlsx/Worksheet.php',
     'PhpOffice\\PhpSpreadsheet\\Writer\\Xlsx\\WriterPart' => $vendorDir . '/phpoffice/phpspreadsheet/src/PhpSpreadsheet/Writer/Xlsx/WriterPart.php',
-<<<<<<< HEAD
-=======
     'PhpOffice\\PhpSpreadsheet\\Writer\\Xlsx\\Xlfn' => $vendorDir . '/phpoffice/phpspreadsheet/src/PhpSpreadsheet/Writer/Xlsx/Xlfn.php',
->>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
     'PhpParser\\Builder' => $vendorDir . '/nikic/php-parser/lib/PhpParser/Builder.php',
     'PhpParser\\BuilderFactory' => $vendorDir . '/nikic/php-parser/lib/PhpParser/BuilderFactory.php',
     'PhpParser\\BuilderHelpers' => $vendorDir . '/nikic/php-parser/lib/PhpParser/BuilderHelpers.php',
@@ -3848,7 +3831,6 @@ return array(
     'Sensio\\Bundle\\FrameworkExtraBundle\\Security\\ExpressionLanguage' => $vendorDir . '/sensio/framework-extra-bundle/src/Security/ExpressionLanguage.php',
     'Sensio\\Bundle\\FrameworkExtraBundle\\SensioFrameworkExtraBundle' => $vendorDir . '/sensio/framework-extra-bundle/src/SensioFrameworkExtraBundle.php',
     'Sensio\\Bundle\\FrameworkExtraBundle\\Templating\\TemplateGuesser' => $vendorDir . '/sensio/framework-extra-bundle/src/Templating/TemplateGuesser.php',
-    'Stringable' => $vendorDir . '/myclabs/php-enum/stubs/Stringable.php',
     'Symfony\\Bridge\\Doctrine\\CacheWarmer\\ProxyCacheWarmer' => $vendorDir . '/symfony/doctrine-bridge/CacheWarmer/ProxyCacheWarmer.php',
     'Symfony\\Bridge\\Doctrine\\ContainerAwareEventManager' => $vendorDir . '/symfony/doctrine-bridge/ContainerAwareEventManager.php',
     'Symfony\\Bridge\\Doctrine\\DataCollector\\DoctrineDataCollector' => $vendorDir . '/symfony/doctrine-bridge/DataCollector/DoctrineDataCollector.php',

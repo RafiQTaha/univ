@@ -34,10 +34,6 @@ class BinaryFileResponse extends Response
     protected $offset = 0;
     protected $maxlen = -1;
     protected $deleteFileAfterSend = false;
-<<<<<<< HEAD
-    protected $chunkSize = 8 * 1024;
-=======
->>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
 
     /**
      * @param \SplFileInfo|string $file               The file to stream
@@ -291,29 +287,8 @@ class BinaryFileResponse extends Response
         fclose($out);
         fclose($file);
 
-<<<<<<< HEAD
-            $length = $this->maxlen;
-            while ($length && !feof($file)) {
-                $read = ($length > $this->chunkSize) ? $this->chunkSize : $length;
-                $length -= $read;
-
-                stream_copy_to_stream($file, $out, $read);
-
-                if (connection_aborted()) {
-                    break;
-                }
-            }
-
-            fclose($out);
-            fclose($file);
-        } finally {
-            if ($this->deleteFileAfterSend && is_file($this->file->getPathname())) {
-                unlink($this->file->getPathname());
-            }
-=======
         if ($this->deleteFileAfterSend && is_file($this->file->getPathname())) {
             unlink($this->file->getPathname());
->>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
         }
 
         return $this;

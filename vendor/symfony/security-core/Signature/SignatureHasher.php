@@ -87,11 +87,7 @@ class SignatureHasher
                 $value = $value->format('c');
             }
 
-<<<<<<< HEAD
-            if (!\is_scalar($value) && !$value instanceof \Stringable) {
-=======
             if (!is_scalar($value) && !$value instanceof \Stringable) {
->>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
                 throw new \InvalidArgumentException(sprintf('The property path "%s" on the user object "%s" must return a value that can be cast to a string, but "%s" was returned.', $property, \get_class($user), get_debug_type($value)));
             }
             $signatureFields[] = base64_encode($value);

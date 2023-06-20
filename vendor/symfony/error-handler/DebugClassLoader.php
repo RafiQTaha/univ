@@ -764,15 +764,6 @@ class DebugClassLoader
             return;
         }
 
-<<<<<<< HEAD
-        if ('null' === $types) {
-            self::$returnTypes[$class][$method] = ['null', 'null', $class, $filename];
-
-            return;
-        }
-
-=======
->>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
         if ($nullable = 0 === strpos($types, 'null|')) {
             $types = substr($types, 5);
         } elseif ($nullable = '|null' === substr($types, -5)) {

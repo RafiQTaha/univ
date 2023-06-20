@@ -555,11 +555,7 @@ class Crawler implements \Countable, \IteratorAggregate
         $text = $this->getNode(0)->nodeValue;
 
         if ($normalizeWhitespace) {
-<<<<<<< HEAD
-            return trim(preg_replace("/(?:[ \n\r\t\x0C]{2,}+|[\n\r\t\x0C])/", ' ', $text), " \n\r\t\x0C");
-=======
             return trim(preg_replace('/(?:\s{2,}+|[^\S ])/', ' ', $text));
->>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
         }
 
         return $text;
@@ -1079,19 +1075,11 @@ class Crawler implements \Countable, \IteratorAggregate
         set_error_handler(function () { throw new \Exception(); });
 
         try {
-<<<<<<< HEAD
-            return mb_encode_numericentity($htmlContent, [0x80, 0x10FFFF, 0, 0x1FFFFF], $charset);
-        } catch (\Exception|\ValueError $e) {
-            try {
-                $htmlContent = iconv($charset, 'UTF-8', $htmlContent);
-                $htmlContent = mb_encode_numericentity($htmlContent, [0x80, 0x10FFFF, 0, 0x1FFFFF], 'UTF-8');
-=======
             return mb_encode_numericentity($htmlContent, [0x80, 0xFFFF, 0, 0xFFFF], $charset);
         } catch (\Exception|\ValueError $e) {
             try {
                 $htmlContent = iconv($charset, 'UTF-8', $htmlContent);
                 $htmlContent = mb_encode_numericentity($htmlContent, [0x80, 0xFFFF, 0, 0xFFFF], 'UTF-8');
->>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
             } catch (\Exception|\ValueError $e) {
             }
 

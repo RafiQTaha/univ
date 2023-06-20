@@ -286,11 +286,7 @@ class PdoSessionHandler extends AbstractSessionHandler
      */
     protected function doWrite(string $sessionId, string $data): bool
     {
-<<<<<<< HEAD
-        $maxlifetime = (int) \ini_get('session.gc_maxlifetime');
-=======
         $maxlifetime = (int) ini_get('session.gc_maxlifetime');
->>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
 
         try {
             // We use a single MERGE SQL query when supported by the database.
@@ -333,11 +329,7 @@ class PdoSessionHandler extends AbstractSessionHandler
 
     public function updateTimestamp(string $sessionId, string $data): bool
     {
-<<<<<<< HEAD
-        $expiry = time() + (int) \ini_get('session.gc_maxlifetime');
-=======
         $expiry = time() + (int) ini_get('session.gc_maxlifetime');
->>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
 
         try {
             $updateStmt = $this->pdo->prepare(
@@ -611,11 +603,7 @@ class PdoSessionHandler extends AbstractSessionHandler
                 throw new \RuntimeException('Failed to read session: INSERT reported a duplicate id but next SELECT did not return any data.');
             }
 
-<<<<<<< HEAD
-            if (!filter_var(\ini_get('session.use_strict_mode'), \FILTER_VALIDATE_BOOLEAN) && self::LOCK_TRANSACTIONAL === $this->lockMode && 'sqlite' !== $this->driver) {
-=======
             if (!filter_var(ini_get('session.use_strict_mode'), \FILTER_VALIDATE_BOOLEAN) && self::LOCK_TRANSACTIONAL === $this->lockMode && 'sqlite' !== $this->driver) {
->>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
                 // In strict mode, session fixation is not possible: new sessions always start with a unique
                 // random id, so that concurrency is not possible and this code path can be skipped.
                 // Exclusive-reading of non-existent rows does not block, so we need to do an insert to block

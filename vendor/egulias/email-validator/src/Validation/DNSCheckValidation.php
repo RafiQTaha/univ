@@ -18,32 +18,6 @@ class DNSCheckValidation implements EmailValidation
     protected const DNS_RECORD_TYPES_TO_CHECK = DNS_MX + DNS_A + DNS_AAAA;
 
     /**
-<<<<<<< HEAD
-     * Reserved Top Level DNS Names (https://tools.ietf.org/html/rfc2606#section-2),
-     * mDNS and private DNS Namespaces (https://tools.ietf.org/html/rfc6762#appendix-G)
-     */
-    public const RESERVED_DNS_TOP_LEVEL_NAMES = [
-        // Reserved Top Level DNS Names
-        'test',
-        'example',
-        'invalid',
-        'localhost',
-
-        // mDNS
-        'local',
-
-        // Private DNS Namespaces
-        'intranet',
-        'internal',
-        'private',
-        'corp',
-        'home',
-        'lan',
-    ];
-    
-    /**
-=======
->>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
      * @var array
      */
     private $warnings = [];

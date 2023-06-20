@@ -85,10 +85,6 @@ class ClassGenerator extends AbstractGenerator implements TraitUsageInterface
         }
 
         $cg->setAbstract($classReflection->isAbstract());
-<<<<<<< HEAD
-        $cg->setFinal($classReflection->isFinal());
-=======
->>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
 
         // set the namespace
         if ($classReflection->inNamespace()) {

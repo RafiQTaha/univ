@@ -18,21 +18,6 @@
         {"name": "Johannes Schmitt", "email": "schmittjoh@gmail.com"}
     ],
     "require": {
-<<<<<<< HEAD
-        "php": "^7.1.3 || ^8.0",
-        "doctrine/deprecations": "^0.5.3 || ^1"
-    },
-    "require-dev": {
-        "doctrine/coding-standard": "^9.0 || ^10.0",
-        "phpstan/phpstan": "^1.4.8",
-        "phpunit/phpunit": "^7.5 || ^8.5 || ^9.1.5",
-        "vimeo/psalm": "^4.22"
-    },
-    "autoload": {
-        "psr-4": {
-            "Doctrine\\Common\\Collections\\": "lib/Doctrine/Common/Collections"
-        }
-=======
         "php": "^7.1.3 || ^8.0"
     },
     "require-dev": {
@@ -43,20 +28,10 @@
     },
     "autoload": {
         "psr-4": { "Doctrine\\Common\\Collections\\": "lib/Doctrine/Common/Collections" }
->>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
     },
     "autoload-dev": {
         "psr-4": {
             "Doctrine\\Tests\\": "tests/Doctrine/Tests"
-<<<<<<< HEAD
-        }
-    },
-    "config": {
-        "allow-plugins": {
-            "composer/package-versions-deprecated": true,
-            "dealerdirect/phpcodesniffer-composer-installer": true
-=======
->>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
         }
     }
 }

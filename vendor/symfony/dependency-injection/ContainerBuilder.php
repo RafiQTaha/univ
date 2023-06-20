@@ -1018,17 +1018,8 @@ class ContainerBuilder extends Container implements TaggedContainerInterface
             }
         }
 
-<<<<<<< HEAD
-        if (null !== $id && $definition->isShared() && (isset($this->services[$id]) || isset($this->privates[$id])) && ($tryProxy || !$definition->isLazy())) {
-            return $this->services[$id] ?? $this->privates[$id];
-        }
-
-        if (!array_is_list($arguments)) {
-            $arguments = array_combine(array_map(function ($k) { return preg_replace('/^.*\\$/', '', $k); }, array_keys($arguments)), $arguments);
-=======
         if (null !== $id && $definition->isShared() && isset($this->services[$id]) && ($tryProxy || !$definition->isLazy())) {
             return $this->services[$id];
->>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
         }
 
         if (null !== $factory) {

@@ -73,13 +73,6 @@ class DefaultAuthenticationFailureHandler implements AuthenticationFailureHandle
             $this->options['failure_path'] = $failureUrl;
         }
 
-<<<<<<< HEAD
-        $options['failure_path'] ?? $options['failure_path'] = $options['login_path'];
-
-        if ($options['failure_forward']) {
-            if (null !== $this->logger) {
-                $this->logger->debug('Authentication failure, forward triggered.', ['failure_path' => $options['failure_path']]);
-=======
         if (null === $this->options['failure_path']) {
             $this->options['failure_path'] = $this->options['login_path'];
         }
@@ -87,7 +80,6 @@ class DefaultAuthenticationFailureHandler implements AuthenticationFailureHandle
         if ($this->options['failure_forward']) {
             if (null !== $this->logger) {
                 $this->logger->debug('Authentication failure, forward triggered.', ['failure_path' => $this->options['failure_path']]);
->>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
             }
 
             $subRequest = $this->httpUtils->createRequest($request, $this->options['failure_path']);
@@ -97,11 +89,7 @@ class DefaultAuthenticationFailureHandler implements AuthenticationFailureHandle
         }
 
         if (null !== $this->logger) {
-<<<<<<< HEAD
-            $this->logger->debug('Authentication failure, redirect triggered.', ['failure_path' => $options['failure_path']]);
-=======
             $this->logger->debug('Authentication failure, redirect triggered.', ['failure_path' => $this->options['failure_path']]);
->>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
         }
 
         $request->getSession()->set(Security::AUTHENTICATION_ERROR, $exception);

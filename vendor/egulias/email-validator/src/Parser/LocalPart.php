@@ -25,21 +25,12 @@ class LocalPart extends PartParser
     {
         $this->lexer->startRecording();
 
-<<<<<<< HEAD
-        while (((array) $this->lexer->token)['type'] !== EmailLexer::S_AT && null !== ((array) $this->lexer->token)['type']) {
-            if ($this->hasDotAtStart()) {
-                return new InvalidEmail(new DotAtStart(), ((array) $this->lexer->token)['value']);
-            }
-
-            if (((array) $this->lexer->token)['type'] === EmailLexer::S_DQUOTE) {
-=======
         while ($this->lexer->token['type'] !== EmailLexer::S_AT && null !== $this->lexer->token['type']) {
             if ($this->hasDotAtStart()) {
                 return new InvalidEmail(new DotAtStart(), $this->lexer->token['value']);
             }
 
             if ($this->lexer->token['type'] === EmailLexer::S_DQUOTE) {
->>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
                 $dquoteParsingResult = $this->parseDoubleQuote();
 
                 //Invalid double quote parsing
@@ -48,13 +39,8 @@ class LocalPart extends PartParser
                 }
             }
 
-<<<<<<< HEAD
-            if (((array) $this->lexer->token)['type'] === EmailLexer::S_OPENPARENTHESIS ||
-                ((array) $this->lexer->token)['type'] === EmailLexer::S_CLOSEPARENTHESIS ) {
-=======
             if ($this->lexer->token['type'] === EmailLexer::S_OPENPARENTHESIS || 
                 $this->lexer->token['type'] === EmailLexer::S_CLOSEPARENTHESIS ) {
->>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
                 $commentsResult = $this->parseComments();
 
                 //Invalid comment parsing
@@ -63,16 +49,6 @@ class LocalPart extends PartParser
                 }
             }
 
-<<<<<<< HEAD
-            if (((array) $this->lexer->token)['type'] === EmailLexer::S_DOT && $this->lexer->isNextToken(EmailLexer::S_DOT)) {
-                return new InvalidEmail(new ConsecutiveDot(), ((array) $this->lexer->token)['value']);
-            }
-
-            if (((array) $this->lexer->token)['type'] === EmailLexer::S_DOT &&
-                $this->lexer->isNextToken(EmailLexer::S_AT)
-            ) {
-                return new InvalidEmail(new DotAtEnd(), ((array) $this->lexer->token)['value']);
-=======
             if ($this->lexer->token['type'] === EmailLexer::S_DOT && $this->lexer->isNextToken(EmailLexer::S_DOT)) {
                 return new InvalidEmail(new ConsecutiveDot(), $this->lexer->token['value']);
             }
@@ -81,7 +57,6 @@ class LocalPart extends PartParser
                 $this->lexer->isNextToken(EmailLexer::S_AT)
             ) {
                 return new InvalidEmail(new DotAtEnd(), $this->lexer->token['value']);
->>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
             }
 
             $resultEscaping = $this->validateEscaping();
@@ -113,10 +88,6 @@ class LocalPart extends PartParser
 
     protected function validateTokens(bool $hasComments) : Result
     {
-<<<<<<< HEAD
-        if (isset(self::INVALID_TOKENS[((array) $this->lexer->token)['type']])) {
-            return new InvalidEmail(new ExpectingATEXT('Invalid token found'), ((array) $this->lexer->token)['value']);
-=======
         $invalidTokens = array(
             EmailLexer::S_COMMA => EmailLexer::S_COMMA,
             EmailLexer::S_CLOSEBRACKET => EmailLexer::S_CLOSEBRACKET,
@@ -129,7 +100,6 @@ class LocalPart extends PartParser
         );
         if (isset($invalidTokens[$this->lexer->token['type']])) {
             return new InvalidEmail(new ExpectingATEXT('Invalid token found'), $this->lexer->token['value']);
->>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
         }
         return new ValidEmail();
     }
@@ -139,11 +109,7 @@ class LocalPart extends PartParser
         return $this->localPart;
     }
 
-<<<<<<< HEAD
-    private function parseLocalFWS() : Result
-=======
     private function parseLocalFWS() : Result 
->>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
     {
         $foldingWS = new FoldingWhiteSpace($this->lexer);
         $resultFWS = $foldingWS->parse();
@@ -155,11 +121,7 @@ class LocalPart extends PartParser
 
     private function hasDotAtStart() : bool
     {
-<<<<<<< HEAD
-            return ((array) $this->lexer->token)['type'] === EmailLexer::S_DOT && null === $this->lexer->getPrevious()['type'];
-=======
             return $this->lexer->token['type'] === EmailLexer::S_DOT && null === $this->lexer->getPrevious()['type'];
->>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
     }
 
     private function parseDoubleQuote() : Result
@@ -185,20 +147,12 @@ class LocalPart extends PartParser
     private function validateEscaping() : Result
     {
         //Backslash found
-<<<<<<< HEAD
-        if (((array) $this->lexer->token)['type'] !== EmailLexer::S_BACKSLASH) {
-=======
         if ($this->lexer->token['type'] !== EmailLexer::S_BACKSLASH) {
->>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
             return new ValidEmail();
         }
 
         if ($this->lexer->isNextToken(EmailLexer::GENERIC)) {
-<<<<<<< HEAD
-            return new InvalidEmail(new ExpectingATEXT('Found ATOM after escaping'), ((array) $this->lexer->token)['value']);
-=======
             return new InvalidEmail(new ExpectingATEXT('Found ATOM after escaping'), $this->lexer->token['value']);
->>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
         }
 
         if (!$this->lexer->isNextTokenAny(array(EmailLexer::S_SP, EmailLexer::S_HTAB, EmailLexer::C_DEL))) {

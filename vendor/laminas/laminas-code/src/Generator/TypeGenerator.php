@@ -119,11 +119,8 @@ final class TypeGenerator implements GeneratorInterface
                 => [$left->sortIndex, $left->type] <=> [$right->sortIndex, $right->type]
         );
 
-<<<<<<< HEAD
-=======
         assert([] !== $types);
 
->>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
         if (1 === count($types)) {
             $types[0]->assertCanBeAStandaloneType();
 

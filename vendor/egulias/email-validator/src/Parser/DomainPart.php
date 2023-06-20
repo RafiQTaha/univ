@@ -49,13 +49,8 @@ class DomainPart extends PartParser
             return $domainChecks;
         }
 
-<<<<<<< HEAD
-        if (((array) $this->lexer->token)['type'] === EmailLexer::S_AT) {
-            return new InvalidEmail(new ConsecutiveAt(), ((array) $this->lexer->token)['value']);
-=======
         if ($this->lexer->token['type'] === EmailLexer::S_AT) {
             return new InvalidEmail(new ConsecutiveAt(), $this->lexer->token['value']);
->>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
         }
 
         $result = $this->doParseDomainPart();
@@ -73,11 +68,7 @@ class DomainPart extends PartParser
 
         $length = strlen($this->domainPart);
         if ($length > self::DOMAIN_MAX_LENGTH) {
-<<<<<<< HEAD
-            return new InvalidEmail(new DomainTooLong(), ((array) $this->lexer->token)['value']);
-=======
             return new InvalidEmail(new DomainTooLong(), $this->lexer->token['value']);
->>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
         }
 
         return new ValidEmail();
@@ -87,21 +78,13 @@ class DomainPart extends PartParser
     {
         $prev = $this->lexer->getPrevious();
         if ($prev['type'] === EmailLexer::S_DOT) {
-<<<<<<< HEAD
-            return new InvalidEmail(new DotAtEnd(), ((array) $this->lexer->token)['value']);
-=======
             return new InvalidEmail(new DotAtEnd(), $this->lexer->token['value']);
->>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
         }
         if ($prev['type'] === EmailLexer::S_HYPHEN) {
             return new InvalidEmail(new DomainHyphened('Hypen found at the end of the domain'), $prev['value']);
         }
 
-<<<<<<< HEAD
-        if (((array) $this->lexer->token)['type'] === EmailLexer::S_SP) {
-=======
         if ($this->lexer->token['type'] === EmailLexer::S_SP) {
->>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
             return new InvalidEmail(new CRLFAtTheEnd(), $prev['value']);
         }
         return new ValidEmail();
@@ -120,11 +103,7 @@ class DomainPart extends PartParser
             return $missingDomain;
         }
 
-<<<<<<< HEAD
-        if (((array) $this->lexer->token)['type'] === EmailLexer::S_OPENPARENTHESIS) {
-=======
         if ($this->lexer->token['type'] === EmailLexer::S_OPENPARENTHESIS) {
->>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
             $this->warnings[DeprecatedComment::CODE] = new DeprecatedComment();
         }
         return new ValidEmail();
@@ -132,21 +111,12 @@ class DomainPart extends PartParser
 
     private function checkEmptyDomain() : Result
     {
-<<<<<<< HEAD
-        $thereIsNoDomain = ((array) $this->lexer->token)['type'] === EmailLexer::S_EMPTY ||
-            (((array) $this->lexer->token)['type'] === EmailLexer::S_SP &&
-            !$this->lexer->isNextToken(EmailLexer::GENERIC));
-
-        if ($thereIsNoDomain) {
-            return new InvalidEmail(new NoDomainPart(), ((array) $this->lexer->token)['value']);
-=======
         $thereIsNoDomain = $this->lexer->token['type'] === EmailLexer::S_EMPTY ||
             ($this->lexer->token['type'] === EmailLexer::S_SP &&
             !$this->lexer->isNextToken(EmailLexer::GENERIC));
 
         if ($thereIsNoDomain) {
             return new InvalidEmail(new NoDomainPart(), $this->lexer->token['value']);
->>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
         }
 
         return new ValidEmail();
@@ -154,19 +124,11 @@ class DomainPart extends PartParser
 
     private function checkInvalidTokensAfterAT() : Result
     {
-<<<<<<< HEAD
-        if (((array) $this->lexer->token)['type'] === EmailLexer::S_DOT) {
-            return new InvalidEmail(new DotAtStart(), ((array) $this->lexer->token)['value']);
-        }
-        if (((array) $this->lexer->token)['type'] === EmailLexer::S_HYPHEN) {
-            return new InvalidEmail(new DomainHyphened('After AT'), ((array) $this->lexer->token)['value']);
-=======
         if ($this->lexer->token['type'] === EmailLexer::S_DOT) {
             return new InvalidEmail(new DotAtStart(), $this->lexer->token['value']);
         }
         if ($this->lexer->token['type'] === EmailLexer::S_HYPHEN) {
             return new InvalidEmail(new DomainHyphened('After AT'), $this->lexer->token['value']);
->>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
         }
         return new ValidEmail();
     }
@@ -193,13 +155,8 @@ class DomainPart extends PartParser
                 return $notAllowedChars;
             }
 
-<<<<<<< HEAD
-            if (((array) $this->lexer->token)['type'] === EmailLexer::S_OPENPARENTHESIS ||
-                ((array) $this->lexer->token)['type'] === EmailLexer::S_CLOSEPARENTHESIS ) {
-=======
             if ($this->lexer->token['type'] === EmailLexer::S_OPENPARENTHESIS || 
                 $this->lexer->token['type'] === EmailLexer::S_CLOSEPARENTHESIS ) {
->>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
                 $hasComments = true;
                 $commentsResult = $this->parseComments();
 
@@ -214,11 +171,7 @@ class DomainPart extends PartParser
                 return $dotsResult;
             }
 
-<<<<<<< HEAD
-            if (((array) $this->lexer->token)['type'] === EmailLexer::S_OPENBRACKET) {
-=======
             if ($this->lexer->token['type'] === EmailLexer::S_OPENBRACKET) {
->>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
                 $literalResult = $this->parseDomainLiteral();
 
                 $this->addTLDWarnings($tldMissing);
@@ -235,15 +188,9 @@ class DomainPart extends PartParser
                 return $FwsResult;
             }
 
-<<<<<<< HEAD
-            $domain .= ((array) $this->lexer->token)['value'];
-
-            if (((array) $this->lexer->token)['type'] === EmailLexer::S_DOT && $this->lexer->isNextToken(EmailLexer::GENERIC)) {
-=======
             $domain .= $this->lexer->token['value'];
 
             if ($this->lexer->token['type'] === EmailLexer::S_DOT && $this->lexer->isNextToken(EmailLexer::GENERIC)) {
->>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
                 $tldMissing = false;
             }
 
@@ -253,11 +200,7 @@ class DomainPart extends PartParser
             }
             $this->lexer->moveNext();
 
-<<<<<<< HEAD
-        } while (null !== ((array) $this->lexer->token)['type']);
-=======
         } while (null !== $this->lexer->token['type']);
->>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
 
         $labelCheck = $this->checkLabelLength(true);
         if ($labelCheck->isInvalid()) {
@@ -269,22 +212,11 @@ class DomainPart extends PartParser
         return new ValidEmail();
     }
 
-<<<<<<< HEAD
-    /**
-     * @psalm-param array|Token<int, string> $token
-     */
-    private function checkNotAllowedChars($token) : Result
-    {
-        $notAllowed = [EmailLexer::S_BACKSLASH => true, EmailLexer::S_SLASH=> true];
-        if (isset($notAllowed[((array) $token)['type']])) {
-            return new InvalidEmail(new CharNotAllowed(), ((array) $token)['value']);
-=======
     private function checkNotAllowedChars(array $token) : Result
     {
         $notAllowed = [EmailLexer::S_BACKSLASH => true, EmailLexer::S_SLASH=> true];
         if (isset($notAllowed[$token['type']])) {
             return new InvalidEmail(new CharNotAllowed(), $token['value']);
->>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
         }
         return new ValidEmail();
     }
@@ -297,11 +229,7 @@ class DomainPart extends PartParser
         try {
             $this->lexer->find(EmailLexer::S_CLOSEBRACKET);
         } catch (\RuntimeException $e) {
-<<<<<<< HEAD
-            return new InvalidEmail(new ExpectingDomainLiteralClose(), ((array) $this->lexer->token)['value']);
-=======
             return new InvalidEmail(new ExpectingDomainLiteralClose(), $this->lexer->token['value']);
->>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
         }
 
         $domainLiteralParser = new DomainLiteralParser($this->lexer);
@@ -312,19 +240,6 @@ class DomainPart extends PartParser
 
     protected function checkDomainPartExceptions(array $prev, bool $hasComments) : Result
     {
-<<<<<<< HEAD
-        if (((array) $this->lexer->token)['type'] === EmailLexer::S_OPENBRACKET && $prev['type'] !== EmailLexer::S_AT) {
-            return new InvalidEmail(new ExpectingATEXT('OPENBRACKET not after AT'), ((array) $this->lexer->token)['value']);
-        }
-
-        if (((array) $this->lexer->token)['type'] === EmailLexer::S_HYPHEN && $this->lexer->isNextToken(EmailLexer::S_DOT)) {
-            return new InvalidEmail(new DomainHyphened('Hypen found near DOT'), ((array) $this->lexer->token)['value']);
-        }
-
-        if (((array) $this->lexer->token)['type'] === EmailLexer::S_BACKSLASH
-            && $this->lexer->isNextToken(EmailLexer::GENERIC)) {
-            return new InvalidEmail(new ExpectingATEXT('Escaping following "ATOM"'), ((array) $this->lexer->token)['value']);
-=======
         if ($this->lexer->token['type'] === EmailLexer::S_OPENBRACKET && $prev['type'] !== EmailLexer::S_AT) {
             return new InvalidEmail(new ExpectingATEXT('OPENBRACKET not after AT'), $this->lexer->token['value']);
         }
@@ -336,7 +251,6 @@ class DomainPart extends PartParser
         if ($this->lexer->token['type'] === EmailLexer::S_BACKSLASH
             && $this->lexer->isNextToken(EmailLexer::GENERIC)) {
             return new InvalidEmail(new ExpectingATEXT('Escaping following "ATOM"'), $this->lexer->token['value']);
->>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
         }
 
         return $this->validateTokens($hasComments);
@@ -355,13 +269,8 @@ class DomainPart extends PartParser
             $validDomainTokens[EmailLexer::S_CLOSEPARENTHESIS] = true;
         }
 
-<<<<<<< HEAD
-        if (!isset($validDomainTokens[((array) $this->lexer->token)['type']])) {
-            return new InvalidEmail(new ExpectingATEXT('Invalid token in domain: ' . ((array) $this->lexer->token)['value']), ((array) $this->lexer->token)['value']);
-=======
         if (!isset($validDomainTokens[$this->lexer->token['type']])) {
             return new InvalidEmail(new ExpectingATEXT('Invalid token in domain: ' . $this->lexer->token['value']), $this->lexer->token['value']);
->>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
         }
 
         return new ValidEmail();
@@ -369,15 +278,6 @@ class DomainPart extends PartParser
 
     private function checkLabelLength(bool $isEndOfDomain = false) : Result
     {
-<<<<<<< HEAD
-        if (((array) $this->lexer->token)['type'] === EmailLexer::S_DOT || $isEndOfDomain) {
-            if ($this->isLabelTooLong($this->label)) {
-                return new InvalidEmail(new LabelTooLong(), ((array) $this->lexer->token)['value']);
-            }
-            $this->label = '';
-        }
-        $this->label .= ((array) $this->lexer->token)['value'];
-=======
         if ($this->lexer->token['type'] === EmailLexer::S_DOT || $isEndOfDomain) {
             if ($this->isLabelTooLong($this->label)) {
                 return new InvalidEmail(new LabelTooLong(), $this->lexer->token['value']);
@@ -385,7 +285,6 @@ class DomainPart extends PartParser
             $this->label = '';
         }
         $this->label .= $this->lexer->token['value'];
->>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
         return new ValidEmail();
     }
 

@@ -574,11 +574,7 @@ final class Path
      */
     public static function isLocal(string $path): bool
     {
-<<<<<<< HEAD
-        return '' !== $path && false === strpos($path, '://');
-=======
         return '' !== $path && false === mb_strpos($path, '://');
->>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
     }
 
     /**
@@ -642,11 +638,7 @@ final class Path
 
                 // Prevent false positives for common prefixes
                 // see isBasePath()
-<<<<<<< HEAD
-                if (0 === strpos($path.'/', $basePath.'/')) {
-=======
                 if (0 === mb_strpos($path.'/', $basePath.'/')) {
->>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
                     // next path
                     continue 2;
                 }
@@ -674,11 +666,7 @@ final class Path
             if (null === $finalPath) {
                 // For first part we keep slashes, like '/top', 'C:\' or 'phar://'
                 $finalPath = $path;
-<<<<<<< HEAD
-                $wasScheme = (false !== strpos($path, '://'));
-=======
                 $wasScheme = (false !== mb_strpos($path, '://'));
->>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
                 continue;
             }
 
@@ -729,11 +717,7 @@ final class Path
         // Don't append a slash for the root "/", because then that root
         // won't be discovered as common prefix ("//" is not a prefix of
         // "/foobar/").
-<<<<<<< HEAD
-        return 0 === strpos($ofPath.'/', rtrim($basePath, '/').'/');
-=======
         return 0 === mb_strpos($ofPath.'/', rtrim($basePath, '/').'/');
->>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
     }
 
     /**
@@ -802,11 +786,7 @@ final class Path
         $length = mb_strlen($path);
 
         // Remove and remember root directory
-<<<<<<< HEAD
-        if (0 === strpos($path, '/')) {
-=======
         if (0 === mb_strpos($path, '/')) {
->>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
             $root .= '/';
             $path = $length > 1 ? mb_substr($path, 1) : '';
         } elseif ($length > 1 && ctype_alpha($path[0]) && ':' === $path[1]) {

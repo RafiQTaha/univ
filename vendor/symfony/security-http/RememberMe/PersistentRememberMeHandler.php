@@ -34,10 +34,7 @@ final class PersistentRememberMeHandler extends AbstractRememberMeHandler
 {
     private $tokenProvider;
     private $tokenVerifier;
-<<<<<<< HEAD
-=======
     private string $secret;
->>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
 
     public function __construct(TokenProviderInterface $tokenProvider, string $secret, UserProviderInterface $userProvider, RequestStack $requestStack, array $options, LoggerInterface $logger = null, TokenVerifierInterface $tokenVerifier = null)
     {
@@ -100,16 +97,6 @@ final class PersistentRememberMeHandler extends AbstractRememberMeHandler
             $this->tokenProvider->updateToken($series, $tokenValue, $tokenLastUsed);
         }
 
-<<<<<<< HEAD
-        $tokenValue = strtr(base64_encode(random_bytes(33)), '+/=', '-_~');
-        $tokenLastUsed = new \DateTime();
-        if ($this->tokenVerifier) {
-            $this->tokenVerifier->updateExistingToken($persistentToken, $tokenValue, $tokenLastUsed);
-        }
-        $this->tokenProvider->updateToken($series, $tokenValue, $tokenLastUsed);
-
-=======
->>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
         $this->createCookie($rememberMeDetails->withValue($series.':'.$tokenValue));
     }
 

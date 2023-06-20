@@ -29,13 +29,7 @@ final class Instantiator implements InstantiatorInterface
      * the method {@see \Serializable::unserialize()} when dealing with classes implementing
      * the {@see \Serializable} interface.
      */
-<<<<<<< HEAD
-    public const SERIALIZATION_FORMAT_USE_UNSERIALIZER = 'C';
-
-    /** @deprecated This constant will be private in 2.0 */
-=======
     public const SERIALIZATION_FORMAT_USE_UNSERIALIZER   = 'C';
->>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
     public const SERIALIZATION_FORMAT_AVOID_UNSERIALIZER = 'O';
 
     /**

@@ -58,11 +58,7 @@ class PhpFilesAdapter extends AbstractAdapter implements PruneableInterface
     {
         self::$startTime = self::$startTime ?? $_SERVER['REQUEST_TIME'] ?? time();
 
-<<<<<<< HEAD
-        return \function_exists('opcache_invalidate') && filter_var(\ini_get('opcache.enable'), \FILTER_VALIDATE_BOOLEAN) && (!\in_array(\PHP_SAPI, ['cli', 'phpdbg'], true) || filter_var(\ini_get('opcache.enable_cli'), \FILTER_VALIDATE_BOOLEAN));
-=======
         return \function_exists('opcache_invalidate') && filter_var(ini_get('opcache.enable'), \FILTER_VALIDATE_BOOLEAN) && (!\in_array(\PHP_SAPI, ['cli', 'phpdbg'], true) || filter_var(ini_get('opcache.enable_cli'), \FILTER_VALIDATE_BOOLEAN));
->>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
     }
 
     public function prune(): bool

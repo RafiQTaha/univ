@@ -68,11 +68,7 @@ class PropertyGenerator extends AbstractMemberGenerator
     /**
      * Generate from array
      *
-<<<<<<< HEAD
-     * @configkey name               string   [required] Class Name
-=======
      * @configkey name               string                                          [required] Class Name
->>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
      * @configkey const              bool
      * @configkey defaultvalue       null|bool|string|int|float|array|ValueGenerator
      * @configkey flags              int
@@ -140,21 +136,6 @@ class PropertyGenerator extends AbstractMemberGenerator
 
                     $property->setReadonly($value);
                     break;
-<<<<<<< HEAD
-                case 'type':
-                    if (! $value instanceof TypeGenerator) {
-                        throw new Exception\InvalidArgumentException(sprintf(
-                            '%s is expecting %s on key %s. Got %s',
-                            __METHOD__,
-                            TypeGenerator::class,
-                            $name,
-                            is_object($value) ? get_class($value) : gettype($value)
-                        ));
-                    }
-                    $property->setType($value);
-                    break;
-=======
->>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
             }
         }
 
@@ -240,23 +221,9 @@ class PropertyGenerator extends AbstractMemberGenerator
     }
 
     /**
-<<<<<<< HEAD
-     * @return ?PropertyValueGenerator
-     */
-    public function getDefaultValue()
-    {
-        return $this->defaultValue;
-    }
-
-    /**
-     * @param  PropertyValueGenerator|mixed  $defaultValue
-     * @param  string                        $defaultValueType
-     * @param  string                        $defaultValueOutputMode
-=======
      * @param PropertyValueGenerator|mixed $defaultValue
      * @param string                       $defaultValueType
      * @param string                       $defaultValueOutputMode
->>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
      * @return static
      */
     public function setDefaultValue(

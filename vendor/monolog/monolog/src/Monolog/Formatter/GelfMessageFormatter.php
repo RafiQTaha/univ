@@ -46,14 +46,6 @@ class GelfMessageFormatter extends NormalizerFormatter
      * @var int max length per field
      */
     protected $maxLength;
-<<<<<<< HEAD
-
-    /**
-     * @var int
-     */
-    private $gelfVersion = 2;
-=======
->>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
 
     /**
      * Translates Monolog log levels to Graylog2 log priorities.
@@ -86,13 +78,6 @@ class GelfMessageFormatter extends NormalizerFormatter
         $this->extraPrefix = is_null($extraPrefix) ? '' : $extraPrefix;
         $this->contextPrefix = $contextPrefix;
         $this->maxLength = is_null($maxLength) ? self::DEFAULT_MAX_LENGTH : $maxLength;
-<<<<<<< HEAD
-
-        if (method_exists(Message::class, 'setFacility')) {
-            $this->gelfVersion = 1;
-        }
-=======
->>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
     }
 
     /**
@@ -128,22 +113,6 @@ class GelfMessageFormatter extends NormalizerFormatter
             $message->setShortMessage(Utils::substr($record['message'], 0, $this->maxLength));
         }
 
-<<<<<<< HEAD
-        if ($this->gelfVersion === 1) {
-            if (isset($record['channel'])) {
-                $message->setFacility($record['channel']);
-            }
-            if (isset($extra['line'])) {
-                $message->setLine($extra['line']);
-                unset($extra['line']);
-            }
-            if (isset($extra['file'])) {
-                $message->setFile($extra['file']);
-                unset($extra['file']);
-            }
-        } else {
-            $message->setAdditional('facility', $record['channel']);
-=======
         if (isset($record['channel'])) {
             $message->setFacility($record['channel']);
         }
@@ -154,7 +123,6 @@ class GelfMessageFormatter extends NormalizerFormatter
         if (isset($extra['file'])) {
             $message->setFile($extra['file']);
             unset($extra['file']);
->>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
         }
 
         foreach ($extra as $key => $val) {
@@ -179,21 +147,11 @@ class GelfMessageFormatter extends NormalizerFormatter
             $message->setAdditional($this->contextPrefix . $key, $val);
         }
 
-<<<<<<< HEAD
-        if ($this->gelfVersion === 1) {
-            /** @phpstan-ignore-next-line */
-            if (null === $message->getFile() && isset($context['exception']['file'])) {
-                if (preg_match("/^(.+):([0-9]+)$/", $context['exception']['file'], $matches)) {
-                    $message->setFile($matches[1]);
-                    $message->setLine($matches[2]);
-                }
-=======
         /** @phpstan-ignore-next-line */
         if (null === $message->getFile() && isset($context['exception']['file'])) {
             if (preg_match("/^(.+):([0-9]+)$/", $context['exception']['file'], $matches)) {
                 $message->setFile($matches[1]);
                 $message->setLine($matches[2]);
->>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
             }
         }
 

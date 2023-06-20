@@ -497,8 +497,8 @@ class ComposerStaticInit88b32876d0f61340c450e7ef2b72e155
         ),
         'Psr\\Http\\Message\\' => 
         array (
-            0 => __DIR__ . '/..' . '/psr/http-factory/src',
-            1 => __DIR__ . '/..' . '/psr/http-message/src',
+            0 => __DIR__ . '/..' . '/psr/http-message/src',
+            1 => __DIR__ . '/..' . '/psr/http-factory/src',
         ),
         'Psr\\Http\\Client\\' => 
         array (
@@ -1017,10 +1017,7 @@ class ComposerStaticInit88b32876d0f61340c450e7ef2b72e155
         'Doctrine\\Common\\Cache\\Psr6\\DoctrineProvider' => __DIR__ . '/..' . '/doctrine/cache/lib/Doctrine/Common/Cache/Psr6/DoctrineProvider.php',
         'Doctrine\\Common\\Cache\\Psr6\\InvalidArgument' => __DIR__ . '/..' . '/doctrine/cache/lib/Doctrine/Common/Cache/Psr6/InvalidArgument.php',
         'Doctrine\\Common\\Cache\\Psr6\\TypedCacheItem' => __DIR__ . '/..' . '/doctrine/cache/lib/Doctrine/Common/Cache/Psr6/TypedCacheItem.php',
-<<<<<<< HEAD
-=======
         'Doctrine\\Common\\ClassLoader' => __DIR__ . '/..' . '/doctrine/common/lib/Doctrine/Common/ClassLoader.php',
->>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
         'Doctrine\\Common\\Collections\\AbstractLazyCollection' => __DIR__ . '/..' . '/doctrine/collections/lib/Doctrine/Common/Collections/AbstractLazyCollection.php',
         'Doctrine\\Common\\Collections\\ArrayCollection' => __DIR__ . '/..' . '/doctrine/collections/lib/Doctrine/Common/Collections/ArrayCollection.php',
         'Doctrine\\Common\\Collections\\Collection' => __DIR__ . '/..' . '/doctrine/collections/lib/Doctrine/Common/Collections/Collection.php',
@@ -1032,13 +1029,6 @@ class ComposerStaticInit88b32876d0f61340c450e7ef2b72e155
         'Doctrine\\Common\\Collections\\Expr\\ExpressionVisitor' => __DIR__ . '/..' . '/doctrine/collections/lib/Doctrine/Common/Collections/Expr/ExpressionVisitor.php',
         'Doctrine\\Common\\Collections\\Expr\\Value' => __DIR__ . '/..' . '/doctrine/collections/lib/Doctrine/Common/Collections/Expr/Value.php',
         'Doctrine\\Common\\Collections\\ExpressionBuilder' => __DIR__ . '/..' . '/doctrine/collections/lib/Doctrine/Common/Collections/ExpressionBuilder.php',
-<<<<<<< HEAD
-        'Doctrine\\Common\\Collections\\ReadableCollection' => __DIR__ . '/..' . '/doctrine/collections/lib/Doctrine/Common/Collections/ReadableCollection.php',
-        'Doctrine\\Common\\Collections\\Selectable' => __DIR__ . '/..' . '/doctrine/collections/lib/Doctrine/Common/Collections/Selectable.php',
-        'Doctrine\\Common\\EventArgs' => __DIR__ . '/..' . '/doctrine/event-manager/src/EventArgs.php',
-        'Doctrine\\Common\\EventManager' => __DIR__ . '/..' . '/doctrine/event-manager/src/EventManager.php',
-        'Doctrine\\Common\\EventSubscriber' => __DIR__ . '/..' . '/doctrine/event-manager/src/EventSubscriber.php',
-=======
         'Doctrine\\Common\\Collections\\Selectable' => __DIR__ . '/..' . '/doctrine/collections/lib/Doctrine/Common/Collections/Selectable.php',
         'Doctrine\\Common\\CommonException' => __DIR__ . '/..' . '/doctrine/common/lib/Doctrine/Common/CommonException.php',
         'Doctrine\\Common\\Comparable' => __DIR__ . '/..' . '/doctrine/common/lib/Doctrine/Common/Comparable.php',
@@ -1057,7 +1047,6 @@ class ComposerStaticInit88b32876d0f61340c450e7ef2b72e155
         'Doctrine\\Common\\Proxy\\ProxyGenerator' => __DIR__ . '/..' . '/doctrine/common/lib/Doctrine/Common/Proxy/ProxyGenerator.php',
         'Doctrine\\Common\\Util\\ClassUtils' => __DIR__ . '/..' . '/doctrine/common/lib/Doctrine/Common/Util/ClassUtils.php',
         'Doctrine\\Common\\Util\\Debug' => __DIR__ . '/..' . '/doctrine/common/lib/Doctrine/Common/Util/Debug.php',
->>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
         'Doctrine\\DBAL\\ArrayParameters\\Exception' => __DIR__ . '/..' . '/doctrine/dbal/src/ArrayParameters/Exception.php',
         'Doctrine\\DBAL\\ArrayParameters\\Exception\\MissingNamedParameter' => __DIR__ . '/..' . '/doctrine/dbal/src/ArrayParameters/Exception/MissingNamedParameter.php',
         'Doctrine\\DBAL\\ArrayParameters\\Exception\\MissingPositionalParameter' => __DIR__ . '/..' . '/doctrine/dbal/src/ArrayParameters/Exception/MissingPositionalParameter.php',
@@ -3501,10 +3490,7 @@ class ComposerStaticInit88b32876d0f61340c450e7ef2b72e155
         'PhpOffice\\PhpSpreadsheet\\Chart\\Title' => __DIR__ . '/..' . '/phpoffice/phpspreadsheet/src/PhpSpreadsheet/Chart/Title.php',
         'PhpOffice\\PhpSpreadsheet\\Collection\\Cells' => __DIR__ . '/..' . '/phpoffice/phpspreadsheet/src/PhpSpreadsheet/Collection/Cells.php',
         'PhpOffice\\PhpSpreadsheet\\Collection\\CellsFactory' => __DIR__ . '/..' . '/phpoffice/phpspreadsheet/src/PhpSpreadsheet/Collection/CellsFactory.php',
-<<<<<<< HEAD
-=======
         'PhpOffice\\PhpSpreadsheet\\Collection\\Memory' => __DIR__ . '/..' . '/phpoffice/phpspreadsheet/src/PhpSpreadsheet/Collection/Memory.php',
->>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
         'PhpOffice\\PhpSpreadsheet\\Comment' => __DIR__ . '/..' . '/phpoffice/phpspreadsheet/src/PhpSpreadsheet/Comment.php',
         'PhpOffice\\PhpSpreadsheet\\DefinedName' => __DIR__ . '/..' . '/phpoffice/phpspreadsheet/src/PhpSpreadsheet/DefinedName.php',
         'PhpOffice\\PhpSpreadsheet\\Document\\Properties' => __DIR__ . '/..' . '/phpoffice/phpspreadsheet/src/PhpSpreadsheet/Document/Properties.php',
@@ -3744,10 +3730,7 @@ class ComposerStaticInit88b32876d0f61340c450e7ef2b72e155
         'PhpOffice\\PhpSpreadsheet\\Writer\\Xlsx\\Workbook' => __DIR__ . '/..' . '/phpoffice/phpspreadsheet/src/PhpSpreadsheet/Writer/Xlsx/Workbook.php',
         'PhpOffice\\PhpSpreadsheet\\Writer\\Xlsx\\Worksheet' => __DIR__ . '/..' . '/phpoffice/phpspreadsheet/src/PhpSpreadsheet/Writer/Xlsx/Worksheet.php',
         'PhpOffice\\PhpSpreadsheet\\Writer\\Xlsx\\WriterPart' => __DIR__ . '/..' . '/phpoffice/phpspreadsheet/src/PhpSpreadsheet/Writer/Xlsx/WriterPart.php',
-<<<<<<< HEAD
-=======
         'PhpOffice\\PhpSpreadsheet\\Writer\\Xlsx\\Xlfn' => __DIR__ . '/..' . '/phpoffice/phpspreadsheet/src/PhpSpreadsheet/Writer/Xlsx/Xlfn.php',
->>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
         'PhpParser\\Builder' => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser/Builder.php',
         'PhpParser\\BuilderFactory' => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser/BuilderFactory.php',
         'PhpParser\\BuilderHelpers' => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser/BuilderHelpers.php',
@@ -4504,7 +4487,6 @@ class ComposerStaticInit88b32876d0f61340c450e7ef2b72e155
         'Sensio\\Bundle\\FrameworkExtraBundle\\Security\\ExpressionLanguage' => __DIR__ . '/..' . '/sensio/framework-extra-bundle/src/Security/ExpressionLanguage.php',
         'Sensio\\Bundle\\FrameworkExtraBundle\\SensioFrameworkExtraBundle' => __DIR__ . '/..' . '/sensio/framework-extra-bundle/src/SensioFrameworkExtraBundle.php',
         'Sensio\\Bundle\\FrameworkExtraBundle\\Templating\\TemplateGuesser' => __DIR__ . '/..' . '/sensio/framework-extra-bundle/src/Templating/TemplateGuesser.php',
-        'Stringable' => __DIR__ . '/..' . '/myclabs/php-enum/stubs/Stringable.php',
         'Symfony\\Bridge\\Doctrine\\CacheWarmer\\ProxyCacheWarmer' => __DIR__ . '/..' . '/symfony/doctrine-bridge/CacheWarmer/ProxyCacheWarmer.php',
         'Symfony\\Bridge\\Doctrine\\ContainerAwareEventManager' => __DIR__ . '/..' . '/symfony/doctrine-bridge/ContainerAwareEventManager.php',
         'Symfony\\Bridge\\Doctrine\\DataCollector\\DoctrineDataCollector' => __DIR__ . '/..' . '/symfony/doctrine-bridge/DataCollector/DoctrineDataCollector.php',

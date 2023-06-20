@@ -28,21 +28,13 @@ use Monolog\Logger;
  */
 class RedisPubSubHandler extends AbstractProcessingHandler
 {
-<<<<<<< HEAD
-    /** @var \Predis\Client<\Predis\Client>|\Redis */
-=======
     /** @var \Predis\Client|\Redis */
->>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
     private $redisClient;
     /** @var string */
     private $channelKey;
 
     /**
-<<<<<<< HEAD
-     * @param \Predis\Client<\Predis\Client>|\Redis $redis The redis instance
-=======
      * @param \Predis\Client|\Redis $redis The redis instance
->>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
      * @param string                $key   The channel key to publish records to
      */
     public function __construct($redis, string $key, $level = Logger::DEBUG, bool $bubble = true)

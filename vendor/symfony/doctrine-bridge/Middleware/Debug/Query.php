@@ -59,13 +59,8 @@ class Query
     }
 
     /**
-<<<<<<< HEAD
-     * @param string|int $param
-     * @param mixed      $value
-=======
      * @param string|int                 $param
      * @param string|int|float|bool|null $value
->>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
      */
     public function setValue($param, $value, int $type): void
     {

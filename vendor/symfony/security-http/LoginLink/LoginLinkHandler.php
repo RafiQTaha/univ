@@ -31,11 +31,7 @@ final class LoginLinkHandler implements LoginLinkHandlerInterface
     private $urlGenerator;
     private $userProvider;
     private array $options;
-<<<<<<< HEAD
-    private $signatureHasher;
-=======
     private $signatureHashUtil;
->>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
 
     public function __construct(UrlGeneratorInterface $urlGenerator, UserProviderInterface $userProvider, SignatureHasher $signatureHashUtil, array $options)
     {

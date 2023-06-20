@@ -39,10 +39,6 @@ use PhpConsole\Helper;
  * @author Sergey Barbushin https://www.linkedin.com/in/barbushin
  *
  * @phpstan-import-type Record from \Monolog\Logger
-<<<<<<< HEAD
- * @deprecated Since 2.8.0 and 3.2.0, PHPConsole is abandoned and thus we will drop this handler in Monolog 4
-=======
->>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
  */
 class PHPConsoleHandler extends AbstractProcessingHandler
 {
