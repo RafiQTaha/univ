@@ -67,6 +67,7 @@ final class CurlResponse implements ResponseInterface, StreamableInterface
         $this->timeout = $options['timeout'] ?? null;
         $this->info['http_method'] = $method;
         $this->info['user_data'] = $options['user_data'] ?? null;
+        $this->info['max_duration'] = $options['max_duration'] ?? null;
         $this->info['start_time'] = $this->info['start_time'] ?? microtime(true);
         $info = &$this->info;
         $headers = &$this->headers;
@@ -317,7 +318,7 @@ final class CurlResponse implements ResponseInterface, StreamableInterface
                 $id = (int) $ch = $info['handle'];
                 $waitFor = @curl_getinfo($ch, \CURLINFO_PRIVATE) ?: '_0';
 
-                if (\in_array($result, [\CURLE_SEND_ERROR, \CURLE_RECV_ERROR, /*CURLE_HTTP2*/ 16, /*CURLE_HTTP2_STREAM*/ 92], true) && $waitFor[1] && 'C' !== $waitFor[0]) {
+                if (\in_array($result, [\CURLE_SEND_ERROR, \CURLE_RECV_ERROR, /* CURLE_HTTP2 */ 16, /* CURLE_HTTP2_STREAM */ 92], true) && $waitFor[1] && 'C' !== $waitFor[0]) {
                     curl_multi_remove_handle($multi->handle, $ch);
                     $waitFor[1] = (string) ((int) $waitFor[1] - 1); // decrement the retry counter
                     curl_setopt($ch, \CURLOPT_PRIVATE, $waitFor);

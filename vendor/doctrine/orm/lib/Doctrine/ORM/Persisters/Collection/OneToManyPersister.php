@@ -14,7 +14,9 @@ use Doctrine\ORM\Utility\PersisterHelper;
 use function array_merge;
 use function array_reverse;
 use function array_values;
+use function assert;
 use function implode;
+use function is_string;
 
 /**
  * Persister for one-to-many collections.
@@ -22,7 +24,7 @@ use function implode;
 class OneToManyPersister extends AbstractCollectionPersister
 {
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @return int|null
      */
@@ -48,7 +50,7 @@ class OneToManyPersister extends AbstractCollectionPersister
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function update(PersistentCollection $collection)
     {
@@ -59,7 +61,7 @@ class OneToManyPersister extends AbstractCollectionPersister
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function get(PersistentCollection $collection, $index)
     {
@@ -85,7 +87,7 @@ class OneToManyPersister extends AbstractCollectionPersister
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function count(PersistentCollection $collection)
     {
@@ -101,7 +103,7 @@ class OneToManyPersister extends AbstractCollectionPersister
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function slice(PersistentCollection $collection, $offset, $length = null)
     {
@@ -112,7 +114,7 @@ class OneToManyPersister extends AbstractCollectionPersister
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function containsKey(PersistentCollection $collection, $key)
     {
@@ -136,7 +138,7 @@ class OneToManyPersister extends AbstractCollectionPersister
     }
 
      /**
-      * {@inheritdoc}
+      * {@inheritDoc}
       */
     public function contains(PersistentCollection $collection, $element)
     {
@@ -156,16 +158,14 @@ class OneToManyPersister extends AbstractCollectionPersister
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function loadCriteria(PersistentCollection $collection, Criteria $criteria)
     {
         throw new BadMethodCallException('Filtering a collection by Criteria is not supported by this CollectionPersister.');
     }
 
-    /**
-     * @throws DBALException
-     */
+    /** @throws DBALException */
     private function deleteEntityCollection(PersistentCollection $collection): int
     {
         $mapping     = $collection->getMapping();
@@ -225,7 +225,9 @@ class OneToManyPersister extends AbstractCollectionPersister
             . ' FROM ' . $targetClass->name . ' t0 WHERE t0.' . $mapping['mappedBy'] . ' = :owner'
         )->setParameter('owner', $collection->getOwner());
 
-        $statement  = 'INSERT INTO ' . $tempTable . ' (' . $idColumnList . ') ' . $query->getSQL();
+        $sql = $query->getSQL();
+        assert(is_string($sql));
+        $statement  = 'INSERT INTO ' . $tempTable . ' (' . $idColumnList . ') ' . $sql;
         $parameters = array_values($sourceClass->getIdentifierValues($collection->getOwner()));
         $numDeleted = $this->conn->executeStatement($statement, $parameters);
 

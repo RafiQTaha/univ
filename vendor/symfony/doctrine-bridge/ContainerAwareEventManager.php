@@ -33,7 +33,7 @@ class ContainerAwareEventManager extends EventManager
     private array $initialized = [];
     private bool $initializedSubscribers = false;
     private array $methods = [];
-    private $container;
+    private ContainerInterface $container;
 
     /**
      * @param list<string|EventSubscriber|array{string[], string|object}> $subscriberIds List of subscribers, subscriber ids, or [events, listener] tuples
@@ -56,7 +56,7 @@ class ContainerAwareEventManager extends EventManager
             return;
         }
 
-        $eventArgs = $eventArgs ?? EventArgs::getEmptyInstance();
+        $eventArgs ??= EventArgs::getEmptyInstance();
 
         if (!isset($this->initialized[$eventName])) {
             $this->initializeListeners($eventName);
@@ -74,15 +74,23 @@ class ContainerAwareEventManager extends EventManager
      */
     public function getListeners($event = null): array
     {
+        if (null === $event) {
+            return $this->getAllListeners();
+        }
         if (!$this->initializedSubscribers) {
             $this->initializeSubscribers();
         }
-        if (null !== $event) {
-            if (!isset($this->initialized[$event])) {
-                $this->initializeListeners($event);
-            }
+        if (!isset($this->initialized[$event])) {
+            $this->initializeListeners($event);
+        }
 
-            return $this->listeners[$event];
+        return $this->listeners[$event];
+    }
+
+    public function getAllListeners(): array
+    {
+        if (!$this->initializedSubscribers) {
+            $this->initializeSubscribers();
         }
 
         foreach ($this->listeners as $event => $listeners) {
