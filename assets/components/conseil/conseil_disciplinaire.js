@@ -167,7 +167,8 @@ const Toast = Swal.mixin({
             $("#datatables_disciplinaire_inscription tbody tr").removeClass('active_databales');
             $(this).addClass('active_databales');
             id_sanction = $(this).attr('id');
-            getConvocationInfos()
+            getConvocationInfos();
+            getNotificationInfos();
         }
         console.log(id_sanction)
         
@@ -339,6 +340,27 @@ const Toast = Swal.mixin({
         $('#incident').html(incident).select2();
         $('#sanction').html(sanction).select2();
     })
+
+    $("body").on('change','#Modifieragressions', async function (){
+        // alert('hi');
+        const id_agression = $(this).val();
+        let incident = ""
+        let sanction = ""
+        if(id_agression != "") {
+            const request = await axios.get('/api/sousagression/'+id_agression);
+            incident = request.data
+            const requestsanction = await axios.get('/api/sanction/'+id_agression);
+            sanction = requestsanction.data
+
+            console.log(sanction);
+        } else {
+            $('#Modifierincident').html("").select2();
+            $('#Modifiersanction').html("").select2();
+        }
+        $('#Modifierincident').html(incident).select2();
+        $('#Modifiersanction').html(sanction).select2();
+    })
+
     $('body').on('click','#newSanction', function (){
         let newSanction = $(this).parent().parent();
         newSanction.append(
@@ -350,6 +372,21 @@ const Toast = Swal.mixin({
         console.log(newSanction)
     })
     $('body').on('click','#removenewSanction', function (){
+        $(this).parent().remove();
+    })
+
+
+    $('body').on('click','#ModifnewSanction', function (){
+        let newSanction = $(this).parent().parent();
+        newSanction.append(
+            `<div class="d-flex  mt-2">
+            <input type="text" name="autre_sanction" id="autre_sanction" class="form-control" placeholder="Autre Sanction">
+            <button type="button" class="btn btn-danger  ml-2" id="ModifremovenewSanction"><i class="fas fa-minus"></i></button>
+          </div>`
+        );
+        console.log(newSanction)
+    })
+    $('body').on('click','#ModifremovenewSanction', function (){
         $(this).parent().remove();
     })
     
@@ -490,6 +527,25 @@ const Toast = Swal.mixin({
             icon.removeClass('fa-spinner fa-spin ').addClass("fa-edit");
         })
     }
+    
+    const getNotificationInfos = () => {
+        let modalAlert =  $("#modifier_org-modal .modal-body .alert");
+        modalAlert.remove();
+        const icon = $("#modifier_notification i");
+        icon.removeClass('fa-edit').addClass("fa-spinner fa-spin");
+        axios.get('/conseil/disciplinaire/getnotificationInfos/'+id_sanction)
+        .then(success => {
+            icon.removeClass('fa-spinner fa-spin').addClass("fa-edit");
+            // console.log(success);
+            $('#notification_update_modal #notification_update').html(success.data)
+            $('#notification_update_modal #notification_update select').select2()
+        })
+        .catch(err => {
+            // console.log(err)
+            icon.removeClass('fa-spinner fa-spin ').addClass("fa-edit");
+        })
+    }
+
     $('body').on('click','#modifier_convocation',function (e) {
         e.preventDefault();
         if(!id_sanction){
@@ -500,6 +556,19 @@ const Toast = Swal.mixin({
             return;
         }
         $("#convocation_update_modal").modal('show');
+    });
+
+    $('body').on('click','#modifier_notification',function (e) {
+        e.preventDefault();
+        // alert('hi');
+        if(!id_sanction){
+            Toast.fire({
+                icon: 'error',
+                title: 'Veuillez selection une ligne!',
+            })
+            return;
+        }
+        $("#notification_update_modal").modal('show');
     });
     
     $("body").on("submit", '#convocation_update', async function (e) {
@@ -534,5 +603,48 @@ const Toast = Swal.mixin({
         }, 4000);
     });
     /////////// End Updating Convocation Block ///////////////
+
+    $("body").on("submit", '#notification_update', async function (e) {
+        e.preventDefault();
+        // alert('test');
+        let formData = new FormData($(this)[0]);
+
+        let inputs = $('#notification_update #autre_sanction_text input');
+        var autreSanctions = []
+        inputs.map(async function(input)  {
+            if( $.trim($(this).val())  != "") {
+                autreSanctions.push($(this).val());
+            } 
+        }) 
+        console.log(autreSanctions)
+        formData.append("newSanctions",  JSON.stringify(autreSanctions));
+
+        let modalAlert =  $("#notification_update_modal .modal-body .alert");
+        modalAlert.remove();
+        const icon = $("#notification_update .btn i");
+        icon.removeClass('fa-check-circle').addClass("fa-spinner fa-spin");
+        try{
+            const request = await  axios.post('/conseil/disciplinaire/modifier_notification/'+id_sanction,formData)
+            const data = request.data;
+            $("#notification_update_modal .modal-body").prepend(
+                `<div class="alert alert-success">${data}</div>`
+            ); 
+            icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin");
+            // id_sanction = false;
+            // table_reglement.ajax.reload(null, false);
+            // window.open('/conseil/disciplinaire/reglementprint/'+id_reglement, '_blank');
+        }catch(error){
+            const message = error.response.data;
+            console.log(error, error.response); 
+            modalAlert.remove();
+            $("#notification_update_modal .modal-body").prepend(
+                `<div class="alert alert-danger">${message}</div>`
+            );
+            icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
+        }
+        setTimeout(() => {
+           $("#notification_update_modal .modal-body .alert").remove();
+        }, 4000);
+    });
 })
 
