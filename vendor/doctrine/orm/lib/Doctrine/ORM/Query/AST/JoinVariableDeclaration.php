@@ -28,7 +28,7 @@ class JoinVariableDeclaration extends Node
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function dispatch($walker)
     {

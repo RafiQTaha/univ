@@ -192,17 +192,6 @@ class ConseildisciplinaireController extends AbstractController
         return new JsonResponse("Convocation bien cree",200);
     }
     
-    #[Route('/getnotificationInfos/{insSanction}', name: 'getnotificationInfos')]
-    public function getnotificationInfos(InsSanctionner $insSanction): Response
-    {
-        // dd($insSanction->getSanction()[0]);
-        $html = $this->render('conseil/pages/update_notification.html.twig', [
-            'notification' => $insSanction,
-            'agressions' =>  $this->em->getRepository(Agression::class)->findBy(['active'=>1]),
-        ])->getContent();
-        return new JsonResponse($html, 200);
-    }
-
     #[Route('/getconvocationInfos/{insSanction}', name: 'getconvocationInfos')]
     public function getconvocationInfos(InsSanctionner $insSanction): Response
     {
@@ -232,57 +221,9 @@ class ConseildisciplinaireController extends AbstractController
         return new JsonResponse('Convocation bien modifier', 200);        
     }
 
-    #[Route('/modifier_notification/{id}', name: 'modifier_notification')]
-    public function modifier_notification(Request $request,InsSanctionner $insSanction): Response
-    { 
-        if ($insSanction->getActive() == 0 || $insSanction->getValide() == 1 ) {
-            return new JsonResponse('Convocation est déja valide ou bien Annuler!', 500);
-        }
-        if (($request->get('incident') == "" && $request->get('autre_incident') == "") || ( !$request->get('sanction') && $request->get('newSanctions') == "" ) || $request->get('date_decision') == "") {
-            return new JsonResponse("Merci de remplir tout les champs!",500);
-        }
-        if ($request->get('autre_incident') != "") {
-            $insSanction->setAutreAgression($request->get('autre_incident'));
-            $insSanction->setAgression(null);
-        }else{
-            $insSanction->setAutreAgression(null);
-            $insSanction->setAgression($this->em->getRepository(SousAgression::class)->find($request->get('incident')));
-        }
-        
-        if ($request->get('sanction')) {
-            $insSanctionSanctions = $insSanction->getSanction();
-            $insSanctionSanctions->clear();
-            foreach ($request->get('sanction') as $sanction) {
-                $insSanction->addSanction($this->em->getRepository(Sanction::class)->find($sanction));
-            }
-        }
-        $newSanctions = json_decode($request->get('newSanctions'));
-        if (json_decode($request->get('newSanctions')) != null) {
-            $insSanction->setAutreSanction([]);
-            $insSanction->setAutreSanction(json_decode($request->get('newSanctions')));
-        }
-        $insSanction->setDateDecision(new DateTime($request->get('date_decision')));
-        $insSanction->setUserUpdated($this->getUser());
-        $insSanction->setUpdated(new DateTime('now'));
-        $insSanction->setSansSuite(0);
-        $this->em->flush();
-        return new JsonResponse('Notification bien modifier', 200);        
-    }
-
     #[Route('/convocation_validation/{insSanction}', name: 'convocation_validation')]
     public function convocation_validation(InsSanctionner $insSanction): Response
     {
-        if ($insSanction->getSansSuite() == 1) {
-            return new JsonResponse("La convocation est déja sans suite !!",500);
-        }
-        // return new JsonResponse("C'est bon",200);
-
-
-
-        if ( ($insSanction->getAgression() == null && $insSanction->getAutreAgression() == null)) {
-            return new JsonResponse("Merci d'ajouter les sanctions d'abord !",500);
-        }
-
         if (!$insSanction || $insSanction->getActive() == 0) {
             return new JsonResponse("Convocation Introuvable!",500);
         }
@@ -347,9 +288,9 @@ class ConseildisciplinaireController extends AbstractController
             $insSanction->setAutreAgression(null);
             $insSanction->setAgression($this->em->getRepository(SousAgression::class)->find($request->get('incident')));
         }
-        // if ($insSanction->getValide() == 0) {
-        //     return new JsonResponse("Merci de valider la convocation!",500);
-        // }
+        if ($insSanction->getValide() == 0) {
+            return new JsonResponse("Merci de valider la convocation!",500);
+        }
         if ($request->get('sanction')) {
             $insSanctionSanctions = $insSanction->getSanction();
             $insSanctionSanctions->clear();

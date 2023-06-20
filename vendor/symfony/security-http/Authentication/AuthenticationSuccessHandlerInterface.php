@@ -27,7 +27,9 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 interface AuthenticationSuccessHandlerInterface
 {
     /**
-     * Usually called by AuthenticatorInterface::onAuthenticationSuccess() implementations.
+     * This is called when an interactive authentication attempt succeeds. This
+     * is called by authentication listeners inheriting from
+     * AbstractAuthenticationListener.
      */
     public function onAuthenticationSuccess(Request $request, TokenInterface $token): Response;
 }

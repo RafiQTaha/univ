@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ### 2.9.1 (2023-02-06)
 
   * Fixed Logger not being serializable anymore (#1792)
@@ -35,6 +36,8 @@
   * Marked the reusable `Monolog\Test\TestCase` class as `@internal` to make sure PHPStorm does not show it above PHPUnit, you may still use it to test your own handlers/etc though (#1677)
   * Fixed RotatingFileHandler issue when the date format contained slashes (#1671)
 
+=======
+>>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
 ### 2.6.0 (2022-05-10)
 
   * Deprecated `SwiftMailerHandler`, use `SymfonyMailerHandler` instead

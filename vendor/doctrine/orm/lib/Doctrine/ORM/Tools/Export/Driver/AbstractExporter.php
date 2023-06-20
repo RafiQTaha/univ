@@ -39,7 +39,9 @@ abstract class AbstractExporter
     /** @var bool */
     protected $_overwriteExistingFiles = false;
 
-    /** @param string|null $dir */
+    /**
+     * @param string|null $dir
+     */
     public function __construct($dir = null)
     {
         Deprecation::trigger(

@@ -24,12 +24,20 @@ class CountWalker extends TreeWalkerAdapter
      */
     public const HINT_DISTINCT = 'doctrine_paginator.distinct';
 
+    /**
+     * Walks down a SelectStatement AST node, modifying it to retrieve a COUNT.
+     *
+     * @return void
+     *
+     * @throws RuntimeException
+     */
     public function walkSelectStatement(SelectStatement $AST)
     {
         if ($AST->havingClause) {
             throw new RuntimeException('Cannot count query that uses a HAVING clause. Use the output walkers for pagination');
         }
 
+        $queryComponents = $this->_getQueryComponents();
         // Get the root entity and alias from the AST fromClause
         $from = $AST->fromClause->identificationVariableDeclarations;
 
@@ -39,7 +47,7 @@ class CountWalker extends TreeWalkerAdapter
 
         $fromRoot            = reset($from);
         $rootAlias           = $fromRoot->rangeVariableDeclaration->aliasIdentificationVariable;
-        $rootClass           = $this->getMetadataForDqlAlias($rootAlias);
+        $rootClass           = $queryComponents[$rootAlias]['metadata'];
         $identifierFieldName = $rootClass->getSingleIdentifierFieldName();
 
         $pathType = PathExpression::TYPE_STATE_FIELD;

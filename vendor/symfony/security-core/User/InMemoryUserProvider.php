@@ -97,7 +97,11 @@ class InMemoryUserProvider implements UserProviderInterface
      *
      * @throws UserNotFoundException if user whose given username does not exist
      */
+<<<<<<< HEAD
     private function getUser(string $username)/* : InMemoryUser */
+=======
+    private function getUser(string $username)/*: InMemoryUser */
+>>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
     {
         if (!isset($this->users[strtolower($username)])) {
             $ex = new UserNotFoundException(sprintf('Username "%s" does not exist.', $username));

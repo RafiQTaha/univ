@@ -56,7 +56,7 @@ class DebugClassLoader
         'null' => 'null',
         'resource' => 'resource',
         'boolean' => 'bool',
-        'true' => 'true',
+        'true' => 'bool',
         'false' => 'false',
         'integer' => 'int',
         'array' => 'array',
@@ -73,8 +73,6 @@ class DebugClassLoader
         'static' => 'static',
         '$this' => 'static',
         'list' => 'array',
-        'class-string' => 'string',
-        'never' => 'never',
     ];
 
     private const BUILTIN_RETURN_TYPES = [
@@ -92,9 +90,6 @@ class DebugClassLoader
         'parent' => true,
         'mixed' => true,
         'static' => true,
-        'null' => true,
-        'true' => true,
-        'never' => true,
     ];
 
     private const MAGIC_METHODS = [
@@ -769,12 +764,15 @@ class DebugClassLoader
             return;
         }
 
+<<<<<<< HEAD
         if ('null' === $types) {
             self::$returnTypes[$class][$method] = ['null', 'null', $class, $filename];
 
             return;
         }
 
+=======
+>>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
         if ($nullable = 0 === strpos($types, 'null|')) {
             $types = substr($types, 5);
         } elseif ($nullable = '|null' === substr($types, -5)) {

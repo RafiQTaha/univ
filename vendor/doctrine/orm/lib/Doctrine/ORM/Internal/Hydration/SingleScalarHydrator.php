@@ -17,7 +17,7 @@ use function key;
 class SingleScalarHydrator extends AbstractHydrator
 {
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     protected function hydrateAllData()
     {

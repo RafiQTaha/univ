@@ -237,10 +237,6 @@ class AutowirePass extends AbstractRecursivePass
         foreach ($parameters as $index => $parameter) {
             $this->defaultArgument->names[$index] = $parameter->name;
 
-            if (\array_key_exists($parameter->name, $arguments)) {
-                $arguments[$index] = $arguments[$parameter->name];
-                unset($arguments[$parameter->name]);
-            }
             if (\array_key_exists($index, $arguments) && '' !== $arguments[$index]) {
                 continue;
             }
@@ -342,7 +338,7 @@ class AutowirePass extends AbstractRecursivePass
 
         // it's possible index 1 was set, then index 0, then 2, etc
         // make sure that we re-order so they're injected as expected
-        ksort($arguments, \SORT_NATURAL);
+        ksort($arguments);
 
         return $arguments;
     }

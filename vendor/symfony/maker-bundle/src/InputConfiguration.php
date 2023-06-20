@@ -13,7 +13,7 @@ namespace Symfony\Bundle\MakerBundle;
 
 final class InputConfiguration
 {
-    private array $nonInteractiveArguments = [];
+    private $nonInteractiveArguments = [];
 
     /**
      * Call in MakerInterface::configureCommand() to disable the automatic interactive

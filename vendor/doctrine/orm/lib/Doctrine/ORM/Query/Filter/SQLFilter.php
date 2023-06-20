@@ -39,7 +39,9 @@ abstract class SQLFilter
      */
     private $parameters = [];
 
-    /** @param EntityManagerInterface $em The entity manager. */
+    /**
+     * @param EntityManagerInterface $em The entity manager.
+     */
     final public function __construct(EntityManagerInterface $em)
     {
         $this->em = $em;

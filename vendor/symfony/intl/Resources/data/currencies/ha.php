@@ -352,7 +352,7 @@ return [
         ],
         'MDL' => [
             0 => 'MDL',
-            1 => 'Kuɗaɗen Moldova',
+            1 => 'kuɗaɗen Moldova',
         ],
         'MGA' => [
             0 => 'MGA',

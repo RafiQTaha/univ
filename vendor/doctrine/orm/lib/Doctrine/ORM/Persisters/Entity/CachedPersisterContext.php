@@ -69,7 +69,9 @@ class CachedPersisterContext
      */
     public $handlesLimits;
 
-    /** @param bool $handlesLimits */
+    /**
+     * @param bool $handlesLimits
+     */
     public function __construct(
         ClassMetadata $class,
         ResultSetMapping $rsm,

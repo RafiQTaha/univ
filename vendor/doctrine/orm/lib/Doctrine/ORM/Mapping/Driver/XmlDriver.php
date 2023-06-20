@@ -5,13 +5,11 @@ declare(strict_types=1);
 namespace Doctrine\ORM\Mapping\Driver;
 
 use Doctrine\Common\Collections\Criteria;
-use Doctrine\Deprecations\Deprecation;
 use Doctrine\ORM\Mapping\Builder\EntityListenerBuilder;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\Mapping\MappingException;
 use Doctrine\Persistence\Mapping\ClassMetadata as PersistenceClassMetadata;
 use Doctrine\Persistence\Mapping\Driver\FileDriver;
-use DOMDocument;
 use InvalidArgumentException;
 use LogicException;
 use SimpleXMLElement;
@@ -24,9 +22,6 @@ use function explode;
 use function extension_loaded;
 use function file_get_contents;
 use function in_array;
-use function libxml_clear_errors;
-use function libxml_get_errors;
-use function libxml_use_internal_errors;
 use function simplexml_load_string;
 use function sprintf;
 use function str_replace;
@@ -41,13 +36,10 @@ class XmlDriver extends FileDriver
 {
     public const DEFAULT_FILE_EXTENSION = '.dcm.xml';
 
-    /** @var bool */
-    private $isXsdValidationEnabled;
-
     /**
      * {@inheritDoc}
      */
-    public function __construct($locator, $fileExtension = self::DEFAULT_FILE_EXTENSION, bool $isXsdValidationEnabled = false)
+    public function __construct($locator, $fileExtension = self::DEFAULT_FILE_EXTENSION)
     {
         if (! extension_loaded('simplexml')) {
             throw new LogicException(sprintf(
@@ -55,25 +47,6 @@ class XmlDriver extends FileDriver
                 . ' Please configure PHP with SimpleXML or choose a different metadata driver.'
             ));
         }
-
-        if (! $isXsdValidationEnabled) {
-            Deprecation::trigger(
-                'doctrine/orm',
-                'https://github.com/doctrine/orm/pull/6728',
-                sprintf(
-                    'Using XML mapping driver with XSD validation disabled is deprecated'
-                    . ' and will not be supported in Doctrine ORM 3.0.'
-                )
-            );
-        }
-
-        if ($isXsdValidationEnabled && ! extension_loaded('dom')) {
-            throw new LogicException(sprintf(
-                'XSD validation cannot be enabled because the DOM extension is missing.'
-            ));
-        }
-
-        $this->isXsdValidationEnabled = $isXsdValidationEnabled;
 
         parent::__construct($locator, $fileExtension);
     }
@@ -204,19 +177,14 @@ class XmlDriver extends FileDriver
                 // Evaluate <discriminator-column...>
                 if (isset($xmlRoot->{'discriminator-column'})) {
                     $discrColumn = $xmlRoot->{'discriminator-column'};
-                    $columnDef   = [
-                        'name' => isset($discrColumn['name']) ? (string) $discrColumn['name'] : null,
-                        'type' => isset($discrColumn['type']) ? (string) $discrColumn['type'] : 'string',
-                        'length' => isset($discrColumn['length']) ? (int) $discrColumn['length'] : 255,
-                        'columnDefinition' => isset($discrColumn['column-definition']) ? (string) $discrColumn['column-definition'] : null,
-                        'enumType' => isset($discrColumn['enum-type']) ? (string) $discrColumn['enum-type'] : null,
-                    ];
-
-                    if (isset($discrColumn['options'])) {
-                        $columnDef['options'] = $this->parseOptions($discrColumn['options']->children());
-                    }
-
-                    $metadata->setDiscriminatorColumn($columnDef);
+                    $metadata->setDiscriminatorColumn(
+                        [
+                            'name' => isset($discrColumn['name']) ? (string) $discrColumn['name'] : null,
+                            'type' => isset($discrColumn['type']) ? (string) $discrColumn['type'] : 'string',
+                            'length' => isset($discrColumn['length']) ? (string) $discrColumn['length'] : 255,
+                            'columnDefinition' => isset($discrColumn['column-definition']) ? (string) $discrColumn['column-definition'] : null,
+                        ]
+                    );
                 } else {
                     $metadata->setDiscriminatorColumn(['name' => 'dtype', 'type' => 'string', 'length' => 255]);
                 }
@@ -388,7 +356,7 @@ class XmlDriver extends FileDriver
             }
 
             if (isset($idElement['length'])) {
-                $mapping['length'] = (int) $idElement['length'];
+                $mapping['length'] = (string) $idElement['length'];
             }
 
             if (isset($idElement['column'])) {
@@ -621,10 +589,6 @@ class XmlDriver extends FileDriver
                         $joinTable['schema'] = (string) $joinTableElement['schema'];
                     }
 
-                    if (isset($joinTableElement->options)) {
-                        $joinTable['options'] = $this->parseOptions($joinTableElement->options->children());
-                    }
-
                     foreach ($joinTableElement->{'join-columns'}->{'join-column'} as $joinColumnElement) {
                         $joinTable['joinColumns'][] = $this->joinColumnToArray($joinColumnElement);
                     }
@@ -703,10 +667,6 @@ class XmlDriver extends FileDriver
                         'name'      => (string) $joinTableElement['name'],
                         'schema'    => (string) $joinTableElement['schema'],
                     ];
-
-                    if (isset($joinTableElement->options)) {
-                        $joinTable['options'] = $this->parseOptions($joinTableElement->options->children());
-                    }
 
                     if (isset($joinTableElement->{'join-columns'})) {
                         foreach ($joinTableElement->{'join-columns'}->{'join-column'} as $joinColumnElement) {
@@ -812,8 +772,7 @@ class XmlDriver extends FileDriver
      *                   unique?: bool,
      *                   nullable?: bool,
      *                   onDelete?: string,
-     *                   columnDefinition?: string,
-     *                   options?: mixed[]
+     *                   columnDefinition?: string
      *               }
      */
     private function joinColumnToArray(SimpleXMLElement $joinColumnElement): array
@@ -837,10 +796,6 @@ class XmlDriver extends FileDriver
 
         if (isset($joinColumnElement['column-definition'])) {
             $joinColumn['columnDefinition'] = (string) $joinColumnElement['column-definition'];
-        }
-
-        if (isset($joinColumnElement['options'])) {
-            $joinColumn['options'] = $this->parseOptions($joinColumnElement['options']->children());
         }
 
         return $joinColumn;
@@ -971,7 +926,7 @@ class XmlDriver extends FileDriver
         foreach ($cascadeElement->children() as $action) {
             // According to the JPA specifications, XML uses "cascade-persist"
             // instead of "persist". Here, both variations
-            // are supported because YAML, Annotation and Attribute use "persist"
+            // are supported because both YAML and Annotation use "persist"
             // and we want to make sure that this driver doesn't need to know
             // anything about the supported cascading actions
             $cascades[] = str_replace('cascade-', '', $action->getName());
@@ -985,11 +940,9 @@ class XmlDriver extends FileDriver
      */
     protected function loadMappingFile($file)
     {
-        $this->validateMapping($file);
         $result = [];
         // Note: we do not use `simplexml_load_file()` because of https://bugs.php.net/bug.php?id=62577
         $xmlElement = simplexml_load_string(file_get_contents($file));
-        assert($xmlElement !== false);
 
         if (isset($xmlElement->entity)) {
             foreach ($xmlElement->entity as $entityElement) {
@@ -1012,27 +965,6 @@ class XmlDriver extends FileDriver
         }
 
         return $result;
-    }
-
-    private function validateMapping(string $file): void
-    {
-        if (! $this->isXsdValidationEnabled) {
-            return;
-        }
-
-        $backedUpErrorSetting = libxml_use_internal_errors(true);
-
-        try {
-            $document = new DOMDocument();
-            $document->load($file);
-
-            if (! $document->schemaValidate(__DIR__ . '/../../../../../doctrine-mapping.xsd')) {
-                throw MappingException::fromLibXmlErrors(libxml_get_errors());
-            }
-        } finally {
-            libxml_clear_errors();
-            libxml_use_internal_errors($backedUpErrorSetting);
-        }
     }
 
     /**

@@ -23,31 +23,41 @@ class CacheConfiguration
     /** @var QueryCacheValidator|null */
     private $queryValidator;
 
-    /** @return CacheFactory|null */
+    /**
+     * @return CacheFactory|null
+     */
     public function getCacheFactory()
     {
         return $this->cacheFactory;
     }
 
-    /** @return void */
+    /**
+     * @return void
+     */
     public function setCacheFactory(CacheFactory $factory)
     {
         $this->cacheFactory = $factory;
     }
 
-    /** @return CacheLogger|null */
+    /**
+     * @return CacheLogger|null
+     */
     public function getCacheLogger()
     {
          return $this->cacheLogger;
     }
 
-    /** @return void */
+    /**
+     * @return void
+     */
     public function setCacheLogger(CacheLogger $logger)
     {
         $this->cacheLogger = $logger;
     }
 
-    /** @return RegionsConfiguration */
+    /**
+     * @return RegionsConfiguration
+     */
     public function getRegionsConfiguration()
     {
         if ($this->regionsConfig === null) {
@@ -57,13 +67,17 @@ class CacheConfiguration
         return $this->regionsConfig;
     }
 
-    /** @return void */
+    /**
+     * @return void
+     */
     public function setRegionsConfiguration(RegionsConfiguration $regionsConfig)
     {
         $this->regionsConfig = $regionsConfig;
     }
 
-    /** @return QueryCacheValidator */
+    /**
+     * @return QueryCacheValidator
+     */
     public function getQueryValidator()
     {
         if ($this->queryValidator === null) {
@@ -75,7 +89,9 @@ class CacheConfiguration
          return $this->queryValidator;
     }
 
-    /** @return void */
+    /**
+     * @return void
+     */
     public function setQueryValidator(QueryCacheValidator $validator)
     {
         $this->queryValidator = $validator;

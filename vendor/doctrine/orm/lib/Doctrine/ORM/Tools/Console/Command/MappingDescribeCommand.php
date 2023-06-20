@@ -39,9 +39,6 @@ use const JSON_UNESCAPED_UNICODE;
  * Show information about mapped entities.
  *
  * @link    www.doctrine-project.org
- *
- * @psalm-import-type AssociationMapping from ClassMetadata
- * @psalm-import-type FieldMapping from ClassMetadata
  */
 final class MappingDescribeCommand extends AbstractEntityManagerCommand
 {
@@ -65,7 +62,7 @@ EOT
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $ui = (new SymfonyStyle($input, $output))->getErrorStyle();
+        $ui = new SymfonyStyle($input, $output);
 
         $entityManager = $this->getEntityManager($input);
 
@@ -249,7 +246,7 @@ EOT
     /**
      * Format the association mappings
      *
-     * @psalm-param array<string, FieldMapping|AssociationMapping> $propertyMappings
+     * @psalm-param array<string, array<string, mixed>> $propertyMappings
      *
      * @return string[][]
      * @psalm-return list<array{0: string, 1: string}>

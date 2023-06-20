@@ -20,6 +20,8 @@ interface CollectionHydrator
      */
     public function buildCacheEntry(ClassMetadata $metadata, CollectionCacheKey $key, $collection);
 
-    /** @return mixed[]|null */
+    /**
+     * @return mixed[]|null
+     */
     public function loadCacheEntry(ClassMetadata $metadata, CollectionCacheKey $key, CollectionCacheEntry $entry, PersistentCollection $collection);
 }

@@ -1,21 +1,6 @@
 CHANGELOG
 =========
 
-6.3
----
-
- * Add support for mocking the `enum_exists` function
-
-6.2
----
-
- * Add support for mocking the `hrtime()` function
-
-6.1
----
-
- * Add option `ignoreFile` to configure a file that lists deprecation messages to ignore
-
 6.0
 ---
 

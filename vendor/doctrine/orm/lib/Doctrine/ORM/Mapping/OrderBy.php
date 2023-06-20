@@ -13,15 +13,14 @@ use Doctrine\Common\Annotations\Annotation\NamedArgumentConstructor;
  * @Target("PROPERTY")
  */
 #[Attribute(Attribute::TARGET_PROPERTY)]
-final class OrderBy implements MappingAttribute
+final class OrderBy implements Annotation
 {
-    /**
-     * @var array<string>
-     * @readonly
-     */
+    /** @var array<string> */
     public $value;
 
-    /** @param array<string> $value */
+    /**
+     * @param array<string> $value
+     */
     public function __construct(array $value)
     {
         $this->value = $value;

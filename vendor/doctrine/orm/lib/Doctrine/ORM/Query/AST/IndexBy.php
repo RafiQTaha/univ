@@ -27,7 +27,7 @@ class IndexBy extends Node
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function dispatch($sqlWalker)
     {

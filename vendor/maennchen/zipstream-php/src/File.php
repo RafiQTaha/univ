@@ -1,11 +1,16 @@
 <?php
-
 declare(strict_types=1);
 
 namespace ZipStream;
 
+<<<<<<< HEAD
 use HashContext;
 use Psr\Http\Message\StreamInterface;
+=======
+use Psr\Http\Message\StreamInterface;
+use RuntimeException;
+use ZipStream\Exception\EncodingException;
+>>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
 use ZipStream\Exception\FileNotFoundException;
 use ZipStream\Exception\FileNotReadableException;
 use ZipStream\Exception\OverflowException;
@@ -15,6 +20,7 @@ use ZipStream\Option\Version;
 
 class File
 {
+<<<<<<< HEAD
     public const HASH_ALGORITHM = 'crc32b';
 
     public const BIT_ZERO_HEADER = 0x0008;
@@ -47,6 +53,37 @@ class File
      */
     public $zlen;
 
+=======
+    const HASH_ALGORITHM = 'crc32b';
+
+    const BIT_ZERO_HEADER = 0x0008;
+    const BIT_EFS_UTF8 = 0x0800;
+
+    const COMPUTE = 1;
+    const SEND = 2;
+
+    private const CHUNKED_READ_BLOCK_SIZE = 1048576;
+
+    /**
+     * @var string
+     */
+    public $name;
+
+    /**
+     * @var FileOptions
+     */
+    public $opt;
+
+    /**
+     * @var Bigint
+     */
+    public $len;
+    /**
+     * @var Bigint
+     */
+    public $zlen;
+
+>>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
     /** @var  int */
     public $crc;
 
@@ -81,7 +118,11 @@ class File
     private $deflate;
 
     /**
+<<<<<<< HEAD
      * @var HashContext
+=======
+     * @var \HashContext
+>>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
      */
     private $hash;
 
@@ -120,7 +161,11 @@ class File
         } else {
             $this->method = $this->zip->opt->getLargeFileMethod();
 
+<<<<<<< HEAD
             $stream = new Stream(fopen($path, 'rb'));
+=======
+            $stream = new DeflateStream(fopen($path, 'rb'));
+>>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
             $this->processStream($stream);
             $stream->close();
         }
@@ -165,17 +210,32 @@ class File
             // Sets Bit 11: Language encoding flag (EFS).  If this bit is set,
             // the filename and comment fields for this file
             // MUST be encoded using UTF-8. (see APPENDIX D)
+<<<<<<< HEAD
             if (mb_check_encoding($name, 'UTF-8') &&
                 mb_check_encoding($comment, 'UTF-8')) {
                 $this->bits |= self::BIT_EFS_UTF8;
             }
+=======
+            if (!mb_check_encoding($name, 'UTF-8') ||
+                !mb_check_encoding($comment, 'UTF-8')) {
+                throw new EncodingException(
+                    'File name and comment should use UTF-8 ' .
+                    'if one of them does not fit into ASCII range.'
+                );
+            }
+            $this->bits |= self::BIT_EFS_UTF8;
+>>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
         }
 
         if ($this->method->equals(Method::DEFLATE())) {
             $this->version = Version::DEFLATE();
         }
 
+<<<<<<< HEAD
         $force = (bool)($this->bits & self::BIT_ZERO_HEADER) &&
+=======
+        $force = (boolean)($this->bits & self::BIT_ZERO_HEADER) &&
+>>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
             $this->zip->opt->isEnableZip64();
 
         $footer = $this->buildZip64ExtraBlock($force);
@@ -228,6 +288,7 @@ class File
     }
 
     /**
+<<<<<<< HEAD
      * Create and send data descriptor footer for this file.
      *
      * @return void
@@ -247,10 +308,109 @@ class File
                 [$sizeFormat, $this->len],      // Length of original data
             ];
 
+=======
+     * Convert a UNIX timestamp to a DOS timestamp.
+     *
+     * @param int $when
+     * @return int DOS Timestamp
+     */
+    final protected static function dosTime(int $when): int
+    {
+        // get date array for timestamp
+        $d = getdate($when);
+
+        // set lower-bound on dates
+        if ($d['year'] < 1980) {
+            $d = array(
+                'year' => 1980,
+                'mon' => 1,
+                'mday' => 1,
+                'hours' => 0,
+                'minutes' => 0,
+                'seconds' => 0
+            );
+        }
+
+        // remove extra years from 1980
+        $d['year'] -= 1980;
+
+        // return date string
+        return
+            ($d['year'] << 25) |
+            ($d['mon'] << 21) |
+            ($d['mday'] << 16) |
+            ($d['hours'] << 11) |
+            ($d['minutes'] << 5) |
+            ($d['seconds'] >> 1);
+    }
+
+    protected function buildZip64ExtraBlock(bool $force = false): string
+    {
+
+        $fields = [];
+        if ($this->len->isOver32($force)) {
+            $fields[] = ['P', $this->len];          // Length of original data
+        }
+
+        if ($this->len->isOver32($force)) {
+            $fields[] = ['P', $this->zlen];         // Length of compressed data
+        }
+
+        if ($this->ofs->isOver32()) {
+            $fields[] = ['P', $this->ofs];          // Offset of local header record
+        }
+
+        if (!empty($fields)) {
+            if (!$this->zip->opt->isEnableZip64()) {
+                throw new OverflowException();
+            }
+
+            array_unshift(
+                $fields,
+                ['v', 0x0001],                      // 64 bit extension
+                ['v', count($fields) * 8]             // Length of data block
+            );
+            $this->version = Version::ZIP64();
+        }
+
+        if ($this->bits & self::BIT_EFS_UTF8) {
+            // Put the tricky entry to
+            // force Linux unzip to lookup EFS flag.
+            $fields[] = ['v', 0x5653];  // Choose 'ZS' for proprietary usage
+            $fields[] = ['v', 0x0000];  // zero length
+        }
+
+        return ZipStream::packFields($fields);
+    }
+
+    /**
+     * Create and send data descriptor footer for this file.
+     *
+     * @return void
+     */
+
+    public function addFileFooter(): void
+    {
+
+        if ($this->bits & self::BIT_ZERO_HEADER) {
+            // compressed and uncompressed size
+            $sizeFormat = 'V';
+            if ($this->zip->opt->isEnableZip64()) {
+                $sizeFormat = 'P';
+            }
+            $fields = [
+                ['V', ZipStream::DATA_DESCRIPTOR_SIGNATURE],
+                ['V', $this->crc],              // CRC32
+                [$sizeFormat, $this->zlen],     // Length of compressed data
+                [$sizeFormat, $this->len],      // Length of original data
+            ];
+
+>>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
             $footer = ZipStream::packFields($fields);
             $this->zip->send($footer);
         } else {
             $footer = '';
+<<<<<<< HEAD
         }
         $this->totalLength = $this->hlen->add($this->zlen)->add(Bigint::init(strlen($footer)));
         $this->zip->addToCdr($this);
@@ -275,6 +435,121 @@ class File
      */
     public function getCdrFile(): string
     {
+=======
+        }
+        $this->totalLength = $this->hlen->add($this->zlen)->add(Bigint::init(strlen($footer)));
+        $this->zip->addToCdr($this);
+    }
+
+    public function processStream(StreamInterface $stream): void
+    {
+        $this->zlen = new Bigint();
+        $this->len = new Bigint();
+
+        if ($this->zip->opt->isZeroHeader()) {
+            $this->processStreamWithZeroHeader($stream);
+        } else {
+            $this->processStreamWithComputedHeader($stream);
+        }
+    }
+
+    protected function processStreamWithZeroHeader(StreamInterface $stream): void
+    {
+        $this->bits |= self::BIT_ZERO_HEADER;
+        $this->addFileHeader();
+        $this->readStream($stream, self::COMPUTE | self::SEND);
+        $this->addFileFooter();
+    }
+
+    protected function readStream(StreamInterface $stream, ?int $options = null): void
+    {
+        $this->deflateInit();
+        $total = 0;
+        $size = $this->opt->getSize();
+        while (!$stream->eof() && ($size === 0 || $total < $size)) {
+            $data = $stream->read(self::CHUNKED_READ_BLOCK_SIZE);
+            $total += strlen($data);
+            if ($size > 0 && $total > $size) {
+                $data = substr($data, 0 , strlen($data)-($total - $size));
+            }
+            $this->deflateData($stream, $data, $options);
+            if ($options & self::SEND) {
+                $this->zip->send($data);
+            }
+        }
+        $this->deflateFinish($options);
+    }
+
+    protected function deflateInit(): void
+    {
+        $hash = hash_init(self::HASH_ALGORITHM);
+        $this->hash = $hash;
+        if ($this->method->equals(Method::DEFLATE())) {
+            $this->deflate = deflate_init(
+                ZLIB_ENCODING_RAW,
+                ['level' => $this->opt->getDeflateLevel()]
+            );
+        }
+    }
+
+    protected function deflateData(StreamInterface $stream, string &$data, ?int $options = null): void
+    {
+        if ($options & self::COMPUTE) {
+            $this->len = $this->len->add(Bigint::init(strlen($data)));
+            hash_update($this->hash, $data);
+        }
+        if ($this->deflate) {
+            $data = deflate_add(
+                $this->deflate,
+                $data,
+                $stream->eof()
+                    ? ZLIB_FINISH
+                    : ZLIB_NO_FLUSH
+            );
+        }
+        if ($options & self::COMPUTE) {
+            $this->zlen = $this->zlen->add(Bigint::init(strlen($data)));
+        }
+    }
+
+    protected function deflateFinish(?int $options = null): void
+    {
+        if ($options & self::COMPUTE) {
+            $this->crc = hexdec(hash_final($this->hash));
+        }
+    }
+
+    protected function processStreamWithComputedHeader(StreamInterface $stream): void
+    {
+        $this->readStream($stream, self::COMPUTE);
+        $stream->rewind();
+
+        // incremental compression with deflate_add
+        // makes this second read unnecessary
+        // but it is only available from PHP 7.0
+        if (!$this->deflate && $stream instanceof DeflateStream && $this->method->equals(Method::DEFLATE())) {
+            $stream->addDeflateFilter($this->opt);
+            $this->zlen = new Bigint();
+            while (!$stream->eof()) {
+                $data = $stream->read(self::CHUNKED_READ_BLOCK_SIZE);
+                $this->zlen = $this->zlen->add(Bigint::init(strlen($data)));
+            }
+            $stream->rewind();
+        }
+
+        $this->addFileHeader();
+        $this->readStream($stream, self::SEND);
+        $this->addFileFooter();
+    }
+
+    /**
+     * Send CDR record for specified file.
+     *
+     * @return string
+     */
+    public function getCdrFile(): string
+    {
+>>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
         $name = static::filterFilename($this->name);
 
         // get attributes
@@ -301,7 +576,11 @@ class File
             ['v', 0],                               // Disk number
             ['v', 0],                               // Internal File Attributes
             ['V', 32],                              // External File Attributes
+<<<<<<< HEAD
             ['V', $this->ofs->getLowFF()],           // Relative offset of local header
+=======
+            ['V', $this->ofs->getLowFF()]           // Relative offset of local header
+>>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
         ];
 
         // pack fields, then append name and comment
@@ -316,6 +595,7 @@ class File
     public function getTotalLength(): Bigint
     {
         return $this->totalLength;
+<<<<<<< HEAD
     }
 
     /**
@@ -466,5 +746,7 @@ class File
         $this->addFileHeader();
         $this->readStream($stream, self::SEND);
         $this->addFileFooter();
+=======
+>>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
     }
 }

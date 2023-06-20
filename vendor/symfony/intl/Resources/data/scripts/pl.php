@@ -2,7 +2,6 @@
 
 return [
     'Names' => [
-        'Adlm' => 'adlam',
         'Arab' => 'arabskie',
         'Aran' => 'nastaliq',
         'Armi' => 'armi',
@@ -22,7 +21,7 @@ return [
         'Cans' => 'zunifikowane symbole kanadyjskich autochtonów',
         'Cari' => 'karyjskie',
         'Cham' => 'czamskie',
-        'Cher' => 'czirokeskie',
+        'Cher' => 'czirokeski',
         'Cirt' => 'cirth',
         'Copt' => 'koptyjskie',
         'Cprt' => 'cypryjskie',
@@ -86,7 +85,7 @@ return [
         'Mymr' => 'birmańskie',
         'Nkoo' => 'n’ko',
         'Ogam' => 'ogham',
-        'Olck' => 'ol ciki',
+        'Olck' => 'ol chiki',
         'Orkh' => 'orchońskie',
         'Orya' => 'orija',
         'Osma' => 'osmanya',
@@ -100,7 +99,6 @@ return [
         'Prti' => 'partyjski inskrypcyjny',
         'Qaag' => 'zawgyi',
         'Rjng' => 'rejang',
-        'Rohg' => 'hanifi',
         'Roro' => 'rongorongo',
         'Runr' => 'runiczne',
         'Samr' => 'samarytański',
@@ -111,7 +109,7 @@ return [
         'Sinh' => 'syngaleskie',
         'Sund' => 'sundajskie',
         'Sylo' => 'syloti nagri',
-        'Syrc' => 'syryjskie',
+        'Syrc' => 'syryjski',
         'Syre' => 'syriacki estrangelo',
         'Syrj' => 'syryjski (odmiana zachodnia)',
         'Syrn' => 'syryjski (odmiana wschodnia)',

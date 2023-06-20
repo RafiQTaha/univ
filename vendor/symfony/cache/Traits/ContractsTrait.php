@@ -45,7 +45,11 @@ trait ContractsTrait
     public function setCallbackWrapper(?callable $callbackWrapper): callable
     {
         if (!isset($this->callbackWrapper)) {
+<<<<<<< HEAD
             $this->callbackWrapper = \Closure::fromCallable([LockRegistry::class, 'compute']);
+=======
+            $this->callbackWrapper = \Closure::fromCallable([LockRegistry::class, 'compute']);;
+>>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
 
             if (\in_array(\PHP_SAPI, ['cli', 'phpdbg'], true)) {
                 $this->setCallbackWrapper(null);

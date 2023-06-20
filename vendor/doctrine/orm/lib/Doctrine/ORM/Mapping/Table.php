@@ -13,42 +13,27 @@ use Doctrine\Common\Annotations\Annotation\NamedArgumentConstructor;
  * @Target("CLASS")
  */
 #[Attribute(Attribute::TARGET_CLASS)]
-final class Table implements MappingAttribute
+final class Table implements Annotation
 {
-    /**
-     * @var string|null
-     * @readonly
-     */
+    /** @var string|null */
     public $name;
 
-    /**
-     * @var string|null
-     * @readonly
-     */
+    /** @var string|null */
     public $schema;
 
-    /**
-     * @var array<Index>|null
-     * @readonly
-     */
+    /** @var array<\Doctrine\ORM\Mapping\Index>|null */
     public $indexes;
 
-    /**
-     * @var array<UniqueConstraint>|null
-     * @readonly
-     */
+    /** @var array<\Doctrine\ORM\Mapping\UniqueConstraint>|null */
     public $uniqueConstraints;
 
-    /**
-     * @var array<string,mixed>
-     * @readonly
-     */
+    /** @var array<string,mixed> */
     public $options = [];
 
     /**
-     * @param array<Index>|null            $indexes
-     * @param array<UniqueConstraint>|null $uniqueConstraints
-     * @param array<string,mixed>          $options
+     * @param array<\Doctrine\ORM\Mapping\Index>            $indexes
+     * @param array<\Doctrine\ORM\Mapping\UniqueConstraint> $uniqueConstraints
+     * @param array<string,mixed>                           $options
      */
     public function __construct(
         ?string $name = null,

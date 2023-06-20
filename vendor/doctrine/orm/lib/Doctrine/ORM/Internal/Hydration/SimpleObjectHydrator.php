@@ -6,11 +6,9 @@ namespace Doctrine\ORM\Internal\Hydration;
 
 use Doctrine\ORM\Internal\SQLResultCasing;
 use Doctrine\ORM\Mapping\ClassMetadata;
-use Doctrine\ORM\Mapping\MappingException;
 use Doctrine\ORM\Query;
 use Exception;
 use RuntimeException;
-use ValueError;
 
 use function array_keys;
 use function array_search;
@@ -28,7 +26,7 @@ class SimpleObjectHydrator extends AbstractHydrator
     private $class;
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     protected function prepare()
     {
@@ -44,7 +42,7 @@ class SimpleObjectHydrator extends AbstractHydrator
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     protected function cleanup()
     {
@@ -55,7 +53,7 @@ class SimpleObjectHydrator extends AbstractHydrator
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     protected function hydrateAllData()
     {
@@ -71,7 +69,7 @@ class SimpleObjectHydrator extends AbstractHydrator
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     protected function hydrateRowData(array $row, array &$result)
     {
@@ -140,21 +138,6 @@ class SimpleObjectHydrator extends AbstractHydrator
             if (isset($cacheKeyInfo['type'])) {
                 $type  = $cacheKeyInfo['type'];
                 $value = $type->convertToPHPValue($value, $this->_platform);
-            }
-
-            if ($value !== null && isset($cacheKeyInfo['enumType'])) {
-                $originalValue = $value;
-                try {
-                    $value = $this->buildEnum($originalValue, $cacheKeyInfo['enumType']);
-                } catch (ValueError $e) {
-                    throw MappingException::invalidEnumValue(
-                        $entityName,
-                        $cacheKeyInfo['fieldName'],
-                        (string) $originalValue,
-                        $cacheKeyInfo['enumType'],
-                        $e
-                    );
-                }
             }
 
             $fieldName = $cacheKeyInfo['fieldName'];

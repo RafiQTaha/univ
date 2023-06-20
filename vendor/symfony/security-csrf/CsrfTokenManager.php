@@ -136,9 +136,6 @@ class CsrfTokenManager implements CsrfTokenManagerInterface
             return $value;
         }
         $key = base64_decode(strtr($parts[1], '-_', '+/'));
-        if ('' === $key || false === $key) {
-            return $value;
-        }
         $value = base64_decode(strtr($parts[2], '-_', '+/'));
 
         return $this->xor($value, $key);

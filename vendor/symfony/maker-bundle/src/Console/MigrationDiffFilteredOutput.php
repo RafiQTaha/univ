@@ -14,9 +14,9 @@ namespace Symfony\Bundle\MakerBundle\Console;
 use Symfony\Component\Console\Formatter\OutputFormatterInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-// look for the "string|iterable" type on OutputInterface::write()
-// @legacy - Use MigrationDiffFilteredOutput_php8 when Symfony 5.4 is no longer supported
-if (!(new \ReflectionMethod(OutputInterface::class, 'write'))->getParameters()[0]->getType()) {
+if (\PHP_VERSION_ID < 80000
+    // look for the "string|iterable" type on OutputInterface::write()
+    || !(new \ReflectionMethod(OutputInterface::class, 'write'))->getParameters()[0]->getType()) {
     class MigrationDiffFilteredOutput implements OutputInterface
     {
         use BaseMakerMigrationDiffFilteredOuputTrait;
@@ -47,12 +47,13 @@ if (!(new \ReflectionMethod(OutputInterface::class, 'write'))->getParameters()[0
 
 trait BaseMakerMigrationDiffFilteredOuputTrait
 {
-    private string $buffer = '';
-    private bool $previousLineWasRemoved = false;
+    private $output;
+    private $buffer = '';
+    private $previousLineWasRemoved = false;
 
-    public function __construct(
-        private OutputInterface $output,
-    ) {
+    public function __construct(OutputInterface $output)
+    {
+        $this->output = $output;
     }
 
     public function _write($messages, bool $newline = false, $options = 0)
@@ -143,7 +144,7 @@ trait BaseMakerMigrationDiffFilteredOuputTrait
 
             $this->previousLineWasRemoved = false;
             foreach ($hiddenPhrases as $hiddenPhrase) {
-                if (str_contains($message, $hiddenPhrase)) {
+                if (false !== strpos($message, $hiddenPhrase)) {
                     $this->previousLineWasRemoved = true;
                     unset($messages[$key]);
 

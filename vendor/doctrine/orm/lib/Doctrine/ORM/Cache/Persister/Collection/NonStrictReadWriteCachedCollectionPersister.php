@@ -12,7 +12,7 @@ use function spl_object_id;
 class NonStrictReadWriteCachedCollectionPersister extends AbstractCollectionPersister
 {
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function afterTransactionComplete()
     {
@@ -32,7 +32,7 @@ class NonStrictReadWriteCachedCollectionPersister extends AbstractCollectionPers
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function afterTransactionRolledBack()
     {
@@ -40,7 +40,7 @@ class NonStrictReadWriteCachedCollectionPersister extends AbstractCollectionPers
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function delete(PersistentCollection $collection)
     {
@@ -53,7 +53,7 @@ class NonStrictReadWriteCachedCollectionPersister extends AbstractCollectionPers
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function update(PersistentCollection $collection)
     {

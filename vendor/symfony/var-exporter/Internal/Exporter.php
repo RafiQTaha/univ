@@ -108,7 +108,12 @@ class Exporter
                 $arrayValue = (array) $value;
             } elseif ($value instanceof \Serializable
                 || $value instanceof \__PHP_Incomplete_Class
-                || \PHP_VERSION_ID < 80200 && $value instanceof \DatePeriod
+                || $value instanceof \DatePeriod
+                || (\PHP_VERSION_ID >= 80200 && (
+                    $value instanceof \DateTimeInterface
+                    || $value instanceof \DateTimeZone
+                    || $value instanceof \DateInterval
+                ))
             ) {
                 ++$objectsCount;
                 $objectsPool[$value] = [$id = \count($objectsPool), serialize($value), [], 0];
@@ -149,7 +154,6 @@ class Exporter
                 }
                 if (null !== $sleep) {
                     if (!isset($sleep[$n]) || ($i && $c !== $class)) {
-                        unset($arrayValue[$name]);
                         continue;
                     }
                     $sleep[$n] = false;
@@ -164,9 +168,6 @@ class Exporter
                         trigger_error(sprintf('serialize(): "%s" returned as member variable from __sleep() but does not exist', $n), \E_USER_NOTICE);
                     }
                 }
-            }
-            if (method_exists($class, '__unserialize')) {
-                $properties = $arrayValue;
             }
 
             prepare_value:
@@ -198,7 +199,7 @@ class Exporter
             case true === $value: return 'true';
             case null === $value: return 'null';
             case '' === $value: return "''";
-            case $value instanceof \UnitEnum: return '\\'.ltrim(var_export($value, true), '\\');
+            case $value instanceof \UnitEnum: return ltrim(var_export($value, true), '\\');
         }
 
         if ($value instanceof Reference) {

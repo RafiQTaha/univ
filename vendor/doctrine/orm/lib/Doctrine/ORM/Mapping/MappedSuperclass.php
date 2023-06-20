@@ -14,16 +14,17 @@ use Doctrine\ORM\EntityRepository;
  * @Target("CLASS")
  */
 #[Attribute(Attribute::TARGET_CLASS)]
-final class MappedSuperclass implements MappingAttribute
+final class MappedSuperclass implements Annotation
 {
     /**
      * @var string|null
      * @psalm-var class-string<EntityRepository>|null
-     * @readonly
      */
     public $repositoryClass;
 
-    /** @psalm-param class-string<EntityRepository>|null $repositoryClass */
+    /**
+     * @psalm-param class-string<EntityRepository>|null $repositoryClass
+     */
     public function __construct(?string $repositoryClass = null)
     {
         $this->repositoryClass = $repositoryClass;

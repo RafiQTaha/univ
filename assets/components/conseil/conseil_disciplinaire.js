@@ -167,8 +167,7 @@ const Toast = Swal.mixin({
             $("#datatables_disciplinaire_inscription tbody tr").removeClass('active_databales');
             $(this).addClass('active_databales');
             id_sanction = $(this).attr('id');
-            getConvocationInfos();
-            getNotificationInfos();
+            getConvocationInfos()
         }
         console.log(id_sanction)
         
@@ -340,27 +339,6 @@ const Toast = Swal.mixin({
         $('#incident').html(incident).select2();
         $('#sanction').html(sanction).select2();
     })
-
-    $("body").on('change','#Modifieragressions', async function (){
-        // alert('hi');
-        const id_agression = $(this).val();
-        let incident = ""
-        let sanction = ""
-        if(id_agression != "") {
-            const request = await axios.get('/api/sousagression/'+id_agression);
-            incident = request.data
-            const requestsanction = await axios.get('/api/sanction/'+id_agression);
-            sanction = requestsanction.data
-
-            console.log(sanction);
-        } else {
-            $('#Modifierincident').html("").select2();
-            $('#Modifiersanction').html("").select2();
-        }
-        $('#Modifierincident').html(incident).select2();
-        $('#Modifiersanction').html(sanction).select2();
-    })
-
     $('body').on('click','#newSanction', function (){
         let newSanction = $(this).parent().parent();
         newSanction.append(
@@ -372,21 +350,6 @@ const Toast = Swal.mixin({
         console.log(newSanction)
     })
     $('body').on('click','#removenewSanction', function (){
-        $(this).parent().remove();
-    })
-
-
-    $('body').on('click','#ModifnewSanction', function (){
-        let newSanction = $(this).parent().parent();
-        newSanction.append(
-            `<div class="d-flex  mt-2">
-            <input type="text" name="autre_sanction" id="autre_sanction" class="form-control" placeholder="Autre Sanction">
-            <button type="button" class="btn btn-danger  ml-2" id="ModifremovenewSanction"><i class="fas fa-minus"></i></button>
-          </div>`
-        );
-        console.log(newSanction)
-    })
-    $('body').on('click','#ModifremovenewSanction', function (){
         $(this).parent().remove();
     })
     
@@ -527,7 +490,10 @@ const Toast = Swal.mixin({
             icon.removeClass('fa-spinner fa-spin ').addClass("fa-edit");
         })
     }
+<<<<<<< HEAD
 
+=======
+>>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
     $('body').on('click','#modifier_convocation',function (e) {
         e.preventDefault();
         if(!id_sanction){
@@ -572,6 +538,7 @@ const Toast = Swal.mixin({
         }, 4000);
     });
     /////////// End Updating Convocation Block ///////////////
+<<<<<<< HEAD
 
 
     
@@ -646,5 +613,7 @@ const Toast = Swal.mixin({
            $("#notification_update_modal .modal-body .alert").remove();
         }, 4000);
     });
+=======
+>>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
 })
 

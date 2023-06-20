@@ -15,7 +15,9 @@ use function preg_match;
  */
 class Composite extends Base
 {
-    /** @return string */
+    /**
+     * @return string
+     */
     public function __toString()
     {
         if ($this->count() === 1) {
@@ -31,7 +33,9 @@ class Composite extends Base
         return implode($this->separator, $components);
     }
 
-    /** @param string|object $part */
+    /**
+     * @param string|object $part
+     */
     private function processQueryPart($part): string
     {
         $queryPart = (string) $part;

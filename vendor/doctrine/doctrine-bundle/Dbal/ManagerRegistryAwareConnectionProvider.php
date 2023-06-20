@@ -8,7 +8,8 @@ use Doctrine\Persistence\AbstractManagerRegistry;
 
 class ManagerRegistryAwareConnectionProvider implements ConnectionProvider
 {
-    private AbstractManagerRegistry $managerRegistry;
+    /** @var AbstractManagerRegistry */
+    private $managerRegistry;
 
     public function __construct(AbstractManagerRegistry $managerRegistry)
     {

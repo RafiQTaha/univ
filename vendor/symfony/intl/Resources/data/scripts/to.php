@@ -2,11 +2,9 @@
 
 return [
     'Names' => [
-        'Adlm' => 'tohinima fakaʻatilami',
         'Afak' => 'tohinima fakaʻafaka',
         'Aghb' => 'tohinima fakaʻalapēnia-kaukasia',
         'Arab' => 'tohinima fakaʻalepea',
-        'Aran' => 'tohinima fakanasatalīki',
         'Armi' => 'tohinima fakaʻalāmiti-ʻemipaea',
         'Armn' => 'tohinima fakaʻāmenia',
         'Avst' => 'tohinima fakaʻavesitani',
@@ -122,7 +120,6 @@ return [
         'Plrd' => 'tohinima fakafonētiki-polāti',
         'Prti' => 'tohinima fakapātia-tongi',
         'Rjng' => 'tohinima fakalesiangi',
-        'Rohg' => 'tohinima fakahanifi-lohingia',
         'Roro' => 'tohinima fakalongolongo',
         'Runr' => 'tohinima fakaluniki',
         'Samr' => 'tohinima fakasamalitane',

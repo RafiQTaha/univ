@@ -6,7 +6,11 @@ use Egulias\EmailValidator\Result\Reason\Reason;
 
 class InvalidEmail implements Result
 {
+<<<<<<< HEAD
     private $token;
+=======
+    private  $token;
+>>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
     /**
      * @var Reason
      */
@@ -43,4 +47,8 @@ class InvalidEmail implements Result
         return $this->reason;
     }
 
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca

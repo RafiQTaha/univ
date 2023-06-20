@@ -5,60 +5,53 @@ declare(strict_types=1);
 namespace Doctrine\ORM\Mapping;
 
 /**
- * This attribute is used to override association mapping of property for an entity relationship.
+ * This annotation is used to override association mapping of property for an entity relationship.
  *
  * @Annotation
  * @NamedArgumentConstructor
  * @Target("ANNOTATION")
  */
-final class AssociationOverride implements MappingAttribute
+final class AssociationOverride implements Annotation
 {
     /**
      * The name of the relationship property whose mapping is being overridden.
      *
      * @var string
-     * @readonly
      */
     public $name;
 
     /**
      * The join column that is being mapped to the persistent attribute.
      *
-     * @var array<JoinColumn>|null
-     * @readonly
+     * @var array<\Doctrine\ORM\Mapping\JoinColumn>|null
      */
     public $joinColumns;
 
     /**
      * The join column that is being mapped to the persistent attribute.
      *
-     * @var array<JoinColumn>|null
-     * @readonly
+     * @var array<\Doctrine\ORM\Mapping\JoinColumn>|null
      */
     public $inverseJoinColumns;
 
     /**
      * The join table that maps the relationship.
      *
-     * @var JoinTable|null
-     * @readonly
+     * @var \Doctrine\ORM\Mapping\JoinTable|null
      */
     public $joinTable;
 
     /**
      * The name of the association-field on the inverse-side.
      *
-     * @var string|null
-     * @readonly
+     * @var ?string
      */
     public $inversedBy;
 
     /**
      * The fetching strategy to use for the association.
      *
-     * @var string|null
-     * @psalm-var 'LAZY'|'EAGER'|'EXTRA_LAZY'|null
-     * @readonly
+     * @var ?string
      * @Enum({"LAZY", "EAGER", "EXTRA_LAZY"})
      */
     public $fetch;
@@ -66,7 +59,6 @@ final class AssociationOverride implements MappingAttribute
     /**
      * @param JoinColumn|array<JoinColumn> $joinColumns
      * @param JoinColumn|array<JoinColumn> $inverseJoinColumns
-     * @psalm-param 'LAZY'|'EAGER'|'EXTRA_LAZY'|null $fetch
      */
     public function __construct(
         string $name,

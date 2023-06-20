@@ -53,7 +53,11 @@ class ChainAdapter implements AdapterInterface, CacheInterface, PruneableInterfa
             if (!$adapter instanceof CacheItemPoolInterface) {
                 throw new InvalidArgumentException(sprintf('The class "%s" does not implement the "%s" interface.', get_debug_type($adapter), CacheItemPoolInterface::class));
             }
+<<<<<<< HEAD
             if (\in_array(\PHP_SAPI, ['cli', 'phpdbg'], true) && $adapter instanceof ApcuAdapter && !filter_var(\ini_get('apc.enable_cli'), \FILTER_VALIDATE_BOOLEAN)) {
+=======
+            if (\in_array(\PHP_SAPI, ['cli', 'phpdbg'], true) && $adapter instanceof ApcuAdapter && !filter_var(ini_get('apc.enable_cli'), \FILTER_VALIDATE_BOOLEAN)) {
+>>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
                 continue; // skip putting APCu in the chain when the backend is disabled
             }
 
@@ -94,6 +98,7 @@ class ChainAdapter implements AdapterInterface, CacheInterface, PruneableInterfa
      */
     public function get(string $key, callable $callback, float $beta = null, array &$metadata = null): mixed
     {
+<<<<<<< HEAD
         $doSave = true;
         $callback = static function (CacheItem $item, bool &$save) use ($callback, &$doSave) {
             $value = $callback($item, $save);
@@ -105,6 +110,11 @@ class ChainAdapter implements AdapterInterface, CacheInterface, PruneableInterfa
         $lastItem = null;
         $i = 0;
         $wrap = function (CacheItem $item = null, bool &$save = true) use ($key, $callback, $beta, &$wrap, &$i, &$doSave, &$lastItem, &$metadata) {
+=======
+        $lastItem = null;
+        $i = 0;
+        $wrap = function (CacheItem $item = null) use ($key, $callback, $beta, &$wrap, &$i, &$lastItem, &$metadata) {
+>>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
             $adapter = $this->adapters[$i];
             if (isset($this->adapters[++$i])) {
                 $callback = $wrap;
@@ -118,7 +128,6 @@ class ChainAdapter implements AdapterInterface, CacheInterface, PruneableInterfa
             if (null !== $item) {
                 (self::$syncItem)($lastItem = $lastItem ?? $item, $item, $this->defaultLifetime, $metadata);
             }
-            $save = $doSave;
 
             return $value;
         };

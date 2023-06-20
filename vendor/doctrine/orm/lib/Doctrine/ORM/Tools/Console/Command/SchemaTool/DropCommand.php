@@ -20,7 +20,9 @@ use function sprintf;
  */
 class DropCommand extends AbstractCommand
 {
-    /** @return void */
+    /**
+     * {@inheritdoc}
+     */
     protected function configure()
     {
         $this->setName('orm:schema-tool:drop')
@@ -43,7 +45,7 @@ EOT
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     protected function executeSchemaCommand(InputInterface $input, OutputInterface $output, SchemaTool $schemaTool, array $metadatas, SymfonyStyle $ui)
     {
@@ -58,18 +60,19 @@ EOT
                 $sqls = $schemaTool->getDropSchemaSQL($metadatas);
             }
 
+            $ui->text('The following SQL statements will be executed:');
+            $ui->newLine();
+
             foreach ($sqls as $sql) {
-                $ui->writeln(sprintf('%s;', $sql));
+                $ui->text(sprintf('    %s;', $sql));
             }
 
             return 0;
         }
 
-        $notificationUi = $ui->getErrorStyle();
-
         if ($force) {
-            $notificationUi->text('Dropping database schema...');
-            $notificationUi->newLine();
+            $ui->text('Dropping database schema...');
+            $ui->newLine();
 
             if ($isFullDatabaseDrop) {
                 $schemaTool->dropDatabase();
@@ -77,12 +80,12 @@ EOT
                 $schemaTool->dropSchema($metadatas);
             }
 
-            $notificationUi->success('Database schema dropped successfully!');
+            $ui->success('Database schema dropped successfully!');
 
             return 0;
         }
 
-        $notificationUi->caution('This operation should not be executed in a production environment!');
+        $ui->caution('This operation should not be executed in a production environment!');
 
         if ($isFullDatabaseDrop) {
             $sqls = $schemaTool->getDropDatabaseSQL();
@@ -91,12 +94,12 @@ EOT
         }
 
         if (empty($sqls)) {
-            $notificationUi->success('Nothing to drop. The database is empty!');
+            $ui->success('Nothing to drop. The database is empty!');
 
             return 0;
         }
 
-        $notificationUi->text(
+        $ui->text(
             [
                 sprintf('The Schema-Tool would execute <info>"%s"</info> queries to update the database.', count($sqls)),
                 '',

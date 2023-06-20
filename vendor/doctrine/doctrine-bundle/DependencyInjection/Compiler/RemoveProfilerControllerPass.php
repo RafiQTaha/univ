@@ -9,7 +9,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 /** @internal */
 final class RemoveProfilerControllerPass implements CompilerPassInterface
 {
-    public function process(ContainerBuilder $container): void
+    public function process(ContainerBuilder $container)
     {
         if ($container->has('twig') && $container->has('profiler')) {
             return;

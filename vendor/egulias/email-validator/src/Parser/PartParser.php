@@ -45,8 +45,13 @@ abstract class PartParser
 
     protected function checkConsecutiveDots() : Result
     {
+<<<<<<< HEAD
         if (((array) $this->lexer->token)['type'] === EmailLexer::S_DOT && $this->lexer->isNextToken(EmailLexer::S_DOT)) {
             return new InvalidEmail(new ConsecutiveDot(), ((array) $this->lexer->token)['value']);
+=======
+        if ($this->lexer->token['type'] === EmailLexer::S_DOT && $this->lexer->isNextToken(EmailLexer::S_DOT)) {
+            return new InvalidEmail(new ConsecutiveDot(), $this->lexer->token['value']);
+>>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
         }
 
         return new ValidEmail();
@@ -58,6 +63,10 @@ abstract class PartParser
 
         return $previous && $previous['type'] === EmailLexer::S_BACKSLASH
             &&
+<<<<<<< HEAD
             ((array) $this->lexer->token)['type'] !== EmailLexer::GENERIC;
+=======
+            $this->lexer->token['type'] !== EmailLexer::GENERIC;
+>>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
     }
 }

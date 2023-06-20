@@ -2,6 +2,7 @@
 namespace Egulias\EmailValidator\Parser;
 
 use Egulias\EmailValidator\EmailLexer;
+use Egulias\EmailValidator\Parser\Parser;
 use Egulias\EmailValidator\Result\ValidEmail;
 use Egulias\EmailValidator\Result\InvalidEmail;
 use Egulias\EmailValidator\Warning\CFWSWithFWS;
@@ -18,36 +19,49 @@ class DoubleQuote extends PartParser
         $validQuotedString = $this->checkDQUOTE();
         if($validQuotedString->isInvalid()) return $validQuotedString;
 
-        $special = [
+        $special = array(
             EmailLexer::S_CR => true,
             EmailLexer::S_HTAB => true,
             EmailLexer::S_LF => true
-        ];
+        );
 
-        $invalid = [
+        $invalid = array(
             EmailLexer::C_NUL => true,
             EmailLexer::S_HTAB => true,
             EmailLexer::S_CR => true,
             EmailLexer::S_LF => true
-        ];
-
+        );
         $setSpecialsWarning = true;
 
         $this->lexer->moveNext();
 
+<<<<<<< HEAD
         while (((array) $this->lexer->token)['type'] !== EmailLexer::S_DQUOTE && null !== ((array) $this->lexer->token)['type']) {
             if (isset($special[((array) $this->lexer->token)['type']]) && $setSpecialsWarning) {
                 $this->warnings[CFWSWithFWS::CODE] = new CFWSWithFWS();
                 $setSpecialsWarning = false;
             }
             if (((array) $this->lexer->token)['type'] === EmailLexer::S_BACKSLASH && $this->lexer->isNextToken(EmailLexer::S_DQUOTE)) {
+=======
+        while ($this->lexer->token['type'] !== EmailLexer::S_DQUOTE && null !== $this->lexer->token['type']) {
+            if (isset($special[$this->lexer->token['type']]) && $setSpecialsWarning) {
+                $this->warnings[CFWSWithFWS::CODE] = new CFWSWithFWS();
+                $setSpecialsWarning = false;
+            }
+            if ($this->lexer->token['type'] === EmailLexer::S_BACKSLASH && $this->lexer->isNextToken(EmailLexer::S_DQUOTE)) {
+>>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
                 $this->lexer->moveNext();
             }
 
             $this->lexer->moveNext();
 
+<<<<<<< HEAD
             if (!$this->escaped() && isset($invalid[((array) $this->lexer->token)['type']])) {
                 return new InvalidEmail(new ExpectingATEXT("Expecting ATEXT between DQUOTE"), ((array) $this->lexer->token)['value']);
+=======
+            if (!$this->escaped() && isset($invalid[$this->lexer->token['type']])) {
+                return new InvalidEmail(new ExpectingATEXT("Expecting ATEXT between DQUOTE"), $this->lexer->token['value']);
+>>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
             }
         }
 
@@ -59,7 +73,11 @@ class DoubleQuote extends PartParser
         }
 
         if (!$this->lexer->isNextToken(EmailLexer::S_AT) && $prev['type'] !== EmailLexer::S_BACKSLASH) {
+<<<<<<< HEAD
             return new InvalidEmail(new ExpectingATEXT("Expecting ATEXT between DQUOTE"), ((array) $this->lexer->token)['value']);
+=======
+            return new InvalidEmail(new ExpectingATEXT("Expecting ATEXT between DQUOTE"), $this->lexer->token['value']);
+>>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
         }
 
         return new ValidEmail();
@@ -71,17 +89,31 @@ class DoubleQuote extends PartParser
 
         if ($this->lexer->isNextToken(EmailLexer::GENERIC) && $previous['type'] === EmailLexer::GENERIC) {
             $description = 'https://tools.ietf.org/html/rfc5322#section-3.2.4 - quoted string should be a unit';
+<<<<<<< HEAD
             return new InvalidEmail(new ExpectingATEXT($description), ((array) $this->lexer->token)['value']);
+=======
+            return new InvalidEmail(new ExpectingATEXT($description), $this->lexer->token['value']);
+>>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
         }
 
         try {
             $this->lexer->find(EmailLexer::S_DQUOTE);
         } catch (\Exception $e) {
+<<<<<<< HEAD
             return new InvalidEmail(new UnclosedQuotedString(), ((array) $this->lexer->token)['value']);
         }
         $this->warnings[QuotedString::CODE] = new QuotedString($previous['value'], ((array) $this->lexer->token)['value']);
+=======
+            return new InvalidEmail(new UnclosedQuotedString(), $this->lexer->token['value']);
+        }
+        $this->warnings[QuotedString::CODE] = new QuotedString($previous['value'], $this->lexer->token['value']);
+>>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
 
         return new ValidEmail();
     }
 
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca

@@ -5,9 +5,7 @@ declare(strict_types=1);
 namespace Doctrine\ORM\Tools;
 
 use Doctrine\DBAL\Types\Type;
-use Doctrine\Deprecations\Deprecation;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\Mapping\ClassMetadataInfo;
 
 use function array_diff;
@@ -17,7 +15,6 @@ use function array_values;
 use function class_exists;
 use function class_parents;
 use function count;
-use function get_class;
 use function implode;
 use function in_array;
 
@@ -72,17 +69,6 @@ class SchemaValidator
      */
     public function validateClass(ClassMetadataInfo $class)
     {
-        if (! $class instanceof ClassMetadata) {
-            Deprecation::trigger(
-                'doctrine/orm',
-                'https://github.com/doctrine/orm/pull/249',
-                'Passing an instance of %s to %s is deprecated, please pass a ClassMetadata instance instead.',
-                get_class($class),
-                __METHOD__,
-                ClassMetadata::class
-            );
-        }
-
         $ce  = [];
         $cmf = $this->em->getMetadataFactory();
 
@@ -105,17 +91,11 @@ class SchemaValidator
                 return $ce;
             }
 
-            $targetMetadata = $cmf->getMetadataFor($assoc['targetEntity']);
-
-            if ($targetMetadata->isMappedSuperclass) {
-                $ce[] = "The target entity '" . $assoc['targetEntity'] . "' specified on " . $class->name . '#' . $fieldName . ' is a mapped superclass. This is not possible since there is no table that a foreign key could refer to.';
-
-                return $ce;
-            }
-
             if ($assoc['mappedBy'] && $assoc['inversedBy']) {
                 $ce[] = 'The association ' . $class . '#' . $fieldName . ' cannot be defined as both inverse and owning.';
             }
+
+            $targetMetadata = $cmf->getMetadataFor($assoc['targetEntity']);
 
             if (isset($assoc['id']) && $targetMetadata->containsForeignIdentifier) {
                 $ce[] = "Cannot map association '" . $class->name . '#' . $fieldName . ' as identifier, because ' .
@@ -166,13 +146,13 @@ class SchemaValidator
                 // Verify inverse side/owning side match each other
                 if (array_key_exists($assoc['inversedBy'], $targetMetadata->associationMappings)) {
                     $targetAssoc = $targetMetadata->associationMappings[$assoc['inversedBy']];
-                    if ($assoc['type'] === ClassMetadata::ONE_TO_ONE && $targetAssoc['type'] !== ClassMetadata::ONE_TO_ONE) {
+                    if ($assoc['type'] === ClassMetadataInfo::ONE_TO_ONE && $targetAssoc['type'] !== ClassMetadataInfo::ONE_TO_ONE) {
                         $ce[] = 'If association ' . $class->name . '#' . $fieldName . ' is one-to-one, then the inversed ' .
                                 'side ' . $targetMetadata->name . '#' . $assoc['inversedBy'] . ' has to be one-to-one as well.';
-                    } elseif ($assoc['type'] === ClassMetadata::MANY_TO_ONE && $targetAssoc['type'] !== ClassMetadata::ONE_TO_MANY) {
+                    } elseif ($assoc['type'] === ClassMetadataInfo::MANY_TO_ONE && $targetAssoc['type'] !== ClassMetadataInfo::ONE_TO_MANY) {
                         $ce[] = 'If association ' . $class->name . '#' . $fieldName . ' is many-to-one, then the inversed ' .
                                 'side ' . $targetMetadata->name . '#' . $assoc['inversedBy'] . ' has to be one-to-many.';
-                    } elseif ($assoc['type'] === ClassMetadata::MANY_TO_MANY && $targetAssoc['type'] !== ClassMetadata::MANY_TO_MANY) {
+                    } elseif ($assoc['type'] === ClassMetadataInfo::MANY_TO_MANY && $targetAssoc['type'] !== ClassMetadataInfo::MANY_TO_MANY) {
                         $ce[] = 'If association ' . $class->name . '#' . $fieldName . ' is many-to-many, then the inversed ' .
                                 'side ' . $targetMetadata->name . '#' . $assoc['inversedBy'] . ' has to be many-to-many as well.';
                     }
@@ -180,7 +160,7 @@ class SchemaValidator
             }
 
             if ($assoc['isOwningSide']) {
-                if ($assoc['type'] === ClassMetadata::MANY_TO_MANY) {
+                if ($assoc['type'] === ClassMetadataInfo::MANY_TO_MANY) {
                     $identifierColumns = $class->getIdentifierColumnNames();
                     foreach ($assoc['joinTable']['joinColumns'] as $joinColumn) {
                         if (! in_array($joinColumn['referencedColumnName'], $identifierColumns, true)) {
@@ -212,7 +192,7 @@ class SchemaValidator
                                 "however '" . implode(', ', array_diff($class->getIdentifierColumnNames(), array_values($assoc['relationToSourceKeyColumns']))) .
                                 "' are missing.";
                     }
-                } elseif ($assoc['type'] & ClassMetadata::TO_ONE) {
+                } elseif ($assoc['type'] & ClassMetadataInfo::TO_ONE) {
                     $identifierColumns = $targetMetadata->getIdentifierColumnNames();
                     foreach ($assoc['joinColumns'] as $joinColumn) {
                         if (! in_array($joinColumn['referencedColumnName'], $identifierColumns, true)) {
@@ -259,13 +239,7 @@ class SchemaValidator
             }
         }
 
-        if (
-            ! $class->isInheritanceTypeNone()
-            && ! $class->isRootEntity()
-            && ($class->reflClass !== null && ! $class->reflClass->isAbstract())
-            && ! $class->isMappedSuperclass
-            && array_search($class->name, $class->discriminatorMap, true) === false
-        ) {
+        if (! $class->isInheritanceTypeNone() && ! $class->isRootEntity() && ! $class->isMappedSuperclass && array_search($class->name, $class->discriminatorMap, true) === false) {
             $ce[] = "Entity class '" . $class->name . "' is part of inheritance hierarchy, but is " .
                 "not mapped in the root entity '" . $class->rootEntityName . "' discriminator map. " .
                 'All subclasses must be listed in the discriminator map.';

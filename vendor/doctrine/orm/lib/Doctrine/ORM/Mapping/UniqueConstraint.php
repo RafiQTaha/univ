@@ -13,36 +13,24 @@ use Doctrine\Common\Annotations\Annotation\NamedArgumentConstructor;
  * @Target("ANNOTATION")
  */
 #[Attribute(Attribute::TARGET_CLASS | Attribute::IS_REPEATABLE)]
-final class UniqueConstraint implements MappingAttribute
+final class UniqueConstraint implements Annotation
 {
-    /**
-     * @var string|null
-     * @readonly
-     */
+    /** @var string|null */
     public $name;
 
-    /**
-     * @var array<string>|null
-     * @readonly
-     */
+    /** @var array<string>|null */
     public $columns;
 
-    /**
-     * @var array<string>|null
-     * @readonly
-     */
+    /** @var array<string>|null */
     public $fields;
 
-    /**
-     * @var array<string,mixed>|null
-     * @readonly
-     */
+    /** @var array<string,mixed>|null */
     public $options;
 
     /**
-     * @param array<string>|null       $columns
-     * @param array<string>|null       $fields
-     * @param array<string,mixed>|null $options
+     * @param array<string>       $columns
+     * @param array<string>       $fields
+     * @param array<string,mixed> $options
      */
     public function __construct(
         ?string $name = null,

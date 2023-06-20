@@ -26,7 +26,10 @@ class SubstringFunction extends FunctionNode
     /** @var SimpleArithmeticExpression|null */
     public $secondSimpleArithmeticExpression = null;
 
-    /** @inheritDoc */
+    /**
+     * @override
+     * @inheritdoc
+     */
     public function getSql(SqlWalker $sqlWalker)
     {
         $optionalSecondSimpleArithmeticExpression = null;
@@ -41,7 +44,10 @@ class SubstringFunction extends FunctionNode
         );
     }
 
-    /** @inheritDoc */
+    /**
+     * @override
+     * @inheritdoc
+     */
     public function parse(Parser $parser)
     {
         $parser->match(Lexer::T_IDENTIFIER);

@@ -49,9 +49,7 @@ class DateTimeParamConverter implements ParamConverterInterface
         if (isset($options['format'])) {
             $date = $class::createFromFormat($options['format'], $value);
 
-            $errors = \DateTime::getLastErrors() ?: ['warning_count' => 0];
-
-            if (0 < $errors['warning_count']) {
+            if (0 < \DateTime::getLastErrors()['warning_count']) {
                 $date = false;
             }
 

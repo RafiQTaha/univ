@@ -25,7 +25,6 @@ use function array_values;
 use function assert;
 use function count;
 
-/** @psalm-import-type AssociationMapping from ClassMetadata */
 abstract class AbstractCollectionPersister implements CachedCollectionPersister
 {
     /** @var UnitOfWork */
@@ -65,7 +64,7 @@ abstract class AbstractCollectionPersister implements CachedCollectionPersister
      * @param CollectionPersister    $persister   The collection persister that will be cached.
      * @param Region                 $region      The collection region.
      * @param EntityManagerInterface $em          The entity manager.
-     * @param AssociationMapping     $association The association mapping.
+     * @param mixed[]                $association The association mapping.
      */
     public function __construct(CollectionPersister $persister, Region $region, EntityManagerInterface $em, array $association)
     {
@@ -86,7 +85,7 @@ abstract class AbstractCollectionPersister implements CachedCollectionPersister
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getCacheRegion()
     {
@@ -94,7 +93,7 @@ abstract class AbstractCollectionPersister implements CachedCollectionPersister
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getSourceEntityMetadata()
     {
@@ -102,7 +101,7 @@ abstract class AbstractCollectionPersister implements CachedCollectionPersister
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getTargetEntityMetadata()
     {
@@ -110,7 +109,7 @@ abstract class AbstractCollectionPersister implements CachedCollectionPersister
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function loadCollectionCache(PersistentCollection $collection, CollectionCacheKey $key)
     {
@@ -124,7 +123,7 @@ abstract class AbstractCollectionPersister implements CachedCollectionPersister
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function storeCollectionCache(CollectionCacheKey $key, $elements)
     {
@@ -168,7 +167,7 @@ abstract class AbstractCollectionPersister implements CachedCollectionPersister
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function contains(PersistentCollection $collection, $element)
     {
@@ -176,7 +175,7 @@ abstract class AbstractCollectionPersister implements CachedCollectionPersister
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function containsKey(PersistentCollection $collection, $key)
     {
@@ -184,7 +183,7 @@ abstract class AbstractCollectionPersister implements CachedCollectionPersister
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function count(PersistentCollection $collection)
     {
@@ -200,7 +199,7 @@ abstract class AbstractCollectionPersister implements CachedCollectionPersister
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function get(PersistentCollection $collection, $index)
     {
@@ -208,7 +207,7 @@ abstract class AbstractCollectionPersister implements CachedCollectionPersister
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function slice(PersistentCollection $collection, $offset, $length = null)
     {

@@ -13,8 +13,10 @@ namespace Symfony\Bundle\MakerBundle;
 
 final class DependencyBuilder
 {
-    private array $dependencies = [];
-    private array $devDependencies = [];
+    private $dependencies = [];
+    private $devDependencies = [];
+
+    private $minimumPHPVersion = 70100;
 
     /**
      * Add a dependency that will be reported if the given class is missing.
@@ -42,7 +44,7 @@ final class DependencyBuilder
 
     public function requirePHP71(): void
     {
-        trigger_deprecation('symfony/maker-bundle', 'v1.44.0', 'requirePHP71() is deprecated and will be removed in a future version.');
+        // no-op - MakerBundle now required PHP 7.1
     }
 
     /**
@@ -108,6 +110,14 @@ final class DependencyBuilder
         return $message;
     }
 
+    /**
+     * @internal
+     */
+    public function isPhpVersionSatisfied(): bool
+    {
+        return \PHP_VERSION_ID >= $this->minimumPHPVersion;
+    }
+
     private function getRequiredDependencyNames(array $dependencies): array
     {
         $packages = [];
@@ -139,6 +149,6 @@ final class DependencyBuilder
             return [];
         }
 
-        return array_unique([...$missingPackages, ...$missingOptionalPackages]);
+        return array_unique(array_merge($missingPackages, $missingOptionalPackages));
     }
 }

@@ -85,13 +85,9 @@ class ChainEncoder implements ContextAwareEncoderInterface
             return $this->encoders[$this->encoderByFormat[$format]];
         }
 
-        $cache = true;
         foreach ($this->encoders as $i => $encoder) {
-            $cache = $cache && !$encoder instanceof ContextAwareEncoderInterface;
             if ($encoder->supportsEncoding($format, $context)) {
-                if ($cache) {
-                    $this->encoderByFormat[$format] = $i;
-                }
+                $this->encoderByFormat[$format] = $i;
 
                 return $encoder;
             }

@@ -12,7 +12,7 @@ namespace Doctrine\ORM\Internal\Hydration;
 class ScalarHydrator extends AbstractHydrator
 {
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     protected function hydrateAllData()
     {
@@ -26,7 +26,7 @@ class ScalarHydrator extends AbstractHydrator
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     protected function hydrateRowData(array $row, array &$result)
     {

@@ -32,8 +32,11 @@ use Symfony\Component\Messenger\MessageBusInterface;
  */
 final class MakeMessage extends AbstractMaker
 {
-    public function __construct(private FileManager $fileManager)
+    private $fileManager;
+
+    public function __construct(FileManager $fileManager)
     {
+        $this->fileManager = $fileManager;
     }
 
     public static function getCommandName(): string
@@ -58,15 +61,13 @@ final class MakeMessage extends AbstractMaker
     {
         $command->addArgument('chosen-transport', InputArgument::OPTIONAL);
 
-        $messengerData = [];
-
         try {
             $manipulator = new YamlSourceManipulator($this->fileManager->getFileContents('config/packages/messenger.yaml'));
             $messengerData = $manipulator->getData();
-        } catch (\Exception) {
+        } catch (\Exception $e) {
         }
 
-        if (!isset($messengerData['framework']['messenger']['transports'])) {
+        if (!isset($messengerData, $messengerData['framework']['messenger']['transports'])) {
             return;
         }
 

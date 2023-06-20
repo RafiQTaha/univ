@@ -24,7 +24,6 @@ use Symfony\Component\DependencyInjection\LazyProxy\ProxyHelper;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\DependencyInjection\TypedReference;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 /**
@@ -158,7 +157,11 @@ class RegisterControllerArgumentLocatorsPass implements CompilerPassInterface
                         $invalidBehavior = ContainerInterface::RUNTIME_EXCEPTION_ON_INVALID_REFERENCE;
                     }
 
+<<<<<<< HEAD
                     if (Request::class === $type || SessionInterface::class === $type || Response::class === $type) {
+=======
+                    if (Request::class === $type || SessionInterface::class === $type) {
+>>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
                         continue;
                     }
 

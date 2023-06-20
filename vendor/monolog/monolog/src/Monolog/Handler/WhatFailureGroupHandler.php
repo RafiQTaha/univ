@@ -59,6 +59,7 @@ class WhatFailureGroupHandler extends GroupHandler
         foreach ($this->handlers as $handler) {
             try {
                 $handler->handleBatch($records);
+<<<<<<< HEAD
             } catch (\Throwable $e) {
                 // What failure?
             }
@@ -73,6 +74,8 @@ class WhatFailureGroupHandler extends GroupHandler
         foreach ($this->handlers as $handler) {
             try {
                 $handler->close();
+=======
+>>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
             } catch (\Throwable $e) {
                 // What failure?
             }

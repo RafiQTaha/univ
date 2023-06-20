@@ -12,10 +12,6 @@
 // Please update when phpunit needs to be reinstalled with fresh deps:
 // Cache-Id: 2021-02-04 11:00 UTC
 
-if ('cli' !== \PHP_SAPI && 'phpdbg' !== \PHP_SAPI) {
-    throw new Exception('This script must be run from the command line.');
-}
-
 error_reporting(-1);
 
 global $argv, $argc;
@@ -70,14 +66,14 @@ $getEnvVar = function ($name, $default = false) use ($argv) {
         $phpunitConfigFilename = $phpunitConfigFilename ?: $getPhpUnitConfig('phpunit.xml');
 
         if ($phpunitConfigFilename) {
-            $phpunitConfig = new DOMDocument();
+            $phpunitConfig = new DomDocument();
             $phpunitConfig->load($phpunitConfigFilename);
         } else {
             $phpunitConfig = false;
         }
     }
     if (false !== $phpunitConfig) {
-        $var = new DOMXPath($phpunitConfig);
+        $var = new DOMXpath($phpunitConfig);
         foreach ($var->query('//php/server[@name="'.$name.'"]') as $var) {
             return $var->getAttribute('value');
         }
@@ -151,16 +147,11 @@ if ('disabled' === $getEnvVar('SYMFONY_DEPRECATIONS_HELPER')) {
     putenv('SYMFONY_DEPRECATIONS_HELPER=disabled');
 }
 
-if (!$getEnvVar('DOCTRINE_DEPRECATIONS')) {
-    putenv('DOCTRINE_DEPRECATIONS=trigger');
-    $_SERVER['DOCTRINE_DEPRECATIONS'] = $_ENV['DOCTRINE_DEPRECATIONS'] = 'trigger';
-}
-
 $COMPOSER = ($COMPOSER = getenv('COMPOSER_BINARY'))
     || file_exists($COMPOSER = $oldPwd.'/composer.phar')
-    || ($COMPOSER = rtrim((string) ('\\' === \DIRECTORY_SEPARATOR ? preg_replace('/[\r\n].*/', '', shell_exec('where.exe composer.phar 2> NUL')) : shell_exec('which composer.phar 2> /dev/null'))))
-    || ($COMPOSER = rtrim((string) ('\\' === \DIRECTORY_SEPARATOR ? preg_replace('/[\r\n].*/', '', shell_exec('where.exe composer 2> NUL')) : shell_exec('which composer 2> /dev/null'))))
-    || file_exists($COMPOSER = rtrim((string) ('\\' === \DIRECTORY_SEPARATOR ? shell_exec('git rev-parse --show-toplevel 2> NUL') : shell_exec('git rev-parse --show-toplevel 2> /dev/null'))).\DIRECTORY_SEPARATOR.'composer.phar')
+    || ($COMPOSER = rtrim((string) ('\\' === \DIRECTORY_SEPARATOR ? preg_replace('/[\r\n].*/', '', `where.exe composer.phar 2> NUL`) : `which composer.phar 2> /dev/null`)))
+    || ($COMPOSER = rtrim((string) ('\\' === \DIRECTORY_SEPARATOR ? preg_replace('/[\r\n].*/', '', `where.exe composer 2> NUL`) : `which composer 2> /dev/null`)))
+    || file_exists($COMPOSER = rtrim((string) ('\\' === \DIRECTORY_SEPARATOR ? `git rev-parse --show-toplevel 2> NUL` : `git rev-parse --show-toplevel 2> /dev/null`)).\DIRECTORY_SEPARATOR.'composer.phar')
     ? ('#!/usr/bin/env php' === file_get_contents($COMPOSER, false, null, 0, 18) ? $PHP : '').' '.escapeshellarg($COMPOSER) // detect shell wrappers by looking at the shebang
     : 'composer';
 

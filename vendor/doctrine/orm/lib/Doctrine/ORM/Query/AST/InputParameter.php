@@ -35,7 +35,7 @@ class InputParameter extends Node
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function dispatch($walker)
     {

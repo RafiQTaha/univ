@@ -396,7 +396,7 @@ return [
         ],
         'GBP' => [
             0 => '£',
-            1 => 'Britse pond',
+            1 => 'Brits pond',
         ],
         'GEK' => [
             0 => 'GEK',

@@ -62,11 +62,6 @@ class AnnotationDriver extends CompatibilityAnnotationDriver
      */
     public function __construct($reader, $paths = null)
     {
-        Deprecation::trigger(
-            'doctrine/orm',
-            'https://github.com/doctrine/orm/issues/10098',
-            'The annotation mapping driver is deprecated and will be removed in Doctrine ORM 3.0, please migrate to the attribute or XML driver.'
-        );
         $this->reader = $reader;
 
         $this->addPaths((array) $paths);
@@ -313,19 +308,14 @@ class AnnotationDriver extends CompatibilityAnnotationDriver
                     $discrColumnAnnot = $classAnnotations[Mapping\DiscriminatorColumn::class];
                     assert($discrColumnAnnot instanceof Mapping\DiscriminatorColumn);
 
-                    $columnDef = [
-                        'name' => $discrColumnAnnot->name,
-                        'type' => $discrColumnAnnot->type ?: 'string',
-                        'length' => $discrColumnAnnot->length ?? 255,
-                        'columnDefinition' => $discrColumnAnnot->columnDefinition,
-                        'enumType' => $discrColumnAnnot->enumType,
-                    ];
-
-                    if ($discrColumnAnnot->options) {
-                        $columnDef['options'] = $discrColumnAnnot->options;
-                    }
-
-                    $metadata->setDiscriminatorColumn($columnDef);
+                    $metadata->setDiscriminatorColumn(
+                        [
+                            'name'             => $discrColumnAnnot->name,
+                            'type'             => $discrColumnAnnot->type ?: 'string',
+                            'length'           => $discrColumnAnnot->length ?? 255,
+                            'columnDefinition' => $discrColumnAnnot->columnDefinition,
+                        ]
+                    );
                 } else {
                     $metadata->setDiscriminatorColumn(['name' => 'dtype', 'type' => 'string', 'length' => 255]);
                 }
@@ -551,9 +541,8 @@ class AnnotationDriver extends CompatibilityAnnotationDriver
     }
 
     /**
-     * @param mixed[]              $joinColumns
-     * @param class-string         $className
-     * @param array<string, mixed> $mapping
+     * @param mixed[] $joinColumns
+     * @psalm-param array<string, mixed> $mapping
      */
     private function loadRelationShipMapping(
         ReflectionProperty $property,
@@ -624,10 +613,6 @@ class AnnotationDriver extends CompatibilityAnnotationDriver
                     'schema' => $joinTableAnnot->schema,
                 ];
 
-                if ($joinTableAnnot->options) {
-                    $joinTable['options'] = $joinTableAnnot->options;
-                }
-
                 foreach ($joinTableAnnot->joinColumns as $joinColumn) {
                     $joinTable['joinColumns'][] = $this->joinColumnToArray($joinColumn);
                 }
@@ -666,8 +651,6 @@ class AnnotationDriver extends CompatibilityAnnotationDriver
     /**
      * Attempts to resolve the fetch mode.
      *
-     * @param class-string $className
-     *
      * @psalm-return ClassMetadata::FETCH_* The fetch mode as defined in ClassMetadata.
      *
      * @throws MappingException If the fetch mode is not valid.
@@ -700,8 +683,8 @@ class AnnotationDriver extends CompatibilityAnnotationDriver
     /**
      * Parses the given method.
      *
-     * @return list<array{string, string}>
-     * @psalm-return list<array{string, (Events::*)}>
+     * @return callable[]
+     * @psalm-return list<callable-array>
      */
     private function getMethodCallbacks(ReflectionMethod $method): array
     {
@@ -755,13 +738,12 @@ class AnnotationDriver extends CompatibilityAnnotationDriver
      *                   nullable: bool,
      *                   onDelete: mixed,
      *                   columnDefinition: string|null,
-     *                   referencedColumnName: string,
-     *                   options?: array<string, mixed>
+     *                   referencedColumnName: string
      *               }
      */
     private function joinColumnToArray(Mapping\JoinColumn $joinColumn): array
     {
-        $mapping = [
+        return [
             'name' => $joinColumn->name,
             'unique' => $joinColumn->unique,
             'nullable' => $joinColumn->nullable,
@@ -769,12 +751,6 @@ class AnnotationDriver extends CompatibilityAnnotationDriver
             'columnDefinition' => $joinColumn->columnDefinition,
             'referencedColumnName' => $joinColumn->referencedColumnName,
         ];
-
-        if ($joinColumn->options) {
-            $mapping['options'] = $joinColumn->options;
-        }
-
-        return $mapping;
     }
 
     /**

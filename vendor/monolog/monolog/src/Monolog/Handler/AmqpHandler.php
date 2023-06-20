@@ -23,18 +23,48 @@ use AMQPExchange;
  */
 class AmqpHandler extends AbstractProcessingHandler
 {
+<<<<<<< HEAD
+=======
     /**
      * @var AMQPExchange|AMQPChannel $exchange
      */
     protected $exchange;
-    /** @var array<string, mixed> */
-    private $extraAttributes = [];
 
     /**
-     * @return array<string, mixed>
+     * @var string
      */
-    public function getExtraAttributes(): array
+    protected $exchangeName;
+
+>>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
+    /**
+     * @var AMQPExchange|AMQPChannel $exchange
+     */
+<<<<<<< HEAD
+    protected $exchange;
+    /** @var array<string, mixed> */
+    private $extraAttributes = [];
+=======
+    public function __construct($exchange, ?string $exchangeName = null, $level = Logger::DEBUG, bool $bubble = true)
     {
+        if ($exchange instanceof AMQPChannel) {
+            $this->exchangeName = (string) $exchangeName;
+        } elseif (!$exchange instanceof AMQPExchange) {
+            throw new \InvalidArgumentException('PhpAmqpLib\Channel\AMQPChannel or AMQPExchange instance required');
+        } elseif ($exchangeName) {
+            @trigger_error('The $exchangeName parameter can only be passed when using PhpAmqpLib, if using an AMQPExchange instance configure it beforehand', E_USER_DEPRECATED);
+        }
+        $this->exchange = $exchange;
+
+        parent::__construct($level, $bubble);
+    }
+>>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function write(array $record): void
+    {
+<<<<<<< HEAD
         return $this->extraAttributes;
     }
 
@@ -81,10 +111,13 @@ class AmqpHandler extends AbstractProcessingHandler
      */
     protected function write(array $record): void
     {
+=======
+>>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
         $data = $record["formatted"];
         $routingKey = $this->getRoutingKey($record);
 
         if ($this->exchange instanceof AMQPExchange) {
+<<<<<<< HEAD
             $attributes = [
                 'delivery_mode' => 2,
                 'content_type'  => 'application/json',
@@ -92,11 +125,16 @@ class AmqpHandler extends AbstractProcessingHandler
             if ($this->extraAttributes) {
                 $attributes = array_merge($attributes, $this->extraAttributes);
             }
+=======
+>>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
             $this->exchange->publish(
                 $data,
                 $routingKey,
                 0,
-                $attributes
+                [
+                    'delivery_mode' => 2,
+                    'content_type' => 'application/json',
+                ]
             );
         } else {
             $this->exchange->basic_publish(
@@ -151,6 +189,7 @@ class AmqpHandler extends AbstractProcessingHandler
 
     private function createAmqpMessage(string $data): AMQPMessage
     {
+<<<<<<< HEAD
         $attributes = [
             'delivery_mode' => 2,
             'content_type' => 'application/json',
@@ -159,6 +198,15 @@ class AmqpHandler extends AbstractProcessingHandler
             $attributes = array_merge($attributes, $this->extraAttributes);
         }
         return new AMQPMessage($data, $attributes);
+=======
+        return new AMQPMessage(
+            $data,
+            [
+                'delivery_mode' => 2,
+                'content_type' => 'application/json',
+            ]
+        );
+>>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
     }
 
     /**

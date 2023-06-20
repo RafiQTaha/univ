@@ -898,10 +898,6 @@ return [
             0 => 'SKK',
             1 => 'Koruna Slòbhacach',
         ],
-        'SLE' => [
-            0 => 'SLE',
-            1 => 'Leone Siarra Leòmhannach ùr',
-        ],
         'SLL' => [
             0 => 'SLL',
             1 => 'Leone Siarra Leòmhannach',
@@ -1049,10 +1045,6 @@ return [
         'VEB' => [
             0 => 'VEB',
             1 => 'Bolívar Bheinisealach (1871–2008)',
-        ],
-        'VED' => [
-            0 => 'VED',
-            1 => 'Bolívar Soberano',
         ],
         'VEF' => [
             0 => 'VEF',

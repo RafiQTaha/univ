@@ -17,14 +17,16 @@ class DeleteStatement extends Node
     /** @var WhereClause|null */
     public $whereClause;
 
-    /** @param DeleteClause $deleteClause */
+    /**
+     * @param DeleteClause $deleteClause
+     */
     public function __construct($deleteClause)
     {
         $this->deleteClause = $deleteClause;
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function dispatch($sqlWalker)
     {

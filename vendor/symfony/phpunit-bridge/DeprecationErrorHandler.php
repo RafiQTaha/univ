@@ -12,9 +12,8 @@
 namespace Symfony\Bridge\PhpUnit;
 
 use PHPUnit\Framework\TestResult;
-use PHPUnit\Runner\ErrorHandler;
 use PHPUnit\Util\Error\Handler;
-use PHPUnit\Util\ErrorHandler as UtilErrorHandler;
+use PHPUnit\Util\ErrorHandler;
 use Symfony\Bridge\PhpUnit\DeprecationErrorHandler\Configuration;
 use Symfony\Bridge\PhpUnit\DeprecationErrorHandler\Deprecation;
 use Symfony\Bridge\PhpUnit\DeprecationErrorHandler\DeprecationGroup;
@@ -76,12 +75,7 @@ class DeprecationErrorHandler
         if (null !== $oldErrorHandler) {
             restore_error_handler();
 
-            if (
-                $oldErrorHandler instanceof UtilErrorHandler
-                || [UtilErrorHandler::class, 'handleError'] === $oldErrorHandler
-                || $oldErrorHandler instanceof ErrorHandler
-                || [ErrorHandler::class, 'handleError'] === $oldErrorHandler
-            ) {
+            if ($oldErrorHandler instanceof ErrorHandler || [ErrorHandler::class, 'handleError'] === $oldErrorHandler) {
                 restore_error_handler();
                 self::register($mode);
             }
@@ -138,11 +132,8 @@ class DeprecationErrorHandler
             $msg = $trace[1]['args'][0];
         }
 
-        $deprecation = new Deprecation($msg, $trace, $file, \E_DEPRECATED === $type);
+        $deprecation = new Deprecation($msg, $trace, $file);
         if ($deprecation->isMuted()) {
-            return null;
-        }
-        if ($this->getConfiguration()->isIgnoredDeprecation($deprecation)) {
             return null;
         }
         if ($this->getConfiguration()->isBaselineDeprecation($deprecation)) {
@@ -197,7 +188,7 @@ class DeprecationErrorHandler
         if (class_exists(DebugClassLoader::class, false)) {
             DebugClassLoader::checkClasses();
         }
-        $currErrorHandler = set_error_handler('is_int');
+        $currErrorHandler = set_error_handler('var_dump');
         restore_error_handler();
 
         if ($currErrorHandler !== [$this, 'handleError']) {
@@ -209,7 +200,7 @@ class DeprecationErrorHandler
         // store failing status
         $isFailing = !$configuration->tolerates($this->deprecationGroups);
 
-        $this->displayDeprecations($groups, $configuration);
+        $this->displayDeprecations($groups, $configuration, $isFailing);
 
         $this->resetDeprecationGroups();
 
@@ -222,7 +213,7 @@ class DeprecationErrorHandler
             }
 
             $isFailingAtShutdown = !$configuration->tolerates($this->deprecationGroups);
-            $this->displayDeprecations($groups, $configuration);
+            $this->displayDeprecations($groups, $configuration, $isFailingAtShutdown);
 
             if ($configuration->isGeneratingBaseline()) {
                 $configuration->writeBaseline();
@@ -298,10 +289,11 @@ class DeprecationErrorHandler
     /**
      * @param string[]      $groups
      * @param Configuration $configuration
+     * @param bool          $isFailing
      *
      * @throws \InvalidArgumentException
      */
-    private function displayDeprecations($groups, $configuration)
+    private function displayDeprecations($groups, $configuration, $isFailing)
     {
         $cmp = function ($a, $b) {
             return $b->count() - $a->count();
@@ -328,8 +320,7 @@ class DeprecationErrorHandler
                     fwrite($handle, "\n".self::colorize($deprecationGroupMessage, 'legacy' !== $group && 'indirect' !== $group)."\n");
                 }
 
-                // Skip the verbose output if the group is quiet and not failing according to its threshold:
-                if ('legacy' !== $group && !$configuration->verboseOutput($group) && $configuration->toleratesForGroup($group, $this->deprecationGroups)) {
+                if ('legacy' !== $group && !$configuration->verboseOutput($group) && !$isFailing) {
                     continue;
                 }
                 $notices = $this->deprecationGroups[$group]->notices();
@@ -340,14 +331,9 @@ class DeprecationErrorHandler
 
                     $countsByCaller = $notice->getCountsByCaller();
                     arsort($countsByCaller);
-                    $limit = 5;
 
                     foreach ($countsByCaller as $method => $count) {
                         if ('count' !== $method) {
-                            if (!$limit--) {
-                                fwrite($handle, "    ...\n");
-                                break;
-                            }
                             fwrite($handle, sprintf("    %dx in %s\n", $count, preg_replace('/(.*)\\\\(.*?::.*?)$/', '$2 from $1', $method)));
                         }
                     }
@@ -360,13 +346,11 @@ class DeprecationErrorHandler
         }
     }
 
-    private static function getPhpUnitErrorHandler(): callable
+    private static function getPhpUnitErrorHandler()
     {
         if (!$eh = self::$errorHandler) {
             if (class_exists(Handler::class)) {
                 $eh = self::$errorHandler = Handler::class;
-            } elseif (method_exists(UtilErrorHandler::class, '__invoke')) {
-                $eh = self::$errorHandler = UtilErrorHandler::class;
             } elseif (method_exists(ErrorHandler::class, '__invoke')) {
                 $eh = self::$errorHandler = ErrorHandler::class;
             } else {

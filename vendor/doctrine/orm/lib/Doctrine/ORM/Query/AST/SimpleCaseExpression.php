@@ -33,7 +33,7 @@ class SimpleCaseExpression extends Node
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function dispatch($sqlWalker)
     {

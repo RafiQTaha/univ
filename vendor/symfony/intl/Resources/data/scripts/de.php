@@ -2,7 +2,6 @@
 
 return [
     'Names' => [
-        'Adlm' => 'Adlam',
         'Afak' => 'Afaka',
         'Aghb' => 'Kaukasisch-Albanisch',
         'Arab' => 'Arabisch',
@@ -96,7 +95,7 @@ return [
         'Mong' => 'Mongolisch',
         'Moon' => 'Moon',
         'Mroo' => 'Mro',
-        'Mtei' => 'Meitei-Mayek',
+        'Mtei' => 'Meitei Mayek',
         'Mymr' => 'Birmanisch',
         'Narb' => 'Altnordarabisch',
         'Nbat' => 'Nabatäisch',
@@ -120,7 +119,6 @@ return [
         'Prti' => 'Parthisch',
         'Qaag' => 'Zawgyi',
         'Rjng' => 'Rejang',
-        'Rohg' => 'Hanifi Rohingya',
         'Roro' => 'Rongorongo',
         'Runr' => 'Runenschrift',
         'Samr' => 'Samaritanisch',

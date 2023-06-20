@@ -27,11 +27,8 @@ use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Symfony\Component\Cache\Adapter\MemcachedAdapter;
 use Symfony\Component\Cache\Adapter\RedisAdapter;
 
-use function apcu_enabled;
 use function class_exists;
-use function dirname;
 use function extension_loaded;
-use function file_exists;
 use function md5;
 use function sys_get_temp_dir;
 
@@ -55,11 +52,7 @@ class Setup
     public static function registerAutoloadDirectory($directory)
     {
         if (! class_exists('Doctrine\Common\ClassLoader', false)) {
-            if (file_exists($directory . '/Doctrine/Common/ClassLoader.php')) {
-                require_once $directory . '/Doctrine/Common/ClassLoader.php';
-            } elseif (file_exists(dirname($directory) . '/src/ClassLoader.php')) {
-                require_once dirname($directory) . '/src/ClassLoader.php';
-            }
+            require_once $directory . '/Doctrine/Common/ClassLoader.php';
         }
 
         $loader = new ClassLoader('Doctrine', $directory);
@@ -237,7 +230,7 @@ class Setup
 
         if ($isDevMode === true) {
             $cache = class_exists(ArrayCache::class) ? new ArrayCache() : new ArrayAdapter();
-        } elseif (extension_loaded('apcu') && apcu_enabled()) {
+        } elseif (extension_loaded('apcu')) {
             $cache = class_exists(ApcuCache::class) ? new ApcuCache() : new ApcuAdapter();
         } elseif (extension_loaded('memcached') && (class_exists(MemcachedCache::class) || MemcachedAdapter::isSupported())) {
             $memcached = new Memcached();

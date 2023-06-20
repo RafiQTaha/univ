@@ -40,7 +40,7 @@ class SelectStatement extends Node
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function dispatch($sqlWalker)
     {

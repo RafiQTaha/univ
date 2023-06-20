@@ -30,7 +30,11 @@ use Monolog\Logger;
  */
 class RedisHandler extends AbstractProcessingHandler
 {
+<<<<<<< HEAD
     /** @var \Predis\Client<\Predis\Client>|\Redis */
+=======
+    /** @var \Predis\Client|\Redis */
+>>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
     private $redisClient;
     /** @var string */
     private $redisKey;
@@ -38,7 +42,11 @@ class RedisHandler extends AbstractProcessingHandler
     protected $capSize;
 
     /**
+<<<<<<< HEAD
      * @param \Predis\Client<\Predis\Client>|\Redis $redis   The redis instance
+=======
+     * @param \Predis\Client|\Redis $redis   The redis instance
+>>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
      * @param string                $key     The key name to push records to
      * @param int                   $capSize Number of entries to limit list size to, 0 = unlimited
      */

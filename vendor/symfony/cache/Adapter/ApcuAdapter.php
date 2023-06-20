@@ -49,7 +49,11 @@ class ApcuAdapter extends AbstractAdapter
 
     public static function isSupported()
     {
+<<<<<<< HEAD
         return \function_exists('apcu_fetch') && filter_var(\ini_get('apc.enabled'), \FILTER_VALIDATE_BOOLEAN);
+=======
+        return \function_exists('apcu_fetch') && filter_var(ini_get('apc.enabled'), \FILTER_VALIDATE_BOOLEAN);
+>>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
     }
 
     /**
@@ -87,8 +91,13 @@ class ApcuAdapter extends AbstractAdapter
      */
     protected function doClear(string $namespace): bool
     {
+<<<<<<< HEAD
         return isset($namespace[0]) && class_exists(\APCUIterator::class, false) && ('cli' !== \PHP_SAPI || filter_var(\ini_get('apc.enable_cli'), \FILTER_VALIDATE_BOOLEAN))
             ? apcu_delete(new \APCUIterator(sprintf('/^%s/', preg_quote($namespace, '/')), \APC_ITER_KEY))
+=======
+        return isset($namespace[0]) && class_exists(\APCuIterator::class, false) && ('cli' !== \PHP_SAPI || filter_var(ini_get('apc.enable_cli'), \FILTER_VALIDATE_BOOLEAN))
+            ? apcu_delete(new \APCuIterator(sprintf('/^%s/', preg_quote($namespace, '/')), \APC_ITER_KEY))
+>>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
             : apcu_clear_cache();
     }
 

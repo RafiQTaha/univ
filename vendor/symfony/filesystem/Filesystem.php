@@ -317,8 +317,6 @@ class Filesystem
      */
     public function symlink(string $originDir, string $targetDir, bool $copyOnWindows = false)
     {
-        self::assertFunctionExists('symlink');
-
         if ('\\' === \DIRECTORY_SEPARATOR) {
             $originDir = strtr($originDir, '/', '\\');
             $targetDir = strtr($targetDir, '/', '\\');
@@ -354,8 +352,6 @@ class Filesystem
      */
     public function hardlink(string $originFile, string|iterable $targetFiles)
     {
-        self::assertFunctionExists('link');
-
         if (!$this->exists($originFile)) {
             throw new FileNotFoundException(null, 0, null, $originFile);
         }
@@ -673,7 +669,7 @@ class Filesystem
      *
      * @throws IOException If the file is not writable
      */
-    public function appendToFile(string $filename, $content/* , bool $lock = false */)
+    public function appendToFile(string $filename, $content/*, bool $lock = false*/)
     {
         if (\is_array($content)) {
             throw new \TypeError(sprintf('Argument 2 passed to "%s()" must be string or resource, array given.', __METHOD__));
@@ -707,17 +703,8 @@ class Filesystem
         return 2 === \count($components) ? [$components[0], $components[1]] : [null, $components[0]];
     }
 
-    private static function assertFunctionExists(string $func): void
+    private static function box(callable $func, mixed ...$args): mixed
     {
-        if (!\function_exists($func)) {
-            throw new IOException(sprintf('Unable to perform filesystem operation because the "%s()" function has been disabled.', $func));
-        }
-    }
-
-    private static function box(string $func, mixed ...$args): mixed
-    {
-        self::assertFunctionExists($func);
-
         self::$lastError = null;
         set_error_handler(__CLASS__.'::handleError');
         try {

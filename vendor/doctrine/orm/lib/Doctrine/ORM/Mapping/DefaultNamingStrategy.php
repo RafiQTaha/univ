@@ -17,7 +17,7 @@ use function substr;
 class DefaultNamingStrategy implements NamingStrategy
 {
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function classToTableName($className)
     {
@@ -29,7 +29,7 @@ class DefaultNamingStrategy implements NamingStrategy
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function propertyToColumnName($propertyName, $className = null)
     {
@@ -37,7 +37,7 @@ class DefaultNamingStrategy implements NamingStrategy
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function embeddedFieldToColumnName($propertyName, $embeddedColumnName, $className = null, $embeddedClassName = null)
     {
@@ -45,7 +45,7 @@ class DefaultNamingStrategy implements NamingStrategy
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function referenceColumnName()
     {
@@ -53,10 +53,7 @@ class DefaultNamingStrategy implements NamingStrategy
     }
 
     /**
-     * {@inheritDoc}
-     *
-     * @param string       $propertyName
-     * @param class-string $className
+     * {@inheritdoc}
      */
     public function joinColumnName($propertyName, $className = null)
     {
@@ -64,7 +61,7 @@ class DefaultNamingStrategy implements NamingStrategy
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function joinTableName($sourceEntity, $targetEntity, $propertyName = null)
     {
@@ -73,7 +70,7 @@ class DefaultNamingStrategy implements NamingStrategy
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function joinKeyColumnName($entityName, $referencedColumnName = null)
     {
