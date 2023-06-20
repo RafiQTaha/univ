@@ -83,10 +83,10 @@ class ContainerBuilder extends Container implements TaggedContainerInterface
      */
     private array $extensionConfigs = [];
 
-    private Compiler $compiler;
+    private $compiler;
     private bool $trackResources;
-    private ?InstantiatorInterface $proxyInstantiator = null;
-    private ExpressionLanguage $expressionLanguage;
+    private $proxyInstantiator = null;
+    private $expressionLanguage;
 
     /**
      * @var ExpressionFunctionProviderInterface[]
@@ -1008,22 +1008,15 @@ class ContainerBuilder extends Container implements TaggedContainerInterface
             require_once $parameterBag->resolveValue($definition->getFile());
         }
 
-        $arguments = $definition->getArguments();
+        $arguments = $this->doResolveServices($parameterBag->unescapeValue($parameterBag->resolveValue($definition->getArguments())), $inlineServices, $isConstructorArgument);
 
         if (null !== $factory = $definition->getFactory()) {
             if (\is_array($factory)) {
                 $factory = [$this->doResolveServices($parameterBag->resolveValue($factory[0]), $inlineServices, $isConstructorArgument), $factory[1]];
             } elseif (!\is_string($factory)) {
                 throw new RuntimeException(sprintf('Cannot create service "%s" because of invalid factory.', $id));
-            } elseif (str_starts_with($factory, '@=')) {
-                $factory = function (ServiceLocator $arguments) use ($factory) {
-                    return $this->getExpressionLanguage()->evaluate(substr($factory, 2), ['container' => $this, 'args' => $arguments]);
-                };
-                $arguments = [new ServiceLocatorArgument($arguments)];
             }
         }
-
-        $arguments = $this->doResolveServices($parameterBag->unescapeValue($parameterBag->resolveValue($arguments)), $inlineServices, $isConstructorArgument);
 
         if (null !== $id && $definition->isShared() && (isset($this->services[$id]) || isset($this->privates[$id])) && ($tryProxy || !$definition->isLazy())) {
             return $this->services[$id] ?? $this->privates[$id];
@@ -1160,10 +1153,12 @@ class ContainerBuilder extends Container implements TaggedContainerInterface
         } elseif ($value instanceof ServiceLocatorArgument) {
             $refs = $types = [];
             foreach ($value->getValues() as $k => $v) {
-                $refs[$k] = [$v, null];
-                $types[$k] = $v instanceof TypedReference ? $v->getType() : '?';
+                if ($v) {
+                    $refs[$k] = [$v];
+                    $types[$k] = $v instanceof TypedReference ? $v->getType() : '?';
+                }
             }
-            $value = new ServiceLocator($this->resolveServices(...), $refs, $types);
+            $value = new ServiceLocator(\Closure::fromCallable([$this, 'resolveServices']), $refs, $types);
         } elseif ($value instanceof Reference) {
             $value = $this->doGet((string) $value, $value->getInvalidBehavior(), $inlineServices, $isConstructorArgument);
         } elseif ($value instanceof Definition) {
@@ -1596,10 +1591,10 @@ class ContainerBuilder extends Container implements TaggedContainerInterface
     private function getExpressionLanguage(): ExpressionLanguage
     {
         if (!isset($this->expressionLanguage)) {
-            if (!class_exists(Expression::class)) {
-                throw new LogicException('Expressions cannot be used without the ExpressionLanguage component. Try running "composer require symfony/expression-language".');
+            if (!class_exists(\Symfony\Component\ExpressionLanguage\ExpressionLanguage::class)) {
+                throw new LogicException('Unable to use expressions as the Symfony ExpressionLanguage component is not installed.');
             }
-            $this->expressionLanguage = new ExpressionLanguage(null, $this->expressionLanguageProviders, null, $this->getEnv(...));
+            $this->expressionLanguage = new ExpressionLanguage(null, $this->expressionLanguageProviders);
         }
 
         return $this->expressionLanguage;

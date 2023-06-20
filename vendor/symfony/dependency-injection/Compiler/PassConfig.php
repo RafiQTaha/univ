@@ -28,7 +28,7 @@ class PassConfig
     public const TYPE_OPTIMIZE = 'optimization';
     public const TYPE_REMOVE = 'removing';
 
-    private MergeExtensionConfigurationPass $mergePass;
+    private $mergePass;
     private array $afterRemovingPasses;
     private array $beforeOptimizationPasses;
     private array $beforeRemovingPasses = [];
@@ -43,7 +43,6 @@ class PassConfig
             100 => [
                 new ResolveClassPass(),
                 new RegisterAutoconfigureAttributesPass(),
-                new AutowireAsDecoratorPass(),
                 new AttributeAutoconfigurationPass(),
                 new ResolveInstanceofConditionalsPass(),
                 new RegisterEnvVarProcessorsPass(),

@@ -25,12 +25,12 @@ use Symfony\Component\HttpKernel\Event\ResponseEvent;
 class ChromePhpHandler extends BaseChromePhpHandler
 {
     private array $headers = [];
-    private Response $response;
+    private $response;
 
     /**
      * Adds the headers to the response once it's created.
      */
-    public function onKernelResponse(ResponseEvent $event): void
+    public function onKernelResponse(ResponseEvent $event)
     {
         if (!$event->isMainRequest()) {
             return;
@@ -50,6 +50,9 @@ class ChromePhpHandler extends BaseChromePhpHandler
         $this->headers = [];
     }
 
+    /**
+     * {@inheritdoc}
+     */
     protected function sendHeader($header, $content): void
     {
         if (!self::$sendHeaders) {

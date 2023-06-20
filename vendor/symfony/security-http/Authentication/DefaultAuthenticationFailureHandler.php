@@ -78,10 +78,12 @@ class DefaultAuthenticationFailureHandler implements AuthenticationFailureHandle
             $this->logger->debug(sprintf('Ignoring query parameter "%s": not a valid URL.', $options['failure_path_parameter']));
         }
 
-        $options['failure_path'] ??= $options['login_path'];
+        $options['failure_path'] ?? $options['failure_path'] = $options['login_path'];
 
         if ($options['failure_forward']) {
-            $this->logger?->debug('Authentication failure, forward triggered.', ['failure_path' => $options['failure_path']]);
+            if (null !== $this->logger) {
+                $this->logger->debug('Authentication failure, forward triggered.', ['failure_path' => $options['failure_path']]);
+            }
 
             $subRequest = $this->httpUtils->createRequest($request, $options['failure_path']);
             $subRequest->attributes->set(Security::AUTHENTICATION_ERROR, $exception);
@@ -89,7 +91,9 @@ class DefaultAuthenticationFailureHandler implements AuthenticationFailureHandle
             return $this->httpKernel->handle($subRequest, HttpKernelInterface::SUB_REQUEST);
         }
 
-        $this->logger?->debug('Authentication failure, redirect triggered.', ['failure_path' => $options['failure_path']]);
+        if (null !== $this->logger) {
+            $this->logger->debug('Authentication failure, redirect triggered.', ['failure_path' => $options['failure_path']]);
+        }
 
         $request->getSession()->set(Security::AUTHENTICATION_ERROR, $exception);
 

@@ -527,24 +527,6 @@ const Toast = Swal.mixin({
             icon.removeClass('fa-spinner fa-spin ').addClass("fa-edit");
         })
     }
-    
-    const getNotificationInfos = () => {
-        let modalAlert =  $("#modifier_org-modal .modal-body .alert");
-        modalAlert.remove();
-        const icon = $("#modifier_notification i");
-        icon.removeClass('fa-edit').addClass("fa-spinner fa-spin");
-        axios.get('/conseil/disciplinaire/getnotificationInfos/'+id_sanction)
-        .then(success => {
-            icon.removeClass('fa-spinner fa-spin').addClass("fa-edit");
-            // console.log(success);
-            $('#notification_update_modal #notification_update').html(success.data)
-            $('#notification_update_modal #notification_update select').select2()
-        })
-        .catch(err => {
-            // console.log(err)
-            icon.removeClass('fa-spinner fa-spin ').addClass("fa-edit");
-        })
-    }
 
     $('body').on('click','#modifier_convocation',function (e) {
         e.preventDefault();
@@ -556,19 +538,6 @@ const Toast = Swal.mixin({
             return;
         }
         $("#convocation_update_modal").modal('show');
-    });
-
-    $('body').on('click','#modifier_notification',function (e) {
-        e.preventDefault();
-        // alert('hi');
-        if(!id_sanction){
-            Toast.fire({
-                icon: 'error',
-                title: 'Veuillez selection une ligne!',
-            })
-            return;
-        }
-        $("#notification_update_modal").modal('show');
     });
     
     $("body").on("submit", '#convocation_update', async function (e) {
@@ -604,6 +573,37 @@ const Toast = Swal.mixin({
     });
     /////////// End Updating Convocation Block ///////////////
 
+
+    
+    const getNotificationInfos = () => {
+        let modalAlert =  $("#modifier_org-modal .modal-body .alert");
+        modalAlert.remove();
+        const icon = $("#modifier_notification i");
+        icon.removeClass('fa-edit').addClass("fa-spinner fa-spin");
+        axios.get('/conseil/disciplinaire/getnotificationInfos/'+id_sanction)
+        .then(success => {
+            icon.removeClass('fa-spinner fa-spin').addClass("fa-edit");
+            // console.log(success);
+            $('#notification_update_modal #notification_update').html(success.data)
+            $('#notification_update_modal #notification_update select').select2()
+        })
+        .catch(err => {
+            // console.log(err)
+            icon.removeClass('fa-spinner fa-spin ').addClass("fa-edit");
+        })
+    }
+    $('body').on('click','#modifier_notification',function (e) {
+        e.preventDefault();
+        // alert('hi');
+        if(!id_sanction){
+            Toast.fire({
+                icon: 'error',
+                title: 'Veuillez selection une ligne!',
+            })
+            return;
+        }
+        $("#notification_update_modal").modal('show');
+    });
     $("body").on("submit", '#notification_update', async function (e) {
         e.preventDefault();
         // alert('test');

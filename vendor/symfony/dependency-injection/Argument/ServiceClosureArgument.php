@@ -12,6 +12,7 @@
 namespace Symfony\Component\DependencyInjection\Argument;
 
 use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
+use Symfony\Component\DependencyInjection\Reference;
 
 /**
  * Represents a service wrapped in a memoizing closure.
@@ -22,9 +23,9 @@ class ServiceClosureArgument implements ArgumentInterface
 {
     private array $values;
 
-    public function __construct(mixed $value)
+    public function __construct(Reference $reference)
     {
-        $this->values = [$value];
+        $this->values = [$reference];
     }
 
     /**
@@ -40,8 +41,8 @@ class ServiceClosureArgument implements ArgumentInterface
      */
     public function setValues(array $values)
     {
-        if ([0] !== array_keys($values)) {
-            throw new InvalidArgumentException('A ServiceClosureArgument must hold one and only one value.');
+        if ([0] !== array_keys($values) || !($values[0] instanceof Reference || null === $values[0])) {
+            throw new InvalidArgumentException('A ServiceClosureArgument must hold one and only one Reference.');
         }
 
         $this->values = $values;

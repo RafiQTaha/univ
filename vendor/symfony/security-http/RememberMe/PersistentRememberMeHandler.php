@@ -32,8 +32,8 @@ use Symfony\Component\Security\Core\User\UserProviderInterface;
  */
 final class PersistentRememberMeHandler extends AbstractRememberMeHandler
 {
-    private TokenProviderInterface $tokenProvider;
-    private ?TokenVerifierInterface $tokenVerifier;
+    private $tokenProvider;
+    private $tokenVerifier;
 
     public function __construct(TokenProviderInterface $tokenProvider, string $secret, UserProviderInterface $userProvider, RequestStack $requestStack, array $options, LoggerInterface $logger = null, TokenVerifierInterface $tokenVerifier = null)
     {
@@ -98,7 +98,9 @@ final class PersistentRememberMeHandler extends AbstractRememberMeHandler
 
         $tokenValue = strtr(base64_encode(random_bytes(33)), '+/=', '-_~');
         $tokenLastUsed = new \DateTime();
-        $this->tokenVerifier?->updateExistingToken($persistentToken, $tokenValue, $tokenLastUsed);
+        if ($this->tokenVerifier) {
+            $this->tokenVerifier->updateExistingToken($persistentToken, $tokenValue, $tokenLastUsed);
+        }
         $this->tokenProvider->updateToken($series, $tokenValue, $tokenLastUsed);
 
         $this->createCookie($rememberMeDetails->withValue($series.':'.$tokenValue));

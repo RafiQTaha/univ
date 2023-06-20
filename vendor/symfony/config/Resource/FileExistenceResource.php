@@ -46,6 +46,9 @@ class FileExistenceResource implements SelfCheckingResourceInterface
         return $this->resource;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function isFresh(int $timestamp): bool
     {
         return file_exists($this->resource) === $this->exists;

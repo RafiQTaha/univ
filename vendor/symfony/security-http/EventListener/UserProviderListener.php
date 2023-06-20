@@ -25,7 +25,7 @@ use Symfony\Component\Security\Http\Event\CheckPassportEvent;
  */
 class UserProviderListener
 {
-    private UserProviderInterface $userProvider;
+    private $userProvider;
 
     public function __construct(UserProviderInterface $userProvider)
     {
@@ -45,6 +45,6 @@ class UserProviderListener
             return;
         }
 
-        $badge->setUserLoader($this->userProvider->loadUserByIdentifier(...));
+        $badge->setUserLoader([$this->userProvider, 'loadUserByIdentifier']);
     }
 }

@@ -304,11 +304,6 @@ class XmlFileLoader extends FileLoader
             $factory = $factories[0];
             if ($function = $factory->getAttribute('function')) {
                 $definition->setFactory($function);
-            } elseif ($expression = $factory->getAttribute('expression')) {
-                if (!class_exists(Expression::class)) {
-                    throw new \LogicException('The "expression" attribute cannot be used on factories without the ExpressionLanguage component. Try running "composer require symfony/expression-language".');
-                }
-                $definition->setFactory('@='.$expression);
             } else {
                 if ($childService = $factory->getAttribute('service')) {
                     $class = new Reference($childService, ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE);
@@ -407,7 +402,7 @@ class XmlFileLoader extends FileLoader
     private function parseFileToDOM(string $file): \DOMDocument
     {
         try {
-            $dom = XmlUtils::loadFile($file, $this->validateSchema(...));
+            $dom = XmlUtils::loadFile($file, [$this, 'validateSchema']);
         } catch (\InvalidArgumentException $e) {
             throw new InvalidArgumentException(sprintf('Unable to parse file "%s": ', $file).$e->getMessage(), $e->getCode(), $e);
         }
@@ -495,7 +490,7 @@ class XmlFileLoader extends FileLoader
                 $invalidBehavior = ContainerInterface::NULL_ON_INVALID_REFERENCE;
             }
 
-            switch ($type = $arg->getAttribute('type')) {
+            switch ($arg->getAttribute('type')) {
                 case 'service':
                     if ('' === $arg->getAttribute('id')) {
                         throw new InvalidArgumentException(sprintf('Tag "<%s>" with type="service" has no or empty "id" attribute in "%s".', $name, $file));
@@ -515,29 +510,31 @@ class XmlFileLoader extends FileLoader
                     break;
                 case 'iterator':
                     $arg = $this->getArgumentsAsPhp($arg, $name, $file);
-                    $arguments[$key] = new IteratorArgument($arg);
-                    break;
-                case 'closure':
-                case 'service_closure':
-                    if ('' !== $arg->getAttribute('id')) {
-                        $arg = new Reference($arg->getAttribute('id'), $invalidBehavior);
-                    } else {
-                        $arg = $this->getArgumentsAsPhp($arg, $name, $file);
+                    try {
+                        $arguments[$key] = new IteratorArgument($arg);
+                    } catch (InvalidArgumentException $e) {
+                        throw new InvalidArgumentException(sprintf('Tag "<%s>" with type="iterator" only accepts collections of type="service" references in "%s".', $name, $file));
                     }
-                    $arguments[$key] = match ($type) {
-                        'service_closure' => new ServiceClosureArgument($arg),
-                        'closure' => (new Definition('Closure'))
-                            ->setFactory(['Closure', 'fromCallable'])
-                            ->addArgument($arg),
-                    };
+                    break;
+                case 'service_closure':
+                    if ('' === $arg->getAttribute('id')) {
+                        throw new InvalidArgumentException(sprintf('Tag "<%s>" with type="service_closure" has no or empty "id" attribute in "%s".', $name, $file));
+                    }
+
+                    $arguments[$key] = new ServiceClosureArgument(new Reference($arg->getAttribute('id'), $invalidBehavior));
                     break;
                 case 'service_locator':
                     $arg = $this->getArgumentsAsPhp($arg, $name, $file);
-                    $arguments[$key] = new ServiceLocatorArgument($arg);
+                    try {
+                        $arguments[$key] = new ServiceLocatorArgument($arg);
+                    } catch (InvalidArgumentException $e) {
+                        throw new InvalidArgumentException(sprintf('Tag "<%s>" with type="service_locator" only accepts maps of type="service" references in "%s".', $name, $file));
+                    }
                     break;
                 case 'tagged':
                 case 'tagged_iterator':
                 case 'tagged_locator':
+                    $type = $arg->getAttribute('type');
                     $forLocator = 'tagged_locator' === $type;
 
                     if (!$arg->getAttribute('tag')) {

@@ -20,7 +20,7 @@ use Symfony\Component\DependencyInjection\Exception\RuntimeException;
  */
 class EnvVarProcessor implements EnvVarProcessorInterface
 {
-    private ContainerInterface $container;
+    private $container;
     private \Traversable $loaders;
     private array $loadedVars = [];
 
@@ -104,7 +104,7 @@ class EnvVarProcessor implements EnvVarProcessorInterface
                 if ('' !== $env && null !== $env) {
                     return $env;
                 }
-            } catch (EnvNotFoundException) {
+            } catch (EnvNotFoundException $e) {
                 // no-op
             }
 
@@ -160,7 +160,7 @@ class EnvVarProcessor implements EnvVarProcessorInterface
                     if ($ended || $count === $i) {
                         $loaders = $this->loaders;
                     }
-                } catch (ParameterCircularReferenceException) {
+                } catch (ParameterCircularReferenceException $e) {
                     // skip loaders that need an env var that is not defined
                 } finally {
                     $this->loaders = $loaders;
