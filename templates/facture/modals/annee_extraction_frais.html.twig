@@ -14,8 +14,11 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="annee">Annee D'extraction (*) :</label>
-                        <input type='text' placeholder='2021' class="form-control" name="annee" id="annee">
-                        </select>
+                        <div class="d-flex">
+                            <input type='text' placeholder='2021' class="form-control" name="annee" id="annee" style="width: 50%;">
+                            <p class="" style="margin-left: 10px;">/ <span id="year_plus_one"></span></p>
+                        </div>
+                        {# <input type='text' placeholder='2021' class="form-control" name="annee" id="annee"> #}
                     </div>
                 </div>
             </div>
