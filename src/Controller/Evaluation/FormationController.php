@@ -676,8 +676,8 @@ class FormationController extends AbstractController
             'mode' => 'utf-8', 
             'format' => 'A4-L',
             'margin_top' => 0,
-            'margin_left' => 5,
-            'margin_right' => 5,
+            'margin_left' => 2,
+            'margin_right' => 2,
             // 'default_font' => 'dejavusans'
         ]);
         // $mpdf->SetFont('Arial');
