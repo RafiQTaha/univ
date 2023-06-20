@@ -383,5 +383,15 @@ const Toast = Swal.mixin({
         // alert(annee);
         window.open('/inscription/gestion/extraction_ins_annee/'+annee, '_blank');
     });
+
+    $('#annee_export').on('input', function() {
+        var inputYear = parseInt($(this).val());
+        var yearPlusOne = inputYear + 1;
+        if (!isNaN(yearPlusOne)) {
+          $('#year_plus_one').text(yearPlusOne);
+        } else {
+          $('#year_plus_one').text('');
+        }
+    });
 })
 

@@ -180,6 +180,7 @@ class GestionPreinscriptionController extends AbstractController
         foreach ($ids as $id) {
             $preinscription = $this->em->getRepository(TPreinscription::class)->find($id);
             $preinscription->setInscriptionValide(0);
+            $preinscription->setActive(0);
             // $preinscription->setUserUpdated($this->getUser());
             $preinscription->setUpdated(New DateTime('now'));
         }
