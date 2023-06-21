@@ -33,6 +33,8 @@ class ConseildisciplinaireController extends AbstractController
         $this->em = $doctrine->getManager();
         date_default_timezone_set('Africa/Casablanca');
     }
+
+    // MAIN PAGE
     #[Route('/', name: 'disciplinaire')]
     public function index(Request $request): Response
     {
@@ -50,6 +52,7 @@ class ConseildisciplinaireController extends AbstractController
        ]);
     }
     
+    // LA LIST DES CONVOCATIONS.
     #[Route('/list', name: 'disciplinaire_inscription_list')]
     public function disciplinaireInscriptionList(Request $request): Response
     {
@@ -160,6 +163,8 @@ class ConseildisciplinaireController extends AbstractController
         // die;
         return new Response(json_encode($json_data));
     }
+    
+    // LA CREATION D'UNE CONVOCATION.
     #[Route('/ajouter_convocation', name: 'ajouter_convocation')]
     public function ajouter_convocation(Request $request): Response
     {
@@ -191,7 +196,8 @@ class ConseildisciplinaireController extends AbstractController
         $this->em->flush();
         return new JsonResponse("Convocation bien cree",200);
     }
-    
+
+
     #[Route('/getconvocationInfos/{insSanction}', name: 'getconvocationInfos')]
     public function getconvocationInfos(InsSanctionner $insSanction): Response
     {
@@ -200,7 +206,7 @@ class ConseildisciplinaireController extends AbstractController
         ])->getContent();
         return new JsonResponse($html, 200);
     }
-
+    // LA MODIFICATION DU CONVOCATION EN CAS D'ERREUR OU CHANGEMENT DE LA DATE.
     #[Route('/modifier_convocation/{id}', name: 'modifier_convocation')]
     public function modifier_convocation(Request $request,InsSanctionner $insSanction): Response
     { 
@@ -220,20 +226,109 @@ class ConseildisciplinaireController extends AbstractController
         $this->em->flush();
         return new JsonResponse('Convocation bien modifier', 200);        
     }
+    
+    // L'AJOUT D'UNE NOTIF. POUR UNE CONVOCATION.
+    // #[Route('/ajouter_notification/{insSanction}', name: 'ajouter_notification')]
+    // public function ajouter_notification(InsSanctionner $insSanction,Request $request): Response
+    // {
+    //     if (($request->get('incident') == "" && $request->get('autre_incident') == "") || ( !$request->get('sanction') && $request->get('newSanctions') == "" ) || $request->get('date_decision') == "") {
+    //         return new JsonResponse("Merci de remplir tout les champs!",500);
+    //     }
+    //     if ($request->get('autre_incident') != "") {
+    //         $insSanction->setAutreAgression($request->get('autre_incident'));
+    //         $insSanction->setAgression(null);
+    //     }else{
+    //         $insSanction->setAutreAgression(null);
+    //         $insSanction->setAgression($this->em->getRepository(SousAgression::class)->find($request->get('incident')));
+    //     }
+    //     if ($request->get('sanction')) {
+    //         $insSanctionSanctions = $insSanction->getSanction();
+    //         $insSanctionSanctions->clear();
+    //         foreach ($request->get('sanction') as $sanction) {
+    //             $insSanction->addSanction($this->em->getRepository(Sanction::class)->find($sanction));
+    //         }
+    //     }
+    //     $newSanctions = json_decode($request->get('newSanctions'));
+    //     if ($newSanctions != null) {
+    //         $insSanction->setAutreSanction([]);
+    //         $insSanction->setAutreSanction($newSanctions);
+    //     }
+    //     $insSanction->setDateDecision(new DateTime($request->get('date_decision')));
+    //     $insSanction->setUserUpdated($this->getUser());
+    //     $insSanction->setUpdated(new DateTime('now'));
+    //     $insSanction->setSansSuite(0);
+    //     $this->em->flush();
+    //     return new JsonResponse("Notification bien ajouter",200);
+    // }
 
-    #[Route('/convocation_validation/{insSanction}', name: 'convocation_validation')]
-    public function convocation_validation(InsSanctionner $insSanction): Response
+    
+    #[Route('/getnotificationInfos/{insSanction}', name: 'getnotificationInfos')]
+    public function getnotificationInfos(InsSanctionner $insSanction): Response
     {
-        if (!$insSanction || $insSanction->getActive() == 0) {
-            return new JsonResponse("Convocation Introuvable!",500);
-        }
-        if ($insSanction->getValide() == 1) {
-            return new JsonResponse("Convocation déja valide!",500);
-        }
-        $insSanction->setValide(1);
-        $this->em->flush();
-        return new JsonResponse("Convocation bien valide",200);
+        // dd($insSanction->getSanction()[0]);
+        $html = $this->render('conseil/pages/update_notification.html.twig', [
+            'notification' => $insSanction,
+            'agressions' =>  $this->em->getRepository(Agression::class)->findBy(['active'=>1]),
+        ])->getContent();
+        return new JsonResponse($html, 200);
     }
+    
+    // LA MODIFICATION DU NOTIF. EN CAS D'ERREUR OU CHANGEMENT DU (SANCTION,AGRESSION)
+    #[Route('/modifier_notification/{id}', name: 'modifier_notification')]
+    public function modifier_notification(Request $request,InsSanctionner $insSanction): Response
+    { 
+        if ($insSanction->getActive() == 0 || $insSanction->getValide() == 1 ) {
+            return new JsonResponse('Convocation est déja valide ou bien Annuler!', 500);
+        }
+        if (($request->get('incident') == "" && $request->get('autre_incident') == "") || ( !$request->get('sanction') && !json_decode($request->get('newSanctions')) ) || $request->get('date_decision') == "") {
+            return new JsonResponse("Merci de remplir tout les champs!",500);
+        }
+        if ($request->get('autre_incident') != "") {
+            $insSanction->setAutreAgression($request->get('autre_incident'));
+            $insSanction->setAgression(null);
+        }else{
+            $insSanction->setAutreAgression(null);
+            $insSanction->setAgression($this->em->getRepository(SousAgression::class)->find($request->get('incident')));
+        }
+        
+        if ($request->get('sanction')) {
+            $insSanctionSanctions = $insSanction->getSanction();
+            $insSanctionSanctions->clear();
+            foreach ($request->get('sanction') as $sanction) {
+                $insSanction->addSanction($this->em->getRepository(Sanction::class)->find($sanction));
+            }
+        }else {
+            $insSanction->getSanction()->clear();
+        }
+        $newSanctions = json_decode($request->get('newSanctions'));
+        // dd($newSanctions);
+        // if ($newSanctions != null) {
+        //     $insSanction->setAutreSanction([]);
+        $insSanction->setAutreSanction($newSanctions);
+        // }
+        $insSanction->setDateDecision(new DateTime($request->get('date_decision')));
+        $insSanction->setUserUpdated($this->getUser());
+        $insSanction->setUpdated(new DateTime('now'));
+        $insSanction->setSansSuite(0);
+        $this->em->flush();
+        return new JsonResponse('Notification bien modifier', 200);        
+    }
+
+    
+    // LA VERIFICATION EST NECESSERE POUR SAVOIR SI LA CONVOCATION A UNE AGRESSION ET UNE SANCTION OU BIEN ELLE EST SANS SUITE POUR NE PAS LA TELECHARGER
+    #[Route('/verification_notification/{insSanction}', name: 'verification_notification')]
+    public function verification_notification(InsSanctionner $insSanction)
+    {
+        if ($insSanction->getSansSuite() == 1) {
+            return new JsonResponse("La convocation est déja sans suite !!",500);
+        }
+        if ( ($insSanction->getAgression() == null && $insSanction->getAutreAgression() == null) || !$insSanction) {
+            return new JsonResponse("Merci d'ajouter les sanctions d'abord !",500);
+        }
+        return new JsonResponse("C'est bon",200);
+    }
+    
+    // RENDRE LA CONVOCATION SANS SUITE
     #[Route('/convocation_sans_suite/{insSanction}', name: 'convocation_sans_suite')]
     public function convocation_sans_suite(InsSanctionner $insSanction): Response
     {
@@ -247,8 +342,29 @@ class ConseildisciplinaireController extends AbstractController
         $this->em->flush();
         return new JsonResponse("Convocation est sans suite",200);
     }
-    
 
+    // VALIDER LA CONVOCATION APRES LE REMPLISSAGE DU NOTIFICATION
+    #[Route('/convocation_validation/{insSanction}', name: 'convocation_validation')]
+    public function convocation_validation(InsSanctionner $insSanction): Response
+    {
+        if (!$insSanction || $insSanction->getActive() == 0) {
+            return new JsonResponse("Convocation Introuvable!",500);
+        }
+        if ($insSanction->getValide() == 1) {
+            return new JsonResponse("Convocation déja valide!",500);
+        }
+        if ($insSanction->getSansSuite() == 1) {
+            return new JsonResponse("La convocation est sans suite !!",500);
+        }
+        if ( ($insSanction->getAgression() == null && $insSanction->getAutreAgression() == null) || ($insSanction->getSanction() == null && $insSanction->getAutreSanction() == null) ) {
+            return new JsonResponse("Merci d'ajouter la notification d'abord !",500);
+        }
+        $insSanction->setValide(1);
+        $this->em->flush();
+        return new JsonResponse("Convocation bien valide",200);
+    }
+    
+    // LA DEVALIDATION DU CONVOCATION
     #[Route('/convocation_devalidation', name: 'convocation_devalidation')]
     public function convocation_devalidation(Request $request): Response
     {
@@ -262,10 +378,10 @@ class ConseildisciplinaireController extends AbstractController
         return new JsonResponse("Convocation bien devalide",200);
     }
 
+    // L'ANNULATION D'UNE CONVOCATION
     #[Route('/annuler_convocation', name: 'annuler_convocation')]
     public function annuler_convocation(Request $request): Response
     {
-        // dd($request);
         $insSanction = $this->em->getRepository(InsSanctionner::class)->find($request->get('id_sanction'));
         if (!$insSanction || $insSanction->getActive() == 0) {
             return new JsonResponse("Convocation Introuvable ou déja annuler!",500);
@@ -274,42 +390,8 @@ class ConseildisciplinaireController extends AbstractController
         $this->em->flush();
         return new JsonResponse("Convocation bien Annuler",200);
     }
-    
-    #[Route('/ajouter_notification/{insSanction}', name: 'ajouter_notification')]
-    public function ajouter_notification(InsSanctionner $insSanction,Request $request): Response
-    {
-        if (($request->get('incident') == "" && $request->get('autre_incident') == "") || ( !$request->get('sanction') && $request->get('newSanctions') == "" ) || $request->get('date_decision') == "") {
-            return new JsonResponse("Merci de remplir tout les champs!",500);
-        }
-        if ($request->get('autre_incident') != "") {
-            $insSanction->setAutreAgression($request->get('autre_incident'));
-            $insSanction->setAgression(null);
-        }else{
-            $insSanction->setAutreAgression(null);
-            $insSanction->setAgression($this->em->getRepository(SousAgression::class)->find($request->get('incident')));
-        }
-        if ($insSanction->getValide() == 0) {
-            return new JsonResponse("Merci de valider la convocation!",500);
-        }
-        if ($request->get('sanction')) {
-            $insSanctionSanctions = $insSanction->getSanction();
-            $insSanctionSanctions->clear();
-            foreach ($request->get('sanction') as $sanction) {
-                $insSanction->addSanction($this->em->getRepository(Sanction::class)->find($sanction));
-            }
-        }
-        $newSanctions = json_decode($request->get('newSanctions'));
-        if (json_decode($request->get('newSanctions')) != null) {
-            $insSanction->setAutreSanction([]);
-            $insSanction->setAutreSanction(json_decode($request->get('newSanctions')));
-        }
-        $insSanction->setDateDecision(new DateTime($request->get('date_decision')));
-        $insSanction->setUserUpdated($this->getUser());
-        $insSanction->setUpdated(new DateTime('now'));
-        $insSanction->setSansSuite(0);
-        $this->em->flush();
-        return new JsonResponse("Notification bien ajouter",200);
-    }
+
+    // L'ETAT D'INPRESSION DU CONVOCATION
     #[Route('/etatConvocation/{insSanction}', name: 'etatConvocation')]
     public function etatConvocation(InsSanctionner $insSanction)
     {
@@ -343,17 +425,8 @@ class ConseildisciplinaireController extends AbstractController
         $mpdf->SetTitle('Convocation');
         $mpdf->Output("Convocation.pdf", "I");
     }
-    #[Route('/verification_notification/{insSanction}', name: 'verification_notification')]
-    public function verification_notification(InsSanctionner $insSanction)
-    {
-        if ($insSanction->getSansSuite() == 1) {
-            return new JsonResponse("La convocation est déja sans suite !!",500);
-        }
-        if ( ($insSanction->getAgression() == null && $insSanction->getAutreAgression() == null) || !$insSanction) {
-            return new JsonResponse("Merci d'ajouter les sanctions d'abord !",500);
-        }
-        return new JsonResponse("C'est bon",200);
-    }
+    
+    // L'ETAT D'INPRESSION DU NOTIFICATION
     #[Route('/etatNotification/{insSanction}', name: 'etatNotification')]
     public function etatNotification(InsSanctionner $insSanction)
     {
@@ -387,6 +460,8 @@ class ConseildisciplinaireController extends AbstractController
         $mpdf->SetTitle('Notification');
         $mpdf->Output("Notification.pdf", "I");
     }
+
+    // L'HISTORIQUE EN EXTRACTION: TOUT LES CONVOCATION AVEC LEUR NOTIFICATION SUR CETTE ETAT D'EXCEL 
     #[Route('/extraction_historique', name: 'extraction_historique')]
     public function extraction_historique()
     {

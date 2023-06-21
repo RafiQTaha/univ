@@ -24,7 +24,7 @@ class Agression
     #[ORM\OneToMany(mappedBy: 'agression', targetEntity: SousAgression::class)]
     private $sousAgressions;
 
-    #[ORM\OneToMany(mappedBy: 'Agression', targetEntity: Sanction::class)]
+    #[ORM\OneToMany(mappedBy: 'agression', targetEntity: Sanction::class)]
     private $sanctions;
 
     public function __construct()
