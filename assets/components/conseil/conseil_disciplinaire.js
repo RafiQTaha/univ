@@ -168,6 +168,7 @@ const Toast = Swal.mixin({
             $(this).addClass('active_databales');
             id_sanction = $(this).attr('id');
             getConvocationInfos()
+            // getNotificationInfos();
         }
         console.log(id_sanction)
         
@@ -311,89 +312,62 @@ const Toast = Swal.mixin({
         
     })
 
-    $("#notification").on("click", () => {
-        if(!id_sanction){
-          Toast.fire({
-            icon: 'error',
-            title: 'Veuillez selection une ligne!',
-          })
-          return;
-        }
-        $("#notification_modal .modal-body .alert").remove()
-        $("#notification_modal").modal("show")
-    })
+    // $("#notification").on("click", () => {
+    //     if(!id_sanction){
+    //       Toast.fire({
+    //         icon: 'error',
+    //         title: 'Veuillez selection une ligne!',
+    //       })
+    //       return;
+    //     }
+    //     $("#notification_modal .modal-body .alert").remove()
+    //     $("#notification_modal").modal("show")
+    // })
     
-    $("#agressions").on('change', async function (){
-        const id_agression = $(this).val();
-        let incident = ""
-        let sanction = ""
-        if(id_agression != "") {
-            const request = await axios.get('/api/sousagression/'+id_agression);
-            incident = request.data
-            const requestsanction = await axios.get('/api/sanction/'+id_agression);
-            sanction = requestsanction.data
-        } else {
-            $('#incident').html("").select2();
-            $('#sanction').html("").select2();
-        }
-        $('#incident').html(incident).select2();
-        $('#sanction').html(sanction).select2();
-    })
-    $('body').on('click','#newSanction', function (){
-        let newSanction = $(this).parent().parent();
-        newSanction.append(
-            `<div class="d-flex  mt-2">
-            <input type="text" name="autre_sanction" id="autre_sanction" class="form-control" placeholder="Autre Sanction">
-            <button type="button" class="btn btn-danger  ml-2" id="removenewSanction"><i class="fas fa-minus"></i></button>
-          </div>`
-        );
-        console.log(newSanction)
-    })
-    $('body').on('click','#removenewSanction', function (){
-        $(this).parent().remove();
-    })
     
-    $("#notification_save").on("submit", async function (e){
-        e.preventDefault();
-        let formData = new FormData($(this)[0]);
-        let modalAlert = $("#notification_modal .modal-body .alert")
-        modalAlert.remove();
-        const icon = $("#notification_save .submitBtn i");
-        icon.removeClass('fa-check-circle').addClass("fa-spinner fa-spin");
+    
+    // $("#notification_save").on("submit", async function (e){
+    //     e.preventDefault();
+    //     let formData = new FormData($(this)[0]);
+    //     let modalAlert = $("#notification_modal .modal-body .alert")
+    //     modalAlert.remove();
+    //     const icon = $("#notification_save .submitBtn i");
+    //     icon.removeClass('fa-check-circle').addClass("fa-spinner fa-spin");
         
-        let inputs = $('#autre_sanction_text input');
-        var autreSanctions = []
-        inputs.map(async function(input)  {
-            if( $.trim($(this).val())  != "") {
-                autreSanctions.push($(this).val());
-            } 
-        }) 
-        console.log(autreSanctions)
-        formData.append("newSanctions",  JSON.stringify(autreSanctions));
-        // return
+    //     let inputs = $('#autre_sanction_text input');
+    //     var autreSanctions = []
+    //     inputs.map(async function(input)  {
+    //         if( $.trim($(this).val())  != "") {
+    //             autreSanctions.push($(this).val());
+    //         } 
+    //     }) 
+    //     console.log(autreSanctions)
+    //     formData.append("newSanctions",  JSON.stringify(autreSanctions));
+    //     // return
         
-        try {
-          const request = await axios.post('/conseil/disciplinaire/ajouter_notification/'+id_sanction, formData);
-          const response = request.data;
-          $("#notification_modal .modal-body").prepend(
-            `<div class="alert alert-success">
-                <p>${response}</p>
-              </div>`
-          );
-          icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
-          $("#notification_modal select").val("").select2();
-          $("#notification_save")[0].reset();
-          table.ajax.reload(null, false)
-        } catch (error) {
-          const message = error.response.data;
-          console.log(error, error.response);
-          modalAlert.remove();
-          $("#notification_modal .modal-body").prepend(
-            `<div class="alert alert-danger">${message}</div>`
-          );
-          icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
-        }
-    })
+    //     try {
+    //       const request = await axios.post('/conseil/disciplinaire/ajouter_notification/'+id_sanction, formData);
+    //       const response = request.data;
+    //       $("#notification_modal .modal-body").prepend(
+    //         `<div class="alert alert-success">
+    //             <p>${response}</p>
+    //           </div>`
+    //       );
+    //       icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
+    //       $("#notification_modal select").val("").select2();
+    //       $("#notification_save")[0].reset();
+    //       table.ajax.reload(null, false)
+    //     } catch (error) {
+    //       const message = error.response.data;
+    //       console.log(error, error.response);
+    //       modalAlert.remove();
+    //       $("#notification_modal .modal-body").prepend(
+    //         `<div class="alert alert-danger">${message}</div>`
+    //       );
+    //       icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
+    //     }
+    // })
+
     $('body').on('click','#etat_convocation', function (){
         if(!id_sanction){
           Toast.fire({
@@ -404,36 +378,7 @@ const Toast = Swal.mixin({
         }
         window.open('/conseil/disciplinaire/etatConvocation/'+id_sanction, '_blank');
     })
-    $('body').on('click','#etat_notification', async function (){
-        if(!id_sanction){
-          Toast.fire({
-            icon: 'error',
-            title: 'Veuillez selection une ligne!',
-          })
-          return;
-        }
-        
-        const icon = $("#etat_notification i");
-        icon.removeClass('fa-print').addClass("fa-spinner fa-spin");
-        try {
-            const request = await axios.post('/conseil/disciplinaire/verification_notification/'+id_sanction);
-            const response = request.data;
-            icon.addClass('fa-print').removeClass("fa-spinner fa-spin ");
-            window.open('/conseil/disciplinaire/etatNotification/'+id_sanction, '_blank');
-          } catch (error) {
-            const message = error.response.data;
-            console.log(error, error.response);
-            Toast.fire({
-              icon: 'error',
-              title: message,
-            })
-            icon.addClass('fa-print').removeClass("fa-spinner fa-spin ");
-          }
-    })
-    $('body').on('click','#extraction_historique',function (e) {
-        e.preventDefault();
-        window.open('/conseil/disciplinaire/extraction_historique', '_blank');
-    });
+    
     $('body').on('click','#annuler_convocation', async function (){
         if(!id_sanction){
           Toast.fire({
@@ -490,10 +435,6 @@ const Toast = Swal.mixin({
             icon.removeClass('fa-spinner fa-spin ').addClass("fa-edit");
         })
     }
-<<<<<<< HEAD
-
-=======
->>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
     $('body').on('click','#modifier_convocation',function (e) {
         e.preventDefault();
         if(!id_sanction){
@@ -538,10 +479,7 @@ const Toast = Swal.mixin({
         }, 4000);
     });
     /////////// End Updating Convocation Block ///////////////
-<<<<<<< HEAD
 
-
-    
     const getNotificationInfos = () => {
         let modalAlert =  $("#modifier_org-modal .modal-body .alert");
         modalAlert.remove();
@@ -553,12 +491,77 @@ const Toast = Swal.mixin({
             // console.log(success);
             $('#notification_update_modal #notification_update').html(success.data)
             $('#notification_update_modal #notification_update select').select2()
+            $("#notification_update_modal").modal('show');
         })
         .catch(err => {
             // console.log(err)
             icon.removeClass('fa-spinner fa-spin ').addClass("fa-edit");
         })
     }
+    
+    $("#agressions").on('change', async function (){
+        const id_agression = $(this).val();
+        let incident = ""
+        let sanction = ""
+        if(id_agression != "") {
+            const request = await axios.get('/api/sousagression/'+id_agression);
+            incident = request.data
+            const requestsanction = await axios.get('/api/sanction/'+id_agression);
+            sanction = requestsanction.data
+        } else {
+            $('#incident').html("").select2();
+            $('#sanction').html("").select2();
+        }
+        $('#incident').html(incident).select2();
+        $('#sanction').html(sanction).select2();
+    })
+    $("body").on('change','#Modifieragressions', async function (){
+        // alert('hi');
+        const id_agression = $(this).val();
+        let incident = ""
+        let sanction = ""
+        if(id_agression != "") {
+            const request = await axios.get('/api/sousagression/'+id_agression);
+            incident = request.data
+            const requestsanction = await axios.get('/api/sanction/'+id_agression);
+            sanction = requestsanction.data
+
+            console.log(sanction);
+        } else {
+            $('#Modifierincident').html("").select2();
+            $('#Modifiersanction').html("").select2();
+        }
+        $('#Modifierincident').html(incident).select2();
+        $('#Modifiersanction').html(sanction).select2();
+    })
+
+    $('body').on('click','#newSanction', function (){
+        let newSanction = $(this).parent().parent();
+        newSanction.append(
+            `<div class="d-flex  mt-2">
+            <input type="text" name="autre_sanction" id="autre_sanction" class="form-control" placeholder="Autre Sanction">
+            <button type="button" class="btn btn-danger  ml-2" id="removenewSanction"><i class="fas fa-minus"></i></button>
+          </div>`
+        );
+        console.log(newSanction)
+    })
+    $('body').on('click','#removenewSanction', function (){
+        $(this).parent().remove();
+    })
+
+    $('body').on('click','#ModifnewSanction', function (){
+        let newSanction = $(this).parent().parent();
+        newSanction.append(
+            `<div class="d-flex  mt-2">
+            <input type="text" name="autre_sanction" id="autre_sanction" class="form-control" placeholder="Autre Sanction">
+            <button type="button" class="btn btn-danger  ml-2" id="ModifremovenewSanction"><i class="fas fa-minus"></i></button>
+          </div>`
+        );
+        console.log(newSanction)
+    })
+    $('body').on('click','#ModifremovenewSanction', function (){
+        $(this).parent().remove();
+    })
     $('body').on('click','#modifier_notification',function (e) {
         e.preventDefault();
         // alert('hi');
@@ -569,7 +572,7 @@ const Toast = Swal.mixin({
             })
             return;
         }
-        $("#notification_update_modal").modal('show');
+        getNotificationInfos()
     });
     $("body").on("submit", '#notification_update', async function (e) {
         e.preventDefault();
@@ -588,7 +591,7 @@ const Toast = Swal.mixin({
 
         let modalAlert =  $("#notification_update_modal .modal-body .alert");
         modalAlert.remove();
-        const icon = $("#notification_update .btn i");
+        const icon = $("#notification_update .submitBtn i");
         icon.removeClass('fa-check-circle').addClass("fa-spinner fa-spin");
         try{
             const request = await  axios.post('/conseil/disciplinaire/modifier_notification/'+id_sanction,formData)
@@ -613,7 +616,36 @@ const Toast = Swal.mixin({
            $("#notification_update_modal .modal-body .alert").remove();
         }, 4000);
     });
-=======
->>>>>>> 80f6c5946528a9ba13e2ef4d814c9c23223fbdca
+    
+    $('body').on('click','#etat_notification', async function (){
+        if(!id_sanction){
+          Toast.fire({
+            icon: 'error',
+            title: 'Veuillez selection une ligne!',
+          })
+          return;
+        }
+        
+        const icon = $("#etat_notification i");
+        icon.removeClass('fa-print').addClass("fa-spinner fa-spin");
+        try {
+            const request = await axios.post('/conseil/disciplinaire/verification_notification/'+id_sanction);
+            const response = request.data;
+            icon.addClass('fa-print').removeClass("fa-spinner fa-spin ");
+            window.open('/conseil/disciplinaire/etatNotification/'+id_sanction, '_blank');
+          } catch (error) {
+            const message = error.response.data;
+            console.log(error, error.response);
+            Toast.fire({
+              icon: 'error',
+              title: message,
+            })
+            icon.addClass('fa-print').removeClass("fa-spinner fa-spin ");
+          }
+    })
+    $('body').on('click','#extraction_historique',function (e) {
+        e.preventDefault();
+        window.open('/conseil/disciplinaire/extraction_historique', '_blank');
+    });
 })
 

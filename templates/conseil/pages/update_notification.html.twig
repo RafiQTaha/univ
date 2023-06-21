@@ -1,0 +1,56 @@
+<label for="date_decision">Date de decision:</label>
+<input type="date" name="date_decision" id="Modifierdate_decision" class="form-control" value="{{notification.dateDecision|date('Y-m-d')}}">
+
+<label for="agressions">Agressions:</label>
+<select class="form-control" name="agressions" id="Modifieragressions">
+    <option value="">Choix Agression</option>
+    {% for agression in agressions %}
+            {# <optgroup label="{{agression.designation}}"> #}
+        <option value="{{agression.id}}" {% if notification.agression is not null and agression.id == notification.agression.agression.id %}
+            selected
+        {% endif %}>{{agression.designation}}</option>
+    {% endfor %}
+</select>
+
+<label for="incident">Incident:</label>
+<select class="form-control" name="incident" id="Modifierincident">
+    {% if notification.agression is not null %}
+        {% for incident in notification.agression.agression.sousAgressions %}
+            <option value="{{incident.id}}" {% if incident.id == notification.agression.id %}
+                selected
+            {% endif %}>{{incident.designation}}</option>
+        {% endfor %}
+    {% endif %}
+</select>
+<label for="autre_incident">Autre Incident:</label>
+<input type="text" name="autre_incident" id="Modifierautre_incident" class="form-control" value="{{notification.autreAgression}}" placeholder="Autre incident">
+
+<label for="sanction">Sanction:</label>
+
+{# {{ dump(notification.autreSanction) }} #}
+<select class="form-control chosen-select" name="sanction[]" id="Modifiersanction" multiple="multiple" >
+    {% if notification.agression is not null %}
+        {% set selectedSanction = notification.sanction|first %}
+        {% set aggr = selectedSanction.agression %}
+        {% for sanction in aggr.sanctions %}
+            <option value="{{sanction.id}}" {% if sanction in notification.sanction %}
+                selected
+            {% endif %}>{{sanction.designation}}</option>
+        {% endfor %}
+    {% endif %}
+</select>
+
+<label for="autre_sanction">Autre Sanction:</label>
+<div id="autre_sanction_text" class="autre_sanction_text">
+    <div class="d-flex">
+        <input type="text" name="autre_sanction" id="Modifierautre_sanction" class="form-control" value="" placeholder="Autre Sanction">
+        <button type="button" class="btn btn-success ml-2" id="ModifnewSanction"><i class="fas fa-plus"></i></button>
+    </div>
+    {% for autre in notification.autreSanction %}
+        <div class="d-flex  mt-2">
+            <input type="text" name="autre_sanction" id="autre_sanction" class="form-control" value="{{autre}}" placeholder="Autre Sanction">
+            <button type="button" class="btn btn-danger  ml-2" id="ModifremovenewSanction"><i class="fas fa-minus"></i></button>
+        </div>
+    {% endfor %}
+</div>
+<button type="submit" class="btn btn-success mt-4 submitBtn"><i class="fas fa-check-circle"></i> Enregister</button>
