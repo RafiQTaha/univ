@@ -49,6 +49,9 @@ class Pv
     #[ORM\Column(type: 'float', nullable: true)]
     private $active;
 
+    #[ORM\Column(type: 'float', nullable: true)]
+    private $seuilRachat;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -194,6 +197,18 @@ class Pv
     public function setActive(?float $active): self
     {
         $this->active = $active;
+
+        return $this;
+    }
+
+    public function getSeuilRachat(): ?float
+    {
+        return $this->seuilRachat;
+    }
+
+    public function setSeuilRachat(?float $seuilRachat): self
+    {
+        $this->seuilRachat = $seuilRachat;
 
         return $this;
     }
