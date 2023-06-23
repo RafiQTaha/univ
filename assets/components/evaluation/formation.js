@@ -136,16 +136,16 @@ $(document).ready(function () {
     const getEtudiantNotes = async () => {
         $('#editNotes #candidat_notes').html('');
         $('#editNotes  .alert').hide();
-      try {
-        const request = await axios.get('/evaluation/formation/getEtudiantNotes/'+id_admission);
-        const data = request.data;
-        $('#editNotes #candidat_notes').html(data['candidats_notes']);
-        $('select').select2();
-        // console.log(data);
-  
-      } catch (error) {
-        // console.log(error.response.data);
-      }  
+        try {
+            const request = await axios.get('/evaluation/formation/getEtudiantNotes/'+id_admission);
+            const data = request.data;
+            $('#editNotes #candidat_notes').html(data['candidats_notes']);
+            $('select').select2();
+            // console.log(data);
+    
+        } catch (error) {
+            // console.log(error.response.data);
+        }  
     }
 
     // pop up triggre after double click tr
@@ -170,6 +170,17 @@ $(document).ready(function () {
             getEtudiantNotes();
             $('#editNotes').modal('show');
         }
+    });
+
+    $("#etatDip").on("click", async function (e) {
+        if (id_admission == "") {
+            Toast.fire({
+                icon: "error",
+                title: "Veuillez selectionner un etudiant!",
+            });
+            return
+        }
+        window.open('/evaluation/formation/impressionDiplome/'+id_admission, '_blank');
     });
 
     // Insertion des notes or modification

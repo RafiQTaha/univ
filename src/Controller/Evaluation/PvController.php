@@ -11,6 +11,7 @@ use App\Entity\ExSnotes;
 use App\Entity\Pv;
 use Doctrine\Persistence\ManagerRegistry;
 use Mpdf\Mpdf;
+use Proxies\__CG__\App\Entity\AcAnnee as EntityAcAnnee;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\CssSelector\Parser\Reader;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
@@ -44,7 +45,7 @@ class PvController extends AbstractController
     }
 
     #[Route('/list', name: 'list_pvs')]
-    public function list_gestion_preinscription(Request $request): Response
+    public function list_pvs(Request $request): Response
     {   
          
         $params = $request->query;
@@ -130,6 +131,33 @@ class PvController extends AbstractController
         );
         return new Response(json_encode($json_data));
     }
+
+    #[Route('/ajouter_pv', name: 'ajouter_pv')]
+    public function ajouter_pv(Request $request)
+    {
+        // dd($request);
+        if ($request->get('president') == "" || $request->get('seuil') == "" || $request->get('annee') == "" || $request->get('semestre') == "" || $request->get('coordonnateur') == "" ) {
+            return new JsonResponse("Merci de remplir tout les champs!",500);
+        }
+        $annee = $this->em->getRepository(AcAnnee::class)->find($request->get('annee'));
+        $pv = new Pv();
+        $pv->setAnnee($annee);
+        $pv->setSemestre($this->em->getRepository(AcSemestre::class)->find($request->get('semestre')));
+        $pv->setCoordonnateur($request->get('coordonnateur'));
+        $pv->setPresident($request->get('president'));
+        $pv->setMembres($request->get('membres'));
+        $pv->setUserUpdated($this->getUser());
+        $pv->setUpdated(new \DateTime('now'));
+        $pv->setSeuilRachat($request->get('seuil'));
+        $pv->setActive(1);
+        $this->em->persist($pv);
+        $this->em->flush();
+        $etab = $annee->getFormation()->getEtablissement()->getAbreviation();
+        $pv->setCode('PV-'.$etab.'_'.str_pad($pv->getId(), 6, '0', STR_PAD_LEFT).'/'.date('Y'));
+        $this->em->flush();
+        // PV-FMA_000002/2023
+        return new JsonResponse("PV bien cree",200);
+    }
     
     #[Route('/getPvInfos/{pv}', name: 'getPvInfos')]
     public function getPvInfos(Pv $pv)
@@ -144,7 +172,7 @@ class PvController extends AbstractController
     #[Route('/modifier_pv/{pv}', name: 'modifier_pv')]
     public function modifier_pv(Request $request,Pv $pv)
     {
-        if ($request->get('president') == "") {
+        if ($request->get('president') == ""  || $request->get('seuil') == "" || $request->get('coordonnateur') == "") {
             return new JsonResponse("Merci de remplir tout les champs!",500);
         }
         if ($pv->getDocAsso() != null) {
@@ -153,6 +181,7 @@ class PvController extends AbstractController
         $pv->setCoordonnateur($request->get('coordonnateur'));
         $pv->setPresident($request->get('president'));
         $pv->setMembres($request->get('membres'));
+        $pv->setSeuilRachat($request->get('seuil'));
         $pv->setUserUpdated($this->getUser());
         $pv->setUpdated(new \DateTime('now'));
         $this->em->persist($pv);
@@ -170,7 +199,7 @@ class PvController extends AbstractController
         $snoteRachetes = $this->em->getRepository(ExSnotes::class)->GetSnotesByAnneeAndSemestreAndStatut($pv->getAnnee(),$pv->getSemestre(),[38,78]);
         $snoteDerogations = $this->em->getRepository(ExSnotes::class)->GetSnotesByAnneeAndSemestreAndStatut($pv->getAnnee(),$pv->getSemestre(),[72]);
         $snoteRecalés = $this->em->getRepository(ExSnotes::class)->GetSnotesByAnneeAndSemestreAndStatut($pv->getAnnee(),$pv->getSemestre(),[39,40,57]);
-        $snoteFraudeurs = $this->em->getRepository(ExSnotes::class)->GetSnotesByAnneeAndSemestreAndStatut($pv->getAnnee(),$pv->getSemestre(),[]);
+        $snoteFraudeurs = $this->em->getRepository(ExSnotes::class)->GetSnotesByAnneeAndSemestreAndStatut($pv->getAnnee(),$pv->getSemestre(),[40]);
         $snoteAbsents = $this->em->getRepository(ExSnotes::class)->GetSnotesByAnneeAndSemestreAndStatut($pv->getAnnee(),$pv->getSemestre(),[]);
         // dd($snoteReussi);
         $html = $this->render("evaluation/pv/pdf/etatPv.html.twig", [

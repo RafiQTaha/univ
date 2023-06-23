@@ -118,7 +118,7 @@
     <tr style="height:150px">
         <td style="width:24%;border:1px solid #ddd;background:#eee;padding:5px;font-size:10px;height:150px">Membres du Jury </td>
         <td style="width:0.5%;"></td>
-        <td style="width:69.5%;border:1px solid #ddd;background:white;padding:5px;font-size:10px">
+        <td style="width:69.5%;border:1px solid #ddd;background:white;padding:5px;font-size:10px; vertical-align:top">
             {{pv.membres}}
         </td>
     </tr>
@@ -152,7 +152,7 @@
         <td style="width:30%;border:1px solid #ddd;background:#eee;padding:5px;font-size:10px">Seuil de rachat</td>
         <td style="width:0.5%;"></td>
         <td style="width:69.5%;border:1px solid #ddd;background:white;padding:5px;font-size:10px;text-align:center">
-            xx/20
+            {{pv.seuilRachat}}/20
         </td>
     </tr>
     <tr>
@@ -213,12 +213,9 @@
         <td style="width:69.5%;background:white">
             <table cellspacing="0" style="width: 100%; text-align: left; font-size: 12px" >
                 <tr>
-                    {# <td style="width:49.5%;border:1px solid #ddd;background:white;padding:5px;font-size:10px;text-align:center">{{snoteFraudeurs | length}}</td>
+                    <td style="width:49.5%;border:1px solid #ddd;background:white;padding:5px;font-size:10px;text-align:center">{{snoteFraudeurs | length}}</td>
                     <td style="width:0.5%;"></td>
-                    <td style="width:49.5%;border:1px solid #ddd;background:white;padding:5px;font-size:10px;text-align:center">{{((snoteFraudeurs | length) * 100 / snotesCount) | round}}%</td> #}
-                    <td style="width:49.5%;border:1px solid #ddd;background:white;padding:5px;font-size:10px;text-align:center">xx</td>
-                    <td style="width:0.5%;"></td>
-                    <td style="width:49.5%;border:1px solid #ddd;background:white;padding:5px;font-size:10px;text-align:center">xx%</td>
+                    <td style="width:49.5%;border:1px solid #ddd;background:white;padding:5px;font-size:10px;text-align:center">{{((snoteFraudeurs | length) * 100 / snotesCount) | round}}%</td>
                 </tr> 
             </table>
         </td>
@@ -263,11 +260,17 @@
 <table style="width: 100%;border: 1px solid #ddd">
     <tr style="width: 100%;">
         <td style="width: 100% ; font-size: 12px;height:100px; vertical-align:top">
+            {% if snoteRachetes | length > 0 %}
+                Le jury a accordé le rachat aux étudiants portant le code anonymat :
+                {% for snoteRachete in snoteRachetes %}
+                    {{snoteRachete.inscription.codeAnonymat}}{% if loop.index < snoteRachetes | length %},{% elseif loop.index == snoteRachetes | length %}.{% endif %}
+                {% endfor %}
+            {% endif %}
+            <br>
             {% if snoteDerogations | length > 0 %}
                 Le jury a demandé une dérogation pour attribuer des points de rachat au profit des étudiants portants le code anonymat: 
                 {% for snoteDerogation in snoteDerogations %}
-                    {{snoteDerogation.inscription.codeAnonymat}} 
-                    {% if loop.index < snoteDerogations | length %},{% endif %}
+                    {{snoteDerogation.inscription.codeAnonymat}}{% if loop.index < snoteDerogations | length %},{% elseif loop.index == snoteDerogations | length %}.{% endif %}
                 {% endfor %}
             {% endif %}
         </td>
