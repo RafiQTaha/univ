@@ -608,6 +608,14 @@ class EpreuveController extends AbstractController
                             'nature' => 'Journal de bord',
                             'statut' => 30
                         ]);
+                        if(count($EpreuveNormals) == 0){
+                            $EpreuveNormals = $this->em->getRepository(AcEpreuve::class)->findBy([
+                                'element'=>$epreuve->getElement(),
+                                'annee'=>$epreuve->getAnnee(),
+                                'natureEpreuve' => $natureEpreuveNormal,
+                                'statut' => 30
+                            ]);
+                        }
                     }else {
                         $EpreuveNormals = $this->em->getRepository(AcEpreuve::class)->findBy([
                             'element'=>$epreuve->getElement(),
