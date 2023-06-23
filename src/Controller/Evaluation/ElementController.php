@@ -57,6 +57,7 @@ class ElementController extends AbstractController
             $check = 1; //opération déja validé
         }
         $promotion = $element->getModule()->getSemestre()->getPromotion();
+        // dd($promotion);
         $inscriptions = $this->em->getRepository(TInscription::class)->getInscriptionsByAnneeAndPromoAndElement($annee, $promotion,$element, $order);
         $data_saved = [];
         // dd($inscriptions);
@@ -67,7 +68,22 @@ class ElementController extends AbstractController
             $statutS1 = $enote->getStatutS1() ? $enote->getStatutS1()->getId() : null;
             $m_cc = $enote->getCcr() < $enote->getMcc() || !$enote->getCcr() ? $enote->getMcc() : $enote->getCcr();
             $m_tp = $enote->getTpr() < $enote->getMtp() || !$enote->getTpr() ? $enote->getMtp() : $enote->getTpr();
-            $m_ef = $enote->getEfr() < $enote->getMef() || !$enote->getEfr() ? $enote->getMef() : $enote->getEfr();
+            if ($promotion->getId() == 7) {
+                // if (array_sum([$enote->getMef(),$enote->getEfr()])/2 >= 10) {
+                //     $m_ef = array_sum([$enote->getMef(),$enote->getEfr()])/2;
+                // }else
+                if (array_sum([$enote->getMef(),$enote->getEfr()])/2 < 10 && ($enote->getMef() >= 10 || $enote->getEfr() >= 10)) {
+                    $m_ef = 10;
+                }elseif(array_sum([$enote->getMef(),$enote->getEfr()])/2 < 10 && $enote->getMef() < 10 && $enote->getEfr() < 10){
+                    $m_ef = MAX($enote->getMef(),$enote->getEfr());
+                }else{
+                    $m_ef = array_sum([$enote->getMef(),$enote->getEfr()])/2;
+                }
+                // dd(array_sum([$enote->getMef(),$enote->getEfr()])/2);
+                // $m_ef = $enote->getEfr() < $enote->getMef() || !$enote->getEfr() ? $enote->getMef() : $enote->getEfr();
+            }else{
+                $m_ef = $enote->getEfr() < $enote->getMef() || !$enote->getEfr() ? $enote->getMef() : $enote->getEfr();
+            }
             if($element->getNature()->getCode() == "NE003" || $element->getNature()->getCode() == "NE004" || $element->getNature()->getCode() == "NE005"){
                 $moyenne_ini = $this->CalculMoyenneElement($element->getCoefficientEpreuve(), $m_cc, $m_tp, $enote->getPondMef() * $enote->getMef());
                 if ($moyenne_ini < 10 || $enote->getMef() < 10 || (!empty($enote->getMtp()) && $enote->getMtp() >= 0 && $enote->getMtp() < 10) || (!empty($enote->getMcc()) && $enote->getMcc() >= 0 && $enote->getMcc() < 10) || $statutS1 == 12 || $statutS1 == 13) {
