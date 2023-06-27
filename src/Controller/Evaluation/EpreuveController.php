@@ -62,7 +62,7 @@ class EpreuveController extends AbstractController
         }
         $promotion = $element->getModule()->getSemestre()->getPromotion();
         $epreuves = $this->em->getRepository(AcEpreuve::class)->findBy(['element' => $element, 'annee'=> $annee , 'natureEpreuve' => $natureEpreuve, 'statut' => $this->em->getRepository(PStatut::class)->find(30)]);
-        // dd($epreuves);
+        // dd($natureEpreuve);
         if(count($epreuves) < 1) {
             return new JsonResponse("Aucune resultat est disponible", 500);
         }
@@ -73,9 +73,19 @@ class EpreuveController extends AbstractController
             $moyenne = 0;
             $total_coef = 0;
             $noteArray = [];
+            $fmaNote1 = 0;
+            $fmaNote2 = 0;
+            $i = 0;
             foreach ($epreuves as $epreuve) {
                 // $html .= "<th>".$epreuve->getId()."</th>";
                 $gnote = $this->em->getRepository(ExGnotes::class)->findOneBy(['epreuve' => $epreuve, 'inscription' => $inscription]);
+                if ($inscription->getPromotion()->getId() == 7 and in_array($natureEpreuve->getId(), [3,4])) {
+                    if ($i == 0) {
+                        $fmaNote1 = $gnote ? $gnote->getNote() * $epreuve->getCoefficient() : 0;
+                    }elseif ($i == 1) {
+                        $fmaNote2 = $gnote ? $gnote->getNote() * $epreuve->getCoefficient() : 0;
+                    }
+                }
                 if($gnote) {
                     $moyenne += $gnote->getNote() * $epreuve->getCoefficient();
                     $total_coef += $epreuve->getCoefficient();
@@ -85,12 +95,30 @@ class EpreuveController extends AbstractController
                     $total_coef += $epreuve->getCoefficient();
                     array_push($noteArray, "");
                 }
-                
+                $i++;
+            }
+            if ($inscription->getPromotion()->getId() == 7 and $natureEpreuve->getId() == 3) {
+                if ( (($fmaNote1 + $fmaNote2) / 2) < 10 && ($fmaNote1 >= 10 || $fmaNote2 >= 10) ) {
+                    $mTotal = 10;
+                }elseif((($fmaNote1 + $fmaNote2) / 2) < 10 && ($fmaNote1 < 10 || $fmaNote2 < 10)){
+                    $mTotal = max($fmaNote1,$fmaNote2);
+                }else {
+                    $mTotal = $moyenne / $total_coef;
+                }
+            }elseif ($inscription->getPromotion()->getId() == 7 and $natureEpreuve->getId() == 4) {
+                if ($fmaNote1 >= 10 || $fmaNote2 >= 10) {
+                    $mTotal = 10;
+                }else {
+                    $mTotal = max($fmaNote1,$fmaNote2);
+                }
+            }else {
+                $mTotal = $moyenne / $total_coef;
             }
             array_push($inscriptionsArray, [
                 'inscription' => $inscription,
                 'notes' => $noteArray,
-                'moyenne' => $moyenne / $total_coef
+                'moyenne' => $mTotal
+                // 'moyenne' => $moyenne / $total_coef
             ]);
         }
         if($order == 3) {
