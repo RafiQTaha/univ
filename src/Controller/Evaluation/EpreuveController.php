@@ -97,13 +97,19 @@ class EpreuveController extends AbstractController
                 }
                 $i++;
             }
-            if ($inscription->getPromotion()->getId() == 7 and in_array($natureEpreuve->getId(), [3,4])) {
+            if ($inscription->getPromotion()->getId() == 7 and $natureEpreuve->getId() == 3) {
                 if ( (($fmaNote1 + $fmaNote2) / 2) < 10 && ($fmaNote1 >= 10 || $fmaNote2 >= 10) ) {
                     $mTotal = 10;
                 }elseif((($fmaNote1 + $fmaNote2) / 2) < 10 && ($fmaNote1 < 10 || $fmaNote2 < 10)){
                     $mTotal = max($fmaNote1,$fmaNote2);
                 }else {
                     $mTotal = $moyenne / $total_coef;
+                }
+            }elseif ($inscription->getPromotion()->getId() == 7 and $natureEpreuve->getId() == 4) {
+                if ($fmaNote1 >= 10 || $fmaNote2 >= 10) {
+                    $mTotal = 10;
+                }else {
+                    $mTotal = max($fmaNote1,$fmaNote2);
                 }
             }else {
                 $mTotal = $moyenne / $total_coef;
