@@ -89,5 +89,27 @@ class ExGnotesRepository extends ServiceEntityRepository
                     ->getResult()
         ;
     }
+
+    
+    public function getNoteTpByInscription($enote,$nature)
+    {
+        return $this->createQueryBuilder('e')
+                    ->innerJoin('e.epreuve', "epreuve")
+                    ->innerJoin('e.inscription', "inscription")
+                    ->innerJoin('epreuve.annee', "annee")
+                    ->innerJoin('epreuve.element', "element")
+                    ->where('annee = :annee')
+                    ->AndWhere('epreuve.nature = :nature')
+                    ->AndWhere('epreuve.natureEpreuve = 2')
+                    ->AndWhere('element = :element')
+                    ->AndWhere('inscription = :inscription')
+                    ->setParameter('annee', $enote->getInscription()->getAnnee())
+                    ->setParameter('nature', $nature)
+                    ->setParameter('element', $enote->getElement())
+                    ->setParameter('inscription', $enote->getInscription())
+                    ->getQuery()
+                    ->getResult()
+        ;
+    }
     
 }

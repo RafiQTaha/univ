@@ -440,8 +440,15 @@ class ElementController extends AbstractController
     public function ElementGetStatutS1_pratique($enote, $noteComposantInitial, $note_eliminatoire, $note_validation) {
         //var_dump($data);
         $moy = $enote->getInscription()->getAnnee()->getFormation()->getEtablissement()->getId() == 26 ? 12 : 10;
+        // $ntp1 = $this->em->getRepository(ExGnotes::class)->getNoteTpByInscription($enote,'Journal de bord')[0]->getNote();
+        $ntpPerformance = $this->em->getRepository(ExGnotes::class)->getNoteTpByInscription($enote,'Performance');
         $send_data = array();
-        if ($enote->getNoteIni() < $moy || ($enote->getMef() && $enote->getMef() < $moy))   {
+        if($ntpPerformance and $ntpPerformance[0]->getNote() < 10){
+            $send_data['statut_s1'] = 16;
+            $send_data['statut_def'] = 16;
+            $send_data['statut_aff'] = 16;
+        }elseif ($enote->getNoteIni() < $moy || ($enote->getMef() && $enote->getMef() < $moy))   {
+        // if ($enote->getNoteIni() < $moy || ($enote->getMef() && $enote->getMef() < $moy) || ($ntp1 < 10 || $ntp2 < 10))   {
             $send_data['statut_s1'] = 12;
             $send_data['statut_def'] = 12;
             $send_data['statut_aff'] = 12;
