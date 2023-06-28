@@ -183,7 +183,7 @@ class ElementController extends AbstractController
         $mpdf->defaultfooterline = 0;
         $mpdf->SetFooter('Page {PAGENO} / {nb}');
         $mpdf->WriteHTML($html);
-        $mpdf->Output("element_deliberation_".$element->getId().".pdf", "I");
+        $mpdf->Output("element_deliberation_".$element->getDesignation()."_".$element->getId().".pdf", "I");
     }
     
     #[Route('/impression_excel/{type}', name: 'administration_element_impression_excel')]
