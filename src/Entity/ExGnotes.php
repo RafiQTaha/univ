@@ -43,6 +43,9 @@ class ExGnotes
     #[ORM\Column(type: 'datetime', nullable: true)]
     private $updated;
 
+    #[ORM\Column(type: 'integer', nullable: true)]
+    private $statutAffichage;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -164,6 +167,18 @@ class ExGnotes
     public function setUpdated(?\DateTimeInterface $updated): self
     {
         $this->updated = $updated;
+
+        return $this;
+    }
+
+    public function getStatutAffichage(): ?int
+    {
+        return $this->statutAffichage;
+    }
+
+    public function setStatutAffichage(?int $statutAffichage): self
+    {
+        $this->statutAffichage = $statutAffichage;
 
         return $this;
     }
