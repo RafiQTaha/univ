@@ -88,6 +88,9 @@ class ExEnotes
     #[ORM\ManyToOne(targetEntity: PeStatut::class)]
     private $statutRachat;
 
+    #[ORM\Column(type: 'integer', nullable: true)]
+    private $statutAffichage;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -389,6 +392,18 @@ class ExEnotes
     public function setStatutRachat(?PeStatut $statutRachat): self
     {
         $this->statutRachat = $statutRachat;
+
+        return $this;
+    }
+
+    public function getStatutAffichage(): ?int
+    {
+        return $this->statutAffichage;
+    }
+
+    public function setStatutAffichage(?int $statutAffichage): self
+    {
+        $this->statutAffichage = $statutAffichage;
 
         return $this;
     }
