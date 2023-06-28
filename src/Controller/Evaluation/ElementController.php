@@ -166,14 +166,14 @@ class ElementController extends AbstractController
         }
         $html .= $this->render("evaluation/element/pdfs/footer.html.twig")->getContent();
         $mpdf = new Mpdf([
-            'mode' => 'utf-8',
-            'margin_left' => '5',
-            'margin_right' => '5',
-            'margin_top' => '35',
-            'margin_bottom' => '20',
-            'format' => 'A4-L',
-            'margin_header' => '2',
-            'margin_footer' => '2'
+                'mode' => 'utf-8',
+                'margin_left' => '5',
+                'margin_right' => '5',
+                'margin_top' => '35',
+                'margin_bottom' => '25',
+                'format' => 'A4-L',
+                'margin_header' => '2',
+                'margin_footer' => '2'
             ]);
         $mpdf->SetHTMLHeader($this->render("evaluation/element/pdfs/header.html.twig", [
             'element' => $element,
