@@ -454,8 +454,8 @@ $(document).ready(function () {
                     icon: 'success',
                     title: response,
                 }) 
-                id_facture = false
-                table_facture.ajax.reload(null, false);
+                // id_facture = false
+                // table_facture.ajax.reload(null, false);
             } catch (error) {
                 console.log(error)
                 const message = error.response.data;
@@ -491,8 +491,8 @@ $(document).ready(function () {
                     icon: 'success',
                     title: response,
                 }) 
-                id_facture = false
-                table_facture.ajax.reload(null, false);
+                // id_facture = false
+                // table_facture.ajax.reload(null, false);
             } catch (error) {
                 console.log(error)
                 const message = error.response.data;

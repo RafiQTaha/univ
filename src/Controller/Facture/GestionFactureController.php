@@ -902,18 +902,19 @@ class GestionFactureController extends AbstractController
         if (!$operationcab) {
             return new JsonResponse('Facture Introuvable!', 500);   
         }
-        if ($operationcab->getActive() == 1) {
+        if ($operationcab->getActive() == 1 and $operationcab->getOrganisme() == "Organisme") {
             return new JsonResponse('Cette Facture est Ouverte', 500);   
         }
-        if (!in_array($operationcab->getCategorie(), ['inscription','hors inscription'])) {
-            return new JsonResponse('Veuillez selection une Facture "Inscription"', 500); 
-        }
+        // if (!in_array($operationcab->getCategorie(), ['inscription','hors inscription'])) {
+        //     return new JsonResponse('Veuillez selection une Facture "Inscription"', 500); 
+        // }
         $check = $this->em->getRepository(TOperationcab::class)->findBy([
             'preinscription'=>$operationcab->getPreinscription(),
             'annee'=>$operationcab->getAnnee(),
-            'dateContable'=>$operationcab->getdateContable() + 1,
+            'dateContable'=>date('Y'),
             'organisme'=>'Organisme',
             'categorie'=>'inscription organisme',
+            'active'=>1
         ]);
         if($check){
             return new JsonResponse('la Facture Organisme est déja crée!', 500); 
@@ -924,7 +925,7 @@ class GestionFactureController extends AbstractController
         $OrganismeOrganisme->setuserCreated($this->getUser()); 
         $OrganismeOrganisme->setActive(1); 
         $OrganismeOrganisme->setSynFlag(0); 
-        $OrganismeOrganisme->setDateContable($operationcab->getDateContable() + 1); 
+        $OrganismeOrganisme->setDateContable(date('Y')); 
         $OrganismeOrganisme->setOrganisme('Organisme');
         $this->em->persist($OrganismeOrganisme);
         $this->em->flush();
@@ -933,6 +934,51 @@ class GestionFactureController extends AbstractController
         $this->em->flush();
         // dd($OrganismeOrganisme);
         return new JsonResponse('La facture organisme est bien Cree!', 200);    
+    }
+    
+    #[Route('/new_fac_payant', name: 'new_fac_payant')]
+    public function new_fac_payant(Request $request): Response
+    {   
+        // dd($request->get('facture'));
+        if (!$request->get('facture')) {
+            return new JsonResponse('Veuillez selection une Facture', 500);
+        }
+        $operationcab = $this->em->getRepository(TOperationcab::class)->find($request->get('facture'));
+        if (!$operationcab) {
+            return new JsonResponse('Facture Introuvable!', 500);   
+        }
+        if ($operationcab->getActive() == 1 and $operationcab->getOrganisme() == "Payant") {
+            return new JsonResponse('Cette Facture est Ouverte', 500);   
+        }
+        // if (!in_array($operationcab->getCategorie(), ['inscription','hors inscription'])) {
+        //     return new JsonResponse('Veuillez selection une Facture "Inscription"', 500); 
+        // }
+        $check = $this->em->getRepository(TOperationcab::class)->findBy([
+            'preinscription'=>$operationcab->getPreinscription(),
+            'annee'=>$operationcab->getAnnee(),
+            'dateContable'=>date('Y'),
+            'organisme'=>'Payant',
+            'categorie'=>'inscription',
+            'active'=>1,
+        ]);
+        if($check){
+            return new JsonResponse('la Facture Payant est déja crée!', 500); 
+        }
+        $OrganismePayant = clone $operationcab;
+        $OrganismePayant->setCategorie('inscription'); 
+        $OrganismePayant->setCreated(new \Datetime('now')); 
+        $OrganismePayant->setuserCreated($this->getUser()); 
+        $OrganismePayant->setActive(1); 
+        $OrganismePayant->setSynFlag(0); 
+        $OrganismePayant->setDateContable(date('Y')); 
+        $OrganismePayant->setOrganisme('Payant');
+        $this->em->persist($OrganismePayant);
+        $this->em->flush();
+        $etab = $OrganismePayant->getAnnee()->getFormation()->getEtablissement()->getAbreviation();
+        $OrganismePayant->setCode($etab.'-FAC'.str_pad($OrganismePayant->getId(), 8, '0', STR_PAD_LEFT).'/'.date('Y'));
+        $this->em->flush();
+        // dd($OrganismePayant);
+        return new JsonResponse('La facture payant est bien Cree!', 200);    
     }
     
     // #[Route('/new_fac_organisme', name: 'new_fac_organisme')]
