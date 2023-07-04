@@ -67,9 +67,10 @@ class GestionFactureController extends AbstractController
     #[Route('/list', name: 'list_facture_factures')]
     public function list_facture_factures(Request $request): Response
     {   
-         
+        
         $params = $request->query;
         $where = $totalRows = $sqlRequest = "";
+        // $filtre = " where preins.active = 1 and preins.inscriptionValide = 1 ";
         $filtre = " where 1=1 ";
         
         if (!empty($params->all('columns')[0]['search']['value'])) {

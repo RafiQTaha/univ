@@ -62,7 +62,7 @@ class ApiController extends AbstractController
     #[Route('/formation/{id}', name: 'getformation')]
     public function getformation($id): Response
     {
-        $formations = $this->em->getRepository(AcFormation::class)->findBy(['etablissement'=>$id]);
+        $formations = $this->em->getRepository(AcFormation::class)->findBy(['etablissement'=>$id, 'active' => 1],['id'=>'ASC']);
         $data = self::dropdown($formations,'Formation');
         return new JsonResponse($data);
     }
@@ -135,7 +135,7 @@ class ApiController extends AbstractController
     #[Route('/anneeProgrammation/{formation}', name: 'anneeProgrammation')]
     public function anneeProgrammation(AcFormation $formation): Response
     {   
-        $annee = $this->em->getRepository(AcAnnee::class)->findBy(['formation'=>$formation],['id'=>'DESC'],2);
+        $annee = $this->em->getRepository(AcAnnee::class)->findBy(['formation'=>$formation,'active'=>1],['id'=>'DESC'],3);
         $data = self::dropdown($annee,'Annee');
         return new JsonResponse($data);
     }

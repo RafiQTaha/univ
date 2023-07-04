@@ -68,6 +68,9 @@ class TPreinscription
     #[ORM\ManyToOne(targetEntity: NatureDemande::class, inversedBy: 'preinscriptions')]
     private $nature;
 
+    // #[ORM\Column(type: 'float', nullable: true)]
+    // private $validation;
+
 
     public function __construct()
     {
@@ -360,4 +363,16 @@ class TPreinscription
 
         return $this;
     }
+
+    // public function getValidation(): ?float
+    // {
+    //     return $this->validation;
+    // }
+
+    // public function setValidation(?float $validation): self
+    // {
+    //     $this->validation = $validation;
+
+    //     return $this;
+    // }
 }

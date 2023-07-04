@@ -625,7 +625,9 @@ class EpreuveController extends AbstractController
                         ]);
                     }
                     // dd($EpreuveNormals);
-                    $moy = $epreuve->getAnnee()->getFormation()->getEtablissement()->getId() == 26 ? 12 : 10;
+                    $etablissement_id =  $epreuve->getAnnee()->getFormation()->getEtablissement()->getId();
+                    $moy = $etablissement_id == 26 ? 12 : 10;
+                    $moyIni = $etablissement_id == 26 ? 8 : 7;
                     foreach($inscriptions as $inscription) {
                         // $moyen = false;
                         if (count($EpreuveNormals) == 1) {
