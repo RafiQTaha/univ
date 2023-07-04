@@ -465,73 +465,73 @@ $(document).ready(function  () {
                 
             }
         } else {
-            if(idEpreuves.length ==0) {
-                Toast.fire({
-                    icon: 'error',
-                    title: 'Veuillez cochez une ou plusieurs ligne!',
-                })
-                return;
-            }
-            const icon = $("#affilier_etudiant i");
-            icon.removeClass('fa-link').addClass("fa-spinner fa-spin");
-            try {
-                let formData = new FormData();
-                formData.append("epreuves", JSON.stringify(idEpreuves))
-                const request = await axios.post('/administration/epreuve/affiliation_rattrapage_Automatique', formData);
-                const response = request.data;
-                icon.addClass('fa-link').removeClass("fa-spinner fa-spin ");
-                if(response.total > 0) {
-                    window.open("/"+response.zipname ,"_blank");
-                } else {
-                    Toast.fire({
-                        icon: 'info',
-                        title: "Epreuves déja affilier ou valider",
-                    }) 
-                }
-                tableEpreuveNormal.ajax.reload(null, false)
-                tableEpreuveRattrapage.ajax.reload(null, false)
-                idEpreuves = [];
-            } catch (error) {
-                console.log(error)
-                const message = error.response.data;
-                Toast.fire({
-                    icon: 'error',
-                    title: message,
-                }) 
-                icon.addClass('fa-link').removeClass("fa-spinner fa-spin ");
-                
-            }
-            // if(!id_epreuve) {
+            // if(idEpreuves.length ==0) {
             //     Toast.fire({
             //         icon: 'error',
-            //         title: 'Veuillez selection une ligne!',
+            //         title: 'Veuillez cochez une ou plusieurs ligne!',
             //     })
             //     return;
             // }
             // const icon = $("#affilier_etudiant i");
             // icon.removeClass('fa-link').addClass("fa-spinner fa-spin");
-            
-            
             // try {
-            //     const request = await axios.get('/administration/epreuve/etudiants/'+id_epreuve);
-            //     const response = request.data;    
+            //     let formData = new FormData();
+            //     formData.append("epreuves", JSON.stringify(idEpreuves))
+            //     const request = await axios.post('/administration/epreuve/affiliation_rattrapage_Automatique', formData);
+            //     const response = request.data;
             //     icon.addClass('fa-link').removeClass("fa-spinner fa-spin ");
-
-            //     $(".list_etudiants").html(response)
-            //     $(".check_all_etudiant").prop("checked",false);
-            //     $("#affilier_list_etudiant").modal("show");
-            //     $("#affilier_list_etudiant .modal-body .alert").remove();
-                
+            //     if(response.total > 0) {
+            //         window.open("/"+response.zipname ,"_blank");
+            //     } else {
+            //         Toast.fire({
+            //             icon: 'info',
+            //             title: "Epreuves déja affilier ou valider",
+            //         }) 
+            //     }
+            //     tableEpreuveNormal.ajax.reload(null, false)
+            //     tableEpreuveRattrapage.ajax.reload(null, false)
+            //     idEpreuves = [];
             // } catch (error) {
             //     console.log(error)
             //     const message = error.response.data;
             //     Toast.fire({
             //         icon: 'error',
             //         title: message,
-            //     })
+            //     }) 
             //     icon.addClass('fa-link').removeClass("fa-spinner fa-spin ");
                 
             // }
+            if(!id_epreuve) {
+                Toast.fire({
+                    icon: 'error',
+                    title: 'Veuillez selection une ligne!',
+                })
+                return;
+            }
+            const icon = $("#affilier_etudiant i");
+            icon.removeClass('fa-link').addClass("fa-spinner fa-spin");
+            
+            
+            try {
+                const request = await axios.get('/administration/epreuve/etudiants/'+id_epreuve);
+                const response = request.data;    
+                icon.addClass('fa-link').removeClass("fa-spinner fa-spin ");
+
+                $(".list_etudiants").html(response)
+                $(".check_all_etudiant").prop("checked",false);
+                $("#affilier_list_etudiant").modal("show");
+                $("#affilier_list_etudiant .modal-body .alert").remove();
+                
+            } catch (error) {
+                console.log(error)
+                const message = error.response.data;
+                Toast.fire({
+                    icon: 'error',
+                    title: message,
+                })
+                icon.addClass('fa-link').removeClass("fa-spinner fa-spin ");
+                
+            }
 
         }
     })
