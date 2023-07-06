@@ -201,6 +201,12 @@ class AnneeController extends AbstractController
     }
     public function getNoteSemestre($inscription, $semestre, $statut)
     {
+        $abreviation = $this->em->getRepository(ExAnotes::class)->getStatutByColumn($inscription, $statut);
+        if ($abreviation != null) { 
+        return new Response($abreviation['abreviation'], 200, ['Content-Type' => 'text/html']);
+        }else{
+            return new Response("");
+        }
         return new Response($this->em->getRepository(ExSnotes::class)->getStatutAffDef($inscription, $semestre, $statut), 200, ['Content-Type' => 'text/html']);
     }
     #[Route('/enregistre', name: 'evaluation_annee_enregistre')]
