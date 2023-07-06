@@ -94,6 +94,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'userCreated', targetEntity: Pv::class)]
     private $pvs;
 
+    #[ORM\OneToMany(mappedBy: 'userAnnulated', targetEntity: TBrdpaiement::class)]
+    private $tBrdpaiements;
+
+    #[ORM\OneToMany(mappedBy: 'userAnnulated', targetEntity: TPreinscription::class)]
+    private $tPreinscriptions;
+
 
     public function __construct()
     {
@@ -115,6 +121,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->tOperationdets = new ArrayCollection();
         $this->insSanctionners = new ArrayCollection();
         $this->pvs = new ArrayCollection();
+        $this->tBrdpaiements = new ArrayCollection();
+        $this->tPreinscriptions = new ArrayCollection();
     }
 
     
@@ -748,6 +756,66 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($pv->getUserCreated() === $this) {
                 $pv->setUserCreated(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, TBrdpaiement>
+     */
+    public function getTBrdpaiements(): Collection
+    {
+        return $this->tBrdpaiements;
+    }
+
+    public function addTBrdpaiement(TBrdpaiement $tBrdpaiement): self
+    {
+        if (!$this->tBrdpaiements->contains($tBrdpaiement)) {
+            $this->tBrdpaiements[] = $tBrdpaiement;
+            $tBrdpaiement->setUserAnnulated($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTBrdpaiement(TBrdpaiement $tBrdpaiement): self
+    {
+        if ($this->tBrdpaiements->removeElement($tBrdpaiement)) {
+            // set the owning side to null (unless already changed)
+            if ($tBrdpaiement->getUserAnnulated() === $this) {
+                $tBrdpaiement->setUserAnnulated(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, TPreinscription>
+     */
+    public function getTPreinscriptions(): Collection
+    {
+        return $this->tPreinscriptions;
+    }
+
+    public function addTPreinscription(TPreinscription $tPreinscription): self
+    {
+        if (!$this->tPreinscriptions->contains($tPreinscription)) {
+            $this->tPreinscriptions[] = $tPreinscription;
+            $tPreinscription->setUserAnnulated($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTPreinscription(TPreinscription $tPreinscription): self
+    {
+        if ($this->tPreinscriptions->removeElement($tPreinscription)) {
+            // set the owning side to null (unless already changed)
+            if ($tPreinscription->getUserAnnulated() === $this) {
+                $tPreinscription->setUserAnnulated(null);
             }
         }
 

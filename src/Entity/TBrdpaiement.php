@@ -36,6 +36,15 @@ class TBrdpaiement
     #[ORM\OneToMany(mappedBy: 'bordereau', targetEntity: TReglement::class)]
     private $reglements;
 
+    #[ORM\Column(type: 'float', nullable: true)]
+    private $active = 1;
+
+    #[ORM\ManyToOne(targetEntity: user::class, inversedBy: 'tBrdpaiements')]
+    private $userAnnulated;
+
+    #[ORM\Column(type: 'datetime', nullable: true)]
+    private $annulated;
+
     public function __construct()
     {
         $this->reglements = new ArrayCollection();
@@ -144,6 +153,42 @@ class TBrdpaiement
                 $reglement->setBordereau(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getActive(): ?float
+    {
+        return $this->active;
+    }
+
+    public function setActive(?float $active): self
+    {
+        $this->active = $active;
+
+        return $this;
+    }
+
+    public function getUserAnnulated(): ?user
+    {
+        return $this->userAnnulated;
+    }
+
+    public function setUserAnnulated(?user $userAnnulated): self
+    {
+        $this->userAnnulated = $userAnnulated;
+
+        return $this;
+    }
+
+    public function getAnnulated(): ?\DateTimeInterface
+    {
+        return $this->annulated;
+    }
+
+    public function setAnnulated(?\DateTimeInterface $annulated): self
+    {
+        $this->annulated = $annulated;
 
         return $this;
     }

@@ -181,8 +181,10 @@ class GestionPreinscriptionController extends AbstractController
             $preinscription = $this->em->getRepository(TPreinscription::class)->find($id);
             $preinscription->setInscriptionValide(0);
             $preinscription->setActive(0);
+            $preinscription->setAnnulated(new DateTime('now'));
+            $preinscription->setUserAnnulated($this->getUser());
             // $preinscription->setUserUpdated($this->getUser());
-            $preinscription->setUpdated(New DateTime('now'));
+            // $preinscription->setUpdated(New DateTime('now'));
         }
         $this->em->flush();
         return new Response(json_encode(1));
