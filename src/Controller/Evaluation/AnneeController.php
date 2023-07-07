@@ -201,12 +201,12 @@ class AnneeController extends AbstractController
     }
     public function getNoteSemestre($inscription, $semestre, $statut)
     {
-        $abreviation = $this->em->getRepository(ExAnotes::class)->getStatutByColumn($inscription, $statut);
-        if ($abreviation != null) { 
-        return new Response($abreviation['abreviation'], 200, ['Content-Type' => 'text/html']);
-        }else{
-            return new Response("");
-        }
+        // $abreviation = $this->em->getRepository(ExSnotes::class)->getStatutAffDef($inscription, $semestre, $statut);
+        // if ($abreviation != null) { 
+        // return new Response($abreviation['abreviation'], 200, ['Content-Type' => 'text/html']);
+        // }else{
+        //     return new Response("");
+        // }
         return new Response($this->em->getRepository(ExSnotes::class)->getStatutAffDef($inscription, $semestre, $statut), 200, ['Content-Type' => 'text/html']);
     }
     #[Route('/enregistre', name: 'evaluation_annee_enregistre')]
@@ -536,4 +536,102 @@ class AnneeController extends AbstractController
         
         return $categorie;
     }
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+    public function getExtractionByAmine() {
+        //die("amine");
+        $sql = "select epreuve.designation, t_inscription.code_admission, t_etudiant.nom, t_etudiant.prenom,
+        epreuve_etudiant_correction.note, question.id,  question.libelle, 
+         epreuve_etudiant_correction_detail.reponses
+           
+           from epreuve_etudiant_correction
+           inner join epreuve on epreuve.id = epreuve_etudiant_correction.epreuve_id
+           inner join t_inscription on t_inscription.id = epreuve_etudiant_correction.t_inscription_id
+           inner join t_admission on t_admission.id = t_inscription.t_admission_id
+           inner join t_preinscription on t_preinscription.id = t_admission.t_preinscription_id
+           inner join t_etudiant on t_etudiant.id = t_preinscription.t_etudiant_id
+           inner join epreuve_etudiant_correction_detail on epreuve_etudiant_correction_detail.epreuve_etudiant_correction_id = epreuve_etudiant_correction.id
+           inner join question on question.id = epreuve_etudiant_correction_detail.question_id
+           
+           where epreuve.id in (477)";
+       $conn = $this->em->getConnection();
+       $stmt = $conn->prepare($sql);
+    //    $stmt->executeQuery();
+       $newstmt = $stmt->executeQuery();
+       $etudiants = $newstmt->fetchAll();
+      //  dd($etudiants);
+       
+       $spreadsheet = new Spreadsheet();
+      //  die("amine");
+       $sheet = $spreadsheet->getActiveSheet();
+       $sheet->setCellValue('A1', 'Epreuve');
+       $sheet->setCellValue('B1', 'Code Admission');
+       $sheet->setCellValue('C1', 'Nom');
+       $sheet->setCellValue('D1', 'Prenom');
+       $sheet->setCellValue('E1', 'Note');
+       $sheet->setCellValue('F1', 'id');
+       $sheet->setCellValue('G1', 'libelle');
+       $sheet->setCellValue('H1', 'Reponses Etudiant');
+       $sheet->setCellValue('I1', 'Reponses Correct');
+       $rowCount = 2;
+       foreach($etudiants as $etudiant) {
+          //  dd($etudiant);
+           $i = 0;
+           $letters = "";
+           $var = explode(";",$etudiant['reponses']);
+           foreach($var as $v){
+               if($i > 0) {
+                   $num = explode(":", $v);
+                   if(isset($num[1])) {
+                       if($num[1] > 400){
+                           //dd("select lettre from question_choix where id = $num[1]");
+                           $sql1 = "select lettre from question_choix where id = $num[1]";
+                           $stmt1 = $conn->prepare($sql1);
+                        //    $stmt1->execute();
+                        //    $stmt = $conn->prepare($sql);
+                            //    $stmt->executeQuery();
+                            $newstmt = $stmt1->executeQuery();
+                        //    dd($newstmt->fetch());
+                          $letters .= $newstmt->fetch()['lettre'].",";
+                       }
+                   }
+               }
+               $i++;
+           }
+          $id = $etudiant['id'];
+          $sql2 = "select lettre from question_choix where reponse = 1 and question_id = $id ";
+          $stmt2 = $conn->prepare($sql2);
+        //   $stmt2->execute();
+        $newstmt = $stmt2->executeQuery();
+
+          $reponses = $newstmt->fetchAll();
+          $lettreReponse = "";
+          foreach($reponses as $reponse) {
+              $lettreReponse .= $reponse['lettre'].",";
+          }
+          $sheet->setCellValue('A' . $rowCount, $etudiant['designation']);
+          $sheet->setCellValue('B' . $rowCount, $etudiant['code_admission']);
+          $sheet->setCellValue('C' . $rowCount, $etudiant['nom']);
+          $sheet->setCellValue('D' . $rowCount, $etudiant['prenom']);
+          $sheet->setCellValue('E' . $rowCount, $etudiant['note']);
+          $sheet->setCellValue('F' . $rowCount, $etudiant['id']);
+          $sheet->setCellValue('G' . $rowCount,  $etudiant['libelle']);
+          $sheet->setCellValue('H' . $rowCount,  $letters);
+          $sheet->setCellValue('I' . $rowCount,  $lettreReponse);
+          
+          $rowCount++;
+      }
+      
+      
+      $writer = new Xlsx($spreadsheet);
+      $fileName = 'exctraction_epreuve.xlsx';
+      $temp_file = tempnam(sys_get_temp_dir(), $fileName);
+      $writer->save($temp_file);
+ 
+      return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);
+         
+     }
+
+
+
 }
