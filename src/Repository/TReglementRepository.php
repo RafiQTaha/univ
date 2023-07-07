@@ -137,7 +137,7 @@ class TReglementRepository extends ServiceEntityRepository
             // ->Where("reg.created like '2021-%' or reg.created like '2022-%'")
             ->Where("reg.annuler = 0")
             ->AndWhere("pre.inscriptionValide = 1 ")
-            ->AndWhere("pre.valide = 1 ")
+            ->AndWhere("pre.active = 1 ")
             // ->Where("ann.cloture_academique = 'non'")
             // ->AndWhere("ann.designation = :annee")
             // ->setParameter("annee", $currentyear)
