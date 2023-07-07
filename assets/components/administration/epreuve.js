@@ -83,8 +83,6 @@ $(document).ready(function () {
   });
   // filters for session normale
 
-  //   let id_etab;
-
   $("#etablissementNrml").select2();
   $("body #etablissementNrml").on("change", async function () {
     const id_etab = $(this).val();
@@ -983,39 +981,16 @@ $(document).ready(function () {
 
   $("body").on("click", "#extraction_epv_valide", async function (e) {
     e.preventDefault();
-    const id_etab = $("body #etablissementNrml").val();
-    if (!id_etab) {
-      Toast.fire({
-        icon: "error",
-        title: "Vous devez choisir une etablissement!",
-      });
-      return;
-    } else {
-      //   console.log(id_etab);
-      const icon = $("#extraction_epv_valide i");
-      window.open(
-        "/administration/epreuve/extraction_epreuve_valide/" + id_etab,
-        "_blank"
-      );
-    }
+    const icon = $("#extraction_epv_valide i");
+    window.open("/administration/epreuve/extraction_epreuve_valide", "_blank");
   });
   $("body").on("click", "#extraction_epv_valide_s2", async function (e) {
     e.preventDefault();
-    const id_etab = $("body #etablissementNrml").val();
-
-    if (!id_etab) {
-      Toast.fire({
-        icon: "error",
-        title: "Vous devez choisir une etablissement!",
-      });
-      return;
-    } else {
-      const icon = $("#extraction_epv_valide_s2 i");
-      window.open(
-        "/administration/epreuve/extraction_epreuve_valide_s2/" + id_etab,
-        "_blank"
-      );
-    }
+    const icon = $("#extraction_epv_valide_s2 i");
+    window.open(
+      "/administration/epreuve/extraction_epreuve_valide_s2",
+      "_blank"
+    );
   });
   $("body").on("click", "#open_upload_file", async function (e) {
     e.preventDefault();
