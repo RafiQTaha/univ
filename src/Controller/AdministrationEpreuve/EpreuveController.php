@@ -881,15 +881,16 @@ class EpreuveController extends AbstractController
         
     } 
     
-    #[Route('/extraction_epreuve_valide', name: 'extraction_epreuve_valide')]
-    public function extraction_epreuve_valide()
+    #[Route('/extraction_epreuve_valide/{etab}', name: 'extraction_epreuve_valide')]
+    public function extraction_epreuve_valide(AcEtablissement $etab)
     {   
+        // dd($etab->getId());
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
         $i=2;
         $j=1;
         $currentyear = date('m') > 7 ? date('Y').'/'.date('Y')+1 : date('Y') - 1 .'/' .date('Y');
-        $epreuves = $this->em->getRepository(AcEpreuve::class)->findEpreuveValideByCurrentYear($currentyear);
+        $epreuves = $this->em->getRepository(AcEpreuve::class)->findEpreuveValideByCurrentYear($currentyear, $etab->getId());
         // dd($epreuves);
         $sheet->fromArray(
             array_keys($epreuves[0]),
@@ -913,15 +914,15 @@ class EpreuveController extends AbstractController
         return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);
     }
     
-    #[Route('/extraction_epreuve_valide_s2', name: 'extraction_epreuve_valide_s2')]
-    public function extraction_epreuve_valide_s2()
+    #[Route('/extraction_epreuve_valide_s2/{etab}', name: 'extraction_epreuve_valide_s2')]
+    public function extraction_epreuve_valide_s2(AcEtablissement $etab)
     {   
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
         $i=2;
         $j=1;
         $currentyear = date('m') > 7 ? date('Y').'/'.date('Y')+1 : date('Y') - 1 .'/' .date('Y');
-        $epreuves = $this->em->getRepository(AcEpreuve::class)->findEpreuveValideS2ByCurrentYear($currentyear);
+        $epreuves = $this->em->getRepository(AcEpreuve::class)->findEpreuveValideS2ByCurrentYear($currentyear, $etab->getId());
         // dd($epreuves);
         $sheet->fromArray(
             array_keys($epreuves[0]),

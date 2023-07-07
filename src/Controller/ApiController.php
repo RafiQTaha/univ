@@ -2,15 +2,20 @@
 
 namespace App\Controller;
 
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use DateTime;
 use App\Entity\PFrais;
 use App\Entity\AcAnnee;
 use App\Entity\PGroupe;
 use App\Entity\XBanque;
 use App\Entity\AcModule;
 use App\Entity\ExGnotes;
+use App\Entity\Mouchard;
+use App\Entity\Sanction;
 use App\Entity\UsModule;
 use App\Entity\AcElement;
 use App\Entity\AcEpreuve;
+use App\Entity\Agression;
 use App\Entity\TEtudiant;
 use App\Entity\AcSemestre;
 use App\Entity\POrganisme;
@@ -21,17 +26,14 @@ use App\Entity\UsOperation;
 use App\Entity\TInscription;
 use App\Entity\UsSousModule;
 use App\Entity\NatureDemande;
+use App\Entity\SousAgression;
 use App\Entity\TOperationcab;
 use App\Entity\PNatureEpreuve;
 use App\Entity\AcEtablissement;
-use App\Entity\Agression;
-use App\Entity\Mouchard;
 use App\Entity\PAnonymatActuel;
 use App\Entity\PrProgrammation;
-use App\Entity\Sanction;
-use App\Entity\SousAgression;
-use DateTime;
 use Doctrine\Persistence\ManagerRegistry;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -39,6 +41,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Serializer\Encoder\XmlEncoder;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
@@ -506,4 +509,100 @@ class ApiController extends AbstractController
     //     return new Response('good');
     // }
 
+
+    // ::::::::::::::::::::::::: for evasym
+    // /**
+    //  * @Route("/getExtractionByAmine", name="getExtractionByAmine")
+    //  */
+    // public function getExtractionByAmine() {
+    //     //   die("amine");
+    //        $sql = "select epreuve.designation, t_inscription.code_admission, t_etudiant.nom, t_etudiant.prenom,
+    //        epreuve_etudiant_correction.note, question.id,  question.libelle, 
+    //         epreuve_etudiant_correction_detail.reponses
+              
+    //           from epreuve_etudiant_correction
+    //           inner join epreuve on epreuve.id = epreuve_etudiant_correction.epreuve_id
+    //           inner join t_inscription on t_inscription.id = epreuve_etudiant_correction.t_inscription_id
+    //           inner join t_admission on t_admission.id = t_inscription.t_admission_id
+    //           inner join t_preinscription on t_preinscription.id = t_admission.t_preinscription_id
+    //           inner join t_etudiant on t_etudiant.id = t_preinscription.t_etudiant_id
+    //           inner join epreuve_etudiant_correction_detail on epreuve_etudiant_correction_detail.epreuve_etudiant_correction_id = epreuve_etudiant_correction.id
+    //           inner join question on question.id = epreuve_etudiant_correction_detail.question_id
+              
+    //           where epreuve.id in (582)";
+    //       $conn = $this->em->getConnection();
+    //       $stmt = $conn->prepare($sql)->executeQuery();
+    //     //   $stmt->executeQuery();
+          
+    //     //   $stmt = $this->em->getConnection()->prepare($sql);
+    //     //   $stmt = $stmt->executeQuery();
+    //     //   $semaine = $resultSet->fetchAll();
+    //       $etudiants = $stmt->fetchAll();
+    //     //   dd($etudiants);
+          
+    //       $spreadsheet = new Spreadsheet();
+    //     //   die("amine");
+    //       $sheet = $spreadsheet->getActiveSheet();
+    //       $sheet->setCellValue('A1', 'Epreuve');
+    //       $sheet->setCellValue('B1', 'Code Admission');
+    //       $sheet->setCellValue('C1', 'Nom');
+    //       $sheet->setCellValue('D1', 'Prenom');
+    //       $sheet->setCellValue('E1', 'Note');
+    //       $sheet->setCellValue('F1', 'id');
+    //       $sheet->setCellValue('G1', 'libelle');
+    //       $sheet->setCellValue('H1', 'Reponses Etudiant');
+    //       $sheet->setCellValue('I1', 'Reponses Correct');
+    //       $rowCount = 2;
+    //       foreach($etudiants as $etudiant) {
+    //          //  dd($etudiant);
+    //           $i = 0;
+    //           $letters = "";
+    //           $var = explode(";",$etudiant['reponses']);
+    //           foreach($var as $v){
+    //               if($i > 0) {
+    //                   $num = explode(":", $v);
+    //                   if(isset($num[1])) {
+    //                       if($num[1] > 400){
+    //                           //dd("select lettre from question_choix where id = $num[1]");
+    //                           $sql1 = "select lettre from question_choix where id = $num[1]";
+    //                           $stmt1 = $conn->prepare($sql1)->executeQuery();
+    //                         //   $stmt1->executeQuery();
+    //                          //  dd($stmt1->fetch()['lettre']);
+    //                          $letters .= $stmt1->fetch()['lettre'].",";
+    //                       }
+    //                   }
+    //               }
+    //               $i++;
+    //           }
+    //          $id = $etudiant['id'];
+    //          $sql2 = "select lettre from question_choix where reponse = 1 and question_id = $id ";
+    //          $stmt2 = $conn->prepare($sql2)->executeQuery();
+    //         //  $stmt2->execute();
+    //          $reponses = $stmt2->fetchAll();
+    //          $lettreReponse = "";
+    //          foreach($reponses as $reponse) {
+    //              $lettreReponse .= $reponse['lettre'].",";
+    //          }
+    //          $sheet->setCellValue('A' . $rowCount, $etudiant['designation']);
+    //          $sheet->setCellValue('B' . $rowCount, $etudiant['code_admission']);
+    //          $sheet->setCellValue('C' . $rowCount, $etudiant['nom']);
+    //          $sheet->setCellValue('D' . $rowCount, $etudiant['prenom']);
+    //          $sheet->setCellValue('E' . $rowCount, $etudiant['note']);
+    //          $sheet->setCellValue('F' . $rowCount, $etudiant['id']);
+    //          $sheet->setCellValue('G' . $rowCount,  $etudiant['libelle']);
+    //          $sheet->setCellValue('H' . $rowCount,  $letters);
+    //          $sheet->setCellValue('I' . $rowCount,  $lettreReponse);
+             
+    //          $rowCount++;
+    //      }
+         
+         
+    //      $writer = new Xlsx($spreadsheet);
+    //      $fileName = 'exctraction_epreuve.xlsx';
+    //      $temp_file = tempnam(sys_get_temp_dir(), $fileName);
+    //      $writer->save($temp_file);
+    
+    //      return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);
+            
+    //     }
 }
