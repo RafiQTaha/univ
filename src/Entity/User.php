@@ -100,6 +100,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'userAnnulated', targetEntity: TPreinscription::class)]
     private $tPreinscriptions;
 
+    #[ORM\OneToMany(mappedBy: 'userCreated', targetEntity: TPreinscription::class)]
+    private $Preinscriptions;
+
 
     public function __construct()
     {
@@ -123,6 +126,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->pvs = new ArrayCollection();
         $this->tBrdpaiements = new ArrayCollection();
         $this->tPreinscriptions = new ArrayCollection();
+        $this->Preinscriptions = new ArrayCollection();
     }
 
     
@@ -816,6 +820,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($tPreinscription->getUserAnnulated() === $this) {
                 $tPreinscription->setUserAnnulated(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, TPreinscription>
+     */
+    public function getPreinscriptions(): Collection
+    {
+        return $this->Preinscriptions;
+    }
+
+    public function addPreinscription(TPreinscription $preinscription): self
+    {
+        if (!$this->Preinscriptions->contains($preinscription)) {
+            $this->Preinscriptions[] = $preinscription;
+            $preinscription->setUserCreated($this);
+        }
+
+        return $this;
+    }
+
+    public function removePreinscription(TPreinscription $preinscription): self
+    {
+        if ($this->Preinscriptions->removeElement($preinscription)) {
+            // set the owning side to null (unless already changed)
+            if ($preinscription->getUserCreated() === $this) {
+                $preinscription->setUserCreated(null);
             }
         }
 
