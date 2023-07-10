@@ -68,6 +68,15 @@ class TPreinscription
     #[ORM\ManyToOne(targetEntity: NatureDemande::class, inversedBy: 'preinscriptions')]
     private $nature;
 
+    #[ORM\ManyToOne(targetEntity: user::class, inversedBy: 'tPreinscriptions')]
+    private $userAnnulated;
+
+    #[ORM\Column(type: 'datetime', nullable: true)]
+    private $annulated;
+
+    // #[ORM\Column(type: 'float', nullable: true)]
+    // private $validation;
+
 
     public function __construct()
     {
@@ -357,6 +366,42 @@ class TPreinscription
     public function setNature(?NatureDemande $nature): self
     {
         $this->nature = $nature;
+
+        return $this;
+    }
+
+    // public function getValidation(): ?float
+    // {
+    //     return $this->validation;
+    // }
+
+    // public function setValidation(?float $validation): self
+    // {
+    //     $this->validation = $validation;
+
+    //     return $this;
+    // }
+
+    public function getUserAnnulated(): ?user
+    {
+        return $this->userAnnulated;
+    }
+
+    public function setUserAnnulated(?user $userAnnulated): self
+    {
+        $this->userAnnulated = $userAnnulated;
+
+        return $this;
+    }
+
+    public function getAnnulated(): ?\DateTimeInterface
+    {
+        return $this->annulated;
+    }
+
+    public function setAnnulated(?\DateTimeInterface $annulated): self
+    {
+        $this->annulated = $annulated;
 
         return $this;
     }

@@ -327,7 +327,7 @@ class GestionAdmissionController extends AbstractController
                 $limit = 2;
             }
             $findAnnee = $this->em->getRepository(AcAnnee::class)->findBy([ 'formation' => $admission->getPreinscription()->getAnnee()->getFormation()],['id'=>'DESC'],$limit);
-            $promotions = $this->em->getRepository(AcPromotion::class)->findBy(['formation' => $admission->getPreinscription()->getAnnee()->getFormation()]);
+            $promotions = $this->em->getRepository(AcPromotion::class)->findBy(['formation' => $admission->getPreinscription()->getAnnee()->getFormation(),'active'=>1],['ordre'=>'ASC']);
             $promotionHtml = ApiController::dropdown($promotions, "promotion");
             $anneeHtml = ApiController::dropdown($findAnnee, "annee");
             return new JsonResponse(['anneeHtml' => $anneeHtml, 'promotionHtml' => $promotionHtml], 200);

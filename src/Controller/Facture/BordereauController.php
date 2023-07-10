@@ -52,7 +52,7 @@ class BordereauController extends AbstractController
          
         $params = $request->query;
         $where = $totalRows = $sqlRequest = "";
-        $filtre = "where 1=1 ";
+        $filtre = "where brd.active = 1 ";
         
         if (!empty($params->all('columns')[0]['search']['value'])) {
             $filtre .= " and etab.id = '" . $params->all('columns')[0]['search']['value'] . "' ";
@@ -164,9 +164,12 @@ class BordereauController extends AbstractController
                 $reglement->setBordereau(Null);
             }
         }
-        $this->em->remove($bordereau);
+        $bordereau->setActive(0);
+        $bordereau->setUserAnnulated($this->getUser());
+        $bordereau->setAnnulated(new DateTime('now'));
+        // $this->em->remove($bordereau);
         $this->em->flush();
-        return new JsonResponse('Bordereau Supprimé', 200); 
+        return new JsonResponse('Bordereau bien Supprimé', 200); 
     }
     
     

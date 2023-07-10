@@ -531,146 +531,148 @@ class EpreuveController extends AbstractController
         return new JsonResponse($html);
     }
     
-    // #[Route('/affiliation_rattrapage', name: 'administration_epreuve_affiliation_rattrapage')]
-    // public function administrationEpreuveAffiliationRattrapage(Request $request) {
-    //     $idInscriptions = json_decode($request->get("idInscriptions"));
-    //     $epreuve = $this->em->getRepository(AcEpreuve::class)->find($request->get("idEpreuve"));
-    //     foreach ($idInscriptions as $idInscription) {
-    //         $inscription = $this->em->getRepository(TInscription::class)->find($idInscription);
-    //         $gnote = new ExGnotes();
-    //         $gnote->setEpreuve($epreuve);
-    //         $gnote->setInscription($inscription);
-    //         $gnote->setUserCreated($this->getUser());
-    //         $gnote->setCreated(new \DateTime("now"));
-    //         if($epreuve->getAnonymat() == 1) {
-    //             if($epreuve->getNatureEpreuve()->getNature() == 'normale') {
-    //                 $gnote->setAnonymat($inscription->getCodeAnonymat());                    
-    //             } else {
-    //                 $gnote->setAnonymat($inscription->getCodeAnonymatRat());
-    //             }
-    //         }
-    //         $this->em->persist($gnote);
-    //     }
-    //     $epreuve->setStatut(
-    //         $this->em->getRepository(PStatut::class)->find(29)
-    //     );
-    //     $this->em->flush();
-        
-    //     ApiController::mouchard($this->getUser(), $this->em,$epreuve, 'AcEpreuve', 'Affiliation Rattrapage');
-
-    //     return new JsonResponse("Bien Enregistre", 200);
-
-    // }
-
-    #[Route('/affiliation_rattrapage_Automatique', name: 'administration_epreuve_affiliation_rattrapage_Automatique')]
-    public function administrationEpreuveAffiliationRattrapageAuto(Request $request) {
-        $idEpreuves = json_decode($request->get("epreuves"));
-        // dd($idEpreuves);
-        $zip = new ZipArchive();
-        $zipname = 'affilation_epreuves_rattrapage'.uniqid().'.zip';
-        $totalEpreuves = 0;
-        $zip->open($zipname, ZipArchive::CREATE);
-        foreach($idEpreuves as $idEpreuve) {
-            $epreuve = $this->em->getRepository(AcEpreuve::class)->find($idEpreuve);
-            if($epreuve->getStatut()->getId() == 28) {
-                $spreadsheet = new Spreadsheet();
-                $sheet = $spreadsheet->getActiveSheet();
-                $sheet->setCellValue('A1', 'Code Epreuve');
-                $sheet->setCellValue('B1', 'Inscription');
-                if($epreuve->getAnonymat() == 1) {
-                    $sheet->setCellValue('C1', 'Anonymat');
-                }
-                $i = 2;
-                $inscriptions = $this->em->getRepository(TInscription::class)->getInscriptionsByEpreuve($epreuve);
-                $natureEpreuveNormal = "";
-                // dd($epreuve->getNatureEpreuve()->getAbreviation());
-                switch ($epreuve->getNatureEpreuve()->getId()) {
-                    case 4:
-                        $natureEpreuveNormal = 3;
-                        break;
-                    case 7:
-                        $natureEpreuveNormal = 1;
-                        break;
-                    case 12:
-                        $natureEpreuveNormal = 2;
-                        break;
-                    default:
-                        $natureEpreuveNormal = "";
-                        break;
-                }
-                
-                if ($natureEpreuveNormal != "") {
-                    if ($natureEpreuveNormal == 2) {
-                        $EpreuveNormals = $this->em->getRepository(AcEpreuve::class)->findBy([
-                            'element'=>$epreuve->getElement(),
-                            'annee'=>$epreuve->getAnnee(),
-                            'natureEpreuve' => $natureEpreuveNormal,
-                            'nature' => 'Journal de bord',
-                            'statut' => 30
-                        ]);
-                        if(count($EpreuveNormals) == 0){
-                            $EpreuveNormals = $this->em->getRepository(AcEpreuve::class)->findBy([
-                                'element'=>$epreuve->getElement(),
-                                'annee'=>$epreuve->getAnnee(),
-                                'natureEpreuve' => $natureEpreuveNormal,
-                                'statut' => 30
-                            ]);
-                        }
-                    }else {
-                        $EpreuveNormals = $this->em->getRepository(AcEpreuve::class)->findBy([
-                            'element'=>$epreuve->getElement(),
-                            'annee'=>$epreuve->getAnnee(),
-                            'natureEpreuve' => $natureEpreuveNormal,
-                            'statut' => 30
-                        ]);
-                    }
-                    // dd($EpreuveNormals);
-                    $moy = $epreuve->getAnnee()->getFormation()->getEtablissement()->getId() == 26 ? 12 : 10;
-                    foreach($inscriptions as $inscription) {
-                        // $moyen = false;
-                        if (count($EpreuveNormals) == 1) {
-                            $moyen = $this->em->getRepository(ExGnotes::class)->findOneBy(['inscription'=>$inscription,'epreuve'=>$EpreuveNormals[0]])->getNote();
-                        }elseif (count($EpreuveNormals) == 2) {
-                            $moyen = 0;
-                            foreach ($EpreuveNormals as $EpreuveNormal) {
-                                $moyen += $this->em->getRepository(ExGnotes::class)->findOneBy(['inscription'=>$inscription,'epreuve'=>$EpreuveNormal])->getNote();
-                            }
-                            $moyen = $moyen / 2;
-                        }
-                        if ($moyen < $moy) {
-                            $gnote = new ExGnotes();
-                            $gnote->setEpreuve($epreuve);
-                            $gnote->setInscription($inscription);
-                            $gnote->setUserCreated($this->getUser());
-                            $gnote->setCreated(new \DateTime("now"));
-                            $this->em->persist($gnote);
-                            $sheet->setCellValue('A'.$i, $epreuve->getId());
-                            $sheet->setCellValue('B'.$i, $inscription->getId());
-                            $i++;
-                        }
-                        // if ($inscription->getId() == 16326) {
-                        //     dd( $moyen,$moy);
-                        // }
-                    }
-                    $epreuve->setStatut(
-                        $this->em->getRepository(PStatut::class)->find(29)
-                    );
-                    // dd('nop');
-                    $this->em->flush();
-                    ApiController::mouchard($this->getUser(), $this->em,$epreuve, 'AcEpreuve', 'Affiliation Epreuve Ratt');
-                    $writer = new Xlsx($spreadsheet);
-                    $fileName = 'affiliation_'.$epreuve->getId().'.xlsx';
-                    // $temp_file = tempnam(sys_get_temp_dir(), $fileName);
-                    $writer->save($fileName);
-                    $zip->addFile($fileName);
-                    $totalEpreuves++;
+    #[Route('/affiliation_rattrapage', name: 'administration_epreuve_affiliation_rattrapage')]
+    public function administrationEpreuveAffiliationRattrapage(Request $request) {
+        $idInscriptions = json_decode($request->get("idInscriptions"));
+        $epreuve = $this->em->getRepository(AcEpreuve::class)->find($request->get("idEpreuve"));
+        foreach ($idInscriptions as $idInscription) {
+            $inscription = $this->em->getRepository(TInscription::class)->find($idInscription);
+            $gnote = new ExGnotes();
+            $gnote->setEpreuve($epreuve);
+            $gnote->setInscription($inscription);
+            $gnote->setUserCreated($this->getUser());
+            $gnote->setCreated(new \DateTime("now"));
+            if($epreuve->getAnonymat() == 1) {
+                if($epreuve->getNatureEpreuve()->getNature() == 'normale') {
+                    $gnote->setAnonymat($inscription->getCodeAnonymat());                    
+                } else {
+                    $gnote->setAnonymat($inscription->getCodeAnonymatRat());
                 }
             }
+            $this->em->persist($gnote);
         }
-        $zip->close();
-        array_map('unlink', glob( "*.xlsx"));
-        return new JsonResponse(['zipname' => $zipname, 'total' => $totalEpreuves]);
-   }
+        $epreuve->setStatut(
+            $this->em->getRepository(PStatut::class)->find(29)
+        );
+        $this->em->flush();
+        
+        ApiController::mouchard($this->getUser(), $this->em,$epreuve, 'AcEpreuve', 'Affiliation Rattrapage');
+
+        return new JsonResponse("Bien Enregistre", 200);
+
+    }
+
+//     #[Route('/affiliation_rattrapage_Automatique', name: 'administration_epreuve_affiliation_rattrapage_Automatique')]
+//     public function administrationEpreuveAffiliationRattrapageAuto(Request $request) {
+//         $idEpreuves = json_decode($request->get("epreuves"));
+//         // dd($idEpreuves);
+//         $zip = new ZipArchive();
+//         $zipname = 'affilation_epreuves_rattrapage'.uniqid().'.zip';
+//         $totalEpreuves = 0;
+//         $zip->open($zipname, ZipArchive::CREATE);
+//         foreach($idEpreuves as $idEpreuve) {
+//             $epreuve = $this->em->getRepository(AcEpreuve::class)->find($idEpreuve);
+//             if($epreuve->getStatut()->getId() == 28) {
+//                 $spreadsheet = new Spreadsheet();
+//                 $sheet = $spreadsheet->getActiveSheet();
+//                 $sheet->setCellValue('A1', 'Code Epreuve');
+//                 $sheet->setCellValue('B1', 'Inscription');
+//                 if($epreuve->getAnonymat() == 1) {
+//                     $sheet->setCellValue('C1', 'Anonymat');
+//                 }
+//                 $i = 2;
+//                 $inscriptions = $this->em->getRepository(TInscription::class)->getInscriptionsByEpreuve($epreuve);
+//                 $natureEpreuveNormal = "";
+//                 // dd($epreuve->getNatureEpreuve()->getAbreviation());
+//                 switch ($epreuve->getNatureEpreuve()->getId()) {
+//                     case 4:
+//                         $natureEpreuveNormal = 3;
+//                         break;
+//                     case 7:
+//                         $natureEpreuveNormal = 1;
+//                         break;
+//                     case 12:
+//                         $natureEpreuveNormal = 2;
+//                         break;
+//                     default:
+//                         $natureEpreuveNormal = "";
+//                         break;
+//                 }
+                
+//                 if ($natureEpreuveNormal != "") {
+//                     if ($natureEpreuveNormal == 2) {
+//                         $EpreuveNormals = $this->em->getRepository(AcEpreuve::class)->findBy([
+//                             'element'=>$epreuve->getElement(),
+//                             'annee'=>$epreuve->getAnnee(),
+//                             'natureEpreuve' => $natureEpreuveNormal,
+//                             'nature' => 'Journal de bord',
+//                             'statut' => 30
+//                         ]);
+//                         if(count($EpreuveNormals) == 0){
+//                             $EpreuveNormals = $this->em->getRepository(AcEpreuve::class)->findBy([
+//                                 'element'=>$epreuve->getElement(),
+//                                 'annee'=>$epreuve->getAnnee(),
+//                                 'natureEpreuve' => $natureEpreuveNormal,
+//                                 'statut' => 30
+//                             ]);
+//                         }
+//                     }else {
+//                         $EpreuveNormals = $this->em->getRepository(AcEpreuve::class)->findBy([
+//                             'element'=>$epreuve->getElement(),
+//                             'annee'=>$epreuve->getAnnee(),
+//                             'natureEpreuve' => $natureEpreuveNormal,
+//                             'statut' => 30
+//                         ]);
+//                     }
+//                     // dd($EpreuveNormals);
+//                     $etablissement_id =  $epreuve->getAnnee()->getFormation()->getEtablissement()->getId();
+//                     $moy = $etablissement_id == 26 ? 12 : 10;
+//                     $moyIni = $etablissement_id == 26 ? 8 : 7;
+//                     foreach($inscriptions as $inscription) {
+//                         // $moyen = false;
+//                         if (count($EpreuveNormals) == 1) {
+//                             $moyen = $this->em->getRepository(ExGnotes::class)->findOneBy(['inscription'=>$inscription,'epreuve'=>$EpreuveNormals[0]])->getNote();
+//                         }elseif (count($EpreuveNormals) == 2) {
+//                             $moyen = 0;
+//                             foreach ($EpreuveNormals as $EpreuveNormal) {
+//                                 $moyen += $this->em->getRepository(ExGnotes::class)->findOneBy(['inscription'=>$inscription,'epreuve'=>$EpreuveNormal])->getNote();
+//                             }
+//                             $moyen = $moyen / 2;
+//                         }
+//                         if ($moyen < $moy) {
+//                             $gnote = new ExGnotes();
+//                             $gnote->setEpreuve($epreuve);
+//                             $gnote->setInscription($inscription);
+//                             $gnote->setUserCreated($this->getUser());
+//                             $gnote->setCreated(new \DateTime("now"));
+//                             $this->em->persist($gnote);
+//                             $sheet->setCellValue('A'.$i, $epreuve->getId());
+//                             $sheet->setCellValue('B'.$i, $inscription->getId());
+//                             $i++;
+//                         }
+//                         // if ($inscription->getId() == 16326) {
+//                         //     dd( $moyen,$moy);
+//                         // }
+//                     }
+//                     $epreuve->setStatut(
+//                         $this->em->getRepository(PStatut::class)->find(29)
+//                     );
+//                     // dd('nop');
+//                     $this->em->flush();
+//                     ApiController::mouchard($this->getUser(), $this->em,$epreuve, 'AcEpreuve', 'Affiliation Epreuve Ratt');
+//                     $writer = new Xlsx($spreadsheet);
+//                     $fileName = 'affiliation_'.$epreuve->getId().'.xlsx';
+//                     // $temp_file = tempnam(sys_get_temp_dir(), $fileName);
+//                     $writer->save($fileName);
+//                     $zip->addFile($fileName);
+//                     $totalEpreuves++;
+//                 }
+//             }
+//         }
+//         $zip->close();
+//         array_map('unlink', glob( "*.xlsx"));
+//         return new JsonResponse(['zipname' => $zipname, 'total' => $totalEpreuves]);
+//    }
     #[Route('/add_epreuve', name: 'administration_epreuve_add_epreuve')]
     public function administrationEpreuveaddepreuve(Request $request) 
     {
