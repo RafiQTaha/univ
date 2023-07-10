@@ -74,6 +74,9 @@ class TPreinscription
     #[ORM\Column(type: 'datetime', nullable: true)]
     private $annulated;
 
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'Preinscriptions')]
+    private $userCreated;
+
     // #[ORM\Column(type: 'float', nullable: true)]
     // private $validation;
 
@@ -402,6 +405,18 @@ class TPreinscription
     public function setAnnulated(?\DateTimeInterface $annulated): self
     {
         $this->annulated = $annulated;
+
+        return $this;
+    }
+
+    public function getUserCreated(): ?User
+    {
+        return $this->userCreated;
+    }
+
+    public function setUserCreated(?User $userCreated): self
+    {
+        $this->userCreated = $userCreated;
 
         return $this;
     }
