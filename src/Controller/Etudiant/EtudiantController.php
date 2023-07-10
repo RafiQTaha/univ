@@ -390,6 +390,7 @@ class EtudiantController extends AbstractController
         $preinscription->setActive(1);
         $preinscription->setNature($nature);
         $preinscription->setCreated(new DateTime('now'));
+        $preinscription->setUserCreated($this->getUser());
         $preinscription->setAnnee($annee);
         $this->em->persist($preinscription);
         $this->em->flush();

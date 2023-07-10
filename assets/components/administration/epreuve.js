@@ -934,13 +934,28 @@ $(document).ready(function  () {
 
     $('body').on('click','#extraction_epv_valide', async function (e) {
         e.preventDefault();
-        const icon = $("#extraction_epv_valide i");
-        window.open('/administration/epreuve/extraction_epreuve_valide', '_blank');
+        // xxxxxxxxxxxxxxxx
+        // const icon = $("#extraction_epv_valide i");
+        if($("#etablissementNrml").val() == "") {
+            Toast.fire({
+                icon: 'error',
+                title: 'Veuillez selectionnez une etablissement!',
+            })
+            return;
+        }
+        window.open('/administration/epreuve/extraction_epreuve_valide/'+$("#etablissementNrml").val(), '_blank');
     })
     $('body').on('click','#extraction_epv_valide_s2', async function (e) {
         e.preventDefault();
-        const icon = $("#extraction_epv_valide_s2 i");
-        window.open('/administration/epreuve/extraction_epreuve_valide_s2', '_blank');
+        // const icon = $("#extraction_epv_valide_s2 i");
+        if($("#etablissementNrml").val() == "") {
+            Toast.fire({
+                icon: 'error',
+                title: 'Veuillez selectionnez une etablissement!',
+            })
+            return;
+        }
+        window.open('/administration/epreuve/extraction_epreuve_valide_s2/'+$("#etablissementNrml").val(), '_blank');
     })
     $('body').on('click','#open_upload_file', async function (e) {
         e.preventDefault();
