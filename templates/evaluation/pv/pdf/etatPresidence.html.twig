@@ -1,0 +1,278 @@
+<link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro" rel="stylesheet">
+
+<style type="text/Css">
+    body{
+        font-family: 'Arial', sans-serif;
+    }
+    footer {
+        /* font-family: 'Courier', Courier; */
+
+    }
+    .titre-reb{
+        width: 100%;
+        background: #1f4f7a;
+        font-size: 9px ;
+        padding:3px 10px;
+        color: #f1f1f1;
+        /* font-weight: bold */
+    }
+    div.zone_over
+    {
+        display: block;
+        width: 40%;
+        word-wrap:break-word !important;
+    }
+    .slh tr td {
+        border-bottom: 1px solid #8d8d8d;
+    }
+    .tableAnnee  th {
+        /*border-bottom: 1px solid #adadad;*/
+        border: 1px solid #adadad;
+    }
+    .tableAnnee  td {
+        /*border-bottom: 1px solid #adadad;*/
+        border-right: .5px solid #adadad;
+        border-left: .5px solid #adadad;
+        border-bottom: .5px solid #adadad;
+        padding : 5px;
+    }
+    .txt {
+        width: 100%;
+        text-align: left;
+        {# line-height: 30px;  #}
+        padding-top: 0px ;  
+        padding-bottom:  0px ;
+        padding-left: 30px ;
+        padding-right:  30px ;
+        text-align: justify; 
+        font-size : 11.5px;
+        font-weight: normal ;
+    }
+    .txt span {
+        /* font-size:11px; */
+        /* font-weight: bold; */
+        /* color:black; */
+        margin-left: 5px ; 
+        margin-right: 5px ; 
+    }
+</style>
+
+<div style="text-align: center;">
+        <table style="width: 100% ;" cellspacing="0">
+            <tr>
+                <th style="width: 100% ; font-size: 13px ;font-weight: 200;font-weight: bold;padding:0 4px;color:rgb(3, 35, 68);">
+                </th>
+                <th style="width: 100% ; font-size: 13px ;font-weight: 200;font-weight: bold;padding:0 4px;color:rgb(3, 35, 68);">
+                    {% if pv.annee.formation.etablissement.id == 28 %}
+                                <img src="./assets/img/logo/cpge.svg" style=" width: 600px; margin: 0 auto;"> 
+                    {% elseif pv.annee.formation.etablissement.id == 5 %}
+                            <img src="./assets/img/logo/logo_lez.png" style=" width: 600px; margin: 0 auto;">
+                    {% else %}                
+                            <img src="./assets/img/logo/Logo_UIASS_bkack2.png" style=" width: 600px; margin: 0 auto;">
+                    {% endif %}
+                </th>
+                <th style="width: 100% ; font-size: 13px ;font-weight: 200;font-weight: bold;padding:0 4px;color:rgb(3, 35, 68);">
+                </th>                    
+            </tr>
+        </table>
+</div>
+{# <br><br><br><br><br><br><br> #}
+<br><br>
+<table style="width: 100%;font-size:12px;"  cellspacing="0">   
+
+    <tbody>
+        <tr>
+            <td style="width: 10%; text-align: left;line-height: 25px">
+            </td>
+            <td style="width: 70%; text-align: left;line-height: 25px">
+                <span style="font-size:11px;font-weight: bold;color:#000;">REF </span> : {{pv.code}}
+            </td>
+            <td style="width: 20%; text-align: left;line-height: 25px">
+            </td>
+        </tr>
+        
+        <tr>
+            <td style="width: 10%; text-align: left;line-height: 25px">
+
+            </td>
+            <td style="width: 70%; text-align: left;line-height: 25px">
+                <span style="font-size:11px;font-weight: bold;color:#000;">Fait à Rabat, le {{"now"|date("d/m/Y")}}
+            </td>
+            <td style="width: 20%; text-align: left;line-height: 25px">
+                <span style="font-size:11px;font-weight: bold;color:#000;"> </span>
+            </td> 
+        </tr>
+        
+    </tbody>
+</table>
+<br><br>
+<p style="text-align:center;font-size:14px;font-weight: bold;font-family: 'Courier'">A l’Attention de la Présidence de l’UIASS</p>
+<br/><br/>
+
+<table style="width: 100%;font-size:14px;"  cellspacing="0">   
+    <tbody>
+        <tr>
+            <td style="width: 10%; text-align: left;line-height: 25px"></td>
+            <td style="width: 70%; text-align: left;line-height: 25px">
+                <span style="font-size:14px;font-weight: bold;color:#000;">Objet </span> : Demande de dérogation.
+            </td>
+        </tr>
+        <tr>
+            <td style="width: 10%; text-align: left;line-height: 25px"></td>
+            <td style="width: 70%; text-align: left;line-height: 25px">
+            </td>
+        </tr>
+        <tr>
+            <td style="width: 10%; text-align: left;line-height: 25px"></td>
+            <td style="width: 70%; text-align: left;line-height: 25px">
+                Monsieur, 
+            </td>
+        </tr>
+        <tr>
+            <td style="width: 10%; text-align: left;line-height: 25px"></td>
+            <td style="width: 70%; text-align: left;line-height: 25px">
+            </td>
+        </tr>
+        <tr>
+        {% set moy = pv.annee.formation.etablissement.id == 26 ? 12 : 10  %}
+{#         
+        $etablissement_id = $enote->getInscription()->getAnnee()->getFormation()->getEtablissement()->getId();
+        $moy = $etablissement_id == 26 ? 12 : 10; #}
+            <td style="width: 10%; text-align: left;line-height: 25px"></td>
+            {# <td style="width: 70%; text-align: left;line-height: 25px;text-align: justify; ">
+                Les membres du jury de la délibération du semestre 4, 2ème année GPIP de l’École d’Ingénieur Abulcasis, demandent une dérogation pour l’octroi de points de rachat au profit de l’étudiant sous-mentionné, ayant une moyenne semestrielle et annuelle supérieure ou égale à <span style="font-size:11px;font-weight: bold;color:#000;">{{12|number_format(2, ',', ' ')}}/20</span>. 
+            </td> #}
+            <td style="width: 70%; text-align: left;line-height: 25px;text-align: justify; ">Les membres du jury de la délibération du {{pv.semestre.designation}}, {{pv.semestre.promotion.ordre}}<sup>{{pv.semestre.promotion.ordre > 1 ? 'éme' : 'er'}}</sup> Année {{pv.annee.formation.designation}}, demandent une dérogation pour l’octroi de points de rachat au profit de l’étudiant portant le code anonymat 
+                {% for snoteDerogation in snoteDerogations %}
+                    {{snoteDerogation.inscription.codeAnonymat}}{% if loop.index < snoteDerogations | length %},{% endif %}
+                {% endfor %}, afin de lui permettre la validation du stage professionnel.
+            </td>
+            <td style="width: 10%; text-align: left;line-height: 25px"></td>
+        </tr>
+        
+    </tbody>
+</table>
+<br>
+{# <table style="width: 100%;font-size:12px;border: 1px solid #adadad;margin: 10px 30px;color:#000" class="tableAnnee"  cellspacing="0">   
+    <thead>
+        <tr>
+            <th style="text-align: center;line-height: 30px;background-color:#bfbfbf">OG</th>
+            <th style="text-align: center;line-height: 30px;background-color:#bfbfbf">Code anonymat</th>
+            <th style="text-align: center;background-color:#bfbfbf">Classement</th>
+            <th style="text-align: center;line-height: 30px;background-color:#bfbfbf">Moyenne semestrielle</th>
+            <th style="text-align: center;background-color:#bfbfbf">Moyenne Annuelle</th>
+            <th style="text-align: center;line-height: 30px;background-color:#bfbfbf">Palier de rachat</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for snote in snoteDerogations %}
+            <tr>
+                <th style="text-align: center;line-height: 30px">{{loop.index}}</th>
+                <th style="text-align: center;line-height: 30px">{{snote.inscription.codeAnonymat}}</th>
+                <th style="text-align: center">888</th>
+                <th style="text-align: center;line-height: 30px">{{snote.note}}</th>
+                <th style="text-align: center">{{snote.inscription.anotes ? snote.inscription.anotes.note : null}}</th>
+                <th style="text-align: center;line-height: 30px">888</th>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table> #}
+    {# {% if inscription.annee.formation.etablissement.id in [3,4] %}
+    {% if inscription.annee.formation.etablissement.id == 3 %}
+        {% set la = "l'" %}
+        {% else %}
+        {% set la = "la " %}
+    {% endif %}
+
+        <p style="line-height: 1.8; margin: 10px 30px;font-size:11px;">
+        A suivi avec succès le cycle de licence Professionnelle de {{la}}<b>{{lastinscription.annee.formation.etablissement.designation}}</b> et a cumulé les moyennes suivantes durant son cursus universitaire :  
+        </p>
+    {% else %}
+        <p style="line-height: 1.8; margin: 10px 30px;font-size:11px;">
+        A suivi avec succès le cursus universitaire de la filière <b>{{lastinscription.annee.formation.designation}}</b> et a été déclaré (e) ‘’ Docteur en <b>{{lastinscription.annee.formation.designation}}</b>‘’ au titre de l’année académique {{lastinscription.annee.designation}} :    
+        </p>
+    {% endif %} #}
+
+    {# <table style="width: 100%;font-size:12px;border: 1px solid #adadad;margin: 10px 30px;color:#000" class="tableAnnee"  cellspacing="0">   
+        <thead>
+            <tr>
+                <th style="text-align: center;line-height: 30px;background-color:#bfbfbf">ANNEE UNIVERSITAIRE</th>
+                <th style="text-align: center;line-height: 30px;background-color:#bfbfbf">NIVEAU</th>
+                <th style="text-align: center;background-color:#bfbfbf">MOYENNE ANNUELLE <br>(/20)</th>
+                <th style="text-align: center;line-height: 30px;background-color:#bfbfbf">STATUT ANNÉE</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% set varColor = 0 %}
+        {% set BackColor = "fff" %}
+            {% for inscription in inscription.admission.inscriptions %}
+                {% if inscription.anotes is not null and inscription.anotes.statutAff and inscription.anotes.statutAff.id not in [44,45,46] %}
+                {% if varColor == 0 %}
+                        {% set BackColor = "#fff" %}
+                        {% set varColor = 1 %}
+                    {% else %}
+                        {% set BackColor = "#f2f2f2" %}
+                        {% set varColor = 0 %}
+                {% endif %}
+                    <tr style="background-color:{{BackColor}}">
+                        <td style="text-align: center;line-height: 30px">{{inscription.annee.designation}}</td>
+                        <td style="text-align: center;line-height: 30px">{{inscription.promotion.ordre}} Année</td>
+                        <td style="text-align: center;line-height: 30px;width:150px">{{inscription.anotes.noteSec|number_format(2)}}</td>
+                        <td style="text-align: center;line-height: 30px">{{inscription.anotes.statutAff.designation}}</td>
+                    </tr>
+                {% endif %}
+            {% endfor %}
+        </tbody>
+    </table> #}
+
+    {# <p style="line-height: 1.8; margin: 10px 30px;font-size:11px;">
+        Cette attestation est délivrée à l&#39;intéressé(e) pour servir et valoir ce que de droit.     
+    </p>
+
+    <table style="width: 100%;font-size:10.5px;margin: 10px 30px;color:#000" align="center" cellspacing="0">
+        <tbody>
+            <tr>
+                <td style="width: 70%; text-align: left;">
+                    <p style="font-size: 11px;"><b><u>Avis important :</u></b></p>
+                    <p style="font-size: 11px;">Il ne peut être délivré qu'un seul exemplaire de la présente attestation de réussite.<br> Aucun duplicata ne sera fourni. </p>
+                </td>
+                <td style="width: 30%; text-align: left;">
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table style="width: 100%;" align="center" cellspacing="0">
+        <thead>
+            <tr>
+                <th style="width: 30%; text-align: left;"></th>
+            </tr>
+        </thead>
+        <tbody>
+
+            <tr>
+
+                <td style="width: 89%; text-align: right;">
+                    <br><br><br>
+                    <span style="font-size:12px;font-weight: bold;color:black;"> Fait à Rabat, le {{"now"|date("d/m/Y")}}</span>
+
+                </td>
+
+            </tr>
+        </tbody>
+    </table>  #}
+
+    <table style="width: 100%;" align="center" cellspacing="0">
+        <thead>
+            <tr>
+                <th style="width: 30%; text-align: left;"></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td style="width: 89%; text-align: right;">
+                    <br><br><br>
+                    <span style="font-size:12px;font-weight: bold;color:black;"> Le jury de délibération </span>
+                </td>
+            </tr>
+        </tbody>
+    </table> 

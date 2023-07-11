@@ -256,5 +256,42 @@ class PvController extends AbstractController
         $this->em->flush();
         return new JsonResponse("Le PV est bien Importer",200);
     }
+    
+    #[Route('/impressionPresidence/{pv}', name: 'impressionPresidence')]
+    public function impressionPresidence(Pv $pv)
+    {
+        // dd($pv);
+        // $snotes = $this->em->getRepository(ExSnotes::class)->GetSnotesByAnneeAndSemestre($pv->getAnnee(),$pv->getSemestre());
+        // // dd($snotes);
+        // $snoteReussi = $this->em->getRepository(ExSnotes::class)->GetSnotesByAnneeAndSemestreAndStatut($pv->getAnnee(),$pv->getSemestre(),[36,56,37]);
+        // $snoteRachetes = $this->em->getRepository(ExSnotes::class)->GetSnotesByAnneeAndSemestreAndStatut($pv->getAnnee(),$pv->getSemestre(),[38,78]);
+        $snoteDerogations = $this->em->getRepository(ExSnotes::class)->GetSnotesByAnneeAndSemestreAndStatut($pv->getAnnee(),$pv->getSemestre(),[72]);
+        // $snoteRecalés = $this->em->getRepository(ExSnotes::class)->GetSnotesByAnneeAndSemestreAndStatut($pv->getAnnee(),$pv->getSemestre(),[39,40,57]);
+        // $snoteFraudeurs = $this->em->getRepository(ExSnotes::class)->GetSnotesByAnneeAndSemestreAndStatut($pv->getAnnee(),$pv->getSemestre(),[40]);
+        // $snoteAbsents = $this->em->getRepository(ExSnotes::class)->GetSnotesByAnneeAndSemestreAndStatut($pv->getAnnee(),$pv->getSemestre(),[]);
+        // dd($snoteReussi);
+        $html = $this->render("evaluation/pv/pdf/etatPresidence.html.twig", [
+            'pv' => $pv,
+            // 'snotes' => $snotes,
+            // 'snoteReussi' => $snoteReussi,
+            // 'snoteRachetes' => $snoteRachetes,
+            'snoteDerogations' => $snoteDerogations,
+            // 'snoteRecalés' => $snoteRecalés,
+            // 'snoteFraudeurs' => $snoteFraudeurs,
+            // 'snoteAbsents' => $snoteAbsents,
+        ])->getContent();
+        $mpdf = new Mpdf([
+            'mode' => 'utf-8', 
+            'margin_top' => 5,
+            'margin_left' => 5,
+            'margin_right' => 5,
+        ]);
+        // $mpdf->SetHTMLFooter(
+        //     $this->render("evaluation/pv/pdf/footer.html.twig")->getContent()
+        // );
+        $mpdf->WriteHTML($html);
+        $mpdf->SetTitle("Etat Presidence ".$pv->getAnnee()->getFormation()->getEtablissement()->getAbreviation()." ".$pv->getSemestre()->getDesignation());
+        $mpdf->Output("Etat Presidence ".$pv->getAnnee()->getFormation()->getEtablissement()->getAbreviation()." ".$pv->getSemestre()->getDesignation().".pdf", "I");
+    }
 
 }

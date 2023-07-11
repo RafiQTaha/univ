@@ -71,7 +71,8 @@ class AnneeController extends AbstractController
                 $total_coef += $module->getCoefficient();
                 $mnote = $this->em->getRepository(ExMnotes::class)->findOneBy(['module' => $module, 'inscription' => $inscription]);
                 if(!$mnote){
-                    dd($module);
+                    // dd($module);
+                    return new JsonResponse("Module Introuvable",500);
                 }
                 $moyenne += $mnote->getNote() * $module->getCoefficient();
                 
