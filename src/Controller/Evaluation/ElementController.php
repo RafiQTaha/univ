@@ -440,10 +440,11 @@ class ElementController extends AbstractController
     public function ElementGetStatutS1_pratique($enote, $noteComposantInitial, $note_eliminatoire, $note_validation) {
         //var_dump($data);
         $moy = $enote->getInscription()->getAnnee()->getFormation()->getEtablissement()->getId() == 26 ? 12 : 10;
-        $ntpJdb = $this->em->getRepository(ExGnotes::class)->getNoteTpByInscription($enote,'Journal de bord');
-        $ntpPerformance = $this->em->getRepository(ExGnotes::class)->getNoteTpByInscription($enote,'Performance');
+        $ntpJdb = $this->em->getRepository(ExGnotes::class)->getNoteTpByInscription($enote,'Journal de bord',2);
+        $ntpJdbRatt = $this->em->getRepository(ExGnotes::class)->getNoteTpByInscription($enote,'Journal de bord',12);
+        $ntpPerformance = $this->em->getRepository(ExGnotes::class)->getNoteTpByInscription($enote,'Performance',2);
         $send_data = array();
-        if(($ntpPerformance and $ntpPerformance[0]->getNote() < 10 ) || ($ntpJdb and $ntpJdb[0]->getNote() < 10 ) ){
+        if(($ntpPerformance and $ntpPerformance[0]->getNote() < 10 ) || ($ntpJdb and $ntpJdb[0]->getNote() < 10 and $ntpJdbRatt and $ntpJdbRatt[0]->getNote() < 10) ){
             $send_data['statut_s1'] = 16;
             $send_data['statut_def'] = 16;
             $send_data['statut_aff'] = 16;
