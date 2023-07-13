@@ -283,8 +283,8 @@ class PvController extends AbstractController
         $mpdf = new Mpdf([
             'mode' => 'utf-8', 
             'margin_top' => 5,
-            'margin_left' => 5,
-            'margin_right' => 5,
+            // 'margin_left' => 5,
+            // 'margin_right' => 5,
         ]);
         // $mpdf->SetHTMLFooter(
         //     $this->render("evaluation/pv/pdf/footer.html.twig")->getContent()

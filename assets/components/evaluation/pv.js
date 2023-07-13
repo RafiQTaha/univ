@@ -263,6 +263,16 @@ $(document).ready(function () {
         window.open('/evaluation/pv/impressionPv/'+id_pv, '_blank');
     })
     
+    $('body').on('click','#imprimerpresidence ', function (){
+        if(!id_pv){
+            Toast.fire({
+            icon: 'error',
+            title: 'Veuillez selection une ligne!',
+            })
+            return;
+        }
+        window.open('/evaluation/pv/impressionPresidence/'+id_pv, '_blank');
+    })
     $('#importer').on('click', () => {
         if(!id_pv){
           Toast.fire({
@@ -274,49 +284,50 @@ $(document).ready(function () {
         $("#importer-modal").modal("show");
     })
     
-  $('#save_import').on('submit', async (e) => {
-    e.preventDefault();
-    let modalAlert = $("#importer-modal .modal-body .alert")
-    modalAlert.remove();
-    if(!id_pv){
-        Toast.fire({
-          icon: 'error',
-          title: 'Veuillez selection une ligne!',
-        })
-        return;
-      }
-    const icon = $("#save_import .btn i");
-    icon.removeClass('fa-check-circle').addClass("fa-spinner fa-spin");
-    var formData = new FormData();
-    formData.append('file', $('.myfile').prop('files')[0]);
-    // console.log(formData);
-    try {
-        const request = await axios.post("/evaluation/pv/importPv/"+id_pv, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-    });
-        const data = await request.data;
-        $("#save_import")[0].reset();
-        $("#importer-modal .modal-body").prepend(
-            `<div class="alert alert-success">
-                <p>${data}</p>
-            </div>`
-        );
-        icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin");
-        // table.ajax.reload(null, false);
-    } catch (error) {
-        const message = error.response.data;
-        // console.log(error, error.response);
+    $('#save_import').on('submit', async (e) => {
+        e.preventDefault();
+        let modalAlert = $("#importer-modal .modal-body .alert")
         modalAlert.remove();
-        $("#importer-modal .modal-body").prepend(
-            `<div class="alert alert-danger">${message}</div>`
-        );
-        icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
-    }
-    setTimeout(() => {
-        $(".modal-body .alert").remove();
-    }, 2500) 
+        if(!id_pv){
+            Toast.fire({
+            icon: 'error',
+            title: 'Veuillez selection une ligne!',
+            })
+            return;
+        }
+        const icon = $("#save_import .btn i");
+        icon.removeClass('fa-check-circle').addClass("fa-spinner fa-spin");
+        var formData = new FormData();
+        formData.append('file', $('.myfile').prop('files')[0]);
+        // console.log(formData);
+        try {
+            const request = await axios.post("/evaluation/pv/importPv/"+id_pv, formData, {
+            headers: {
+            "Content-Type": "multipart/form-data",
+            },
+        });
+            const data = await request.data;
+            $("#save_import")[0].reset();
+            $("#importer-modal .modal-body").prepend(
+                `<div class="alert alert-success">
+                    <p>${data}</p>
+                </div>`
+            );
+            icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin");
+            // table.ajax.reload(null, false);
+        } catch (error) {
+            const message = error.response.data;
+            // console.log(error, error.response);
+            modalAlert.remove();
+            $("#importer-modal .modal-body").prepend(
+                `<div class="alert alert-danger">${message}</div>`
+            );
+            icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
+        }
+        setTimeout(() => {
+            $(".modal-body .alert").remove();
+        }, 2500) 
   
-  });
+    });
+   
 });

@@ -150,7 +150,7 @@ class ApiController extends AbstractController
         if((strpos($formation->getDesignation(), 'Résidanat') === false) && $formation->getEtablissement()->getId() != 25){
             return new JsonResponse(1);
         }else{
-            $annee = $this->em->getRepository(AcAnnee::class)->findBy(['formation'=>$formation],['id'=>'DESC'],2);
+            $annee = $this->em->getRepository(AcAnnee::class)->findBy(['formation'=>$formation],['id'=>'DESC'],3);
             $data = self::dropdown($annee,'Annee');
             return new JsonResponse($data);
         }

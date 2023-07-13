@@ -82,25 +82,25 @@
 
     <tbody>
         <tr>
-            <td style="width: 10%; text-align: left;line-height: 25px">
-            </td>
+            {# <td style="width: 10%; text-align: left;line-height: 25px">
+            </td> #}
             <td style="width: 70%; text-align: left;line-height: 25px">
                 <span style="font-size:11px;font-weight: bold;color:#000;">REF </span> : {{pv.code}}
             </td>
-            <td style="width: 20%; text-align: left;line-height: 25px">
-            </td>
+            {# <td style="width: 20%; text-align: left;line-height: 25px">
+            </td> #}
         </tr>
         
         <tr>
-            <td style="width: 10%; text-align: left;line-height: 25px">
+            {# <td style="width: 10%; text-align: left;line-height: 25px">
 
-            </td>
+            </td> #}
             <td style="width: 70%; text-align: left;line-height: 25px">
                 <span style="font-size:11px;font-weight: bold;color:#000;">Fait à Rabat, le {{"now"|date("d/m/Y")}}
             </td>
-            <td style="width: 20%; text-align: left;line-height: 25px">
+            {# <td style="width: 20%; text-align: left;line-height: 25px">
                 <span style="font-size:11px;font-weight: bold;color:#000;"> </span>
-            </td> 
+            </td>  #}
         </tr>
         
     </tbody>
@@ -112,25 +112,25 @@
 <table style="width: 100%;font-size:14px;"  cellspacing="0">   
     <tbody>
         <tr>
-            <td style="width: 10%; text-align: left;line-height: 25px"></td>
+            {# <td style="width: 10%; text-align: left;line-height: 25px"></td> #}
             <td style="width: 70%; text-align: left;line-height: 25px">
                 <span style="font-size:14px;font-weight: bold;color:#000;">Objet </span> : Demande de dérogation.
             </td>
         </tr>
         <tr>
-            <td style="width: 10%; text-align: left;line-height: 25px"></td>
-            <td style="width: 70%; text-align: left;line-height: 25px">
+            {# <td style="width: 10%; text-align: left;line-height: 25px"></td> #}
+            <td style="width: 70%; text-align: left;height: 25px">
             </td>
         </tr>
         <tr>
-            <td style="width: 10%; text-align: left;line-height: 25px"></td>
+            {# <td style="width: 10%; text-align: left;line-height: 25px"></td> #}
             <td style="width: 70%; text-align: left;line-height: 25px">
                 Monsieur, 
             </td>
         </tr>
         <tr>
-            <td style="width: 10%; text-align: left;line-height: 25px"></td>
-            <td style="width: 70%; text-align: left;line-height: 25px">
+            {# <td style="width: 10%; text-align: left;line-height: 25px"></td> #}
+            <td style="width: 70%; text-align: left;height: 25px">
             </td>
         </tr>
         <tr>
@@ -138,7 +138,7 @@
 {#         
         $etablissement_id = $enote->getInscription()->getAnnee()->getFormation()->getEtablissement()->getId();
         $moy = $etablissement_id == 26 ? 12 : 10; #}
-            <td style="width: 10%; text-align: left;line-height: 25px"></td>
+            {# <td style="width: 10%; text-align: left;line-height: 25px"></td> #}
             {# <td style="width: 70%; text-align: left;line-height: 25px;text-align: justify; ">
                 Les membres du jury de la délibération du semestre 4, 2ème année GPIP de l’École d’Ingénieur Abulcasis, demandent une dérogation pour l’octroi de points de rachat au profit de l’étudiant sous-mentionné, ayant une moyenne semestrielle et annuelle supérieure ou égale à <span style="font-size:11px;font-weight: bold;color:#000;">{{12|number_format(2, ',', ' ')}}/20</span>. 
             </td> #}
@@ -147,7 +147,7 @@
                     {{snoteDerogation.inscription.codeAnonymat}}{% if loop.index < snoteDerogations | length %},{% endif %}
                 {% endfor %}, afin de lui permettre la validation du stage professionnel.
             </td>
-            <td style="width: 10%; text-align: left;line-height: 25px"></td>
+            {# <td style="width: 10%; text-align: left;line-height: 25px"></td> #}
         </tr>
         
     </tbody>

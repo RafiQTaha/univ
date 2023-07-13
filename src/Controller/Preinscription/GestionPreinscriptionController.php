@@ -183,6 +183,10 @@ class GestionPreinscriptionController extends AbstractController
             $preinscription->setActive(0);
             $preinscription->setAnnulated(new DateTime('now'));
             $preinscription->setUserAnnulated($this->getUser());
+            $toperationcabs = $this->em->getRepository(TOperationcab::class)->findBy(['preinscription'=>$preinscription]);
+            foreach ($toperationcabs as $toperationcab) {
+                $toperationcab->setActive(0);
+            }
             // $preinscription->setUserUpdated($this->getUser());
             // $preinscription->setUpdated(New DateTime('now'));
         }

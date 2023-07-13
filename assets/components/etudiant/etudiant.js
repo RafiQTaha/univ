@@ -211,6 +211,7 @@ $(document).ready(function  () {
       return;
     }
     $("#validermodal .modal-body #annee,#validermodal .modal-body #formation").empty();
+    $("select").select2()
     $('#validermodal').modal("show")
   })
   $('body').on('submit','.form-valider',async function (e) {
