@@ -91,7 +91,7 @@ class ExGnotesRepository extends ServiceEntityRepository
     }
 
     
-    public function getNoteTpByInscription($enote,$nature)
+    public function getNoteTpByInscription($enote,$nature,$natureEpreuve)
     {
         return $this->createQueryBuilder('e')
                     ->innerJoin('e.epreuve', "epreuve")
@@ -100,11 +100,12 @@ class ExGnotesRepository extends ServiceEntityRepository
                     ->innerJoin('epreuve.element', "element")
                     ->where('annee = :annee')
                     ->AndWhere('epreuve.nature = :nature')
-                    ->AndWhere('epreuve.natureEpreuve = 2')
+                    ->AndWhere('epreuve.natureEpreuve = :natureEpreuve')
                     ->AndWhere('element = :element')
                     ->AndWhere('inscription = :inscription')
                     ->setParameter('annee', $enote->getInscription()->getAnnee())
                     ->setParameter('nature', $nature)
+                    ->setParameter('natureEpreuve', $natureEpreuve)
                     ->setParameter('element', $enote->getElement())
                     ->setParameter('inscription', $enote->getInscription())
                     ->getQuery()
