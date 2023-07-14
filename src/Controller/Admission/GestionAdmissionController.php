@@ -324,7 +324,7 @@ class GestionAdmissionController extends AbstractController
         if(!$inscription) {
             $limit = 1;
             if ($admission->getPreinscription()->getAnnee()->getFormation()->getEtablissement()->getAbreviation() == 'CFC') {
-                $limit = 2;
+                $limit = 3;
             }
             $findAnnee = $this->em->getRepository(AcAnnee::class)->findBy([ 'formation' => $admission->getPreinscription()->getAnnee()->getFormation()],['id'=>'DESC'],$limit);
             $promotions = $this->em->getRepository(AcPromotion::class)->findBy(['formation' => $admission->getPreinscription()->getAnnee()->getFormation(),'active'=>1],['ordre'=>'ASC']);

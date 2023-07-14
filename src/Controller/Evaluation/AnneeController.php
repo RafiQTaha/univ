@@ -354,7 +354,11 @@ class AnneeController extends AbstractController
                 $data_semestre = $this->em->getRepository(ExSnotes::class)->GetCategorieSemestreByCodeAnnee($annee, $inscription);
                 
                 // $result = $this->AnneeGetStatutCategories($data_semestre[0]->getCategorie() ,$data_semestre[1]->getCategorie(),$anote->getStatutAff()->getId(),$data_semestre[0]->getStatutAff()->getId(),$data_semestre[1]->getStatutAff()->getId());
+
+                ////////////// Si il ya qu'une semestre dans toute l'année .. DO THIS RESULT 👇 Si non DO THIS RESULT 👆 
+
                 $result = $this->AnneeGetStatutCategories($data_semestre[0]->getCategorie() ,count($data_semestre) > 1 ? $data_semestre[1]->getCategorie() : $data_semestre[0]->getCategorie(),$anote->getStatutAff()->getId(),$data_semestre[0]->getStatutAff()->getId(),count($data_semestre) > 1 ? $data_semestre[1]->getStatutAff()->getId() : $data_semestre[0]->getStatutAff()->getId());
+
                 if (isset($result) and !empty($result)) {
                     $anote->setCategorie($result);
                 }
