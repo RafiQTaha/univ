@@ -225,9 +225,9 @@ class GestionFactureController extends AbstractController
         // elseif ($request->get('montant') > $request->get('montant2')) {
         //     return new JsonResponse('Le montant a réglé est '.$request->get('montant2').'DH', 500);
         // }
-        if ($operationcab->getOrganisme() == 'Organisme') {
-            return new JsonResponse('Vous ne pouvez pas reglé une Facture Organisme', 500);
-        }
+        // if ($operationcab->getOrganisme() == 'Organisme') {
+        //     return new JsonResponse('Vous ne pouvez pas reglé une Facture Organisme', 500);
+        // }
         // $org = $operationcab->getOrganisme() == 'Payant' ? 1 : 0;
         $org = 1;
         $etablissement = $operationcab->getPreinscription()->getAnnee()->getFormation()->getEtablissement()->getAbreviation();
