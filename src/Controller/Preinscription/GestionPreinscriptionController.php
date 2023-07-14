@@ -179,11 +179,6 @@ class GestionPreinscriptionController extends AbstractController
         $ids = json_decode($request->get('idpreins'));
         foreach ($ids as $id) {
             $preinscription = $this->em->getRepository(TPreinscription::class)->find($id);
-            $totalfacture = $this->em->getRepository(TOperationdet::class)->getSumMontantCAByPreins($preinscription)['total'];
-            $totalreglement = $this->em->getRepository(TReglement::class)->getSumMontantReglementByPreins($preinscription)['total'];
-            if ($totalfacture != 0 or $totalreglement != 0) {
-                return new JsonResponse("Vous devez desactive tout les factures et annuler tou les reglement (".$preinscription->getCode().")", 500);
-            }
             $preinscription->setInscriptionValide(0);
             $preinscription->setActive(0);
             $preinscription->setAnnulated(new DateTime('now'));
