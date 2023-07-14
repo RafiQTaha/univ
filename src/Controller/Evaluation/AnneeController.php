@@ -353,7 +353,8 @@ class AnneeController extends AbstractController
                 $anote = $this->em->getRepository(ExAnotes::class)->findOneBy(['inscription' => $inscription]);                
                 $data_semestre = $this->em->getRepository(ExSnotes::class)->GetCategorieSemestreByCodeAnnee($annee, $inscription);
                 
-                $result = $this->AnneeGetStatutCategories($data_semestre[0]->getCategorie() ,$data_semestre[1]->getCategorie(),$anote->getStatutAff()->getId(),$data_semestre[0]->getStatutAff()->getId(),$data_semestre[1]->getStatutAff()->getId());
+                // $result = $this->AnneeGetStatutCategories($data_semestre[0]->getCategorie() ,$data_semestre[1]->getCategorie(),$anote->getStatutAff()->getId(),$data_semestre[0]->getStatutAff()->getId(),$data_semestre[1]->getStatutAff()->getId());
+                $result = $this->AnneeGetStatutCategories($data_semestre[0]->getCategorie() ,count($data_semestre) > 1 ? $data_semestre[1]->getCategorie() : $data_semestre[0]->getCategorie(),$anote->getStatutAff()->getId(),$data_semestre[0]->getStatutAff()->getId(),count($data_semestre) > 1 ? $data_semestre[1]->getStatutAff()->getId() : $data_semestre[0]->getStatutAff()->getId());
                 if (isset($result) and !empty($result)) {
                     $anote->setCategorie($result);
                 }
