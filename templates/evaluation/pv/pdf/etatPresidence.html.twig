@@ -135,18 +135,23 @@
         </tr>
         <tr>
         {% set moy = pv.annee.formation.etablissement.id == 26 ? 12 : 10  %}
+        {% if pv.annee.formation.etablissement.id == 3 %}
+            {% set la = "l'" %}
+        {% else %}
+            {% set la = "la " %}
+        {% endif %}
 {#         
         $etablissement_id = $enote->getInscription()->getAnnee()->getFormation()->getEtablissement()->getId();
         $moy = $etablissement_id == 26 ? 12 : 10; #}
             {# <td style="width: 10%; text-align: left;line-height: 25px"></td> #}
-            {# <td style="width: 70%; text-align: left;line-height: 25px;text-align: justify; ">
-                Les membres du jury de la délibération du semestre 4, 2ème année GPIP de l’École d’Ingénieur Abulcasis, demandent une dérogation pour l’octroi de points de rachat au profit de l’étudiant sous-mentionné, ayant une moyenne semestrielle et annuelle supérieure ou égale à <span style="font-size:11px;font-weight: bold;color:#000;">{{12|number_format(2, ',', ' ')}}/20</span>. 
-            </td> #}
-            <td style="width: 70%; text-align: left;line-height: 25px;text-align: justify; ">Les membres du jury de la délibération du {{pv.semestre.designation}}, {{pv.semestre.promotion.ordre}}<sup>{{pv.semestre.promotion.ordre > 1 ? 'éme' : 'er'}}</sup> Année {{pv.annee.formation.designation}}, demandent une dérogation pour l’octroi de points de rachat au profit de l’étudiant portant le code anonymat 
+            <td style="width: 70%; text-align: left;line-height: 25px;text-align: justify; ">
+                Les membres du jury de la délibération du {{pv.semestre.designation}}, {{pv.semestre.promotion.ordre}}<sup>{{pv.semestre.promotion.ordre > 1 ? 'éme' : 'er'}}</sup> année  {{pv.annee.formation.designation}} de {{la}} {{pv.annee.formation.etablissement.designation}}, demandent une dérogation pour l’octroi de points de rachat au profit de l’étudiant sous-mentionné, ayant une moyenne semestrielle et annuelle supérieure ou égale à <span style="font-size:11px;font-weight: bold;color:#000;">{{12|number_format(2, ',', ' ')}}/20</span>. 
+            </td>
+            {# <td style="width: 70%; text-align: left;line-height: 25px;text-align: justify; ">Les membres du jury de la délibération du {{pv.semestre.designation}}, {{pv.semestre.promotion.ordre}}<sup>{{pv.semestre.promotion.ordre > 1 ? 'éme' : 'er'}}</sup> Année {{pv.annee.formation.designation}}, demandent une dérogation pour l’octroi de points de rachat au profit de l’étudiant portant le code anonymat 
                 {% for snoteDerogation in snoteDerogations %}
                     {{snoteDerogation.inscription.codeAnonymat}}{% if loop.index < snoteDerogations | length %},{% endif %}
                 {% endfor %}, afin de lui permettre la validation du stage professionnel.
-            </td>
+            </td> #}
             {# <td style="width: 10%; text-align: left;line-height: 25px"></td> #}
         </tr>
         

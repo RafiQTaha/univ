@@ -42,8 +42,11 @@ class AcAnneeRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('a')
         ->innerJoin("a.formation", 'formation')
         ->where("formation = :formation")
-        ->andWhere("a.designation = '2021/2022'")
+        // ->andWhere("a.designation = '2021/2022'")
+        ->andWhere('a.validation_academique = :non')
+        ->andWhere('a.cloture_academique = :non')
         ->setParameter('formation', $formation)
+        ->setParameter('non', "non")
         ->getQuery()
         ->getOneOrNullResult();
     }

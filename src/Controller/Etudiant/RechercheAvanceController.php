@@ -415,4 +415,48 @@ class RechercheAvanceController extends AbstractController
         $mpdf->SetTitle('Attestation de réussite (cursus)');
         $mpdf->Output("Reussite (cursus).pdf", "I");
     }
+    
+    // #[Route('/impression_delib/{ins}', name: 'evaluation_semestre_impression_deliberation')]
+    // public function evaluationSemestreImpressionDeliberation(Request $request,TInscription $inscription) 
+    // {         
+    //     $session = $request->getSession();
+    //     $snote= $this->em->getRepository(ExSnotes::class)->findBy(['inscription'=>$inscription, 'semestre' =>$semestre]);
+
+    //     $snotes = $this->em->getRepository(ExSnotes::class)->findByAdmission($inscription->getAdmission());
+    //     $count_module_non_aquis = $this->em->getRepository(ExMnotes::class)->getModuleNonAquis($semestre, $inscription);
+    //     $annee = $this->em->getRepository(AcAnnee::class)->getActiveAnneeByFormation($semestre->getPromotion()->getFormation());
+    //     $infos =  [
+    //         'nbr_nonAcis'=> count($count_module_non_aquis),
+    //         'derogation' => count($snotes),
+    //         'semestre' => $semestre,
+    //         'snote' => $snote[0],
+    //         'inscription' => $inscription,
+    //         'modules' => $modules,
+    //         'statutModules' => $this->em->getRepository(PeStatut::class)->findBy(['type' => 'M']),
+    //         'statutSemestres' => $this->em->getRepository(PeStatut::class)->findBy(['type' => 'S']),
+    //         'etablissement' => $annee->getFormation()->getEtablissement(),
+    //     ];
+
+    //     $html = $this->render("evaluation/semestre/pdfs/deliberation_individuel.html.twig", $infos)->getContent();
+        
+    //     $html .= $this->render("evaluation/semestre/pdfs/footer.html.twig")->getContent();
+    //     $mpdf = new Mpdf([
+    //         'mode' => 'utf-8',
+    //         'margin_left' => '5',
+    //         'margin_right' => '5',
+    //         'margin_top' => '35',
+    //         'margin_bottom' => '20',
+    //         'format' => 'A4-L',
+    //         'margin_header' => '2',
+    //         'margin_footer' => '2'
+    //         ]);
+    //     $mpdf->SetHTMLHeader($this->render("evaluation/semestre/pdfs/header_deliberation_individuel.html.twig", [
+    //         'semestre' => $semestre,
+    //         'annee' => $annee
+    //     ])->getContent());
+    //     $mpdf->defaultfooterline = 0;
+    //     $mpdf->SetFooter('Page {PAGENO} / {nb}');
+    //     $mpdf->WriteHTML($html);
+    //     $mpdf->Output("semestre_deliberation_individuel".$semestre->getId().".pdf", "I");
+    // }
 }
