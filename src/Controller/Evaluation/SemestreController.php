@@ -573,7 +573,7 @@ class SemestreController extends AbstractController
                 //     dd($ModuleTheoriqueEliminatoire);
                 // }
                 $palier = ($data_snotes->getNote() + $noteAssiduite->getNote()) / 2;
-                if ($data_snotes->getNote() >= $moy and $ModulePratiqueEliminatoire and count($derogations) > 0) {
+                if ($data_snotes->getNote() >= $moy and count($derogations) > 0 and ($ModulePratiqueEliminatoire || $palier < 10)) {
                     $categorie = 'HD';
                 }elseif ($data_snotes->getNote() >= $moy and $palier >= 10 and $ModulePratiqueEliminatoire) {
                     $categorie = 'HB';
