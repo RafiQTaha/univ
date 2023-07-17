@@ -46,7 +46,7 @@ class AcAnneeRepository extends ServiceEntityRepository
         // ->andWhere('a.validation_academique = :non')
         // ->andWhere('a.cloture_academique = :non')
         ->setParameter('formation', $formation)
-        ->setParameter('non', "non")
+        // ->setParameter('non', "non")
         ->getQuery()
         ->getOneOrNullResult();
     }
