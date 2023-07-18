@@ -592,12 +592,12 @@ class SemestreController extends AbstractController
         return $categorie;
     }
     
-    #[Route('/extraction_semestre', name: 'evaluation_semestre_extraction_semestre')]
-    public function evaluationSemestreExtraction(Request $request) 
+    #[Route('/extraction_semestre/{etab}', name: 'evaluation_semestre_extraction_semestre')]
+    public function evaluationSemestreExtraction(AcEtablissement $etab,Request $request) 
     {   
         $current_year = date('m') > 7 ? date('Y').'/'.date('Y')+1 :  date('Y') - 1 .'/' .date('Y');
         // $elements = $this->em->getRepository(AcElement::class)->getElementByCurrentYear($current_year);
-        $semestres = $this->em->getRepository(ExSnotes::class)->getSemestreByCurrentYear($current_year);
+        $semestres = $this->em->getRepository(ExSnotes::class)->getSemestreByCurrentYear($current_year, $etab->getId());
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
         $i=2;

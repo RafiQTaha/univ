@@ -2,25 +2,30 @@
 
 namespace App\Controller\Evaluation;
 
-use App\Controller\ApiController;
+use Mpdf\Mpdf;
 use App\Entity\AcAnnee;
-use App\Entity\AcEtablissement;
 use App\Entity\AcModule;
-use App\Entity\AcPromotion;
-use App\Entity\AcSemestre;
 use App\Entity\ExAnotes;
-use App\Entity\ExControle;
 use App\Entity\ExMnotes;
 use App\Entity\ExSnotes;
 use App\Entity\PeStatut;
+use App\Entity\AcEpreuve;
+use App\Entity\AcSemestre;
+use App\Entity\ExControle;
+use App\Entity\AcPromotion;
 use App\Entity\TInscription;
+use App\Entity\AcEtablissement;
+use App\Controller\ApiController;
 use Doctrine\Persistence\ManagerRegistry;
-use Mpdf\Mpdf;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\JsonResponse;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\Reader\Xlsx as reader;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[Route('/evaluation/annee')]
 class AnneeController extends AbstractController
@@ -637,6 +642,41 @@ class AnneeController extends AbstractController
       return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);
          
      }
+
+
+
+     #[Route('/extraction_annee/{etab}', name: 'evaluation_annee_extraction_annee')]
+    public function evaluationAnneeExtraction(AcEtablissement $etab,Request $request) 
+    {   
+        $current_year = date('m') > 7 ? date('Y').'/'.date('Y')+1 :  date('Y') - 1 .'/' .date('Y');
+        $annees = $this->em->getRepository(ExAnotes::class)->getAnneeByCurrentYear($current_year, $etab->getId());
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        $i=2;
+        $j=1;
+        // dump($annees);die;
+        $sheet->fromArray(
+            array_keys($annees[0]),
+            null,
+            'A1'
+        );
+        foreach ($annees as $semestre) {
+            $sheet->fromArray(
+                $semestre,
+                null,
+                'A'.$i
+            );
+            $i++;
+            $j++;
+        }
+        $writer = new Xlsx($spreadsheet);
+        $year = date('m') > 7 ? date('Y').'-'.date('Y')+1 : date('Y') - 1 .'-' .date('Y');
+        $fileName = "Extraction annee $year.xlsx";
+        $temp_file = tempnam(sys_get_temp_dir(), $fileName);
+        $writer->save($temp_file);
+        return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);
+        
+    }
 
 
 

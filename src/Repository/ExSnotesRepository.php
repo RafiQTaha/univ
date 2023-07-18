@@ -172,7 +172,7 @@ class ExSnotesRepository extends ServiceEntityRepository
         ;
     }
     
-    public function getSemestreByCurrentYear($currentyear)
+    public function getSemestreByCurrentYear($currentyear, $etab)
     {
         $sqls="SELECT ex.id, etab.code as code, etab.designation as etablissement, frm.code,
         frm.designation as formation, ann.code, ann.designation as annee, ins.code as code_ins,
@@ -223,7 +223,7 @@ class ExSnotesRepository extends ServiceEntityRepository
         LEFT JOIN pe_statut stsdef on stsdef.id = es.statut_def_id
         LEFT JOIN pe_statut stsaff on stsaff.id = es.statut_aff_id
         
-        where ann.designation = '$currentyear'";
+        where ann.designation = '$currentyear' and etab.id = $etab";
         // dd($sqls);
         $stmts = $this->em->getConnection()->prepare($sqls);
         $resultSets = $stmts->executeQuery();
