@@ -200,7 +200,7 @@ class PvController extends AbstractController
         $snoteDerogations = $this->em->getRepository(ExSnotes::class)->GetSnotesByAnneeAndSemestreAndStatut($pv->getAnnee(),$pv->getSemestre(),[72]);
         $snoteRecalés = $this->em->getRepository(ExSnotes::class)->GetSnotesByAnneeAndSemestreAndStatut($pv->getAnnee(),$pv->getSemestre(),[39,40,57]);
         $snoteFraudeurs = $this->em->getRepository(ExSnotes::class)->GetSnotesByAnneeAndSemestreAndStatut($pv->getAnnee(),$pv->getSemestre(),[40]);
-        $snoteAbsents = $this->em->getRepository(ExSnotes::class)->GetSnotesByAnneeAndSemestreAndStatut($pv->getAnnee(),$pv->getSemestre(),[]);
+        // $snoteAbsents = $this->em->getRepository(ExSnotes::class)->GetSnotesByAnneeAndSemestreAndStatut($pv->getAnnee(),$pv->getSemestre(),[]);
         // dd($snoteReussi);
         $html = $this->render("evaluation/pv/pdf/etatPv.html.twig", [
             'pv' => $pv,
@@ -210,7 +210,7 @@ class PvController extends AbstractController
             'snoteDerogations' => $snoteDerogations,
             'snoteRecalés' => $snoteRecalés,
             'snoteFraudeurs' => $snoteFraudeurs,
-            'snoteAbsents' => $snoteAbsents,
+            // 'snoteAbsents' => $snoteAbsents,
         ])->getContent();
         $mpdf = new Mpdf([
             'mode' => 'utf-8', 
