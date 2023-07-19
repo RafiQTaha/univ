@@ -545,9 +545,14 @@ class ElementController extends AbstractController
     }
     public function ElementGetStatutS2($enote, $noteComposantInitial, $note_eliminatoire, $note_validation) 
     {
-        $etablissement_id = $enote->getInscription()->getAnnee()->getFormation()->getEtablissement()->getId();
-        $moy = $etablissement_id == 26 ? 12 : 10;
-        $moyIni = $etablissement_id == 26 ? 8 : 7;
+        $etablissement_id = $enote->getInscription()->getAnnee()->getFormation()->getEtablissement()->getId(); 
+        if ($enote->getElement()->getModule()->getId() == 7419) {
+            $moy = 10;
+            $moyIni = 10;
+        }else{
+            $moy = $etablissement_id == 26 ? 12 : 10;
+            $moyIni = $etablissement_id == 26 ? 8 : 7;
+        }
         $send_data = array();
 
          if ($enote->getStatutS1()->getId() == 52) {
