@@ -510,6 +510,18 @@ class AnneeController extends AbstractController
                 $send_data['statut_s2'] = 46;
                 $send_data['statut_def'] = 46;
                 $send_data['statut_aff'] = 46;
+            }elseif ($max_semestre_statut_def == 72) {
+                $statusAquis = [36,37,38,56];
+                $statusNonAquis = [39,57,78];
+                if (in_array($min_semestre_statut_def, $statusAquis)) {
+                    $send_data['statut_s2'] = 73;
+                    $send_data['statut_def'] = 73;
+                    $send_data['statut_aff'] = 73;
+                }elseif (in_array($min_semestre_statut_def, $statusNonAquis)) {
+                    $send_data['statut_s2'] = 44;
+                    $send_data['statut_def'] = 44;
+                    $send_data['statut_aff'] = 44;
+                }
             }
         }
 
