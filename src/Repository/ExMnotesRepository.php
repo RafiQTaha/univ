@@ -181,7 +181,7 @@ class ExMnotesRepository extends ServiceEntityRepository
             ->where("m.inscription = :inscription")
             // ->andWhere('semestre = :semestre')
             ->andWhere('module.type != :type')
-            ->andWhere('def.id = 31')
+            ->andWhere('def.id in (31,30)')
             ->setParameter('inscription', $inscription)
             // ->setParameter('semestre', $semestre)
             ->setParameter('type', 'A')
