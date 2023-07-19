@@ -82,6 +82,7 @@ class EpreuveController extends AbstractController
                 if ($inscription->getPromotion()->getId() == 7 and in_array($natureEpreuve->getId(), [3,4])) {
                     if ($i == 0) {
                         $fmaNote1 = $gnote ? $gnote->getNote() * $epreuve->getCoefficient() : 0;
+                        $fmaNote2 = $gnote ? $gnote->getNote() * $epreuve->getCoefficient() : 0;
                     }elseif ($i == 1) {
                         $fmaNote2 = $gnote ? $gnote->getNote() * $epreuve->getCoefficient() : 0;
                     }
