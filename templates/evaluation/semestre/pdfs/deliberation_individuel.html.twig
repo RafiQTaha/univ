@@ -169,28 +169,28 @@
         {% set count = 0 %}
 
         {% for mnote in inscription.mnotes %}
+            {% if mnote.module.semestre.id == semestre.id %}
+                {{ render(controller(
+                    'App\\Controller\\Evaluation\\SemestreController::getEnotesBySemestreAction', {'module': mnote.module , 'inscription': inscription, 'semestre': semestre}
+                )) }}
+                {# {{ dump(enotes) }} #}
 
-            {{ render(controller(
-                'App\\Controller\\Evaluation\\SemestreController::getEnotesBySemestreAction', {'module': mnote.module , 'inscription': inscription, 'semestre': semestre}
-            )) }}
-            {# {{ dump(enotes) }} #}
+                
 
+                <tr style="font-size: 9px ;">
+                    <td  colspan="14"></td>
             
+                    <td  style="text-align: center; background: #333f4f; color: #fff;{% if mnote.noteini < 8 and mnote.noteIni > 0 %} {{red_module_class }} {% elseif mnote.noteIni >= 8 and  mnote.noteIni < 10 %} {{ pink_module_class }} {% endif %}"> {% if mnote.noteIni is defined %} {{ mnote.noteIni|number_format(2,'.',',') }} {% else %} - {% endif %}</td>
+                    <td  style="text-align: center; background: #333f4f; color: #fff;{% if mnote.noteRat < 8 and mnote.noteRat > 0 %} {{red_module_class }} {% elseif mnote.noteRat >= 8 and  mnote.noteRat < 10 %} {{ pink_module_class }} {% endif %}"> {% if mnote.noteRat is defined %} {{ mnote.noteRat|number_format(2,'.',',') }} {% else %} - {% endif %}</td>
+                    <td  style="text-align: center; background: #333f4f; color: #fff">{% if mnote.noteRachat %} - {% else %}  {{mnote.noteRachat|number_format(2, '.', ',')}} {% endif %}</td>
 
-            <tr style="font-size: 9px ;">
-                <td  colspan="14"></td>
-           
-                <td  style="text-align: center; background: #333f4f; color: #fff;{% if mnote.noteini < 8 and mnote.noteIni > 0 %} {{red_module_class }} {% elseif mnote.noteIni >= 8 and  mnote.noteIni < 10 %} {{ pink_module_class }} {% endif %}"> {% if mnote.noteIni is defined %} {{ mnote.noteIni|number_format(2,'.',',') }} {% else %} - {% endif %}</td>
-                <td  style="text-align: center; background: #333f4f; color: #fff;{% if mnote.noteRat < 8 and mnote.noteRat > 0 %} {{red_module_class }} {% elseif mnote.noteRat >= 8 and  mnote.noteRat < 10 %} {{ pink_module_class }} {% endif %}"> {% if mnote.noteRat is defined %} {{ mnote.noteRat|number_format(2,'.',',') }} {% else %} - {% endif %}</td>
-                <td  style="text-align: center; background: #333f4f; color: #fff">{% if mnote.noteRachat %} - {% else %}  {{mnote.noteRachat|number_format(2, '.', ',')}} {% endif %}</td>
+                    <td  style="text-align: center; background: #333f4f;color: #fff;{% if mnote.note < 8 and mnote.note > 0 %} {{red_module_class}} {% elseif mnote.note >= 8 and  mnote.note < 10 %} {{pink_module_class}} {% endif %}">{% if mnote.note is defined %} - {% else %} {{ mnote.note|number_format(2,'.',',') }} {% endif %}</td>
+                    <td  style="text-align: center; background: #333f4f;color: #fff">{{ mnote.statutAff.abreviation }}</td>
 
-                <td  style="text-align: center; background: #333f4f;color: #fff;{% if mnote.note < 8 and mnote.note > 0 %} {{red_module_class}} {% elseif mnote.note >= 8 and  mnote.note < 10 %} {{pink_module_class}} {% endif %}">{% if mnote.note is defined %} - {% else %} {{ mnote.note|number_format(2,'.',',') }} {% endif %}</td>
-                <td  style="text-align: center; background: #333f4f;color: #fff">{{ mnote.statutAff.abreviation }}</td>
+                </tr>
 
-            </tr>
-
-            {% set count = 0 %}
-
+                {% set count = 0 %}
+            {% endif %}
         {% endfor %}
     </tbody>
 </table>
