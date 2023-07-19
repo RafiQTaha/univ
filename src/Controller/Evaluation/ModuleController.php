@@ -405,7 +405,11 @@ class ModuleController extends AbstractController
         $send_data = array();
 
         $etablissement_id = $mnote->getInscription()->getAnnee()->getFormation()->getEtablissement()->getId();
-        $note_validation = $etablissement_id == 26 ? 12 : 10;
+        if ($mnote->getModule()->getId() == 7419) {
+            $note_validation = 13;
+        }else{
+            $note_validation = $etablissement_id == 26 ? 12 : 10;
+        }
         // $note_eliminatoire = $etablissement_id == 26 ? 8 : 7;
         if($min_element_module_statut_def == 52 || $max_element_module_statut_aff == 52){
             $send_data['statut_s2'] = 53;
