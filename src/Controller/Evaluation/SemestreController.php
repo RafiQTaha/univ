@@ -205,7 +205,10 @@ class SemestreController extends AbstractController
         $semestre = $session->get('data_semestre')['semestre'];
         $modules = $session->get('data_semestre')['modules'];
         $inscription = $this->em->getRepository(TInscription::class)->find($ins);
-        $snote= $this->em->getRepository(ExSnotes::class)->findBy(['inscription'=>$inscription, 'semestre' =>$semestre]);
+        $snote= $this->em->getRepository(ExSnotes::class)->findBy(['inscription'=>$inscription, 'semestre' =>$semestre]); 
+
+        $noteAssiduite = $this->em->getRepository(ExMnotes::class)->getNotesModuleAssiduiteBySemestre($semestre,$inscription);
+        $palier = ($snote->getNote() + $noteAssiduite->getNote()) / 2;
 
         $snotes = $this->em->getRepository(ExSnotes::class)->findByAdmission($inscription->getAdmission());
         $count_module_non_aquis = $this->em->getRepository(ExMnotes::class)->getModuleNonAquis($semestre, $inscription);
@@ -217,6 +220,7 @@ class SemestreController extends AbstractController
             'snote' => $snote[0],
             'inscription' => $inscription,
             'modules' => $modules,
+            'palier' => $palier,
             'statutModules' => $this->em->getRepository(PeStatut::class)->findBy(['type' => 'M']),
             'statutSemestres' => $this->em->getRepository(PeStatut::class)->findBy(['type' => 'S']),
             'etablissement' => $annee->getFormation()->getEtablissement(),
