@@ -77,7 +77,7 @@ class AnneeController extends AbstractController
                 $mnote = $this->em->getRepository(ExMnotes::class)->findOneBy(['module' => $module, 'inscription' => $inscription]);
                 if(!$mnote){
                     // dd($module);
-                    return new JsonResponse("Module Introuvable",500);
+                    return new JsonResponse("Note Module Introuvable",500);
                 }
                 $moyenne += $mnote->getNote() * $module->getCoefficient();
                 
