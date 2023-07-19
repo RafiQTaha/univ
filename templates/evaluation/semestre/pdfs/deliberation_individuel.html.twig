@@ -167,6 +167,7 @@
     <tbody>
 
         {% set count = 0 %}
+        {% set noteRachat = 0 %}
 
         {% for mnote in inscription.mnotes %}
             {% if mnote.module.semestre.id == semestre.id %}
@@ -191,6 +192,7 @@
 
                 {% set count = 0 %}
             {% endif %}
+            {% set noteRachat = noteRachat + mnote.noteRachat %}
         {% endfor %}
     </tbody>
 </table>
@@ -218,5 +220,7 @@
     <span>Nombre des modules non acis : {{ nbr_nonAcis }}</span>
     <br>
     <span>Palier : {{ palier }}</span>
+    <br>
+    <span>Point de Rachat : {{ noteRachat }}</span>
 
     </div>
