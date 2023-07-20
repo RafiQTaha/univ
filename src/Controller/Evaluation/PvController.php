@@ -136,7 +136,7 @@ class PvController extends AbstractController
     public function ajouter_pv(Request $request)
     {
         // dd($request);
-        if ($request->get('president') == "" || $request->get('seuil') == "" || $request->get('annee') == "" || $request->get('semestre') == "" ) {
+        if ($request->get('president') == ""  || $request->get('annee') == "" || $request->get('semestre') == "" ) {
             return new JsonResponse("Merci de remplir tout les champs!",500);
         }
         $annee = $this->em->getRepository(AcAnnee::class)->find($request->get('annee'));
@@ -146,10 +146,10 @@ class PvController extends AbstractController
         $pv->setCoordonnateur($request->get('coordonnateur'));
         $pv->setPresident($request->get('president'));
         $pv->setMembres($request->get('membres'));
-        $pv->setObservation($request->get('observation'));
+        $request->get('observation') !== "" && $pv->setObservation($request->get('observation'));
         $pv->setUserUpdated($this->getUser());
         $pv->setUpdated(new \DateTime('now'));
-        $pv->setSeuilRachat($request->get('seuil'));
+        $request->get('seuil') !== "" && $pv->setSeuilRachat($request->get('seuil'));
         $pv->setActive(1);
         $this->em->persist($pv);
         $this->em->flush();
