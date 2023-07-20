@@ -471,8 +471,20 @@ class ElementController extends AbstractController
     }
     public function ElementGetStatutS1($enote, $noteComposantInitial, $note_eliminatoire, $note_validation) {
         $etablissement_id = $enote->getInscription()->getAnnee()->getFormation()->getEtablissement()->getId();
-        $moy = $etablissement_id == 26 ? 12 : 10;
-        $moyIni = $etablissement_id == 26 ? 8 : 7;
+        if ($enote->getElement()->getModule()->getId() == 7419) {
+            //temporaire
+            if (in_array($enote->getElement()->getId(),[10119,10120])) {
+                $moy = 13;
+            }else {
+                $moy = 10;
+            }
+            $moyIni = 10;
+        }else{
+            $moy = $etablissement_id == 26 ? 12 : 10;
+            $moyIni = $etablissement_id == 26 ? 8 : 7;
+        }
+        // $moy = $etablissement_id == 26 ? 12 : 10;
+        // $moyIni = $etablissement_id == 26 ? 8 : 7;
         $send_data = array();
         $capitaliser = $this->em->getRepository(ExGnotes::class)->checkIfModuleCapitaliser($enote);
         if(count($capitaliser) > 0){
