@@ -399,13 +399,13 @@ class ModuleController extends AbstractController
 
     }
 
-    public function ModuleGetStatutAvantRachat($mnote, $note_eliminatoire, $note_validation, $min_element_module_statut_def, $max_element_module_statut_def, $max_element_module_statut_aff) {
-
-
+    public function ModuleGetStatutAvantRachat($mnote, $note_eliminatoire, $note_validation, $min_element_module_statut_def, $max_element_module_statut_def, $max_element_module_statut_aff) 
+    {
         $send_data = array();
 
         $etablissement_id = $mnote->getInscription()->getAnnee()->getFormation()->getEtablissement()->getId();
         if ($mnote->getModule()->getId() == 7419) {
+            $note_eliminatoire = 13;
             $note_validation = 13;
         }else{
             $note_validation = $etablissement_id == 26 ? 12 : 10;
@@ -480,6 +480,10 @@ class ModuleController extends AbstractController
     public function ModuleGetStatutApresRachat($data, $mnote, $note_eliminatoire, $note_validation) {
         $send_data = array();
         $etablissement_id = $mnote->getInscription()->getAnnee()->getFormation()->getEtablissement()->getId();
+        
+        if ($mnote->getModule()->getId() == 7419) {
+            $note_validation = 13;
+        }
         $note_validation = $etablissement_id == 26 ? 12 : 10;
         // $note_eliminatoire = $etablissement_id == 26 ? 8 : 7;
         foreach ($data as $key => $value) {
