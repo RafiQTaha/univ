@@ -480,6 +480,10 @@ class ModuleController extends AbstractController
     public function ModuleGetStatutApresRachat($data, $mnote, $note_eliminatoire, $note_validation) {
         $send_data = array();
         $etablissement_id = $mnote->getInscription()->getAnnee()->getFormation()->getEtablissement()->getId();
+        
+        if ($mnote->getModule()->getId() == 7419) {
+            $note_validation = 13;
+        }
         $note_validation = $etablissement_id == 26 ? 12 : 10;
         // $note_eliminatoire = $etablissement_id == 26 ? 8 : 7;
         foreach ($data as $key => $value) {
