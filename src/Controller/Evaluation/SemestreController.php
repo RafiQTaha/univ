@@ -209,7 +209,7 @@ class SemestreController extends AbstractController
 
         $noteAssiduite = $this->em->getRepository(ExMnotes::class)->getNotesModuleAssiduiteBySemestre($semestre,$inscription);
         $palier = ($snote->getNote() + $noteAssiduite->getNote()) / 2;
-
+ 
         $snotes = $this->em->getRepository(ExSnotes::class)->findByAdmission($inscription->getAdmission());
         $count_module_non_aquis = $this->em->getRepository(ExMnotes::class)->getModuleNonAquis($semestre, $inscription);
         $annee = $this->em->getRepository(AcAnnee::class)->getActiveAnneeByFormation($semestre->getPromotion()->getFormation());
