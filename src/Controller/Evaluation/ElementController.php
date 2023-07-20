@@ -79,7 +79,8 @@ class ElementController extends AbstractController
                 }
             } else {
                 $moyenne_ini = $this->CalculMoyenneElement($element->getCoefficientEpreuve(), $m_cc, $m_tp, $enote->getPondMef() * $enote->getMef());
-                if ($moyenne_ini < 10 || $enote->getMef() < 7 || $statutS1 == 12 || $statutS1 == 13) {
+                // [10119,10120] deux element avec moyen de validation 13 c'est temporaire à changer apres les delebiration annuelle 2022/2023.
+                if ($moyenne_ini < in_array($element->getId(),[10119,10120]) ? 13 : 10 || $enote->getMef() < 7 || $statutS1 == 12 || $statutS1 == 13) {
                     $moyenne_rat = $this->CalculMoyenneElement($element->getCoefficientEpreuve(), $m_cc, $m_tp, $m_ef);
                     $moyenne_tot = $moyenne_rat + $enote->getNoteRachat();
                 } else {
