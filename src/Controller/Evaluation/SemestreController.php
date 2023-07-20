@@ -205,7 +205,7 @@ class SemestreController extends AbstractController
         $semestre = $session->get('data_semestre')['semestre'];
         $modules = $session->get('data_semestre')['modules'];
         $inscription = $this->em->getRepository(TInscription::class)->find($ins);
-        $snote= $this->em->getRepository(ExSnotes::class)->findOneBy(['inscription'=>$inscription, 'semestre' =>$semestre]); 
+        $snote= $this->em->getRepository(ExSnotes::class)->findBy(['inscription'=>$inscription, 'semestre' =>$semestre]); 
 
         $noteAssiduite = $this->em->getRepository(ExMnotes::class)->getNotesModuleAssiduiteBySemestre($semestre,$inscription);
         $palier = ($snote->getNote() + $noteAssiduite->getNote()) / 2;
@@ -217,7 +217,7 @@ class SemestreController extends AbstractController
             'nbr_nonAcis'=> count($count_module_non_aquis),
             'derogation' => count($snotes),
             'semestre' => $semestre,
-            'snote' => $snote,
+            'snote' => $snote[0],
             'inscription' => $inscription,
             'modules' => $modules,
             'palier' => $palier,
@@ -563,14 +563,10 @@ class SemestreController extends AbstractController
                 $categorie = 'D';
             } elseif ($data_snotes->getStatutAff()->getId() == 39) {
                 $count_module_non_aquis = $this->em->getRepository(ExMnotes::class)->getModuleNonAquis($semestre, $inscription);
-                $noteAssiduite = $this->em->getRepository(ExMnotes::class)->getNotesModuleAssiduiteBySemestre($semestre,$inscription);
-                $palier = ($data_snotes->getNote() + $noteAssiduite->getNote()) / 2;
-                if (count($count_module_non_aquis) > 2 and $data_snotes->getNote() >= $moy and $palier >= 10) {
+                if (count($count_module_non_aquis) > 2 and $data_snotes->getNote() >= $moy ) {
                     $categorie = 'F';
                 }elseif ($data_snotes->getNote() >= 9 and $data_snotes->getNote() < $moy) {
                     $categorie = 'E';
-                }elseif(count($count_module_non_aquis) > 2 and $data_snotes->getNote() >= $moy and $palier < 10){
-                    $categorie = 'HBA';
                 }
             }elseif ($data_snotes->getStatutAff()->getId() == 57) {
                 $ModuleTheoriqueEliminatoire = $this->em->getRepository(ExMnotes::class)->getModulesTheoriqueBySemestre($semestre,$inscription);
