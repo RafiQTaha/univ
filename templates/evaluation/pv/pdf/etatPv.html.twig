@@ -263,14 +263,14 @@
             {% if snoteRachetes | length > 0 %}
                 Le jury a accordé le rachat aux étudiants portant le code anonymat :
                 {% for snoteRachete in snoteRachetes %}
-                    {{snoteRachete.inscription.codeAnonymat}}{% if loop.index < snoteRachetes | length %},{% elseif loop.index == snoteRachetes | length %}.{% endif %}
+                    {{snoteRachete.inscription.codeAnonymatRat}}{% if loop.index < snoteRachetes | length %},{% elseif loop.index == snoteRachetes | length %}.{% endif %}
                 {% endfor %}
             {% endif %}
             <br>
             {% if snoteDerogations | length > 0 %}
                 Le jury a demandé une dérogation pour attribuer des points de rachat au profit des étudiants portants le code anonymat: 
                 {% for snoteDerogation in snoteDerogations %}
-                    {{snoteDerogation.inscription.codeAnonymat}}{% if loop.index < snoteDerogations | length %},{% elseif loop.index == snoteDerogations | length %}.{% endif %}
+                    {{snoteDerogation.inscription.codeAnonymatRat}}{% if loop.index < snoteDerogations | length %},{% elseif loop.index == snoteDerogations | length %}.{% endif %}
                 {% endfor %}
             {% endif %}
         </td>

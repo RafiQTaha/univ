@@ -136,7 +136,7 @@ class PvController extends AbstractController
     public function ajouter_pv(Request $request)
     {
         // dd($request);
-        if ($request->get('president') == "" || $request->get('seuil') == "" || $request->get('annee') == "" || $request->get('semestre') == "" || $request->get('coordonnateur') == "" ) {
+        if ($request->get('president') == "" || $request->get('seuil') == "" || $request->get('annee') == "" || $request->get('semestre') == "" ) {
             return new JsonResponse("Merci de remplir tout les champs!",500);
         }
         $annee = $this->em->getRepository(AcAnnee::class)->find($request->get('annee'));
@@ -172,7 +172,7 @@ class PvController extends AbstractController
     #[Route('/modifier_pv/{pv}', name: 'modifier_pv')]
     public function modifier_pv(Request $request,Pv $pv)
     {
-        if ($request->get('president') == ""  || $request->get('seuil') == "" || $request->get('coordonnateur') == "") {
+        if ($request->get('president') == ""  || $request->get('seuil') == "") {
             return new JsonResponse("Merci de remplir tout les champs!",500);
         }
         if ($pv->getDocAsso() != null) {
