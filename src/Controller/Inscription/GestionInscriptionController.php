@@ -339,7 +339,7 @@ class GestionInscriptionController extends AbstractController
         $sheet->setCellValue('AE1', 'CODE ASSURANCE');
         $i=2;
         $j=1;
-        $current_year = date('m') > 7 ? date('Y').'/'.date('Y')+1 : date('Y') - 1 .'/' .date('Y');
+        $current_year = date('m') >= 7 ? date('Y').'/'.date('Y')+1 : date('Y') - 1 .'/' .date('Y');
         $inscriptions = $this->em->getRepository(TInscription::class)->getActiveInscriptionByCurrentAnnee($current_year);
         // dd($inscriptions);
         foreach ($inscriptions as $inscription) {

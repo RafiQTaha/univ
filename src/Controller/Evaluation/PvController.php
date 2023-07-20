@@ -146,6 +146,7 @@ class PvController extends AbstractController
         $pv->setCoordonnateur($request->get('coordonnateur'));
         $pv->setPresident($request->get('president'));
         $pv->setMembres($request->get('membres'));
+        $pv->setObservation($request->get('observation'));
         $pv->setUserUpdated($this->getUser());
         $pv->setUpdated(new \DateTime('now'));
         $pv->setSeuilRachat($request->get('seuil'));
@@ -182,6 +183,7 @@ class PvController extends AbstractController
         $pv->setPresident($request->get('president'));
         $pv->setMembres($request->get('membres'));
         $pv->setSeuilRachat($request->get('seuil'));
+        $pv->setObservation($request->get('observation'));
         $pv->setUserUpdated($this->getUser());
         $pv->setUpdated(new \DateTime('now'));
         $this->em->persist($pv);
