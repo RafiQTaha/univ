@@ -564,6 +564,9 @@ class SemestreController extends AbstractController
             } elseif ($data_snotes->getStatutAff()->getId() == 39) {
                 $count_module_non_aquis = $this->em->getRepository(ExMnotes::class)->getModuleNonAquis($semestre, $inscription);
                 $noteAssiduite = $this->em->getRepository(ExMnotes::class)->getNotesModuleAssiduiteBySemestre($semestre,$inscription);
+                if ($inscription->getId() == 14167) {
+                    dd($data_snotes->getNote() ,$noteAssiduite->getNote());
+                }
                 $palier = ($data_snotes->getNote() + $noteAssiduite->getNote()) / 2;
                 if (count($count_module_non_aquis) > 2 and $data_snotes->getNote() >= $moy and $palier >= 10) {
                     $categorie = 'F';
