@@ -52,6 +52,9 @@ class Pv
     #[ORM\Column(type: 'float', nullable: true)]
     private $seuilRachat;
 
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private $observation;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -209,6 +212,18 @@ class Pv
     public function setSeuilRachat(?float $seuilRachat): self
     {
         $this->seuilRachat = $seuilRachat;
+
+        return $this;
+    }
+
+    public function getObservation(): ?string
+    {
+        return $this->observation;
+    }
+
+    public function setObservation(?string $observation): self
+    {
+        $this->observation = $observation;
 
         return $this;
     }
