@@ -174,7 +174,6 @@ class SemestreController extends AbstractController
         } else {
             die("403 something wrong !");
         }
-        
         // $html .= $this->render("evaluation/semestre/pdfs/footer.html.twig")->getContent();
         $mpdf = new Mpdf([
             'mode' => 'utf-8',
