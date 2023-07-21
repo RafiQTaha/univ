@@ -542,19 +542,22 @@ class EpreuveController extends AbstractController
         $epreuve = $this->em->getRepository(AcEpreuve::class)->find($request->get("idEpreuve"));
         foreach ($idInscriptions as $idInscription) {
             $inscription = $this->em->getRepository(TInscription::class)->find($idInscription);
-            $gnote = new ExGnotes();
-            $gnote->setEpreuve($epreuve);
-            $gnote->setInscription($inscription);
-            $gnote->setUserCreated($this->getUser());
-            $gnote->setCreated(new \DateTime("now"));
-            if($epreuve->getAnonymat() == 1) {
-                if($epreuve->getNatureEpreuve()->getNature() == 'normale') {
-                    $gnote->setAnonymat($inscription->getCodeAnonymat());                    
-                } else {
-                    $gnote->setAnonymat($inscription->getCodeAnonymatRat());
+            $existgnote = $this->em->getRepository(ExGnotes::class)->findOneBy(['inscription'=>$inscription,'epreuve'=>$epreuve]);
+            if (!$existgnote) {
+                $gnote = new ExGnotes();
+                $gnote->setEpreuve($epreuve);
+                $gnote->setInscription($inscription);
+                $gnote->setUserCreated($this->getUser());
+                $gnote->setCreated(new \DateTime("now"));
+                if($epreuve->getAnonymat() == 1) {
+                    if($epreuve->getNatureEpreuve()->getNature() == 'normale') {
+                        $gnote->setAnonymat($inscription->getCodeAnonymat());                    
+                    } else {
+                        $gnote->setAnonymat($inscription->getCodeAnonymatRat());
+                    }
                 }
+                $this->em->persist($gnote);
             }
-            $this->em->persist($gnote);
         }
         $epreuve->setStatut(
             $this->em->getRepository(PStatut::class)->find(29)
