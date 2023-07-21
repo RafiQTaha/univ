@@ -474,25 +474,30 @@ class EpreuveController extends AbstractController
                 }
                 $i = 2;
                 $inscriptions = $this->em->getRepository(TInscription::class)->getInscriptionsByEpreuve($epreuve);
+                // dd($inscriptions);
                 foreach($inscriptions as $inscription) {
-                    $gnote = new ExGnotes();
-                    $gnote->setEpreuve($epreuve);
-                    $gnote->setInscription($inscription);
-                    $gnote->setUserCreated($this->getUser());
-                    $gnote->setCreated(new \DateTime("now"));
-                    if($epreuve->getAnonymat() == 1) {                        
-                        if($epreuve->getNatureEpreuve()->getNature() == 'normale') {
-                            $gnote->setAnonymat($inscription->getCodeAnonymat() ? $inscription->getCodeAnonymat() : null);     
-                            $sheet->setCellValue('C'.$i, $inscription->getCodeAnonymat() ? $inscription->getCodeAnonymat() : null);
-                        } else {
-                            $gnote->setAnonymat($inscription->getCodeAnonymatRat());
-                            $sheet->setCellValue('C'.$i, $inscription->getCodeAnonymatRat());
-                        }                        
+                    $existgnote = $this->em->getRepository(ExGnotes::class)->findOneBy(['inscription'=>$inscription,'epreuve'=>$epreuve]);
+                    if (!$existgnote) {
+                        $gnote = new ExGnotes();
+                        $gnote->setEpreuve($epreuve);
+                        $gnote->setInscription($inscription);
+                        $gnote->setUserCreated($this->getUser());
+                        $gnote->setCreated(new \DateTime("now"));
+                        if($epreuve->getAnonymat() == 1) {                        
+                            if($epreuve->getNatureEpreuve()->getNature() == 'normale') {
+                                $gnote->setAnonymat($inscription->getCodeAnonymat() ? $inscription->getCodeAnonymat() : null);     
+                                $sheet->setCellValue('C'.$i, $inscription->getCodeAnonymat() ? $inscription->getCodeAnonymat() : null);
+                            } else {
+                                $gnote->setAnonymat($inscription->getCodeAnonymatRat());
+                                $sheet->setCellValue('C'.$i, $inscription->getCodeAnonymatRat());
+                            }                        
+                        }
+                        $this->em->persist($gnote);
+                        $sheet->setCellValue('A'.$i, $epreuve->getId());
+                        $sheet->setCellValue('B'.$i, $inscription->getId());
+                        $i++;
                     }
-                    $this->em->persist($gnote);
-                    $sheet->setCellValue('A'.$i, $epreuve->getId());
-                    $sheet->setCellValue('B'.$i, $inscription->getId());
-                    $i++;
+                    
                 }
                 $epreuve->setStatut(
                     $this->em->getRepository(PStatut::class)->find(29)
