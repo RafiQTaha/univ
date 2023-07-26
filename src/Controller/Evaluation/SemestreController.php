@@ -180,7 +180,7 @@ class SemestreController extends AbstractController
             'margin_left' => '5',
             'margin_right' => '5',
             'margin_top' => '50',
-            'margin_bottom' => '25',
+            'margin_bottom' => '15',
             'format' => 'A4-L',
             'margin_header' => '2',
             'margin_footer' => '2'
