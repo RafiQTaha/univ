@@ -90,6 +90,12 @@ class TInscription
     #[ORM\OneToMany(mappedBy: 'inscription', targetEntity: InsSanctionner::class)]
     private $insSanctionners;
 
+    #[ORM\Column(type: 'datetime', nullable: true)]
+    private $statutUpdated;
+
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    private $userStatutUpdated;
+
     public function __construct()
     {
         $this->gnotes = new ArrayCollection();
@@ -542,4 +548,29 @@ class TInscription
 
         return $this;
     }
+
+    public function getUserStatutUpdated(): ?user
+    {
+        return $this->userStatutUpdated;
+    }
+
+    public function setUserStatutUpdated(?user $userStatutUpdated): self
+    {
+        $this->userStatutUpdated = $userStatutUpdated;
+
+        return $this;
+    }
+
+    public function getStatutUpdated(): ?\DateTimeInterface
+    {
+        return $this->statutUpdated;
+    }
+
+    public function setStatutUpdated(?\DateTimeInterface $statutUpdated): self
+    {
+        $this->statutUpdated = $statutUpdated;
+
+        return $this;
+    }
+
 }

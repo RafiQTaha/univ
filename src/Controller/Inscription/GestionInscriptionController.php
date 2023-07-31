@@ -188,6 +188,9 @@ class GestionInscriptionController extends AbstractController
         );
         $inscription->setUpdated(new \DateTime('now'));
         $inscription->setUserUpdated($this->getUser());
+
+        $inscription->setStatutUpdated(new \DateTime('now'));
+        $inscription->setUserStatutUpdated($this->getUser());
         $this->em->flush();
         return new JsonResponse("Bien Enregistre", 200);
     }
