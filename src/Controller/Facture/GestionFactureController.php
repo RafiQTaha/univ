@@ -617,7 +617,7 @@ class GestionFactureController extends AbstractController
         $i=2;
         $j=1;
         // $currentyear = '2022/2023';
-        $currentyear = date('m') > 7 ? date('Y').'/'.date('Y')+1 : date('Y') - 1 .'/' .date('Y');
+        $currentyear = date('m') >= 7 ? date('Y').'/'.date('Y')+1 : date('Y') - 1 .'/' .date('Y');
         $operationcabs = $this->em->getRepository(TOperationcab::class)->getFacturesByCurrentYear($currentyear);
         // dd($operationcabs);
         foreach ($operationcabs as $operationcab) {
