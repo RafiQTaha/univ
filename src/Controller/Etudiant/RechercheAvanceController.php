@@ -6,6 +6,7 @@ use App\Entity\TAdmission;
 use App\Entity\TInscription;
 use App\Controller\ApiController;
 use App\Entity\AcSemestre;
+use App\Entity\ExAnotes;
 use App\Entity\ExMnotes;
 use App\Entity\ExSnotes;
 use Doctrine\Persistence\ManagerRegistry;
