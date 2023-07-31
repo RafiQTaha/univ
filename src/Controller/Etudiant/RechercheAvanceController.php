@@ -217,7 +217,12 @@ class RechercheAvanceController extends AbstractController
             'admission' => $inscription->getAdmission(),
             'promotion' => $inscription->getPromotion()
         ]);
-        if (count($prm) > 1) {
+        // ,'statutAff'=>[41,42,43,44,70,73]
+        $anote = $this->em->getRepository(ExAnotes::class)->findOneBy(['inscription'=>$inscription]);
+        if (!$anote) {
+            return new JsonResponse('Note Annee Introuvable!!',500);
+        }
+        if (!in_array($anote->getStatutAff()->getId(), [41,42,43,44,70,73])) {
             return new JsonResponse('Redoublant!!',500);
         }
         $html = $this->render("etudiant/recherche_avance/pdf/attestations/reussite.html.twig", [
