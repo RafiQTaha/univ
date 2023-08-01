@@ -245,6 +245,50 @@ class RechercheAvanceController extends AbstractController
         $mpdf->Output("reussite.pdf", "I");
     }
 
+    ////////////////////////////////////////////////////
+        
+    #[Route('/attestation/reussiteAll/{inscription}', name: 'etudiant_recherche_attestation_reussite_all')]
+    public function attestationReussiteAll(TInscription $inscription): Response
+    {
+        ;
+        $inscriptions = $this->em->getRepository(TInscription::class)->getInscriptionsByAdmission($inscription->getAdmission());
+        $html = "";
+        $i = 1;
+        foreach ($inscriptions as $inscription) {
+            $prm = $this->em->getRepository(TInscription::class)->findBy([
+                'admission' => $inscription->getAdmission(),
+                'promotion' => $inscription->getPromotion()
+            ]);
+            // ,'statutAff'=>[41,42,43,44,70,73]
+            $anote = $this->em->getRepository(ExAnotes::class)->findOneBy(['inscription'=>$inscription]);
+            if ($anote and in_array($anote->getStatutAff()->getId(), [41,42,43,44,70,73])) {
+                if ($i > 1 ) {
+                    $html .= "<pagebreak>";
+                }
+                $html .= $this->render("etudiant/recherche_avance/pdf/attestations/reussite.html.twig", [
+                    'inscription' => $inscription,
+                ])->getContent();
+            }
+            $i++;
+        }
+        
+        // dd($html);
+        $mpdf = new Mpdf([
+            'margin_left' => 5,
+            'margin_right' => 5,
+        ]);
+        // $mpdf->SetHTMLHeader(
+        //     $this->render("etudiant/recherche_avance/pdf/attestations/header.html.twig")->getContent()
+        // );
+        $mpdf->SetHTMLFooter(
+            $this->render("etudiant/recherche_avance/pdf/attestations/footer.html.twig")->getContent()
+        );
+        $mpdf->WriteHTML($html);
+        $mpdf->SetTitle('Attestation de réussite (cursus)');
+        $mpdf->Output("reussite.pdf", "I");
+    }
+    ////////////////////////////////////////////////////
+
     #[Route('/attestation/reussitenote/{inscription}', name: 'etudiant_recherche_attestation_reussite_note')]
     public function attestationReussiteNote(TInscription $inscription): Response
     {
