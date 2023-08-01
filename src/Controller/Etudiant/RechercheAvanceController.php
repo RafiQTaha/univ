@@ -348,6 +348,66 @@ class RechercheAvanceController extends AbstractController
         $mpdf->Output("releve_annee.pdf", "I");
     }
     
+    ///////////////////////////////////////////////////////
+        
+    #[Route('/attestation/releveAll/annee/{inscription}/{assiduite}', name: 'etudiant_recherche_releve_annee_all')]
+    public function attestationReleveAllAnnee(TInscription $inscription, $assiduite): Response
+    {
+        $admission = $inscription->getAdmission();
+        $inscriptions = $this->em->getRepository(TInscription::class)->getInscriptionsByAdmission($admission);
+        // dd($inscriptions);
+        $html = "";
+        $i = 1;
+        foreach ($inscriptions as $key => $inscription) {
+            $semestres = $this->em->getRepository(ExSnotes::class)->findBy(['inscription' => $inscription],['semestre'=>'ASC']);
+            // dd($semestres);
+            $noteSemestre2 = null;
+            $noteModulesBySemestre2 = null;
+            if (count($semestres)>1) {
+                $noteSemestre1 = $semestres[0];
+                $noteSemestre2 = $semestres[1];
+                if($assiduite == 0){
+                    $noteModulesBySemestre1 = $this->em->getRepository(ExMnotes::class)->getNotesModuleSansAssiduiteBySemestre($noteSemestre1->getSemestre(), $inscription);
+                    if ($noteSemestre2 != null) {
+                        $noteModulesBySemestre2 = $this->em->getRepository(ExMnotes::class)->getNotesModuleSansAssiduiteBySemestre($noteSemestre2->getSemestre(), $inscription);
+                    }
+                } else {
+                    $noteModulesBySemestre1 = $this->em->getRepository(ExMnotes::class)->getNotesModuleBySemestre($noteSemestre1->getSemestre(), $inscription);
+                    if ($noteSemestre2 != null) {
+                        $noteModulesBySemestre2 = $this->em->getRepository(ExMnotes::class)->getNotesModuleBySemestre($noteSemestre2->getSemestre(), $inscription);
+                    }
+                }
+                if ($i > 1 ) {
+                    $html .= "<pagebreak>";
+                }
+                $html .= $this->render("etudiant/recherche_avance/pdf/academique/note_annee.html.twig", [
+                    'inscription' => $inscription,
+                    'noteModulesBySemestre1' => $noteModulesBySemestre1,
+                    'noteModulesBySemestre2' => $noteModulesBySemestre2,
+                    'noteSemestre1' => $noteSemestre1,
+                    'noteSemestre2' => $noteSemestre2,
+                    'assiduite' => $assiduite
+                ])->getContent();
+            }
+            $i++;
+        }
+        
+        // dd($html);
+        $mpdf = new Mpdf([
+            'margin_left' => 5,
+            'margin_right' => 5,
+        ]);
+        $mpdf->SetHTMLHeader(
+            $this->render("etudiant/recherche_avance/pdf/academique/header.html.twig")->getContent()
+        );
+        $mpdf->SetHTMLFooter(
+            $this->render("etudiant/recherche_avance/pdf/academique/footer.html.twig")->getContent()
+        );
+        $mpdf->WriteHTML($html);
+        $mpdf->SetTitle('Relevé de note annuel');
+        $mpdf->Output("releve_annee.pdf", "I");
+    }
+    //////////////////////////////////////////////////////
     #[Route('/attestation/bonne_conduite/{inscription}', name: 'etudiant_recherche_attestation_bonne_conduite')]
     public function attestation_bonne_conduite(TInscription $inscription): Response
     {

@@ -381,4 +381,17 @@ class TInscriptionRepository extends ServiceEntityRepository
         return $result;
     } 
     
+    
+    public function getInscriptionsByAdmission($admission)
+    {
+        return $this->createQueryBuilder('inscription')
+            ->innerJoin("inscription.admission", "admission")
+            ->where("admission = :admission")
+            ->setParameter('admission', $admission)
+            ->orderBy('inscription.id', 'ASC')
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
 }
