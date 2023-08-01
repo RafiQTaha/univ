@@ -660,7 +660,7 @@ class AnneeController extends AbstractController
      #[Route('/extraction_annee/{etab}', name: 'evaluation_annee_extraction_annee')]
     public function evaluationAnneeExtraction(AcEtablissement $etab,Request $request) 
     {   
-        $current_year = date('m') > 7 ? date('Y').'/'.date('Y')+1 :  date('Y') - 1 .'/' .date('Y');
+        $current_year = date('m') > 5 ? date('Y') - 1 .'/' .date('Y') : date('Y').'/'.date('Y')+1 ;
         $annees = $this->em->getRepository(ExAnotes::class)->getAnneeByCurrentYear($current_year, $etab->getId());
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
