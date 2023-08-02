@@ -918,7 +918,8 @@ class EpreuveController extends AbstractController
             $j++;
         }
         $writer = new Xlsx($spreadsheet);
-        $currentyear = date('m') > 7 ? date('Y').'-'.date('Y')+1 : date('Y') - 1 .'-' .date('Y');
+        // $currentyear = date('m') > 7 ? date('Y').'-'.date('Y')+1 : date('Y') - 1 .'-' .date('Y');
+        $currentyear = date('Y') - 1 .'/' .date('Y');
         $fileName = 'Extraction Epreuves Valide '.$currentyear.'.xlsx';
         $temp_file = tempnam(sys_get_temp_dir(), $fileName);
         $writer->save($temp_file);
@@ -951,7 +952,8 @@ class EpreuveController extends AbstractController
             $j++;
         }
         $writer = new Xlsx($spreadsheet);
-        $currentyear = date('m') > 7 ? date('Y').'-'.date('Y')+1 : date('Y') - 1 .'-' .date('Y');
+        // $currentyear = date('m') > 7 ? date('Y').'-'.date('Y')+1 : date('Y') - 1 .'-' .date('Y');
+        $currentyear = date('Y') - 1 .'/' .date('Y');
         $fileName = 'Extraction Epreuves Valide Session 2 '.$currentyear.'.xlsx';
         $temp_file = tempnam(sys_get_temp_dir(), $fileName);
         $writer->save($temp_file);
