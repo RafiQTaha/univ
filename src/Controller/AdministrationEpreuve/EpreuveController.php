@@ -899,7 +899,8 @@ class EpreuveController extends AbstractController
         $sheet = $spreadsheet->getActiveSheet();
         $i=2;
         $j=1;
-        $currentyear = date('m') > 7 ? date('Y').'/'.date('Y')+1 : date('Y') - 1 .'/' .date('Y');
+        // $currentyear = date('m') > 7 ? date('Y').'/'.date('Y')+1 : date('Y') - 1 .'/' .date('Y');
+        $currentyear = date('Y') - 1 .'/' .date('Y');
         $epreuves = $this->em->getRepository(AcEpreuve::class)->findEpreuveValideByCurrentYear($currentyear, $etab->getId());
         // dd($epreuves);
         $sheet->fromArray(
@@ -931,7 +932,8 @@ class EpreuveController extends AbstractController
         $sheet = $spreadsheet->getActiveSheet();
         $i=2;
         $j=1;
-        $currentyear = date('m') > 7 ? date('Y').'/'.date('Y')+1 : date('Y') - 1 .'/' .date('Y');
+        // $currentyear = date('m') > 7 ? date('Y').'/'.date('Y')+1 : date('Y') - 1 .'/' .date('Y');
+        $currentyear = date('Y') - 1 .'/' .date('Y');
         $epreuves = $this->em->getRepository(AcEpreuve::class)->findEpreuveValideS2ByCurrentYear($currentyear, $etab->getId());
         // dd($epreuves);
         $sheet->fromArray(
