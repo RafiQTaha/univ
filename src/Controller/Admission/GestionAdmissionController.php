@@ -19,11 +19,14 @@ use App\Entity\AcPromotion;
 use App\Entity\PStatut;
 use App\Entity\TInscription;
 use Doctrine\Persistence\ManagerRegistry;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 
 #[Route('/admission/gestion')]
 
@@ -511,4 +514,133 @@ class GestionAdmissionController extends AbstractController
         $mpdf->Output("attestaion.pdf", "I");
     } 
     
+    
+    #[Route('/reinscription', name: 'admission_reinscription')]
+    public function reinscriptionAction()
+    {
+        // dd($admission->getPreinscription()->getNature());
+        $id_anneeInscription = 638; 
+        $id_promotionInscription = 365; 
+        $codeAdmissions = ['ADM-CPGEA_MPSI00006590','ADM-CPGEA_MPSI00006645','ADM-CPGEA_MPSI00006593','ADM-CPGEA_MPSI00006533','ADM-CPGEA_MPSI00006644','ADM-CPGEA_MPSI00007035','ADM-CPGEA_MPSI00006532','ADM-CPGEA_MPSI00006628','ADM-CPGEA_MPSI00006631','ADM-CPGEA_MPSI00006619','ADM-CPGEA_MPSI00006522','ADM-CPGEA_MPSI00006521','ADM-CPGEA_MPSI00006524','ADM-CPGEA_MPSI00006553','ADM-CPGEA_MPSI00006564','ADM-CPGEA_MPSI00006572','ADM-CPGEA_MPSI00006727','ADM-CPGEA_MPSI00006844','ADM-CPGEA_MPSI00006761','ADM-CPGEA_MPSI00006622','ADM-CPGEA_MPSI00006603','ADM-CPGEA_MPSI00006556','ADM-CPGEA_MPSI00006508','ADM-CPGEA_MPSI00006538','ADM-CPGEA_MPSI00006791','ADM-CPGEA_MPSI00006765'];
+        // $codeAdmissions = ['ADM-CPGEA_MPSI00006590','ADM-CPGEA_MPSI00006645','ADM-CPGEA_MPSI00006593'];
+        // dd($this->em->getRepository(TAdmission::class)->findBy(['code'=>$codeAdmissions]));
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        $sheet->setCellValue('A1', 'ID Preins');
+        $sheet->setCellValue('B1', 'ID Admission');
+        $sheet->setCellValue('C1', 'ID Inscription');
+        $sheet->setCellValue('D1', 'ID Fact PYT');
+        $sheet->setCellValue('E1', 'ID Fact ORG');
+        $j = 2;
+        foreach ($codeAdmissions as $code) {
+            $admission = $this->em->getRepository(TAdmission::class)->findOneBy(['code'=>$code]);
+            $annee = $this->em->getRepository(AcAnnee::class)->find($id_anneeInscription);
+            $inscription = $this->em->getRepository(TInscription::class)->getActiveInscriptionByAnnee($admission,$annee);
+            $sheet->setCellValue('A'.$j, $admission->getPreinscription()->getId());
+            $sheet->setCellValue('B'.$j, $admission->getId());
+            if ($inscription == null) {
+                // dd('test'); 
+                $promotion = $this->em->getRepository(AcPromotion::class)->find($id_promotionInscription);
+                $etudiant = $admission->getPreinscription()->getEtudiant();
+        
+                $inscription = new TInscription();
+                $inscription->setStatut(
+                    $this->em->getRepository(PStatut::class)->find(13)
+                );
+                $inscription->setUserCreated($this->getUser());
+                $inscription->setAnnee($annee);
+                $inscription->setPromotion($promotion);
+                $inscription->setAdmission($admission);
+                $inscription->setCreated(new \DateTime("now"));
+                $this->em->persist($inscription);
+                $this->em->flush();
+                $inscription->setCode('INS-'. $annee->getFormation()->getEtablissement()->getAbreviation().str_pad($inscription->getId(), 8, '0', STR_PAD_LEFT).'/'.date("Y"));
+                $this->em->flush();
+                $sheet->setCellValue('C'.$j, $inscription->getId());
+                if (count($admission->getInscriptions()) > 1) {
+                    $operationcabs = $this->em->getRepository(TOperationcab::class)->findBy(['preinscription'=>$inscription->getAdmission()->getPreinscription()]);
+                    foreach($operationcabs as $operationcab){
+                        $operationcab->setActive(0);
+                    }   
+                }
+                $isBoursier = 0;
+                if ($admission->getPreinscription()->getNature() and $admission->getPreinscription()->getNature()->getId() == 4) {
+                    $isBoursier = 1;
+                }
+                $k = $isBoursier == 0 ? 1 : 2 ;
+                for ($i=1; $i <= $k; $i++) { 
+                    $operationCab = new TOperationcab();
+                    $operationCab->setPreinscription($inscription->getAdmission()->getPreinscription());
+                    $operationCab->setUserCreated($this->getUser());
+                    $operationCab->setAnnee($inscription->getAnnee());
+                    $operationCab->setActive(1);
+                    $operationCab->setDateContable(date('Y'));
+                    $categorie = $i == 1 ? 'inscription' : 'inscription organisme';
+                    $organisme = $i == 1 ? 'Payant' : 'Organisme';
+                    $operationCab->setCategorie($categorie);
+                    $operationCab->setOrganisme($organisme);
+                    $operationCab->setCreated(new \DateTime("now"));
+                    $this->em->persist($operationCab);
+                    $this->em->flush();
+                    $operationCab->setCode(
+                        $inscription->getAnnee()->getFormation()->getEtablissement()->getAbreviation()."-FAC".str_pad($operationCab->getId(), 8, '0', STR_PAD_LEFT)."/".date('Y')
+                    );
+                    $this->em->flush();
+
+                    $org = $organisme == 'Payant' ? 7 : 1;
+                    $operationDet = new TOperationdet();
+                    $operationDet->setOperationcab($operationCab);
+                    $operationDet->setFrais($this->em->getRepository(PFrais::class)->find(2494));
+                    $operationDet->setMontant(1000);
+                    $operationDet->setCreated(new \DateTime("now"));
+                    $operationDet->setRemise(0);
+                    $operationDet->setActive(1);
+                    $operationDet->setUserCreated($this->getUser());
+                    $operationDet->setOrganisme($this->em->getRepository(POrganisme::class)->find($org));
+                    $this->em->persist($operationDet);
+                    $this->em->flush();
+                    $operationDet->setCode(
+                        "OPD".str_pad($operationDet->getId(), 8, '0', STR_PAD_LEFT)
+                    );
+                    $operationDet->getOperationcab()->setSynFlag(0);
+                    $this->em->flush();
+
+                    $operationDet = new TOperationdet();
+                    $operationDet->setOperationcab($operationCab);
+                    $operationDet->setFrais($this->em->getRepository(PFrais::class)->find(2496));
+                    $operationDet->setMontant(54000);
+                    $operationDet->setCreated(new \DateTime("now"));
+                    $operationDet->setRemise(0);
+                    $operationDet->setActive(1);
+                    $operationDet->setUserCreated($this->getUser());
+                    // $this->em->getRepository(POrganisme::class)->find(1)
+                    $operationDet->setOrganisme($this->em->getRepository(POrganisme::class)->find($org));
+                    $this->em->persist($operationDet);
+                    $this->em->flush();
+                    $operationDet->setCode(
+                        "OPD".str_pad($operationDet->getId(), 8, '0', STR_PAD_LEFT)
+                    );
+                    $operationDet->getOperationcab()->setSynFlag(0);
+                    $this->em->flush();
+
+                    if ($organisme == 'Payant') {
+                        $sheet->setCellValue('D'.$j, $operationCab->getId());
+                    }else {
+                        $sheet->setCellValue('E'.$j, $operationCab->getId());
+                    }
+                }
+            }else {
+                $sheet->setCellValue('C'.$j, $inscription->getId());
+            }
+            $j++;
+        }
+        
+        $writer = new Xlsx($spreadsheet);
+        $fileName = 'Inscription '.$j-2 . ' - into '.$annee->getFormation()->getDesignation().'.xlsx';
+        $temp_file = tempnam(sys_get_temp_dir(), $fileName);
+        $writer->save($temp_file);
+        return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);
+        
+        // return new JsonResponse("Bien Enregistre code inscription: " . $inscription->getCode(), 200);
+    }
 }
