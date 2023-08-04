@@ -2,31 +2,34 @@
 
 namespace App\Controller\Admission;
 
-use App\Controller\ApiController;
 use Mpdf\Mpdf;
 use App\Entity\PFrais;
+use App\Entity\AcAnnee;
+use App\Entity\PStatut;
 use App\Entity\PDocument;
 use App\Entity\POrganisme;
 use App\Entity\TAdmission;
 use App\Entity\TReglement;
+use App\Entity\AcPromotion;
+use App\Entity\TInscription;
 use App\Entity\TOperationcab;
 use App\Entity\TOperationdet;
+use App\Entity\AcEtablissement;
+use App\Controller\ApiController;
 use App\Entity\TAdmissionDocument;
 use App\Controller\DatatablesController;
-use App\Entity\AcAnnee;
-use App\Entity\AcEtablissement;
-use App\Entity\AcPromotion;
-use App\Entity\PStatut;
-use App\Entity\TInscription;
 use Doctrine\Persistence\ManagerRegistry;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\Reader\Xlsx as reader;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 
 #[Route('/admission/gestion')]
 
@@ -516,28 +519,72 @@ class GestionAdmissionController extends AbstractController
     
     
     #[Route('/reinscription', name: 'admission_reinscription')]
-    public function reinscriptionAction()
+    public function reinscriptionAction(Request $request, SluggerInterface $slugger)
     {
-        // dd($admission->getPreinscription()->getNature());
-        $id_anneeInscription = 638; 
-        $id_promotionInscription = 365; 
-        $codeAdmissions = ['ADM-CPGEA_MPSI00006590','ADM-CPGEA_MPSI00006645','ADM-CPGEA_MPSI00006593','ADM-CPGEA_MPSI00006533','ADM-CPGEA_MPSI00006644','ADM-CPGEA_MPSI00007035','ADM-CPGEA_MPSI00006532','ADM-CPGEA_MPSI00006628','ADM-CPGEA_MPSI00006631','ADM-CPGEA_MPSI00006619','ADM-CPGEA_MPSI00006522','ADM-CPGEA_MPSI00006521','ADM-CPGEA_MPSI00006524','ADM-CPGEA_MPSI00006553','ADM-CPGEA_MPSI00006564','ADM-CPGEA_MPSI00006572','ADM-CPGEA_MPSI00006727','ADM-CPGEA_MPSI00006844','ADM-CPGEA_MPSI00006761','ADM-CPGEA_MPSI00006622','ADM-CPGEA_MPSI00006603','ADM-CPGEA_MPSI00006556','ADM-CPGEA_MPSI00006508','ADM-CPGEA_MPSI00006538','ADM-CPGEA_MPSI00006791','ADM-CPGEA_MPSI00006765'];
-        // $codeAdmissions = ['ADM-CPGEA_MPSI00006590','ADM-CPGEA_MPSI00006645','ADM-CPGEA_MPSI00006593'];
-        // dd($this->em->getRepository(TAdmission::class)->findBy(['code'=>$codeAdmissions]));
+        $file = $request->files->get('file');
+        // dd($file);
+        if(!$file){
+            return new JsonResponse('Prière d\'importer le fichier',500);
+        }
+        if($file->guessExtension() !== 'xlsx'){
+            return new JsonResponse('Prière d\'enregister un fichier xlsx', 500);            
+        }
+
+        $originalFilename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+        // this is needed to safely include the file name as part of the URL
+        $safeFilename = $slugger->slug($originalFilename);
+        $newFilename = $safeFilename.'-'.uniqid().'_'.$this->getUser()->getId().'.'.$file->guessExtension();
+
+        // Move the file to the directory where brochures are stored
+        try {
+            $file->move(
+                $this->getParameter('reinscription'),
+                $newFilename
+            );
+        } catch (FileException $e) {
+            throw new \Exception($e);
+        }
+
+        $reader = new reader();
+        $spreadsheet = $reader->load($this->getParameter('reinscription').'/'.$newFilename);
+        $worksheet = $spreadsheet->getActiveSheet();
+        $spreadSheetArys = $worksheet->toArray();
+
+        unset($spreadSheetArys[0]);
+        $sheetCount = count($spreadSheetArys);
+
+        // dd($spreadSheetArys);
+
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
         $sheet->setCellValue('A1', 'ID Preins');
-        $sheet->setCellValue('B1', 'ID Admission');
-        $sheet->setCellValue('C1', 'ID Inscription');
-        $sheet->setCellValue('D1', 'ID Fact PYT');
-        $sheet->setCellValue('E1', 'ID Fact ORG');
+        $sheet->setCellValue('B1', 'Code Preins');
+        $sheet->setCellValue('C1', 'ID Admission');
+        $sheet->setCellValue('D1', 'Code Admission');
+        $sheet->setCellValue('E1', 'ID Inscription');
+        $sheet->setCellValue('F1', 'Code Inscription');
+        $sheet->setCellValue('G1', 'ID Fact PYT');
+        $sheet->setCellValue('H1', 'Code Fact PYT');
+        $sheet->setCellValue('I1', 'ID Fact ORG');
+        $sheet->setCellValue('J1', 'Code Fact ORG');
         $j = 2;
-        foreach ($codeAdmissions as $code) {
-            $admission = $this->em->getRepository(TAdmission::class)->findOneBy(['code'=>$code]);
+
+        foreach ($spreadSheetArys as $arr) {
+            $id_admission = $arr[0];
+            // dd($id_admission);
+            $id_anneeInscription = $arr[1];
+            $id_promotionInscription = $arr[2];
+
+            $admission = $this->em->getRepository(TAdmission::class)->find($id_admission);
             $annee = $this->em->getRepository(AcAnnee::class)->find($id_anneeInscription);
+
             $inscription = $this->em->getRepository(TInscription::class)->getActiveInscriptionByAnnee($admission,$annee);
+            // dd($admission, $annee);
+            // dd($inscription);
             $sheet->setCellValue('A'.$j, $admission->getPreinscription()->getId());
-            $sheet->setCellValue('B'.$j, $admission->getId());
+            $sheet->setCellValue('B'.$j, $admission->getPreinscription()->getCode());
+            $sheet->setCellValue('C'.$j, $admission->getId());
+            $sheet->setCellValue('D'.$j, $admission->getCode());
             if ($inscription == null) {
                 // dd('test'); 
                 $promotion = $this->em->getRepository(AcPromotion::class)->find($id_promotionInscription);
@@ -556,7 +603,8 @@ class GestionAdmissionController extends AbstractController
                 $this->em->flush();
                 $inscription->setCode('INS-'. $annee->getFormation()->getEtablissement()->getAbreviation().str_pad($inscription->getId(), 8, '0', STR_PAD_LEFT).'/'.date("Y"));
                 $this->em->flush();
-                $sheet->setCellValue('C'.$j, $inscription->getId());
+                $sheet->setCellValue('E'.$j, $inscription->getId());
+                $sheet->setCellValue('F'.$j, $inscription->getCode());
                 if (count($admission->getInscriptions()) > 1) {
                     $operationcabs = $this->em->getRepository(TOperationcab::class)->findBy(['preinscription'=>$inscription->getAdmission()->getPreinscription()]);
                     foreach($operationcabs as $operationcab){
@@ -590,9 +638,11 @@ class GestionAdmissionController extends AbstractController
                     
 
                     if ($organisme == 'Payant') {
-                        $sheet->setCellValue('D'.$j, $operationCab->getId());
+                        $sheet->setCellValue('G'.$j, $operationCab->getId());
+                        $sheet->setCellValue('H'.$j, $operationCab->getCode());
                     }else {
-                        $sheet->setCellValue('E'.$j, $operationCab->getId());
+                        $sheet->setCellValue('I'.$j, $operationCab->getId());
+                        $sheet->setCellValue('J'.$j, $operationCab->getCode());
                     }
                 }
                     // $org = $organisme == 'Payant' ? 7 : 1;
@@ -630,17 +680,50 @@ class GestionAdmissionController extends AbstractController
                     // $operationDet->getOperationcab()->setSynFlag(0);
                     // $this->em->flush();
             }else {
-                $sheet->setCellValue('C'.$j, $inscription->getId());
+                $sheet->setCellValue('E'.$j, $inscription->getId());
+                $sheet->setCellValue('F'.$j, $inscription->getCode());
             }
             $j++;
         }
+
+        // dd($codeAdmission, $id_anneeInscription, $id_promotionInscription);
+        // $id_anneeInscription = 638; 
+        // $id_promotionInscription = 365; 
+        // $codeAdmissions = ['ADM-CPGEA_MPSI00006590','ADM-CPGEA_MPSI00006645','ADM-CPGEA_MPSI00006593','ADM-CPGEA_MPSI00006533','ADM-CPGEA_MPSI00006644','ADM-CPGEA_MPSI00007035','ADM-CPGEA_MPSI00006532','ADM-CPGEA_MPSI00006628','ADM-CPGEA_MPSI00006631','ADM-CPGEA_MPSI00006619','ADM-CPGEA_MPSI00006522','ADM-CPGEA_MPSI00006521','ADM-CPGEA_MPSI00006524','ADM-CPGEA_MPSI00006553','ADM-CPGEA_MPSI00006564','ADM-CPGEA_MPSI00006572','ADM-CPGEA_MPSI00006727','ADM-CPGEA_MPSI00006844','ADM-CPGEA_MPSI00006761','ADM-CPGEA_MPSI00006622','ADM-CPGEA_MPSI00006603','ADM-CPGEA_MPSI00006556','ADM-CPGEA_MPSI00006508','ADM-CPGEA_MPSI00006538','ADM-CPGEA_MPSI00006791','ADM-CPGEA_MPSI00006765'];
+        // $codeAdmissions = ['ADM-CPGEA_MPSI00006590','ADM-CPGEA_MPSI00006645','ADM-CPGEA_MPSI00006593'];
+        // dd($this->em->getRepository(TAdmission::class)->findBy(['code'=>$codeAdmissions]));
+        
+        // foreach ($codeAdmissions as $code) {
+            
+            
+            
+        // }
         
         $writer = new Xlsx($spreadsheet);
         $fileName = 'Inscription '.$j-2 . ' - into '.$annee->getFormation()->getDesignation().'.xlsx';
         $temp_file = tempnam(sys_get_temp_dir(), $fileName);
-        $writer->save($temp_file);
-        return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);
+        // $writer->save($temp_file);
+        // $writer->save($fileName);
+        // return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);
+        $writer->save($fileName);
+        return new JsonResponse(['message' => "Total des inscription crée est ".$sheetCount, 'file' => $fileName]);
         
         // return new JsonResponse("Bien Enregistre code inscription: " . $inscription->getCode(), 200);
+    }
+
+    #[Route('/canvas', name: 'reinscription_canvas')]
+    public function epreuveCanvas() {
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        $sheet->setCellValue('A1', 'id_admission');
+        $sheet->setCellValue('B1', 'id_promotion');
+        $sheet->setCellValue('C1', 'id_annee');
+
+        $writer = new Xlsx($spreadsheet);
+        $fileName = 'canvas_reinscription.xlsx';
+        $temp_file = tempnam(sys_get_temp_dir(), $fileName);
+        $writer->save($temp_file);
+
+        return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);
     }
 }

@@ -103,7 +103,7 @@ and ex_e.code_inscription = '$code_inscription' group by ex_e.id order by ex_e.$
         LEFT JOIN pe_statut st2 on st2.id = ex.statut_s2_id 
         LEFT JOIN pe_statut stdetf on stdetf.id = ex.statut_def_id 
         LEFT JOIN pe_statut staff on staff.id = ex.statut_aff_id 
-        where ann.designation = '$currentyear'";
+        where ann.designation = '$currentyear' and frm.designation not like '%Résidanat%'";
         // dd($sqls);
         $stmts = $this->em->getConnection()->prepare($sqls);
         $resultSets = $stmts->executeQuery();
