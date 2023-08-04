@@ -75,7 +75,7 @@ class TInscriptionRepository extends ServiceEntityRepository
             ->innerJoin("t.annee", "annee")
             ->innerJoin("t.statut", "statut")
             ->where('t.admission = :admission')
-            ->andWhere("annee.designation = :annee")
+            ->andWhere("annee = :annee")
             ->andWhere("statut.id = 13")
             ->setParameter('admission', $admission)
             ->setParameter('annee', $annee)
