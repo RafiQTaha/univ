@@ -587,41 +587,7 @@ class GestionAdmissionController extends AbstractController
                     );
                     $this->em->flush();
 
-                    $org = $organisme == 'Payant' ? 7 : 1;
-                    $operationDet = new TOperationdet();
-                    $operationDet->setOperationcab($operationCab);
-                    $operationDet->setFrais($this->em->getRepository(PFrais::class)->find(2494));
-                    $operationDet->setMontant(1000);
-                    $operationDet->setCreated(new \DateTime("now"));
-                    $operationDet->setRemise(0);
-                    $operationDet->setActive(1);
-                    $operationDet->setUserCreated($this->getUser());
-                    $operationDet->setOrganisme($this->em->getRepository(POrganisme::class)->find($org));
-                    $this->em->persist($operationDet);
-                    $this->em->flush();
-                    $operationDet->setCode(
-                        "OPD".str_pad($operationDet->getId(), 8, '0', STR_PAD_LEFT)
-                    );
-                    $operationDet->getOperationcab()->setSynFlag(0);
-                    $this->em->flush();
-
-                    $operationDet = new TOperationdet();
-                    $operationDet->setOperationcab($operationCab);
-                    $operationDet->setFrais($this->em->getRepository(PFrais::class)->find(2496));
-                    $operationDet->setMontant(54000);
-                    $operationDet->setCreated(new \DateTime("now"));
-                    $operationDet->setRemise(0);
-                    $operationDet->setActive(1);
-                    $operationDet->setUserCreated($this->getUser());
-                    // $this->em->getRepository(POrganisme::class)->find(1)
-                    $operationDet->setOrganisme($this->em->getRepository(POrganisme::class)->find($org));
-                    $this->em->persist($operationDet);
-                    $this->em->flush();
-                    $operationDet->setCode(
-                        "OPD".str_pad($operationDet->getId(), 8, '0', STR_PAD_LEFT)
-                    );
-                    $operationDet->getOperationcab()->setSynFlag(0);
-                    $this->em->flush();
+                    
 
                     if ($organisme == 'Payant') {
                         $sheet->setCellValue('D'.$j, $operationCab->getId());
@@ -629,6 +595,40 @@ class GestionAdmissionController extends AbstractController
                         $sheet->setCellValue('E'.$j, $operationCab->getId());
                     }
                 }
+                    // $org = $organisme == 'Payant' ? 7 : 1;
+                    // $operationDet = new TOperationdet();
+                    // $operationDet->setOperationcab($operationCab);
+                    // $operationDet->setFrais($this->em->getRepository(PFrais::class)->find(2494));
+                    // $operationDet->setMontant(1000);
+                    // $operationDet->setCreated(new \DateTime("now"));
+                    // $operationDet->setRemise(0);
+                    // $operationDet->setActive(1);
+                    // $operationDet->setUserCreated($this->getUser());
+                    // $operationDet->setOrganisme($this->em->getRepository(POrganisme::class)->find($org));
+                    // $this->em->persist($operationDet);
+                    // $this->em->flush();
+                    // $operationDet->setCode(
+                    //     "OPD".str_pad($operationDet->getId(), 8, '0', STR_PAD_LEFT)
+                    // );
+                    // $operationDet->getOperationcab()->setSynFlag(0);
+                    // $this->em->flush();
+
+                    // $operationDet = new TOperationdet();
+                    // $operationDet->setOperationcab($operationCab);
+                    // $operationDet->setFrais($this->em->getRepository(PFrais::class)->find(2496));
+                    // $operationDet->setMontant(54000);
+                    // $operationDet->setCreated(new \DateTime("now"));
+                    // $operationDet->setRemise(0);
+                    // $operationDet->setActive(1);
+                    // $operationDet->setUserCreated($this->getUser());
+                    // $operationDet->setOrganisme($this->em->getRepository(POrganisme::class)->find($org));
+                    // $this->em->persist($operationDet);
+                    // $this->em->flush();
+                    // $operationDet->setCode(
+                    //     "OPD".str_pad($operationDet->getId(), 8, '0', STR_PAD_LEFT)
+                    // );
+                    // $operationDet->getOperationcab()->setSynFlag(0);
+                    // $this->em->flush();
             }else {
                 $sheet->setCellValue('C'.$j, $inscription->getId());
             }
