@@ -235,7 +235,7 @@ class GestionBorderauxController extends AbstractController
         $sheet = $spreadsheet->getActiveSheet();
         $i=2;
         $j=1;
-        $currentyear = date('m') > 7 ? date('Y').'/'.date('Y')+1 : date('Y') - 1 .'/'.date('Y');
+        $currentyear = date('m') > 9 ? date('Y').'/'.date('Y')+1 : date('Y') - 1 .'/'.date('Y');
         // $seances = $this->em->getRepository(PlEmptime::class)->findSeanceByCurrentYears($currentyear);
         $honoraires = $this->em->getRepository(HHonens::class)->findHonoraireByCurrentYears($currentyear);
         // dd($honoraires[0]);
