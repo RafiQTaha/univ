@@ -305,7 +305,7 @@ class ExMnotesRepository extends ServiceEntityRepository
         LEFT JOIN pe_statut stsdef on stsdef.id = es.statut_def_id 
         LEFT JOIN pe_statut stsaff on stsaff.id = es.statut_aff_id
         
-        where ann.designation = '$currentyear'";
+        where ann.designation = '$currentyear' and frm.designation not like '%Résidanat%'";
         // dd($sqls);
         $stmts = $this->em->getConnection()->prepare($sqls);
         $resultSets = $stmts->executeQuery();
