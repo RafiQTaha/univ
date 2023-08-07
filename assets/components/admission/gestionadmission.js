@@ -509,7 +509,9 @@ $(document).ready(function () {
             <p>${response.message}</p>
           </div>`
       );
-      window.open("/" + response.file, "_blank");
+      if (response.count > 0) {
+          window.open("/" + response.file, "_blank");
+      }
       icon.addClass("fa-check-circle").removeClass("fa-spinner fa-spin ");
       tableEpreuveNormal.ajax.reload(null, false);
       tableEpreuveRattrapage.ajax.reload(null, false);

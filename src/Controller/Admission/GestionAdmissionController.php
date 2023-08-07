@@ -551,7 +551,7 @@ class GestionAdmissionController extends AbstractController
         $spreadSheetArys = $worksheet->toArray();
 
         unset($spreadSheetArys[0]);
-        $sheetCount = count($spreadSheetArys);
+        $sheetCount = 0;
 
         // dd($spreadSheetArys);
 
@@ -570,24 +570,22 @@ class GestionAdmissionController extends AbstractController
         $j = 2;
 
         foreach ($spreadSheetArys as $arr) {
-            $id_admission = $arr[0];
             // dd($id_admission);
-            $id_anneeInscription = $arr[1];
-            $id_promotionInscription = $arr[2];
+            $id_admission = $arr[0];
+            $id_promotionInscription = $arr[1];
+            $id_anneeInscription = $arr[2];
 
             $admission = $this->em->getRepository(TAdmission::class)->find($id_admission);
             $annee = $this->em->getRepository(AcAnnee::class)->find($id_anneeInscription);
+            $promotion = $this->em->getRepository(AcPromotion::class)->find($id_promotionInscription);
 
             $inscription = $this->em->getRepository(TInscription::class)->getActiveInscriptionByAnnee($admission,$annee);
-            // dd($admission, $annee);
-            // dd($inscription);
+            
             $sheet->setCellValue('A'.$j, $admission->getPreinscription()->getId());
             $sheet->setCellValue('B'.$j, $admission->getPreinscription()->getCode());
             $sheet->setCellValue('C'.$j, $admission->getId());
             $sheet->setCellValue('D'.$j, $admission->getCode());
             if ($inscription == null) {
-                // dd('test'); 
-                $promotion = $this->em->getRepository(AcPromotion::class)->find($id_promotionInscription);
                 $etudiant = $admission->getPreinscription()->getEtudiant();
         
                 $inscription = new TInscription();
@@ -645,6 +643,7 @@ class GestionAdmissionController extends AbstractController
                         $sheet->setCellValue('J'.$j, $operationCab->getCode());
                     }
                 }
+                $sheetCount++;
                     // $org = $organisme == 'Payant' ? 7 : 1;
                     // $operationDet = new TOperationdet();
                     // $operationDet->setOperationcab($operationCab);
@@ -698,15 +697,18 @@ class GestionAdmissionController extends AbstractController
             
             
         // }
-        
-        $writer = new Xlsx($spreadsheet);
-        $fileName = 'Inscription '.$j-2 . ' - into '.$annee->getFormation()->getDesignation().'.xlsx';
-        $temp_file = tempnam(sys_get_temp_dir(), $fileName);
+        $fileName = "";
+        if ($sheetCount > 0) {
+            $writer = new Xlsx($spreadsheet);
+            $fileName = 'Total des inscription crée est ' .$sheetCount.'.xlsx';
+            $temp_file = tempnam(sys_get_temp_dir(), $fileName);
+            $writer->save($fileName);
+        }
         // $writer->save($temp_file);
         // $writer->save($fileName);
         // return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);
-        $writer->save($fileName);
-        return new JsonResponse(['message' => "Total des inscription crée est ".$sheetCount, 'file' => $fileName]);
+        // $writer->save($fileName);
+        return new JsonResponse(['message' => "Total des inscription crée est ".$sheetCount, 'file' => $fileName,'count'=>$sheetCount]);
         
         // return new JsonResponse("Bien Enregistre code inscription: " . $inscription->getCode(), 200);
     }
