@@ -58,4 +58,27 @@ class PrProgrammationRepository extends ServiceEntityRepository
             ->getResult()
         ;
     }
+    
+    public function findProgrammationsByEtablissementOrFormationOrPromotion($etablissement,$formation,$promotion)
+    {
+        // $formation = $formation == "" ? 
+        return $this->createQueryBuilder('programation')
+            ->innerJoin('programation.annee','annee')
+            ->innerJoin('annee.formation','formation')
+            ->innerJoin('formation.etablissement','etablissement')
+            ->innerJoin('programation.element','element')
+            ->innerJoin('element.module','module')
+            ->innerJoin('module.semestre','semestre')
+            ->innerJoin('semestre.promotion','promotion')
+            ->Where('etablissement = :etablissement')
+            ->AndWhere('formation in (:formation) ')
+            ->AndWhere('promotion in (:promotion) ')
+            ->orderBy('programation.id','ASC')
+            ->setParameter('etablissement', $etablissement)
+            ->setParameter('formation', $formation)
+            ->setParameter('promotion', $promotion)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
 }
