@@ -9,6 +9,7 @@ use App\Entity\AcElement;
 use App\Entity\AcEtablissement;
 use App\Entity\AcFormation;
 use App\Entity\AcModule;
+use App\Entity\AcPromotion;
 use App\Entity\PEnseignant;
 use App\Entity\PNatureEpreuve;
 use App\Entity\PrProgrammation;
@@ -226,32 +227,31 @@ class ProgrammationController extends AbstractController
 
        return new JsonResponse('Programmation Bien Supprimer',200);
     }
-    // #[Route('/duplication', name: 'parametre_programmation_duplication')]
-    // public function duplication(): Response
-    // {   
-    //     $formations = $this->em->getRepository(AcFormation::class)->findProgrammationGroupByFormation();
-    //     // if ($formations[0]) {
-    //     // if($formations[0]->getAnnee()->getValidationAcademique() = 'non')
-    //     $programmations = $this->em->getRepository(PrProgrammation::class)->findProgrammationsByFormation($formations[0]);
-    //     foreach ($programmations as $programmation) {
-
-    //         $prog = new PrProgrammation();
-    //         $prog->setVolume($programmation->getVolume());
-    //         $prog->setNatureEpreuve($programmation->getNatureEpreuve());
-    //         $prog->setElement($programmation->getElement());
-    //         $annee = $this->em->getRepository(AcAnnee::class)->getActiveAnneeByFormation($programmations->getAnnee()->getFormation());
-    //         // $annees = $this->em->getRepository(AcAnnee::class)->findBy(["formation"=>$programmations->getAnnee()->getFormation(),'active'=>1]);
-    //         dd($annee);  
-    //         $programmation->setAnnee($this->em->getRepository(AcAnnee::class)->find($request->get("annee_id")));
-    //         $programmation->setCreated(new \DateTime("now"));
-    //         $programmation->setUserCreated($this->getUser());
-    //     }
-    //     dd($programmations);
-            
-    //         # code...
-    //     // }
-    //     dd($formations[0]);  
+    #[Route('/duplication', name: 'parametre_programmation_duplication')]
+    public function duplication(Request $request): Response
+    {   
+        $etablissement = $this->em->getRepository(AcEtablissement::class)->find($request->get("etablissement"));
+        $formation = $request->get("formation") != "" ? $this->em->getRepository(AcFormation::class)->find($request->get("formation")) : $this->em->getRepository(AcFormation::class)->findBy(['etablissement'=>$etablissement,'active'=>1]);
+        $promotion = $request->get("promotion") != "" ? $this->em->getRepository(AcPromotion::class)->find($request->get("promotion")) : $this->em->getRepository(AcPromotion::class)->findBy(['formation'=>$formation,'active'=>1]);
+        $programmations = $this->em->getRepository(PrProgrammation::class)->findProgrammationGroupByFormation($etablissement,$formation,$promotion);
+        dd($programmations);
+        // if ($formations[0]) {
+        // if($formations[0]->getAnnee()->getValidationAcademique() = 'non')
+        // $programmations = $this->em->getRepository(PrProgrammation::class)->findProgrammationsByFormation($formations[0]);
+        foreach ($programmations as $programmation) {
+            $prog = new PrProgrammation();
+            $prog->setVolume($programmation->getVolume());
+            $prog->setNatureEpreuve($programmation->getNatureEpreuve());
+            $prog->setElement($programmation->getElement());
+            $annee = $this->em->getRepository(AcAnnee::class)->getActiveAnneeByFormation($programmations->getAnnee()->getFormation());
+            // $annees = $this->em->getRepository(AcAnnee::class)->findBy(["formation"=>$programmations->getAnnee()->getFormation(),'active'=>1]);
+            dd($annee);  
+            $programmation->setAnnee($this->em->getRepository(AcAnnee::class)->find($request->get("annee_id")));
+            $programmation->setCreated(new \DateTime("now"));
+            $programmation->setUserCreated($this->getUser());
+        }
+        dd($programmations);
     
-    //     return new JsonResponse('Programmation Bien Modifier',200);
-    // }
+        return new JsonResponse('Programmation Bien Modifier',200);
+    }
 }

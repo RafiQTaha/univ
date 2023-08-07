@@ -265,6 +265,43 @@ const Toast = Swal.mixin({
             }
         }
     })
+
+    $("#duplication").on("click", async function(){
+        if(!id_programmation){
+            Toast.fire({
+              icon: 'error',
+              title: 'Veuillez selectioner un enseignant!',
+            })
+            return;
+        }
+        const icon = $("#duplication i");
+        icon.removeClass('fa-clone').addClass("fa-spinner fa-spin ");
+        var formData = new FormData()
+        formData.append("etablissement", etablissement);
+        formData.append("formation", formation);
+        formData.append("promotion", promotion);
+        var res = confirm('Vous voulez vraiment supprimer cette programmation ?');
+        if(res == 1){
+            try {
+                const request = await axios.post('/parametre/programmation/duplication',formData);
+                const response = request.data;
+                table.ajax.reload();
+                icon.addClass('fa-clone').removeClass("fa-spinner fa-spin ");
+                Toast.fire({
+                    icon: 'success',
+                    title: 'programmation bien Dupliqué',
+                })
+            } catch (error) {
+                console.log(error, error.response);
+                const message = error.response.data;
+                Toast.fire({
+                    icon: 'error',
+                    title: message,
+                })
+                icon.addClass('fa-clone').removeClass("fa-spinner fa-spin ");
+            }
+        }
+    })
 })
 
 
