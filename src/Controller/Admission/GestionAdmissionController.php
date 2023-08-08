@@ -714,7 +714,7 @@ class GestionAdmissionController extends AbstractController
     }
 
     #[Route('/canvas', name: 'reinscription_canvas')]
-    public function epreuveCanvas() {
+    public function reinscriptionCanvas() {
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
         $sheet->setCellValue('A1', 'id_admission');

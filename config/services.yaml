@@ -6,6 +6,7 @@
 parameters:
   etudiant_directory: "%kernel.project_dir%/public/uploads/etudiant"
   reinscription: "%kernel.project_dir%/public/uploads/reinscription"
+  facturation_reinscription: "%kernel.project_dir%/public/uploads/facturation_reinscription"
   epreuve_create_directory: "%kernel.project_dir%/public/uploads/epreuve/epreuve"
   note_epreuve_create_directory: "%kernel.project_dir%/public/uploads/epreuve/notes_epreuve"
   planification_create_directory: "%kernel.project_dir%/public/uploads/planification"

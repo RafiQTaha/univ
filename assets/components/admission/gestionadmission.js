@@ -510,11 +510,10 @@ $(document).ready(function () {
           </div>`
       );
       if (response.count > 0) {
-          window.open("/" + response.file, "_blank");
+        window.open("/" + response.file, "_blank");
       }
       icon.addClass("fa-check-circle").removeClass("fa-spinner fa-spin ");
-      tableEpreuveNormal.ajax.reload(null, false);
-      tableEpreuveRattrapage.ajax.reload(null, false);
+      table.ajax.reload(null, false);
     } catch (error) {
       const message = error.response.data;
       console.log(error, error.response);
