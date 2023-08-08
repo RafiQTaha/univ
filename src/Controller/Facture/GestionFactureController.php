@@ -4,32 +4,35 @@ namespace App\Controller\Facture;
 
 use DateTime;
 use Mpdf\Mpdf;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
-use Doctrine\Persistence\ManagerRegistry;
-use App\Entity\AcEtablissement;
+use App\Entity\PFrais;
 use App\Entity\AcAnnee;
-use App\Entity\AcFormation;
-use App\Entity\TPreinscription;
-use App\Entity\TInscription;
+use App\Entity\PStatut;
+use App\Entity\XBanque;
+use App\Entity\POrganisme;
 use App\Entity\TAdmission;
 use App\Entity\TReglement;
+use App\Entity\XModalites;
+use App\Entity\AcFormation;
 use App\Entity\AcPromotion;
-use App\Entity\POrganisme;
-use App\Entity\XBanque;
-use App\Entity\PFrais;
+use PhpOffice\PhpSpreadsheet\Reader\Xlsx as reader;
+use App\Entity\TInscription;
 use App\Entity\TOperationcab;
 use App\Entity\TOperationdet;
-use App\Entity\XModalites;
+use App\Entity\AcEtablissement;
+use App\Entity\TPreinscription;
 use App\Controller\ApiController;
 use App\Controller\DatatablesController;
-use App\Entity\PStatut;
+use Doctrine\Persistence\ManagerRegistry;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 
 #[Route('/facture/factures')]
 class GestionFactureController extends AbstractController
@@ -990,8 +993,50 @@ class GestionFactureController extends AbstractController
     }
 
     #[Route('/facturation_reinscription', name: 'facturation_reinscription')]
-    public function facturation_reinscription(Request $request,TOperationcab $operationcab): Response
+    public function facturation_reinscription(Request $request,SluggerInterface $slugger): Response
     {   
+
+        $file = $request->files->get('file');
+        // dd($file);
+        if(!$file){
+            return new JsonResponse('Prière d\'importer le fichier',500);
+        }
+        if($file->guessExtension() !== 'xlsx'){
+            return new JsonResponse('Prière d\'enregister un fichier xlsx', 500);            
+        }
+
+        $originalFilename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+        // this is needed to safely include the file name as part of the URL
+        $safeFilename = $slugger->slug($originalFilename);
+        $newFilename = $safeFilename.'-'.uniqid().'_'.$this->getUser()->getId().'.'.$file->guessExtension();
+
+        // Move the file to the directory where brochures are stored
+        try {
+            $file->move(
+                $this->getParameter('facturation_reinscription'),
+                $newFilename
+            );
+        } catch (FileException $e) {
+            throw new \Exception($e);
+        }
+
+        $reader = new reader();
+        $spreadsheet = $reader->load($this->getParameter('facturation_reinscription').'/'.$newFilename);
+        $worksheet = $spreadsheet->getActiveSheet();
+        $spreadSheetArys = $worksheet->toArray();
+
+        unset($spreadSheetArys[0]);
+        $sheetCount = 0;
+        
+        foreach ($spreadSheetArys as $arr) {
+            $id_facture = $arr[0];
+            $id_frais = $arr[1];
+            $montant = $arr[2];
+            dd($id_facture, $id_frais,$montant);
+        }
+
+
+
         $operationcabs = [];
         foreach ($operationcabs as $operationcab) {
             $frais =  $this->em->getRepository(PFrais::class)->find();
@@ -1021,6 +1066,22 @@ class GestionFactureController extends AbstractController
             }
         }
         return new JsonResponse(1, 200);    
+    }
+
+    #[Route('/canvas', name: 'facture_canvas')]
+    public function facturationCanvas() {
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        $sheet->setCellValue('A1', 'id_facture');
+        $sheet->setCellValue('B1', 'id_frais');
+        $sheet->setCellValue('C1', 'montant');
+
+        $writer = new Xlsx($spreadsheet);
+        $fileName = 'canvas_facturation.xlsx';
+        $temp_file = tempnam(sys_get_temp_dir(), $fileName);
+        $writer->save($temp_file);
+
+        return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);
     }
 
 }
