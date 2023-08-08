@@ -609,9 +609,9 @@ class GestionAdmissionController extends AbstractController
                         $operationcab->setActive(0);
                     }   
                 }
-                $isBoursier = 0;
-                if ($admission->getPreinscription()->getNature() and $admission->getPreinscription()->getNature()->getId() == 4) {
-                    $isBoursier = 1;
+                $isBoursier = 1;
+                if ($admission->getPreinscription()->getNature() and $admission->getPreinscription()->getNature()->getId() == 1) {
+                    $isBoursier = 0;
                 }
                 $k = $isBoursier == 0 ? 1 : 2 ;
                 for ($i=1; $i <= $k; $i++) { 
