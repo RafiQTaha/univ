@@ -601,9 +601,9 @@ $(document).ready(function () {
                 <p>${response.message}</p>
               </div>`
       );
-      if (response.count > 0) {
-        window.open("/" + response.file, "_blank");
-      }
+      // if (response.count > 0) {
+      //   window.open("/" + response.file, "_blank");
+      // }
       icon.addClass("fa-check-circle").removeClass("fa-spinner fa-spin ");
       table_facture.ajax.reload(null, false);
     } catch (error) {

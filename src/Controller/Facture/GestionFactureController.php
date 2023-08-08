@@ -995,7 +995,6 @@ class GestionFactureController extends AbstractController
     #[Route('/facturation_reinscription', name: 'facturation_reinscription')]
     public function facturation_reinscription(Request $request,SluggerInterface $slugger): Response
     {   
-
         $file = $request->files->get('file');
         // dd($file);
         if(!$file){
@@ -1032,15 +1031,10 @@ class GestionFactureController extends AbstractController
             $id_facture = $arr[0];
             $id_frais = $arr[1];
             $montant = $arr[2];
-            dd($id_facture, $id_frais,$montant);
-        }
-
-
-
-        $operationcabs = [];
-        foreach ($operationcabs as $operationcab) {
-            $frais =  $this->em->getRepository(PFrais::class)->find();
-            if ($frais != null) { 
+            // dd($id_facture, $id_frais,$montant);
+            $operationcab =  $this->em->getRepository(TOperationcab::class)->find($id_facture);
+            $frais =  $this->em->getRepository(PFrais::class)->find($id_frais);
+            if ($frais != null and $operationcab) { 
                 if ($operationcab->getOrganisme() == 'Payant' ) {
                     $org = $this->em->getRepository(POrganisme::class)->find(7);
                 }else {
@@ -1049,7 +1043,7 @@ class GestionFactureController extends AbstractController
                 $operationDet = new TOperationdet();
                 $operationDet->setOperationcab($operationcab);
                 $operationDet->setFrais($frais);
-                $operationDet->setMontant($request->get('montant'));
+                $operationDet->setMontant($montant);
                 $operationDet->setCreated(new \DateTime("now"));
                 $operationDet->setRemise(0);
                 $operationDet->setActive(1);
@@ -1063,9 +1057,10 @@ class GestionFactureController extends AbstractController
                 );
                 $operationDet->getOperationcab()->setSynFlag(0);
                 $this->em->flush();
+                $sheetCount++;
             }
         }
-        return new JsonResponse(1, 200);    
+        return new JsonResponse(['message' => "Total des factures facturé est ".$sheetCount,'count'=>$sheetCount]);  
     }
 
     #[Route('/canvas', name: 'facture_canvas')]
