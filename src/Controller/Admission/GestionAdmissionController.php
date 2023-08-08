@@ -644,59 +644,12 @@ class GestionAdmissionController extends AbstractController
                     }
                 }
                 $sheetCount++;
-                    // $org = $organisme == 'Payant' ? 7 : 1;
-                    // $operationDet = new TOperationdet();
-                    // $operationDet->setOperationcab($operationCab);
-                    // $operationDet->setFrais($this->em->getRepository(PFrais::class)->find(2494));
-                    // $operationDet->setMontant(1000);
-                    // $operationDet->setCreated(new \DateTime("now"));
-                    // $operationDet->setRemise(0);
-                    // $operationDet->setActive(1);
-                    // $operationDet->setUserCreated($this->getUser());
-                    // $operationDet->setOrganisme($this->em->getRepository(POrganisme::class)->find($org));
-                    // $this->em->persist($operationDet);
-                    // $this->em->flush();
-                    // $operationDet->setCode(
-                    //     "OPD".str_pad($operationDet->getId(), 8, '0', STR_PAD_LEFT)
-                    // );
-                    // $operationDet->getOperationcab()->setSynFlag(0);
-                    // $this->em->flush();
-
-                    // $operationDet = new TOperationdet();
-                    // $operationDet->setOperationcab($operationCab);
-                    // $operationDet->setFrais($this->em->getRepository(PFrais::class)->find(2496));
-                    // $operationDet->setMontant(54000);
-                    // $operationDet->setCreated(new \DateTime("now"));
-                    // $operationDet->setRemise(0);
-                    // $operationDet->setActive(1);
-                    // $operationDet->setUserCreated($this->getUser());
-                    // $operationDet->setOrganisme($this->em->getRepository(POrganisme::class)->find($org));
-                    // $this->em->persist($operationDet);
-                    // $this->em->flush();
-                    // $operationDet->setCode(
-                    //     "OPD".str_pad($operationDet->getId(), 8, '0', STR_PAD_LEFT)
-                    // );
-                    // $operationDet->getOperationcab()->setSynFlag(0);
-                    // $this->em->flush();
             }else {
                 $sheet->setCellValue('E'.$j, $inscription->getId());
                 $sheet->setCellValue('F'.$j, $inscription->getCode());
             }
             $j++;
         }
-
-        // dd($codeAdmission, $id_anneeInscription, $id_promotionInscription);
-        // $id_anneeInscription = 638; 
-        // $id_promotionInscription = 365; 
-        // $codeAdmissions = ['ADM-CPGEA_MPSI00006590','ADM-CPGEA_MPSI00006645','ADM-CPGEA_MPSI00006593','ADM-CPGEA_MPSI00006533','ADM-CPGEA_MPSI00006644','ADM-CPGEA_MPSI00007035','ADM-CPGEA_MPSI00006532','ADM-CPGEA_MPSI00006628','ADM-CPGEA_MPSI00006631','ADM-CPGEA_MPSI00006619','ADM-CPGEA_MPSI00006522','ADM-CPGEA_MPSI00006521','ADM-CPGEA_MPSI00006524','ADM-CPGEA_MPSI00006553','ADM-CPGEA_MPSI00006564','ADM-CPGEA_MPSI00006572','ADM-CPGEA_MPSI00006727','ADM-CPGEA_MPSI00006844','ADM-CPGEA_MPSI00006761','ADM-CPGEA_MPSI00006622','ADM-CPGEA_MPSI00006603','ADM-CPGEA_MPSI00006556','ADM-CPGEA_MPSI00006508','ADM-CPGEA_MPSI00006538','ADM-CPGEA_MPSI00006791','ADM-CPGEA_MPSI00006765'];
-        // $codeAdmissions = ['ADM-CPGEA_MPSI00006590','ADM-CPGEA_MPSI00006645','ADM-CPGEA_MPSI00006593'];
-        // dd($this->em->getRepository(TAdmission::class)->findBy(['code'=>$codeAdmissions]));
-        
-        // foreach ($codeAdmissions as $code) {
-            
-            
-            
-        // }
         $fileName = "";
         if ($sheetCount > 0) {
             $writer = new Xlsx($spreadsheet);
@@ -704,13 +657,7 @@ class GestionAdmissionController extends AbstractController
             $temp_file = tempnam(sys_get_temp_dir(), $fileName);
             $writer->save($fileName);
         }
-        // $writer->save($temp_file);
-        // $writer->save($fileName);
-        // return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);
-        // $writer->save($fileName);
         return new JsonResponse(['message' => "Total des inscription crée est ".$sheetCount, 'file' => $fileName,'count'=>$sheetCount]);
-        
-        // return new JsonResponse("Bien Enregistre code inscription: " . $inscription->getCode(), 200);
     }
 
     #[Route('/canvas', name: 'reinscription_canvas')]

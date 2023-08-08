@@ -9,11 +9,14 @@ use App\Controller\DatatablesController;
 use App\Entity\AcFormation;
 use App\Entity\PFrais;
 use Doctrine\Persistence\ManagerRegistry;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 
 #[Route('/parametre/frais')]
 
@@ -170,5 +173,38 @@ class FraisController extends AbstractController
         $this->em->flush();
  
         return new JsonResponse('Frais bien Supprimer!',200);
+    }
+
+    #[Route('/ExtractionFrais', name: 'extraction_frais')]
+    public function extraction_frais() {
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        $sheet->setCellValue('A1', 'ID ETABLISSEMENT');
+        $sheet->setCellValue('B1', 'ETABLISSEMENT');
+        $sheet->setCellValue('C1', 'ID FORMATION');
+        $sheet->setCellValue('D1', 'FORMATION');
+        $sheet->setCellValue('E1', 'ID FRAIS');
+        $sheet->setCellValue('F1', 'FRAIS');
+        $sheet->setCellValue('G1', 'MONTANT');
+
+        $fraiss = $this->em->getRepository(PFrais::class)->findBy(['active'=>1],['formation'=>'ASC']);
+        // dd($fraiss);
+        $i=1;
+        foreach ($fraiss as $frais) {
+            $i++;
+            $sheet->setCellValue('A'.$i, $frais->getFormation()->getEtablissement()->getId());
+            $sheet->setCellValue('B'.$i, $frais->getFormation()->getEtablissement()->getDesignation());
+            $sheet->setCellValue('C'.$i, $frais->getFormation()->getId());
+            $sheet->setCellValue('D'.$i, $frais->getFormation()->getDesignation());
+            $sheet->setCellValue('E'.$i, $frais->getId());
+            $sheet->setCellValue('F'.$i, $frais->getDesignation());
+            $sheet->setCellValue('G'.$i, $frais->getMontant());
+        }
+        $writer = new Xlsx($spreadsheet);
+        $fileName = 'Extraction des Frais.xlsx';
+        $temp_file = tempnam(sys_get_temp_dir(), $fileName);
+        $writer->save($temp_file);
+
+        return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);
     }
 }

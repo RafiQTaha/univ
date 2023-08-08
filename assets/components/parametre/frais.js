@@ -193,6 +193,11 @@ const Toast = Swal.mixin({
         }  
         
     })
+
+    $('body').on('click','#extraction', async function (e) {
+        e.preventDefault();
+        window.open('/parametre/frais/ExtractionFrais', '_blank');
+    })
    
 })
 
