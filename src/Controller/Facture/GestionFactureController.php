@@ -642,18 +642,25 @@ class GestionFactureController extends AbstractController
             $sheet->setCellValue('Q'.$i, $montant_reglement['total']);
             $sheet->setCellValue('R'.$i, $montant['total'] - $montant_reglement['total']);
             $value ="";
-            $orgpyt = $this->em->getRepository(TOperationdet::class)->findBy(['operationcab'=>$operationcab['id'],'active'=>1,'organisme'=>103]);
-            if (count($orgpyt)) {
-                $value = 'O/P';
-            }else{
-                $pyt = $this->em->getRepository(TOperationdet::class)->findBy(['operationcab'=>$operationcab['id'],'active'=>1,'organisme'=>7]);
-                $org = $this->em->getRepository(TOperationdet::class)->FindDetNotPayant($operationcab['id']);
-                if (count($pyt) && count($org)) {
+            $opCab = $this->em->getRepository(TOperationcab::class)->find($operationcab['id']);
+            if ($opCab->getOrganisme() == "Payant") {
+                $value = 'PYT';
+            }elseif ($opCab->getOrganisme() == "Organisme") {
+                $value = 'ORG';
+            }else {
+                $orgpyt = $this->em->getRepository(TOperationdet::class)->findBy(['operationcab'=>$operationcab['id'],'active'=>1,'organisme'=>103]);
+                if (count($orgpyt)) {
                     $value = 'O/P';
-                }elseif (!count($pyt) && count($org)) {
-                    $value = 'ORG';
-                }else {
-                    $value = 'PYT';
+                }else{
+                    $pyt = $this->em->getRepository(TOperationdet::class)->findBy(['operationcab'=>$operationcab['id'],'active'=>1,'organisme'=>7]);
+                    $org = $this->em->getRepository(TOperationdet::class)->FindDetNotPayant($operationcab['id']);
+                    if (count($pyt) && count($org)) {
+                        $value = 'O/P';
+                    }elseif (!count($pyt) && count($org)) {
+                        $value = 'ORG';
+                    }else {
+                        $value = 'PYT';
+                    }
                 }
             }
             $sheet->setCellValue('S'.$i, $value);
@@ -981,28 +988,39 @@ class GestionFactureController extends AbstractController
         // dd($OrganismePayant);
         return new JsonResponse('La facture payant est bien Cree!', 200);    
     }
-    
-    // #[Route('/new_fac_organisme', name: 'new_fac_organisme')]
-    // public function new_fac_organisme(Request $request): Response
-    // {   
-    //     dd($request->get('facture'));
-    //     if (!$request->get('facture')) {
-    //         return new JsonResponse('Veuillez selection une Facture Inscription "Payant"!', 500);
-    //     }
-    //     // $operationcab = $this->em->getRepository(TOperationcab::class)->find($request->get('facture'));
-    //     // if (!$operationcab) {
-    //     //     return new JsonResponse('Facture Introuvable!', 500);   
-    //     // }
-    //     // if ($operationcab->getActive() == 0) {
-    //     //     return new JsonResponse('Facture Déja Cloturée!', 500);   
-    //     // }
-    //     // if ($operationcab->getCategorie() == 'inscription') {
-    //     //     $operationCabHorsIns = $this->em->getRepository(TOperationcab::class)->findOneBy(['categorie'=>'hors inscription','preinscription'=>$operationcab->getPreinscription()]);
-    //     //     $operationCabHorsIns->setActive(1);
-    //     // }
-    //     // $operationcab->setActive(0);
-    //     // $this->em->flush();
-    //     // return new JsonResponse('La facture est bien Valider!', 200);    
-    // }
+
+    #[Route('/facturation_reinscription', name: 'facturation_reinscription')]
+    public function facturation_reinscription(Request $request,TOperationcab $operationcab): Response
+    {   
+        $operationcabs = [];
+        foreach ($operationcabs as $operationcab) {
+            $frais =  $this->em->getRepository(PFrais::class)->find();
+            if ($frais != null) { 
+                if ($operationcab->getOrganisme() == 'Payant' ) {
+                    $org = $this->em->getRepository(POrganisme::class)->find(7);
+                }else {
+                    $org = $this->em->getRepository(POrganisme::class)->find(1);
+                }
+                $operationDet = new TOperationdet();
+                $operationDet->setOperationcab($operationcab);
+                $operationDet->setFrais($frais);
+                $operationDet->setMontant($request->get('montant'));
+                $operationDet->setCreated(new \DateTime("now"));
+                $operationDet->setRemise(0);
+                $operationDet->setActive(1);
+                $operationDet->setUserCreated($this->getUser());
+                $operationDet->setOrganisme($org);
+                $operationDet->setSynFlag(0);
+                $this->em->persist($operationDet);
+                $this->em->flush();
+                $operationDet->setCode(
+                    "OPD".str_pad($operationDet->getId(), 8, '0', STR_PAD_LEFT)
+                );
+                $operationDet->getOperationcab()->setSynFlag(0);
+                $this->em->flush();
+            }
+        }
+        return new JsonResponse(1, 200);    
+    }
 
 }
