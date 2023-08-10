@@ -57,6 +57,12 @@ class TOperationcab
     #[ORM\Column(type: 'string', length: 25, nullable: true)]
     private $organisme;
 
+    #[ORM\Column(type: 'float', nullable: true)]
+    private $annuler;
+
+    #[ORM\Column(type: 'integer', nullable: true)]
+    private $facAnnuler;
+
     public function __construct()
     {
         $this->reglements = new ArrayCollection();
@@ -268,6 +274,30 @@ class TOperationcab
     public function setOrganisme(?string $organisme): self
     {
         $this->organisme = $organisme;
+
+        return $this;
+    }
+
+    public function getAnnuler(): ?float
+    {
+        return $this->annuler;
+    }
+
+    public function setAnnuler(?float $annuler): self
+    {
+        $this->annuler = $annuler;
+
+        return $this;
+    }
+
+    public function getFacAnnuler(): ?int
+    {
+        return $this->facAnnuler;
+    }
+
+    public function setFacAnnuler(?int $facAnnuler): self
+    {
+        $this->facAnnuler = $facAnnuler;
 
         return $this;
     }

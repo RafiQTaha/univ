@@ -68,7 +68,9 @@
                     </tr>
                 </table>
             </td>
-            <td style="width: 40% ;font-size: 20px;font-weight: bold ; border-left: 1px solid #292929 ;border-right: 1px solid #292929; border-bottom: 1px solid #292929 ;color:rgb(3, 35, 68);">FACTURE </td>
+            <td style="width: 40% ;font-size: 20px;font-weight: bold ; border-left: 1px solid #292929 ;border-right: 1px solid #292929; border-bottom: 1px solid #292929 ;color:rgb(3, 35, 68);">{% if operationcab.active == 0 %} FACTURE {% else %} FACTURE PRO FORMAT
+                 {% endif %}
+              </td>
             <td style="width: 30% ;border-bottom: 1px solid #292929 ;">
                 <table style="width: 100% ; background: #FFFFFF; text-align: center" cellspacing="0">
                     <tr>

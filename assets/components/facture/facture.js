@@ -619,4 +619,44 @@ $(document).ready(function () {
   $("#facture_canvas").on("click", function () {
     window.open("/facture/factures/canvas", "_blank");
   });
+  
+  $("#ouverture_facture").on("click", async function (e) {
+    e.preventDefault();
+    if (!id_facture) {
+      Toast.fire({
+        icon: "error",
+        title: 'Veuillez selection une Facture Inscription Source "PYT"!',
+      });
+      return;
+    }
+    let formData = new FormData();
+    formData.append("facture", id_facture);
+    var res = confirm('Vous voulez vraiment ouvrir une facture ?');
+    if (res == 1) {
+      const icon = $("#ouverture_facture i");
+      icon.removeClass("fa-file-invoice-dollar").addClass("fa-spinner fa-spin");
+      try {
+        const request = await axios.post(
+          "/facture/factures/ouverture_facture",
+          formData
+        );
+        const response = request.data;
+        icon.addClass("fa-file-invoice-dollar").removeClass("fa-spinner fa-spin");
+        Toast.fire({
+          icon: "success",
+          title: response,
+        });
+        // id_facture = false
+        table_facture.ajax.reload(null, false);
+      } catch (error) {
+        console.log(error);
+        const message = error.response.data;
+        icon.addClass("fa-file-invoice-dollar").removeClass("fa-spinner fa-spin");
+        Toast.fire({
+          icon: "error",
+          title: message,
+        });
+      }
+    }
+  });
 });

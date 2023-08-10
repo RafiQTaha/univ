@@ -74,7 +74,8 @@ class GestionFactureController extends AbstractController
         $params = $request->query;
         $where = $totalRows = $sqlRequest = "";
         // $filtre = " where preins.active = 1 and preins.inscriptionValide = 1 ";
-        $filtre = " where 1=1 ";
+        $filtre = " where opcab.annuler = 0 ";
+        // $filtre = " where 1=1 ";
         
         if (!empty($params->all('columns')[0]['search']['value'])) {
             $filtre .= " and etab.id = '" . $params->all('columns')[0]['search']['value'] . "' ";
@@ -1077,6 +1078,84 @@ class GestionFactureController extends AbstractController
         $writer->save($temp_file);
 
         return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);
+    }
+
+    
+    
+    #[Route('/ouverture_facture', name: 'ouverture_facture')]
+    public function ouverture_facture(Request $request): Response
+    {   
+        // dd($request->get('facture'));
+        if (!$request->get('facture')) {
+            return new JsonResponse('Veuillez selection une Facture', 500);
+        }
+        $operationcab = $this->em->getRepository(TOperationcab::class)->find($request->get('facture'));
+        if (!$operationcab) {
+            return new JsonResponse('Facture Introuvable!', 500);   
+        }
+        if ($operationcab->getActive() == 1) {
+            return new JsonResponse('Cette facture est déja ouverte!', 500);   
+        }
+        
+        $operationcab->setActive(0);
+        $operationcab->setAnnuler(1);
+        // dd($operationcab);
+        $operationcabA = clone $operationcab;
+        $operationcabA->setCreated(new \Datetime('now')); 
+        $operationcabA->setuserCreated($this->getUser()); 
+        $operationcabA->setSynFlag(0); 
+        $operationcabA->setDateContable(date('Y')); 
+        $operationcabA->setCode($operationcab->getCode().'_A');
+        $this->em->persist($operationcabA);
+        // $this->em->flush();
+        
+        $operationcabN = clone $operationcab;
+        $operationcabN->setCreated(new \Datetime('now')); 
+        $operationcabN->setuserCreated($this->getUser()); 
+        $operationcabN->setActive(1); 
+        $operationcabN->setSynFlag(0); 
+        $operationcabN->setAnnuler(0); 
+        $operationcabN->setDateContable(date('Y')); 
+        $operationcabN->setFacAnnuler($operationcab->getId()); 
+        $this->em->persist($operationcabN);
+        $this->em->flush();
+        $etab = $operationcab->getAnnee()->getFormation()->getEtablissement()->getAbreviation();
+        $operationcabN->setCode($etab.'-FAC'.str_pad($operationcabN->getId(), 8, '0', STR_PAD_LEFT).'/'.date('Y'));
+
+        foreach ($operationcab->getOperationDets() as $det) {
+            // dd($det);
+            if ($det->getActive() == 1) {
+                $operationdetA = clone $det;
+                $operationdetA->setCreated(new \Datetime('now')); 
+                $operationdetA->setCode($det->getCode().'_A');
+                $operationdetA->setSynFlag(0); 
+                $operationdetA->setMontant(-1 * $det->getMontant()); 
+                $operationdetA->setOperationcab($operationcabA); 
+
+                $operationdetN = clone $det;
+                $operationdetN->setCreated(new \Datetime('now')); 
+                $operationdetN->setSynFlag(0); 
+                $operationdetN->setMontant($det->getMontant()); 
+                $operationdetN->setOperationcab($operationcabN); 
+
+                $this->em->persist($operationdetA);
+                $this->em->persist($operationdetN);
+                $this->em->flush();
+
+                $operationdetN->setCode(
+                    "OPD".str_pad($operationdetN->getId(), 8, '0', STR_PAD_LEFT)
+                );
+                $this->em->flush();
+            }
+        }
+
+        $reglements = $this->em->getRepository(TReglement::class)->findBy(['operation'=>$operationcab,'annuler'=>0,'synFlag'=>0]);
+        foreach ($reglements as $reglement) {
+            $reglement->setOperation($operationcabN);
+        }
+        $this->em->flush();
+        // dd($operationcab);
+        return new JsonResponse('La facture est ouverte', 200);    
     }
 
 }
