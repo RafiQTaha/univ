@@ -58,7 +58,7 @@ class TOperationcab
     private $organisme;
 
     #[ORM\Column(type: 'float', nullable: true)]
-    private $annuler;
+    private $annuler = 0;
 
     #[ORM\Column(type: 'integer', nullable: true)]
     private $facAnnuler;
