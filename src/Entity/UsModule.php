@@ -33,6 +33,9 @@ class UsModule
     #[ORM\OneToMany(mappedBy: 'module', targetEntity: UsSousModule::class)]
     private $sousModule;
 
+    #[ORM\Column(type: 'integer', nullable: true)]
+    private $ordre;
+
     public function __construct()
     {
         $this->sousModule = new ArrayCollection();
@@ -130,6 +133,18 @@ class UsModule
                 $sousModule->setModule(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getOrdre(): ?int
+    {
+        return $this->ordre;
+    }
+
+    public function setOrdre(?int $ordre): self
+    {
+        $this->ordre = $ordre;
 
         return $this;
     }

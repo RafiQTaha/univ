@@ -334,6 +334,9 @@ class GestionReglementsController extends AbstractController
     #[Route('/modifier_reglement/{id}', name: 'modifier_reglement')]
     public function ajouter_reglement(Request $request,TReglement $reglement): Response
     { 
+        if ($reglement->getSynFlag() == 1) {
+            return new JsonResponse('Reglement déja Importer!', 500);
+        }
         if ($reglement->getAnnuler() == 1) {
             return new JsonResponse('Reglement déja Annuler!', 500);
         }

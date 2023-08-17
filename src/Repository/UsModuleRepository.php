@@ -52,6 +52,7 @@ class UsModuleRepository extends ServiceEntityRepository
             ->innerJoin('u.sousModule', "sousModule")
             ->where('sousModule in (:sousModule)')
             ->setParameter('sousModule', $sousModule)
+            ->orderBy('u.ordre',"ASC")
             ->getQuery()
             ->getResult()
         ;
