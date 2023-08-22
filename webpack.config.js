@@ -86,6 +86,7 @@ Encore
     .addEntry('modalites', './assets/components/parametre/modalites.js')
     .addEntry('serieBac', './assets/components/parametre/serieBac.js')
     .addEntry('typeBac', './assets/components/parametre/typeBac.js')
+    .addEntry('semaines', './assets/components/parametre/semaines.js')
 
 
     // .addStyleEntry('login', './assets/styles/components/login/login.scss')
