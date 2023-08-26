@@ -26,7 +26,7 @@ const Toast = Swal.mixin({
             url: "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/French.json",
         },
     });
-    $("#etablissement").select2();
+    $("select").select2();
     $('body').on('click','#datatables_gestion_programmation tbody tr',function () {
         // const input = $(this).find("input");
         
@@ -42,31 +42,53 @@ const Toast = Swal.mixin({
     })
     $("#etablissement").on("change",async function(){
         const id_etab = $(this).val();
+        $(".card-header").find('#a-ouverte').text("")
         let response = ""
         if(id_etab != "") {
             const request = await axios.get('/api/formation/'+id_etab);
             response = request.data
+            table.columns().search("").draw();
             table.columns(0).search(id_etab).draw();
         } else {
-            table.columns(0).search("").draw();
+                table.columns(0).search("").draw();
         }
+        // for (let i = 1; i <= 6; i++) {
+        //     table.columns(i).search("").draw();
+        // }
         $('#formation').html(response).select2();
+        $('#promotion').html("").select2();
+        $('#annee').html("").select2();  
+        $('#semestre').html("").select2();
+        $('#module').html("").select2();
+        $('#element').html("").select2();  
     })
     $("#formation").on('change', async function (){
         const id_formation = $(this).val();
         let response = ""
+        $(".card-header").find('#a-ouverte').text("")
 
         if(id_formation != "") {
+            // table.columns(0).search($("#etablissement").val()).draw();
+            table.columns().search("").draw();
             table.columns(1).search(id_formation).draw();
             const annee_request = await axios.get('/api/anneeProgrammation/'+id_formation);
             response_annee = annee_request.data
             const request = await axios.get('/api/promotion/'+id_formation);
             response = request.data
+            const formationAndanneeOuverte = await axios.get('/api/formationAndanneeOuverte/'+id_formation);
+            $(".card-header").find('#a-ouverte').text("L'Annee Ouverte: "+formationAndanneeOuverte.data.annee)
         } else {
             table.columns(1).search("").draw();
         }
+        // for (let i = 2; i <= 6; i++) {
+        //     table.columns(i).search("").draw();
+            
+        // }
         $('#promotion').html(response).select2();
-        $('#annee').html(response_annee).select2();       
+        $('#annee').html(response_annee).select2();  
+        $('#semestre').html("").select2();
+        $('#module').html("").select2();
+        $('#element').html("").select2();  
     })
     $("#promotion").on('change', async function (){
         const id_promotion = $(this).val();
@@ -79,7 +101,12 @@ const Toast = Swal.mixin({
         } else {
             table.columns(2).search("").draw();
         }
+        // for (let i = 3; i <= 5; i++) {
+        //     table.columns(i).search("").draw();
+        // }
         $('#semestre').html(response).select2();
+        $('#module').html("").select2();
+        $('#element').html("").select2();
        
     })
     $("#semestre").on('change', async function (){
@@ -92,7 +119,11 @@ const Toast = Swal.mixin({
         } else {
             table.columns(3).search("").draw();
         }
+        // for (let i = 4; i <= 5; i++) {
+        //     table.columns(i).search("").draw();
+        // }
         $('#module').html(response).select2();
+        $('#element').html("").select2();
        
     })
     $("#module").on('change', async function (){
@@ -105,18 +136,17 @@ const Toast = Swal.mixin({
         } else {
             table.columns(4).search("").draw();
         }
+        table.columns(5).search("").draw();
         $('#element').html(response).select2();
        
     })
     $("#element").on('change', async function (){
         const id_element = $(this).val();
-
         if(id_element != "") {
             table.columns(5).search(id_element).draw();
         } else {
             table.columns(5).search("").draw();
         }
-       
     })
     $("#annee").on('change', async function (){
         const id_annee = $(this).val();
@@ -267,20 +297,19 @@ const Toast = Swal.mixin({
     })
 
     $("#duplication").on("click", async function(){
-        if(!id_programmation){
+        if($('#annee').val() == "" ){
             Toast.fire({
               icon: 'error',
-              title: 'Veuillez selectioner un enseignant!',
+              title: 'Veuillez selectioner une formation et une annee!',
             })
             return;
         }
         const icon = $("#duplication i");
         icon.removeClass('fa-clone').addClass("fa-spinner fa-spin ");
         var formData = new FormData()
-        formData.append("etablissement", etablissement);
-        formData.append("formation", formation);
-        formData.append("promotion", promotion);
-        var res = confirm('Vous voulez vraiment supprimer cette programmation ?');
+        formData.append("promotion", $('#promotion').val());
+        formData.append("annee", $('#annee').val());
+        var res = confirm('Vous voulez vraiment dupliquer les programmations ? Si oui, merci de verifier d\'abord l\'annee ouverte pour cette formation');
         if(res == 1){
             try {
                 const request = await axios.post('/parametre/programmation/duplication',formData);
@@ -289,7 +318,7 @@ const Toast = Swal.mixin({
                 icon.addClass('fa-clone').removeClass("fa-spinner fa-spin ");
                 Toast.fire({
                     icon: 'success',
-                    title: 'programmation bien Dupliqué',
+                    title: response,
                 })
             } catch (error) {
                 console.log(error, error.response);

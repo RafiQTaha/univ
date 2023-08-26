@@ -14,6 +14,7 @@ use App\Entity\PEnseignant;
 use App\Entity\PNatureEpreuve;
 use App\Entity\PrProgrammation;
 use App\Entity\TypeElement;
+use DateTime;
 use Doctrine\Persistence\ManagerRegistry;
 use Proxies\__CG__\App\Entity\AcAnnee as EntityAcAnnee;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -186,9 +187,8 @@ class ProgrammationController extends AbstractController
     #[Route('/update/{programmation}', name: 'parametre_programmation_update')]
     public function update(Request $request, PrProgrammation $programmation): Response
     {   
-        // dd($request);     
+        // dd($request->request);     
         if (empty($request->get('observation')) || empty($request->get('volume')) ||
-            $request->get('element_id') == "" || $request->get('annee_id') == "" || 
             $request->get('enseignants') == null || $request->get('nature') == "")  
         {
             return new JsonResponse('merci de remplir tout les champs!!',500);
@@ -230,28 +230,33 @@ class ProgrammationController extends AbstractController
     #[Route('/duplication', name: 'parametre_programmation_duplication')]
     public function duplication(Request $request): Response
     {   
-        $etablissement = $this->em->getRepository(AcEtablissement::class)->find($request->get("etablissement"));
-        $formation = $request->get("formation") != "" ? $this->em->getRepository(AcFormation::class)->find($request->get("formation")) : $this->em->getRepository(AcFormation::class)->findBy(['etablissement'=>$etablissement,'active'=>1]);
-        $promotion = $request->get("promotion") != "" ? $this->em->getRepository(AcPromotion::class)->find($request->get("promotion")) : $this->em->getRepository(AcPromotion::class)->findBy(['formation'=>$formation,'active'=>1]);
-        $programmations = $this->em->getRepository(PrProgrammation::class)->findProgrammationGroupByFormation($etablissement,$formation,$promotion);
-        dd($programmations);
-        // if ($formations[0]) {
-        // if($formations[0]->getAnnee()->getValidationAcademique() = 'non')
-        // $programmations = $this->em->getRepository(PrProgrammation::class)->findProgrammationsByFormation($formations[0]);
+        $annee = $this->em->getRepository(AcAnnee::class)->find($request->get("annee"));
+        $promotion = $request->get("promotion") != "" ? $this->em->getRepository(AcPromotion::class)->find($request->get("promotion")) : $this->em->getRepository(AcPromotion::class)->findBy(['formation'=>$annee->getFormation(),'active'=>1]);
+        $programmations = $this->em->getRepository(PrProgrammation::class)->findProgrammationsByFormation($annee,$promotion);
+        // dd($programmations);
+        $NewAnnee = $this->em->getRepository(AcAnnee::class)->getActiveAnneeByFormation($annee->getFormation());
+        $counter = 0;
         foreach ($programmations as $programmation) {
-            $prog = new PrProgrammation();
-            $prog->setVolume($programmation->getVolume());
-            $prog->setNatureEpreuve($programmation->getNatureEpreuve());
-            $prog->setElement($programmation->getElement());
-            $annee = $this->em->getRepository(AcAnnee::class)->getActiveAnneeByFormation($programmations->getAnnee()->getFormation());
-            // $annees = $this->em->getRepository(AcAnnee::class)->findBy(["formation"=>$programmations->getAnnee()->getFormation(),'active'=>1]);
-            dd($annee);  
-            $programmation->setAnnee($this->em->getRepository(AcAnnee::class)->find($request->get("annee_id")));
-            $programmation->setCreated(new \DateTime("now"));
-            $programmation->setUserCreated($this->getUser());
+            $progExist = $this->em->getRepository(PrProgrammation::class)->findOneBy(["annee"=>$NewAnnee,"element"=>$programmation->getElement(),"nature_epreuve"=>$programmation->getNatureEpreuve()]);
+            if (!$progExist) {
+                    $prog = clone $programmation;
+                    $prog->setAnnee($NewAnnee);
+                    $prog->setCreated(new \DateTime("now"));
+                    $prog->setUpdated(null);
+                    $prog->setUserCreated($this->getUser());
+                    foreach ($programmation->getEnseignants() as $enseignant) {
+                        $enseignant->addProgrammation($prog);
+                    }
+                    $this->em->persist($prog);
+                    $this->em->flush();
+                    $prog->setCode("PRG".str_pad($prog->getId(), 8, '0', STR_PAD_LEFT));
+                    $this->em->flush();
+                    $counter++;
+            }
         }
-        dd($programmations);
-    
-        return new JsonResponse('Programmation Bien Modifier',200);
+        if ($counter == 0) {
+            return new JsonResponse('Aucune Programmtion n\'a été dupliquer pour l\'année ouverte '.$NewAnnee->getDesignation(),500);
+        }
+        return new JsonResponse($counter.' Programmations sont Bien Dupliquer pour l\'année ouverte '.$NewAnnee->getDesignation(),200);
     }
 }
