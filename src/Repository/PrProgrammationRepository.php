@@ -47,13 +47,18 @@ class PrProgrammationRepository extends ServiceEntityRepository
         ;
     }
     */
-    public function findProgrammationsByFormation($formation)
+    public function findProgrammationsByFormation($annee,$promotion)
     {
-        return $this->createQueryBuilder('p')
-            ->innerJoin('p.annee','annee')
-            ->innerJoin('annee.formation','formation')
-            ->where('formation = :formation')
-            ->setParameter('formation', $formation)
+        return $this->createQueryBuilder('programmation')
+            ->innerJoin('programmation.element','element')
+            ->innerJoin('element.module','module')
+            ->innerJoin('module.semestre','semestre')
+            ->innerJoin('semestre.promotion','promotion')
+            ->innerJoin('programmation.annee','annee')
+            ->Where('annee in (:annee)')
+            ->AndWhere('promotion in (:promotion)')
+            ->setParameter('annee', $annee)
+            ->setParameter('promotion', $promotion)
             ->getQuery()
             ->getResult()
         ;
