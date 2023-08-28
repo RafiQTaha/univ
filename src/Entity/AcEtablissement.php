@@ -75,6 +75,9 @@ class AcEtablissement
     #[ORM\Column(type: 'string', length: 50, nullable: true)]
     private $statutEn;
 
+    #[ORM\Column(type: 'integer')]
+    private $assiduite;
+
     public function __construct()
     {
         $this->acFormations = new ArrayCollection();
@@ -396,6 +399,18 @@ class AcEtablissement
     public function setStatutEn(?string $statutEn): self
     {
         $this->statutEn = $statutEn;
+
+        return $this;
+    }
+
+    public function getAssiduite(): ?int
+    {
+        return $this->assiduite;
+    }
+
+    public function setAssiduite(int $assiduite): self
+    {
+        $this->assiduite = $assiduite;
 
         return $this;
     }
