@@ -63,6 +63,9 @@ class AcFormation
     #[ORM\OneToMany(mappedBy: 'formationSouhaitee', targetEntity: TEtudiant::class)]
     private $tEtudiants;
 
+    #[ORM\Column(type: 'integer', nullable: true)]
+    private $assiduite;
+
     public function __construct()
     {
         $this->acPromotions = new ArrayCollection();
@@ -374,6 +377,18 @@ class AcFormation
                 $tEtudiant->setFormationSouhaitee(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getAssiduite(): ?int
+    {
+        return $this->assiduite;
+    }
+
+    public function setAssiduite(?int $assiduite): self
+    {
+        $this->assiduite = $assiduite;
 
         return $this;
     }
