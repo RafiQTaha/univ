@@ -64,6 +64,12 @@ class XseanceAbsences
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $Obs;
 
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private $Categorie_si;
+
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private $Categorie_f;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -269,6 +275,30 @@ class XseanceAbsences
     public function setObs(?string $Obs): self
     {
         $this->Obs = $Obs;
+
+        return $this;
+    }
+
+    public function getCategorieSi(): ?string
+    {
+        return $this->Categorie_si;
+    }
+
+    public function setCategorieSi(?string $Categorie_si): self
+    {
+        $this->Categorie_si = $Categorie_si;
+
+        return $this;
+    }
+
+    public function getCategorieF(): ?string
+    {
+        return $this->Categorie_f;
+    }
+
+    public function setCategorieF(?string $Categorie_f): self
+    {
+        $this->Categorie_f = $Categorie_f;
 
         return $this;
     }
