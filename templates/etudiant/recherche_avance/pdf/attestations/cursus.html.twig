@@ -169,22 +169,22 @@
     </tbody>
 </table>
 {% if inscription.annee.formation.etablissement.id in [3,4] %}
-{% if inscription.annee.formation.etablissement.id == 3 %}
-    {% set la = "l'" %}
-    {% else %}
-    {% set la = "la " %}
-{% endif %}
-{% if inscription.annee.formation == 843 %}
-    {% set doc = "" %}
-    {% else %}
-    {% set doc = "Docteur en" %}
-{% endif %}
+    {% if inscription.annee.formation.etablissement.id == 3 %}
+        {% set la = "l'" %}
+        {% else %}
+        {% set la = "la " %}
+    {% endif %}
 
 
     <p style="line-height: 1.8; margin: 10px 30px;font-size:11px;">
     A suivi avec succès le cycle de licence Professionnelle de {{la}}<b>{{lastinscription.annee.formation.etablissement.designation}}</b> et a cumulé les moyennes suivantes durant son cursus universitaire :  
     </p>
 {% else %}
+    {% if inscription.annee.formation.id == 843 %}
+        {% set doc = "" %}
+        {% else %}
+        {% set doc = "Docteur en" %}
+    {% endif %}
     <p style="line-height: 1.8; margin: 10px 30px;font-size:11px;">
     A suivi avec succès le cursus universitaire de la filière <b>{{lastinscription.annee.formation.designation}}</b> et a été déclaré (e) ‘’ {{doc}} <b>{{lastinscription.annee.formation.designation}}</b>‘’ au titre de l’année académique {{lastinscription.annee.designation}} :    
     </p>
