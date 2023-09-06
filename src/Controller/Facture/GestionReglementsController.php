@@ -440,4 +440,51 @@ class GestionReglementsController extends AbstractController
     }
 
     
+    
+    #[Route('/annuler_temp', name: 'annuler_temp')]
+    public function annuler_temp(Request $request)
+    {  
+        // $id_regs = [404336,404015,404338,404333,404331,404347,404343,404345,404332,404339,404335,404344,404329,404316];
+        $id_regs = [404333,404331,404347,404343,404345,404332,404339,404335,404344,404329,404316];
+        dd(count($id_regs));
+        $count = 0;
+        foreach ($id_regs as $id) {
+            $reglement = $this->em->getRepository(TReglement::class)->find($id);
+            if (!$reglement) {
+                dd($id);
+            }
+            $reglement->setAnnuler(1);
+            $reglement->setAnnulerMotif('Autre');
+            $this->em->flush();
+            $nreglement = clone $reglement;
+            $nreglement->setUserCreated($this->getUser());
+            $nreglement->setMontant($reglement->getMontant() * -1);
+            $nreglement->setCreated(new DateTime('now'));
+            $this->em->persist($nreglement);
+            $this->em->flush();
+            $etablissement = $reglement->getOperation()->getAnnee()->getFormation()->getEtablissement()->getAbreviation();
+            $reglement->setCode($etablissement.'-REG'.str_pad($nreglement->getId(), 8, '0', STR_PAD_LEFT).'/'.date('Y'));
+            $this->em->flush();
+            $count++;
+        }
+        dd($count);
+        // if ($reglement) {
+        //     if ($reglement->getAnnuler() == 1) {
+        //         return new JsonResponse('Cette Réglement est déja annuler!', 500);
+        //     }
+        //     $reglement->setAnnuler(1);
+        //     $reglement->setAnnulerMotif('Autre');
+        //     $this->em->flush();
+        //     $nreglement = clone $reglement;
+        //     $nreglement->setUserCreated($this->getUser());
+        //     $nreglement->setMontant($reglement->getMontant() * -1);
+        //     $nreglement->setCreated(new DateTime('now'));
+        //     $this->em->persist($nreglement);
+        //     $this->em->flush();
+        //     $etablissement = $reglement->getOperation()->getAnnee()->getFormation()->getEtablissement()->getAbreviation();
+        //     $reglement->setCode($etablissement.'-REG'.str_pad($nreglement->getId(), 8, '0', STR_PAD_LEFT).'/'.date('Y'));
+        //     $this->em->flush();
+        //     return new JsonResponse('Reglement Bien Annuler',200);
+        // }
+    }
 }

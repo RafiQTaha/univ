@@ -65,6 +65,7 @@ class AnneeController extends AbstractController
         $data_saved = [];
         // dd('amine');
         $modules = $this->em->getRepository(AcModule::class)->findByPromotion($promotion, $annee);
+        // dd($modules);
         foreach ($inscriptions as $inscription) {
             $moyenne = 0;
             $moyenne_normal = 0;
@@ -660,7 +661,7 @@ class AnneeController extends AbstractController
      #[Route('/extraction_annee/{etab}', name: 'evaluation_annee_extraction_annee')]
     public function evaluationAnneeExtraction(AcEtablissement $etab,Request $request) 
     {   
-        $current_year = date('Y') - 1 .'/' .date('Y');
+        $current_year = date('m') > 7 ? date('Y').'/'.date('Y')+1 :  date('Y') - 1 .'/' .date('Y');
         $annees = $this->em->getRepository(ExAnotes::class)->getAnneeByCurrentYear($current_year, $etab->getId());
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();

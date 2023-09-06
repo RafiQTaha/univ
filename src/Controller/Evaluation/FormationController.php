@@ -67,12 +67,13 @@ class FormationController extends AbstractController
         $nbr_annee = $dataInfosGenerales['nbr_annee'];
         $data_annee = $this->em->getRepository(AcAnnee::class)->getAnnee($annee, $nbr_annee);
 
-        // dd($data_annee);
+        // dd($annee->getFormation());
         
         $promotion = $this->em->getRepository(AcPromotion::class)->findOneBy(['formation'=>$annee->getFormation(),'ordre'=>$nbr_annee]);
         $inscriptions = $this->em->getRepository(TInscription::class)->findBy(['annee'=>$annee,'promotion'=>$promotion,'statut'=>13]);
         $lastYear = $annee->getId();
        
+        // dd($promotion);
         $array_etudiants = [];
         $array_informations = [];
         $admissions = [];
@@ -238,6 +239,9 @@ class FormationController extends AbstractController
         
 
         foreach ($etudiants as $etudiant){
+            if ($etudiant['moyenne'] < 10) {
+                continue;
+            }
             $fnote = $this->em->getRepository(ExFnotes::class)->findOneByAdmission($etudiant['admission']);
             $admission = $this->em->getRepository(TAdmission::class)->find($etudiant['admission']);
             // $annee = $admission->getPreinscription()->getAnnee();

@@ -374,7 +374,7 @@ class EtudiantController extends AbstractController
         if(!$annee) {
             return new JsonResponse('Annee Introuvable!', 500);
         }
-        $exist = count($this->em->getRepository(TPreinscription::class)->findBy(['etudiant'=>$etudiant,'annee'=>$annee]));
+        $exist = count($this->em->getRepository(TPreinscription::class)->findBy(['etudiant'=>$etudiant,'annee'=>$annee,'active'=>1]));
         // dd($exist);
         if ($exist > 0) {
             return new JsonResponse("Etudiant déja une preinscription dans cette année / formation", 500);

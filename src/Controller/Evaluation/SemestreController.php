@@ -180,7 +180,7 @@ class SemestreController extends AbstractController
             'margin_left' => '5',
             'margin_right' => '5',
             'margin_top' => '50',
-            'margin_bottom' => '15',
+            'margin_bottom' => '25',
             'format' => 'A4-L',
             'margin_header' => '2',
             'margin_footer' => '2'
@@ -395,10 +395,6 @@ class SemestreController extends AbstractController
             foreach ($dataSaved as $data) {
                 $inscription = $this->em->getRepository(TInscription::class)->find($data['inscription']->getId());
                 $count_module_non_aquis = $this->em->getRepository(ExMnotes::class)->getModuleNonAquis($semestre, $inscription);
-                $semestreArray = explode(" ", trim($semestre->getDesignation()));
-                if((int) $semestreArray[1] % 2 === 0) {
-                    $count_module_non_aquis = $this->em->getRepository(ExMnotes::class)->getModuleNonAquisByYear($inscription);
-                }
                 $snote = $this->em->getRepository(ExSnotes::class)->findOneBy(['semestre' => $semestre, 'inscription' => $inscription]);
                 $data_module_min = $this->em->getRepository(ExMnotes::class)->GetModuleByCodeAnneeCodeSemstre($annee, $semestre, $inscription, 'min', 'statutDef');
                 $data_module_max = $this->em->getRepository(ExMnotes::class)->GetModuleByCodeAnneeCodeSemstre($annee, $semestre, $inscription, 'max', 'statutDef');
