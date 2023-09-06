@@ -383,6 +383,9 @@ class GestionPlanificationController extends AbstractController
         $currentyear = date('m') > 9 ? $current_year = date('Y').'/'.date('Y')+1 : $current_year = date('Y') - 1 .'/' .date('Y');
         $seances = $this->em->getRepository(PlEmptime::class)->findSeanceByCurrentYears($currentyear);
         // dd($seances);
+        if (count($seances) < 1) {
+            die('Acune seance trouvée pour cette annee universitaire');
+        }
         $sheet->fromArray(
             array_keys($seances[0]),
             null,
@@ -416,6 +419,9 @@ class GestionPlanificationController extends AbstractController
         $currentyear = date('m') > 7 ? $current_year = date('Y').'/'.date('Y')+1 : $current_year = date('Y') - 1 .'/' .date('Y');
         $seances = $this->em->getRepository(PlEmptime::class)->findSeanceByCurrentYearsAndWeek($currentyear,$semaine_id);
         // dd($seances);
+        if (count($seances) < 1) {
+            die('Acune seance trouvée pour cette semaine');
+        }
         $sheet->fromArray(
             array_keys($seances[0]),
             null,
