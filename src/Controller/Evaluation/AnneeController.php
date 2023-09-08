@@ -65,7 +65,7 @@ class AnneeController extends AbstractController
         $data_saved = [];
         // dd('amine');
         $modules = $this->em->getRepository(AcModule::class)->findByPromotion($promotion, $annee);
-        // dd($modules);
+        dd($modules[1]);
         foreach ($inscriptions as $inscription) {
             $moyenne = 0;
             $moyenne_normal = 0;
@@ -95,6 +95,7 @@ class AnneeController extends AbstractController
 
             }
             $moyenne = number_format($moyenne / $total_coef, 2, '.', ' ');
+            dd($total_coef_normal);
             $moyenneNormal = number_format($moyenne_normal / $total_coef_normal, 2, '.', ' ');
             
             array_push($data_saved, [

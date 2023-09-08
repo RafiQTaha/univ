@@ -186,45 +186,51 @@
         {% set doc = "Docteur en" %}
     {% endif %}
     <p style="line-height: 1.8; margin: 10px 30px;font-size:11px;">
-    A suivi avec succès le cursus universitaire de la filière <b>{{lastinscription.annee.formation.designation}}</b> et a été déclaré (e) ‘’ {{doc}} <b>{{lastinscription.annee.formation.designation}}</b>‘’ au titre de l’année académique {{lastinscription.annee.designation}} :    
+    A suivi avec succès le cursus universitaire de la filière <b>{{lastinscription.annee.formation.designation}}</b> et a été déclaré (e) ‘’ {{doc}} <b>{{lastinscription.annee.formation.designation}}</b>‘’ au titre de l’année académique {{lastinscription.annee.designation}}
     </p>
 {% endif %}
 
-<table style="width: 100%;font-size:12px;border: 1px solid #adadad;margin: 10px 30px;color:#000" class="tableAnnee"  cellspacing="0">   
-    <thead>
-        <tr>
-            <th style="text-align: center;line-height: 30px;background-color:#bfbfbf">ANNEE UNIVERSITAIRE</th>
-            <th style="text-align: center;line-height: 30px;background-color:#bfbfbf">NIVEAU</th>
-            <th style="text-align: center;background-color:#bfbfbf">MOYENNE ANNUELLE <br>(/20)</th>
-            <th style="text-align: center;line-height: 30px;background-color:#bfbfbf">STATUT ANNÉE</th>
-        </tr>
-    </thead>
-    <tbody>
-    {% set varColor = 0 %}
-    {% set BackColor = "fff" %}
-        {% for inscription in inscription.admission.inscriptions %}
-            {% if inscription.anotes is not null and inscription.anotes.statutAff and inscription.anotes.statutAff.id not in [44,45,46] %}
-            {% if varColor == 0 %}
-                    {% set BackColor = "#fff" %}
-                    {% set varColor = 1 %}
-                {% else %}
-                    {% set BackColor = "#f2f2f2" %}
-                    {% set varColor = 0 %}
-            {% endif %}
-                <tr style="background-color:{{BackColor}}">
-                    <td style="text-align: center;line-height: 30px">{{inscription.annee.designation}}</td>
-                    <td style="text-align: center;line-height: 30px">{{inscription.promotion.ordre}} Année</td>
-                    <td style="text-align: center;line-height: 30px;width:150px">{{inscription.anotes.noteSec|number_format(2)}}</td>
-                    <td style="text-align: center;line-height: 30px">{{inscription.anotes.statutAff.designation}}</td>
-                </tr>
-            {% endif %}
-        {% endfor %}
-    </tbody>
-</table>
+
+{% if inscription.annee.formation.id != 843 %}
+    <table style="width: 100%;font-size:12px;border: 1px solid #adadad;margin: 10px 30px;color:#000" class="tableAnnee"  cellspacing="0">   
+        <thead>
+            <tr>
+                <th style="text-align: center;line-height: 30px;background-color:#bfbfbf">ANNEE UNIVERSITAIRE</th>
+                <th style="text-align: center;line-height: 30px;background-color:#bfbfbf">NIVEAU</th>
+                <th style="text-align: center;background-color:#bfbfbf">MOYENNE ANNUELLE <br>(/20)</th>
+                <th style="text-align: center;line-height: 30px;background-color:#bfbfbf">STATUT ANNÉE</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% set varColor = 0 %}
+        {% set BackColor = "fff" %}
+            {% for inscription in inscription.admission.inscriptions %}
+                {% if inscription.anotes is not null and inscription.anotes.statutAff and inscription.anotes.statutAff.id not in [44,45,46] %}
+                {% if varColor == 0 %}
+                        {% set BackColor = "#fff" %}
+                        {% set varColor = 1 %}
+                    {% else %}
+                        {% set BackColor = "#f2f2f2" %}
+                        {% set varColor = 0 %}
+                {% endif %}
+                    <tr style="background-color:{{BackColor}}">
+                        <td style="text-align: center;line-height: 30px">{{inscription.annee.designation}}</td>
+                        <td style="text-align: center;line-height: 30px">{{inscription.promotion.ordre}} Année</td>
+                        <td style="text-align: center;line-height: 30px;width:150px">{{inscription.anotes.noteSec|number_format(2)}}</td>
+                        <td style="text-align: center;line-height: 30px">{{inscription.anotes.statutAff.designation}}</td>
+                    </tr>
+                {% endif %}
+            {% endfor %}
+        </tbody>
+    </table>
+{% endif %}
 <p style="line-height: 1.8; margin: 10px 30px;font-size:11px;">
     Cette attestation est délivrée à l&#39;intéressé(e) pour servir et valoir ce que de droit.     
 </p>
 
+{% if inscription.annee.formation.id == 843 %}
+    <br><br><br><br><br><br>
+{% endif %}
 <table style="width: 100%;font-size:10.5px;margin: 10px 30px;color:#000" align="center" cellspacing="0">
     <tbody>
         <tr>

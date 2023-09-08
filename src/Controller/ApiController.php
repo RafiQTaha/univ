@@ -113,9 +113,14 @@ class ApiController extends AbstractController
     #[Route('/enseignantsByProgramme/{element}/{nature_epreuve}', name: 'enseignantsByProgramme')]
     public function enseignantsByProgramme(AcElement $element,PNatureEpreuve $nature_epreuve): Response
     {   
+        $annee = $this->em->getRepository(AcAnnee::class)->findOneBy([
+            'formation'=>$element->getModule()->getSemestre()->getPromotion()->getFormation(),
+            'validation_academique' => 'non'
+        ]);
         $programmation = $this->em->getRepository(PrProgrammation::class)->findOneBy([
             'element'=> $element,
-            'nature_epreuve' => $nature_epreuve]
+            'nature_epreuve' => $nature_epreuve,
+            'annee' =>  $annee]
         );
         
         $data = "<option enabled value='' disabled='disabled'>Choix Enseignants</option>";
