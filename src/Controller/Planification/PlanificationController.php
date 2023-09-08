@@ -683,5 +683,91 @@ class PlanificationController extends AbstractController
         $mpdf->WriteHTML($html);
         $mpdf->Output("Fiche D'abcense.pdf", "I");
     }
+
+    
+
+    #[Route('/dupliquer_planning/{semestre}/{groupe}', name: 'dupliquer_planning')]
+    public function dupliquer_planning(AcSemestre $semestre,$groupe,Request $request): Response
+    {   
+        // return new Response('La semaine suivante introuvable, merci de verifier la list des semaines! 👩',500);
+        // dd('test');
+        // dd($request->get('nsemaine'),$request->get('crntday') , $semestre ,$groupe);
+        if ($request->get('nsemaine') != "" && $semestre) {
+            $annee = $this->em->getRepository(AcAnnee::class)->getActiveAnneeByFormation($semestre->getPromotion()->getFormation());
+            $semaine = $this->em->getRepository(Semaine::class)->findOneBy(['nsemaine'=>$request->get('nsemaine'),'anneeS'=>$annee->getDesignation()]);
+            // $semaine = $this->em->getRepository(Semaine::class)->findsemaine($request->get('nsemaine'),$request->get('crntday'));
+            if ($groupe == 0) {
+                $emptimes = $this->em->getRepository(PlEmptime::class)->getEmptimeBySemestreAndSemaine($semestre,$semaine);
+            }else{
+                $emptimes = $this->em->getRepository(PlEmptime::class)->getEmptimeBySemestreAndGroupeAndSemaine($semestre,$groupe,$semaine);
+            }
+            // dd($emptimes);
+            // $count = count($emptimesValider) + count($emptimesAnnuler);
+            if ($emptimes) {
+                $nextWeek = $this->em->getRepository(Semaine::class)->findOneBy([
+                    'nsemaine'=> $semaine->getNsemaine() == 52 ? 1 : $semaine->getNsemaine() + 1,
+                    'anneeS'=>$semaine->getAnneeS()
+                ]);
+                if (!$nextWeek) {
+                    return new Response('La semaine suivante introuvable, merci de verifier la list des semaines!',500);
+                }
+                $counter = 0;
+                foreach($emptimes as $emptime){
+                    $dDebut = $emptime->getStart()->modify('+7 days');
+                    $dFin = $emptime->getEnd()->modify('+7 days');
+                    $EmptimeExist = $this->em->getRepository(PlEmptime::class)->findBy([
+                        'programmation' => $emptime->getProgrammation(),
+                        'semaine' => $nextWeek,
+                        'active'  => 1,
+                        'start'  => $dDebut,
+                        'end'  => $dFin]);
+                    // dump($EmptimeExist);
+                    if (!$EmptimeExist) {
+                        $empenss = $this->em->getRepository(PlEmptimens::class)->findBy([
+                            'seance'=>$emptime,
+                        ]);
+                        // dd($enseignants);
+                        $newEmpTime = new PlEmptime();
+                        $newEmpTime->setProgrammation($emptime->getProgrammation());
+                        $newEmpTime->setSemaine($nextWeek);
+                        $newEmpTime->setUserCreated($this->getUser());
+                        $newEmpTime->setCreated(new DateTime('now'));
+                        $newEmpTime->setGroupe($emptime->getGroupe());
+                        $newEmpTime->setSalle($emptime->getSalle());
+                        $newEmpTime->setXsalle($emptime->getSalle());
+                        $newEmpTime->setDescription($emptime->getDescription());
+                        $newEmpTime->setDateemploi($emptime->getDateemploi());
+                        $newEmpTime->setStart($dDebut);
+                        $newEmpTime->setEnd($dFin);
+                        $newEmpTime->setHeurDb($emptime->getHeurDb());
+                        $newEmpTime->setHeurFin($emptime->getHeurFin());
+                        foreach ($empenss as $empens) {
+                            $emptimens = new PlEmptimens();
+                            $emptimens->setSeance($newEmpTime);
+                            $emptimens->setEnseignant($empens->getEnseignant());
+                            $emptimens->setGenerer(0);
+                            $emptimens->setActive(1);
+                            $emptimens->setCreated(new \DateTime('now'));
+                            $this->em->persist($emptimens);
+                        }
+                        $this->em->persist($newEmpTime);
+                        $this->em->flush();
+                        $nat = $emptime->getProgrammation()->getNatureEpreuve()->getAbreviation();
+                        $etab = $semestre->getPromotion()->getFormation()->getEtablissement()->getAbreviation();
+                        $newEmpTime->setCode($nat.'-'.$etab.str_pad($newEmpTime->getId(), 7, '0', STR_PAD_LEFT).'/'.date('Y'));
+                        $this->em->flush();
+                        $counter++;
+                    } 
+                }
+                if ($counter == 0) {
+                    return new Response('Toutes les seances sans déja dupliquer!',500);
+                }
+                return new Response('Dupliquation bien Effectuée 👍',200);
+            }else {
+                return new Response('Aucune seance trouver pour la duplication!',500);
+            }
+        }
+        return new Response('Generation Echouée',500);
+    }
     
 }

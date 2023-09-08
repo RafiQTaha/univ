@@ -565,7 +565,47 @@ $(document).ready(function () {
         }else{
             edit_groupe = $('#niveau2').val();
         }
-    })   
+    })  
+    
+    $("body").on('click','#dupliquer', async function (e){
+        e.preventDefault();
+        if(!id_semestre){
+            Toast.fire({
+                icon: 'error',
+                title: 'Vous devez choisir Semestre ou un Niveau!!',
+            })
+            return
+        }
+        //////
+        // let crntday = moment($('#calendar').fullCalendar('getDate')).format('YYYY-MM-DD')
+        var res = confirm('Vous voulez Vraiment Dupliquer les planifications de cette semaine sur la prochaine?');
+        if (res == 1) {
+            currentweek = moment($('#calendar').fullCalendar('getDate'), "MMDDYYYY").isoWeek();
+            let formData = new FormData();
+            formData.append('nsemaine',currentweek)
+            // formData.append('crntday',crntday)
+            const icon = $("#dupliquer i");
+            icon.removeClass("fa-clone").addClass("fa-spinner fa-spin");
+            try {
+                const request = await axios.post('/planification/planifications/dupliquer_planning/'+id_semestre+'/'+niv, formData);
+                // const request = await axios.post('/planification/planifications/generer_planning/107/9', formData);
+                const response = request.data;
+                alltimes()
+                Toast.fire({
+                    icon: 'success',
+                    title: response,
+                })
+                icon.addClass("fa-clone").removeClass("fa-spinner fa-spin");
+            } catch (error) {
+                const message = error.response.data;
+                Toast.fire({
+                    icon: 'error',
+                    title: message,
+                })
+                icon.addClass("fa-clone").removeClass("fa-spinner fa-spin");
+            }   
+        }
+    })
 })
 
 // const allLocales = require("../includes/local-all");

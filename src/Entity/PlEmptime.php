@@ -43,13 +43,13 @@ class PlEmptime
     private $heur_fin;
 
     #[ORM\Column(type: 'float', nullable: true)]
-    private $valider;
+    private $valider = 0;
 
     #[ORM\Column(type: 'float', nullable: true)]
-    private $annuler;
+    private $annuler = 0;
 
     #[ORM\Column(type: 'float', nullable: true)]
-    private $generer;
+    private $generer = 0;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $motif_annuler;
@@ -82,7 +82,7 @@ class PlEmptime
     private $emptimens;
 
     #[ORM\Column(type: 'float', nullable: true)]
-    private $active;
+    private $active = 1;
 
     #[ORM\OneToMany(mappedBy: 'seance', targetEntity: HHonens::class)]
     private $honenss;
