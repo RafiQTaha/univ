@@ -201,6 +201,7 @@
                 <th style="width: 100px;padding:6px;border-right:1px solid white;font-weight: bold;color:white;">BQ</th>
                 <th style="width: 100px;padding:6px;border-right:1px solid white;font-weight: bold;color:white;">Référence</th>
                 <th style="width: 90px;padding:6px;border-right:1px solid white;font-weight: bold;color:white;">Montant</th>
+                <th style="width: 90px;padding:6px;border-right:1px solid white;font-weight: bold;color:white;">Montant</th>
 
             </tr>
         </thead>
@@ -218,6 +219,7 @@
                         <td style="padding:6px;border-right:1px solid white;text-align: left;">{{reglement.banque.designation}}</td>
                         <td style="padding:6px;border-right:1px solid white;text-align: left;">{{reglement.reference}}</td>
                         <td style="padding:6px;border-right:1px solid white;text-align: right;">{{reglement.montant|number_format(2, ',', ' ')}}</td>
+                        <td style="padding:6px;border-right:1px solid white;text-align: right;">{{reglement.DateReglement|date("d/m/Y")}}</td>
                     </tr>
                     {% set i = i + 1 %}
                     {% set somme = somme + reglement.montant %}
