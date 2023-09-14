@@ -297,8 +297,22 @@ class GestionPlanificationController extends AbstractController
             'validation_academique'=>'non',
             'cloture_academique'=>'non',
         ]);
-        if( $emptime->getGroupe() != NULL){
-            $inscriptions = $this->em->getRepository(TInscription::class)->getInscriptionsByAnneeAndPromoAndGroupe($promotion,$annee,$emptime->getGroupe());
+        $groupes = [];
+        if( $emptime->getGroupe()){
+            $groupe = $emptime->getGroupe();
+            array_push($groupes,$groupe);
+            foreach ($groupe->getGroupes() as $groupe) {
+                if (!in_array($groupe, $groupes)){
+                    array_push($groupes,$groupe);
+                }
+                foreach ($groupe->getGroupes() as $groupe) {
+                    if (!in_array($groupe, $groupes)){
+                        array_push($groupes,$groupe);
+                    }
+                }
+            }
+            $inscriptions = $this->em->getRepository(TInscription::class)->getInscriptionsByAnneeAndPromoAndGroupes($promotion,$annee,$groupes);
+            // $inscriptions = $this->em->getRepository(TInscription::class)->getInscriptionsByAnneeAndPromoAndGroupe($promotion,$annee,$emptime->getGroupe());
             
         }else{
             $inscriptions = $this->em->getRepository(TInscription::class)->getInscriptionsByAnneeAndPromoNoGroup($promotion,$annee);
