@@ -3,7 +3,7 @@ const Toast = Swal.mixin({
     toast: true,
     position: 'top-end',
     showConfirmButton: false,
-    timer: 3000,
+    timer: 6000,
     timerProgressBar: true,
     didOpen: (toast) => {
         toast.addEventListener('mouseenter', Swal.stopTimer)
@@ -13,20 +13,6 @@ const Toast = Swal.mixin({
 let id_preinscription = false;
 let idpreins = [];
 let frais = [];
-// var table_preins = $("#datables_preinscription").DataTable({
-//     lengthMenu: [
-//         [10, 15, 25, 50, 100, 20000000000000],
-//         [10, 15, 25, 50, 100, "All"],
-//     ],
-//     order: [[0, "desc"]],
-//     ajax: "/preinscription/list",
-//     processing: true,
-//     serverSide: true,
-//     deferRender: true,
-//     language: {
-//     url: "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/French.json",
-//     },
-// });
 
 var table_gestion_preins = $("#datables_gestion_preinscription").DataTable({
     lengthMenu: [
@@ -319,23 +305,28 @@ $("#annulation").on('click', async (e) => {
     icon.removeClass('fa-times-circle').addClass("fa-spinner fa-spin");
     var formData = new FormData();
     formData.append('idpreins', JSON.stringify(idpreins));
-    try {
-        const request = await axios.post("/preinscription/gestion/annulation_preinscription", formData);
-        const data = await request.data;
-        Toast.fire({
-            icon: 'success',
-            title: 'Preinscription Bien Annuler',
-        })
-        idpreins = []
-        icon.addClass('fa-times-circle').removeClass("fa-spinner fa-spin");
-        table_gestion_preins.ajax.reload(null,false);
-    } catch (error) {
-        const message = error.response.data;
-        console.log(error, error.response);
-        Toast.fire({
-            icon: 'error',
-            title: 'Some Error',
-        })
+    
+    var res = confirm('Vous voulez Confirmer cette operation ?');
+    if (res == 1) {
+        try {
+            const request = await axios.post("/preinscription/gestion/annulation_preinscription", formData);
+            const data = await request.data;
+            Toast.fire({
+                icon: 'success',
+                title: data,
+            })
+            idpreins = []
+            icon.addClass('fa-times-circle').removeClass("fa-spinner fa-spin");
+            table_gestion_preins.ajax.reload(null,false);
+        } catch (error) {
+            const message = error.response.data;
+            // console.log(error, error.response);
+            Toast.fire({
+                icon: 'error',
+                title: message,
+            })
+            icon.addClass('fa-times-circle').removeClass("fa-spinner fa-spin");
+        }
     }
 })
 $("#admission").on('click', async (e) => {

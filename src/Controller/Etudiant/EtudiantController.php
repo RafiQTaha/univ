@@ -362,9 +362,9 @@ class EtudiantController extends AbstractController
         $nature = $this->em->getRepository(NatureDemande::class)->find($request->get('naturedemande'));
         $formation = $this->em->getRepository(AcFormation::class)->find($id_formation);
         if(strpos($formation->getDesignation(), 'Résidanat') === false && $formation->getEtablissement()->getId() != 25){
-            $currentYear = date('Y') - 1 .'/'.date('Y');  // means current college year
+            $currentYear = date('Y') - 1 .'/'.date('Y');  // means current year
             if($currentMonth >= 4) { // april and above
-                $currentYear = date('Y') . '/'.date('Y')+1; // means next college year
+                $currentYear = date('Y') . '/'.date('Y')+1; // means next year
             }
             $annee = $this->em->getRepository(AcAnnee::class)->findOneBy(['formation'=>$formation,'designation'=>$currentYear]);
         }else{

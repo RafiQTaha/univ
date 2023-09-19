@@ -175,4 +175,19 @@ class TOperationdetRepository extends ServiceEntityRepository
             ->getResult()
         ; 
     }
+
+    
+    public function getActiveDetByPreins($preinscription)
+    {
+        return $this->createQueryBuilder('t')
+            ->innerJoin('t.operationcab','operationcab')
+            ->innerJoin('operationcab.preinscription','preinscription')
+            ->andWhere('preinscription = :preinscription')
+            ->andWhere('t.active = 1')
+            ->setParameter('preinscription', $preinscription)
+            // ->groupBy('t.operationcab')
+            ->getQuery()
+            ->getResult()
+        ;
+    }
 }
