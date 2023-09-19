@@ -179,6 +179,12 @@ class GestionPreinscriptionController extends AbstractController
         $ids = json_decode($request->get('idpreins'));
         foreach ($ids as $id) {
             $preinscription = $this->em->getRepository(TPreinscription::class)->find($id);
+            $totalfacture = $this->em->getRepository(TOperationdet::class)->getActiveDetByPreins($preinscription);
+            $totalreglement = $this->em->getRepository(TReglement::class)->getActiveReglementByPreins($preinscription);
+            // dd($preinscription->getId(),$totalreglement);
+            if ($totalfacture || $totalreglement) {
+                return new JsonResponse("Merci d'annuler les factures d'abord pour le Code '".$preinscription->getCode()."', Merci de contacter le service Financière !", 500);
+            }
             $preinscription->setInscriptionValide(0);
             $preinscription->setActive(0);
             $preinscription->setAnnulated(new DateTime('now'));
@@ -191,7 +197,7 @@ class GestionPreinscriptionController extends AbstractController
             // $preinscription->setUpdated(New DateTime('now'));
         }
         $this->em->flush();
-        return new Response(json_encode(1));
+        return new JsonResponse('PréInscription bien Annuler.', 200);
     }
     
     #[Route('/admission_preinscription', name: 'admission_preinscription')]

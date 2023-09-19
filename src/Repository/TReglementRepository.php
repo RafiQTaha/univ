@@ -147,6 +147,21 @@ class TReglementRepository extends ServiceEntityRepository
             ->getResult()
         ;
     }
+
+    
+    public function getActiveReglementByPreins($preinscription)
+    {
+        return $this->createQueryBuilder('t')
+            ->innerJoin('t.operation','operation')
+            ->innerJoin('operation.preinscription','preinscription')
+            ->andWhere('preinscription = :preinscription')
+            ->andWhere('t.annuler = 0')
+            ->setParameter('preinscription', $preinscription)
+            // ->groupBy('t.operationcab')
+            ->getQuery()
+            ->getResult()
+        ;
+    }
     /*
     public function findOneBySomeField($value): ?TReglement
     {
