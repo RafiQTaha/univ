@@ -45,8 +45,8 @@ class FiliereController extends AbstractController
         $filtre = "where 1 = 1";   
         $columns = array(
             array( 'db' => 'filiere.id','dt' => 0),
-            array( 'db' => 'LOWER(filiere.code)','dt' => 1),
-            array( 'db' => 'LOWER(filiere.designation)','dt' => 2),
+            array( 'db' => 'upper(filiere.code)','dt' => 1),
+            array( 'db' => 'upper(filiere.designation)','dt' => 2),
             array( 'db' => 'filiere.abreviation','dt' => 3),
         );
         $sql = "SELECT " . implode(", ", DatatablesController::Pluck($columns, 'db')) . "
@@ -114,7 +114,8 @@ class FiliereController extends AbstractController
         $filiere->setActive('1');
         $this->em->persist($filiere);
         $this->em->flush();
-        $filiere->setCode("ban".str_pad($filiere->getId(), 8, '0', STR_PAD_LEFT));
+        // $filiere->setCode("ban".str_pad($filiere->getId(), 8, '0', STR_PAD_LEFT));
+        $filiere->setCode(strtolower($request->get('abreviation')));
         $this->em->flush();
 
        return new JsonResponse('filiere bien Ajouter',200);

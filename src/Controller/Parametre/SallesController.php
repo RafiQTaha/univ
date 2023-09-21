@@ -57,6 +57,7 @@ class SallesController extends AbstractController
             array( 'db' => 'upper(sal.code)','dt' => 1),
             array( 'db' => 'upper(sal.designation)','dt' => 2),
             array( 'db' => 'upper(sal.abreviation)','dt' => 3),
+            array( 'db' => 'sal.etat_pc','dt' => 4),
         );
         $sql = "SELECT " . implode(", ", DatatablesController::Pluck($columns, 'db')) . "
         from psalles sal
@@ -90,7 +91,13 @@ class SallesController extends AbstractController
             // dd($row);
             
             foreach (array_values($row) as $key => $value) {
-               
+                if ($key == 4 ) {
+                    if ($value == 1) {
+                        $value = "ACTIVE";
+                    }else {
+                        $value = "INACTIVE";
+                    }
+                }
                 $nestedData[] = $value;
                 
             }
