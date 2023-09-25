@@ -55,6 +55,7 @@ class AnneeController extends AbstractController
     {
         $order = $request->get('order');
         $annee = $this->em->getRepository(AcAnnee::class)->getActiveAnneeByFormation($promotion->getFormation());
+        // $annee = $this->em->getRepository(AcAnnee::class)->find(494);
         $verify = $this->em->getRepository(ExControle::class)->alreadyValidateAnnee($promotion, $annee);
         $check = 0; //valider cette opération
         if(!$verify){
@@ -65,6 +66,8 @@ class AnneeController extends AbstractController
         $data_saved = [];
         // dd('amine');
         $modules = $this->em->getRepository(AcModule::class)->findByPromotion($promotion, $annee);
+        // $modules=['MOD00001026','MOD00001025','MOD00001023','MOD00001024','MOD00001027','MOD00001028','MOD00001375','MOD00001035','MOD00001032','MOD00001031','MOD00001034','MOD00001029','MOD00001030','MOD00002798'];
+        // $modules = $this->em->getRepository(AcModule::class)->findBy(['code'=>$modules]);
         // dd($modules[1]);
         foreach ($inscriptions as $inscription) {
             $moyenne = 0;
@@ -138,6 +141,7 @@ class AnneeController extends AbstractController
         $semstre1 = $semestres[0];
         $semstre2 = $semestres[1];
         $annee = $this->em->getRepository(AcAnnee::class)->getActiveAnneeByFormation($promotion->getFormation());
+        // $annee = $this->em->getRepository(AcAnnee::class)->find(494);
         $infos =  [
             'dataSaved' => $dataSaved,
             'modules' => $modules,

@@ -399,9 +399,6 @@ class PlanificationController extends AbstractController
     public function planifications_calendar_edit(PlEmptime $emptime,Request $request): Response
     {
         // dd($request->get('n_semaine'));
-        if ($request->get('enseignant') == NULL) {
-            return new Response('Merci de Choisir Au Moins Un Enseignant!!',500);
-        } 
         if($emptime->getValider() != 1){
             $element = $this->em->getRepository(AcElement::class)->find($request->get('element'));
             $annee = $this->em->getRepository(AcAnnee::class)->getActiveAnneeByFormation($element->getModule()->getSemestre()->getPromotion()->getFormation());
@@ -428,6 +425,9 @@ class PlanificationController extends AbstractController
             }
             $this->em->flush();
         }
+        if ($request->get('enseignant') == NULL) {
+            return new Response('Merci de Choisir Au Moins Un Enseignant!!',500);
+        } 
         $emptime->setUserUpdated($this->getUser());
         $emptime->setUpdated(new \DateTime('now'));
         $emptimens = $this->em->getRepository(PlEmptimens::class)->findBy(['seance'=>$emptime]);
@@ -715,13 +715,16 @@ class PlanificationController extends AbstractController
                 foreach($emptimes as $emptime){
                     $dDebut = $emptime->getStart()->modify('+7 days');
                     $dFin = $emptime->getEnd()->modify('+7 days');
-                    $EmptimeExist = $this->em->getRepository(PlEmptime::class)->findBy([
+                    $EmptimeExist = $this->em->getRepository(PlEmptime::class)->findOneBy([
                         'programmation' => $emptime->getProgrammation(),
                         'semaine' => $nextWeek,
                         'active'  => 1,
                         'start'  => $dDebut,
-                        'end'  => $dFin]);
-                    // dump($EmptimeExist);
+                        'end'  => $dFin,
+                        'groupe' => $emptime->getGroupe()]);
+                        // if ($emptime->getId() == 52545) {
+                        //     dd($emptime->getId(),$EmptimeExist);
+                        // }
                     if (!$EmptimeExist) {
                         $empenss = $this->em->getRepository(PlEmptimens::class)->findBy([
                             'seance'=>$emptime,
