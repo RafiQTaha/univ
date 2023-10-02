@@ -426,7 +426,6 @@ class PlanificationController extends AbstractController
             }elseif ($request->get('edit_groupe') != 0) {
                 $emptime->setGroupe($this->em->getRepository(PGroupe::class)->find($request->get('edit_groupe')));
             }
-            $this->em->flush();
         }
         $emptime->setUserUpdated($this->getUser());
         $emptime->setUpdated(new \DateTime('now'));
