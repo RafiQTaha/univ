@@ -2,6 +2,8 @@
 
 namespace App\Controller\Inscription;
 
+
+use DateTime;
 use App\Controller\ApiController;
 use App\Controller\DatatablesController;
 use App\Entity\AcEtablissement;
@@ -226,6 +228,8 @@ class GestionGroupesController extends AbstractController
                 $inscription = $this->em->getRepository(TInscription::class)->find($sheet[0]);
                 if ($inscription != Null) {
                     $inscription->setGroupe($this->em->getRepository(PGroupe::class)->find($sheet[1]));
+                    $inscription->setUpdated(new DateTime('now'));
+                    $inscription->setUserUpdated($this->getUser());
                 }
             }else {
                 return new Response('Inscription ou Niveau Introuvable!',200);
