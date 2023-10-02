@@ -423,7 +423,6 @@ class PlanificationController extends AbstractController
             }elseif ($request->get('edit_groupe') != 0) {
                 $emptime->setGroupe($this->em->getRepository(PGroupe::class)->find($request->get('edit_groupe')));
             }
-            $this->em->flush();
         }
         if ($request->get('enseignant') == NULL) {
             return new Response('Merci de Choisir Au Moins Un Enseignant!!',500);
