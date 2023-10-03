@@ -399,9 +399,6 @@ class PlanificationController extends AbstractController
     public function planifications_calendar_edit(PlEmptime $emptime,Request $request): Response
     {
         // dd($request->get('n_semaine'));
-        if ($request->get('enseignant') == NULL) {
-            return new Response('Merci de Choisir Au Moins Un Enseignant!!',500);
-        } 
         if($emptime->getValider() != 1){
             $element = $this->em->getRepository(AcElement::class)->find($request->get('element'));
             $annee = $this->em->getRepository(AcAnnee::class)->getActiveAnneeByFormation($element->getModule()->getSemestre()->getPromotion()->getFormation());
@@ -427,6 +424,9 @@ class PlanificationController extends AbstractController
                 $emptime->setGroupe($this->em->getRepository(PGroupe::class)->find($request->get('edit_groupe')));
             }
         }
+        if ($request->get('enseignant') == NULL) {
+            return new Response('Merci de Choisir Au Moins Un Enseignant!!',500);
+        } 
         $emptime->setUserUpdated($this->getUser());
         $emptime->setUpdated(new \DateTime('now'));
         $emptimens = $this->em->getRepository(PlEmptimens::class)->findBy(['seance'=>$emptime]);
