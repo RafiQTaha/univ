@@ -223,7 +223,7 @@ class RechercheAvanceController extends AbstractController
         if (!$anote) {
             return new JsonResponse('Note Annee Introuvable!!',500);
         }
-        if (!in_array($anote->getStatutAff()->getId(), [41,42,43,44,70,73])) {
+        if (!in_array($anote->getStatutAff()->getId(), [41,42,43,70,73])) {
             return new JsonResponse('Redoublant!!',500);
         }
         $html = $this->render("etudiant/recherche_avance/pdf/attestations/reussite.html.twig", [
@@ -250,7 +250,7 @@ class RechercheAvanceController extends AbstractController
     #[Route('/attestation/reussiteAll/{inscription}', name: 'etudiant_recherche_attestation_reussite_all')]
     public function attestationReussiteAll(TInscription $inscription): Response
     {
-        ;
+        
         $inscriptions = $this->em->getRepository(TInscription::class)->getInscriptionsByAdmission($inscription->getAdmission());
         $html = "";
         $i = 1;
@@ -261,7 +261,7 @@ class RechercheAvanceController extends AbstractController
             ]);
             // ,'statutAff'=>[41,42,43,44,70,73]
             $anote = $this->em->getRepository(ExAnotes::class)->findOneBy(['inscription'=>$inscription]);
-            if ($anote and in_array($anote->getStatutAff()->getId(), [41,42,43,44,70,73])) {
+            if ($anote and in_array($anote->getStatutAff()->getId(), [41,42,43,70,73])) {
                 if ($i > 1 ) {
                     $html .= "<pagebreak>";
                 }

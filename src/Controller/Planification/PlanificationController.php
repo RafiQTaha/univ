@@ -269,7 +269,8 @@ class PlanificationController extends AbstractController
     {
         $salles = $this->em->getRepository(PSalles::class)->findBy([],['designation'=>'ASC']);
         $programmation = $emptime->getProgrammation();
-        $annee = $this->em->getRepository(AcAnnee::class)->getActiveAnneeByFormation($programmation->getElement()->getModule()->getSemestre()->getPromotion()->getFormation());
+        $annee = $programmation->getAnnee();
+        // $annee = $this->em->getRepository(AcAnnee::class)->getActiveAnneeByFormation($annee->getFormation());
         $natureepreuves = $this->em->getRepository(PNatureEpreuve::class)->findBy([],['designation'=>'ASC']);
         $modules = $this->em->getRepository(AcModule::class)->findBy(['semestre'=>$programmation->getElement()->getModule()->getSemestre(), 'active' => 1],['designation'=>'ASC']);
         $elements = $this->em->getRepository(AcElement::class)->findBy(['module'=>$programmation->getElement()->getModule(), 'active' => 1],['designation'=>'ASC']);

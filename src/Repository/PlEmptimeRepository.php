@@ -363,7 +363,11 @@ class PlEmptimeRepository extends ServiceEntityRepository
     public function findSeanceByCurrentYears($currentyear)
     {
         $sqls="SELECT DISTINCT ep.id 'seance_id',ep.code,sm.id 'semaine_id',sm.nsemaine,ann.id 'annee_id',ann.designation 'Année',etab.id 'etablissement_id',etab.designation 'Etablissement',
-        frm.id 'formation_id',frm.designation 'Formation',prm.id 'promotion_id',prm.designation 'Promotion',sem.id 'semesre_id',sem.designation 'Semestre',mdl.id 'module_id',mdl.designation 'Module',ele.id 'element_id',ele.code 'Code_element',ele.designation 'Element',ne.id 'nat_epreuve_id',ne.designation 'Nature_epreuve',te.id 'Id_Type',te.designation 'Type',date(start) 'DateSeance',ep.start 'Date_début',ep.end 'Date_fin',ep.valider,ep.generer,ep.annuler,ep.motif_annuler,s.id 'salle_id',s.code as code_salle,s.designation 'Salle',grp.id 'groupe_id',grp.niveau,epe.id 'enseignant_id',epe.code as code_enseignant,epe.nom,epe.prenom,gr.id 'grade_id',gr.code as code_grade,gr.abreviation 'Grade'
+        frm.id 'formation_id',frm.designation 'Formation',prm.id 'promotion_id',prm.designation 'Promotion',sem.id 'semesre_id',sem.designation 'Semestre',mdl.id 'module_id',
+        mdl.designation 'Module',ele.id 'element_id',ele.code 'Code_element',ele.designation 'Element',ne.id 'nat_epreuve_id',ne.designation 'Nature_epreuve',te.id 'Id_Type', te.designation 'Type',
+        DATE_FORMAT(date(start), '%Y/%m/%d') 'DateSeance', DATE_FORMAT(ep.start, '%H:%i') 'Date_début', DATE_FORMAT(ep.end, '%H:%i') 'Date_fin',time_to_sec(TIMEDIFF(ep.end,ep.start)) / 3600 'Volume Seance', 
+        ep.valider,ep.generer,ep.annuler,ep.motif_annuler,s.id 'salle_id',s.code as code_salle,s.designation 'Salle',grp.id 'groupe_id',grp.niveau,epe.id 'enseignant_id',
+        epe.code as code_enseignant,epe.nom,epe.prenom,gr.id 'grade_id',gr.code as code_grade,gr.abreviation 'Grade'
         FROM pl_emptime ep
         INNER join pr_programmation pr on pr.id = ep.programmation_id
         INNER join pnature_epreuve ne on ne.id = pr.nature_epreuve_id
@@ -381,7 +385,7 @@ class PlEmptimeRepository extends ServiceEntityRepository
         left join pgrade gr on gr.id = epe.grade_id
         LEFT JOIN psalles s ON s.id = ep.salle_id
         LEFT JOIN pgroupe grp ON grp.id = ep.groupe_id
-        WHERE ann.designation= '$currentyear' and ep.active = 1";
+        WHERE ann.designation= '$currentyear' and ep.active = 1 ";
         // dd($sqls);
         $stmts = $this->em->getConnection()->prepare($sqls);
         $resultSets = $stmts->executeQuery();

@@ -408,8 +408,10 @@ class TInscriptionRepository extends ServiceEntityRepository
     public function getInscriptionsByAdmission($admission)
     {
         return $this->createQueryBuilder('inscription')
-            ->innerJoin("inscription.admission", "admission")
+        ->innerJoin("inscription.admission", "admission")
+        ->innerJoin("inscription.statut", "statut")
             ->where("admission = :admission")
+            ->Andwhere("statut.id in (13,33)")
             ->setParameter('admission', $admission)
             ->orderBy('inscription.id', 'ASC')
             ->getQuery()
