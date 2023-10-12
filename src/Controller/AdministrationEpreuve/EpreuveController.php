@@ -899,8 +899,9 @@ class EpreuveController extends AbstractController
         $sheet = $spreadsheet->getActiveSheet();
         $i=2;
         $j=1;
-        // $currentyear = date('m') > 7 ? date('Y').'/'.date('Y')+1 : date('Y') - 1 .'/' .date('Y');
-        $currentyear = date('Y') - 1 .'/' .date('Y');
+        $currentyear = date('m') > 7 ? date('Y').'/'.date('Y')+1 : date('Y') - 1 .'/' .date('Y');
+        // dd($currentyear);
+        // $currentyear = date('Y') - 1 .'/' .date('Y');
         $epreuves = $this->em->getRepository(AcEpreuve::class)->findEpreuveValideByCurrentYear($currentyear, $etab->getId());
         // dd($epreuves);
         $sheet->fromArray(
@@ -918,8 +919,8 @@ class EpreuveController extends AbstractController
             $j++;
         }
         $writer = new Xlsx($spreadsheet);
-        // $currentyear = date('m') > 7 ? date('Y').'-'.date('Y')+1 : date('Y') - 1 .'-' .date('Y');
-        $currentyear = date('Y') - 1 .'-' .date('Y');
+        $currentyear = date('m') > 7 ? date('Y').'-'.date('Y')+1 : date('Y') - 1 .'-' .date('Y');
+        // $currentyear = date('Y') - 1 .'-' .date('Y');
         $fileName = 'Extraction Epreuves Valide '.$currentyear.'.xlsx';
         $temp_file = tempnam(sys_get_temp_dir(), $fileName);
         $writer->save($temp_file);
@@ -933,8 +934,8 @@ class EpreuveController extends AbstractController
         $sheet = $spreadsheet->getActiveSheet();
         $i=2;
         $j=1;
-        // $currentyear = date('m') > 7 ? date('Y').'/'.date('Y')+1 : date('Y') - 1 .'/' .date('Y');
-        $currentyear = date('Y') - 1 .'/' .date('Y');
+        $currentyear = date('m') > 7 ? date('Y').'/'.date('Y')+1 : date('Y') - 1 .'/' .date('Y');
+        // $currentyear = date('Y') - 1 .'/' .date('Y');
         $epreuves = $this->em->getRepository(AcEpreuve::class)->findEpreuveValideS2ByCurrentYear($currentyear, $etab->getId());
         // dd($epreuves);
         $sheet->fromArray(
