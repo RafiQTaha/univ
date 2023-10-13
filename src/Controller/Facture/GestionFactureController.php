@@ -1158,4 +1158,57 @@ class GestionFactureController extends AbstractController
         return new JsonResponse('La facture est ouverte', 200);    
     }
 
+
+    
+    #[Route('/facturationAvoirEnMasse', name: 'facturationAvoirEnMasse')]
+    public function facturationAvoirEnMasse(Request $request): Response
+    {   
+        // dd($request->get('facture'));
+        // if (!$request->get('facture')) {
+        //     return new JsonResponse('Veuillez selection une Facture', 500);
+        // }
+        $codeOperations = [];
+        $operationcabs = $this->em->getRepository(TOperationcab::class)->findBy(['code'=>$codeOperations]);
+        dd($operationcabs);
+        $counter = 0;
+        $total = 0;
+        foreach ($operationcabs as $operationcab) {
+            $operationcabN = clone $operationcab;
+            $operationcabN->setCreated(new \Datetime('now')); 
+            $operationcabN->setuserCreated($this->getUser()); 
+            $operationcabN->setActive(0); 
+            $operationcabN->setSynFlag(0); 
+            $operationcabN->setAnnuler(0); 
+            $operationcabN->setDateContable(date('Y')); 
+            $this->em->persist($operationcabN);
+            $this->em->flush();
+            $etab = $operationcab->getAnnee()->getFormation()->getEtablissement()->getAbreviation();
+            $operationcabN->setCode($etab.'-FAC'.str_pad($operationcabN->getId(), 8, '0', STR_PAD_LEFT).'/'.date('Y'));
+    
+            foreach ($operationcab->getOperationDets() as $det) {
+                // dd($det);
+                if ($det->getActive() == 1) {
+    
+                    $operationdetN = clone $det;
+                    $operationdetN->setCreated(new \Datetime('now')); 
+                    $operationdetN->setSynFlag(0); 
+                    $operationdetN->setMontant(-1 * $det->getMontant()); 
+                    $operationdetN->setOperationcab($operationcabN); 
+                    
+                    $this->em->persist($operationdetN);
+                    $this->em->flush();
+    
+                    $operationdetN->setCode(
+                        "OPD".str_pad($operationdetN->getId(), 8, '0', STR_PAD_LEFT)
+                    );
+                    $this->em->flush();
+                    $total -= $det->getMontant();
+                }
+            }
+            $counter++;
+        }
+        
+        return new JsonResponse('Montant Total: '.$total. ' ' .$counter.' Facture Bien Crée', 200);    
+    }
+
 }
