@@ -1169,7 +1169,7 @@ class GestionFactureController extends AbstractController
         // }
         $codeOperations = [];
         $operationcabs = $this->em->getRepository(TOperationcab::class)->findBy(['code'=>$codeOperations]);
-        dd($operationcabs);
+        // dd($operationcabs);
         $counter = 0;
         $total = 0;
         foreach ($operationcabs as $operationcab) {
@@ -1191,8 +1191,20 @@ class GestionFactureController extends AbstractController
     
                     $operationdetN = clone $det;
                     $operationdetN->setCreated(new \Datetime('now')); 
+                    $operationdetN->setuserCreated($this->getUser()); 
                     $operationdetN->setSynFlag(0); 
+                    // $operationdetN->setMontant($det->getMontant()); 
                     $operationdetN->setMontant(-1 * $det->getMontant()); 
+
+                    
+        // if ($operationcab->getOrganisme() == 'Payant' ) {
+        //     $org = $this->em->getRepository(POrganisme::class)->find(7);
+        // }else {
+        //     $org = $this->em->getRepository(POrganisme::class)->find(1);
+        // }
+        // // $operationDet->setOrganisme($this->em->getRepository(POrganisme::class)->find($request->get('organisme_id')));
+        // $operationDet->setOrganisme($org);
+                    $operationdetN->setOrganisme($this->em->getRepository(POrganisme::class)->find(1));
                     $operationdetN->setOperationcab($operationcabN); 
                     
                     $this->em->persist($operationdetN);
@@ -1208,7 +1220,7 @@ class GestionFactureController extends AbstractController
             $counter++;
         }
         
-        return new JsonResponse('Montant Total: '.$total. ' ' .$counter.' Facture Bien Crée', 200);    
+        return new JsonResponse('Montant Total: '.$total. ' Pour ' .$counter.' Facture Bien Crée', 200);    
     }
 
 }
