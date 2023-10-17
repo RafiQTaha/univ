@@ -1169,7 +1169,7 @@ class GestionFactureController extends AbstractController
         // }
         $codeOperations = [];
         $operationcabs = $this->em->getRepository(TOperationcab::class)->findBy(['code'=>$codeOperations]);
-        // dd($operationcabs);
+        dd($operationcabs);
         $counter = 0;
         $total = 0;
         foreach ($operationcabs as $operationcab) {
@@ -1194,7 +1194,7 @@ class GestionFactureController extends AbstractController
                     $operationdetN->setuserCreated($this->getUser()); 
                     $operationdetN->setSynFlag(0); 
                     // $operationdetN->setMontant($det->getMontant()); 
-                    $operationdetN->setMontant(-1 * $det->getMontant()); 
+                    // $operationdetN->setMontant(-1 * $det->getMontant()); 
 
                     
         // if ($operationcab->getOrganisme() == 'Payant' ) {
@@ -1202,7 +1202,7 @@ class GestionFactureController extends AbstractController
         // }else {
         //     $org = $this->em->getRepository(POrganisme::class)->find(1);
         // }
-        // // $operationDet->setOrganisme($this->em->getRepository(POrganisme::class)->find($request->get('organisme_id')));
+        // $operationDet->setOrganisme($this->em->getRepository(POrganisme::class)->find($request->get('organisme_id')));
         // $operationDet->setOrganisme($org);
                     $operationdetN->setOrganisme($this->em->getRepository(POrganisme::class)->find(1));
                     $operationdetN->setOperationcab($operationcabN); 
@@ -1214,7 +1214,7 @@ class GestionFactureController extends AbstractController
                         "OPD".str_pad($operationdetN->getId(), 8, '0', STR_PAD_LEFT)
                     );
                     $this->em->flush();
-                    $total -= $det->getMontant();
+                    $total += $det->getMontant();
                 }
             }
             $counter++;
