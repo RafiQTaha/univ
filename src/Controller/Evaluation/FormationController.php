@@ -86,7 +86,7 @@ class FormationController extends AbstractController
                 }
             }
             foreach ($admissions as $admission) {
-                // if($admission->getCode() == 'ADM-FMA_MG00000238'){
+                // if($admission->getCode() == 'ADM-CFC_DUPOP00006106'){
                     $etudiant = $admission->getPreinscription()->getEtudiant();
                     // dd($etudiant);
                     $array_informations['etudiantInfo'] = $etudiant;
@@ -99,9 +99,13 @@ class FormationController extends AbstractController
 
                     $ins = $this->em->getRepository(TInscription::class)->findBy(['admission'=>$admission],['id'=>'DESC']);
                     // dd($ins);
+                    if(count($ins) == 1 && $ins[0]->getAnotes()->getStatutAff()->getId() == 44){
+                        // dd($admission->getCode());
+                        continue;
+                    }
                     foreach($ins as $inscription){
                         $anote =$inscription->getAnotes();
-                        // dd($inscription);
+                        
                         if(!$anote){
                             array_push($array_notes , 'Actuellement');
                         }else{
@@ -111,15 +115,20 @@ class FormationController extends AbstractController
                                 $moyenneSec =($moyenneSec + $anote->getNoteSec());
                                 array_push($array_notes ,number_format($anote->getNote(), 2, '.', ' ') );
                                 $countAnote++;
-                            }    
+                            }  
                         }
+                        
                     }
                     // dd($moyenne);
+
+                    // if($admission->getCode() =="ADM-CFC_DUPOP00006106"){
+                    //     dd(count($array_informations['notes']) < $nbr_annee);
+                    // }
                     
                     $array_informations['notes'] = $array_notes;
                     $array_informations['lastYear'] = $lastYear;
-                    
                     if(count($array_informations['notes']) < $nbr_annee){
+                        // dd("hi");
                         for($i = count($array_informations['notes']); $i < $nbr_annee; $i++){
                             // dd($data_annee[$i]['id']);
                             $annee = $this->em->getRepository(AcAnnee::class)->findOneBy(['id'=>$data_annee[$i]['id']]);
@@ -162,13 +171,15 @@ class FormationController extends AbstractController
                         array_push($array_etudiants, $array_informations);
                     }
                 // }
+
+               
                 
             }
         }
 
         
         $cechekIfExistAllAnneeExist = $this->em->getRepository(ExFnotes::class)->getFnotesByAdmissions($admissions);
-        // dd($array_etudiants);
+        // dd(count($cechekIfExistAllAnneeExist) == count($admissions));
         $check = 0; //valider cette opération
         if(!$cechekIfExistAllAnneeExist && $notFullTest == 0){
             // dd('hi');
