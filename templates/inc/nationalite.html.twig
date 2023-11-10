@@ -1,6 +1,10 @@
+{% set natinalites = ['Afghane','Albanaise','Algérienne','Américaine','Andorrane','Angolaise','Anguillaise','Antiguaise et Barbudienne','Argentine','Arménienne','Arubaise','Australienne','Autrichienne','Azérie','Bahaméenne','Bahreïnienne','Bangladaise','Barbadienne','Biélorusse','Belge','Bélizienne','Béninoise','Bermudienne','Bhoutanaise','Bolivienne','Bonaire','Bosniaque','Botswanaise','Brésilienne','Britannique','Brunéienne','Bulgare','Burkinabé','Burundaise','Cambodgienne','Camerounaise','Canadienne','Canarienne','Cap-Verdienne','Caïmanaise','Centrafricaine','Tchadiene','Anglo-Normande','Chilienne','Chinoise','Christmas','Cocosienne','Colombienne','Comorienne','Congolaise','Cookienne','Costaricienne','Ivoirienne','Croate','Cubaine','Curaçao','Chypriote','Tchèque','Danoise','Djiboutienne','Dominicaine','Dominicaine','Timoraise','Équatorienne','Égyptienne','Salvadorienne','Équato-guinéenne','Érythréenne','Estonienne','Éthiopienne','Malouine','Féroïenne','Fidjienne','Finlandaise','Française','Française','Française','Française','Gabonaise','Gambienne','Géorgienne','Allemande','Ghanéene','Gibraltarienne','Britannique','Grecque','Groenlandaise','Grenadienne','Guadeloupéene','Guamanienne','Guatémaltèque','Guinéenne','Guyanaise','Haïtienne','Hawaïenne','Hondurienne','Hongkongaise','Hongroise','Islandaise','Indonésienne','Indienne','Iranienne','Irakienne','Irlandaise','Manx','Italienne','Jamaïcaine','Japonaise','Jordanienne','Kazakhe','Kényane','Kiribatienne','Nord-Coréenne','Sud-Coréenne','Koweïtienne','Kirghize','Laotienne','Lettone','Libanaise','Lesothane','Libérienne','Libyenne','Liechtensteinoise','Lituanienbne','Luxembourgeoise','Macanaise','Macédonienne','Malgache','Malaisienne','Malawienne','Maldivienne','Malienne','Maltaise','Marshallaise','Martiniquaise','Mauritanienne','Mauricienne','Mahoraise','Mexicaine','Midway','Moldave','Monégasque','Mongole','Montserratan','Marocainne','Mozambicaine','Birmane','Namibienne','Nauruane','Népalaise','Néerlandaise','Néerlandaise','Saint-Christophe-et-Niévès','Néo-Calédonienne','Néo-Zélandaise','Nicaraguayenne','Nigérienne','Nigériane','Niuéene','Norfolkienne','Norvégienne','Omanaise','Pakistanaise','Paluan','Palestinienne','Panaméenne','Papouan-Néo-Guinéenne','Paraguayenne','Péruvienne','Philippine','Pitcairnienne','Polonaise','Portugaise','Portoricaine','Qatarienne','Monténégrine','Serbe','Réunionnaise','Roumaine','Russe','Rwandaise','Saint-Barthélémy','Saint-Eustachien','Saint-Hélène','Saint-Christophe-et-Niévésien','Saint-Lucienne','Saint-Martinoise','Saint-Pierraise et Miquelonnaise','Saint-Vincentaise et Grenadine','Saipanaise','Samoane','Américaine','Saint-Marinaise','Santoméene','Saoudienne','Sénégalaise','Seychelloise','Sierra-Léonaise','Singapourienne','Slovaque','Slovène','Salomonaise','Somalienne','Sud-Africaine','Espagnole','Sri-Lankaise','Soudanaise','Surinamienne','Swazie','Suédoise','Suisse','Syrienne','Tahitienne','Taïwanaise','Tadjike','Tanzanienne','Thaïlandaise','Togolaise','Tokelauan','Tongienne','Trinidadienne et Tobagonienne','Tunisienne','Turque','Turkmène','Turque-et-Caïques','Tuvaluane','Ougandaise','Britannique','Ukrainienne','Émiratie','Américaine','Uruguayenne','Ouzbèke','Vanuatuane','Vaticanaise','Vénézuélienne','Vietnamienne','Britannique','Américaine','Wake','Wallisienne et Futunienne','Yéménite','Zaïroise','Zambienne','Zimbabwéenne'] %}
 <select class="form-control" type="text" name="nationalite" placeholder="Nationalite">
     <option value="" selected>Choix Nationalite</option>
-    <option value="Afganistan">Afghanistan</option>
+    {% for natinalite in natinalites %}
+        <option value={{natinalite}}>{{natinalite}}</option>
+    {% endfor %}
+    {# <option value="Afganistan">Afghanistan</option>
     <option value="Albania">Albania</option>
     <option value="Algeria">Algeria</option>
     <option value="American Samoa">American Samoa</option>
@@ -105,7 +109,6 @@
     <option value="Iraq">Iraq</option>
     <option value="Ireland">Ireland</option>
     <option value="Isle of Man">Isle of Man</option>
-    <option value="Israel">Israel</option>
     <option value="Italy">Italy</option>
     <option value="Jamaica">Jamaica</option>
     <option value="Japan">Japan</option>
@@ -245,5 +248,5 @@
     <option value="Yemen">Yemen</option>
     <option value="Zaire">Zaire</option>
     <option value="Zambia">Zambia</option>
-    <option value="Zimbabwe">Zimbabwe</option>
+    <option value="Zimbabwe">Zimbabwe</option> #}
 </select>
