@@ -76,7 +76,7 @@ class AcEtablissement
     private $statutEn;
 
     #[ORM\Column(type: 'integer')]
-    private $assiduite;
+    private $assiduite =0;
 
     public function __construct()
     {
