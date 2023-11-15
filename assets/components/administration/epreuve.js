@@ -957,6 +957,18 @@ $(document).ready(function  () {
         }
         window.open('/administration/epreuve/extraction_epreuve_valide_s2/'+$("#etablissementNrml").val(), '_blank');
     })
+    $('body').on('click','#extraction_epv_affilier', async function (e) {
+        e.preventDefault();
+        // const icon = $("#extraction_epv_affilier i");
+        if($("#etablissementNrml").val() == "") {
+            Toast.fire({
+                icon: 'error',
+                title: 'Veuillez selectionnez une etablissement!',
+            })
+            return;
+        }
+        window.open('/administration/epreuve/extraction_epv_affilier/'+$("#etablissementNrml").val(), '_blank');
+    })
     $('body').on('click','#open_upload_file', async function (e) {
         e.preventDefault();
         $('body #inscriptions_ids').click();

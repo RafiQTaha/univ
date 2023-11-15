@@ -961,6 +961,44 @@ class EpreuveController extends AbstractController
         return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);
     }
     
+    
+    #[Route('/extraction_epv_affilier/{etab}', name: 'extraction_epv_affilier')]
+    public function extraction_epv_affilier(AcEtablissement $etab)
+    {   
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        $i=2;
+        $j=1;
+        $currentyear = date('m') > 7 ? date('Y').'/'.date('Y')+1 : date('Y') - 1 .'/' .date('Y');
+        // $currentyear = date('Y') - 1 .'/' .date('Y');
+        $epreuves = $this->em->getRepository(AcEpreuve::class)->findEpreuveAffilierByCurrentYear($currentyear, $etab->getId());
+        if (!$epreuves) {
+            die("Aucun epreuve affilier trouve !!");
+        }
+        // dd($epreuves);
+        $sheet->fromArray(
+            array_keys($epreuves[0]),
+            null,
+            'A1'
+        );
+        foreach ($epreuves as $epreuve) {
+            $sheet->fromArray(
+                $epreuve,
+                null,
+                'A'.$i
+            );
+            $i++;
+            $j++;
+        }
+        $writer = new Xlsx($spreadsheet);
+        // $currentyear = date('m') > 7 ? date('Y').'-'.date('Y')+1 : date('Y') - 1 .'-' .date('Y');
+        $currentyear = date('Y') - 1 .'-' .date('Y');
+        $fileName = 'Extraction Epreuves Affilier '.$currentyear.'.xlsx';
+        $temp_file = tempnam(sys_get_temp_dir(), $fileName);
+        $writer->save($temp_file);
+        return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);
+    }
+    
     #[Route('/extraction_emargement/{epreuve}', name: 'administration_epreuve_emargement')]
     public function administration_epreuve_emargement(AcEpreuve $epreuve) 
     {
