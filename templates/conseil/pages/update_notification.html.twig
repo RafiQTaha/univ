@@ -1,9 +1,9 @@
 <label for="date_decision">Date de decision:</label>
 <input type="date" name="date_decision" id="Modifierdate_decision" class="form-control" value="{{notification.dateDecision|date('Y-m-d')}}">
 
-<label for="agressions">Agressions:</label>
+<label for="agressions">Qualification:</label>
 <select class="form-control" name="agressions" id="Modifieragressions">
-    <option value="">Choix Agression</option>
+    <option value="">Choix Qualification</option>
     {% for agression in agressions %}
             {# <optgroup label="{{agression.designation}}"> #}
         <option value="{{agression.id}}" {% if notification.agression is not null and agression.id == notification.agression.agression.id %}
