@@ -344,7 +344,7 @@ class GestionAdmissionController extends AbstractController
     #[Route('/inscription/{admission}', name: 'admission_inscription')]
     public function inscriptionAction(Request $request, TAdmission $admission)
     {
-        // dd($admission->getPreinscription()->getNature());
+        // dd($admission->getPreinscription()->getNature()->getId());
         $annee = $this->em->getRepository(AcAnnee::class)->find($request->get('annee_inscription'));
         $inscription = $this->em->getRepository(TInscription::class)->getActiveInscriptionByAnnee($admission,$annee);
         if ($inscription != null) {
@@ -377,8 +377,10 @@ class GestionAdmissionController extends AbstractController
         $this->em->flush();
         $inscription->setCode('INS-'. $annee->getFormation()->getEtablissement()->getAbreviation().str_pad($inscription->getId(), 8, '0', STR_PAD_LEFT).'/'.date("Y"));
         $this->em->flush();
+
         // Add New Facture Inscription
         // dd($operationcabs = $this->em->getRepository(TOperationcab::class)->findBy(['preinscription'=>$admission->getPreinscription()]));
+
         if (count($admission->getInscriptions()) > 1) {
             $operationcabs = $this->em->getRepository(TOperationcab::class)->findBy(['preinscription'=>$inscription->getAdmission()->getPreinscription()]);
             foreach($operationcabs as $operationcab){
@@ -386,9 +388,10 @@ class GestionAdmissionController extends AbstractController
             }   
         }
         $isBoursier = 0;
-        if ($admission->getPreinscription()->getNature() and $admission->getPreinscription()->getNature()->getId() == 4) {
+        if ($admission->getPreinscription()->getNature() and $admission->getPreinscription()->getNature()->getId() != 1) {
             $isBoursier = 1;
         }
+        // dd($isBoursier);
         $k = $isBoursier == 0 ? 1 : 2 ;
         // for ($i=0; $i < $k; $i++) { 
         // for ($i=0; $i < 2; $i++) { 
