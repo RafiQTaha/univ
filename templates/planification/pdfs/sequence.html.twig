@@ -44,8 +44,11 @@
             <td style="width: 25%; text-align: right;">
                 <br/>
                 {% if seance.programmation.element.module.semestre.promotion.formation.etablissement.id == 23 %}
-                    <img style=" margin-right: 75px; width: 30%;" src="./assets/img/logo/ifcp.png" alt="Logo">
+                    <img style=" margin-right: 75px; width: 30%;" src="./assets/img/logo/ifcp-2.png" alt="Logo">
+                {% elseif seance.programmation.element.module.semestre.promotion.formation.etablissement.id == 29 %}
+                    <img style=" margin-right: 75px; width: 30%;" src="./assets/img/logo/cpefms.png" alt="Logo">
                 {% else %}
+                    {# <img style=" margin-right: 75px; width: 25%;" src="./assets/img/logo/ifcp-2.png" alt="Logo">           #}
                     <img style=" margin-right: 75px; width: 25%;" src="./assets/img/logo/pdf-logo.png" alt="Logo">          
                 {% endif %}
             </td>

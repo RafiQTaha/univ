@@ -379,12 +379,12 @@ class GestionPlanificationController extends AbstractController
             'margin_left' => '5',
             'margin_right' => '5',
         ]);
-        $mpdf->SetTitle('Fiche D\'abcense');
+        $mpdf->SetTitle('Fiche De sequence');
         $mpdf->SetHTMLFooter(
             $this->render("planification/pdfs/footer.html.twig")->getContent()
         );
         $mpdf->WriteHTML($html);
-        $mpdf->Output("Fiche D'abcense.pdf", "I");
+        $mpdf->Output("Fiche De sequence.pdf", "I");
     }  
     
     #[Route('/extraction_planning', name: 'extraction_planning')]

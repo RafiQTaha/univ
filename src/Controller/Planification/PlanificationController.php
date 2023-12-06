@@ -620,12 +620,34 @@ class PlanificationController extends AbstractController
     #[Route('/GetAbsenceByGroupe/{emptime}', name: 'GetAbsenceByGroupe')]
     public function GetAbsenceByGroupe(PlEmptime $emptime)
     {   
-        
-        $promotion = $emptime->getProgrammation()->getElement()->getModule()->getSemestre()->getPromotion();
-        $annee = $this->em->getRepository(AcAnnee::class)->getActiveAnneeByFormation($promotion->getFormation());
-        $inscriptions = $this->em->getRepository(TInscription::class)->getInscriptionsByAnneeAndPromoAndGroupe($promotion,$annee,$emptime->getGroupe());
-        // $inscriptions = $this->em->getRepository(TInscription::class)->findBy(['groupe'=>$emptime->getGroupe(),
-        // 'promotion'=>$element->getModule()->getSemestre()->getPromotion(),'annee'=>$annee]);
+        $element = $emptime->getProgrammation()->getElement();
+        $promotion = $element->getModule()->getSemestre()->getPromotion();
+        $annee = $this->em->getRepository(AcAnnee::class)->findOneBy([
+            'formation'=>$promotion->getFormation(),
+            'validation_academique'=>'non',
+            'cloture_academique'=>'non',
+        ]);
+        $groupes = [];
+        if( $emptime->getGroupe()){
+            $groupe = $emptime->getGroupe();
+            array_push($groupes,$groupe);
+            foreach ($groupe->getGroupes() as $groupe) {
+                if (!in_array($groupe, $groupes)){
+                    array_push($groupes,$groupe);
+                }
+                foreach ($groupe->getGroupes() as $groupe) {
+                    if (!in_array($groupe, $groupes)){
+                        array_push($groupes,$groupe);
+                    }
+                }
+            }
+            $inscriptions = $this->em->getRepository(TInscription::class)->getInscriptionsByAnneeAndPromoAndGroupes($promotion,$annee,$groupes);
+            // $inscriptions = $this->em->getRepository(TInscription::class)->getInscriptionsByAnneeAndPromoAndGroupe($promotion,$annee,$emptime->getGroupe());
+            
+        }else{
+            $inscriptions = $this->em->getRepository(TInscription::class)->getInscriptionsByAnneeAndPromoNoGroup($promotion,$annee);
+        }
+        // $inscriptions = $this->em->getRepository(TInscription::class)->getInscriptionsByAnneeAndPromoAndGroupe($promotion,$annee,$emptime->getGroupe());
         $emptimenss = $this->em->getRepository(PlEmptimens::class)->findBy(['seance'=>$emptime]);
         $html = $this->render("planification/pdfs/absence.html.twig", [
             'inscriptions' => $inscriptions,
@@ -676,12 +698,12 @@ class PlanificationController extends AbstractController
             'margin_left' => '5',
             'margin_right' => '5',
         ]);
-        $mpdf->SetTitle('Fiche D\'abcense');
+        $mpdf->SetTitle('Fiche De sequence');
         $mpdf->SetHTMLFooter(
             $this->render("planification/pdfs/footer.html.twig")->getContent()
         );
         $mpdf->WriteHTML($html);
-        $mpdf->Output("Fiche D'abcense.pdf", "I");
+        $mpdf->Output("Fiche De sequence.pdf", "I");
     }
 
     
