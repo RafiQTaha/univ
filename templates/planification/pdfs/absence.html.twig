@@ -26,10 +26,11 @@
 </style>
 <div style="text-align: center; margin-bottom: 60px !important;">
     {% if seance.programmation.element.module.semestre.promotion.formation.etablissement.id == 23 %}
-            <img src="./assets/img/logo/ifcp-2.png" style=" width: 350px; margin: 0 auto;">    
+            <img src="./assets/img/logo/ifcp-2.png" style=" width: 150px; margin: 0 auto;">    
         {% elseif seance.programmation.element.module.semestre.promotion.formation.etablissement.id == 29 %}
-            <img src="./assets/img/logo/cpefms.png" style=" width: 350px; margin: 0 auto;">    
+            <img src="./assets/img/logo/cpefms.png" style=" width: 150px; margin: 0 auto;">    
         {% else %}
+            {# <img src="./assets/img/logo/ifcp-2.png" style=" width: 150px; margin: 0 auto;">        #}
             <img src="./assets/img/logo/pdf-logo.png" style=" width: 350px; margin: 0 auto;">       
     {% endif %}
     
