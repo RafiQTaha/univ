@@ -39,7 +39,14 @@
     <tbody>
         <tr style="width: 100%;">
             <td style="width: 80%; text-align: right;font-size:16px;font-weight: bold;padding-right:40px;">
-                <br/> Université Internationale Abulcasis des Sciences de la Santé
+                <br/> 
+                {% if seance.programmation.element.module.semestre.promotion.formation.etablissement.id == 23 %}
+                    Institut de Formation aux Carrières Paramédicales
+                {% elseif seance.programmation.element.module.semestre.promotion.formation.etablissement.id == 29 %}
+                    Centre Privé d'Excellence pour la Formation des Métiers de santé
+                {% else %}
+                    Université Internationale Abulcasis des Sciences de la Santé       
+                {% endif %}
             </td>
             <td style="width: 25%; text-align: right;">
                 <br/>
