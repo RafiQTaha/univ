@@ -25,13 +25,34 @@
 
 </style>
 <div style="text-align: center; margin-bottom: 60px !important;">
-    {% if seance.programmation.element.module.semestre.promotion.formation.etablissement.id == 23 %}
-            <img src="./assets/img/logo/ifcp-2.png" style=" width: 150px; margin: 0 auto;">    
-        {% elseif seance.programmation.element.module.semestre.promotion.formation.etablissement.id == 29 %}
-            <img src="./assets/img/logo/cpefms.png" style=" width: 150px; margin: 0 auto;">    
-        {% else %}
-            {# <img src="./assets/img/logo/ifcp-2.png" style=" width: 150px; margin: 0 auto;">        #}
-            <img src="./assets/img/logo/pdf-logo.png" style=" width: 350px; margin: 0 auto;">       
+    {% if seance.programmation.element.module.semestre.promotion.formation.etablissement.id in [23,29] %}
+            <table style="width: 100%;" align="center" cellspacing="0">
+                    <tr style="width: 100%;">
+                        <td style="width: 80%; text-align: right;font-size:16px;font-weight: bold;padding-right:40px;">
+                            <br/> 
+                            {% if seance.programmation.element.module.semestre.promotion.formation.etablissement.id == 23 %}
+                                Institut de Formation aux Carrières Paramédicales
+                            {% elseif seance.programmation.element.module.semestre.promotion.formation.etablissement.id == 29 %}
+                                Centre Privé d'Excellence pour la Formation des Métiers de santé   
+                            {% endif %}
+                        </td>
+                        <td style="width: 25%; text-align: right;">
+                            <br/>
+                            {% if seance.programmation.element.module.semestre.promotion.formation.etablissement.id == 23 %}
+                                <img style=" margin-right: 75px; width: 30%;" src="./assets/img/logo/ifcp-2.png" alt="Logo">
+                            {% elseif seance.programmation.element.module.semestre.promotion.formation.etablissement.id == 29 %}
+                                <img style=" margin-right: 75px; width: 30%;" src="./assets/img/logo/cpefms.png" alt="Logo">       
+                            {% endif %}
+                        </td>
+
+                    </tr>
+            </table>
+            {# <img src="./assets/img/logo/ifcp-2.png" style=" width: 150px; margin: 0 auto;">     #}
+        {# {% elseif seance.programmation.element.module.semestre.promotion.formation.etablissement.id == 29 %}
+            <img src="./assets/img/logo/cpefms.png" style=" width: 150px; margin: 0 auto;">     #}
+    {% else %}
+        {# <img src="./assets/img/logo/ifcp-2.png" style=" width: 150px; margin: 0 auto;">        #}
+        <img src="./assets/img/logo/pdf-logo.png" style=" width: 350px; margin: 0 auto;">       
     {% endif %}
     
 </div>
