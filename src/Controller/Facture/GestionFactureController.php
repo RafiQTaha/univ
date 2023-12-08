@@ -1176,50 +1176,52 @@ class GestionFactureController extends AbstractController
             $operationcabN = clone $operationcab;
             $operationcabN->setCreated(new \Datetime('now')); 
             $operationcabN->setuserCreated($this->getUser()); 
-            $operationcabN->setActive(0); 
+            $operationcabN->setActive(1); 
             $operationcabN->setSynFlag(0); 
             $operationcabN->setAnnuler(0); 
             $operationcabN->setDateContable(date('Y')); 
+            $operationcabN->setOrganisme('Organisme'); 
             $this->em->persist($operationcabN);
             $this->em->flush();
             $etab = $operationcab->getAnnee()->getFormation()->getEtablissement()->getAbreviation();
             $operationcabN->setCode($etab.'-FAC'.str_pad($operationcabN->getId(), 8, '0', STR_PAD_LEFT).'/'.date('Y'));
     
-            foreach ($operationcab->getOperationDets() as $det) {
-                // dd($det);
-                if ($det->getActive() == 1) {
+        //     foreach ($operationcab->getOperationDets() as $det) {
+        //         // dd($det);
+        //         if ($det->getActive() == 1) {
     
-                    $operationdetN = clone $det;
-                    $operationdetN->setCreated(new \Datetime('now')); 
-                    $operationdetN->setuserCreated($this->getUser()); 
-                    $operationdetN->setSynFlag(0); 
-                    // $operationdetN->setMontant($det->getMontant()); 
-                    // $operationdetN->setMontant(-1 * $det->getMontant()); 
+        //             $operationdetN = clone $det;
+        //             $operationdetN->setCreated(new \Datetime('now')); 
+        //             $operationdetN->setuserCreated($this->getUser()); 
+        //             $operationdetN->setSynFlag(0); 
+        //             // $operationdetN->setMontant($det->getMontant()); 
+        //             // $operationdetN->setMontant(-1 * $det->getMontant()); 
 
                     
-        // if ($operationcab->getOrganisme() == 'Payant' ) {
-        //     $org = $this->em->getRepository(POrganisme::class)->find(7);
-        // }else {
-        //     $org = $this->em->getRepository(POrganisme::class)->find(1);
-        // }
-        // $operationDet->setOrganisme($this->em->getRepository(POrganisme::class)->find($request->get('organisme_id')));
-        // $operationDet->setOrganisme($org);
-                    $operationdetN->setOrganisme($this->em->getRepository(POrganisme::class)->find(1));
-                    $operationdetN->setOperationcab($operationcabN); 
+        // // if ($operationcab->getOrganisme() == 'Payant' ) {
+        // //     $org = $this->em->getRepository(POrganisme::class)->find(7);
+        // // }else {
+        // //     $org = $this->em->getRepository(POrganisme::class)->find(1);
+        // // }
+        // // $operationDet->setOrganisme($this->em->getRepository(POrganisme::class)->find($request->get('organisme_id')));
+        // // $operationDet->setOrganisme($org);
+        //             $operationdetN->setOrganisme($this->em->getRepository(POrganisme::class)->find(1));
+        //             $operationdetN->setOperationcab($operationcabN); 
                     
-                    $this->em->persist($operationdetN);
-                    $this->em->flush();
+        //             $this->em->persist($operationdetN);
+        //             $this->em->flush();
     
-                    $operationdetN->setCode(
-                        "OPD".str_pad($operationdetN->getId(), 8, '0', STR_PAD_LEFT)
-                    );
-                    $this->em->flush();
-                    $total += $det->getMontant();
-                }
-            }
+        //             $operationdetN->setCode(
+        //                 "OPD".str_pad($operationdetN->getId(), 8, '0', STR_PAD_LEFT)
+        //             );
+        //             $this->em->flush();
+        //             $total += $det->getMontant();
+        //         }
+        //     }
             $counter++;
         }
         
+        return new JsonResponse($counter.' Facture Bien Crée', 200);    
         return new JsonResponse('Montant Total: '.$total. ' Pour ' .$counter.' Facture Bien Crée', 200);    
     }
 
