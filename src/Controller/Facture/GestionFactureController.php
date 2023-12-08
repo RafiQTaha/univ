@@ -444,7 +444,7 @@ class GestionFactureController extends AbstractController
     #[Route('/article_frais/{id}', name: 'article_frais_facture')]
     public function article_frais(Request $request,TOperationCab $operationcab): Response
     {   
-        $formation = $operationcab->getPreinscription()->getAnnee()->getFormation();
+        $formation = $operationcab->getAnnee()->getFormation();
         $categorie = $operationcab->getCategorie();
         // if ($categorie == 'hors inscription' || $categorie == 'inscription') {
         //     $frais = $this->em->getRepository(PFrais::class)->findBy(['formation'=>$formation,'active'=>1]);
