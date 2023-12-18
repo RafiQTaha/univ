@@ -367,7 +367,8 @@ class EpreuveController extends AbstractController
             }
             
             $writer = new Xlsx($spreadsheet);
-            $fileName = $element->getDesignation()."_".$element->getId().".xlsx";
+            $elementesignation =  str_replace("/", "_", $element->getDesignation());
+            $fileName = $elementesignation."_".$element->getId().".xlsx";
             $temp_file = tempnam(sys_get_temp_dir(), $fileName);
             $writer->save($temp_file);
             return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);
