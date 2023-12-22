@@ -639,7 +639,12 @@ class EpreuveController extends AbstractController
                     foreach($inscriptions as $inscription) {
                         // $moyen = false;
                         if (count($EpreuveNormals) == 1) {
-                            $moyen = $this->em->getRepository(ExGnotes::class)->findOneBy(['inscription'=>$inscription,'epreuve'=>$EpreuveNormals[0]])->getNote();
+                            $moyen = 0;
+                            $gnoteExEpreuve = $this->em->getRepository(ExGnotes::class)->findOneBy(['inscription'=>$inscription,'epreuve'=>$EpreuveNormals[0]]);
+                            if ($gnoteExEpreuve) {
+                                $moyen = $gnoteExEpreuve->getNote();
+                            }
+                            // $moyen = $this->em->getRepository(ExGnotes::class)->findOneBy(['inscription'=>$inscription,'epreuve'=>$EpreuveNormals[0]])->getNote();
                         }elseif (count($EpreuveNormals) == 2) {
                             $moyen = 0;
                             foreach ($EpreuveNormals as $EpreuveNormal) {
