@@ -648,7 +648,10 @@ class EpreuveController extends AbstractController
                         }elseif (count($EpreuveNormals) == 2) {
                             $moyen = 0;
                             foreach ($EpreuveNormals as $EpreuveNormal) {
-                                $moyen += $this->em->getRepository(ExGnotes::class)->findOneBy(['inscription'=>$inscription,'epreuve'=>$EpreuveNormal])->getNote();
+                                $gnoteExEpreuve = $this->em->getRepository(ExGnotes::class)->findOneBy(['inscription'=>$inscription,'epreuve'=>$EpreuveNormal]);
+                                if ($gnoteExEpreuve) {
+                                    $moyen += $gnoteExEpreuve->getNote();
+                                }
                             }
                             $moyen = $moyen / 2;
                         }
