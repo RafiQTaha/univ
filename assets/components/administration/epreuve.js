@@ -859,6 +859,10 @@ $(document).ready(function  () {
             const response = request.data;
             icon.addClass('fa-check').removeClass("fa-spinner fa-spin ");
             $("#modifier_epreuve-modal").modal("hide")
+            Toast.fire({
+                icon: 'success',
+                title: 'Bien modifiée.',
+            })
             tableEpreuveNormal.ajax.reload(null, false)
             tableEpreuveRattrapage.ajax.reload(null, false)
         } catch (error) {
