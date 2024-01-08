@@ -439,4 +439,64 @@ $(document).ready(function () {
         }
         window.open('/administration/epreuve/extraction_emargement/'+id_epreuve, '_blank');
     })
+
+    // modification epreuve
+    $('#modifier_epreuve').on('click', async function(e){
+        e.preventDefault();
+        if(!id_epreuve) {
+            Toast.fire({
+                icon: 'error',
+                title: 'Veuillez selection une ligne!',
+            })
+            return;
+        }
+        const icon = $("#modifier_epreuve i");
+        icon.removeClass('fa-edit').addClass("fa-spinner fa-spin");
+
+        try {
+            const request = await axios.get('/administration/epreuve/edit/'+id_epreuve);
+            const response = request.data;
+            icon.addClass('fa-edit').removeClass("fa-spinner fa-spin ");
+            $("#modifier_epreuve-modal").modal("show")
+            $("#modifier_epreuve-modal #edit_epreuve").html(response);    
+            $('select').select2();     
+        } catch (error) {
+            console.log(error)
+            const message = error.response.data;
+            Toast.fire({
+                icon: 'error',
+                title: message,
+            }) 
+            icon.addClass('fa-edit').removeClass("fa-spinner fa-spin ");
+
+        }
+    })
+    $('#edit_epreuve').on('submit', async function(e){
+        e.preventDefault();
+        
+        const icon = $("#edit_epreuve button i");
+        icon.removeClass('fa-check').addClass("fa-spinner fa-spin");
+        let formData = new FormData($(this)[0]);
+        try {
+            const request = await axios.post('/administration/epreuve/update/'+id_epreuve, formData);
+            const response = request.data;
+            icon.addClass('fa-check').removeClass("fa-spinner fa-spin ");
+            $("#modifier_epreuve-modal").modal("hide")
+            Toast.fire({
+                icon: 'success',
+                title: 'Bien modifiée.',
+            })
+            tableEpreuveNormal.ajax.reload(null, false)
+            tableEpreuveRattrapage.ajax.reload(null, false)
+        } catch (error) {
+            console.log(error)
+            const message = error.response.data;
+            Toast.fire({
+                icon: 'error',
+                title: message,
+            }) 
+            icon.addClass('fa-check').removeClass("fa-spinner fa-spin ");
+
+        }
+    })
 });
