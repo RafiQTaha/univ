@@ -159,6 +159,7 @@ class AnneeController extends AbstractController
        $annee->setClotureAcademique('oui');
        $annee->setValidationAcademique('oui');
        $annee->setCreated(new \DateTime("now"));
+       $annee->setUserCreated($this->getUser());
        $annee->setActive(1);
        $annee->setFormation($formation);
        $this->em->persist($annee);
@@ -179,6 +180,8 @@ class AnneeController extends AbstractController
             return new JsonResponse('Année déja exist!',500);
         }
         $annee->setDesignation($request->get('designation'));
+        $annee->setUserUpdated($this->getUser());
+        $annee->setUpdated(new \DateTime("now"));
         $this->em->flush();
         
         return new JsonResponse(1);
@@ -187,6 +190,8 @@ class AnneeController extends AbstractController
     public function delete(Request $request, AcAnnee $annee): Response
     {
         $annee->setActive(0);
+        $annee->setUserUpdated($this->getUser());
+        $annee->setUpdated(new \DateTime("now"));
         $this->em->flush();
         
         return new JsonResponse('Annee bien supprimer!',200);
