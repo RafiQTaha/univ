@@ -878,7 +878,6 @@ class GestionFactureController extends AbstractController
              
             $operationCabHorsIns = new TOperationcab();
             $operationCabHorsIns->setPreinscription($operationcab->getPreinscription());
-            $operationCabHorsIns->setUserCreated($this->getUser());
             $operationCabHorsIns->setAnnee($operationcab->getAnnee());
             $operationCabHorsIns->setActive(1);
             $operationCabHorsIns->setDateContable($year);
@@ -886,6 +885,7 @@ class GestionFactureController extends AbstractController
             $organisme = $operationcab->getCategorie() == 'inscription' ? 'Payant' : 'Organisme';
             $operationCabHorsIns->setCategorie($categorie);
             $operationCabHorsIns->setOrganisme($organisme);
+            $operationCabHorsIns->setUserCreated($this->getUser());
             $operationCabHorsIns->setCreated(new \DateTime("now"));
             $this->em->persist($operationCabHorsIns);
             $this->em->flush();
