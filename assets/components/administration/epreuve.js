@@ -940,38 +940,34 @@ $(document).ready(function  () {
         e.preventDefault();
         // xxxxxxxxxxxxxxxx
         // const icon = $("#extraction_epv_valide i");
+        var etab = $("#etablissementNrml").val();
         if($("#etablissementNrml").val() == "") {
-            Toast.fire({
-                icon: 'error',
-                title: 'Veuillez selectionnez une etablissement!',
-            })
-            return;
+            etab = 0;
+            
         }
-        window.open('/administration/epreuve/extraction_epreuve_valide/'+$("#etablissementNrml").val(), '_blank');
+        // console.log(etab);
+        // return;
+        window.open('/administration/epreuve/extraction_epreuve_valide/'+etab, '_blank');
     })
     $('body').on('click','#extraction_epv_valide_s2', async function (e) {
         e.preventDefault();
         // const icon = $("#extraction_epv_valide_s2 i");
+        var etab = $("#etablissementNrml").val();
         if($("#etablissementNrml").val() == "") {
-            Toast.fire({
-                icon: 'error',
-                title: 'Veuillez selectionnez une etablissement!',
-            })
-            return;
+            etab = 0;
+            
         }
-        window.open('/administration/epreuve/extraction_epreuve_valide_s2/'+$("#etablissementNrml").val(), '_blank');
+        window.open('/administration/epreuve/extraction_epreuve_valide_s2/'+etab, '_blank');
     })
     $('body').on('click','#extraction_epv_affilier', async function (e) {
         e.preventDefault();
         // const icon = $("#extraction_epv_affilier i");
+        var etab = $("#etablissementNrml").val();
         if($("#etablissementNrml").val() == "") {
-            Toast.fire({
-                icon: 'error',
-                title: 'Veuillez selectionnez une etablissement!',
-            })
-            return;
+            etab = 0;
+            
         }
-        window.open('/administration/epreuve/extraction_epv_affilier/'+$("#etablissementNrml").val(), '_blank');
+        window.open('/administration/epreuve/extraction_epv_affilier/'+etab, '_blank');
     })
     $('body').on('click','#open_upload_file', async function (e) {
         e.preventDefault();

@@ -55,11 +55,11 @@ class ExSnotesRepository extends ServiceEntityRepository
 
     public function findByAdmission($admission)
     {
-        $inscriptions = $this->em->getRepository(TInscription::class)->findby(['admission'=>$admission]);
+        $inscriptions = $this->em->getRepository(TInscription::class)->findby(['admission' => $admission]);
         $inscription = end($inscriptions);
         $formation = $inscription->getPromotion()->getFormation();
         $annee = $this->em->getRepository(AcAnnee::class)->getAnneeByFormation($formation);
-        
+
 
         return  $this->createQueryBuilder('e')
             ->innerJoin("e.inscription", 'inscription')
@@ -72,8 +72,7 @@ class ExSnotesRepository extends ServiceEntityRepository
             ->setParameter('admission', $admission)
             ->setParameter('annee_id', $annee->getId())
             ->getQuery()
-            ->getResult()
-        ;
+            ->getResult();
 
         // dd($return);
     }
@@ -81,7 +80,7 @@ class ExSnotesRepository extends ServiceEntityRepository
     public function getStatutByColumn($inscription, $semestre, $statut)
     {
         // dd('e.'.$statut);
-        if($statut == "statutDef") {
+        if ($statut == "statutDef") {
             $request = $this->createQueryBuilder('e')
                 ->select("statut.abreviation")
                 ->innerJoin("e.statutDef", "statut")
@@ -90,8 +89,7 @@ class ExSnotesRepository extends ServiceEntityRepository
                 ->setParameter('semestre', $semestre)
                 ->setParameter('inscription', $inscription)
                 ->getQuery()
-                ->getOneOrNullResult()
-            ;
+                ->getOneOrNullResult();
         } else {
             $request = $this->createQueryBuilder('e')
                 ->select("statut.abreviation")
@@ -101,12 +99,11 @@ class ExSnotesRepository extends ServiceEntityRepository
                 ->setParameter('semestre', $semestre)
                 ->setParameter('inscription', $inscription)
                 ->getQuery()
-                ->getOneOrNullResult()
-            ;
+                ->getOneOrNullResult();
         }
-        if(!$request) {
+        if (!$request) {
             return "";
-        } 
+        }
 
         return $request;
     }
@@ -114,14 +111,13 @@ class ExSnotesRepository extends ServiceEntityRepository
     {
         $request = $this->createQueryBuilder('e')
             ->select("e.note, statut.abreviation")
-            ->leftJoin("e.".$statut, "statut")
+            ->leftJoin("e." . $statut, "statut")
             ->where('e.semestre = :semestre')
             ->andWhere('e.inscription = :inscription')
             ->setParameter('semestre', $semestre)
             ->setParameter('inscription', $inscription)
             ->getQuery()
-            ->getOneOrNullResult()
-        ;
+            ->getOneOrNullResult();
         // dd($request);
         return $request['note'] . "/" . $request['abreviation'];
         // return $request;
@@ -151,11 +147,10 @@ class ExSnotesRepository extends ServiceEntityRepository
             ->setParameter('promotion', $promotion)
             ->setParameter('A', "A")
             ->groupBy("s.id")
-            ->orderBy("s.".$statut, $minOrMax)
+            ->orderBy("s." . $statut, $minOrMax)
             ->setMaxResults($limit)
             ->getQuery()
-            ->getResult()
-        ;
+            ->getResult();
     }
     public function GetCategorieSemestreByCodeAnnee($annee, $inscription)
     {
@@ -163,18 +158,19 @@ class ExSnotesRepository extends ServiceEntityRepository
             ->innerJoin("s.inscription", 'inscription')
             ->innerJoin("s.semestre", 'semestre')
             ->where("inscription = :inscription")
-            ->andWhere('inscription.annee = :annee')            
+            ->andWhere('inscription.annee = :annee')
             ->setParameter('inscription', $inscription)
             ->setParameter('annee', $annee)
             ->orderBy("s.semestre", "asc")
             ->getQuery()
-            ->getResult()
-        ;
+            ->getResult();
     }
-    
+
     public function getSemestreByCurrentYear($currentyear, $etab)
     {
-        $sqls="SELECT ex.id, etab.code as code, etab.designation as etablissement, frm.code,
+        // dd($etab);
+        $filter = $etab ? "and etab.id = $etab" : "";
+        $sqls = "SELECT ex.id, etab.code as code, etab.designation as etablissement, frm.code,
         frm.designation as formation, ann.code, ann.designation as annee, ins.code as code_ins,
         adm.code as code_adm, pre.code as code_preins, ins.code_anonymat as anonymat,
         st.code as statut, etu.nom, etu.prenom, prm.code, prm.designation as promotion,
@@ -223,7 +219,7 @@ class ExSnotesRepository extends ServiceEntityRepository
         LEFT JOIN pe_statut stsdef on stsdef.id = es.statut_def_id
         LEFT JOIN pe_statut stsaff on stsaff.id = es.statut_aff_id
         
-        where ann.designation = '$currentyear' and etab.id = $etab and frm.designation not like '%Résidanat%'";
+        where ann.designation = '$currentyear' $filter and frm.designation not like '%Résidanat%'";
         // dd($sqls);
         $stmts = $this->em->getConnection()->prepare($sqls);
         $resultSets = $stmts->executeQuery();
@@ -238,32 +234,30 @@ class ExSnotesRepository extends ServiceEntityRepository
             ->innerJoin("s.inscription", 'inscription')
             ->innerJoin("s.semestre", 'semestre')
             ->where("semestre = :semestre")
-            ->andWhere('inscription.annee = :annee')            
+            ->andWhere('inscription.annee = :annee')
             ->setParameter('semestre', $semestre)
             ->setParameter('annee', $annee)
             // ->groupBy('s.statutDef')
             ->orderBy("s.semestre", "asc")
             ->getQuery()
-            ->getResult()
-        ;
+            ->getResult();
     }
 
     //GETING INSCRIPTIONS SNOTES BY ANNEE AND SEMESTRE AND STATUT
-    public function GetSnotesByAnneeAndSemestreAndStatut($annee, $semestre,$statut)
+    public function GetSnotesByAnneeAndSemestreAndStatut($annee, $semestre, $statut)
     {
         return $this->createQueryBuilder('s')
             ->innerJoin("s.inscription", 'inscription')
             ->innerJoin("s.semestre", 'semestre')
             ->innerJoin("s.statutDef", 'def')
             ->where("semestre = :semestre")
-            ->andWhere('inscription.annee = :annee')            
-            ->andWhere('def.id in (:statut)')            
+            ->andWhere('inscription.annee = :annee')
+            ->andWhere('def.id in (:statut)')
             ->setParameter('semestre', $semestre)
             ->setParameter('annee', $annee)
             ->setParameter('statut', $statut)
             ->orderBy("s.semestre", "asc")
             ->getQuery()
-            ->getResult()
-        ;
+            ->getResult();
     }
 }

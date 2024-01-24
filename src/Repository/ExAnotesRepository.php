@@ -14,7 +14,7 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class ExAnotesRepository extends ServiceEntityRepository
 {
-    
+
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, ExAnotes::class);
@@ -53,15 +53,14 @@ class ExAnotesRepository extends ServiceEntityRepository
     public function getStatutByColumn($inscription, $statut)
     {
         // dd('e.'.$statut);
-        if($statut == "statutDef") {
+        if ($statut == "statutDef") {
             $request = $this->createQueryBuilder('e')
                 ->select("statut.abreviation")
                 ->innerJoin("e.statutDef", "statut")
                 ->where('e.inscription = :inscription')
                 ->setParameter('inscription', $inscription)
                 ->getQuery()
-                ->getOneOrNullResult()
-            ;
+                ->getOneOrNullResult();
         } else {
             $request = $this->createQueryBuilder('e')
                 ->select("statut.abreviation")
@@ -69,18 +68,17 @@ class ExAnotesRepository extends ServiceEntityRepository
                 ->where('e.inscription = :inscription')
                 ->setParameter('inscription', $inscription)
                 ->getQuery()
-                ->getOneOrNullResult()
-            ;
+                ->getOneOrNullResult();
         }
-        if(!$request) {
+        if (!$request) {
             return "";
-        } 
+        }
 
         return $request;
     }
     public function getNoteFromExAnotes($codeAdm, $annee)
     {
-        $sqls="SELECT ex.*
+        $sqls = "SELECT ex.*
         FROM `ex_anotes` ex 
         inner join tinscription ins on ins.id = ex.inscription_id
         inner join ac_annee ann on ann.id = ex.annee_id
@@ -98,7 +96,7 @@ class ExAnotesRepository extends ServiceEntityRepository
 
     public function getNoteFromExAnotesByStatut($admission)
     {
-        $sqls="SELECT ex.*
+        $sqls = "SELECT ex.*
         FROM `ex_anotes` ex 
         inner join tinscription ins on ins.id = ex.inscription_id
         inner join tadmission adm on adm.id = ins.admission_id
@@ -116,7 +114,7 @@ class ExAnotesRepository extends ServiceEntityRepository
 
     public function CalculeMoyenneNote($admission)
     {
-        $sqls="SELECT ins.id as inscriptoion, adm.id as admission, sum(note) as moyenne, sum(note_sec) as moyenneSec
+        $sqls = "SELECT ins.id as inscriptoion, adm.id as admission, sum(note) as moyenne, sum(note_sec) as moyenneSec
         FROM `ex_anotes` an
         inner join tinscription ins on ins.id = an.inscription_id
         inner join tadmission adm on adm.id = ins.admission_id
@@ -130,7 +128,9 @@ class ExAnotesRepository extends ServiceEntityRepository
 
     public function getAnneeByCurrentYear($currentyear, $etab)
     {
-        $sqls="SELECT distinct  mn.id, etab.code 'code Etablissement', etab.designation 'Etablissement', frm.code 'code Formation', frm.designation 'Formation', an.code 'code annee', an.designation 'Annee',ins.id 'id_inscription', ins.code 'code Inscription', adm.id 'id_admission', adm.code 'code Admission', pre.id 'id_preinscription', pre.code 'code Preinscription', ins.code_anonymat, ins.code_anonymat_rat, ins.statut_id 'ID Statut', etu.nom, etu.prenom,prm.code 'code Promotion', prm.designation 'Promotion', a.note 'note Annee',a.note_sec 'note_sec Annee', a.statut_s2_id 'statut_s2_id annee', st10.designation 'statut_s2 annee', a.statut_def_id 'statut_def_id annee', st11.designation 'statut_def annee' , a.statut_aff_id 'statut_aff_id annee', st12.designation 'statut_aff annee', a.categorie 'categorie annee' ,sem.code 'code Semestre', sem.designation 'Semestre', s.note 'note semestre', s.note_sec 'note_sec semestre',s.note_rachat 'note_rachat semestre', s.statut_s2_id 'statut_s2_id semestre', st7.designation 'statut_s2semestre', s.statut_def_id 'statut_def_id semestre', st8.designation 'statut_def_ semestre', s.statut_aff_id 'statut_aff_id semestre', st9.designation 'statut_aff semestre', s.categorie 'semestre categorie', mdl.code 'note Module', mdl.designation 'Module', sn.note 'note Module', sn.note_ini 'note_ini Module', sn.note_rat 'note_rat Module', sn.note_rachat 'note_rachat Module',sn.statut_s2_id 'statut_s2_id module', st4.designation 'statut_s2 module', sn.statut_def_id 'statut_def_id module',st5.designation 'statut_def module',sn.statut_aff_id 'statut_aff_id module', st6.designation 'statut_aff module',
+        // dd($etab);
+        $filter = $etab ? "and etab.id = $etab" : "";
+        $sqls = "SELECT distinct  mn.id, etab.code 'code Etablissement', etab.designation 'Etablissement', frm.code 'code Formation', frm.designation 'Formation', an.code 'code annee', an.designation 'Annee',ins.id 'id_inscription', ins.code 'code Inscription', adm.id 'id_admission', adm.code 'code Admission', pre.id 'id_preinscription', pre.code 'code Preinscription', ins.code_anonymat, ins.code_anonymat_rat, ins.statut_id 'ID Statut', etu.nom, etu.prenom,prm.code 'code Promotion', prm.designation 'Promotion', a.note 'note Annee',a.note_sec 'note_sec Annee', a.statut_s2_id 'statut_s2_id annee', st10.designation 'statut_s2 annee', a.statut_def_id 'statut_def_id annee', st11.designation 'statut_def annee' , a.statut_aff_id 'statut_aff_id annee', st12.designation 'statut_aff annee', a.categorie 'categorie annee' ,sem.code 'code Semestre', sem.designation 'Semestre', s.note 'note semestre', s.note_sec 'note_sec semestre',s.note_rachat 'note_rachat semestre', s.statut_s2_id 'statut_s2_id semestre', st7.designation 'statut_s2semestre', s.statut_def_id 'statut_def_id semestre', st8.designation 'statut_def_ semestre', s.statut_aff_id 'statut_aff_id semestre', st9.designation 'statut_aff semestre', s.categorie 'semestre categorie', mdl.code 'note Module', mdl.designation 'Module', sn.note 'note Module', sn.note_ini 'note_ini Module', sn.note_rat 'note_rat Module', sn.note_rachat 'note_rachat Module',sn.statut_s2_id 'statut_s2_id module', st4.designation 'statut_s2 module', sn.statut_def_id 'statut_def_id module',st5.designation 'statut_def module',sn.statut_aff_id 'statut_aff_id module', st6.designation 'statut_aff module',
         ele.code 'code Element', ele.designation 'Element', ele.coefficient, ele.coefficient_epreuve,mn.mcc, mn.ccr, case when (mn.mcc is null and mn.ccr is null) then '' when (mn.mcc>mn.ccr or mn.ccr is null) then mn.mcc else mn.ccr end 'cc_max',
         
         mn.cc_rachat, mn.mtp, mn.tpr, case when (mn.mtp is null and mn.tpr is null) then '' when (mn.mtp>mn.tpr or mn.tpr is null) then mn.mtp else mn.tpr end 'tp_max', mn.tp_rachat,
@@ -190,7 +190,7 @@ class ExAnotesRepository extends ServiceEntityRepository
         left join pe_statut st11 on st11.id = a.statut_def_id
         
         left join pe_statut st12 on st12.id = a.statut_aff_id
-        where an.designation = '$currentyear' and etab.id = $etab and frm.designation not like '%Résidanat%'";
+        where an.designation = '$currentyear' $filter and frm.designation not like '%Résidanat%'";
         // dd($sqls);
         $stmts = $this->em->getConnection()->prepare($sqls);
         $resultSets = $stmts->executeQuery();
