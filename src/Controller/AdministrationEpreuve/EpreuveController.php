@@ -38,18 +38,16 @@ class EpreuveController extends AbstractController
     public function __construct(ManagerRegistry $doctrine)
     {
         $this->em = $doctrine->getManager();
-        
     }
     #[Route('/', name: 'administration_epreuve')]
     public function index(Request $request): Response
     {
         //check if user has access to this page
         $operations = ApiController::check($this->getUser(), 'administration_epreuve', $this->em, $request);
-        if(!$operations) {
+        if (!$operations) {
             return $this->render("errors/403.html.twig");
-
         }
-        $etablissements =  $this->em->getRepository(AcEtablissement::class)->findBy(['active'=>1]);
+        $etablissements =  $this->em->getRepository(AcEtablissement::class)->findBy(['active' => 1]);
         $natureEpreuves = $this->em->getRepository(PNatureEpreuve::class)->findAll();
         $enseignants = $this->em->getRepository(PEnseignant::class)->findAll();
         return $this->render('administration_epreuve/epreuve.html.twig', [
@@ -58,7 +56,6 @@ class EpreuveController extends AbstractController
             'natureEpreuves' => $natureEpreuves,
             'enseignants' => $enseignants,
         ]);
-        
     }
 
     #[Route('/list/normal', name: 'administration_epreuve_list_normal')]
@@ -66,9 +63,9 @@ class EpreuveController extends AbstractController
     {
         $params = $request->query;
         $where = $totalRows = $sqlRequest = "";
-        $filtre = "where 1 = 1 and an.validation_academique = 'non' and nepv.nature = 'normale'";   
+        $filtre = "where 1 = 1 and an.validation_academique = 'non' and nepv.nature = 'normale'";
         // dd($params->all('columns')[0]);
-        
+
         // if (!empty($params->all('columns')[0]['search']['value'])) {
         //     // dd("in");
         //     $filtre .= " and etab.id = '" . $params->all('columns')[0]['search']['value'] . "' ";
@@ -82,42 +79,42 @@ class EpreuveController extends AbstractController
         // if (!empty($params->all('columns')[3]['search']['value'])) {
         //     $filtre .= " and an.id = '" . $params->all('columns')[3]['search']['value'] . "' ";
         // }   
-        
+
         if (!empty($params->all('columns')[0]['search']['value'])) {
             $filtre .= " and etab.id = '" . $params->all('columns')[0]['search']['value'] . "' ";
         }
         if (!empty($params->all('columns')[1]['search']['value'])) {
             $filtre .= " and frm.id = '" . $params->all('columns')[1]['search']['value'] . "' ";
-        }   
+        }
         if (!empty($params->all('columns')[2]['search']['value'])) {
             $filtre .= " and prm.id = '" . $params->all('columns')[2]['search']['value'] . "' ";
-        }   
+        }
         if (!empty($params->all('columns')[3]['search']['value'])) {
             $filtre .= " and sem.id = '" . $params->all('columns')[3]['search']['value'] . "' ";
-        }   
+        }
         if (!empty($params->all('columns')[4]['search']['value'])) {
             $filtre .= " and mdl.id = '" . $params->all('columns')[4]['search']['value'] . "' ";
-        }   
+        }
         if (!empty($params->all('columns')[5]['search']['value'])) {
             $filtre .= " and ele.id = '" . $params->all('columns')[5]['search']['value'] . "' ";
-        }   
+        }
         if (!empty($params->all('columns')[6]['search']['value'])) {
             $filtre .= " and epv.date_epreuve = '" . $params->all('columns')[6]['search']['value'] . "' ";
         }
 
         $columns = array(
-            array( 'db' => 'epv.id','dt' => 0),
-            array( 'db' => 'right (epv.code , 10)','dt' => 1),
-            array( 'db' => 'epv.date_epreuve','dt' => 2),
-            array( 'db' => 'nepv.abreviation','dt' => 3),
-            array( 'db' => 'left(mdl.designation , 8)','dt' => 4),
-            array( 'db' => 'left(ele.designation , 8)','dt' => 5),
-            array( 'db' => 'UPPER(etab.abreviation)','dt' => 6),
-            array( 'db' => 'UPPER(frm.abreviation)','dt' => 7),
-            array( 'db' => 'UPPER(prm.designation)','dt' => 8),
-            array( 'db' => 'CONCAT(ens.nom," ",ens.prenom)','dt' => 9),
-            array( 'db' => 'st.designation','dt' => 10),
-            array( 'db' => 'users.username','dt' => 11), 
+            array('db' => 'epv.id', 'dt' => 0),
+            array('db' => 'right (epv.code , 10)', 'dt' => 1),
+            array('db' => 'epv.date_epreuve', 'dt' => 2),
+            array('db' => 'nepv.abreviation', 'dt' => 3),
+            array('db' => 'left(mdl.designation , 8)', 'dt' => 4),
+            array('db' => 'left(ele.designation , 8)', 'dt' => 5),
+            array('db' => 'UPPER(etab.abreviation)', 'dt' => 6),
+            array('db' => 'UPPER(frm.abreviation)', 'dt' => 7),
+            array('db' => 'UPPER(prm.designation)', 'dt' => 8),
+            array('db' => 'CONCAT(ens.nom," ",ens.prenom)', 'dt' => 9),
+            array('db' => 'st.designation', 'dt' => 10),
+            array('db' => 'users.username', 'dt' => 11),
         );
         $sql = "SELECT " . implode(", ", DatatablesController::Pluck($columns, 'db')) . "
         
@@ -135,8 +132,7 @@ class EpreuveController extends AbstractController
         INNER JOIN pnature_epreuve nepv ON nepv.id = epv.nature_epreuve_id  
         INNER JOIN pstatut st on st.id = epv.statut_id
     
-        $filtre "
-        ;
+        $filtre ";
         // dd($sql);
         $totalRows .= $sql;
         $sqlRequest .= $sql;
@@ -145,7 +141,7 @@ class EpreuveController extends AbstractController
         $totalRecords = count($newstmt->fetchAll());
         // dd($sql);
         $my_columns = DatatablesController::Pluck($columns, 'db');
-        
+
         // search 
         $where = DatatablesController::Search($request, $columns);
         if (isset($where) && $where != '') {
@@ -153,13 +149,13 @@ class EpreuveController extends AbstractController
         }
         // dd($sql);
         $changed_column = $params->all('order')[0]['column'] > 0 ? $params->all('order')[0]['column'] - 1 : 0;
-        $sqlRequest .= " ORDER BY " .DatatablesController::Pluck($columns, 'db')[$changed_column] . "   " . $params->all('order')[0]['dir'] . "  LIMIT " . $params->get('start') . " ," . $params->get('length') . " ";
+        $sqlRequest .= " ORDER BY " . DatatablesController::Pluck($columns, 'db')[$changed_column] . "   " . $params->all('order')[0]['dir'] . "  LIMIT " . $params->get('start') . " ," . $params->get('length') . " ";
         // $sqlRequest .= DatatablesController::Order($request, $columns);
         $stmt = $this->em->getConnection()->prepare($sqlRequest);
         $resultSet = $stmt->executeQuery();
         $result = $resultSet->fetchAll();
-        
-        
+
+
         $data = array();
         // dd($result);
         $i = 1;
@@ -170,9 +166,9 @@ class EpreuveController extends AbstractController
             $nestedData[] = $cd;
             $username = "";
             // dd($row);
-            
+
             foreach (array_values($row) as $key => $value) {
-                if($key > 0) {
+                if ($key > 0) {
                     $nestedData[] = $value;
                 }
             }
@@ -191,7 +187,7 @@ class EpreuveController extends AbstractController
             "draw" => intval($params->get('draw')),
             "recordsTotal" => intval($totalRecords),
             "recordsFiltered" => intval($totalRecords),
-            "data" => $data   
+            "data" => $data
         );
         // die;
         return new Response(json_encode($json_data));
@@ -201,9 +197,9 @@ class EpreuveController extends AbstractController
     {
         $params = $request->query;
         $where = $totalRows = $sqlRequest = "";
-        $filtre = "where 1 = 1 and an.validation_academique = 'non' and nepv.nature = 'rattrapage'";   
+        $filtre = "where 1 = 1 and an.validation_academique = 'non' and nepv.nature = 'rattrapage'";
         // dd($params->all('columns')[0]);
-        
+
         // if (!empty($params->all('columns')[0]['search']['value'])) {
         //     // dd("in");
         //     $filtre .= " and etab.id = '" . $params->all('columns')[0]['search']['value'] . "' ";
@@ -217,44 +213,44 @@ class EpreuveController extends AbstractController
         // if (!empty($params->all('columns')[3]['search']['value'])) {
         //     $filtre .= " and an.id = '" . $params->all('columns')[3]['search']['value'] . "' ";
         // }
-        
+
         if (!empty($params->all('columns')[0]['search']['value'])) {
             $filtre .= " and etab.id = '" . $params->all('columns')[0]['search']['value'] . "' ";
         }
         if (!empty($params->all('columns')[1]['search']['value'])) {
             $filtre .= " and frm.id = '" . $params->all('columns')[1]['search']['value'] . "' ";
-        }   
+        }
         if (!empty($params->all('columns')[2]['search']['value'])) {
             $filtre .= " and prm.id = '" . $params->all('columns')[2]['search']['value'] . "' ";
-        }   
+        }
         if (!empty($params->all('columns')[3]['search']['value'])) {
             $filtre .= " and sem.id = '" . $params->all('columns')[3]['search']['value'] . "' ";
-        }   
+        }
         if (!empty($params->all('columns')[4]['search']['value'])) {
             $filtre .= " and mdl.id = '" . $params->all('columns')[4]['search']['value'] . "' ";
-        }   
+        }
         if (!empty($params->all('columns')[5]['search']['value'])) {
             $filtre .= " and ele.id = '" . $params->all('columns')[5]['search']['value'] . "' ";
-        }   
+        }
         if (!empty($params->all('columns')[6]['search']['value'])) {
             $filtre .= " and epv.date_epreuve = '" . $params->all('columns')[6]['search']['value'] . "' ";
         }
 
         $columns = array(
-            array( 'db' => 'epv.id','dt' => 0),
-            array( 'db' => 'right (epv.code , 10)','dt' => 1),
-            array( 'db' => 'epv.date_epreuve','dt' => 2),
-            array( 'db' => 'nepv.abreviation','dt' => 3),
-            array( 'db' => 'left(mdl.designation , 8)','dt' => 4),
-            array( 'db' => 'left(ele.designation , 8)','dt' => 5),
-            array( 'db' => 'UPPER(etab.abreviation)','dt' => 6),
-            array( 'db' => 'UPPER(frm.abreviation)','dt' => 7),
-            array( 'db' => 'UPPER(prm.designation)','dt' => 8),
-            array( 'db' => 'CONCAT(ens.nom," ",ens.prenom)','dt' => 9),
-            array( 'db' => 'st.designation','dt' => 10),
-            array( 'db' => 'users.username','dt' => 11),
-           
-            
+            array('db' => 'epv.id', 'dt' => 0),
+            array('db' => 'right (epv.code , 10)', 'dt' => 1),
+            array('db' => 'epv.date_epreuve', 'dt' => 2),
+            array('db' => 'nepv.abreviation', 'dt' => 3),
+            array('db' => 'left(mdl.designation , 8)', 'dt' => 4),
+            array('db' => 'left(ele.designation , 8)', 'dt' => 5),
+            array('db' => 'UPPER(etab.abreviation)', 'dt' => 6),
+            array('db' => 'UPPER(frm.abreviation)', 'dt' => 7),
+            array('db' => 'UPPER(prm.designation)', 'dt' => 8),
+            array('db' => 'CONCAT(ens.nom," ",ens.prenom)', 'dt' => 9),
+            array('db' => 'st.designation', 'dt' => 10),
+            array('db' => 'users.username', 'dt' => 11),
+
+
         );
         $sql = "SELECT " . implode(", ", DatatablesController::Pluck($columns, 'db')) . "
         
@@ -272,8 +268,7 @@ class EpreuveController extends AbstractController
         INNER JOIN pnature_epreuve nepv ON nepv.id = epv.nature_epreuve_id  
         INNER JOIN pstatut st on st.id = epv.statut_id
     
-        $filtre "
-        ;
+        $filtre ";
         // dd($sql);
         $totalRows .= $sql;
         $sqlRequest .= $sql;
@@ -282,21 +277,21 @@ class EpreuveController extends AbstractController
         $totalRecords = count($newstmt->fetchAll());
         // dd($sql);
         $my_columns = DatatablesController::Pluck($columns, 'db');
-            
+
         // search 
         $where = DatatablesController::Search($request, $columns);
         if (isset($where) && $where != '') {
             $sqlRequest .= $where;
         }
         $changed_column = $params->all('order')[0]['column'] > 0 ? $params->all('order')[0]['column'] - 1 : 0;
-        $sqlRequest .= " ORDER BY " .DatatablesController::Pluck($columns, 'db')[$changed_column] . "   " . $params->all('order')[0]['dir'] . "  LIMIT " . $params->get('start') . " ," . $params->get('length') . " ";
+        $sqlRequest .= " ORDER BY " . DatatablesController::Pluck($columns, 'db')[$changed_column] . "   " . $params->all('order')[0]['dir'] . "  LIMIT " . $params->get('start') . " ," . $params->get('length') . " ";
         // $sqlRequest .= DatatablesController::Order($request, $columns);
         // dd($sqlRequest);
         $stmt = $this->em->getConnection()->prepare($sqlRequest);
         $resultSet = $stmt->executeQuery();
         $result = $resultSet->fetchAll();
-        
-        
+
+
         $data = array();
         // dd($result);
         $i = 1;
@@ -307,9 +302,9 @@ class EpreuveController extends AbstractController
             $nestedData[] = $cd;
             $username = "";
             // dd($row);
-            
+
             foreach (array_values($row) as $key => $value) {
-                if($key > 0) {
+                if ($key > 0) {
                     $nestedData[] = $value;
                 }
             }
@@ -328,14 +323,15 @@ class EpreuveController extends AbstractController
             "draw" => intval($params->get('draw')),
             "recordsTotal" => intval($totalRecords),
             "recordsFiltered" => intval($totalRecords),
-            "data" => $data   
+            "data" => $data
         );
         // die;
         return new Response(json_encode($json_data));
     }
 
     #[Route('/canvas', name: 'administration_epreuve_canvas')]
-    public function epreuveCanvas() {
+    public function epreuveCanvas()
+    {
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
         $sheet->setCellValue('A1', 'coefficient');
@@ -356,20 +352,21 @@ class EpreuveController extends AbstractController
         return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);
     }
     #[Route('/import', name: 'administration_epreuve_import')]
-    public function epreuveEnMasse(Request $request, SluggerInterface $slugger) {
+    public function epreuveEnMasse(Request $request, SluggerInterface $slugger)
+    {
         $file = $request->files->get('file');
         // dd($file);
-        if(!$file){
-            return new JsonResponse('Prière d\'importer le fichier',500);
+        if (!$file) {
+            return new JsonResponse('Prière d\'importer le fichier', 500);
         }
-        if($file->guessExtension() !== 'xlsx'){
-            return new JsonResponse('Prière d\'enregister un fichier xlsx', 500);            
+        if ($file->guessExtension() !== 'xlsx') {
+            return new JsonResponse('Prière d\'enregister un fichier xlsx', 500);
         }
 
         $originalFilename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
         // this is needed to safely include the file name as part of the URL
         $safeFilename = $slugger->slug($originalFilename);
-        $newFilename = $safeFilename.'-'.uniqid().'_'.$this->getUser()->getId().'.'.$file->guessExtension();
+        $newFilename = $safeFilename . '-' . uniqid() . '_' . $this->getUser()->getId() . '.' . $file->guessExtension();
 
         // Move the file to the directory where brochures are stored
         try {
@@ -381,7 +378,7 @@ class EpreuveController extends AbstractController
             throw new \Exception($e);
         }
         $reader = new reader();
-        $spreadsheet = $reader->load($this->getParameter('epreuve_create_directory').'/'.$newFilename);
+        $spreadsheet = $reader->load($this->getParameter('epreuve_create_directory') . '/' . $newFilename);
         $worksheet = $spreadsheet->getActiveSheet();
         $spreadSheetArys = $worksheet->toArray();
 
@@ -429,83 +426,83 @@ class EpreuveController extends AbstractController
             $epreuve->addEnseignant(
                 $this->em->getRepository(PEnseignant::class)->find($sheet[4])
             );
-            $epreuve->setCode('EPV-'.$annee->getFormation()->getEtablissement()->getAbreviation().str_pad($epreuve->getId(), 8, '0', STR_PAD_LEFT).'/'.date('Y'));     
+            $epreuve->setCode('EPV-' . $annee->getFormation()->getEtablissement()->getAbreviation() . str_pad($epreuve->getId(), 8, '0', STR_PAD_LEFT) . '/' . date('Y'));
             $this->em->flush();
-            
-            ApiController::mouchard($this->getUser(), $this->em,$epreuve, 'AcEpreuve', 'Importation Epreuve');
+
+            ApiController::mouchard($this->getUser(), $this->em, $epreuve, 'AcEpreuve', 'Importation Epreuve');
 
             // dump(37015));
-            $sheetGenerer->setCellValue('A'.$i, $epreuve->getId());
-            $sheetGenerer->setCellValue('B'.$i, $epreuve->getCode());
-            $sheetGenerer->setCellValue('C'.$i, $epreuve->getCoefficient());
-            $sheetGenerer->setCellValue('D'.$i, $annee->getId());
-            $sheetGenerer->setCellValue('E'.$i, $element->getId());
-            $sheetGenerer->setCellValue('F'.$i, $sheet[3]);
-            $sheetGenerer->setCellValue('G'.$i, $sheet[4]);
-            $sheetGenerer->setCellValue('H'.$i, date_format($epreuve->getDateEpreuve(), 'Y-m-d'));
-            $sheetGenerer->setCellValue('I'.$i, $epreuve->getAnonymat());
-            $sheetGenerer->setCellValue('J'.$i, $epreuve->getObservation());
-            $sheetGenerer->setCellValue('K'.$i, $epreuve->getNature());
-            $sheetGenerer->setCellValue('L'.$i, $epreuve->getUserCreated()->getUsername());
+            $sheetGenerer->setCellValue('A' . $i, $epreuve->getId());
+            $sheetGenerer->setCellValue('B' . $i, $epreuve->getCode());
+            $sheetGenerer->setCellValue('C' . $i, $epreuve->getCoefficient());
+            $sheetGenerer->setCellValue('D' . $i, $annee->getId());
+            $sheetGenerer->setCellValue('E' . $i, $element->getId());
+            $sheetGenerer->setCellValue('F' . $i, $sheet[3]);
+            $sheetGenerer->setCellValue('G' . $i, $sheet[4]);
+            $sheetGenerer->setCellValue('H' . $i, date_format($epreuve->getDateEpreuve(), 'Y-m-d'));
+            $sheetGenerer->setCellValue('I' . $i, $epreuve->getAnonymat());
+            $sheetGenerer->setCellValue('J' . $i, $epreuve->getObservation());
+            $sheetGenerer->setCellValue('K' . $i, $epreuve->getNature());
+            $sheetGenerer->setCellValue('L' . $i, $epreuve->getUserCreated()->getUsername());
             $i++;
         }
         // die;
         $writer = new Xlsx($spreadsheetGenerer);
-        $fileName = 'epreuve'.uniqid().'.xlsx';
+        $fileName = 'epreuve' . uniqid() . '.xlsx';
         $writer->save($fileName);
-        return new JsonResponse(['message' => "Total des epreuves crée est ".$sheetCount, 'file' => $fileName]);
+        return new JsonResponse(['message' => "Total des epreuves crée est " . $sheetCount, 'file' => $fileName]);
     }
     #[Route('/affiliation_normale', name: 'administration_epreuve_affiliation_normal')]
-    public function administrationEpreuveAffiliationNormal(Request $request) {
+    public function administrationEpreuveAffiliationNormal(Request $request)
+    {
         $idEpreuves = json_decode($request->get("epreuves"));
         $zip = new ZipArchive();
-        $zipname = 'affilation_epreuves'.uniqid().'.zip';
+        $zipname = 'affilation_epreuves' . uniqid() . '.zip';
         $totalEpreuves = 0;
         $zip->open($zipname, ZipArchive::CREATE);
-        foreach($idEpreuves as $idEpreuve) {
+        foreach ($idEpreuves as $idEpreuve) {
             $epreuve = $this->em->getRepository(AcEpreuve::class)->find($idEpreuve);
-            if($epreuve->getStatut()->getId() == 28) {
+            if ($epreuve->getStatut()->getId() == 28) {
                 $spreadsheet = new Spreadsheet();
                 $sheet = $spreadsheet->getActiveSheet();
                 $sheet->setCellValue('A1', 'Code Epreuve');
                 $sheet->setCellValue('B1', 'Inscription');
-                if($epreuve->getAnonymat() == 1) {
+                if ($epreuve->getAnonymat() == 1) {
                     $sheet->setCellValue('C1', 'Anonymat');
                 }
                 $i = 2;
                 $inscriptions = $this->em->getRepository(TInscription::class)->getInscriptionsByEpreuve($epreuve);
                 // dd($inscriptions);
-                foreach($inscriptions as $inscription) {
-                    $existgnote = $this->em->getRepository(ExGnotes::class)->findOneBy(['inscription'=>$inscription,'epreuve'=>$epreuve]);
+                foreach ($inscriptions as $inscription) {
+                    $existgnote = $this->em->getRepository(ExGnotes::class)->findOneBy(['inscription' => $inscription, 'epreuve' => $epreuve]);
                     if (!$existgnote) {
                         $gnote = new ExGnotes();
                         $gnote->setEpreuve($epreuve);
                         $gnote->setInscription($inscription);
                         $gnote->setUserCreated($this->getUser());
                         $gnote->setCreated(new \DateTime("now"));
-                        if($epreuve->getAnonymat() == 1) {                        
-                            if($epreuve->getNatureEpreuve()->getNature() == 'normale') {
-                                $gnote->setAnonymat($inscription->getCodeAnonymat() ? $inscription->getCodeAnonymat() : null);     
-                                $sheet->setCellValue('C'.$i, $inscription->getCodeAnonymat() ? $inscription->getCodeAnonymat() : null);
+                        if ($epreuve->getAnonymat() == 1) {
+                            if ($epreuve->getNatureEpreuve()->getNature() == 'normale') {
+                                $gnote->setAnonymat($inscription->getCodeAnonymat() ? $inscription->getCodeAnonymat() : null);
+                                $sheet->setCellValue('C' . $i, $inscription->getCodeAnonymat() ? $inscription->getCodeAnonymat() : null);
                             } else {
                                 $gnote->setAnonymat($inscription->getCodeAnonymatRat());
-                                $sheet->setCellValue('C'.$i, $inscription->getCodeAnonymatRat());
-                            }                        
+                                $sheet->setCellValue('C' . $i, $inscription->getCodeAnonymatRat());
+                            }
                         }
                         $this->em->persist($gnote);
-                        $sheet->setCellValue('A'.$i, $epreuve->getId());
-                        $sheet->setCellValue('B'.$i, $inscription->getId());
+                        $sheet->setCellValue('A' . $i, $epreuve->getId());
+                        $sheet->setCellValue('B' . $i, $inscription->getId());
                         $i++;
                     }
-                    
                 }
                 $epreuve->setStatut(
                     $this->em->getRepository(PStatut::class)->find(29)
                 );
                 $this->em->flush();
-                ApiController::mouchard($this->getUser(), $this->em,$epreuve, 'AcEpreuve', 'Affiliation Epreuve');
+                ApiController::mouchard($this->getUser(), $this->em, $epreuve, 'AcEpreuve', 'Affiliation Epreuve');
                 $writer = new Xlsx($spreadsheet);
-                $fileName = 'affiliation_'.$epreuve->getId().'.xlsx';
+                $fileName = 'affiliation_' . $epreuve->getId() . '.xlsx';
                 // $temp_file = tempnam(sys_get_temp_dir(), $fileName);
                 $writer->save($fileName);
                 $zip->addFile($fileName);
@@ -513,45 +510,46 @@ class EpreuveController extends AbstractController
             }
         }
         $zip->close();
-        array_map('unlink', glob( "*.xlsx"));
+        array_map('unlink', glob("*.xlsx"));
         return new JsonResponse(['zipname' => $zipname, 'total' => $totalEpreuves]);
     }
     #[Route('/etudiants/{epreuve}', name: 'administration_epreuve_get_etudiants')]
-    public function administrationEpreuveGetEtudiants(AcEpreuve $epreuve) {
+    public function administrationEpreuveGetEtudiants(AcEpreuve $epreuve)
+    {
         // 28 Statut En Cours
-        if($epreuve->getStatut()->getId() != 28) {
+        if ($epreuve->getStatut()->getId() != 28) {
             return new JsonResponse("Epreuve déja affilier", 500);
         }
         $inscriptions = $this->em->getRepository(TInscription::class)->getInscriptionsByEpreuve($epreuve);
         $html = "";
         foreach ($inscriptions as $key => $inscription) {
             $html .= '<tr>
-                        <td><input type ="checkbox" class="check_etudiant" value="'.$inscription->getId().'" > </td>
-                        <td>'.$inscription->getId().'</td>
-                        <td>'.$inscription->getAdmission()->getPreinscription()->getEtudiant()->getNom().'</td>
-                        <td>'.$inscription->getAdmission()->getPreinscription()->getEtudiant()->getPrenom().'</td>
-                    </tr>'
-            ;
+                        <td><input type ="checkbox" class="check_etudiant" value="' . $inscription->getId() . '" > </td>
+                        <td>' . $inscription->getId() . '</td>
+                        <td>' . $inscription->getAdmission()->getPreinscription()->getEtudiant()->getNom() . '</td>
+                        <td>' . $inscription->getAdmission()->getPreinscription()->getEtudiant()->getPrenom() . '</td>
+                    </tr>';
         }
         return new JsonResponse($html);
     }
-    
+
     #[Route('/affiliation_rattrapage', name: 'administration_epreuve_affiliation_rattrapage')]
-    public function administrationEpreuveAffiliationRattrapage(Request $request) {
+    public function administrationEpreuveAffiliationRattrapage(Request $request)
+    {
         $idInscriptions = json_decode($request->get("idInscriptions"));
         $epreuve = $this->em->getRepository(AcEpreuve::class)->find($request->get("idEpreuve"));
         foreach ($idInscriptions as $idInscription) {
             $inscription = $this->em->getRepository(TInscription::class)->find($idInscription);
-            $existgnote = $this->em->getRepository(ExGnotes::class)->findOneBy(['inscription'=>$inscription,'epreuve'=>$epreuve]);
+            $existgnote = $this->em->getRepository(ExGnotes::class)->findOneBy(['inscription' => $inscription, 'epreuve' => $epreuve]);
             if (!$existgnote) {
                 $gnote = new ExGnotes();
                 $gnote->setEpreuve($epreuve);
                 $gnote->setInscription($inscription);
                 $gnote->setUserCreated($this->getUser());
                 $gnote->setCreated(new \DateTime("now"));
-                if($epreuve->getAnonymat() == 1) {
-                    if($epreuve->getNatureEpreuve()->getNature() == 'normale') {
-                        $gnote->setAnonymat($inscription->getCodeAnonymat());                    
+                if ($epreuve->getAnonymat() == 1) {
+                    if ($epreuve->getNatureEpreuve()->getNature() == 'normale') {
+                        $gnote->setAnonymat($inscription->getCodeAnonymat());
                     } else {
                         $gnote->setAnonymat($inscription->getCodeAnonymatRat());
                     }
@@ -563,29 +561,29 @@ class EpreuveController extends AbstractController
             $this->em->getRepository(PStatut::class)->find(29)
         );
         $this->em->flush();
-        
-        ApiController::mouchard($this->getUser(), $this->em,$epreuve, 'AcEpreuve', 'Affiliation Rattrapage');
+
+        ApiController::mouchard($this->getUser(), $this->em, $epreuve, 'AcEpreuve', 'Affiliation Rattrapage');
 
         return new JsonResponse("Bien Enregistre", 200);
-
     }
 
     #[Route('/affiliation_rattrapage_Automatique', name: 'administration_epreuve_affiliation_rattrapage_Automatique')]
-    public function administrationEpreuveAffiliationRattrapageAuto(Request $request) {
+    public function administrationEpreuveAffiliationRattrapageAuto(Request $request)
+    {
         $idEpreuves = json_decode($request->get("epreuves"));
         // dd($idEpreuves);
         $zip = new ZipArchive();
-        $zipname = 'affilation_epreuves_rattrapage'.uniqid().'.zip';
+        $zipname = 'affilation_epreuves_rattrapage' . uniqid() . '.zip';
         $totalEpreuves = 0;
         $zip->open($zipname, ZipArchive::CREATE);
-        foreach($idEpreuves as $idEpreuve) {
+        foreach ($idEpreuves as $idEpreuve) {
             $epreuve = $this->em->getRepository(AcEpreuve::class)->find($idEpreuve);
-            if($epreuve->getStatut()->getId() == 28) {
+            if ($epreuve->getStatut()->getId() == 28) {
                 $spreadsheet = new Spreadsheet();
                 $sheet = $spreadsheet->getActiveSheet();
                 $sheet->setCellValue('A1', 'Code Epreuve');
                 $sheet->setCellValue('B1', 'Inscription');
-                if($epreuve->getAnonymat() == 1) {
+                if ($epreuve->getAnonymat() == 1) {
                     $sheet->setCellValue('C1', 'Anonymat');
                 }
                 $i = 2;
@@ -606,28 +604,28 @@ class EpreuveController extends AbstractController
                         $natureEpreuveNormal = "";
                         break;
                 }
-                
+
                 if ($natureEpreuveNormal != "") {
                     if ($natureEpreuveNormal == 2) {
                         $EpreuveNormals = $this->em->getRepository(AcEpreuve::class)->findBy([
-                            'element'=>$epreuve->getElement(),
-                            'annee'=>$epreuve->getAnnee(),
+                            'element' => $epreuve->getElement(),
+                            'annee' => $epreuve->getAnnee(),
                             'natureEpreuve' => $natureEpreuveNormal,
                             'nature' => 'Journal de bord',
                             'statut' => 30
                         ]);
-                        if(count($EpreuveNormals) == 0){
+                        if (count($EpreuveNormals) == 0) {
                             $EpreuveNormals = $this->em->getRepository(AcEpreuve::class)->findBy([
-                                'element'=>$epreuve->getElement(),
-                                'annee'=>$epreuve->getAnnee(),
+                                'element' => $epreuve->getElement(),
+                                'annee' => $epreuve->getAnnee(),
                                 'natureEpreuve' => $natureEpreuveNormal,
                                 'statut' => 30
                             ]);
                         }
-                    }else {
+                    } else {
                         $EpreuveNormals = $this->em->getRepository(AcEpreuve::class)->findBy([
-                            'element'=>$epreuve->getElement(),
-                            'annee'=>$epreuve->getAnnee(),
+                            'element' => $epreuve->getElement(),
+                            'annee' => $epreuve->getAnnee(),
                             'natureEpreuve' => $natureEpreuveNormal,
                             'statut' => 30
                         ]);
@@ -636,19 +634,19 @@ class EpreuveController extends AbstractController
                     $etablissement_id =  $epreuve->getAnnee()->getFormation()->getEtablissement()->getId();
                     $moy = $etablissement_id == 26 ? 12 : 10;
                     $moyIni = $etablissement_id == 26 ? 8 : 7;
-                    foreach($inscriptions as $inscription) {
+                    foreach ($inscriptions as $inscription) {
                         // $moyen = false;
                         if (count($EpreuveNormals) == 1) {
                             $moyen = 0;
-                            $gnoteExEpreuve = $this->em->getRepository(ExGnotes::class)->findOneBy(['inscription'=>$inscription,'epreuve'=>$EpreuveNormals[0]]);
+                            $gnoteExEpreuve = $this->em->getRepository(ExGnotes::class)->findOneBy(['inscription' => $inscription, 'epreuve' => $EpreuveNormals[0]]);
                             if ($gnoteExEpreuve) {
                                 $moyen = $gnoteExEpreuve->getNote();
                             }
                             // $moyen = $this->em->getRepository(ExGnotes::class)->findOneBy(['inscription'=>$inscription,'epreuve'=>$EpreuveNormals[0]])->getNote();
-                        }elseif (count($EpreuveNormals) == 2) {
+                        } elseif (count($EpreuveNormals) == 2) {
                             $moyen = 0;
                             foreach ($EpreuveNormals as $EpreuveNormal) {
-                                $gnoteExEpreuve = $this->em->getRepository(ExGnotes::class)->findOneBy(['inscription'=>$inscription,'epreuve'=>$EpreuveNormal]);
+                                $gnoteExEpreuve = $this->em->getRepository(ExGnotes::class)->findOneBy(['inscription' => $inscription, 'epreuve' => $EpreuveNormal]);
                                 if ($gnoteExEpreuve) {
                                     $moyen += $gnoteExEpreuve->getNote();
                                 }
@@ -662,8 +660,8 @@ class EpreuveController extends AbstractController
                             $gnote->setUserCreated($this->getUser());
                             $gnote->setCreated(new \DateTime("now"));
                             $this->em->persist($gnote);
-                            $sheet->setCellValue('A'.$i, $epreuve->getId());
-                            $sheet->setCellValue('B'.$i, $inscription->getId());
+                            $sheet->setCellValue('A' . $i, $epreuve->getId());
+                            $sheet->setCellValue('B' . $i, $inscription->getId());
                             $i++;
                         }
                         // if ($inscription->getId() == 16326) {
@@ -675,9 +673,9 @@ class EpreuveController extends AbstractController
                     );
                     // dd('nop');
                     $this->em->flush();
-                    ApiController::mouchard($this->getUser(), $this->em,$epreuve, 'AcEpreuve', 'Affiliation Epreuve Ratt');
+                    ApiController::mouchard($this->getUser(), $this->em, $epreuve, 'AcEpreuve', 'Affiliation Epreuve Ratt');
                     $writer = new Xlsx($spreadsheet);
-                    $fileName = 'affiliation_'.$epreuve->getId().'.xlsx';
+                    $fileName = 'affiliation_' . $epreuve->getId() . '.xlsx';
                     // $temp_file = tempnam(sys_get_temp_dir(), $fileName);
                     $writer->save($fileName);
                     $zip->addFile($fileName);
@@ -686,11 +684,11 @@ class EpreuveController extends AbstractController
             }
         }
         $zip->close();
-        array_map('unlink', glob( "*.xlsx"));
+        array_map('unlink', glob("*.xlsx"));
         return new JsonResponse(['zipname' => $zipname, 'total' => $totalEpreuves]);
-   }
+    }
     #[Route('/add_epreuve', name: 'administration_epreuve_add_epreuve')]
-    public function administrationEpreuveaddepreuve(Request $request) 
+    public function administrationEpreuveaddepreuve(Request $request)
     {
         if (empty($request->get('id_element')) || empty($request->get('id_Nature')) || empty($request->get('id_enseignant')) || empty($request->get('d_epreuve'))) {
             return new JsonResponse('Merci de remplir tout les champs!', 500);
@@ -706,7 +704,7 @@ class EpreuveController extends AbstractController
         $epreuve->setNature($request->get('nature'));
         $epreuve->setNatureEpreuve($this->em->getRepository(PNatureEpreuve::class)->find($request->get('id_Nature')));
         $epreuve->setObservation($request->get('obs') == '' ? Null : $request->get('obs'));
-        $epreuve->setAnnee($this->em->getRepository(AcAnnee::class)->findOneBy(['formation'=>$request->get('id_formation'),'validation_academique'=>'non']));
+        $epreuve->setAnnee($this->em->getRepository(AcAnnee::class)->findOneBy(['formation' => $request->get('id_formation'), 'validation_academique' => 'non']));
         $epreuve->setUserCreated($this->getUser());
         $this->em->persist($epreuve);
         $this->em->flush();
@@ -716,73 +714,74 @@ class EpreuveController extends AbstractController
                 $this->em->getRepository(PEnseignant::class)->find($id)
             );
         };
-        $epreuve->setCode('EPV-'.$etablissement->getAbreviation().str_pad($epreuve->getId(), 8, '0', STR_PAD_LEFT).'/'.date('Y'));     
+        $epreuve->setCode('EPV-' . $etablissement->getAbreviation() . str_pad($epreuve->getId(), 8, '0', STR_PAD_LEFT) . '/' . date('Y'));
         $this->em->flush();
-        ApiController::mouchard($this->getUser(), $this->em,$epreuve, 'AcEpreuve', 'Ajouter Epreuve');
+        ApiController::mouchard($this->getUser(), $this->em, $epreuve, 'AcEpreuve', 'Ajouter Epreuve');
 
-        return new JsonResponse('Epreuve Bien Ajouter',200);
+        return new JsonResponse('Epreuve Bien Ajouter', 200);
     }
     #[Route('/cloture', name: 'administration_epreuve_cloture')]
-    public function administrationEpreuveCloture(Request $request) 
+    public function administrationEpreuveCloture(Request $request)
     {
         $idEpreuves = array_unique(json_decode($request->get("idEpreuves")));
         if ($idEpreuves == null) {
-            return new JsonResponse('Merci de choisir une epreuve!',500);
+            return new JsonResponse('Merci de choisir une epreuve!', 500);
         }
         foreach ($idEpreuves as $key => $id) {
             $epreuve = $this->em->getRepository(AcEpreuve::class)->find($id);
-            if($epreuve->getStatut()->getDesignation() == "Affilier") {
+            if ($epreuve->getStatut()->getDesignation() == "Affilier") {
                 // dd($epreuve);
                 $epreuve->setStatut(
                     $this->em->getRepository(PStatut::class)->find(30) //Valider
                 );
                 $epreuve->setUserValidated($this->getUser());
                 $epreuve->setValidated(new \DateTime('now'));
-                ApiController::mouchard($this->getUser(), $this->em,$epreuve, 'AcEpreuve', 'Valider Epreuve');
+                ApiController::mouchard($this->getUser(), $this->em, $epreuve, 'AcEpreuve', 'Valider Epreuve');
             }
         }
         $this->em->flush();
         // dd($idEpreuves);
-        return new JsonResponse('Bien clôturer',200);
+        return new JsonResponse('Bien clôturer', 200);
     }
     #[Route('/decloture', name: 'administration_epreuve_decloture')]
-    public function administrationEpreuveDecloture(Request $request) 
+    public function administrationEpreuveDecloture(Request $request)
     {
         $idEpreuves = array_unique(json_decode($request->get("idEpreuves")));
         foreach ($idEpreuves as $key => $id) {
             $epreuve = $this->em->getRepository(AcEpreuve::class)->find($id);
-            if($epreuve->getStatut()->getDesignation() == "Valider") {
+            if ($epreuve->getStatut()->getDesignation() == "Valider") {
                 $epreuve->setStatut(
                     $this->em->getRepository(PStatut::class)->find(29) //Affilier
                 );
-                ApiController::mouchard($this->getUser(), $this->em,$epreuve, 'AcEpreuve', 'Dévalider Epreuve');
+                ApiController::mouchard($this->getUser(), $this->em, $epreuve, 'AcEpreuve', 'Dévalider Epreuve');
             }
         }
         $this->em->flush();
         // dd($idEpreuves);
-        return new JsonResponse('Bien delôturer',200);
+        return new JsonResponse('Bien delôturer', 200);
     }
     #[Route('/checkifanonymat/{epreuve}', name: 'administration_epreuve_checkifanonymat')]
-    public function administrationEpreuveCheckifanonymat(AcEpreuve $epreuve) {
-        $html = "<p><span>Etablissement</span> : ".$epreuve->getAnnee()->getFormation()->getEtablissement()->getDesignation()."</p>
-          <p><span>Formation</span> : ".$epreuve->getAnnee()->getFormation()->getDesignation()."</p>
-          <p><span>Promotion</span> : ".$epreuve->getElement()->getModule()->getSemestre()->getPromotion()->getDesignation()."</p>
-          <p><span>Module</span> : ".$epreuve->getElement()->getModule()->getDesignation()."</p>
-          <p><span>Element</span> : ".$epreuve->getElement()->getDesignation()."</p>";
-        if($epreuve->getAnonymat() == 1) {
+    public function administrationEpreuveCheckifanonymat(AcEpreuve $epreuve)
+    {
+        $html = "<p><span>Etablissement</span> : " . $epreuve->getAnnee()->getFormation()->getEtablissement()->getDesignation() . "</p>
+          <p><span>Formation</span> : " . $epreuve->getAnnee()->getFormation()->getDesignation() . "</p>
+          <p><span>Promotion</span> : " . $epreuve->getElement()->getModule()->getSemestre()->getPromotion()->getDesignation() . "</p>
+          <p><span>Module</span> : " . $epreuve->getElement()->getModule()->getDesignation() . "</p>
+          <p><span>Element</span> : " . $epreuve->getElement()->getDesignation() . "</p>";
+        if ($epreuve->getAnonymat() == 1) {
             $anonymat = "oui";
         } else {
             $anonymat = "non";
         }
-        return new JsonResponse(['html' => $html,'id' => $epreuve->getId(), 'anonymat' => $anonymat], 200);
-
+        return new JsonResponse(['html' => $html, 'id' => $epreuve->getId(), 'anonymat' => $anonymat], 200);
     }
     #[Route('/impression/{epreuve}/{anonymat}', name: 'administration_epreuve_impression_c_a')]
-    public function administrationEpreuveImpression(AcEpreuve $epreuve, $anonymat) {
-        
-            
+    public function administrationEpreuveImpression(AcEpreuve $epreuve, $anonymat)
+    {
+
+
         $html = $this->render("administration_epreuve/pdfs/header.html.twig")->getContent();
-        if($epreuve->getAnonymat() == 1 && $anonymat == 1){
+        if ($epreuve->getAnonymat() == 1 && $anonymat == 1) {
             $html .= $this->render("administration_epreuve/pdfs/anonymat.html.twig", [
                 'epreuve' => $epreuve
             ])->getContent();
@@ -790,7 +789,6 @@ class EpreuveController extends AbstractController
             $html .= $this->render("administration_epreuve/pdfs/clair.html.twig", [
                 'epreuve' => $epreuve
             ])->getContent();
-            
         }
         $html .= $this->render("administration_epreuve/pdfs/footer.html.twig")->getContent();
         $mpdf = new Mpdf([
@@ -799,18 +797,19 @@ class EpreuveController extends AbstractController
             'margin_right' => '5',
             'margin_top' => '5',
             'margin_bottom' => '5',
-            ]);
+        ]);
         // $mpdf->SetHTMLHeader(
         // );
         // $mpdf->SetHTMLFooter(
         //     $this->render("administration_epreuve/pdfs/footer.html.twig")->getContent()
         // );
         $mpdf->WriteHTML($html);
-        $mpdf->Output("epreuve_".$epreuve->getId().".pdf", "I");
+        $mpdf->Output("epreuve_" . $epreuve->getId() . ".pdf", "I");
     }
-    
+
     #[Route('/capitaliser', name: 'administration_epreuve_capitaliser')]
-    public function administrationEpreuveCapitaliser(Request $request) {
+    public function administrationEpreuveCapitaliser(Request $request)
+    {
         $idEpreuves = array_unique(json_decode($request->get("idEpreuves")));
         $count = 0;
         $spreadsheet = new Spreadsheet();
@@ -820,8 +819,8 @@ class EpreuveController extends AbstractController
         $sheet->setCellValue('C1', 'prenom');
         $sheet->setCellValue('D1', 'epreuve');
         $sheet->setCellValue('E1', 'note');
-        $i=2;
-       
+        $i = 2;
+
         foreach ($idEpreuves as $idEpreuve) {
             $epreuve = $this->em->getRepository(AcEpreuve::class)->find($idEpreuve);
             // dd($epreuve->getElement()->getModule());
@@ -830,45 +829,45 @@ class EpreuveController extends AbstractController
                 $inscription = $gnote->getInscription();
                 // dump($inscription);
                 // if ($inscription->getId() == 16322) {
-                    $previousInscription = $this->em->getRepository(TInscription::class)->getPreviousInsription($inscription);
-                    // dd($previousInscription);
-                    if($previousInscription) {
-                        $previousNoteModule = $this->em->getRepository(ExMnotes::class)->findOneBy(['module' => $epreuve->getElement()->getModule(), 'inscription' => $previousInscription]);
-                        // dd($previousNoteModule);
-                        if ($previousNoteModule != null) {
-                            $stat = $previousNoteModule->getStatutAff() != null ? $previousNoteModule->getStatutAff()->getId() : "";
-                            // dump($stat);
-                            if($stat == 53) {
-                                $gnote->setNote($previousNoteModule->getNote());
-                                $gnote->setObservation('CAP');
-                                $sheet->setCellValue('A'.$i, $inscription->getId());
-                                $sheet->setCellValue('B'.$i, $gnote->getInscription()->getAdmission()->getPreinscription()->getEtudiant()->getNom());
-                                $sheet->setCellValue('C'.$i, $gnote->getInscription()->getAdmission()->getPreinscription()->getEtudiant()->getPrenom());
-                                $sheet->setCellValue('D'.$i, $epreuve->getId());
-                                $sheet->setCellValue('E'.$i, $previousNoteModule->getNote());
-                                $i++;
-                                $count++;
-                            }
+                $previousInscription = $this->em->getRepository(TInscription::class)->getPreviousInsription($inscription);
+                // dd($previousInscription);
+                if ($previousInscription) {
+                    $previousNoteModule = $this->em->getRepository(ExMnotes::class)->findOneBy(['module' => $epreuve->getElement()->getModule(), 'inscription' => $previousInscription]);
+                    // dd($previousNoteModule);
+                    if ($previousNoteModule != null) {
+                        $stat = $previousNoteModule->getStatutAff() != null ? $previousNoteModule->getStatutAff()->getId() : "";
+                        // dump($stat);
+                        if ($stat == 53) {
+                            $gnote->setNote($previousNoteModule->getNote());
+                            $gnote->setObservation('CAP');
+                            $sheet->setCellValue('A' . $i, $inscription->getId());
+                            $sheet->setCellValue('B' . $i, $gnote->getInscription()->getAdmission()->getPreinscription()->getEtudiant()->getNom());
+                            $sheet->setCellValue('C' . $i, $gnote->getInscription()->getAdmission()->getPreinscription()->getEtudiant()->getPrenom());
+                            $sheet->setCellValue('D' . $i, $epreuve->getId());
+                            $sheet->setCellValue('E' . $i, $previousNoteModule->getNote());
+                            $i++;
+                            $count++;
                         }
                     }
+                }
                 // }
-                
+
             }
             // dd('tewst');
         }
         $this->em->flush();
         $fileName = null;
-        if($count > 0) {
+        if ($count > 0) {
             $writer = new Xlsx($spreadsheet);
-            $fileName = 'epreuves_capitaliser_'.uniqid().'.xlsx';
+            $fileName = 'epreuves_capitaliser_' . uniqid() . '.xlsx';
             $writer->save($fileName);
         }
 
         return new JsonResponse(['fileName' => $fileName, 'count' => $count]);
-
     }
     #[Route('/edit/{epreuve}', name: 'administration_epreuve_edit')]
-    public function administrationEpreuveEdit(AcEpreuve $epreuve) {
+    public function administrationEpreuveEdit(AcEpreuve $epreuve)
+    {
         $enseignants = $this->em->getRepository(PEnseignant::class)->findAll();
         $html = $this->renderView('administration_epreuve/pages/epreuve_edit.html.twig', [
             'epreuve' => $epreuve,
@@ -877,10 +876,11 @@ class EpreuveController extends AbstractController
         return new JsonResponse($html);
     }
     #[Route('/update/{epreuve}', name: 'administration_epreuve_update')]
-    public function administrationEpreuveUpdate(Request $request, AcEpreuve $epreuve) {
+    public function administrationEpreuveUpdate(Request $request, AcEpreuve $epreuve)
+    {
         // dd($request);
-       
-        if(empty($request->get('id_enseignant')) or empty($request->get('d_epreuve'))) {
+
+        if (empty($request->get('id_enseignant')) or empty($request->get('d_epreuve'))) {
             return new JsonResponse("Veuillez remplir tous les champs!", 500);
         }
         $epreuve->setDateEpreuve(new \DateTime($request->get('d_epreuve')));
@@ -894,23 +894,22 @@ class EpreuveController extends AbstractController
         };
 
         $this->em->flush();
-        return new JsonResponse('Bien enregistre',200);
+        return new JsonResponse('Bien enregistre', 200);
+    }
 
-        
-    } 
-    
     #[Route('/extraction_epreuve_valide/{etab}', name: 'extraction_epreuve_valide')]
-    public function extraction_epreuve_valide(AcEtablissement $etab)
-    {   
+    public function extraction_epreuve_valide($etab)
+    {
+        $etablissement = $this->em->getRepository(AcEtablissement::class)->find($etab);
         // dd($etab->getId());
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
-        $i=2;
-        $j=1;
-        $currentyear = date('m') > 7 ? date('Y').'/'.date('Y')+1 : date('Y') - 1 .'/' .date('Y');
-        // dd($currentyear);
+        $i = 2;
+        $j = 1;
+        $currentyear = date('m') > 7 ? date('Y') . '/' . date('Y') + 1 : date('Y') - 1 . '/' . date('Y');
+        // dd($etablissement ? $etablissement->getId() : 'hey');
         // $currentyear = date('Y') - 1 .'/' .date('Y');
-        $epreuves = $this->em->getRepository(AcEpreuve::class)->findEpreuveValideByCurrentYear($currentyear, $etab->getId());
+        $epreuves = $this->em->getRepository(AcEpreuve::class)->findEpreuveValideByCurrentYear($currentyear, $etablissement ? $etablissement->getId() : null);
         // dd($epreuves);
         $sheet->fromArray(
             array_keys($epreuves[0]),
@@ -921,30 +920,31 @@ class EpreuveController extends AbstractController
             $sheet->fromArray(
                 $epreuve,
                 null,
-                'A'.$i
+                'A' . $i
             );
             $i++;
             $j++;
         }
         $writer = new Xlsx($spreadsheet);
-        $currentyear = date('m') > 7 ? date('Y').'-'.date('Y')+1 : date('Y') - 1 .'-' .date('Y');
+        $currentyear = date('m') > 7 ? date('Y') . '-' . date('Y') + 1 : date('Y') - 1 . '-' . date('Y');
         // $currentyear = date('Y') - 1 .'-' .date('Y');
-        $fileName = 'Extraction Epreuves Valide '.$currentyear.'.xlsx';
+        $fileName = 'Extraction Epreuves Valide ' . $currentyear . '.xlsx';
         $temp_file = tempnam(sys_get_temp_dir(), $fileName);
         $writer->save($temp_file);
         return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);
     }
-    
+
     #[Route('/extraction_epreuve_valide_s2/{etab}', name: 'extraction_epreuve_valide_s2')]
-    public function extraction_epreuve_valide_s2(AcEtablissement $etab)
-    {   
+    public function extraction_epreuve_valide_s2($etab)
+    {
+        $etablissement = $this->em->getRepository(AcEtablissement::class)->find($etab);
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
-        $i=2;
-        $j=1;
-        $currentyear = date('m') > 7 ? date('Y').'/'.date('Y')+1 : date('Y') - 1 .'/' .date('Y');
+        $i = 2;
+        $j = 1;
+        $currentyear = date('m') > 7 ? date('Y') . '/' . date('Y') + 1 : date('Y') - 1 . '/' . date('Y');
         // $currentyear = date('Y') - 1 .'/' .date('Y');
-        $epreuves = $this->em->getRepository(AcEpreuve::class)->findEpreuveValideS2ByCurrentYear($currentyear, $etab->getId());
+        $epreuves = $this->em->getRepository(AcEpreuve::class)->findEpreuveValideS2ByCurrentYear($currentyear, $etablissement ? $etablissement->getId() : null);
         // dd($epreuves);
         $sheet->fromArray(
             array_keys($epreuves[0]),
@@ -955,31 +955,32 @@ class EpreuveController extends AbstractController
             $sheet->fromArray(
                 $epreuve,
                 null,
-                'A'.$i
+                'A' . $i
             );
             $i++;
             $j++;
         }
         $writer = new Xlsx($spreadsheet);
         // $currentyear = date('m') > 7 ? date('Y').'-'.date('Y')+1 : date('Y') - 1 .'-' .date('Y');
-        $currentyear = date('Y') - 1 .'-' .date('Y');
-        $fileName = 'Extraction Epreuves Valide Session 2 '.$currentyear.'.xlsx';
+        $currentyear = date('Y') - 1 . '-' . date('Y');
+        $fileName = 'Extraction Epreuves Valide Session 2 ' . $currentyear . '.xlsx';
         $temp_file = tempnam(sys_get_temp_dir(), $fileName);
         $writer->save($temp_file);
         return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);
     }
-    
-    
+
+
     #[Route('/extraction_epv_affilier/{etab}', name: 'extraction_epv_affilier')]
-    public function extraction_epv_affilier(AcEtablissement $etab)
-    {   
+    public function extraction_epv_affilier($etab)
+    {
+        $etablissement = $this->em->getRepository(AcEtablissement::class)->find($etab);
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
-        $i=2;
-        $j=1;
-        $currentyear = date('m') > 7 ? date('Y').'/'.date('Y')+1 : date('Y') - 1 .'/' .date('Y');
+        $i = 2;
+        $j = 1;
+        $currentyear = date('m') > 7 ? date('Y') . '/' . date('Y') + 1 : date('Y') - 1 . '/' . date('Y');
         // $currentyear = date('Y') - 1 .'/' .date('Y');
-        $epreuves = $this->em->getRepository(AcEpreuve::class)->findEpreuveAffilierByCurrentYear($currentyear, $etab->getId());
+        $epreuves = $this->em->getRepository(AcEpreuve::class)->findEpreuveAffilierByCurrentYear($currentyear, $etablissement ? $etablissement->getId() : null);
         if (!$epreuves) {
             die("Aucun epreuve affilier trouve !!");
         }
@@ -993,22 +994,22 @@ class EpreuveController extends AbstractController
             $sheet->fromArray(
                 $epreuve,
                 null,
-                'A'.$i
+                'A' . $i
             );
             $i++;
             $j++;
         }
         $writer = new Xlsx($spreadsheet);
         // $currentyear = date('m') > 7 ? date('Y').'-'.date('Y')+1 : date('Y') - 1 .'-' .date('Y');
-        $currentyear = date('Y') - 1 .'-' .date('Y');
-        $fileName = 'Extraction Epreuves Affilier '.$currentyear.'.xlsx';
+        $currentyear = date('Y') - 1 . '-' . date('Y');
+        $fileName = 'Extraction Epreuves Affilier ' . $currentyear . '.xlsx';
         $temp_file = tempnam(sys_get_temp_dir(), $fileName);
         $writer->save($temp_file);
         return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);
     }
-    
+
     #[Route('/extraction_emargement/{epreuve}', name: 'administration_epreuve_emargement')]
-    public function administration_epreuve_emargement(AcEpreuve $epreuve) 
+    public function administration_epreuve_emargement(AcEpreuve $epreuve)
     {
         // dd($epreuve);
         $spreadsheet = new Spreadsheet();
@@ -1030,22 +1031,22 @@ class EpreuveController extends AbstractController
         $sheet->setCellValue('O1', 'COPIE RENSEIGNEE');
         $sheet->setCellValue('P1', 'VIDE');
         $sheet->setCellValue('Q1', 'EMARGEMENT DE REMISE DES COPIES');
-        $i=2;
-        $count = 1 ;
+        $i = 2;
+        $count = 1;
         foreach ($epreuve->getGnotes() as $gnote) {
-            $sheet->setCellValue('A'.$i, $count++);
-            $sheet->setCellValue('B'.$i, $epreuve->getDateEpreuve()->format('d/m/Y'));
-            $sheet->setCellValue('C'.$i, $epreuve->getElement()->getModule()->getDesignation());
-            $sheet->setCellValue('D'.$i, $epreuve->getElement()->getDesignation());
-            $sheet->setCellValue('E'.$i, $epreuve->getNatureEpreuve()->getNature());
-            $sheet->setCellValue('F'.$i, $epreuve->getNatureEpreuve()->getDesignation());
-            $sheet->setCellValue('G'.$i, $gnote->getInscription()->getCode());
-            $sheet->setCellValue('H'.$i, $gnote->getInscription()->getAdmission()->getPreinscription()->getEtudiant()->getNom());
-            $sheet->setCellValue('I'.$i, $gnote->getInscription()->getAdmission()->getPreinscription()->getEtudiant()->getPrenom());
-            $sheet->setCellValue('J'.$i, $gnote->getInscription()->getPromotion()->getDesignation());
+            $sheet->setCellValue('A' . $i, $count++);
+            $sheet->setCellValue('B' . $i, $epreuve->getDateEpreuve()->format('d/m/Y'));
+            $sheet->setCellValue('C' . $i, $epreuve->getElement()->getModule()->getDesignation());
+            $sheet->setCellValue('D' . $i, $epreuve->getElement()->getDesignation());
+            $sheet->setCellValue('E' . $i, $epreuve->getNatureEpreuve()->getNature());
+            $sheet->setCellValue('F' . $i, $epreuve->getNatureEpreuve()->getDesignation());
+            $sheet->setCellValue('G' . $i, $gnote->getInscription()->getCode());
+            $sheet->setCellValue('H' . $i, $gnote->getInscription()->getAdmission()->getPreinscription()->getEtudiant()->getNom());
+            $sheet->setCellValue('I' . $i, $gnote->getInscription()->getAdmission()->getPreinscription()->getEtudiant()->getPrenom());
+            $sheet->setCellValue('J' . $i, $gnote->getInscription()->getPromotion()->getDesignation());
             $i++;
         }
-            
+
         $this->em->flush();
         $fileName = null;
         $writer = new Xlsx($spreadsheet);
@@ -1055,22 +1056,22 @@ class EpreuveController extends AbstractController
         return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);
     }
 
-    
+
     #[Route('/affiliation_ParInscriptions', name: 'administration_epreuve_affiliation_ParInscriptions')]
-    public function administrationEpreuveaffiliationParInscriptions(Request $request, SluggerInterface $slugger) 
+    public function administrationEpreuveaffiliationParInscriptions(Request $request, SluggerInterface $slugger)
     {
         $file = $request->files->get('files_inscriptions_ids');
-        if(!$file){
-            return new JsonResponse('Prière d\'importer le fichier',500);
+        if (!$file) {
+            return new JsonResponse('Prière d\'importer le fichier', 500);
         }
-        if($file->guessExtension() !== 'xlsx'){
-            return new JsonResponse('Prière d\'enregister un fichier xlsx', 500);            
+        if ($file->guessExtension() !== 'xlsx') {
+            return new JsonResponse('Prière d\'enregister un fichier xlsx', 500);
         }
 
         $originalFilename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
         // this is needed to safely include the file name as part of the URL
         $safeFilename = $slugger->slug($originalFilename);
-        $newFilename = $safeFilename.'-'.uniqid().'_'.$this->getUser()->getUsername().'.'.$file->guessExtension();
+        $newFilename = $safeFilename . '-' . uniqid() . '_' . $this->getUser()->getUsername() . '.' . $file->guessExtension();
 
         // Move the file to the directory where brochures are stored
         try {
@@ -1082,7 +1083,7 @@ class EpreuveController extends AbstractController
             throw new \Exception($e);
         }
         $reader = new reader();
-        $spreadsheet = $reader->load($this->getParameter('inscriptions_affiliation_directory').'/'.$newFilename);
+        $spreadsheet = $reader->load($this->getParameter('inscriptions_affiliation_directory') . '/' . $newFilename);
         $worksheet = $spreadsheet->getActiveSheet();
         $spreadSheetArys = $worksheet->toArray();
 
@@ -1091,7 +1092,7 @@ class EpreuveController extends AbstractController
         $idInscriptions = [];
         foreach ($spreadSheetArys as $value) {
             if ($value[1]) {
-                array_push($idInscriptions ,$value[1]);
+                array_push($idInscriptions, $value[1]);
             }
         }
         if ($idInscriptions == []) {
@@ -1107,9 +1108,9 @@ class EpreuveController extends AbstractController
             $gnote->setInscription($inscription);
             $gnote->setUserCreated($this->getUser());
             $gnote->setCreated(new \DateTime("now"));
-            if($epreuve->getAnonymat() == 1) {
-                if($epreuve->getNatureEpreuve()->getNature() == 'normale') {
-                    $gnote->setAnonymat($inscription->getCodeAnonymat());                    
+            if ($epreuve->getAnonymat() == 1) {
+                if ($epreuve->getNatureEpreuve()->getNature() == 'normale') {
+                    $gnote->setAnonymat($inscription->getCodeAnonymat());
                 } else {
                     $gnote->setAnonymat($inscription->getCodeAnonymatRat());
                 }
@@ -1119,13 +1120,12 @@ class EpreuveController extends AbstractController
         $epreuve->setStatut(
             $this->em->getRepository(PStatut::class)->find(29)
         );
-        
+
         // dd($gnote);
         $this->em->flush();
-        
-        ApiController::mouchard($this->getUser(), $this->em,$epreuve, 'AcEpreuve', 'Affiliation Rat Ins');
+
+        ApiController::mouchard($this->getUser(), $this->em, $epreuve, 'AcEpreuve', 'Affiliation Rat Ins');
 
         return new JsonResponse("Epreuve Bien Affilier", 200);
-
     }
 }

@@ -309,15 +309,14 @@ $(document).ready(function () {
   $("body").on("click", "#extraction", async function (e) {
     e.preventDefault();
     // const icon = $("#extraction_epv_valide_s2 i");
-    if ($("#etablissement").val() == "") {
-      Toast.fire({
-        icon: "error",
-        title: "Veuillez selectionnez une etablissement!",
-      });
-      return;
-    }
+
+    var etab = $("#etablissement").val();
+        if($("#etablissement").val() == "") {
+            etab = 0;
+            
+        }
     window.open(
-      "/evaluation/annee/extraction_annee/" + $("#etablissement").val(),
+      "/evaluation/annee/extraction_annee/" + etab,
       "_blank"
     );
   });
