@@ -169,7 +169,7 @@ class RechercheAvanceController extends AbstractController
     #[Route('/attestation/cerificat/{inscription}', name: 'etudiant_recherche_attestation_cerificat')]
     public function attestationcerificat(TInscription $inscription): Response
     {
-        $html = $this->render("etudiant/recherche_avance/pdf/attestations/scolarite.html.twig", [
+        $html = $this->render("etudiant/recherche_avance/pdf/attestations/Cerficationscolarite.html.twig", [
             'inscription' => $inscription,
             'laz' => 0,
             'certif' => 1,
