@@ -15,8 +15,6 @@
                 <li>
                     <a target="_blank" href="{{path('etudiant_recherche_attestation_scolarite_laz', {inscription: inscription.id})}}">Attestation de scolarité LAZ</a>
                 </li>
-            {% endif %}
-            {% if inscription.annee.formation.id == 874 %}
                 <li>
                     <a target="_blank" href="{{path('etudiant_recherche_attestation_cerificat', {inscription: inscription.id})}}">Certificat de scolarité</a>
                 </li>
