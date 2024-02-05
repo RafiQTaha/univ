@@ -7,6 +7,7 @@ use ZipArchive;
 use App\Entity\AcAnnee;
 use App\Entity\PStatut;
 use App\Entity\ExGnotes;
+use App\Entity\ExEnotes;
 use App\Entity\ExMnotes;
 use App\Entity\AcElement;
 use App\Entity\AcEpreuve;
@@ -631,12 +632,28 @@ class EpreuveController extends AbstractController
                         ]);
                     }
                     // dd($EpreuveNormals);
+                    $formation = $epreuve->getAnnee()->getFormation();
+                    $ElementEpreuveIsStage = false;
+                    if ($epreuve->getElement()->getNature()->getId() != 3 and $natureEpreuveNormal == 3 and $formation->getEtablissement()->getId()!=25 and !str_contains($formation->getDesignation(), 'Résidanat')  ) {
+                        $ElementEpreuveIsStage = true;
+                    }
                     $etablissement_id =  $epreuve->getAnnee()->getFormation()->getEtablissement()->getId();
                     $moy = $etablissement_id == 26 ? 12 : 10;
                     $moyIni = $etablissement_id == 26 ? 8 : 7;
                     foreach ($inscriptions as $inscription) {
+                        // dd($inscription->getId(),$EpreuveNormals[0]);
                         // $moyen = false;
-                        if (count($EpreuveNormals) == 1) {
+                        $checkcomposant = false;
+                        if ($ElementEpreuveIsStage) {
+                            $gnoteExEpreuve = $this->em->getRepository(ExGnotes::class)->findOneBy(['inscription' => $inscription, 'epreuve' => $EpreuveNormals[0]]);
+                            $EnoteExEpreuve = $this->em->getRepository(ExEnotes::class)->findOneBy(['inscription' => $inscription, 'element' => $epreuve->getElement()]);
+                            $moyen =$EnoteExEpreuve->getNote();
+                            if ($gnoteExEpreuve->getNote() < $moyIni) {
+                                $checkcomposant = true;
+                            }
+                            // dd($checkcomposant);
+                            // dd($gnoteExEpreuve->getId(),$EnoteExEpreuve->getNote());
+                        }elseif (count($EpreuveNormals) == 1) {
                             $moyen = 0;
                             $gnoteExEpreuve = $this->em->getRepository(ExGnotes::class)->findOneBy(['inscription' => $inscription, 'epreuve' => $EpreuveNormals[0]]);
                             if ($gnoteExEpreuve) {
@@ -653,11 +670,17 @@ class EpreuveController extends AbstractController
                             }
                             $moyen = $moyen / 2;
                         }
-                        if ($moyen < $moy) {
-                            $gnote = new ExGnotes();
+                        if ($moyen < $moy or $checkcomposant == true ) {
+                            // $gnote = $this->em->getRepository(ExGnotes::class)->findOneBy(['inscription' => $inscription, 'epreuve' => $epreuve]);
+                            // if (!$gnote) {
+                                $gnote = new ExGnotes();
+                            // }
+                            // echo 'En Cours De Maintenance!';
+                            // dd($gnote);
                             $gnote->setEpreuve($epreuve);
                             $gnote->setInscription($inscription);
                             $gnote->setUserCreated($this->getUser());
+                            $gnote->setAnonymat($inscription->getCodeAnonymatRat());
                             $gnote->setCreated(new \DateTime("now"));
                             $this->em->persist($gnote);
                             $sheet->setCellValue('A' . $i, $epreuve->getId());
@@ -668,6 +691,7 @@ class EpreuveController extends AbstractController
                         //     dd( $moyen,$moy);
                         // }
                     }
+                    // dd($i);
                     $epreuve->setStatut(
                         $this->em->getRepository(PStatut::class)->find(29)
                     );
@@ -778,8 +802,6 @@ class EpreuveController extends AbstractController
     #[Route('/impression/{epreuve}/{anonymat}', name: 'administration_epreuve_impression_c_a')]
     public function administrationEpreuveImpression(AcEpreuve $epreuve, $anonymat)
     {
-
-
         $html = $this->render("administration_epreuve/pdfs/header.html.twig")->getContent();
         if ($epreuve->getAnonymat() == 1 && $anonymat == 1) {
             $html .= $this->render("administration_epreuve/pdfs/anonymat.html.twig", [
