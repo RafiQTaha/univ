@@ -162,10 +162,10 @@
             <td class="txt" style="padding-left:50px;">
                 <ul> 
                     {% for sanction in insSanction.getSanction %}
-                    <li>{{sanction.designation}}</li>
+                    <li>{{sanction.designation}}.</li>
                     {% endfor %}
                     {% for autresanction in insSanction.getAutreSanction %}
-                        <li>{{autresanction}}</li>
+                        <li>{{autresanction}}.</li>
                     {% endfor %}
                 </ul> 
             </td>
@@ -173,8 +173,16 @@
         <tr>
             <td class="txt">
                 Cette décision prend effet à compter du <span style="font-size:12px;font-weight: bold;color:black;">{% if insSanction.dateDecision %}{{insSanction.dateDecision|date('d/m/Y')}}{% else %}{{insSanction.dateReunion|date('d/m/Y')}}
-                    {% endif %}</span>. Pour tout complément d’information, nous vous invitons à vous
-                adresser à l’administration.
+                    {% endif %}</span>. 
+            </td>
+        </tr>
+        <tr>
+            <td class="txt">
+                Pour tout complément d’information, nous vous invitons à vous adresser à l’administration.
+            </td>
+        </tr>
+        <tr>
+            <td class="txt">
                 Veuillez agréer, cher(e) étudiant(e), l’expression de nos salutations distinguées.
             </td>
         </tr>
@@ -185,5 +193,5 @@
 <br><br>
 
 <p style="margin-left:40px;font-size:10px;color:black;font-weight:bold">
-    L’Université Internationale Abulcasis des Sciences de la Santé.
+    Université Internationale Abulcasis des Sciences de la Santé.
 </p>
