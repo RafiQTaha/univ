@@ -331,7 +331,7 @@ class PlanificationController extends AbstractController
     #[Route('/planifications_calendar_add', name: 'planifications_calendar_add')]
     public function planifications_calendar_add(Request $request): Response
     {
-        return new Response("Vous n'anvez pas le droit!!",500);
+        // return new Response("Vous n'anvez pas le droit!!",500);
         if ($request->get('nature_seance') == "" || $request->get('element') =="" ) {
             return new Response('Merci de renseignez tout les champs',500);
         }
