@@ -331,6 +331,7 @@ class PlanificationController extends AbstractController
     #[Route('/planifications_calendar_add', name: 'planifications_calendar_add')]
     public function planifications_calendar_add(Request $request): Response
     {
+        return new Response("Vous n'anvez pas le droit!!",500);
         if ($request->get('nature_seance') == "" || $request->get('element') =="" ) {
             return new Response('Merci de renseignez tout les champs',500);
         }
@@ -399,6 +400,7 @@ class PlanificationController extends AbstractController
     #[Route('/planifications_calendar_edit/{id}', name: 'planifications_calendar_edit')]
     public function planifications_calendar_edit(PlEmptime $emptime,Request $request): Response
     {
+        return new Response("Vous n'anvez pas le droit!!",500);
         // dd($request->get('n_semaine'));
         if($emptime->getValider() != 1){
             $element = $this->em->getRepository(AcElement::class)->find($request->get('element'));
@@ -456,6 +458,7 @@ class PlanificationController extends AbstractController
     #[Route('/delete_planning/{id}', name: 'delete_planning')]
     public function delete_planning(PlEmptime $emptime): Response
     {   
+        return new Response("Vous n'anvez pas le droit!!",500);
         if ($emptime->getValider() == 1) {
             return new Response('Vous ne pouvez pas supprimer une seance déja valider!',500);
         }
@@ -517,6 +520,7 @@ class PlanificationController extends AbstractController
     #[Route('/planifications_editEventDate/{id}', name: 'planifications_editEventDate')]
     public function planifications_editEventDate(PlEmptime $emptime,Request $request): Response
     {   
+        return new Response("Vous n'anvez pas le droit!!",500);
         if ($emptime->getGenerer() ==1 || $emptime->getAnnuler() == 1) {
             return new Response('Seance déja générer',500);
         }
