@@ -72,7 +72,7 @@ $(document).ready(function () {
         locale: "fr",
         firstDay: 1,
         minTime: "08:00:00",
-        maxTime: "18:01:00",
+        maxTime: "20:01:00",
         select: function (start, end,date) {
             if($('#semestre').val() != ""){
                 currentDay = moment(start).format('YYYY-MM-DD');
