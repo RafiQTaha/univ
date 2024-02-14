@@ -637,10 +637,12 @@ class SemestreController extends AbstractController
                     $categorie = 'HA';
                 } elseif ($data_snotes->getNote() >= $moy and $palier < 10) {
                     $categorie = 'HC';
-                } elseif ($data_snotes->getNote() < $moy and $palier >= 10) {
+                } elseif ($data_snotes->getNote() < $moy and $palier >= 10 and $ModuleTheoriqueEliminatoire) {
                     $categorie = 'IA';
-                } elseif ($data_snotes->getNote() < $moy and $palier < 10) {
+                } elseif ($data_snotes->getNote() < $moy and $palier >= 10 and $ModulePratiqueEliminatoire) {
                     $categorie = 'IB';
+                } elseif ($data_snotes->getNote() < $moy and $palier < 10) {
+                    $categorie = 'IC';
                 }
             }
         }
