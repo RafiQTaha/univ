@@ -193,6 +193,57 @@ class SemestreController extends AbstractController
         $mpdf->Output("semestre_deliberation_" . $semestre->getId() . ".pdf", "I");
     }
 
+    #[Route('/extraction_list', name: 'evaluation_semestre_extraction_list')]
+    public function evaluationSemestreExtractionList(Request $request)
+    {
+        $session = $request->getSession();
+        $dataSaved = $session->get('data_semestre')['data_saved'];
+        $semestre = $session->get('data_semestre')['semestre'];
+        $modules = $session->get('data_semestre')['modules'];
+        $annee = $this->em->getRepository(AcAnnee::class)->getActiveAnneeByFormation($semestre->getPromotion()->getFormation());
+        $headers = ['ord','Code','Nom','Prénom'];
+        foreach ($modules as $module) {
+            array_push($headers,'MOD'.$module->getId());
+        }
+        array_push($headers, "Moyenne Validation", "Moyenne Classement", "Statut", "Categorie");
+        
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        $i = 2;
+        // $j = 1;
+        $sheet->fromArray(
+            array_values($headers),
+            null,
+            'A1'
+        );
+        
+        // xxxxxxxxx
+        foreach ($dataSaved as $data) {
+            $sheet->setCellValue('A'.$i, $i-1);
+            $sheet->setCellValue('B'.$i, $data['inscription']->getId());
+            $sheet->setCellValue('C'.$i, $data['inscription']->getAdmission()->getPreinscription()->getEtudiant()->getNom());
+            $sheet->setCellValue('D'.$i, $data['inscription']->getAdmission()->getPreinscription()->getEtudiant()->getPrenom());
+            $alphabet = range('E', 'Z');
+            foreach ($data['noteModules'] as $key => $noteModule) {
+                $column = $alphabet[$key];
+                $sheet->setCellValue($column.$i, $noteModule['note']." ". $noteModule['statut']['abreviationAff']);
+            }
+            $alphabet = range($column, 'Z');
+            $sheet->setCellValue($alphabet[1].$i, round($data['moyenneNormal'],2));
+            $sheet->setCellValue($alphabet[2].$i, round($data['moyenneSec'],2));
+            $sheet->setCellValue($alphabet[3].$i, $this->getStatut($data['inscription'], $semestre, statut: "statutAff")->getContent());
+            $sheet->setCellValue($alphabet[4].$i, $data['categorie']);
+            $i++;
+            // $j++;
+        }
+        $writer = new Xlsx($spreadsheet);
+        $current_year = date('m') > 7 ? date('Y').'-'.date('Y')+1 : date('Y') - 1 .'-' .date('Y');
+        $fileName = "Extraction List ".$annee->getFormation()->getAbreviation()." ".$semestre->getDesignation().".xlsx";
+        $temp_file = tempnam(sys_get_temp_dir(), $fileName);
+        $writer->save($temp_file);
+        return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);
+    }
+
     // impression deliberation
 
     #[Route('/impression_delib/{ins}', name: 'evaluation_semestre_impression_deliberation')]
