@@ -204,6 +204,7 @@ class SemestreController extends AbstractController
         $headers = ['ord','Code','Nom','Prénom'];
         foreach ($modules as $module) {
             array_push($headers,'MOD'.$module->getId());
+            array_push($headers,'STAT-AFF');
         }
         array_push($headers, "Moyenne Validation", "Moyenne Classement", "Statut", "Categorie");
         
@@ -224,9 +225,15 @@ class SemestreController extends AbstractController
             $sheet->setCellValue('C'.$i, $data['inscription']->getAdmission()->getPreinscription()->getEtudiant()->getNom());
             $sheet->setCellValue('D'.$i, $data['inscription']->getAdmission()->getPreinscription()->getEtudiant()->getPrenom());
             $alphabet = range('E', 'Z');
+            $k=0;
             foreach ($data['noteModules'] as $key => $noteModule) {
-                $column = $alphabet[$key];
-                $sheet->setCellValue($column.$i, $noteModule['note']." ". $noteModule['statut']['abreviationAff']);
+                $column = $alphabet[$k];
+                // $sheet->setCellValue($column.$i, $noteModule['note']." ". $noteModule['statut']['abreviationAff']);
+                $sheet->setCellValue($column.$i, $noteModule['note']);
+                $k++;
+                $column = $alphabet[$k];
+                $sheet->setCellValue($column.$i, $noteModule['statut']['abreviationAff']);
+                $k++;
             }
             $alphabet = range($column, 'Z');
             $sheet->setCellValue($alphabet[1].$i, round($data['moyenneNormal'],2));
