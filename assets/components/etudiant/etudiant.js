@@ -154,9 +154,7 @@ $(document).ready(function  () {
       processing: true,
       serverSide: true,
       deferRender: true,
-      language: {
-        url: "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/French.json",
-      },
+      language: datatablesFrench,
       stateSave: true,
       bDestroy: true
     });    
