@@ -31,9 +31,7 @@ var table = $("#datatables_candidat_admissibles").DataTable({
             .prop("checked", true);
         });
     },
-    language: {
-        url: "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/French.json",
-    },
+    language: datatablesFrench,
     });
 var tableAdmis = $("#datatables_candidat_admis").DataTable({
     lengthMenu: [

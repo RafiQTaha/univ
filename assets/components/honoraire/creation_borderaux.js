@@ -35,9 +35,7 @@ $(document).ready(function () {
         columnDefs: [
             { targets: [1], orderable: false }
         ],
-        language: {
-            url: "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/French.json",
-        },
+        language: datatablesFrench,
     });
     $('body').on('dblclick','#datables_creation_borderaux tbody tr',function (e) {
         e.preventDefault();

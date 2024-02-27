@@ -42,9 +42,7 @@ $(document).ready(function () {
                 }
             }
         },
-        language: {
-        url: "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/French.json",
-        },
+        language: datatablesFrench,
     });
     function table_note_inscription(){
         var table_notes_inscription =  $("#datatables_notes_inscription").DataTable({
@@ -57,9 +55,7 @@ $(document).ready(function () {
             processing: true,
             serverSide: true,
             deferRender: true,
-            language: {
-                url: "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/French.json",
-            },
+            language: datatablesFrench,
             stateSave: true,
             bDestroy: true
         });

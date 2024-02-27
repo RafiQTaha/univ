@@ -31,9 +31,7 @@ $(document).ready(function () {
                 }
             }
         },
-        language: {
-        url: "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/French.json",
-        },
+        language: datatablesFrench,
     });
 $("body").on('keydown',"#input1", async function(e){
     if (e.which === 13) {

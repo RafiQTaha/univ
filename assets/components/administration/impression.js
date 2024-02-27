@@ -91,9 +91,7 @@ $(document).ready(function  () {
             $("#list_etudiants").html(response).DataTable({
                 scrollX: true,
                 scrollY: true,
-                language: {
-                    url: "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/French.json",
-                },
+                language: datatablesFrench,
             });
             check = 1;
             enableButtons();

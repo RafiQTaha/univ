@@ -102,9 +102,7 @@ $(document).ready(function () {
                 .html(response.html2)
                 .DataTable({
                     scrollX: true,
-                    language: {
-                        url: "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/French.json",
-                    },
+                    language: datatablesFrench,
                     lengthMenu: [
                         [10, 15, 25, 50, 100, 20000000000000],
                         [10, 15, 25, 50, 100, "All"],
@@ -264,9 +262,7 @@ $(document).ready(function () {
                 .html(response.html2)
                 .DataTable({
                     scrollX: true,
-                    language: {
-                        url: "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/French.json",
-                    },
+                    language: datatablesFrench,
                     lengthMenu: [
                         [10, 15, 25, 50, 100, 20000000000000],
                         [10, 15, 25, 50, 100, "All"],

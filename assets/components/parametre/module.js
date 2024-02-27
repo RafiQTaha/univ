@@ -23,9 +23,7 @@ const Toast = Swal.mixin({
         processing: true,
         serverSide: true,
         deferRender: true,
-        language: {
-            url: "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/French.json",
-        },
+        language: datatablesFrench,
     });
     $("#etablissement").select2();
     $('body').on('click','#datatables_gestion_module tbody tr',function () {
