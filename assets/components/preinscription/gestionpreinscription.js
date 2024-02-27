@@ -43,9 +43,7 @@ var table_gestion_preins = $("#datables_gestion_preinscription").DataTable({
             }
         }
     },
-    language: {
-        url: "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/French.json",
-    },
+    language: datatablesFrench,
 });
 const getDocumentsPreins = async () => {
     try {

@@ -45,9 +45,7 @@ const Toast = Swal.mixin({
                 }
             }
         },
-        language: {
-            url: "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/French.json",
-        },
+        language: datatablesFrench,
     });
 
     const getStatutInscription = async () => {

@@ -20,9 +20,7 @@ var table_preins = $("#datables_preinscription").DataTable({
     processing: true,
     serverSide: true,
     deferRender: true,
-    language: {
-    url: "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/French.json",
-    },
+    language: datatablesFrench,
 });
 
 

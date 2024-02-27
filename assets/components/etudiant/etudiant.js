@@ -41,9 +41,10 @@ $(document).ready(function  () {
             }
         }
     },
-    language: {
-      url: "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/French.json",
-    },
+    language: datatablesFrench,
+    // language: {
+    //   url: "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/French.json",
+    // },
   });
 
   const getAppelRdv = async () => {

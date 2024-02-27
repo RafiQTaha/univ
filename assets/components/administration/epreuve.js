@@ -46,9 +46,7 @@ $(document).ready(function  () {
                 }
             }
         },
-        language: {
-            url: "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/French.json",
-        },
+        language: datatablesFrench,
         });
     var tableEpreuveRattrapage = $("#list_epreuve_rattrapage").DataTable({
         lengthMenu: [
@@ -79,9 +77,7 @@ $(document).ready(function  () {
                 }
             }
         },
-        language: {
-            url: "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/French.json",
-        },
+        language: datatablesFrench,
     });
     // filters for session normale
 

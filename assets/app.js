@@ -25,6 +25,9 @@ require("./components/includes/stisla");
 
 require("./components/includes/datatables/core");
 require("./components/includes/datatables/datatable-bs4");
+const datatablesFrench = require("./components/includes/datatables_french.json");
+global.datatablesFrench = datatablesFrench
+
 require("select2");
 require("select2/dist/css/select2.css");
 

@@ -42,9 +42,7 @@ $(document).ready(function () {
                 }
             }
         },
-        language: {
-        url: "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/French.json",
-        },
+        language: datatablesFrench,
     });
     // $('body').on('click','#datables_notes_epreuve tbody tr',function () {
     //     const input = $(this).find("input");

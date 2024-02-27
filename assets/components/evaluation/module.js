@@ -92,9 +92,7 @@ $(document).ready(function  () {
                 $('#list_epreuve_normal').DataTable().clear().destroy();
               }
             $("#list_epreuve_normal").html(response.html).DataTable({
-                language: {
-                    url: "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/French.json",
-                },
+                language: datatablesFrench,
             });
             check = response.check;
             if(check == 1){

@@ -31,9 +31,7 @@ $(document).ready(function () {
             });
             $("body tr#" + id_seance).addClass('active_databales');
         },
-        language: {
-            url: "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/French.json",
-        },
+        language: datatablesFrench,
         columnDefs: [
             { targets: [1], orderable: false }
         ],
