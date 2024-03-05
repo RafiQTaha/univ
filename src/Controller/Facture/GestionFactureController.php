@@ -1180,12 +1180,13 @@ class GestionFactureController extends AbstractController
             $operationcabN->setSynFlag(0); 
             $operationcabN->setAnnuler(0); 
             $operationcabN->setDateContable(date('Y')); 
-            $operationcabN->setOrganisme('Organisme'); 
+            $operationcabN->setOrganisme('Payant'); 
             $this->em->persist($operationcabN);
             $this->em->flush();
             $etab = $operationcab->getAnnee()->getFormation()->getEtablissement()->getAbreviation();
             $operationcabN->setCode($etab.'-FAC'.str_pad($operationcabN->getId(), 8, '0', STR_PAD_LEFT).'/'.date('Y'));
-    
+            $this->em->flush();
+            
         //     foreach ($operationcab->getOperationDets() as $det) {
         //         // dd($det);
         //         if ($det->getActive() == 1) {
