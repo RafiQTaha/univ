@@ -52,7 +52,7 @@ class Pv
     #[ORM\Column(type: 'float', nullable: true)]
     private $seuilRachat;
 
-    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[ORM\Column(type: 'text', nullable: true)]
     private $observation;
 
     public function getId(): ?int

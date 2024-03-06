@@ -52,7 +52,7 @@ class TReglement
     #[ORM\Column(type: 'float', nullable: true)]
     private $annuler = 0;
 
-    #[ORM\Column(type: 'string', length: 20, nullable: true)]
+    #[ORM\Column(type: 'string', length: 100, nullable: true)]
     private $annuler_motif;
 
     #[ORM\Column(type: 'datetime', nullable: true)]
