@@ -95,6 +95,12 @@ class PlEmptime
 
     #[ORM\Column(type: 'datetime', nullable: true)]
     private $deleted;
+
+    #[ORM\ManyToOne(targetEntity: PEnseignant::class, inversedBy: 'plEmptimes')]
+    private $assurePar;
+
+    #[ORM\Column(type: 'text', nullable: true)]
+    private $observation;
     
     public function __construct()
     {
@@ -482,6 +488,30 @@ class PlEmptime
     public function setDeleted(?\DateTimeInterface $deleted): self
     {
         $this->deleted = $deleted;
+
+        return $this;
+    }
+
+    public function getAssurePar(): ?PEnseignant
+    {
+        return $this->assurePar;
+    }
+
+    public function setAssurePar(?PEnseignant $assurePar): self
+    {
+        $this->assurePar = $assurePar;
+
+        return $this;
+    }
+
+    public function getObservation(): ?string
+    {
+        return $this->observation;
+    }
+
+    public function setObservation(?string $observation): self
+    {
+        $this->observation = $observation;
 
         return $this;
     }

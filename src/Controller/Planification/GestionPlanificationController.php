@@ -237,33 +237,60 @@ class GestionPlanificationController extends AbstractController
         $emptime->setMotifAnnuler($motif);
         $this->em->flush();
         return new Response('Seance Bien Anuller',200);
-    }  
-    #[Route('/gestion_valider_planning/{emptime}', name: 'gestion_valider_planning')]
-    public function gestion_valider_planning(PlEmptime $emptime): Response
+    } 
+    
+    #[Route('/valider_observation_planning', name: 'valider_observation_planning')]
+    public function valider_observation_planning(Request $request): Response
     {   
+        if ($request->get('seance') == "" || $request->get('enseignant_assurer') =="" ) {
+            return new Response('Merci de renseignez tout les champs Obligatoire',500);
+        }
+        $emptime = $this->em->getRepository(PlEmptime::class)->find($request->get('seance'));
         if ($emptime->getAnnuler() == 1) {
             return new Response('Impossible de valider une séance annulé! ',500);
         }
-        // $emptimes = $this->em->getRepository(PlEmptime::class)->findBy(['semaine'=>$emptime->getSemaine()]);
-        // // dd($emptimes);
-        // foreach ($emptimes as $emptime) {
-            // $sql = "select * from semaine 
-            //     where id >= 100 and id <= 200 and date(date_debut) <= (SELECT date(start) FROM `pl_emptime`
-            //     where id = ".$emptime->getId().") and date(date_fin) >= (SELECT date(start) FROM `pl_emptime`
-            //     where id = ".$emptime->getId().")";
-            // $stmt = $this->em->getConnection()->prepare($sql);
-            // $resultSet = $stmt->executeQuery();
-            // $semaine = $resultSet->fetchAll();
-            // $emptime->setSemaine($this->em->getRepository(semaine::class)->find($semaine[0]['id']));
-            // $this->em->flush();
-        // }
-        // die('done');
-        if ($emptime) {
+        if ($emptime->getValider() == 1) {
+            return new Response('Impossible de valider une séance déja validé! ',500);
+        }
+        $enseignant = $this->em->getRepository(PEnseignant::class)->find($request->get('enseignant_assurer'));
+        if ($enseignant) {
+            $emptime->setAssurePar($enseignant);
+            $emptime->setObservation($request->get('observation'));
             $emptime->setValider(1);
             $this->em->flush();
+            return new Response('Seance Bien Valider',200);
+        }else {
+            return new Response('Enseignant Introuvable',500);
         }
-        return new Response('Seance Bien Valider',200);
-    }  
+    } 
+
+    // #[Route('/gestion_valider_planning/{emptime}', name: 'gestion_valider_planning')]
+    // public function gestion_valider_planning(PlEmptime $emptime): Response
+    // {   
+    //     if ($emptime->getAnnuler() == 1) {
+    //         return new Response('Impossible de valider une séance annulé! ',500);
+    //     }
+    //     // $emptimes = $this->em->getRepository(PlEmptime::class)->findBy(['semaine'=>$emptime->getSemaine()]);
+    //     // // dd($emptimes);
+    //     // foreach ($emptimes as $emptime) {
+    //         // $sql = "select * from semaine 
+    //         //     where id >= 100 and id <= 200 and date(date_debut) <= (SELECT date(start) FROM `pl_emptime`
+    //         //     where id = ".$emptime->getId().") and date(date_fin) >= (SELECT date(start) FROM `pl_emptime`
+    //         //     where id = ".$emptime->getId().")";
+    //         // $stmt = $this->em->getConnection()->prepare($sql);
+    //         // $resultSet = $stmt->executeQuery();
+    //         // $semaine = $resultSet->fetchAll();
+    //         // $emptime->setSemaine($this->em->getRepository(semaine::class)->find($semaine[0]['id']));
+    //         // $this->em->flush();
+    //     // }
+    //     // die('done');
+    //     if ($emptime) {
+    //         $emptime->setValider(1);
+    //         $this->em->flush();
+    //     }
+    //     return new Response('Seance Bien Valider',200);
+    // }  
+
     #[Route('/gestion_devalider_planning/{emptime}', name: 'gestion_devalider_planning')]
     public function gestion_devalider_planning(PlEmptime $emptime): Response
     {   

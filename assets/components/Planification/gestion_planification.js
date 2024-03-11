@@ -467,6 +467,7 @@ $(document).ready(function () {
         }
         window.open('/planification/gestions/Getsequence_gestion/'+id_planning, '_blank');
     });
+
     $('body').on('click','#validation', async function (e) {
         e.preventDefault();
         if(!id_planning){
@@ -476,28 +477,75 @@ $(document).ready(function () {
             })
             return;
         }
-        const icon = $("#validation i");
-        icon.removeClass('fa-check').addClass("fa-spinner fa-spin");
-        // var formData = new FormData();
-        // formData.append('ids_planning', JSON.stringify(ids_planning));
-        try {
-            const request = await axios.post('/planification/gestions/gestion_valider_planning/'+id_planning);
-            const response = request.data;
-            Toast.fire({
-                icon: 'success',
-                title: response,
-            })
-            table_gestion_planification.ajax.reload(null,false);
-            icon.addClass('fa-check').removeClass("fa-spinner fa-spin");
-        } catch (error) {
-            const message = error.response.data;
-            icon.addClass('fa-check').removeClass("fa-spinner fa-spin");
-            Toast.fire({
-                icon: 'error',
-                title: message,
-            })
-        }
+        $('#observation_modal').modal("show");
     })
+
+    $("body").on('submit','#enseignant_assurer_save', async function (e){
+        e.preventDefault();
+        var formData = new FormData(this);
+        formData.append('seance', id_planning)
+        // console.log(formData);
+        let modalAlert =  $("#observation_modal .modal-body .alert");
+        modalAlert.remove();
+        const icon = $("#enseignant_assurer_save .btn i");
+        icon.removeClass('fa-check-circle').addClass("fa-spinner fa-spin");
+        try{
+            const request = await  axios.post('/planification/gestions/valider_observation_planning',formData)
+            const data = request.data;
+            $("#observation_modal .modal-body").prepend(
+                `<div class="alert alert-success">${data}</div>`
+            ); 
+            icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin");
+            // alltimes()
+            // setTimeout(() => {
+            // //    $("#observation_modal .modal-body .alert").remove();
+            //    $('#observation_modal').modal("hide");
+            // }, 3000);
+        }catch(error){
+            const message = error.response.data;
+            // console.log(error, error.response);
+            modalAlert.remove();
+            $("#observation_modal .modal-body").prepend(
+                `<div class="alert alert-danger">${message}</div>`
+            );
+            icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
+        }
+        setTimeout(() => {
+            $("#observation_modal .modal-body .alert").remove();
+         }, 3000);
+    })
+    
+    // $('body').on('click','#validation', async function (e) {
+    //     e.preventDefault();
+    //     if(!id_planning){
+    //         Toast.fire({
+    //             icon: 'error',
+    //             title: 'Merci de Choisir une ligne',
+    //         })
+    //         return;
+    //     }
+    //     const icon = $("#validation i");
+    //     icon.removeClass('fa-check').addClass("fa-spinner fa-spin");
+    //     // var formData = new FormData();
+    //     // formData.append('ids_planning', JSON.stringify(ids_planning));
+    //     try {
+    //         const request = await axios.post('/planification/gestions/gestion_valider_planning/'+id_planning);
+    //         const response = request.data;
+    //         Toast.fire({
+    //             icon: 'success',
+    //             title: response,
+    //         })
+    //         table_gestion_planification.ajax.reload(null,false);
+    //         icon.addClass('fa-check').removeClass("fa-spinner fa-spin");
+    //     } catch (error) {
+    //         const message = error.response.data;
+    //         icon.addClass('fa-check').removeClass("fa-spinner fa-spin");
+    //         Toast.fire({
+    //             icon: 'error',
+    //             title: message,
+    //         })
+    //     }
+    // })
 
     $('body').on('click','#extraction', async function (e) {
         e.preventDefault();

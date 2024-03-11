@@ -57,6 +57,9 @@ class PEnseignant
     #[ORM\Column(type: 'string', length: 24, nullable: true)]
     private $Rib;
 
+    #[ORM\OneToMany(mappedBy: 'assurePar', targetEntity: PlEmptime::class)]
+    private $plEmptimes;
+
     public function __construct()
     {
         $this->epreuves = new ArrayCollection();
@@ -65,6 +68,7 @@ class PEnseignant
         $this->emptimens = new ArrayCollection();
         $this->honenss = new ArrayCollection();
         $this->enseignantexcepts = new ArrayCollection();
+        $this->plEmptimes = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -338,6 +342,36 @@ class PEnseignant
     public function setRib(?string $Rib): self
     {
         $this->Rib = $Rib;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, PlEmptime>
+     */
+    public function getPlEmptimes(): Collection
+    {
+        return $this->plEmptimes;
+    }
+
+    public function addPlEmptime(PlEmptime $plEmptime): self
+    {
+        if (!$this->plEmptimes->contains($plEmptime)) {
+            $this->plEmptimes[] = $plEmptime;
+            $plEmptime->setAssurePar($this);
+        }
+
+        return $this;
+    }
+
+    public function removePlEmptime(PlEmptime $plEmptime): self
+    {
+        if ($this->plEmptimes->removeElement($plEmptime)) {
+            // set the owning side to null (unless already changed)
+            if ($plEmptime->getAssurePar() === $this) {
+                $plEmptime->setAssurePar(null);
+            }
+        }
 
         return $this;
     }
