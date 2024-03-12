@@ -496,11 +496,11 @@ $(document).ready(function () {
                 `<div class="alert alert-success">${data}</div>`
             ); 
             icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin");
+            table_gestion_planification.ajax.reload(null,false);
             // alltimes()
-            // setTimeout(() => {
-            // //    $("#observation_modal .modal-body .alert").remove();
-            //    $('#observation_modal').modal("hide");
-            // }, 3000);
+            setTimeout(() => {
+                $('#observation_modal').modal("hide");
+            }, 3000);
         }catch(error){
             const message = error.response.data;
             // console.log(error, error.response);
