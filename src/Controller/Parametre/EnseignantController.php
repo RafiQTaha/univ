@@ -192,7 +192,7 @@ class EnseignantController extends AbstractController
 
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
-        $sheet->setCellValue('A1', 'Id');
+        $sheet->setCellValue('A1', 'Id_ENSEIGNANT');
         $sheet->setCellValue('B1', 'CODE');
         $sheet->setCellValue('C1', 'NOM');
         $sheet->setCellValue('D1', 'PRENOM');
@@ -206,12 +206,12 @@ class EnseignantController extends AbstractController
 
         
         foreach ($enseignants as $enseignant){
-            $grade =$enseignant->getGrade();
+            $grade = $enseignant->getGrade();
             $sheet->setCellValue('A'.$i, $enseignant->getId());
-            $sheet->setCellValue('B'.$i, $grade->getId());
-            $sheet->setCellValue('C'.$i, $enseignant->getCode());
-            $sheet->setCellValue('D'.$i, $enseignant->getNom());
-            $sheet->setCellValue('E'.$i, $enseignant->getPrenom());
+            $sheet->setCellValue('B'.$i, $enseignant->getCode());
+            $sheet->setCellValue('C'.$i, $enseignant->getNom());
+            $sheet->setCellValue('D'.$i, $enseignant->getPrenom());
+            $sheet->setCellValue('E'.$i, $grade->getId());
             $sheet->setCellValue('F'.$i, $grade->getDesignation());
             $sheet->setCellValue('G'.$i, $grade->getAbreviation());
             $sheet->setCellValue('H'.$i, $enseignant->getCin());
