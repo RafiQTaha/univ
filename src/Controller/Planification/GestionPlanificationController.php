@@ -242,10 +242,13 @@ class GestionPlanificationController extends AbstractController
     #[Route('/valider_observation_planning', name: 'valider_observation_planning')]
     public function valider_observation_planning(Request $request): Response
     {   
-        if ($request->get('seance') == "" || $request->get('enseignant_assurer') =="" ) {
-            return new Response('Merci de renseignez tout les champs Obligatoire',500);
-        }
+        // if ($request->get('seance') == "" || $request->get('enseignant_assurer') =="" ) {
+        //     return new Response('Merci de renseignez tout les champs Obligatoire',500);
+        // }
         $emptime = $this->em->getRepository(PlEmptime::class)->find($request->get('seance'));
+        if (!$emptime) {
+            return new Response('IMerci de choisir une seance! ',500);
+        }
         if ($emptime->getAnnuler() == 1) {
             return new Response('Impossible de valider une séance annulé! ',500);
         }
