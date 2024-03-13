@@ -258,13 +258,11 @@ class GestionPlanificationController extends AbstractController
         $enseignant = $this->em->getRepository(PEnseignant::class)->find($request->get('enseignant_assurer'));
         if ($enseignant) {
             $emptime->setAssurePar($enseignant);
-            $emptime->setObservation($request->get('observation'));
-            $emptime->setValider(1);
-            $this->em->flush();
-            return new Response('Seance Bien Valider',200);
-        }else {
-            return new Response('Enseignant Introuvable',500);
         }
+        $emptime->setObservation($request->get('observation'));
+        $emptime->setValider(1);
+        $this->em->flush();
+        return new Response('Seance Bien Valider',200);
     } 
 
     // #[Route('/gestion_valider_planning/{emptime}', name: 'gestion_valider_planning')]
