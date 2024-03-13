@@ -401,6 +401,9 @@ class PlanificationController extends AbstractController
     public function planifications_calendar_edit(PlEmptime $emptime,Request $request): Response
     {
         // return new Response("Vous n'anvez pas le droit!!",500);
+        if (date('d') > 13) {
+            return new Response("Vous n'anvez pas le droit!!",500);
+        }
         // dd($request->get('n_semaine'));
         if($emptime->getValider() != 1){
             $element = $this->em->getRepository(AcElement::class)->find($request->get('element'));
@@ -521,6 +524,9 @@ class PlanificationController extends AbstractController
     public function planifications_editEventDate(PlEmptime $emptime,Request $request): Response
     {   
         // return new Response("Vous n'anvez pas le droit!!",500);
+        if (date('d') > 13) {
+            return new Response("Vous n'anvez pas le droit!!",500);
+        }
         if ($emptime->getGenerer() ==1 || $emptime->getAnnuler() == 1) {
             return new Response('Seance déja générer',500);
         }
