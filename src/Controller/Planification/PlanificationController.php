@@ -400,11 +400,7 @@ class PlanificationController extends AbstractController
     #[Route('/planifications_calendar_edit/{id}', name: 'planifications_calendar_edit')]
     public function planifications_calendar_edit(PlEmptime $emptime,Request $request): Response
     {
-        // return new Response("Vous n'anvez pas le droit!!",500);
-        if (date('d') > 13) {
-            return new Response("Vous n'anvez pas le droit!!",500);
-        }
-        // dd($request->get('n_semaine'));
+        return new Response("Vous n'anvez pas le droit!!",500);
         if($emptime->getValider() != 1){
             $element = $this->em->getRepository(AcElement::class)->find($request->get('element'));
             $annee = $this->em->getRepository(AcAnnee::class)->getActiveAnneeByFormation($element->getModule()->getSemestre()->getPromotion()->getFormation());
@@ -523,14 +519,11 @@ class PlanificationController extends AbstractController
     #[Route('/planifications_editEventDate/{id}', name: 'planifications_editEventDate')]
     public function planifications_editEventDate(PlEmptime $emptime,Request $request): Response
     {   
-        // return new Response("Vous n'anvez pas le droit!!",500);
-        if (date('d') > 13) {
-            return new Response("Vous n'anvez pas le droit!!",500);
-        }
+        return new Response("Vous n'anvez pas le droit!!",500);
         if ($emptime->getGenerer() ==1 || $emptime->getAnnuler() == 1) {
             return new Response('Seance déja générer',500);
         }
-        if ($request->get('start') != "" && $request->get('start') != "") {
+        if ($request->get('start') != "" && $request->get('end') != "") {
             $start = new \DateTime($request->get('start'));
             $end = new \DateTime($request->get('end'));
             $h_debut = new \DateTime($start->format('H:i'));
