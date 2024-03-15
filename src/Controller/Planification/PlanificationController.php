@@ -132,8 +132,7 @@ class PlanificationController extends AbstractController
         $semestre = $request->get('semestre');
         $groupe = $request->get('niv');
         $professeur = $request->get('professeur');
-        
-        if (!$semestre && $professeur != 'null') {
+        if ( (!$semestre || $semestre == "null") && $professeur != 'null') {
             $emptimes = $this->em->getRepository(PlEmptime::class)->getEmptimeByProfesseur($professeur);
             
         }elseif($groupe == 0 && $professeur == 'null'){
