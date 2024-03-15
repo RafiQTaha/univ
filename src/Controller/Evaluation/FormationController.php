@@ -80,6 +80,10 @@ class FormationController extends AbstractController
         $admissions = [];
         $notFullTest = 0;
         
+        if (!$inscriptions) {
+            return new jsonResponse('Aucune Inscription Trouver!',500);
+        }
+        
         if (!empty($inscriptions)) {
 		    foreach ($inscriptions as $key => $value) {
                 if (!in_array($value->getAdmission(),$admissions)) {
