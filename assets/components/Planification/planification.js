@@ -41,15 +41,15 @@ $(document).ready(function () {
             myCustomButton: {
                 text: 'Imprimer',
                 click: function () {
-                    var currentWeek = moment($('#calendar').fullCalendar('getDate'), "MMDDYYYY").isoWeek();
+                    // var currentWeek = moment($('#calendar').fullCalendar('getDate'), "MMDDYYYY").isoWeek();
                     var currentDate = moment($('#calendar').fullCalendar('getDate')).format('YYYY-MM-DD');
-                    if(id_semestre != ""){
+                    if(id_semestre != "" || professeur){
                         window.open('/planification/planifications/print_planning/'+id_semestre+'/'+niv+'/'+currentDate+'/'+professeur, '_blank');
                         // window.open('/planification/planifications/print_planning/'+id_semestre+'/'+niv+'/'+currentWeek+'/'+currentDate+'/'+professeur, '_blank');
                     }else{
                         Toast.fire({
                             icon: 'error',
-                            title: 'Merci de Choisir une Semestre!!',
+                            title: 'Merci de Choisir une Semestre ou un Enseignant!!',
                         }) 
                     }
                 }
@@ -234,13 +234,13 @@ $(document).ready(function () {
         if (professeur == "") {
             professeur = null;
         }
-        if(id_semestre != "" ){
+        // if(id_semestre != "" ){
             alltimes()
-        }else{
-            alltime = [];
-            $("#calendar").fullCalendar('removeEvents'); 
-            $("#calendar").fullCalendar('addEventSource', alltime); 
-        }
+        // }else{
+        //     alltime = [];
+        //     $("#calendar").fullCalendar('removeEvents'); 
+        //     $("#calendar").fullCalendar('addEventSource', alltime); 
+        // }
     })
     $("#niv1").on('change', async function (){
         const niv1 = $(this).val();
@@ -332,6 +332,8 @@ $(document).ready(function () {
     })
     $("body").on('submit','.form_add_planning', async function (e){
         e.preventDefault();
+        $(".form_add_planning .btn").attr("disabled", true);
+
         var formData = new FormData(this);
         formData.append('n_semaine', currentweek);
         formData.append('day', currentDay)
@@ -348,9 +350,9 @@ $(document).ready(function () {
                 `<div class="alert alert-success">${data}</div>`
             ); 
             icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin");
+            $(".form_add_planning .btn").attr("disabled", false);
             alltimes()
             setTimeout(() => {
-            //    $("#addform_planif-modal .modal-body .alert").remove();
                $('#addform_planif-modal').modal("hide");
             }, 3000);
         }catch(error){
@@ -361,6 +363,7 @@ $(document).ready(function () {
                 `<div class="alert alert-danger">${message}</div>`
             );
             icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
+            $(".form_add_planning .btn").attr("disabled", false);
         }
         setTimeout(() => {
             $("#addform_planif-modal .modal-body .alert").remove();
@@ -371,9 +374,10 @@ $(document).ready(function () {
         var formData = new FormData(this);
         formData.append('edit_groupe', edit_groupe);
         formData.append('n_semaine', currentweek);
-        ////////////
+
         let modalAlert =  $("#updateform_planif-modal .modal-body .alert");
         modalAlert.remove();
+        $(".form_update_planning .btn_update_planning").attr("disabled", true);
         const icon = $(".form_update_planning .btn_update_planning i");
         icon.removeClass('fa-check-circle').addClass("fa-spinner fa-spin");
         try{
@@ -383,6 +387,7 @@ $(document).ready(function () {
                 `<div class="alert alert-success">${data}</div>`
             ); 
             icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin");
+            $(".form_update_planning .btn_update_planning").attr("disabled", false);
             alltimes()
             setTimeout(() => {
                 $("#updateform_planif-modal .modal-body .alert").remove();
@@ -396,6 +401,7 @@ $(document).ready(function () {
                 `<div class="alert alert-danger">${message}</div>`
             );
             icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
+            $(".form_update_planning .btn_update_planning").attr("disabled", false);
         }
     })
 

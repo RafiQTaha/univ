@@ -113,7 +113,27 @@ class PlEmptimeRepository extends ServiceEntityRepository
             ->getResult()
         ;
     }
-    ////////////////////////////////////////////////////Professur
+    ////////////////////////////////////////////////////Professeur
+    
+    public function getEmptimeByProfesseur($professeur)
+    {
+        // dd($semestre,$professeur);
+        return $this->createQueryBuilder('e')
+            ->innerJoin("e.emptimens", "emptimens")
+            ->InnerJoin("emptimens.enseignant", "enseignant")
+            ->innerJoin("e.programmation", "programmation")
+            ->innerJoin("programmation.element", "element")
+            ->innerJoin("element.module", "module")
+            ->innerJoin("module.semestre", "semestre")
+            ->Where('enseignant.id = :enseignant')
+            ->andWhere("e.active = 1")
+            ->andWhere("e.annuler = 0")
+            ->setParameter('enseignant', $professeur)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+    ////////////////////////////////////////////////////Professeur
 
     public function getEmptimeBySemestreAndGroupeAndSemaineAndProfesseur($semestre,$groupe,$semaine,$professeur)
     {

@@ -7,67 +7,96 @@
         <meta name="description" content="">
         <meta name="author" content="">
         <title>Planification</title>
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+        {# <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"> #}
         {{ encore_entry_link_tags('app') }}
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.css"/>
+        {# <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.css"/> #}
     </head>
 
     <body>
     <STYLE type="text/css" media="print">
     @page { size: landscape; }
     </STYLE>
-        <table class="tbl_style">
-            <tr>
-                <td><b> Etablissement :</b> </td>
-                <td> {{semestre.promotion.formation.etablissement.designation}} </td>
-            </tr>
-            
-            <tr>
-                <td><b> Formation :</b> </td>
-                <td> {{semestre.promotion.formation.designation}} </td>
-            </tr>
-
-            <tr>
-                <td><b> Année :</b> </td>
-                <td> {{annee.designation}} </td>
-            </tr>
-                
-            <tr>
-                <td><b> Promotion  :</b> </td>
-                <td> {{semestre.promotion.designation }}</td>
-            </tr>
-
-            <tr>
-                <td><b> Semestre  :</b> </td>
-                <td> {{semestre.designation}} </td>
-            </tr>
-            {% if groupe != 0 %}
+        {% if semestre != "false" %}
+            <table class="tbl_style">
                 <tr>
-                    <td><b> Groupe Principale  :</b> </td>
-                    <td> {{niveau.niveau}} </td>
+                    <td><b> Etablissement :</b> </td>
+                    <td> {{semestre.promotion.formation.etablissement.designation}} </td>
                 </tr>
-                <input type="text" id="niv" value="{{niveau.id}}" style="display:none"/>
-            {% else %}
-                <input type="text" id="niv" value="{{groupe}}" style="display:none"/>
-            {% endif %}
+                
+                <tr>
+                    <td><b> Formation :</b> </td>
+                    <td> {{semestre.promotion.formation.designation}} </td>
+                </tr>
+
+                <tr>
+                    <td><b> Année :</b> </td>
+                    <td> {{annee.designation}} </td>
+                </tr>
+                    
+                <tr>
+                    <td><b> Promotion  :</b> </td>
+                    <td> {{semestre.promotion.designation }}</td>
+                </tr>
+
+                <tr>
+                    <td><b> Semestre  :</b> </td>
+                    <td> {{semestre.designation}} </td>
+                </tr>
+                {% if groupe != 0 %}
+                    <tr>
+                        <td><b> Groupe Principale  :</b> </td>
+                        <td> {{niveau.niveau}} </td>
+                    </tr>
+                    <input type="text" id="niv" value="{{niveau.id}}" style="display:none"/>
+                {% else %}
+                    <input type="text" id="niv" value="{{groupe}}" style="display:none"/>
+                {% endif %}
+                
+            </table>
             
-        </table>
+            <input type="text" id="semestre" value="{{semestre.id}}" style="display:none"/>
+            <input type="text" id="professeur" value="{{professeur}}" style="display:none"/>
+        {% else %}
+        <table class="tbl_style">
+                <tr>
+                    <td><b> Professeur :</b> </td>
+                    <td> {{professeur.nom}}  {{professeur.prenom}} </td>
+                </tr>
+                
+            </table>
+            <input type="text" id="professeur" value="{{professeur.id}}" style="display:none"/>
+            <input type="text" id="semestre" value="" style="display:none"/>
+        {% endif %}
+            
+            <input type="text" id="date" value="{{day}}" style="display:none"/>
+    
+        
         {# <div>{{times}}</div> #}
-        <input type="text" id="date" value="{{day}}" style="display:none"/>
-        <input type="text" id="professeur" value="{{professeur}}" style="display:none"/>
-        <input type="text" id="semestre" value="{{semestre.id}}" style="display:none"/>
     </div>
     <div id='calendar'></div>
 </div>    
 <!-- JavaScript -->
-<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" ></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.24.0/axios.min.js"></script>
-{# Full Calendar Script #}
-<script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/locale-all.js"></script>
+{# <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script> #}
+<script src="{{asset('assets/fullcallendar/jquery-3.3.1.min.js')}}"></script>
+
+{# <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" ></script> #}
+<script src="{{asset('assets/fullcallendar/popper.min.js')}}"></script>
+
+
+{# <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script> #}
+<script src="{{asset('assets/fullcallendar/moment.min.js')}}"></script>
+
+
+{# <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.24.0/axios.min.js"></script> #}
+<script src="{{asset('assets/fullcallendar/axios.min.js')}}"></script>
+
+{# <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.js"></script> #}
+<script src="{{asset('assets/fullcallendar/fullcalendar.min.js')}}"></script>
+
+{# <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/locale-all.js"></script> #}
+<script src="{{asset('assets/fullcallendar/locale-all.js')}}"></script>
 <script>
+{# {{ encore_entry_script_tags('app') }} #}
 $(document).ready(function () {
     let alltime = [];
     const alltimes = async () => {

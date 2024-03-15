@@ -62,9 +62,9 @@
                             <div class="form-group">
                                 <label for="description">Description :</label>
                                 {% if emptime.description != "NULL" %}
-                                    <input class="form-control" type="text" placeholder="description" name="description" value="{{emptime.description}}"> 
+                                    <input class="form-control" type="text" placeholder="description" name="description" value="{{emptime.description}}" readonly> 
                                     {% else %}
-                                    <input class="form-control" type="text" placeholder="description" name="description" value=""> 
+                                    <input class="form-control" type="text" placeholder="description" name="description" value="" readonly> 
                                 {% endif %}
                             </div>
                         </div>
@@ -114,7 +114,8 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="nature_seance">Nature Seance :</label>
-                                <select class="form-control chosen-select" name="nature_seance" id="nature_seance" {{readonly}}>
+                                <input class="form-control" type="text" name="nature_seance" id="nature_seance" value="{{emptime.programmation.natureepreuve.designation}}" readonly> 
+                                {# <select class="form-control chosen-select" name="nature_seance" id="nature_seance" {{readonly}}>
                                     <option value="">Choix Nature Seance</option>
                                     {% for natureepreuve in natureepreuves %}
                                         {% if natureepreuve == emptime.programmation.natureepreuve %}
@@ -123,7 +124,7 @@
                                             <option value="{{natureepreuve.id}}">{{natureepreuve.designation}}</option>   
                                         {% endif %}
                                     {% endfor %}
-                                </select>
+                                </select> #}
                             </div>
                         </div>
                     </div>
@@ -131,7 +132,8 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="module">Module :</label>
-                                <select class="form-control chosen-select" name="module" id="module" {{readonly}}>
+                                <input class="form-control" type="text" name="module" id="module" value="{{emptime.programmation.element.module.designation}}" readonly> 
+                                {# <select class="form-control chosen-select" name="module" id="module" {{readonly}}>
                                     <option value="">Choix Module</option>
                                     {% for module in modules %}
                                         {% if module == emptime.programmation.element.module %}
@@ -140,13 +142,14 @@
                                                 <option value="{{module.id}}">{{module.designation}}</option>                                                
                                         {% endif %}
                                     {% endfor %}
-                                </select>
+                                </select> #}
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="element">Element :</label>
-                                <select class="form-control chosen-select" name="element" id="element" {{readonly}}>
+                                <input class="form-control" type="text" name="element" id="element" value="{{emptime.programmation.element.designation}}" readonly> 
+                                {# <select class="form-control chosen-select" name="element" id="element" {{readonly}}>
                                     <option value="">Choix Element</option>
                                     {% for element in elements %}
                                         {% if element == emptime.programmation.element %}
@@ -155,7 +158,7 @@
                                             <option value="{{element.id}}">{{element.designation}}</option>
                                         {% endif %}
                                     {% endfor %}
-                                </select>
+                                </select> #}
                             </div>
                         </div>
                     </div>
