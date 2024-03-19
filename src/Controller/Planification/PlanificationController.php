@@ -380,7 +380,7 @@ class PlanificationController extends AbstractController
     #[Route('/planifications_calendar_edit/{id}', name: 'planifications_calendar_edit')]
     public function planifications_calendar_edit(PlEmptime $emptime,Request $request): Response
     {
-        return new Response("Vous n'anvez pas le droit!!",500);
+        // return new Response("Vous n'anvez pas le droit!!",500);
         if ($emptime->getValider() == 1) {
             return new Response("Vous ne pouvez pas modifer une seance déja valider!",500);
         }
