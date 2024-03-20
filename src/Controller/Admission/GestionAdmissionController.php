@@ -3,13 +3,10 @@
 namespace App\Controller\Admission;
 
 use Mpdf\Mpdf;
-use App\Entity\PFrais;
 use App\Entity\AcAnnee;
 use App\Entity\PStatut;
 use App\Entity\PDocument;
-use App\Entity\POrganisme;
 use App\Entity\TAdmission;
-use App\Entity\TReglement;
 use App\Entity\AcPromotion;
 use App\Entity\TInscription;
 use App\Entity\TOperationcab;
@@ -18,6 +15,7 @@ use App\Entity\AcEtablissement;
 use App\Controller\ApiController;
 use App\Entity\TAdmissionDocument;
 use App\Controller\DatatablesController;
+use App\Entity\Pec;
 use Doctrine\Persistence\ManagerRegistry;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
@@ -50,10 +48,11 @@ class GestionAdmissionController extends AbstractController
         if(!$operations) {
             return $this->render("errors/403.html.twig");
         }
-        // dd($operations);
+        $pecs = $this->em->getRepository(Pec::class)->findBy(['active' => 1],['designation' => 'ASC']);
         return $this->render('admission/gestion_admission.html.twig', [
             'etablissements' =>  $this->em->getRepository(AcEtablissement::class)->findBy(['active'=>1]),
-            'operations' => $operations
+            'operations' => $operations,
+            'pecs' => $pecs,
         ]);
     }
     #[Route('/list', name: 'gestion_admission_list')]
@@ -334,9 +333,14 @@ class GestionAdmissionController extends AbstractController
             }
             $findAnnee = $this->em->getRepository(AcAnnee::class)->findBy([ 'formation' => $admission->getPreinscription()->getAnnee()->getFormation()],['id'=>'DESC'],$limit);
             $promotions = $this->em->getRepository(AcPromotion::class)->findBy(['formation' => $admission->getPreinscription()->getAnnee()->getFormation(),'active'=>1],['ordre'=>'ASC']);
+            $pecs = $this->em->getRepository(Pec::class)->findBy(['active' => 1],['designation' => 'ASC']); 
             $promotionHtml = ApiController::dropdown($promotions, "promotion");
             $anneeHtml = ApiController::dropdown($findAnnee, "annee");
-            return new JsonResponse(['anneeHtml' => $anneeHtml, 'promotionHtml' => $promotionHtml], 200);
+            $pecsHtml = "";
+            if ($admission->getPreinscription()->getPec() == null) {
+                $pecsHtml = ApiController::dropdown($pecs, "pec");
+            }
+            return new JsonResponse(['anneeHtml' => $anneeHtml, 'promotionHtml' => $promotionHtml, 'pecsHtml' => $pecsHtml], 200);
         }
 
         return new JsonResponse("Etudiant deja inscrit à l'année courante!", 500);
@@ -344,15 +348,13 @@ class GestionAdmissionController extends AbstractController
     #[Route('/inscription/{admission}', name: 'admission_inscription')]
     public function inscriptionAction(Request $request, TAdmission $admission)
     {
-        // dd($admission->getPreinscription()->getNature()->getId());
+        return new JsonResponse("Bien ", 200);
         $annee = $this->em->getRepository(AcAnnee::class)->find($request->get('annee_inscription'));
         $inscription = $this->em->getRepository(TInscription::class)->getActiveInscriptionByAnnee($admission,$annee);
         if ($inscription != null) {
             return new JsonResponse("Etudiant deja inscrit à l'année courante!", 500);
         }
-        // dd('test'); 
         $promotion = $this->em->getRepository(AcPromotion::class)->find($request->get('promotion_inscription'));
-        // dd($admission->getPreinscription()->getEtudiant()->getCategoriePreinscription());
         $etudiant = $admission->getPreinscription()->getEtudiant();
         
         if ($etudiant->getNationalite() == 'MOROCCO' || $etudiant->getCategoriePreinscription() == 'NOUVELLE PRE-INSCRIPTION') {            
@@ -362,6 +364,14 @@ class GestionAdmissionController extends AbstractController
                     return new JsonResponse("La liste est Complete!!", 500);
                 }
             }
+        }
+        if ($admission->getPreinscription()->getPec() == null) {
+            $pec = $this->em->getRepository(Pec::class)->find($request->get('pec'));
+            if ($pec && trim($request->get('n-pec')) == "" ) {
+                return new JsonResponse("Merci d'entrer le numero de pec !", 500);
+            }
+            $admission->getPreinscription()->setPec($pec);
+            $admission->getPreinscription()->setPecNumber(trim($request->get('n-pec')));
         }
 
         $inscription = new TInscription();
@@ -414,35 +424,10 @@ class GestionAdmissionController extends AbstractController
                 );
                 $this->em->flush();
             }
-            // switch ($i) {
-            //     case 1:
-            //         // "hors inscription" à remplacer par "ADD Inscription"
-            //         $operationCab->setCategorie('hors inscription');
-            //         $operationCab->setCategorie('hors inscription');
-            //         $operationCab->setActive(0);
-            //         $operationCab->setDateContable(date('Y') + 1);
-            //         break;
-            //     case 2:
-            //         $operationCab->setCategorie('hors inscription');
-            //         $operationCab->setActive(1);
-            //         $operationCab->setDateContable(date('Y'));
-            //         break;
-            //     default:
-            //         $operationCab->setCategorie('inscription');
-            //         $operationCab->setActive(1);
-            //         $operationCab->setDateContable(date('Y'));
-            //         break;
-            // }
-            // if ($i != 2) {
-                // $i == 0 ? $operationCab->setCategorie('inscription') : $operationCab->setCategorie('hors inscription');
-                // $i == 0 ? $operationCab->setActive(1) : $operationCab->setActive(0);
-                // $i == 0 ? $operationCab->setDateContable(date('Y')) : $operationCab->setDateContable(date('Y') + 1);
-            // }
-        // }
         return new JsonResponse("Bien Enregistre code inscription: " . $inscription->getCode(), 200);
     }
     #[Route('/listadmission/{annee}', name: 'admission_list_admis')]
-    public function admissionListAdmis(Request $request, AcAnnee $annee): Response
+    public function admissionListAdmis(Request $request, AcAnnee $annee)
     {
         $admissions = $this->em->getRepository(TAdmission::class)->getAdmissionByAnnee($annee);
         $html = $this->render("admission/pdfs/list.html.twig", [

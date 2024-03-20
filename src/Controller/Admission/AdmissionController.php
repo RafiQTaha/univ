@@ -123,7 +123,7 @@ class AdmissionController extends AbstractController
                 }
             }
             $nestedData["DT_RowId"] = $cd;
-            $nestedData["DT_RowClass"] = $cd;
+            $nestedData["DT_RowClass"] = "";
             $data[] = $nestedData;
             $i++;
         }
@@ -152,16 +152,6 @@ class AdmissionController extends AbstractController
             array( 'db' => 'etab.abreviation','dt' => 5),
             array( 'db' => 'UPPER(form.abreviation)','dt' => 6),
             array( 'db' => 'nd.designation','dt' => 7),
-
-            // array( 'db' => 'ad.code','dt' => 0),
-            // array( 'db' => 'UPPER(pre.code)','dt' => 1),
-            // array( 'db' => 'etu.nom','dt' => 2),
-            // array( 'db' => 'etu.prenom','dt' => 3),
-            // array( 'db' => 'etab.abreviation','dt' => 4),
-            // array( 'db' => 'UPPER(form.abreviation)','dt' => 5),
-            // array( 'db' => 'nd.designation','dt' => 6),
-            // array( 'db' => 'ad.id','dt' => 7)
-
         );
 
         $sql = "SELECT " . implode(", ", DatatablesController::Pluck($columns, 'db')) . "
@@ -180,7 +170,6 @@ class AdmissionController extends AbstractController
         $stmt = $this->em->getConnection()->prepare($sql);
         $newstmt = $stmt->executeQuery();
         $totalRecords = count($newstmt->fetchAll());
-        // dd($sql);
         $my_columns = DatatablesController::Pluck($columns, 'db');
         
         // search 
@@ -189,25 +178,19 @@ class AdmissionController extends AbstractController
             $sqlRequest .= $where;
         }
         
-        // dd($params->all('order')[0]['column']);
         $changed_column = $params->all('order')[0]['column'] > 0 ? $params->all('order')[0]['column'] - 1 : 0;
         $sqlRequest .= " ORDER BY " .DatatablesController::Pluck($columns, 'db')[$changed_column] . "   " . $params->all('order')[0]['dir'] . "  LIMIT " . $params->get('start') . " ," . $params->get('length') . " ";
-        // $sqlRequest .= DatatablesController::Order($request, $columns);
-        // dd($sqlRequest);
         $stmt = $this->em->getConnection()->prepare($sqlRequest);
         $resultSet = $stmt->executeQuery();
         $result = $resultSet->fetchAll();
 
 
         $data = array();
-        // dd($result);
         $i = 1;
         foreach ($result as $key => $row) {
             $nestedData = array();
             $cd = $row['id'];
             $nestedData[] = "<input type ='checkbox' class='check_admissible' id ='$cd' >";
-            // $nestedData[] = $cd;
-            // dd($row);
 
             foreach (array_values($row) as $key => $value) {
                 // if($key < 0) {
@@ -215,7 +198,7 @@ class AdmissionController extends AbstractController
                 // }
             }
             $nestedData["DT_RowId"] = $cd;
-            $nestedData["DT_RowClass"] = $cd;
+            $nestedData["DT_RowClass"] = "";
             $data[] = $nestedData;
             $i++;
         }

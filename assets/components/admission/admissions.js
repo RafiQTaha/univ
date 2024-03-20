@@ -50,9 +50,8 @@ var tableAdmis = $("#datatables_candidat_admis").DataTable({
     //         .prop("checked", true);
     //     });
     // },
-    language: {
-        url: "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/French.json",
-    },
+    
+    language: datatablesFrench,
     });
 $('.nav-pills a').on('click', function (e) {
     $(this).tab('show')

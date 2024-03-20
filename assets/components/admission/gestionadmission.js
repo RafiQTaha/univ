@@ -100,7 +100,7 @@ $(document).ready(function () {
     $("#montant").val($("#frais").find(":selected").data("frais"));
   });
   getOrganisme();
-  $("#etablissement").select2();
+  $("select").select2();
   $("#etablissement").on("change", async function () {
     const id_etab = $(this).val();
     table.columns().search("");
@@ -139,6 +139,12 @@ $(document).ready(function () {
       const data = await request.data;
       $("#annee_inscription").html(data.anneeHtml).select2();
       $("#promotion_inscription").html(data.promotionHtml).select2();
+      if (data.pecsHtml != "") {
+          $("#pec").html(data.pecsHtml).select2();
+          $("#d-pec").removeClass("d-none");
+      }else{
+        $("#d-pec").addClass("d-none");
+      }
       $("#inscription-modal").attr("disabled", false);
     } catch (error) {
       $("#inscription-modal").attr("disabled", true);
@@ -432,8 +438,10 @@ $(document).ready(function () {
                 <p>${response}</p>
               </div>`
       );
+      // xxxxx
       icon.addClass("fa-check-circle").removeClass("fa-spinner fa-spin ");
-      $("#annee_inscription, #promotion_inscription, #organisme").empty();
+      $("#annee_inscription, #promotion_inscription, #pec").empty();
+      $(this).trigger("reset");
       table.ajax.reload(null, false);
     } catch (error) {
       const message = error.response.data;

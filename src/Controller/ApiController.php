@@ -2,21 +2,17 @@
 
 namespace App\Controller;
 
-use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use DateTime;
 use App\Entity\PFrais;
 use App\Entity\AcAnnee;
 use App\Entity\PGroupe;
 use App\Entity\XBanque;
 use App\Entity\AcModule;
-use App\Entity\ExGnotes;
 use App\Entity\Mouchard;
 use App\Entity\Sanction;
 use App\Entity\UsModule;
 use App\Entity\AcElement;
-use App\Entity\AcEpreuve;
 use App\Entity\Agression;
-use App\Entity\TEtudiant;
 use App\Entity\AcSemestre;
 use App\Entity\POrganisme;
 use App\Entity\TAdmission;
@@ -33,16 +29,10 @@ use App\Entity\AcEtablissement;
 use App\Entity\PAnonymatActuel;
 use App\Entity\PrProgrammation;
 use Doctrine\Persistence\ManagerRegistry;
-use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
-use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\Serializer\Encoder\XmlEncoder;
-use Symfony\Component\Serializer\Encoder\JsonEncoder;
-use Symfony\Component\HttpFoundation\ResponseHeaderBag;
-use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[Route('/api')]

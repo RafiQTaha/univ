@@ -4,7 +4,6 @@ namespace App\Controller\Etudiant;
 
 use App\Controller\ApiController;
 use DateTime;
-
 use App\Entity\PStatut;
 use App\Entity\XTypeBac;
 use App\Entity\TEtudiant;
@@ -14,15 +13,14 @@ use App\Entity\NatureDemande;
 use App\Entity\AcAnnee;
 use App\Controller\DatatablesController;
 use App\Entity\AcFormation;
+use App\Entity\Pec;
 use App\Entity\PMatiere;
-use App\Entity\POrganisme;
 use App\Entity\PSituation;
 use App\Entity\XFiliere;
 use App\Entity\XLangue;
 use App\Entity\TOperationcab;
 use App\Entity\TPreinscriptionReleveNote;
 use Doctrine\Persistence\ManagerRegistry;
-use phpDocumentor\Reflection\Types\Null_;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use PhpOffice\PhpSpreadsheet\Reader\Xlsx as Reader;
@@ -58,6 +56,7 @@ class EtudiantController extends AbstractController
         $typebacs = $this->em->getRepository(XTypeBac::class)->findBy(['active'=>1],['designation' => 'ASC']);
         $langues = $this->em->getRepository(XLangue::class)->findBy(['active'=>1],['designation' => 'ASC']);
         $natureDemandes = $this->em->getRepository(NatureDemande::class)->findBy(['active' => 1],['designation' => 'ASC']);
+        $pecs = $this->em->getRepository(Pec::class)->findBy(['active' => 1],['designation' => 'ASC']);
         
         return $this->render('etudiant/etudiant/index.html.twig', [
             'operations' => $operations,
@@ -67,6 +66,7 @@ class EtudiantController extends AbstractController
             'langues' => $langues,
             'natureDemandes' => $natureDemandes,
             'academies' => $academies,
+            'pecs' => $pecs,
         ]);
     }
     
@@ -380,6 +380,10 @@ class EtudiantController extends AbstractController
             return new JsonResponse("Etudiant déja une preinscription dans cette année / formation", 500);
         }
         // dd($etudiant->getStatut());
+        $pec = $this->em->getRepository(Pec::class)->find($request->get('pec'));
+        if ($pec && trim($request->get('n-pec')) == "" ) {
+            return new JsonResponse("Merci d'entrer le numero de pec !", 500);
+        }
         $etudiant->setStatutCondidat("PRE-INSCRIT");
         $preinscription = new TPreinscription();
         $preinscription->setStatut($etudiant->getStatut());
@@ -392,6 +396,12 @@ class EtudiantController extends AbstractController
         $preinscription->setCreated(new DateTime('now'));
         $preinscription->setUserCreated($this->getUser());
         $preinscription->setAnnee($annee);
+
+        if($pec){
+            $preinscription->setPec($pec);
+            $preinscription->setPecNumber(trim($request->get('n-pec')));
+        }
+
         $this->em->persist($preinscription);
         $this->em->flush();
         $preinscription->setCode('PRE-'.$formation->getAbreviation().str_pad($preinscription->getId(), 8, '0', STR_PAD_LEFT).'/'.date('Y'));

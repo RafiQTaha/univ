@@ -77,6 +77,12 @@ class TPreinscription
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'Preinscriptions')]
     private $userCreated;
 
+    #[ORM\ManyToOne(targetEntity: Pec::class, inversedBy: 'tPreinscriptions')]
+    private $pec;
+
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private $pecNumber;
+
     // #[ORM\Column(type: 'float', nullable: true)]
     // private $validation;
 
@@ -417,6 +423,30 @@ class TPreinscription
     public function setUserCreated(?User $userCreated): self
     {
         $this->userCreated = $userCreated;
+
+        return $this;
+    }
+
+    public function getPec(): ?Pec
+    {
+        return $this->pec;
+    }
+
+    public function setPec(?Pec $pec): self
+    {
+        $this->pec = $pec;
+
+        return $this;
+    }
+
+    public function getPecNumber(): ?string
+    {
+        return $this->pecNumber;
+    }
+
+    public function setPecNumber(?string $pecNumber): self
+    {
+        $this->pecNumber = $pecNumber;
 
         return $this;
     }
