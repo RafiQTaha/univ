@@ -35,7 +35,7 @@ class RechercheAvanceController extends AbstractController
         //check if user has access to this page
         $operations = ApiController::check($this->getUser(), 'etudiant_recherche_avance', $this->em, $request);
         // dd($operations);
-        if(!$operations) {
+        if (!$operations) {
             return $this->render("errors/403.html.twig");
         }
         // $admissions = $this->em->getRepository(TAdmission::class)->findAll();
@@ -47,7 +47,7 @@ class RechercheAvanceController extends AbstractController
     public function find(Request $request): Response
     {
         $admissions = $this->em->getRepository(TAdmission::class)->findAdmssions($request->query->get("search"));
-        
+
         // dd($admissions);
         return new Response(json_encode($admissions));
     }
@@ -57,7 +57,7 @@ class RechercheAvanceController extends AbstractController
         $html = "<option value=''>Choix année</option>";
         // dd($admission->getInscriptions());
         foreach ($admission->getInscriptions() as $inscription) {
-            $html .= "<option value='".$inscription->getId()."'>".$inscription->getAnnee()->getDesignation()."</option>";
+            $html .= "<option value='" . $inscription->getId() . "'>" . $inscription->getAnnee()->getDesignation() . "</option>";
         }
         return new JsonResponse($html);
     }
@@ -65,10 +65,10 @@ class RechercheAvanceController extends AbstractController
     public function recherche(TInscription $inscription): Response
     {
         $administratif = $this->render("etudiant/recherche_avance/page/administratif.html.twig", ['inscription' => $inscription])->getContent();
-        $academique = $this->render("etudiant/recherche_avance/page/academique.html.twig", ['inscription' => $inscription])->getContent();        
+        $academique = $this->render("etudiant/recherche_avance/page/academique.html.twig", ['inscription' => $inscription])->getContent();
         $informations = $this->render("etudiant/recherche_avance/page/informations.html.twig", ['inscription' => $inscription])->getContent();
         // dd($informations);
-        
+
         return new JsonResponse([
             'informations' => $informations,
             'administratif' => $administratif,
@@ -83,7 +83,7 @@ class RechercheAvanceController extends AbstractController
         ])->getContent();
         // dd($html);
         $mpdf = new Mpdf([
-            'mode' => 'utf-8', 
+            'mode' => 'utf-8',
             'margin_left' => 5,
             'margin_right' => 5,
         ]);
@@ -96,7 +96,6 @@ class RechercheAvanceController extends AbstractController
         $mpdf->WriteHTML($html);
         $mpdf->SetTitle('Attestation d\'inscription');
         $mpdf->Output("attestaion.pdf", "I");
-        
     }
     #[Route('/attestation/scolarite/{inscription}', name: 'etudiant_recherche_attestation_scolarite')]
     public function attestationScolarite(TInscription $inscription): Response
@@ -142,7 +141,7 @@ class RechercheAvanceController extends AbstractController
         $mpdf->SetTitle('ATTESTATION DU SUIVI d\'ETUDES EN LANGUE FRANCAISE');
         $mpdf->Output("suivi.pdf", "I");
     }
-    
+
     #[Route('/attestation/scolariteLaz/{inscription}', name: 'etudiant_recherche_attestation_scolarite_laz')]
     public function attestationScolariteLaz(TInscription $inscription): Response
     {
@@ -165,7 +164,7 @@ class RechercheAvanceController extends AbstractController
         $mpdf->SetTitle('Attestation de scolarité LAZ');
         $mpdf->Output("scolarite.pdf", "I");
     }
-    
+
     #[Route('/attestation/cerificat/{inscription}', name: 'etudiant_recherche_attestation_cerificat')]
     public function attestationcerificat(TInscription $inscription): Response
     {
@@ -212,7 +211,7 @@ class RechercheAvanceController extends AbstractController
         $mpdf->SetTitle('Attestation de scolarité (Anglais)');
         $mpdf->Output("scolarite.pdf", "I");
     }
-    
+
     #[Route('/attestation/scolariteAnglaisLaz/{inscription}', name: 'etudiant_recherche_attestation_scolarite_anglais_laz')]
     public function attestationScolariteAngalisLaz(TInscription $inscription): Response
     {
@@ -244,12 +243,12 @@ class RechercheAvanceController extends AbstractController
             'promotion' => $inscription->getPromotion()
         ]);
         // ,'statutAff'=>[41,42,43,44,70,73]
-        $anote = $this->em->getRepository(ExAnotes::class)->findOneBy(['inscription'=>$inscription]);
+        $anote = $this->em->getRepository(ExAnotes::class)->findOneBy(['inscription' => $inscription]);
         if (!$anote) {
-            return new JsonResponse('Note Annee Introuvable!!',500);
+            return new JsonResponse('Note Annee Introuvable!!', 500);
         }
-        if (!in_array($anote->getStatutAff()->getId(), [41,42,43,70,73])) {
-            return new JsonResponse('Redoublant!!',500);
+        if (!in_array($anote->getStatutAff()->getId(), [41, 42, 43, 70, 73])) {
+            return new JsonResponse('Redoublant!!', 500);
         }
         $html = $this->render("etudiant/recherche_avance/pdf/attestations/reussite.html.twig", [
             'inscription' => $inscription,
@@ -271,11 +270,11 @@ class RechercheAvanceController extends AbstractController
     }
 
     ////////////////////////////////////////////////////
-        
+
     #[Route('/attestation/reussiteAll/{inscription}', name: 'etudiant_recherche_attestation_reussite_all')]
     public function attestationReussiteAll(TInscription $inscription): Response
     {
-        
+
         $inscriptions = $this->em->getRepository(TInscription::class)->getInscriptionsByAdmission($inscription->getAdmission());
         $html = "";
         $i = 1;
@@ -285,9 +284,9 @@ class RechercheAvanceController extends AbstractController
                 'promotion' => $inscription->getPromotion()
             ]);
             // ,'statutAff'=>[41,42,43,44,70,73]
-            $anote = $this->em->getRepository(ExAnotes::class)->findOneBy(['inscription'=>$inscription]);
-            if ($anote and in_array($anote->getStatutAff()->getId(), [41,42,43,70,73])) {
-                if ($i > 1 ) {
+            $anote = $this->em->getRepository(ExAnotes::class)->findOneBy(['inscription' => $inscription]);
+            if ($anote and in_array($anote->getStatutAff()->getId(), [41, 42, 43, 70, 73])) {
+                if ($i > 1) {
                     $html .= "<pagebreak>";
                 }
                 $html .= $this->render("etudiant/recherche_avance/pdf/attestations/reussite.html.twig", [
@@ -296,7 +295,7 @@ class RechercheAvanceController extends AbstractController
             }
             $i++;
         }
-        
+
         // dd($html);
         $mpdf = new Mpdf([
             'margin_left' => 5,
@@ -337,13 +336,11 @@ class RechercheAvanceController extends AbstractController
         $mpdf->WriteHTML($html);
         $mpdf->SetTitle('Attestation de réussite Avec Moyenne');
         $mpdf->Output("reussite.pdf", "I");
-       
-        
     }
     #[Route('/attestation/releve/module/{inscription}/{semestre}/{assiduite}', name: 'etudiant_recherche_releve_module')]
     public function attestationReleveModule(TInscription $inscription, AcSemestre $semestre, $assiduite): Response
     {
-        if($assiduite == 0){
+        if ($assiduite == 0) {
             $noteModulesBySemestre = $this->em->getRepository(ExMnotes::class)->getNotesModuleSansAssiduiteBySemestre($semestre, $inscription);
         } else {
             $noteModulesBySemestre = $this->em->getRepository(ExMnotes::class)->getNotesModuleBySemestre($semestre, $inscription);
@@ -374,15 +371,15 @@ class RechercheAvanceController extends AbstractController
     #[Route('/attestation/releve/annee/{inscription}/{assiduite}', name: 'etudiant_recherche_releve_annee')]
     public function attestationReleveAnnee(TInscription $inscription, $assiduite): Response
     {
-        $semestres = $this->em->getRepository(ExSnotes::class)->findBy(['inscription' => $inscription],['semestre'=>'ASC']);
+        $semestres = $this->em->getRepository(ExSnotes::class)->findBy(['inscription' => $inscription], ['semestre' => 'ASC']);
         // dd($semestres);
         $noteSemestre2 = null;
         $noteModulesBySemestre2 = null;
         $noteSemestre1 = $semestres ? $semestres[0] : die("Note semestre introuvable");
-        if (count($semestres)>1) {
+        if (count($semestres) > 1) {
             $noteSemestre2 = $semestres[1];
         }
-        if($assiduite == 0){
+        if ($assiduite == 0) {
             $noteModulesBySemestre1 = $this->em->getRepository(ExMnotes::class)->getNotesModuleSansAssiduiteBySemestre($noteSemestre1->getSemestre(), $inscription);
             if ($noteSemestre2 != null) {
                 $noteModulesBySemestre2 = $this->em->getRepository(ExMnotes::class)->getNotesModuleSansAssiduiteBySemestre($noteSemestre2->getSemestre(), $inscription);
@@ -416,9 +413,9 @@ class RechercheAvanceController extends AbstractController
         $mpdf->SetTitle('Relevé de note annuel');
         $mpdf->Output("releve_annee.pdf", "I");
     }
-    
+
     ///////////////////////////////////////////////////////
-        
+
     #[Route('/attestation/releveAll/annee/{inscription}/{assiduite}', name: 'etudiant_recherche_releve_annee_all')]
     public function attestationReleveAllAnnee(TInscription $inscription, $assiduite): Response
     {
@@ -428,14 +425,14 @@ class RechercheAvanceController extends AbstractController
         $html = "";
         $i = 1;
         foreach ($inscriptions as $key => $inscription) {
-            $semestres = $this->em->getRepository(ExSnotes::class)->findBy(['inscription' => $inscription],['semestre'=>'ASC']);
+            $semestres = $this->em->getRepository(ExSnotes::class)->findBy(['inscription' => $inscription], ['semestre' => 'ASC']);
             // dd($semestres);
             $noteSemestre2 = null;
             $noteModulesBySemestre2 = null;
-            if (count($semestres)>1) {
+            if (count($semestres) > 1) {
                 $noteSemestre1 = $semestres[0];
                 $noteSemestre2 = $semestres[1];
-                if($assiduite == 0){
+                if ($assiduite == 0) {
                     $noteModulesBySemestre1 = $this->em->getRepository(ExMnotes::class)->getNotesModuleSansAssiduiteBySemestre($noteSemestre1->getSemestre(), $inscription);
                     if ($noteSemestre2 != null) {
                         $noteModulesBySemestre2 = $this->em->getRepository(ExMnotes::class)->getNotesModuleSansAssiduiteBySemestre($noteSemestre2->getSemestre(), $inscription);
@@ -446,7 +443,7 @@ class RechercheAvanceController extends AbstractController
                         $noteModulesBySemestre2 = $this->em->getRepository(ExMnotes::class)->getNotesModuleBySemestre($noteSemestre2->getSemestre(), $inscription);
                     }
                 }
-                if ($i > 1 ) {
+                if ($i > 1) {
                     $html .= "<pagebreak>";
                 }
                 $html .= $this->render("etudiant/recherche_avance/pdf/academique/note_annee.html.twig", [
@@ -460,7 +457,7 @@ class RechercheAvanceController extends AbstractController
             }
             $i++;
         }
-        
+
         // dd($html);
         $mpdf = new Mpdf([
             'margin_left' => 5,
@@ -550,7 +547,46 @@ class RechercheAvanceController extends AbstractController
         $mpdf->SetTitle('Attestation de réussite (cursus)');
         $mpdf->Output("Reussite (cursus).pdf", "I");
     }
-    
+
+    #[Route('/avc/{inscription}', name: 'etudiant_recherche_attestation_avc')]
+    public function evaluationAnneeAvc(TInscription $inscription, Request $request)
+    {
+        // $inscription = $this->em->getRepository(TInscription::class)->find($inscription);
+        // dd($inscription);
+        // dd(count($this->em->getRepository(ExMnotes::class)->getModulesTheoriqueBySemestre(1177, $inscription)));
+        $anotes = $this->em->getRepository(ExAnotes::class)->findAnoteByAdmission($inscription->getAdmission());
+        $html = $this->render("etudiant/recherche_avance/pdf/attestations/avc.html.twig", ['inscription' => $inscription, "anotes" => $anotes])->getContent();
+        $mpdf = new Mpdf([
+            'mode' => 'utf-8',
+            'margin_left' => '1',
+            'margin_right' => '1',
+            'margin_top' => '1',
+            'margin_bottom' => '15',
+            'format' => 'A4-L',
+            'margin_header' => '2',
+            'margin_footer' => '2'
+        ]);
+        // $mpdf->SetHTMLHeader($this->render("evaluation/annee/pdfs/header.html.twig", [
+        //     'annee' => $annee,
+        //     'promotion' => $promotion,
+        //     'affichage' => $affichage
+        // ])->getContent());
+        $mpdf->defaultfooterline = 0;
+        $mpdf->SetFooter('Page {PAGENO} / {nb}');
+        $mpdf->WriteHTML($html);
+        $mpdf->Output("avc" . $inscription->getId() . ".pdf", "I");
+    }
+
+    public function validationModules($inscription, $semestre)
+    {
+        return new Response(count($this->em->getRepository(ExMnotes::class)->getModulesTheoriqueBySemestre($semestre, $inscription)), 200, ['Content-Type' => 'text/html']);
+    }
+
+    public function validationStages($inscription, $semestre)
+    {
+        return new Response(count($this->em->getRepository(ExMnotes::class)->getModulesPratiqueBySemestre($semestre, $inscription)), 200, ['Content-Type' => 'text/html']);
+    }
+
     // #[Route('/impression_delib/{ins}', name: 'evaluation_semestre_impression_deliberation')]
     // public function evaluationSemestreImpressionDeliberation(Request $request,TInscription $inscription) 
     // {         
@@ -573,7 +609,7 @@ class RechercheAvanceController extends AbstractController
     //     ];
 
     //     $html = $this->render("evaluation/semestre/pdfs/deliberation_individuel.html.twig", $infos)->getContent();
-        
+
     //     $html .= $this->render("evaluation/semestre/pdfs/footer.html.twig")->getContent();
     //     $mpdf = new Mpdf([
     //         'mode' => 'utf-8',

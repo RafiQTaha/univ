@@ -1,0 +1,558 @@
+<style>
+	table {
+		font-family: sans-serif;
+		font-size: 10px !important;
+		font-weight: bold;
+		letter-spacing: -0.5px;
+		margin-top: -5px;
+	}
+
+	.header-table th,
+	td {
+		border: solid 1px grey;
+		margin: 2px;
+	}
+
+	.info-table th,
+	td {
+		font-size: 8px !important;
+	}
+
+	.info-table {
+		border-collapse: separate;
+		border-spacing: 5px;
+	}
+
+	.header-table {
+		border-collapse: separate;
+		border-spacing: 5px;
+	}
+
+	.header-table th {
+		padding-left: 5px;
+	}
+
+	.info-table th {
+		padding-left: 5px;
+	}
+
+	.validation-table {
+		border-collapse: separate;
+		border-spacing: 2px;
+	}
+
+	.validation-table tbody td {
+		font-size: 8px !important;
+	}
+
+	.validation-table th,
+	td {
+		border: none;
+		padding: 3px;
+		text-align: center;
+	}
+
+	.border {
+		border: solid 1px rgba(128, 128, 128, 0.541);
+	}
+
+	.oui {
+		background-color: rgba(180, 235, 158, 0.301);
+	}
+
+	.non {
+		background-color: rgba(235, 158, 158, 0.301);
+	}
+</style>
+
+<table class="header-table top" width="100%">
+	<tbody>
+		<tr>
+			<td class="border" rowspan="2" width="10%" style="margin: -5px">
+				<img width="6%" src="./assets/img/logo/Logo_UIASS_diplome.png" alt=""/>
+			</td>
+			<td class="border" width="70%" style="
+															          text-align: center;
+															          background-color: black;
+															          color: white;
+															          font-size: 10px;
+															        ">
+				UNIVERSITE ABULCASIS DES SCIENCES DE LA SANTE ABULCASIS
+			</td>
+			<td class="border" width="7%" style="
+															          text-align: center;
+															          background-color: rgb(182, 182, 182);
+															          color: black;
+															        ">
+				Réf Doc
+			</td>
+			<td class="border" width="15%" style="text-align: center">
+				UIASS{{ 'now'|date('Y')|slice(2)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        }}_AVC/{{inscription.admission.id}}
+			</td>
+		</tr>
+		<tr>
+			<td class="border" width="70%" style="
+															          text-align: center;
+															          background-color: black;
+															          color: white;
+															          font-size: 10px;
+															        ">
+				ATTESTATION DE VALIDATION DU CURSUS - FACULTE DE MEDECINE ABULCASIS
+			</td>
+			<td class="border" width="7%" style="
+															          text-align: center;
+															          background-color: rgb(182, 182, 182);
+															          color: black;
+															        ">
+				Date
+			</td>
+			<td class="border" width="15%" style="text-align: center">
+				{{ 'now' | date('d/m/Y')}}
+			</td>
+		</tr>
+	</tbody>
+</table>
+<table class="header-table" width="100%">
+	<tbody>
+		<tr>
+			<td width="100%" style="
+															          text-align: left;
+															          background-color: rgb(38, 38, 38);
+															          color: white;
+															          font-size: 10px;
+															        ">
+				<span style="margin-left: 5px">INFORMATIONS ETUDIANT</span>
+			</td>
+		</tr>
+	</tbody>
+</table>
+<table class="info-table" width="100%">
+	<tbody>
+		<tr>
+			<th style="
+															          text-align: left;
+															          background-color: rgb(220, 214, 202);
+															          color: rgb(58, 56, 56);
+															        ">
+				<span style="margin-left: 5px">NOM</span>
+			</th>
+			<td class="border" style="text-align: center">
+				<span style="margin-left: 5px">{{
+          inscription.admission.preinscription.etudiant.nom
+          }}</span>
+			</td>
+			<td style="text-align: center; border: none">
+				<span style="margin-left: 5px"></span>
+			</td>
+			<td style="text-align: center; border: none">
+				<span style="margin-left: 5px"></span>
+			</td>
+			<th style="
+															          text-align: left;
+															          background-color: rgb(220, 214, 202);
+															          color: rgb(58, 56, 56);
+															        ">
+				<span style="margin-left: 5px">PRENOM</span>
+			</th>
+			<td class="border" style="text-align: center">
+				<span style="margin-left: 5px">{{
+          inscription.admission.preinscription.etudiant.prenom
+          }}</span>
+			</td>
+		</tr>
+		<tr>
+			<th style="
+															          text-align: left;
+															          background-color: rgb(220, 214, 202);
+															          color: rgb(58, 56, 56);
+															        ">
+				<span style="margin-left: 5px">ETABLISSEMENT</span>
+			</th>
+			<td class="border" style="text-align: center">
+				<span style="margin-left: 5px">{{
+          inscription.promotion.formation.etablissement.designation
+          }}</span>
+			</td>
+			<td style="text-align: center; border: none">
+				<span style="margin-left: 5px"></span>
+			</td>
+			<td style="text-align: center; border: none">
+				<span style="margin-left: 5px"></span>
+			</td>
+			<th style="
+															          text-align: left;
+															          background-color: rgb(220, 214, 202);
+															          color: rgb(58, 56, 56);
+															        ">
+				<span style="margin-left: 5px">CODE INSCRIPTION</span>
+			</th>
+			<td class="border" style="text-align: center">
+				<span style="margin-left: 5px">{{ inscription.code }}</span>
+			</td>
+		</tr>
+		<tr>
+			<th style="
+															          text-align: left;
+															          background-color: rgb(220, 214, 202);
+															          color: rgb(58, 56, 56);
+															        ">
+				<span style="margin-left: 5px">TELEPHONE</span>
+			</th>
+			<td class="border" style="text-align: center">
+				<span style="margin-left: 5px">{{
+          inscription.admission.preinscription.etudiant.tel1
+          }}</span>
+			</td>
+			<td style="text-align: center; border: none">
+				<span style="margin-left: 5px"></span>
+			</td>
+			<td style="text-align: center; border: none">
+				<span style="margin-left: 5px"></span>
+			</td>
+			<th style="
+															          text-align: left;
+															          background-color: rgb(220, 214, 202);
+															          color: rgb(58, 56, 56);
+															        ">
+				<span style="margin-left: 5px">MAIL</span>
+			</th>
+			<td class="border" style="text-align: center">
+				<span style="margin-left: 5px">{{
+          inscription.admission.preinscription.etudiant.mail1
+          }}</span>
+			</td>
+		</tr>
+	</tbody>
+</table>
+<table class="header-table" width="100%">
+	<tbody>
+		<tr>
+			<td width="100%" style="
+															          text-align: left;
+															          background-color: rgb(38, 38, 38);
+															          color: white;
+															          font-size: 10px;
+															        ">
+				<span style="margin-left: 5px">VALIDATION CURSUS UNIVERSITAIRE</span>
+			</td>
+		</tr>
+	</tbody>
+</table>
+<table class="header-table" width="24.85%">
+	<tbody>
+		<tr>
+			<td width="100%" style="
+															          text-align: left;
+															          background-color: rgb(64, 64, 64);
+															          color: white;
+															          font-size: 10px;
+															        ">
+				<span style="margin-left: 5px">VALIDATION ANNUELLE</span>
+			</td>
+		</tr>
+	</tbody>
+</table>
+<!-- table validation annuelle -->
+<table class="validation-table" width="100%" style="padding: 0 3px; margin: -2px 0">
+	<thead>
+		<tr>
+			<th width="4%" style="background-color: rgb(74, 65, 48); color: rgb(220, 214, 202)">
+				ORD
+			</th>
+			<th width="12%" style="
+															          background-color: rgb(74, 65, 48);
+															          color: rgb(220, 214, 202);
+															          padding: 1px;
+															        ">
+				ANNÉES UNIVERSITAIRES
+			</th>
+			<th width="8.3%" style="background-color: rgb(74, 65, 48); color: rgb(220, 214, 202)">
+				SEMESTRES
+			</th>
+			<th colspan="4" width="10%" style="background-color: rgb(74, 65, 48); color: rgb(220, 214, 202)">
+				VALIDATION MODULES
+			</th>
+			<th colspan="4" width="10%" style="background-color: rgb(74, 65, 48); color: rgb(220, 214, 202)">
+				VALIDATION STAGES
+			</th>
+			<th colspan="4" width="10%" style="background-color: rgb(74, 65, 48); color: rgb(220, 214, 202)">
+				VALIDATION ANNUELLE
+			</th>
+			<th width="10%" style="background-color: rgb(74, 65, 48); color: rgb(220, 214, 202)">
+				MOYENNE ANNUELLE (NOTE/20)
+			</th>
+			<th colspan="4" width="25%" style="background-color: rgb(74, 65, 48); color: rgb(220, 214, 202)">
+				RACHAT
+			</th>
+			<th width="10%" style="background-color: rgb(74, 65, 48); color: rgb(220, 214, 202)">
+				OBSERVATIONS
+			</th>
+		</tr>
+	</thead>
+	<tbody>
+		{% set ord = 0 %}
+		{% for anote in anotes %}
+			{% for snote in anote.inscription.snotes %}
+				{% set ord = ord + 1 %}
+				<tr>
+					<td style="background-color: rgb(40, 35, 26); color: rgb(220, 214, 202)">
+						{{ ord }}
+					</td>
+
+					{% if ord is not even %}
+						<td rowspan="2" style="background-color: rgb(58, 56, 56); color: white">
+							ANNÉE
+							{{ (ord + 1) / 2 }}
+						</td>
+					{% endif %}
+
+					<td style="background-color: rgb(117, 113, 113); color: white">
+						SEMESTRE
+						{{ ord }}
+						{# SEMESTRE {{ snote.id }} {{ snote.inscription.id }} #}
+					</td>
+
+					{% set validationModules %}
+					{{render(controller(
+                'App\\Controller\\Etudiant\\RechercheAvanceController::validationModules', { inscription: snote.inscription, semestre: snote.semestre}
+            ))}}
+					{% endset %}
+
+					{% if validationModules == "0" %}
+						{% set oui = "check.png" %}
+						{% set non = "white.png" %}
+					{% else %}
+						{% set oui = "white.png" %}
+						{% set non = "uncheck.png" %}
+					{% endif %}
+
+
+					<!-- validation modules -->
+					<td class="border" style="padding: 0 !important">
+						<img width="8px" src="./assets/img/{{oui}}" alt=""/>
+					</td>
+					<td class="border oui">OUI</td>
+					<td class="border" style="padding: 0 !important">
+						<img width="8px" src="./assets/img/{{non}}" alt=""/>
+					</td>
+					<td class="border non">NON</td>
+					<!-- validation modules -->
+
+					{% set validationStages %}
+					{{render(controller(
+                'App\\Controller\\Etudiant\\RechercheAvanceController::validationStages', { inscription: snote.inscription, semestre: snote.semestre}
+            ))}}
+					{% endset %}
+
+					{% if validationStages == "0" %}
+						{% set oui = "check.png" %}
+						{% set non = "white.png" %}
+					{% else %}
+						{% set oui = "white.png" %}
+						{% set non = "uncheck.png" %}
+					{% endif %}
+
+					<!-- validation stages -->
+					<td class="border" style="padding: 0 !important">
+						<img width="8px" src="./assets/img/{{oui}}" alt=""/>
+					</td>
+					<td class="border oui">OUI</td>
+					<td class="border" style="padding: 0 !important">
+						<img width="8px" src="./assets/img/{{non}}" alt=""/>
+					</td>
+					<td class="border non">NON</td>
+					<!-- validation stages -->
+
+					{% if ord is not even %}
+
+						{% if anote.statutDef.id in [41,42,43,59,64,70,73] %}
+							{% set oui = "check.png" %}
+							{% set non = "white.png" %}
+						{% else %}
+							{% set oui = "white.png" %}
+							{% set non = "uncheck.png" %}
+						{% endif %}
+
+						<!-- validation annuelle -->
+						<td class="border" rowspan="2" style="padding: 0 !important">
+							<img width="8px" src="./assets/img/{{oui}}" alt=""/>
+						</td>
+						<td class="border oui" rowspan="2">OUI</td>
+						<td class="border" rowspan="2" style="padding: 0 !important">
+							<img width="8px" src="./assets/img/{{non}}" alt=""/>
+						</td>
+						<td class="border non" rowspan="2">NON</td>
+						<!-- validation annuelle -->
+
+						<td class="border" rowspan="2">
+							{{anote.note | number_format(2, '.', ',')}}
+							/ 20</td>
+
+
+						<!-- rachat -->
+						{% if anote.statutDef.id in [43] %}
+							{% set oui = "check.png" %}
+							{% set non = "white.png" %}
+						{% else %}
+							{% set oui = "white.png" %}
+							{% set non = "uncheck.png" %}
+						{% endif %}
+						<td class="border" rowspan="2">
+							<img width="8px" src="./assets/img/{{oui}}" alt=""/>
+						</td>
+						<td class="border oui" rowspan="2" style="padding: 0px 15px">OUI</td>
+						<td class="border" rowspan="2">
+							<img width="8px" src="./assets/img/{{non}}" alt=""/>
+						</td>
+						<td class="border non" rowspan="2" style="padding: 0px 15px">NON</td>
+						<!-- rachat -->
+
+						<td class="border" rowspan="2"></td>
+					{% endif %}
+				</tr>
+			{% endfor %}
+		{% endfor %}
+	</tbody>
+</table>
+<!-- end table validation annuelle -->
+<table class="header-table" width="24.85%">
+	<tbody>
+		<tr>
+			<td width="100%" style="
+															          text-align: left;
+															          background-color: rgb(64, 64, 64);
+															          color: white;
+															          font-size: 10px;
+															        ">
+				<span style="margin-left: 5px">VALIDATION CURSUS (HORS SOUTENANCE)</span>
+			</td>
+		</tr>
+	</tbody>
+</table>
+<!-- table validation cursus -->
+<table class="validation-table" width="100%" style="padding: 0 3px; margin: -2px 0">
+	<thead>
+		<tr style="height: 500px">
+			<th width="24.3%" style="background-color: rgb(40, 35, 26); color: rgb(220, 214, 202)">
+				VALIDATION MODULES
+			</th>
+
+
+			{% if anotes|length == inscription.annee.formation.nbrAnnee %}
+				{% set oui = "check.png" %}
+				{% set non = "white.png" %}
+			{% else %}
+				{% set oui = "white.png" %}
+				{% set non = "uncheck.png" %}
+			{% endif %}
+
+			<td class="border" width="6.6%" style="padding: 15px !important">
+				<img width="8px" src="./assets/img/{{oui}}" alt=""/>
+			</td>
+			<td class="border oui" width="6.6%">OUI</td>
+
+			<td class="border" width="6.6%" style="padding: 15px !important">
+				<img width="8px" src="./assets/img/{{non}}" alt=""/>
+			</td>
+			<td class="border non" width="6.6%">NON</td>
+			<td class="border" colspan="4" width="80%" style="
+															          text-align: left;
+															          vertical-align: top;
+															          padding: 2px 2px !important;
+															        ">
+				<span style="font-size: 6px">MENTIONS SPECIFIQUES:</span>
+			</td>
+		</tr>
+	</thead>
+</table>
+<!-- end -->
+<table class="header-table" width="100%">
+	<tbody>
+		<tr>
+			<td width="100%" style="
+															          text-align: left;
+															          background-color: rgb(38, 38, 38);
+															          color: white;
+															          font-size: 10px;
+															        ">
+				<span style="margin-left: 5px">SIGNATURES ET VALIDATIONS</span>
+			</td>
+		</tr>
+	</tbody>
+</table>
+<!-- signatures -->
+<table class="validation-table" width="100%" style="padding: 0 3px; margin: -2px 0">
+	<thead>
+		<tr style="height: 50px">
+			<th width="20%" style="background-color: rgb(74, 65, 48); color: rgb(220, 214, 202)">
+				SERVICE CONCOURS & EXAMENS
+			</th>
+			<th width="20%" style="background-color: rgb(74, 65, 48); color: rgb(220, 214, 202)">
+				SERVICE STAGES
+			</th>
+			<th width="20%" style="background-color: rgb(74, 65, 48); color: rgb(220, 214, 202)">
+				SERVICE CONTRÔLE
+			</th>
+			<th width="20%" style="background-color: rgb(74, 65, 48); color: rgb(220, 214, 202)">
+				COORDINATION UNIVERSITAIRE
+			</th>
+			<th width="3%" style="border: none"></th>
+			<th width="20%" style="background-color: rgb(116, 102, 76); color: rgb(220, 214, 202)">
+				SERVICE CONCOURS & EXAMENS
+			</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr style="height: 100px !important">
+			<td rowspan="7" class="border"></td>
+			<td rowspan="7" class="border"></td>
+			<td rowspan="7" class="border"></td>
+			<td rowspan="7" class="border"></td>
+			<td rowspan="" style="border: none"></td>
+			<td rowspan="7" class="border"></td>
+		</tr>
+		<tr style="height: 100px !important">
+			<td rowspan="" style="border: none"></td>
+		</tr>
+		<tr style="height: 100px !important">
+			<td rowspan="" style="border: none"></td>
+		</tr>
+		<tr style="height: 100px !important">
+			<td rowspan="" style="border: none"></td>
+		</tr>
+		<tr style="height: 100px !important">
+			<td rowspan="" style="border: none"></td>
+		</tr>
+		<tr style="height: 100px !important">
+			<td rowspan="" style="border: none"></td>
+		</tr>
+		<tr style="height: 100px !important">
+			<td rowspan="" style="border: none"></td>
+		</tr>
+	</tbody>
+</table>
+<!-- end -->
