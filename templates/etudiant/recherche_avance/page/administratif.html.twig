@@ -1,82 +1,95 @@
-<div class="row">        
-    <div class="col-md-12">
-        <h3> {{inscription.code}} - {{inscription.promotion.designation}} - {{inscription.annee.designation}}   </h3>
-    </div>
-    <div class="col-md-4">
-        <p>Attestations</p>
-        <ul>
-            <li>
-                <a target="_blank" href="{{path('etudiant_recherche_attestation_inscription', {inscription: inscription.id})}}">Attestation d'inscription	</a>
-            </li>
-            <li>
-                <a target="_blank" href="{{path('etudiant_recherche_attestation_scolarite', {inscription: inscription.id})}}">Attestation de scolarité	</a>
-            </li>
-            {% if inscription.annee.formation.etablissement.id == 28 %}
-                <li>
-                    <a target="_blank" href="{{path('etudiant_recherche_attestation_scolarite_laz', {inscription: inscription.id})}}">Attestation de scolarité LAZ</a>
-                </li>
-                <li>
-                    <a target="_blank" href="{{path('etudiant_recherche_attestation_cerificat', {inscription: inscription.id})}}">Certificat de scolarité</a>
-                </li>
-            {% endif %}
-            
-            <li>
-                <a target="_blank" href="{{path('etudiant_recherche_attestation_scolarite_anglais', {inscription: inscription.id})}}">Attestation de scolarité (Anglais)	</a>
-            </li>
-            {% if inscription.annee.formation.etablissement.id == 28 %}
-                <li>
-                    <a target="_blank" href="{{path('etudiant_recherche_attestation_scolarite_anglais_laz', {inscription: inscription.id})}}">Attestation de scolarité LAZ (Anglais)</a>
-                </li>
-                {# <li>
-                    <a target="_blank" href="{{path('etudiant_recherche_attestation_cursus', {inscription: inscription.id})}}">Certificat de scolarité LAZ (Anglais)</a>
-                </li> #}
-            {% endif %}
-            <li>
-                <a target="_blank" href="{{path('etudiant_recherche_attestation_suivi', {inscription: inscription.id})}}">Attestation du suivi d’etudes	en langue francaise</a>
-            </li>
-            <li>
-               <a target="_blank" href="{{path('etudiant_recherche_attestation_reussite', {inscription: inscription.id})}}">Attestation de réussite </a>
-            </li>
-            <li>
-                <a target="_blank" href="{{path('etudiant_recherche_attestation_reussite_note', {inscription: inscription.id})}}">Attestation de réussite Avec Moyenne	</a>
-            </li>
-            <li>
-                <a target="_blank" href="{{path('etudiant_recherche_attestation_bonne_conduite', {inscription: inscription.id})}}">Attestation de bonne conduite	</a>
-            </li>
-            <li>
-                <a target="_blank" href="{{path('etudiant_recherche_attestation_hebergement', {inscription: inscription.id})}}">Attestation d’hebergement	</a>
-            </li>
-            <li>
-                <a target="_blank" href="{{path('etudiant_recherche_attestation_cursus', {inscription: inscription.id})}}">Attestation de réussite Avec Note (cursus)	</a>
-            </li>
-            <li>
-                <a target="_blank" href="{{path('etudiant_recherche_attestation_reussite_all', {inscription: inscription.id})}}">Attestation de réussite (cursus)	</a>
-            </li>
-            
-        </ul>
-    </div>    
-    
-    <div class="col-md-4">
-        <p>Lettre d'avertissement</p>
-        
-    </div>    
-    
-    <div class="col-md-4">
-        <p>Statistique</p>
-        
-          <ul>
-            <li>
-                <a target="_blank" href="">Absence</a>
-            </li>
-             <li>
-                <a target="_blank" href="">Assiduité</a>
-            </li>
-             
-        </ul>
-    </div>
+<div class="row">
+	<div class="col-md-12">
+		<h3>
+			{{inscription.code}}
+			-
+			{{inscription.promotion.designation}}
+			-
+			{{inscription.annee.designation}}
+		</h3>
+	</div>
+	<div class="col-md-4">
+		<p>Attestations</p>
+		<ul>
+			<li>
+				<a target="_blank" href="{{path('etudiant_recherche_attestation_inscription', {inscription: inscription.id})}}">Attestation d'inscription
+				</a>
+			</li>
+			<li>
+				<a target="_blank" href="{{path('etudiant_recherche_attestation_scolarite', {inscription: inscription.id})}}">Attestation de scolarité
+				</a>
+			</li>
+			{% if inscription.annee.formation.etablissement.id == 28 %}
+				<li>
+					<a target="_blank" href="{{path('etudiant_recherche_attestation_scolarite_laz', {inscription: inscription.id})}}">Attestation de scolarité LAZ</a>
+				</li>
+				<li>
+					<a target="_blank" href="{{path('etudiant_recherche_attestation_cerificat', {inscription: inscription.id})}}">Certificat de scolarité</a>
+				</li>
+			{% endif %}
+
+			<li>
+				<a target="_blank" href="{{path('etudiant_recherche_attestation_scolarite_anglais', {inscription: inscription.id})}}">Attestation de scolarité (Anglais)
+				</a>
+			</li>
+			{% if inscription.annee.formation.etablissement.id == 28 %}
+				<li>
+					<a target="_blank" href="{{path('etudiant_recherche_attestation_scolarite_anglais_laz', {inscription: inscription.id})}}">Attestation de scolarité LAZ (Anglais)</a>
+				</li>
+				{# <li>
+																				                    <a target="_blank" href="{{path('etudiant_recherche_attestation_cursus', {inscription: inscription.id})}}">Certificat de scolarité LAZ (Anglais)</a>
+																				                </li> #}
+			{% endif %}
+			<li>
+				<a target="_blank" href="{{path('etudiant_recherche_attestation_suivi', {inscription: inscription.id})}}">Attestation du suivi d’etudes	en langue francaise</a>
+			</li>
+			<li>
+				<a target="_blank" href="{{path('etudiant_recherche_attestation_reussite', {inscription: inscription.id})}}">Attestation de réussite
+				</a>
+			</li>
+			<li>
+				<a target="_blank" href="{{path('etudiant_recherche_attestation_reussite_note', {inscription: inscription.id})}}">Attestation de réussite Avec Moyenne
+				</a>
+			</li>
+			<li>
+				<a target="_blank" href="{{path('etudiant_recherche_attestation_bonne_conduite', {inscription: inscription.id})}}">Attestation de bonne conduite
+				</a>
+			</li>
+			<li>
+				<a target="_blank" href="{{path('etudiant_recherche_attestation_hebergement', {inscription: inscription.id})}}">Attestation d’hebergement
+				</a>
+			</li>
+			<li>
+				<a target="_blank" href="{{path('etudiant_recherche_attestation_cursus', {inscription: inscription.id})}}">Attestation de réussite Avec Note (cursus)
+				</a>
+			</li>
+			<li>
+				<a target="_blank" href="{{path('etudiant_recherche_attestation_reussite_all', {inscription: inscription.id})}}">Attestation de réussite (cursus)
+				</a>
+			</li>
+
+			<li>
+				<a target="_blank" href="{{path('etudiant_recherche_attestation_avc', {inscription: inscription.id})}}">Attestation de validation du cursus
+				</a>
+			</li>
+
+		</ul>
+	</div>
+
+	<div class="col-md-4">
+		<p>Lettre d'avertissement</p>
+
+	</div>
+
+	<div class="col-md-4">
+		<p>Statistique</p>
+
+		<ul>
+			<li><a target="_blank" href="">Absence</a></li>
+			<li><a target="_blank" href="">Assiduité</a></li>
+
+		</ul>
+	</div>
 
 
-   
-
-   
 </div>

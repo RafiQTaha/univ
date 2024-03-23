@@ -38,17 +38,18 @@ class ExAnotesRepository extends ServiceEntityRepository
     }
     */
 
-    /*
-    public function findOneBySomeField($value): ?ExAnotes
+    public function findAnoteByAdmission($admission): ?array
     {
         return $this->createQueryBuilder('e')
-            ->andWhere('e.exampleField = :val')
-            ->setParameter('val', $value)
+            ->innerJoin("e.inscription", "inscription")
+            ->where('inscription.admission = :admission')
+            ->andWhere('e.statutAff not in (44,45,46)')
+            ->setParameter('admission', $admission)
+            // ->setParameter('statutAff', 44)
+            ->orderBy('inscription.id', 'ASC')
             ->getQuery()
-            ->getOneOrNullResult()
-        ;
+            ->getResult();
     }
-    */
 
     public function getStatutByColumn($inscription, $statut)
     {
@@ -125,6 +126,7 @@ class ExAnotesRepository extends ServiceEntityRepository
         $result = $resultSets->fetch();
         return $result;
     }
+
 
     public function getAnneeByCurrentYear($currentyear, $etab)
     {
