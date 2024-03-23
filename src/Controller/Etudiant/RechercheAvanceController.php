@@ -551,9 +551,6 @@ class RechercheAvanceController extends AbstractController
     #[Route('/avc/{inscription}', name: 'etudiant_recherche_attestation_avc')]
     public function evaluationAnneeAvc(TInscription $inscription, Request $request)
     {
-        // $inscription = $this->em->getRepository(TInscription::class)->find($inscription);
-        // dd($inscription);
-        // dd(count($this->em->getRepository(ExMnotes::class)->getModulesTheoriqueBySemestre(1177, $inscription)));
         $anotes = $this->em->getRepository(ExAnotes::class)->findAnoteByAdmission($inscription->getAdmission());
         $html = $this->render("etudiant/recherche_avance/pdf/attestations/avc.html.twig", ['inscription' => $inscription, "anotes" => $anotes])->getContent();
         $mpdf = new Mpdf([
@@ -566,14 +563,10 @@ class RechercheAvanceController extends AbstractController
             'margin_header' => '2',
             'margin_footer' => '2'
         ]);
-        // $mpdf->SetHTMLHeader($this->render("evaluation/annee/pdfs/header.html.twig", [
-        //     'annee' => $annee,
-        //     'promotion' => $promotion,
-        //     'affichage' => $affichage
-        // ])->getContent());
         $mpdf->defaultfooterline = 0;
         $mpdf->SetFooter('Page {PAGENO} / {nb}');
         $mpdf->WriteHTML($html);
+        $mpdf->SetTitle('Attestation de validation du cursus - '.$inscription->getAdmission()->getCode());
         $mpdf->Output("avc" . $inscription->getId() . ".pdf", "I");
     }
 
