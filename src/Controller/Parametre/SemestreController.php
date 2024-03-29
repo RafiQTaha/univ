@@ -144,6 +144,8 @@ class SemestreController extends AbstractController
     {
         $semestre->setDesignation($request->get('designation'));
         $semestre->setActive($request->get('active') == "on" ? true : false);
+        $semestre->setUpdated(new \DateTime("now"));
+        $semestre->setUserUpdated($this->getUser());
         $this->em->flush();
  
         return new JsonResponse(1);
@@ -153,6 +155,8 @@ class SemestreController extends AbstractController
     public function delete(Request $request, AcSemestre $semestre): Response
     {
         $semestre->setActive('0');
+        $semestre->setUpdated(new \DateTime("now"));
+        $semestre->setUserUpdated($this->getUser());
         $this->em->flush();
  
         return new JsonResponse(1);
