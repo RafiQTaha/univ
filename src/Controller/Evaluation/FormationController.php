@@ -497,7 +497,7 @@ class FormationController extends AbstractController
 
         $writer = new Xlsx($spreadsheet);
         $fileName = $formation->getDesignation().'_'.$year.'.xlsx';
-        $fileName = str_replace(" : ","_",$fileName);
+        $fileName = str_replace(" : ","_",$fileName); 
         //dd($fileName);
         $writer->save($fileName);
         // return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);
