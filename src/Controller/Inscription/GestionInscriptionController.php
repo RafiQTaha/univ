@@ -165,13 +165,13 @@ class GestionInscriptionController extends AbstractController
         // $cabs = $this->em->getRepository(TOperationcab::class)->findBy(['annee'=>$inscription->getAnnee(),'preinscription'=>$inscription->getAdmission()->getPreinscription()]);
         $totalfacture = $this->em->getRepository(TOperationdet::class)->getSumMontantCAByPreins($inscription->getAdmission()->getPreinscription())['total'];
         $totalreglement = $this->em->getRepository(TReglement::class)->getSumMontantReglementByPreins($inscription->getAdmission()->getPreinscription())['total'];
-        if ($totalfacture - $totalreglement != 0) {
+        if ($totalfacture - $totalreglement <= 0) {
             return new JsonResponse("Facture non reglé, Merci de contacter le service Financière !", 500);
         }
         // dd($montantDet['total'] - $montantReg['total'] );
         // $cabs = $inscription->getAdmission()->getPreinscription()->getOperationcabs();
         // dd($cabs);
-        $valide = 0;
+        // $valide = 0;
         // foreach ($cabs as $cab) {
         //     $totalfacture = $this->em->getRepository(TOperationdet::class)->getSumMontantNonOrganismeByCodeFacture($cab)['total'];
         //     $totalreglement = $this->em->getRepository(TReglement::class)->getSumMontantByCodeFacture($cab)['total'];
