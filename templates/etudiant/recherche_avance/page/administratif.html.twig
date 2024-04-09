@@ -37,8 +37,8 @@
 					<a target="_blank" href="{{path('etudiant_recherche_attestation_scolarite_anglais_laz', {inscription: inscription.id})}}">Attestation de scolarité LAZ (Anglais)</a>
 				</li>
 				{# <li>
-																				                    <a target="_blank" href="{{path('etudiant_recherche_attestation_cursus', {inscription: inscription.id})}}">Certificat de scolarité LAZ (Anglais)</a>
-																				                </li> #}
+																																																								                    <a target="_blank" href="{{path('etudiant_recherche_attestation_cursus', {inscription: inscription.id})}}">Certificat de scolarité LAZ (Anglais)</a>
+																																																								                </li> #}
 			{% endif %}
 			<li>
 				<a target="_blank" href="{{path('etudiant_recherche_attestation_suivi', {inscription: inscription.id})}}">Attestation du suivi d’etudes	en langue francaise</a>
@@ -68,11 +68,12 @@
 				</a>
 			</li>
 
-			<li>
-				<a target="_blank" href="{{path('etudiant_recherche_attestation_avc', {inscription: inscription.id})}}">Attestation de validation du cursus
-				</a>
-			</li>
-
+			{% if inscription.annee.formation.etablissement.id in [1,2,22] %}
+				<li>
+					<a target="_blank" href="{{path('etudiant_recherche_attestation_avc', {inscription: inscription.id})}}">Attestation de validation du cursus
+					</a>
+				</li>
+			{% endif %}
 		</ul>
 	</div>
 

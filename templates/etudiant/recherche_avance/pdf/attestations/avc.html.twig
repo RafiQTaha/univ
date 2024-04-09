@@ -63,8 +63,20 @@
 	.non {
 		background-color: rgba(235, 158, 158, 0.301);
 	}
-</style>
 
+	.etblissement {
+		text-transform: uppercase;
+	}
+</style>
+{% if inscription.annee.formation.etablissement.id == 1 %}
+	{% set DesignationEtablissement = "FACULTÉ DE MÉDECINE GÉNÉRALE ABULCASIS" %}
+{% endif %}
+{% if inscription.annee.formation.etablissement.id == 2 %}
+	{% set DesignationEtablissement = "FACULTÉ DE MÉDECINE DENTAIRE ABULCASIS" %}
+{% endif %}
+{% if inscription.annee.formation.etablissement.id == 22 %}
+	{% set DesignationEtablissement = "FACULTÉ DE PHARMACIE ABULCASIS" %}
+{% endif %}
 <table class="header-table top" width="100%">
 	<tbody>
 		<tr>
@@ -82,8 +94,10 @@
 			</td>
 		</tr>
 		<tr>
-			<td class="border" width="70%" style="text-align: center;background-color: black;color: white;font-size: 10px;">
-				ATTESTATION DE VALIDATION DU CURSUS - FACULTE DE MEDECINE ABULCASIS
+			<td class="border etblissement" width="70%" style="text-align: center;background-color: black;color: white;font-size: 10px;">
+				ATTESTATION DE VALIDATION DU CURSUS -
+				{{DesignationEtablissement}}
+				ABULCASIS
 			</td>
 			<td class="border" width="7%" style="text-align: center;background-color: rgb(182, 182, 182);color: black;">
 				Date
@@ -432,7 +446,8 @@
 			</th>
 			<th width="3%" style="border: none"></th>
 			<th width="20%" style="background-color: rgb(116, 102, 76); color: rgb(220, 214, 202)">
-				DOYEN FACULTE DE MEDECINE
+				DOYEN
+				{{DesignationEtablissement}}
 			</th>
 		</tr>
 	</thead>
