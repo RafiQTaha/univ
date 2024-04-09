@@ -554,10 +554,11 @@ class RechercheAvanceController extends AbstractController
         $anotes = $this->em->getRepository(ExAnotes::class)->findAnoteByAdmission($inscription->getAdmission());
         $html = $this->render("etudiant/recherche_avance/pdf/attestations/avc.html.twig", ['inscription' => $inscription, "anotes" => $anotes])->getContent();
         $mpdf = new Mpdf([
+            'format' => 'A4-L',
             'mode' => 'utf-8',
-            'margin_left' => '1',
-            'margin_right' => '1',
-            'margin_top' => '1',
+            'margin_left' => '3',
+            'margin_right' => '3',
+            'margin_top' => '3',
             'margin_bottom' => '15',
             'format' => 'A4-L',
             'margin_header' => '2',
