@@ -567,7 +567,7 @@ class RechercheAvanceController extends AbstractController
         $mpdf->defaultfooterline = 0;
         $mpdf->SetFooter('Page {PAGENO} / {nb}');
         $mpdf->WriteHTML($html);
-        $mpdf->SetTitle('Attestation de validation du cursus - '.$inscription->getAdmission()->getCode());
+        $mpdf->SetTitle('Attestation de validation du cursus - ' . $inscription->getAdmission()->getCode());
         $mpdf->Output("avc" . $inscription->getId() . ".pdf", "I");
     }
 
@@ -579,6 +579,10 @@ class RechercheAvanceController extends AbstractController
     public function validationStages($inscription, $semestre)
     {
         return new Response(count($this->em->getRepository(ExMnotes::class)->getModulesPratiqueBySemestre($semestre, $inscription)), 200, ['Content-Type' => 'text/html']);
+    }
+    public function nbrModulesStages($inscription, $semestre)
+    {
+        return new Response(count($this->em->getRepository(ExMnotes::class)->getNbrModulesPratiqueBySemestre($semestre, $inscription)), 200, ['Content-Type' => 'text/html']);
     }
 
     // #[Route('/impression_delib/{ins}', name: 'evaluation_semestre_impression_deliberation')]
