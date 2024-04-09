@@ -273,23 +273,35 @@
 					<td class="border non">NON</td>
 					<!-- validation modules -->
 
-					{% set validationStages %}
+
+					<!-- validation stages -->
+					{% set nbrModuleStages %}
 					{{render(
-						controller('App\\Controller\\Etudiant\\RechercheAvanceController::validationStages', { 
+						controller('App\\Controller\\Etudiant\\RechercheAvanceController::nbrModulesStages', { 
 							inscription: snote.inscription, semestre: snote.semestre
 						})
 					)}}
 					{% endset %}
-
-					{% if validationStages == "0" %}
-						{% set oui = "check.png" %}
-						{% set non = "white.png" %}
+					{% if nbrModuleStages != "0" %}
+						{% set validationStages %}
+						{{render(
+							controller('App\\Controller\\Etudiant\\RechercheAvanceController::validationStages', { 
+								inscription: snote.inscription, semestre: snote.semestre
+							})
+						)}}
+						{% endset %}
+						{% if validationStages == "0" %}
+							{% set oui = "check.png" %}
+							{% set non = "white.png" %}
+						{% else %}
+							{% set oui = "white.png" %}
+							{% set non = "uncheck.png" %}
+						{% endif %}
 					{% else %}
-						{% set oui = "white.png" %}
-						{% set non = "uncheck.png" %}
+						{% set oui = "dash.png" %}
+						{% set non = "dash.png" %}
 					{% endif %}
 
-					<!-- validation stages -->
 					<td class="border" style="padding: 0 !important">
 						<img width="8px" src="./assets/img/{{oui}}" alt=""/>
 					</td>
@@ -322,7 +334,8 @@
 						<!-- validation annuelle -->
 
 						<td class="border" rowspan="2">
-							{{anote.note | number_format(2, '.', ',')}} / 20
+							{{anote.note | number_format(2, '.', ',')}}
+							/ 20
 						</td>
 
 						<!-- rachat -->
@@ -419,7 +432,7 @@
 			</th>
 			<th width="3%" style="border: none"></th>
 			<th width="20%" style="background-color: rgb(116, 102, 76); color: rgb(220, 214, 202)">
-				SERVICE CONCOURS & EXAMENS
+				DOYEN FACULTE DE MEDECINE
 			</th>
 		</tr>
 	</thead>

@@ -37,11 +37,11 @@ class ExMnotesRepository extends ServiceEntityRepository
     }
     */
 
-    
+
     public function getStatutByColumn($inscription, $module, $statut)
     {
         // dd('e.'.$statut);
-        if($statut == "statutDef") {
+        if ($statut == "statutDef") {
             $request = $this->createQueryBuilder('e')
                 ->select("statut.abreviation")
                 ->innerJoin("e.statutDef", "statut")
@@ -50,8 +50,7 @@ class ExMnotesRepository extends ServiceEntityRepository
                 ->setParameter('module', $module)
                 ->setParameter('inscription', $inscription)
                 ->getQuery()
-                ->getOneOrNullResult()
-            ;
+                ->getOneOrNullResult();
         } else {
             $request = $this->createQueryBuilder('e')
                 ->select("statut.abreviation")
@@ -61,12 +60,11 @@ class ExMnotesRepository extends ServiceEntityRepository
                 ->setParameter('module', $module)
                 ->setParameter('inscription', $inscription)
                 ->getQuery()
-                ->getOneOrNullResult()
-            ;
+                ->getOneOrNullResult();
         }
-        if(!$request) {
+        if (!$request) {
             return "";
-        } 
+        }
 
         return $request;
     }
@@ -81,19 +79,18 @@ class ExMnotesRepository extends ServiceEntityRepository
             ->setParameter('module', $module)
             ->setParameter('inscription', $inscription)
             ->getQuery()
-            ->getOneOrNullResult()
-        ;
-        
-        if(!$request) {
+            ->getOneOrNullResult();
+
+        if (!$request) {
             return [
                 'abreviationAff' => "",
                 'abreviationDef' => ""
             ];
-        } 
+        }
 
         return $request;
     }
-    
+
 
     public function GetModuleByCodeAnneeCodeSemstre($annee, $semestre, $inscription, $minOrMax, $statut)
     {
@@ -119,13 +116,13 @@ class ExMnotesRepository extends ServiceEntityRepository
             ->setParameter('semestre', $semestre)
             ->setParameter('letter', 'A')
             ->groupBy("m.id")
-            ->orderBy("m.".$statut, $minOrMax)
+            ->orderBy("m." . $statut, $minOrMax)
             ->setMaxResults($limit)
             ->getQuery()
-            ->getResult()
-        ;
+            ->getResult();
     }
-    public function GetNbrModuleByInscription($annee, $inscription, $note) {
+    public function GetNbrModuleByInscription($annee, $inscription, $note)
+    {
         return $this->createQueryBuilder('m')
             ->select("count(m) as nbr_modules")
             ->innerJoin("m.inscription", 'inscription')
@@ -139,11 +136,11 @@ class ExMnotesRepository extends ServiceEntityRepository
             ->setParameter('note', $note)
             ->setParameter('A', "A")
             ->getQuery()
-            ->getResult()
-        ;
+            ->getResult();
     }
-    
-    public function getNotesModuleBySemestre($semestre, $inscription) {
+
+    public function getNotesModuleBySemestre($semestre, $inscription)
+    {
         return $this->createQueryBuilder('m')
             ->innerJoin("m.inscription", 'inscription')
             ->innerJoin("m.module", 'module')
@@ -152,11 +149,11 @@ class ExMnotesRepository extends ServiceEntityRepository
             ->setParameter('inscription', $inscription)
             ->setParameter('semestre', $semestre)
             ->getQuery()
-            ->getResult()
-        ;
+            ->getResult();
     }
-    public function getNotesModuleSansAssiduiteBySemestre($semestre, $inscription) {
-        
+    public function getNotesModuleSansAssiduiteBySemestre($semestre, $inscription)
+    {
+
         return $this->createQueryBuilder('m')
             ->innerJoin("m.inscription", 'inscription')
             ->innerJoin("m.module", 'module')
@@ -167,12 +164,11 @@ class ExMnotesRepository extends ServiceEntityRepository
             ->setParameter('semestre', $semestre)
             ->setParameter('lettre', "A")
             ->getQuery()
-            ->getResult()
-        ;
+            ->getResult();
     }
-    
-    
-    public function getModuleNonAquis($semestre,$inscription)
+
+
+    public function getModuleNonAquis($semestre, $inscription)
     {
         return $this->createQueryBuilder('m')
             ->innerJoin("m.module", 'module')
@@ -186,8 +182,7 @@ class ExMnotesRepository extends ServiceEntityRepository
             ->setParameter('semestre', $semestre)
             ->setParameter('type', 'A')
             ->getQuery()
-            ->getResult()
-        ;
+            ->getResult();
     }
     public function getModuleNonAquisByYear($inscription)
     {
@@ -201,11 +196,11 @@ class ExMnotesRepository extends ServiceEntityRepository
             ->setParameter('inscription', $inscription)
             ->setParameter('type', 'A')
             ->getQuery()
-            ->getResult()
-        ;
+            ->getResult();
     }
-    public function getNotesModuleAssiduiteBySemestre($semestre, $inscription) {
-        
+    public function getNotesModuleAssiduiteBySemestre($semestre, $inscription)
+    {
+
         return $this->createQueryBuilder('m')
             ->innerJoin("m.inscription", 'inscription')
             ->innerJoin("m.module", 'module')
@@ -216,11 +211,11 @@ class ExMnotesRepository extends ServiceEntityRepository
             ->setParameter('semestre', $semestre)
             ->setParameter('lettre', "A")
             ->getQuery()
-            ->getOneOrNullResult()
-        ;
+            ->getOneOrNullResult();
     }
-    public function getModulesTheoriqueBySemestre($semestre, $inscription) {
-        
+    public function getModulesTheoriqueBySemestre($semestre, $inscription)
+    {
+
         return $this->createQueryBuilder('m')
             ->innerJoin("m.inscription", 'inscription')
             ->innerJoin("m.statutDef", 'statdef')
@@ -234,11 +229,11 @@ class ExMnotesRepository extends ServiceEntityRepository
             ->setParameter('inscription', $inscription)
             ->setParameter('semestre', $semestre)
             ->getQuery()
-            ->getResult()
-        ;
+            ->getResult();
     }
-    public function getModulesPratiqueBySemestre($semestre, $inscription) {
-        
+    public function getModulesPratiqueBySemestre($semestre, $inscription)
+    {
+
         return $this->createQueryBuilder('m')
             ->innerJoin("m.inscription", 'inscription')
             ->innerJoin("m.statutDef", 'statdef')
@@ -252,13 +247,30 @@ class ExMnotesRepository extends ServiceEntityRepository
             ->setParameter('inscription', $inscription)
             ->setParameter('semestre', $semestre)
             ->getQuery()
-            ->getResult()
-        ;
+            ->getResult();
     }
-    
+
+    public function getNbrModulesPratiqueBySemestre($semestre, $inscription)
+    {
+
+        return $this->createQueryBuilder('m')
+            ->innerJoin("m.inscription", 'inscription')
+            ->innerJoin("m.statutDef", 'statdef')
+            ->innerJoin("m.module", 'module')
+            ->innerJoin("module.elements", 'element')
+            ->innerJoin("element.nature", 'nature')
+            ->where("inscription = :inscription")
+            ->andWhere('module.semestre = :semestre')
+            ->andWhere('nature in (3,4)')
+            ->setParameter('inscription', $inscription)
+            ->setParameter('semestre', $semestre)
+            ->getQuery()
+            ->getResult();
+    }
+
     public function getModuleByCurrentYear($currentyear)
     {
-        $sqls="SELECT ex.id, etab.code as code, etab.designation as etablissement, frm.code, 
+        $sqls = "SELECT ex.id, etab.code as code, etab.designation as etablissement, frm.code, 
         frm.designation as formation, ann.code, ann.designation as annee, ins.code as code_ins, 
         adm.code as code_adm, pre.code as code_preins, ins.code_anonymat as anonymat, 
         st.code as statut, etu.nom, etu.prenom, prm.code, prm.designation as promotion, 
