@@ -176,7 +176,7 @@ class PlanificationController extends AbstractController
                 }
             }
             
-            $emptimens = $this->em->getRepository(PlEmptimens::class)->findBy(['seance'=>$emptime]);
+            $emptimens = $this->em->getRepository(PlEmptimens::class)->findBy(['seance'=>$emptime,'active'=>1]);
             $enseingant = "";
             foreach ($emptimens as $emptimen) {
                 if ($emptimen->getEnseignant() != null ) {
@@ -261,7 +261,7 @@ class PlanificationController extends AbstractController
         $modules = $this->em->getRepository(AcModule::class)->findBy(['semestre'=>$programmation->getElement()->getModule()->getSemestre(), 'active' => 1],['designation'=>'ASC']);
         $elements = $this->em->getRepository(AcElement::class)->findBy(['module'=>$programmation->getElement()->getModule(), 'active' => 1],['designation'=>'ASC']);
         // $enseignants = $this->em->getRepository(PlEmptimens::class)->findBy();
-        $emptimens = $this->em->getRepository(PlEmptimens::class)->findBy(['seance'=>$emptime]);
+        $emptimens = $this->em->getRepository(PlEmptimens::class)->findBy(['seance'=>$emptime,'active'=>1]);
         $empenseignants = [];
         foreach ($emptimens as $emptimen) {
             array_push($empenseignants,$emptimen->getEnseignant());
@@ -646,7 +646,7 @@ class PlanificationController extends AbstractController
         }else{
             $inscriptions = $this->em->getRepository(TInscription::class)->getInscriptionsByAnneeAndPromoNoGroup($promotion,$annee);
         }
-        $emptimenss = $this->em->getRepository(PlEmptimens::class)->findBy(['seance'=>$emptime]);
+        $emptimenss = $this->em->getRepository(PlEmptimens::class)->findBy(['seance'=>$emptime,'active'=>1]);
         $html = $this->render("planification/pdfs/absence.html.twig", [
             'inscriptions' => $inscriptions,
             'seance' => $emptime,
@@ -675,7 +675,7 @@ class PlanificationController extends AbstractController
         $diff = $emptime->getEnd()->diff($emptime->getStart());
         $hours = $diff->h;
         $hours = $hours + ($diff->days*24);
-        $emptimenss = $this->em->getRepository(PlEmptimens::class)->findBy(['seance'=>$emptime]);
+        $emptimenss = $this->em->getRepository(PlEmptimens::class)->findBy(['seance'=>$emptime,'active'=>1]);
         $html = "";
         $i=1;
         foreach ($emptimenss as $emptimens) {
@@ -742,6 +742,7 @@ class PlanificationController extends AbstractController
                     if (!$EmptimeExist) {
                         $empenss = $this->em->getRepository(PlEmptimens::class)->findBy([
                             'seance'=>$emptime,
+                            'active'=>1
                         ]);
                         // dd($enseignants);
                         $newEmpTime = new PlEmptime();

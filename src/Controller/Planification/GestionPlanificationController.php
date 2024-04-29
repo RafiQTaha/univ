@@ -346,7 +346,7 @@ class GestionPlanificationController extends AbstractController
             $inscriptions = $this->em->getRepository(TInscription::class)->getInscriptionsByAnneeAndPromoNoGroup($promotion,$annee);
         }
         // $inscriptions = $this->em->getRepository(TInscription::class)->getInscriptionsByAnneeAndPromoAndGroupe($promotion,$annee,$emptime->getGroupe());
-        $emptimenss = $this->em->getRepository(PlEmptimens::class)->findBy(['seance'=>$emptime]);
+        $emptimenss = $this->em->getRepository(PlEmptimens::class)->findBy(['seance'=>$emptime,'active'=>1]);
         $html = $this->render("planification/pdfs/absence.html.twig", [
             'inscriptions' => $inscriptions,
             'seance' => $emptime,
@@ -386,7 +386,7 @@ class GestionPlanificationController extends AbstractController
         $diff = $emptime->getEnd()->diff($emptime->getStart());
         $hours = $diff->h;
         $hours = $hours + ($diff->days*24);
-        $emptimenss = $this->em->getRepository(PlEmptimens::class)->findBy(['seance'=>$emptime]);
+        $emptimenss = $this->em->getRepository(PlEmptimens::class)->findBy(['seance'=>$emptime,'active'=>1]);
         $html = "";
         $i=1;
         foreach ($emptimenss as $emptimens) {
