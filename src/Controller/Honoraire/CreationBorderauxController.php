@@ -89,7 +89,7 @@ class CreationBorderauxController extends AbstractController
             array( 'db' => 'ens.nom','dt' => 3),
             array( 'db' => 'ens.prenom','dt' => 4),
             array( 'db' => 'lower(gr.designation)','dt' => 5),
-            array( 'db' => 'Hour(SUBTIME(emp.heur_fin,emp.heur_db))','dt' => 6),
+            array( 'db' => 'CONCAT(FLOOR(HOUR(TIMEDIFF(emp.heur_fin, emp.heur_db)) / 10), MOD(HOUR(TIMEDIFF(emp.heur_fin, emp.heur_db)), 10), ":", FLOOR(MINUTE(TIMEDIFF(emp.heur_fin, emp.heur_db)) / 10), MOD(MINUTE(TIMEDIFF(emp.heur_fin, emp.heur_db)), 10))','dt' => 6),
             array( 'db' => 'hon.montant','dt' => 7),
             array( 'db' => 'etab.abreviation','dt' => 8),
             array( 'db' => 'Upper(frm.abreviation)','dt' => 9),
