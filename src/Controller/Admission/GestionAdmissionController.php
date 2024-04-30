@@ -348,7 +348,7 @@ class GestionAdmissionController extends AbstractController
     #[Route('/inscription/{admission}', name: 'admission_inscription')]
     public function inscriptionAction(Request $request, TAdmission $admission)
     {
-        return new JsonResponse("Bien ", 200);
+        // return new JsonResponse("Bien ", 200);
         $annee = $this->em->getRepository(AcAnnee::class)->find($request->get('annee_inscription'));
         $inscription = $this->em->getRepository(TInscription::class)->getActiveInscriptionByAnnee($admission,$annee);
         if ($inscription != null) {

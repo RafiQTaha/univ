@@ -123,7 +123,8 @@
                 <td style="padding:3px;border-right:1px solid white;text-align: left;font-size: 9px;">{{honens.seance.code}}</td>
                 <td style="padding:3px;border-right:1px solid white;text-align: left;font-size: 9px;">{{honens.enseignant.nom}} {{honens.enseignant.prenom}}</td>
                 <td style="padding:3px;border-right:1px solid white;text-align: right;font-size: 9px;">{{honens.seance.start | date('Y-m-j')}}</td>
-                <td style="padding:3px;border-right:1px solid white;text-align: right;font-size: 9px;">{{honens.nbrheur }}</td>
+                {# <td style="padding:3px;border-right:1px solid white;text-align: right;font-size: 9px;">{{honens.nbrheur }}</td> #}
+                <td style="padding:3px;border-right:1px solid white;text-align: right;font-size: 9px;">{{honens.seance.end.diff(honens.seance.start).format('%h:%I')   }}</td>
                 <td style="padding:3px;border-right:1px solid white;text-align: right;font-size: 9px;">{{honens.seance.start | date('H:i')}}</td>
                 <td style="padding:3px;border-right:1px solid white;text-align: left;font-size: 9px;">{{honens.seance.end | date('H:i')}}</td>
                 {# <td style="padding:3px;border-right:1px solid white;text-align: left;font-size: 9px;"></td> #}

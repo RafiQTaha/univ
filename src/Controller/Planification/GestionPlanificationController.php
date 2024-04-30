@@ -115,7 +115,7 @@ class GestionPlanificationController extends AbstractController
             array( 'db' => 'Upper(mdl.designation)','dt' => 9),
             array( 'db' => 'lower(elm.designation)','dt' => 10),
             array( 'db' => 'Upper(nat.abreviation)','dt' => 11),
-            array( 'db' => 'Hour(SUBTIME(emp.heur_fin,emp.heur_db))','dt' => 12),
+            array( 'db' => 'CONCAT(FLOOR(HOUR(TIMEDIFF(emp.heur_fin, emp.heur_db)) / 10), MOD(HOUR(TIMEDIFF(emp.heur_fin, emp.heur_db)), 10), ":", FLOOR(MINUTE(TIMEDIFF(emp.heur_fin, emp.heur_db)) / 10), MOD(MINUTE(TIMEDIFF(emp.heur_fin, emp.heur_db)), 10))','dt' => 12),
             array( 'db' => 'emp.valider','dt' => 13),
         );
         $sql = "SELECT DISTINCT " . implode(", ", DatatablesController::Pluck($columns, 'db')) . "
@@ -386,6 +386,8 @@ class GestionPlanificationController extends AbstractController
         $diff = $emptime->getEnd()->diff($emptime->getStart());
         $hours = $diff->h;
         $hours = $hours + ($diff->days*24);
+        $duree = $hours.":".$diff->i;
+        // dd();
         $emptimenss = $this->em->getRepository(PlEmptimens::class)->findBy(['seance'=>$emptime,'active'=>1]);
         $html = "";
         $i=1;
@@ -395,7 +397,7 @@ class GestionPlanificationController extends AbstractController
                 'annee' => $annee,
                 'emptimenss' => $emptimenss,
                 'emptimens' => $emptimens,
-                'hours' => $hours,
+                'hours' => $duree,
                 'effectife' => count($inscriptions),
             ])->getContent();
             $i < count($emptimenss) ? $html .= '<page_break>':"";
