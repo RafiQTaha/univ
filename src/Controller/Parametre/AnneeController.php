@@ -164,7 +164,7 @@ class AnneeController extends AbstractController
        $annee->setFormation($formation);
        $this->em->persist($annee);
        $this->em->flush();
-       $annee->setCode("ANN".str_pad($annee->getId(), 8, '0', STR_PAD_LEFT));
+       $annee->setCode("ANN".str_pad($annee->getId(), 10, '0', STR_PAD_LEFT));
        $this->em->flush();
 
        return new JsonResponse(1);

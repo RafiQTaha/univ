@@ -366,7 +366,7 @@ class PlEmptimeRepository extends ServiceEntityRepository
         INNER JOIN ac_promotion prom on prom.id = sem.promotion_id
         INNER JOIN ac_formation frm on frm.id = prom.formation_id
         INNER JOIN ac_etablissement etab on etab.id = frm.etablissement_id
-        INNER join pl_emptimens pl_ens on pl.id = pl_ens.seance_id  and pl_ens.active = 1
+        INNER join pl_emptimens pl_ens on pl.id = pl_ens.seance_id and pl_ens.active = 1
         INNER JOIN penseignant ens ON ens.id = pl_ens.enseignant_id
         INNER JOIN type_element tele ON tele.id = ele.nature_id
         left join pensgrille gr on gr.grade_id = ens.grade_id AND gr.formation_id = frm.id aND prog.nature_epreuve_id  = gr.type_epreuve_id 
@@ -400,7 +400,7 @@ class PlEmptimeRepository extends ServiceEntityRepository
         INNER JOIN ac_annee ann ON ann.id = pr.annee_id
         INNER join ac_etablissement etab on etab.id = frm.etablissement_id
         INNER join semaine sm on sm.id = ep.semaine_id
-        left join pl_emptimens emen on emen.seance_id = ep.id
+        left join pl_emptimens emen on emen.seance_id = ep.id and emen.active = 1
         left join penseignant epe on epe.id = emen.enseignant_id
         left join pgrade gr on gr.id = epe.grade_id
         LEFT JOIN psalles s ON s.id = ep.salle_id
@@ -430,7 +430,7 @@ class PlEmptimeRepository extends ServiceEntityRepository
         INNER JOIN ac_annee ann ON ann.id = pr.annee_id
         INNER join ac_etablissement etab on etab.id = frm.etablissement_id
         INNER join semaine sm on sm.id = ep.semaine_id
-        left join pl_emptimens emen on emen.seance_id = ep.id
+        left join pl_emptimens emen on emen.seance_id = ep.id and emen.active = 1
         left join penseignant epe on epe.id = emen.enseignant_id
         left join pgrade gr on gr.id = epe.grade_id
         LEFT JOIN psalles s ON s.id = ep.salle_id
