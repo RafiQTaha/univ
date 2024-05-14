@@ -88,12 +88,13 @@
         <tr>
         {% if laz == 1 %}
                 {% set doyen = 'Mohammed Nabil NGOTE' %}
+        {% elseif inscription.annee.formation.etablissement.id == 25 %}
+                {% set doyen = inscription.annee.formation.doyen %}
             {% else %}
                 {% set doyen = inscription.annee.formation.etablissement.doyen %}
         {% endif %}
             <td class="txt">
                 Je soussigné Monsieur {{doyen}}, {{inscription.annee.formation.etablissement.statut}} de l'établissement :
-
 <span style="font-size:10px;font-weight: bold;color:black;"> 
 {% if inscription.annee.formation.etablissement.designation =='Centre de Simulation Médicale' %}
 Université Internationale Abulcasis des Sciences de la Santé

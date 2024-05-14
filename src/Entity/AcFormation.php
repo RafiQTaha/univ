@@ -66,6 +66,9 @@ class AcFormation
     #[ORM\Column(type: 'integer', nullable: true)]
     private $assiduite;
 
+    #[ORM\Column(type: 'string', length: 30, nullable: true)]
+    private $Doyen;
+
     public function __construct()
     {
         $this->acPromotions = new ArrayCollection();
@@ -389,6 +392,18 @@ class AcFormation
     public function setAssiduite(?int $assiduite): self
     {
         $this->assiduite = $assiduite;
+
+        return $this;
+    }
+
+    public function getDoyen(): ?string
+    {
+        return $this->Doyen;
+    }
+
+    public function setDoyen(?string $Doyen): self
+    {
+        $this->Doyen = $Doyen;
 
         return $this;
     }
