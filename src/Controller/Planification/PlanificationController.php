@@ -359,12 +359,13 @@ class PlanificationController extends AbstractController
         
         $totalMinute =0;
         $seancesActive = $this->em->getRepository(PlEmptime::class)->findBy(['active' => 1,'programmation' => $programmation]);
+        // dd($programmation->getVolume(),$seancesActive);
         foreach ($seancesActive as $seance) {
             $interval = $seance->getHeurDb()->diff($seance->getHeurFin());
             $totalMinute += $interval->h * 60 + $interval->i;
         }
-        
-        if ($totalMinute >= $programmation->getVolume()) {
+        // dd($totalMinute);
+        if ($totalMinute / 60 >= $programmation->getVolume()) {
             return new Response("Vous avez atteint le maximum des heures pour cet élément !",500); 
         }
 
