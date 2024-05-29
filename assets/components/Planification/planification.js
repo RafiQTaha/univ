@@ -79,7 +79,12 @@ $(document).ready(function () {
                 currentweek = moment(start, "MMDDYYYY").isoWeek();
                 heur_debut= moment(start).format('HH:mm')
                 heur_fin= moment(end).format('HH:mm')
-                axios.get('/planification/planifications/planification_infos/'+$('#semestre').val())
+                let formData = new FormData();
+                // formData.append('day',currentDay)
+                formData.append('start',moment(start).format('YYYY-MM-DD HH:mm'))
+                formData.append('end',moment(end).format('YYYY-MM-DD HH:mm'))
+                console.log(formData)
+                axios.post('/planification/planifications/planification_infos/'+$('#semestre').val(),formData)
                 .then(success => {
                     $('.modal-addform_planif .add_planning').html(success.data);
                     $('.modal-addform_planif #h_debut').val(heur_debut);
@@ -100,7 +105,7 @@ $(document).ready(function () {
                 currentweek = moment(event.start, "MMDDYYYY").isoWeek();
                 id_planning = event.id;
                 if (id_planning) {
-                    let formData = new FormData();
+                    // let formData = new FormData();
                     axios.get('/planification/planifications/planification_infos_edit/'+id_planning)
                     .then(success => {
                         $('.modal-updateform_planif .update_planning').html(success.data);
@@ -216,7 +221,7 @@ $(document).ready(function () {
             $('#semestre').html(semestre).select2();
             const requestt = await axios.get('/api/niv1/'+id_promotion);
             niv1 = requestt.data  
-            $('#niv1').html(niv1).select2();
+            $('body #niv1').html(niv1).select2();
         }
     })
     $("#semestre").on('change', async function (){
@@ -262,8 +267,8 @@ $(document).ready(function () {
             $("#calendar").fullCalendar('removeEvents'); 
             $("#calendar").fullCalendar('addEventSource', alltime); 
         }
-        $('#niv3').html("").select2();
-        $('#niv2').html(response).select2();
+        $('body #niv3').html("").select2();
+        $('body #niv2').html(response).select2();
     })
     $("#niv2").on('change', async function (){
         const niv2 = $(this).val();
@@ -281,7 +286,7 @@ $(document).ready(function () {
             $("#calendar").fullCalendar('removeEvents'); 
             $("#calendar").fullCalendar('addEventSource', alltime); 
         }
-        $('#niv3').html(response).select2();
+        $('body #niv3').html(response).select2();
     })
     $("#niv3").on('change', async function (){
         const niv3 = $(this).val();
@@ -306,7 +311,7 @@ $(document).ready(function () {
             const request = await axios.get('/api/element/'+id_module);
             response = request.data
         }
-        $('#element').html(response).select2();
+        $('body #element').html(response).select2();
     })
     $("body").on('change','#nature_seance', async function (){
         const id_nature_seance = $(this).val();
@@ -316,7 +321,7 @@ $(document).ready(function () {
             response = request.data
             pills()
         }
-        $('#enseignant').html(response).select2();
+        $('body #enseignant').html(response).select2();
     })
 
     $("body").on('change','#element', async function (){
@@ -328,7 +333,7 @@ $(document).ready(function () {
             response = request.data
             pills()
         }
-        $('#enseignant').html(response).select2();
+        $('body #enseignant').html(response).select2();
     })
     $("body").on('submit','.form_add_planning', async function (e){
         e.preventDefault();

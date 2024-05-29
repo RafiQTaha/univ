@@ -380,10 +380,10 @@ class EtudiantController extends AbstractController
             return new JsonResponse("Etudiant déja une preinscription dans cette année / formation", 500);
         }
         // dd($etudiant->getStatut());
-        $pec = $this->em->getRepository(Pec::class)->find($request->get('pec'));
-        if ($pec && trim($request->get('n-pec')) == "" ) {
-            return new JsonResponse("Merci d'entrer le numero de pec !", 500);
-        }
+        // $pec = $this->em->getRepository(Pec::class)->find($request->get('pec'));
+        // if ($pec && trim($request->get('n-pec')) == "" ) {
+        //     return new JsonResponse("Merci d'entrer le numero de pec !", 500);
+        // }
         $etudiant->setStatutCondidat("PRE-INSCRIT");
         $preinscription = new TPreinscription();
         $preinscription->setStatut($etudiant->getStatut());
@@ -397,10 +397,10 @@ class EtudiantController extends AbstractController
         $preinscription->setUserCreated($this->getUser());
         $preinscription->setAnnee($annee);
 
-        if($pec){
-            $preinscription->setPec($pec);
-            $preinscription->setPecNumber(trim($request->get('n-pec')));
-        }
+        // if($pec){
+        //     $preinscription->setPec($pec);
+        //     $preinscription->setPecNumber(trim($request->get('n-pec')));
+        // }
 
         $this->em->persist($preinscription);
         $this->em->flush();

@@ -23,6 +23,8 @@ use App\Entity\PrProgrammation;
 use App\Entity\PSalles;
 use App\Entity\Semaine;
 use App\Entity\TInscription;
+use App\Entity\User;
+use App\Entity\UsOperation;
 use DateTime;
 use Mpdf\Mpdf;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
@@ -234,12 +236,16 @@ class PlanificationController extends AbstractController
     }
 
     #[Route('/planification_infos/{id}', name: 'planifications_planification_infos')]
-    public function planification_infos(AcSemestre $semestre,Request $request): Response
+    public function planification_infos(AcSemestre $semestre,Request $request)
     {
+        // dd($request->request->get('start'));
         $annee = $this->em->getRepository(AcAnnee::class)->getActiveAnneeByFormation($semestre->getPromotion()->getFormation());
-        $salles = $this->em->getRepository(PSalles::class)->findBy([],['designation'=>'ASC']);
+        $salles = $this->em->getRepository(PSalles::class)->findEmptySallesByDateTime($request->get('start').":00",$request->get('end').":00");
+        // dd($salles);
+        // $salles = $this->em->getRepository(PSalles::class)->findBy([],['designation'=>'ASC']);
         $natureepreuves = $this->em->getRepository(PNatureEpreuve::class)->findBy([],['designation'=>'ASC']);
         $modules = $this->em->getRepository(AcModule::class)->findBy(['semestre'=>$semestre, 'active' => 1],['designation'=>'ASC']);
+        
         $html = $this->render("planification/pages/form.html.twig", [
             'semestre' => $semestre,
             'annee' => $annee,
@@ -251,9 +257,12 @@ class PlanificationController extends AbstractController
     }
 
     #[Route('/planification_infos_edit/{id}', name: 'planifications_planification_infos_edit')]
-    public function planifications_planification_infos_edit(PlEmptime $emptime,Request $request): Response
+    public function planifications_planification_infos_edit(PlEmptime $emptime,Request $request)
     {
+        
         $salles = $this->em->getRepository(PSalles::class)->findBy([],['designation'=>'ASC']);
+        // $salles = $this->em->getRepository(PSalles::class)->findEmptySallesByDateTime($emptime->getStart(),$emptime->getEnd());
+        // dd($salles);
         $programmation = $emptime->getProgrammation();
         $annee = $programmation->getAnnee();
         // $annee = $this->em->getRepository(AcAnnee::class)->getActiveAnneeByFormation($annee->getFormation());
@@ -280,7 +289,6 @@ class PlanificationController extends AbstractController
         }
         $promotion = $emptime->getProgrammation()->getElement()->getModule()->getSemestre()->getPromotion();
         $inscriptions = $this->em->getRepository(TInscription::class)->getNiveaux($promotion,$annee);
-        $data="";
         $groupes = [];
         foreach ($inscriptions as $inscription) {
             $groupe = $inscription->getGroupe();
@@ -300,17 +308,35 @@ class PlanificationController extends AbstractController
                 }
             }
         }
-        $html = $this->render("planification/pages/update_form.html.twig", [
-            'emptime' => $emptime,
-            'empenseignants' => $empenseignants,
-            'annee' => $annee,
-            'natureepreuves' => $natureepreuves,
-            'salles' => $salles,
-            'modules' => $modules,
-            'elements' => $elements,
-            'nivs' => $nivs,
-            'groupes' => $groupes
-        ])->getContent();
+        
+        $isAdmin = in_array('ROLE_ADMIN',$this->getUser()->getRoles());
+        $havePermission = $this->em->getRepository(UsOperation::class)->havePermission(302,$this->getUser());
+        if ($emptime->getVerifier() == 0 or $havePermission or $isAdmin) {
+            $html = $this->render("planification/pages/full_update_form.html.twig", [
+                'emptime' => $emptime,
+                'empenseignants' => $empenseignants,
+                'annee' => $annee,
+                'natureepreuves' => $natureepreuves,
+                'salles' => $salles,
+                'modules' => $modules,
+                'elements' => $elements,
+                'nivs' => $nivs,
+                'groupes' => $groupes,
+            ])->getContent();
+        }else {
+            $html = $this->render("planification/pages/update_form.html.twig", [
+                'emptime' => $emptime,
+                'empenseignants' => $empenseignants,
+                'annee' => $annee,
+                'natureepreuves' => $natureepreuves,
+                'salles' => $salles,
+                'modules' => $modules,
+                'elements' => $elements,
+                'nivs' => $nivs,
+                'groupes' => $groupes,
+            ])->getContent();
+        }
+
         return new JsonResponse($html);
     }
 
@@ -326,12 +352,24 @@ class PlanificationController extends AbstractController
         }
         $annee = $this->em->getRepository(AcAnnee::class)->getActiveAnneeByFormation($element->getModule()->getSemestre()->getPromotion()->getFormation());
         $programmation = $this->em->getRepository(PrProgrammation::class)->findOneBy(['element'=>$request->get('element'),'nature_epreuve'=>$request->get('nature_seance'),'annee'=>$annee]);
+
         if ($programmation == null) {
             return new Response("Programmation introuvable ou l'annee ".$annee->getDesignation()." est cloturée!!",500);
         }
-        if ($request->get('enseignant') == NULL) {
-            return new Response('Merci de Choisir Au Moins Un Enseignant!!',500);
+        
+        $totalMinute =0;
+        $seancesActive = $this->em->getRepository(PlEmptime::class)->findBy(['active' => 1,'programmation' => $programmation]);
+        foreach ($seancesActive as $seance) {
+            $interval = $seance->getHeurDb()->diff($seance->getHeurFin());
+            $totalMinute += $interval->h * 60 + $interval->i;
         }
+        
+        if ($totalMinute >= $programmation->getVolume()) {
+            return new Response("Vous avez atteint le maximum des heures pour cet élément !",500); 
+        }
+
+        if ($request->get('enseignant') == NULL) return new Response('Merci de Choisir Au Moins Un Enseignant!!',500);
+
         $semaine = $this->em->getRepository(Semaine::class)->findOneBy(['nsemaine'=>$request->get('n_semaine'),'anneeS'=>$annee->getDesignation()]);
         if ($semaine == null) {
             return new Response("Semaine Introuvable ou l'annee ".$annee->getDesignation()." est cloturée!!",500);
@@ -377,33 +415,32 @@ class PlanificationController extends AbstractController
         return new Response('Planification bien Ajouter!!',200);
     }
 
-    #[Route('/planifications_calendar_edit/{id}', name: 'planifications_calendar_edit')]
-    public function planifications_calendar_edit(PlEmptime $emptime,Request $request): Response
-    {
-        // return new Response("Vous n'anvez pas le droit!!",500);
-        if ($emptime->getValider() == 1) {
-            return new Response("Vous ne pouvez pas modifer une seance déja valider!",500);
-        }
-        $element = $emptime->getProgrammation()->getElement();
-        if ((!str_contains($element->getModule()->getSemestre()->getPromotion()->getFormation()->getDesignation(), 'Résidanat') && $request->get('salle') == "")) {
-            return new Response('Merci de choisir une salle',500);
-        }
-        $salle = $this->em->getRepository(PSalles::class)->find($request->get('salle'));
-        $emptime->setSalle($salle);
-        $emptime->setXsalle($salle);
-        if ($request->get('vide') == "on") {
-            $emptime->setGroupe(null);
-        }elseif ($request->get('edit_groupe') != 0) {
-            $emptime->setGroupe($this->em->getRepository(PGroupe::class)->find($request->get('edit_groupe')));
-        }
-        $emptime->setUserUpdated($this->getUser());
-        $emptime->setUpdated(new \DateTime('now'));
-        $this->em->flush();
+    // #[Route('/planifications_calendar_edit/{id}', name: 'planifications_calendar_edit')]
+    // public function planifications_calendar_edit(PlEmptime $emptime,Request $request): Response
+    // {
+    //     // return new Response("Vous n'anvez pas le droit!!",500);
+    //     if ($emptime->getValider() == 1) {
+    //         return new Response("Vous ne pouvez pas modifer une seance déja valider!",500);
+    //     }
+    //     $element = $emptime->getProgrammation()->getElement();
+    //     if ((!str_contains($element->getModule()->getSemestre()->getPromotion()->getFormation()->getDesignation(), 'Résidanat') && $request->get('salle') == "")) {
+    //         return new Response('Merci de choisir une salle',500);
+    //     }
+    //     $salle = $this->em->getRepository(PSalles::class)->find($request->get('salle'));
+    //     $emptime->setSalle($salle);
+    //     $emptime->setXsalle($salle);
+    //     if ($request->get('vide') == "on") {
+    //         $emptime->setGroupe(null);
+    //     }elseif ($request->get('edit_groupe') != 0) {
+    //         $emptime->setGroupe($this->em->getRepository(PGroupe::class)->find($request->get('edit_groupe')));
+    //     }
+    //     $emptime->setUserUpdated($this->getUser());
+    //     $emptime->setUpdated(new \DateTime('now'));
+    //     $this->em->flush();
         
-        return new Response('Planification bien Modifier!!',200);
+    //     return new Response('Planification bien Modifier!!',200);
         
-    }
-
+    // }
 
     // #[Route('/planifications_calendar_edit/{id}', name: 'planifications_calendar_edit')]
     // public function planifications_calendar_edit(PlEmptime $emptime,Request $request): Response
@@ -416,6 +453,15 @@ class PlanificationController extends AbstractController
     //         if ($programmation == null) {
     //             return new Response("Programmation introuvable ou l'annee ".$annee->getDesignation()." est cloturée!!",500);
     //         }
+        
+    //         $totalMinute =0;
+    //         $seancesActive = $this->em->getRepository(PlEmptime::class)->findBy(['active' => 1,'programmation' => $programmation]);
+    //         foreach ($seancesActive as $seance) {
+    //             $interval = $seance->getHeurDb()->diff($seance->getHeurFin());
+    //             $totalMinute += $interval->h * 60 + $interval->i;
+    //         }
+            
+    //         if ($totalMinute >= $programmation->getVolume()) return new Response("Vous avez atteint le maximum des heures pour cet élément !",500); 
     //         if ($request->get('nature_seance') == "" || $request->get('nature_seance') == "" || (!str_contains($element->getModule()->getSemestre()->getPromotion()->getFormation()->getDesignation(), 'Résidanat') && $request->get('salle') == "")) {
     //             return new Response('Merci de renseignez tout les champs',500);
     //         }
@@ -458,18 +504,121 @@ class PlanificationController extends AbstractController
     //     $this->em->flush();
         
     //     return new Response('Planification bien Modifier!!',200);
-        
     // }
+
+    
+    #[Route('/planifications_calendar_edit/{id}', name: 'planifications_calendar_edit')]
+    public function planifications_calendar_edit(PlEmptime $emptime,Request $request): Response
+    {
+        if ($emptime->getValider() == 1) {
+            return new Response("Vous ne pouvez pas modifer une seance déja valider!",500);
+        }
+        $havePermission = $this->em->getRepository(UsOperation::class)->havePermission(302,$this->getUser());
+        $isAdmin = in_array('ROLE_ADMIN',$this->getUser()->getRoles());
+        if ($emptime->getVerifier() == 0 or $havePermission or $isAdmin) {
+            $message = $this->editPlanningFull($emptime, $request);
+        }else{
+            $message = $this->editPlanning($emptime, $request);
+        }
+        return new Response($message->getContent(),$message->getStatusCode());
+    }
+
+    public function editPlanning($emptime,Request $request){
+        $element = $emptime->getProgrammation()->getElement();
+        if ((!str_contains($element->getModule()->getSemestre()->getPromotion()->getFormation()->getDesignation(), 'Résidanat') && $request->get('salle') == "")) {
+            return new Response('Merci de choisir une salle',500);
+        }
+        $salle = $this->em->getRepository(PSalles::class)->find($request->get('salle'));
+        $emptime->setSalle($salle);
+        $emptime->setXsalle($salle);
+        if ($request->get('vide') == "on") {
+            $emptime->setGroupe(null);
+        }elseif ($request->get('edit_groupe') != 0) {
+            $emptime->setGroupe($this->em->getRepository(PGroupe::class)->find($request->get('edit_groupe')));
+        }
+        $emptime->setUserUpdated($this->getUser());
+        $emptime->setUpdated(new \DateTime('now'));
+        $this->em->flush();
+        return new Response('Planification bien Modifier!!',200);
+    }
+    public function editPlanningFull($emptime,Request $request){
+        $element = $this->em->getRepository(AcElement::class)->find($request->get('element'));
+        $annee = $this->em->getRepository(AcAnnee::class)->getActiveAnneeByFormation($element->getModule()->getSemestre()->getPromotion()->getFormation());
+        $programmation = $this->em->getRepository(PrProgrammation::class)->findOneBy(['element'=>$request->get('element'),'nature_epreuve'=>$request->get('nature_seance'),'annee'=>$annee]);
+        if ($programmation == null) {
+            return new Response("Programmation introuvable ou l'annee ".$annee->getDesignation()." est cloturée!!",500);
+        }
+        // $totalMinute =0;
+        // $seancesActive = $this->em->getRepository(PlEmptime::class)->findBy(['active' => 1,'programmation' => $programmation]);
+        // foreach ($seancesActive as $seance) {
+        //     if ($seance->getId() == $emptime->getId()) {
+        //         continue;
+        //     }
+        //     $interval = $seance->getHeurDb()->diff($seance->getHeurFin());
+        //     $totalMinute += $interval->h * 60 + $interval->i;
+        // }
+        // if ($totalMinute >= $programmation->getVolume()) {
+        //     return new Response("Vous avez atteint le maximum des heures pour cet élément !",500); 
+        // }
+        
+        if ($request->get('nature_seance') == "" || (!str_contains($annee->getFormation()->getDesignation(), 'Résidanat') && $request->get('salle') == "")) {
+            return new Response('Merci de renseignez tout les champs',500);
+        }
+        $semaine = $this->em->getRepository(Semaine::class)->findOneBy(['nsemaine'=>$request->get('n_semaine'),'anneeS'=>$annee->getDesignation()]);
+        if ($semaine == null) {
+            return new Response("Semaine Introuvable ou l'annee ".$annee->getDesignation()." est cloturée!!",500);
+        }
+        
+        $emptime->setSemaine($semaine);
+        $emptime->setProgrammation($programmation);
+        $emptime->setDescription($request->get('description'));
+        $emptime->setSalle($this->em->getRepository(PSalles::class)->find($request->get('salle')));
+        $emptime->setXsalle($this->em->getRepository(PSalles::class)->find($request->get('salle')));
+        if ($request->get('vide') == "on") {
+            $emptime->setGroupe(null);
+        }elseif ($request->get('edit_groupe') != 0) {
+            $emptime->setGroupe($this->em->getRepository(PGroupe::class)->find($request->get('edit_groupe')));
+        }
+        // }
+        
+        
+        if ($request->get('enseignant') == NULL) {
+            return new Response('Merci de Choisir Au Moins Un Enseignant!!',500);
+        } 
+        
+        $emptime->setUserUpdated($this->getUser());
+        $emptime->setUpdated(new \DateTime('now'));
+        $emptimens = $this->em->getRepository(PlEmptimens::class)->findBy(['seance'=>$emptime]);
+        foreach ($emptimens as $emptimen) {
+            $this->em->remove($emptimen);
+        }
+        foreach ($request->get('enseignant') as $enseignant) {
+            $emptimens = new PlEmptimens();
+            $emptimens->setSeance($emptime);
+            $emptimens->setEnseignant(
+                $this->em->getRepository(PEnseignant::class)->find($enseignant)
+            );
+            $emptimens->setGenerer(0);
+            $emptimens->setActive(1);
+            $emptimens->setCreated(new \DateTime('now'));
+            $this->em->persist($emptimens);
+        }
+        $this->em->flush();
+        return new Response('Planification bien Modifier!!',200);
+    }
 
     
     #[Route('/delete_planning/{id}', name: 'delete_planning')]
     public function delete_planning(PlEmptime $emptime): Response
     {   
-        return new Response("Vous n'anvez pas le droit!!",500);
+        // return new Response("Vous n'anvez pas le droit!!",500);
         if ($emptime->getValider() == 1) {
             return new Response('Vous ne pouvez pas supprimer une seance déja valider!',500);
         }
-        if ($emptime) {
+        $havePermission = $this->em->getRepository(UsOperation::class)->havePermission(302,$this->getUser());
+        $isAdmin = in_array('ROLE_ADMIN',$this->getUser()->getRoles());
+        if ($emptime->getVerifier() == 0 or $havePermission or $isAdmin) {
+            // if ($emptime) {
             $iseances = $this->em->getRepository(ISeance::class)->findBy(['seance'=>$emptime]);
             foreach($iseances as $iseance){
                 $iseance->setStatut(5);
@@ -479,8 +628,10 @@ class PlanificationController extends AbstractController
             $emptime->setUserDeleted($this->getUser());
             $this->em->flush();
             return new Response('Planification bien supprimée',200);
+            // }
         }
-        return new Response('Suppression Echouée',500);
+        return new Response("Vous n'anvez pas le droit!!",500);
+        // return new Response('Suppression Echouée',500);
     }
 
     #[Route('/generer_planning/{semestre}/{groupe}', name: 'generer_planning')]
@@ -516,21 +667,26 @@ class PlanificationController extends AbstractController
     #[Route('/planifications_editEventDate/{id}', name: 'planifications_editEventDate')]
     public function planifications_editEventDate(PlEmptime $emptime,Request $request): Response
     {   
-        return new Response("Vous n'anvez pas le droit!!",500);
+        // return new Response("Vous n'anvez pas le droit!!",500);
         if ($emptime->getGenerer() ==1 || $emptime->getAnnuler() == 1) {
             return new Response('Seance déja générer',500);
         }
-        if ($request->get('start') != "" && $request->get('end') != "") {
-            $start = new \DateTime($request->get('start'));
-            $end = new \DateTime($request->get('end'));
-            $h_debut = new \DateTime($start->format('H:i'));
-            $emptime->setStart($start);
-            $emptime->setEnd($end);
-            $emptime->setHeurDb($start);
-            $emptime->setHeurFin($end);
-            $this->em->flush();
-            return new Response('Planification bien Modifier!!',200);
+        $havePermission = $this->em->getRepository(UsOperation::class)->havePermission(302,$this->getUser());
+        $isAdmin = in_array('ROLE_ADMIN',$this->getUser()->getRoles());
+        if ($emptime->getVerifier() == 0 or $havePermission or $isAdmin) {
+            if ($request->get('start') != "" && $request->get('end') != "") {
+                $start = new \DateTime($request->get('start'));
+                $end = new \DateTime($request->get('end'));
+                // $h_debut = new \DateTime($start->format('H:i'));
+                $emptime->setStart($start);
+                $emptime->setEnd($end);
+                $emptime->setHeurDb($start);
+                $emptime->setHeurFin($end);
+                $this->em->flush();
+                return new Response('Planification bien Modifier!!',200);
+            }
         }
+        return new Response("Vous n'anvez pas le droit!!",500);
     }
 
     #[Route('/planning_canvas', name: 'planning_canvas')]

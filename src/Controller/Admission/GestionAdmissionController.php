@@ -365,14 +365,14 @@ class GestionAdmissionController extends AbstractController
                 }
             }
         }
-        if ($admission->getPreinscription()->getPec() == null) {
-            $pec = $this->em->getRepository(Pec::class)->find($request->get('pec'));
-            if ($pec && trim($request->get('n-pec')) == "" ) {
-                return new JsonResponse("Merci d'entrer le numero de pec !", 500);
-            }
-            $admission->getPreinscription()->setPec($pec);
-            $admission->getPreinscription()->setPecNumber(trim($request->get('n-pec')));
-        }
+        // if ($admission->getPreinscription()->getPec() == null) {
+        //     $pec = $this->em->getRepository(Pec::class)->find($request->get('pec'));
+        //     if ($pec && trim($request->get('n-pec')) == "" ) {
+        //         return new JsonResponse("Merci d'entrer le numero de pec !", 500);
+        //     }
+        //     $admission->getPreinscription()->setPec($pec);
+        //     $admission->getPreinscription()->setPecNumber(trim($request->get('n-pec')));
+        // }
 
         $inscription = new TInscription();
         $inscription->setStatut(

@@ -103,6 +103,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'userCreated', targetEntity: TPreinscription::class)]
     private $Preinscriptions;
 
+    #[ORM\OneToMany(mappedBy: 'userVerified', targetEntity: PlEmptime::class)]
+    private $userVerified;
+
 
     public function __construct()
     {
@@ -127,6 +130,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->tBrdpaiements = new ArrayCollection();
         $this->tPreinscriptions = new ArrayCollection();
         $this->Preinscriptions = new ArrayCollection();
+        $this->userVerified = new ArrayCollection();
     }
 
     
@@ -850,6 +854,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($preinscription->getUserCreated() === $this) {
                 $preinscription->setUserCreated(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, PlEmptime>
+     */
+    public function getUserVerified(): Collection
+    {
+        return $this->userVerified;
+    }
+
+    public function addUserVerified(PlEmptime $userVerified): self
+    {
+        if (!$this->userVerified->contains($userVerified)) {
+            $this->userVerified[] = $userVerified;
+            $userVerified->setUserVerified($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUserVerified(PlEmptime $userVerified): self
+    {
+        if ($this->userVerified->removeElement($userVerified)) {
+            // set the owning side to null (unless already changed)
+            if ($userVerified->getUserVerified() === $this) {
+                $userVerified->setUserVerified(null);
             }
         }
 

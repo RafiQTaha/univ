@@ -252,9 +252,12 @@ class FormationController extends AbstractController
 
 
         foreach ($etudiants as $etudiant) {
-            if ($etudiant['moyenne'] < 10) {
+            if (!array_key_exists('moyenne', $etudiant)  || $etudiant['moyenne'] < 10) {
                 continue;
             }
+            // if ($etudiant['moyenne'] < 10) {
+            //     continue;
+            // }
             $fnote = $this->em->getRepository(ExFnotes::class)->findOneByAdmission($etudiant['admission']);
             $admission = $this->em->getRepository(TAdmission::class)->find($etudiant['admission']);
             // $annee = $admission->getPreinscription()->getAnnee();

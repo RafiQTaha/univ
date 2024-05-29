@@ -101,6 +101,15 @@ class PlEmptime
 
     #[ORM\Column(type: 'text', nullable: true)]
     private $observation;
+
+    #[ORM\Column(type: 'float', nullable: true)]
+    private $verifier;
+
+    #[ORM\Column(type: 'datetime', nullable: true)]
+    private $verified;
+
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'userVerified')]
+    private $userVerified;
     
     public function __construct()
     {
@@ -512,6 +521,42 @@ class PlEmptime
     public function setObservation(?string $observation): self
     {
         $this->observation = $observation;
+
+        return $this;
+    }
+
+    public function getVerifier(): ?float
+    {
+        return $this->verifier;
+    }
+
+    public function setVerifier(?float $verifier): self
+    {
+        $this->verifier = $verifier;
+
+        return $this;
+    }
+
+    public function getVerified(): ?\DateTimeInterface
+    {
+        return $this->verified;
+    }
+
+    public function setVerified(?\DateTimeInterface $verified): self
+    {
+        $this->verified = $verified;
+
+        return $this;
+    }
+
+    public function getUserVerified(): ?User
+    {
+        return $this->userVerified;
+    }
+
+    public function setUserVerified(?User $userVerified): self
+    {
+        $this->userVerified = $userVerified;
 
         return $this;
     }

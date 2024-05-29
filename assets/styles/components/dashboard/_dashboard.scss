@@ -6285,11 +6285,17 @@ tr:first-child > td > .fc-day-grid-event {
 }
 .etat_bg_nf{
   background-color :#fde0e0 !important ;
-  color :#3c3c3c !important;
+  // color :#3c3c3c !important;
+  color :#000 !important;
 }
 .etat_bg_reg{
   background-color : #ceffce !important;
-  color :#3c3c3c !important;
+  // color :#3c3c3c !important;
+  color :#000 !important;
+}
+.etat_bg_vrf{
+  background-color : #00b7c7 !important;
+  color :#000 !important;
 }
 .modal .modal-preins{
   max-width: 75% !important;

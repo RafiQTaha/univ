@@ -83,4 +83,16 @@ class UsOperationRepository extends ServiceEntityRepository
         ;
         // dd($request);
     }
+    public function havePermission($operation,$user) {
+        return $this->createQueryBuilder('operation')
+            ->innerJoin("operation.users", "user")
+            ->where('operation = :operation')
+            ->andWhere('user = :user')
+            ->setParameter('operation', $operation)
+            ->setParameter('user', $user)
+            ->getQuery()
+            ->getResult()
+        ;
+        // dd($request);
+    }
 }

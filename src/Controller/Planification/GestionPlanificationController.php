@@ -164,18 +164,18 @@ class GestionPlanificationController extends AbstractController
             $nestedData[] = $i;
             $etat_bg="";
             foreach (array_values($row) as $key => $value) { 
-                $checked = "";
+                $seance = $this->em->getRepository(PlEmptime::class)->find($cd);
+                $etat_bg = $seance->getVerifier() == 0 ? $etat_bg : "etat_bg_vrf";
                 if ($key == 0) {
                     $nestedData[] = "<input type ='checkbox' class='check_seance' data-id ='$cd' >";
                 }elseif($key == 13){
                     $nestedData[] = $value == 1 ? 'oui' : 'non';
-                    $etat_bg = $value == 1 ? "etat_bg_reg" : "";
+                    $etat_bg = $value == 1 ? "etat_bg_reg" : $etat_bg ;
                 }
                 else{
                     $nestedData[] = $value;
                 }
-                $active = $this->em->getRepository(PlEmptime::class)->find($cd);
-                $etat_bg = $active->getAnnuler() == 0 ? $etat_bg : "etat_bg_nf";
+                $etat_bg = $seance->getAnnuler() == 0 ? $etat_bg : "etat_bg_nf";
             }
             $nestedData["DT_RowId"] = $cd;
             $nestedData["DT_RowClass"] = $etat_bg; 
@@ -216,14 +216,37 @@ class GestionPlanificationController extends AbstractController
         }
         return new Response('Seances Bien Supprimer',200);
     } 
+    
+    #[Route('/gestion_verifier_planning', name: 'gestion_verifier_planning')]
+    public function gestion_verifier_planning(Request $request): Response
+    {   
+        $ids = json_decode($request->get('ids_planning'));
+        if (count($ids) == 0) {
+            return new Response('Merci de choisir Au moins une Seance!',500);
+        }
+        foreach ($ids as $id) {
+            $emptime = $this->em->getRepository(PlEmptime::class)->find($id);
+            if ($emptime->getActive() == 1 && $emptime->getValider() == 0) {
+                
+                $emptime->setVerified(new \DateTime('now'));
+                $emptime->setUserVerified($this->getUser());
+                $emptime->setVerifier(1);
+                $this->em->flush();
+            }
+        }
+        return new Response('Seances Bien Verifier',200);
+    } 
+
     #[Route('/gestion_annuler_planning/{emptime}', name: 'gestion_annuler_planning')]
     public function gestion_annuler_planning(Request $request,PlEmptime $emptime): Response
     {   
         // $ids = json_decode($request->get('ids_planning'));
         if ($emptime->getValider() == 1) {
-            return new Response('Impossible d\'annuler une séance validée! ',500);
+            return new Response('Impossible d\'annuler une séance validée !',500);
         }elseif ($emptime->getAnnuler() == 1) {
-            return new Response('Cette séance est déja annuler! ',500);
+            return new Response('Cette séance est déja annuler !',500);
+        }elseif ($emptime->getVerifier() == 0) {
+            return new Response("merci de verifier la seance avant l'annulation !",500);
         }
         if ($request->get('motif_annuler') == "Autre") {
             if ($request->get('autre_motif') == "") {
@@ -248,6 +271,9 @@ class GestionPlanificationController extends AbstractController
         $emptime = $this->em->getRepository(PlEmptime::class)->find($request->get('seance'));
         if (!$emptime) {
             return new Response('IMerci de choisir une seance! ',500);
+        }
+        if ($emptime->getVerifier() == 0) {
+            return new Response('merci de verifier la seance avant la validation !',500);
         }
         if ($emptime->getAnnuler() == 1) {
             return new Response('Impossible de valider une séance annulé! ',500);

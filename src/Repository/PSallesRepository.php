@@ -47,4 +47,24 @@ class PSallesRepository extends ServiceEntityRepository
         ;
     }
     */
+    public function findEmptySallesByDateTime($start,$end)
+    {
+        $salleIn =  $this->createQueryBuilder('salle')
+            ->innerJoin('salle.emptimes','seance')
+            ->Where('seance.start BETWEEN :start and :end OR seance.end BETWEEN :start and :end ')
+            ->setParameter('start', $start)
+            ->setParameter('end', $end)
+            ->groupBy('salle.id')
+            ->orderBy('salle.designation', 'ASC')
+            ->getQuery()
+            ->getResult();
+            
+        return $this->createQueryBuilder('salle')
+            ->Where('salle not in (:salleIn) ')
+            ->setParameter('salleIn', $salleIn)
+            ->groupBy('salle.id')
+            ->orderBy('salle.designation', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
 }

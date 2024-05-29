@@ -34,7 +34,7 @@
               <select class="form-control" name="annee" id="annee">
               </select>
             </div>
-            <div class="pec">
+            {# <div class="pec">
               <label for="pec">Pec:</label>
               <select class="form-control" name="pec" id="pec">
                 <option value="" selected>Choix De Pec</option>
@@ -42,15 +42,15 @@
                     <option value="{{pec.id}}">{{pec.designation}}</option>
                 {% endfor %}
               </select>
-            </div>
-            <div class="n-pec">
+            </div> #}
+            {# <div class="n-pec">
               <label for="n-pec">Numero de Pec:</label>
               <input type="text" class="form-control" name="n-pec" id="n-pec" value="" placeholder="Numero de Pec"/>
-            </div>
+            </div> #}
             
             <div class="d-flex mt-5 mb-5">
-              <button class="btn btn-primary ml-auto">G.Preinscription</button>
-              <button type="submit" class="btn btn-success ml-5" id="enregistrer" disabled> <i class="fas fa-check-circle"></i> Enregistrer</button>
+              {# <button class="btn btn-primary ml-auto">G.Preinscription</button> #}
+              <button type="submit" class="btn btn-success ml-auto" id="enregistrer" disabled> <i class="fas fa-check-circle"></i> Enregistrer</button>
             </div>
           </form>
           <table id="datables_etudiant_modal" class="table table-striped mt-3" style="width:100%">
