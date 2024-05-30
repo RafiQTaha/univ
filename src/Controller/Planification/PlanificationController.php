@@ -356,7 +356,7 @@ class PlanificationController extends AbstractController
         if ($programmation == null) {
             return new Response("Programmation introuvable ou l'annee ".$annee->getDesignation()." est cloturée!!",500);
         }
-        if ($annee->getFormation()->getEtabllissement()->getId() != 28) {
+        if ($annee->getFormation()->getEtablissement()->getId() != 28) {
             $totalMinute =0;
             $seancesActive = $this->em->getRepository(PlEmptime::class)->findBy(['active' => 1,'programmation' => $programmation]);
             
@@ -670,7 +670,7 @@ class PlanificationController extends AbstractController
     #[Route('/verifier_planning/{semestre}/{groupe}', name: 'verifier_planning')]
     public function verifier_planning(AcSemestre $semestre,$groupe,Request $request): Response
     {   
-        dd($request->request, $semestre ,$groupe);
+        // dd($request->request, $semestre ,$groupe);
         
         $professeur = $request->get('professeur');
         if ( (!$semestre || $semestre == "null") && $professeur != 'null') {
@@ -703,7 +703,7 @@ class PlanificationController extends AbstractController
                 $emptimes = $this->em->getRepository(PlEmptime::class)->getEmptimeBySemestreAndGroupeAndProfesseur($semestre,$groupes,$professeur);
             }
         }
-
+        dd($emptimes);
         if ($request->get('nsemaine') != "" && $semestre) {
             $annee = $this->em->getRepository(AcAnnee::class)->getActiveAnneeByFormation($semestre->getPromotion()->getFormation());
             $semaine = $this->em->getRepository(Semaine::class)->findOneBy(['nsemaine'=>$request->get('nsemaine'),'anneeS'=>$annee->getDesignation()]);
