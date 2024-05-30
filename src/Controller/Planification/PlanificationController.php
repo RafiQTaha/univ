@@ -240,9 +240,9 @@ class PlanificationController extends AbstractController
     {
         // dd($request->request->get('start'));
         $annee = $this->em->getRepository(AcAnnee::class)->getActiveAnneeByFormation($semestre->getPromotion()->getFormation());
-        $salles = $this->em->getRepository(PSalles::class)->findEmptySallesByDateTime($request->get('start').":00",$request->get('end').":00");
+        // $salles = $this->em->getRepository(PSalles::class)->findEmptySallesByDateTime($request->get('start').":00",$request->get('end').":00");
         // dd($salles);
-        // $salles = $this->em->getRepository(PSalles::class)->findBy([],['designation'=>'ASC']);
+        $salles = $this->em->getRepository(PSalles::class)->findBy([],['designation'=>'ASC']);
         $natureepreuves = $this->em->getRepository(PNatureEpreuve::class)->findBy([],['designation'=>'ASC']);
         $modules = $this->em->getRepository(AcModule::class)->findBy(['semestre'=>$semestre, 'active' => 1],['designation'=>'ASC']);
         
@@ -356,18 +356,20 @@ class PlanificationController extends AbstractController
         if ($programmation == null) {
             return new Response("Programmation introuvable ou l'annee ".$annee->getDesignation()." est cloturée!!",500);
         }
+        if ($annee->getFormation()->getEtabllissement()->getId() != 28) {
+            $totalMinute =0;
+            $seancesActive = $this->em->getRepository(PlEmptime::class)->findBy(['active' => 1,'programmation' => $programmation]);
+            
+            foreach ($seancesActive as $seance) {
+                $interval = $seance->getHeurDb()->diff($seance->getHeurFin());
+                $totalMinute += $interval->h * 60 + $interval->i;
+            }
+            
+            if ($totalMinute / 60 >= $programmation->getVolume()) {
+                return new Response("Vous avez atteint le maximum des heures pour cet élément !",500); 
+            }
+        }
         
-        $totalMinute =0;
-        $seancesActive = $this->em->getRepository(PlEmptime::class)->findBy(['active' => 1,'programmation' => $programmation]);
-        // dd($programmation->getVolume(),$seancesActive);
-        foreach ($seancesActive as $seance) {
-            $interval = $seance->getHeurDb()->diff($seance->getHeurFin());
-            $totalMinute += $interval->h * 60 + $interval->i;
-        }
-        // dd($totalMinute);
-        if ($totalMinute / 60 >= $programmation->getVolume()) {
-            return new Response("Vous avez atteint le maximum des heures pour cet élément !",500); 
-        }
 
         if ($request->get('enseignant') == NULL) return new Response('Merci de Choisir Au Moins Un Enseignant!!',500);
 
@@ -639,6 +641,69 @@ class PlanificationController extends AbstractController
     public function generer_planning(AcSemestre $semestre,$groupe,Request $request): Response
     {   
         // dd($request->get('nsemaine'),$request->get('crntday') , $semestre ,$groupe);
+        if ($request->get('nsemaine') != "" && $semestre) {
+            $annee = $this->em->getRepository(AcAnnee::class)->getActiveAnneeByFormation($semestre->getPromotion()->getFormation());
+            $semaine = $this->em->getRepository(Semaine::class)->findOneBy(['nsemaine'=>$request->get('nsemaine'),'anneeS'=>$annee->getDesignation()]);
+            if ($groupe == 0) {
+                $emptimesValider = $this->em->getRepository(PlEmptime::class)->getEmptimeBySemestreAndSemaineToGenerer($semestre,$semaine);
+                $emptimesAnnuler = $this->em->getRepository(PlEmptime::class)->getEmptimeAnnulerBySemestreAndSemaineToGenerer($semestre,$semaine);
+                $Allemptimes = $this->em->getRepository(PlEmptime::class)->getEmptimeBySemestreAndSemaine($semestre,$semaine);
+            }else{
+                $emptimesValider = $this->em->getRepository(PlEmptime::class)->getEmptimeBySemestreAndGroupeAndSemaineToGenerer($semestre,$groupe,$semaine);
+                $emptimesAnnuler = $this->em->getRepository(PlEmptime::class)->getEmptimeAnnulerBySemestreAndGroupeAndSemaineToGenerer($semestre,$groupe,$semaine);
+                $Allemptimes = $this->em->getRepository(PlEmptime::class)->getEmptimeBySemestreAndGroupeAndSemaine($semestre,$groupe,$semaine);
+            }
+            $count = count($emptimesValider) + count($emptimesAnnuler);
+            if (count($Allemptimes) == $count && $emptimesValider != NULL) {
+                foreach($emptimesValider as $emptime){
+                    $emptime->setGenerer(1);
+                    $this->em->flush();
+                }
+                return new Response('Géneration bien Effectuée',200);
+            }else {
+                return new Response('Merci de Valider tout les seances de cette semaine!',500);
+            }
+        }
+        return new Response('Generation Echouée',500);
+    }
+// xxxxxxxxxxxxxxxxxxx
+    #[Route('/verifier_planning/{semestre}/{groupe}', name: 'verifier_planning')]
+    public function verifier_planning(AcSemestre $semestre,$groupe,Request $request): Response
+    {   
+        dd($request->request, $semestre ,$groupe);
+        
+        $professeur = $request->get('professeur');
+        if ( (!$semestre || $semestre == "null") && $professeur != 'null') {
+            $emptimes = $this->em->getRepository(PlEmptime::class)->getEmptimeByProfesseur($professeur);
+            
+        }elseif($groupe == 0 && $professeur == 'null'){
+            
+            $emptimes = $this->em->getRepository(PlEmptime::class)->getEmptimeBySemestre($semestre);
+        }elseif ($groupe == 0 && $professeur != 'null') {
+            
+            $emptimes = $this->em->getRepository(PlEmptime::class)->getEmptimeBySemestreAndProfesseur($semestre,$professeur);
+        }else{
+            
+            $groupes = [null];
+            $pgroupe1 = $this->em->getRepository(PGroupe::class)->find($groupe);
+            array_push($groupes,$pgroupe1);
+            $pgroupe2 = $this->em->getRepository(PGroupe::class)->findGroupesByGroupes(['groupe'=>$pgroupe1]);
+            foreach ($pgroupe2 as $pgroupe2e) {
+                array_push($groupes,$pgroupe2e);
+            }
+            $pgroupe3 = $this->em->getRepository(PGroupe::class)->findGroupesByGroupes($pgroupe2);
+            foreach ($pgroupe3 as $pgroupe3e) {
+                array_push($groupes,$pgroupe3e);
+            }
+            // $emptimes = $this->em->getRepository(PlEmptime::class)->getEmptimeBySemestreAndGroupe($semestre,$groupes);
+            // $emptimes = $this->em->getRepository(PlEmptime::class)->getEmptimeBySemestreAndGroupe($semestre,$groupe);
+            if ($professeur == 'null') {
+                $emptimes = $this->em->getRepository(PlEmptime::class)->getEmptimeBySemestreAndGroupe($semestre,$groupes);
+            }else {
+                $emptimes = $this->em->getRepository(PlEmptime::class)->getEmptimeBySemestreAndGroupeAndProfesseur($semestre,$groupes,$professeur);
+            }
+        }
+
         if ($request->get('nsemaine') != "" && $semestre) {
             $annee = $this->em->getRepository(AcAnnee::class)->getActiveAnneeByFormation($semestre->getPromotion()->getFormation());
             $semaine = $this->em->getRepository(Semaine::class)->findOneBy(['nsemaine'=>$request->get('nsemaine'),'anneeS'=>$annee->getDesignation()]);
