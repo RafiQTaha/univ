@@ -164,6 +164,37 @@ class PlEmptimeRepository extends ServiceEntityRepository
         // dd('test');
         // dd($return);
     }
+
+    public function getEmptimeBySemestreAndGroupesAndSemaineAndProfesseur($semestre,$groupes,$semaine,$professeur)
+    {
+        // dd($semaine);
+        // $return = $this->createQueryBuilder('e')
+        return $this->createQueryBuilder('e')
+            ->innerJoin("e.groupe", "groupe")
+            ->innerJoin("e.emptimens", "emptimens")
+            ->InnerJoin("emptimens.enseignant", "enseignant")
+            ->innerJoin("e.semaine", "semaine")
+            ->innerJoin("e.programmation", "programmation")
+            ->innerJoin("programmation.element", "element")
+            ->innerJoin("element.module", "module")
+            ->innerJoin("module.semestre", "semestre")
+            ->where('semestre.id = :semestre')
+            ->andWhere("groupe in (:groupes)")
+            ->andWhere("semaine = :semaine")
+            ->andwhere('enseignant.id = :enseignant')
+            ->andWhere("e.active = 1")
+            ->andWhere("e.annuler = 0")
+            ->setParameter('semestre', $semestre)
+            ->setParameter('groupes', $groupes)
+            ->setParameter('semaine', $semaine)
+            ->setParameter('enseignant', $professeur)
+            ->getQuery()
+            ->getResult()
+        ;
+        // dd('test');
+        // dd($return);
+    }
+
     public function getEmptimeBySemestreAndSemaineAndProfesseur($semestre,$semaine,$professeur)
     {
         return $this->createQueryBuilder('e')
@@ -241,6 +272,30 @@ class PlEmptimeRepository extends ServiceEntityRepository
             ->getResult()
         ;
     }
+
+    
+    public function getEmptimeBySemestreAndGroupesAndSemaine($semestre,$groupes,$semaine)
+    {
+        return $this->createQueryBuilder('e')
+            ->innerJoin("e.groupe", "groupe")
+            ->innerJoin("e.semaine", "semaine")
+            ->innerJoin("e.programmation", "programmation")
+            ->innerJoin("programmation.element", "element")
+            ->innerJoin("element.module", "module")
+            ->innerJoin("module.semestre", "semestre")
+            ->where('semestre.id = :semestre')
+            ->andWhere("groupe in (:groupes)")
+            ->andWhere("semaine = :semaine")
+            ->andWhere("e.active = 1")
+            // ->andWhere("e.annuler = 0")
+            ->setParameter('semestre', $semestre)
+            ->setParameter('groupes', $groupes)
+            ->setParameter('semaine', $semaine)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
     public function getEmptimeBySemestreAndSemaine($semestre,$semaine)
     {
         return $this->createQueryBuilder('e')

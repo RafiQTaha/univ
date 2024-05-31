@@ -525,19 +525,16 @@ $(document).ready(function () {
         if(!id_semestre){
             Toast.fire({
                 icon: 'error',
-                title: 'Vous devez choisir Semestre et Niveau!!',
+                title: 'Vous devez choisir une Semestre!!',
             })
             return
         }
-        //////
-        // let crntday = moment($('#calendar').fullCalendar('getDate')).format('YYYY-MM-DD')
         var res = confirm("Vous êtes sûr d'avoir vérifié toutes les séances de cette semaine ?");
         if (res == 1) {
             currentweek = moment($('#calendar').fullCalendar('getDate'), "MMDDYYYY").isoWeek();
             let formData = new FormData();
             formData.append('nsemaine',currentweek)
             formData.append('professeur',  professeur)
-            // formData.append('crntday',crntday)
             const icon = $("#verifier i");
             icon.removeClass('fab fa-get-pocket').addClass("fas fa-spinner fa-spin");
             try {
