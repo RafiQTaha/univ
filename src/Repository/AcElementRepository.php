@@ -52,7 +52,7 @@ class AcElementRepository extends ServiceEntityRepository
     
     public function findArchitectureByCurrentYear($currentyear)
     {
-        $sqls="SELECT etab.id 'Etablissement_id',etab.code 'Etablissement_code', etab.designation 'Etablissement',frm.id 'Formation_id',frm.code 'Formation_code',frm.designation 'Formation',ann.id 'Annee_id',ann.code 'Annee_code',ann.designation 'Annee',prm.id 'Promotion_id',prm.code 'Promotion_code',prm.designation 'Promotion', sem.id 'Semestre_id', sem.code 'Semestre_code',sem.designation 'Semestre',sem.active 'Semestre_active',mdl.id 'Module_id',mdl.code 'Module_code',mdl.designation 'Module',mdl.active 'Module_active',elm.id 'Element_id',elm.code 'Element_code', elm.designation 'Element', elm.coefficient 'coefficient',elm.coefficient_epreuve 'coefficient_epreuve',elm.active 'Element_active', prog.volume 'Volume',nat.id 'Nature_id', nat.code 'Nature_code',nat.designation 'Nature',ens.id 'Enseignant_id', ens.nom 'Nom_Enseignant', ens.prenom 'Prenom_Enseignant', grd.designation 'Grade'
+        $sqls="SELECT etab.id 'Etablissement_id',etab.code 'Etablissement_code', etab.designation 'Etablissement',frm.id 'Formation_id',frm.code 'Formation_code',frm.designation 'Formation',ann.id 'Annee_id',ann.code 'Annee_code',ann.designation 'Annee',prm.id 'Promotion_id',prm.code 'Promotion_code',prm.designation 'Promotion', sem.id 'Semestre_id', sem.code 'Semestre_code',sem.designation 'Semestre',sem.active 'Semestre_active',mdl.id 'Module_id',mdl.code 'Module_code',mdl.designation 'Module',mdl.active 'Module_active',elm.id 'Element_id',elm.code 'Element_code', elm.designation 'Element', elm.coefficient 'coefficient',elm.coefficient_epreuve 'coefficient_epreuve',elm.active 'Element_active',prog.id 'Programmation_id', prog.volume 'Volume',nat.id 'Nature_id', nat.code 'Nature_code',nat.designation 'Nature',ens.id 'Enseignant_id', ens.nom 'Nom_Enseignant', ens.prenom 'Prenom_Enseignant', grd.designation 'Grade'
         FROM ac_etablissement etab
         inner join ac_formation frm on frm.etablissement_id = etab.id
         inner join ac_annee ann on ann.formation_id = frm.id
@@ -60,7 +60,7 @@ class AcElementRepository extends ServiceEntityRepository
         inner join ac_semestre sem on sem.promotion_id = prm.id
         inner join ac_module mdl on mdl.semestre_id = sem.id
         inner join ac_element elm on elm.module_id = mdl.id
-        inner join pr_programmation prog on prog.element_id = elm.id
+        inner join pr_programmation prog on prog.element_id = elm.id and prog.annee_id = ann.id
         inner join pnature_epreuve nat on nat.id = prog.nature_epreuve_id
         left join penseignant_pr_programmation enspr on enspr.pr_programmation_id = prog.id
         left join penseignant ens on ens.id = enspr.penseignant_id
