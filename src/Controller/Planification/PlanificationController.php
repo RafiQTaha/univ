@@ -358,7 +358,7 @@ class PlanificationController extends AbstractController
         }
         if ($annee->getFormation()->getEtablissement()->getId() != 28) {
             $totalMinute =0;
-            $seancesActive = $this->em->getRepository(PlEmptime::class)->findBy(['active' => 1,'programmation' => $programmation]);
+            $seancesActive = $this->em->getRepository(PlEmptime::class)->findBy(['active' => 1,'programmation' => $programmation,'annuler'=>0]);
             
             foreach ($seancesActive as $seance) {
                 $interval = $seance->getHeurDb()->diff($seance->getHeurFin());
