@@ -357,15 +357,36 @@ class PlanificationController extends AbstractController
             return new Response("Programmation introuvable ou l'annee ".$annee->getDesignation()." est cloturée!!",500);
         }
         if ($annee->getFormation()->getEtablissement()->getId() != 28) {
-            $totalMinute =0;
-            $seancesActive = $this->em->getRepository(PlEmptime::class)->findBy(['active' => 1,'programmation' => $programmation,'annuler'=>0]);
-            
-            foreach ($seancesActive as $seance) {
-                $interval = $seance->getHeurDb()->diff($seance->getHeurFin());
-                $totalMinute += $interval->h * 60 + $interval->i;
-            }
-            
-            if ($totalMinute / 60 >= $programmation->getVolume()) {
+            // $inscriptions = $this->em->getRepository(TInscription::class)->getNiveaux($element->getModule()->getSemestre()->getPromotion(),$annee);
+            // $groupes = [];
+            // foreach ($inscriptions as $inscription) {
+            //     $groupe = $inscription->getGroupe();
+            //     if ($groupe->getGroupe() == Null) {
+            //         if (!in_array($groupe, $groupes)){
+            //             array_push($groupes,$groupe);
+            //         }
+            //     }elseif ($groupe->getGroupe()->getGroupe() == Null) {
+            //         $groupe = $groupe->getGroupe();
+            //         if (!in_array($groupe, $groupes)){
+            //             array_push($groupes,$groupe);
+            //         }
+            //     }else {
+            //         $groupe = $groupe->getGroupe()->getGroupe();
+            //         if (!in_array($groupe, $groupes)){
+            //             array_push($groupes,$groupe);
+            //         }
+            //     }
+            // }
+            // $CountGroupe = count($groupes);
+            // $totalMinute =0;
+            // $seancesActive = $this->em->getRepository(PlEmptime::class)->findBy(['active' => 1,'programmation' => $programmation,'annuler'=>0]);
+
+            // foreach ($seancesActive as $seance) {
+            //     $interval = $seance->getHeurDb()->diff($seance->getHeurFin());
+            //     $totalMinute += $interval->h * 60 + $interval->i;
+            // }
+            $MaxVolumeHoraire = $this->MaxVolumeHoraire($element,$annee,$programmation);
+            if (!$MaxVolumeHoraire) {
                 return new Response("Vous avez atteint le maximum des heures pour cet élément !",500); 
             }
         }
@@ -418,6 +439,40 @@ class PlanificationController extends AbstractController
         return new Response('Planification bien Ajouter!!',200);
     }
 
+    public function MaxVolumeHoraire($element,$annee,$programmation){
+        $inscriptions = $this->em->getRepository(TInscription::class)->getNiveaux($element->getModule()->getSemestre()->getPromotion(),$annee);
+            $groupes = [];
+            foreach ($inscriptions as $inscription) {
+                $groupe = $inscription->getGroupe();
+                if ($groupe->getGroupe() == Null) {
+                    if (!in_array($groupe, $groupes)){
+                        array_push($groupes,$groupe);
+                    }
+                }elseif ($groupe->getGroupe()->getGroupe() == Null) {
+                    $groupe = $groupe->getGroupe();
+                    if (!in_array($groupe, $groupes)){
+                        array_push($groupes,$groupe);
+                    }
+                }else {
+                    $groupe = $groupe->getGroupe()->getGroupe();
+                    if (!in_array($groupe, $groupes)){
+                        array_push($groupes,$groupe);
+                    }
+                }
+            }
+            $CountGroupe = count($groupes);
+            $totalMinute =0;
+            $seancesActive = $this->em->getRepository(PlEmptime::class)->findBy(['active' => 1,'programmation' => $programmation,'annuler'=>0]);
+
+            foreach ($seancesActive as $seance) {
+                $interval = $seance->getHeurDb()->diff($seance->getHeurFin());
+                $totalMinute += $interval->h * 60 + $interval->i;
+            }
+            if ($totalMinute / 60  >= $programmation->getVolume() * $CountGroupe) {
+                return false;
+            }
+            return true;
+    }
     // #[Route('/planifications_calendar_edit/{id}', name: 'planifications_calendar_edit')]
     // public function planifications_calendar_edit(PlEmptime $emptime,Request $request): Response
     // {
@@ -564,6 +619,11 @@ class PlanificationController extends AbstractController
         //     return new Response("Vous avez atteint le maximum des heures pour cet élément !",500); 
         // }
         
+        $MaxVolumeHoraire = $this->MaxVolumeHoraire($element,$annee,$programmation);
+        if (!$MaxVolumeHoraire) {
+            return new Response("Vous avez atteint le maximum des heures pour cet élément !",500); 
+        }
+
         if ($request->get('nature_seance') == "" || (!str_contains($annee->getFormation()->getDesignation(), 'Résidanat') && $request->get('salle') == "")) {
             return new Response('Merci de renseignez tout les champs',500);
         }
@@ -615,9 +675,16 @@ class PlanificationController extends AbstractController
     public function delete_planning(PlEmptime $emptime): Response
     {   
         // return new Response("Vous n'anvez pas le droit!!",500);
+        
         if ($emptime->getValider() == 1) {
             return new Response('Vous ne pouvez pas supprimer une seance déja valider!',500);
         }
+        $havePermission = $this->em->getRepository(UsOperation::class)->havePermission(302,$this->getUser());
+        $isAdmin = in_array('ROLE_ADMIN',$this->getUser()->getRoles());
+        if (!$isAdmin && !$havePermission && $emptime->getVerifier() == 1) {
+            return new Response("Vous ne pouvez pas supprimer une seance déja verifier!",500);
+        }
+
         $havePermission = $this->em->getRepository(UsOperation::class)->havePermission(302,$this->getUser());
         $isAdmin = in_array('ROLE_ADMIN',$this->getUser()->getRoles());
         if ($emptime->getVerifier() == 0 or $havePermission or $isAdmin) {
