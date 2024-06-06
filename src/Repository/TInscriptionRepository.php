@@ -222,6 +222,7 @@ class TInscriptionRepository extends ServiceEntityRepository
             ->Where("inscription.promotion = :promotion")
             ->AndWhere("inscription.annee = :annee")
             ->AndWhere("inscription.salle is not null")
+            ->AndWhere("inscription.statut = 13")
             ->setParameter('promotion', $promotion)
             ->setParameter('annee', $annee)
             ->getQuery()
