@@ -460,7 +460,7 @@ class PlanificationController extends AbstractController
                     }
                 }
             }
-            $CountGroupe = count($groupes);
+            $CountGroupe = count($groupes) == 0 ? 1 : count($groupes);
             $totalMinute =0;
             $seancesActive = $this->em->getRepository(PlEmptime::class)->findBy(['active' => 1,'programmation' => $programmation,'annuler'=>0]);
 
