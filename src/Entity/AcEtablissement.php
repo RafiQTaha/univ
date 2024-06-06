@@ -78,6 +78,9 @@ class AcEtablissement
     #[ORM\Column(type: 'integer')]
     private $assiduite =0;
 
+    #[ORM\Column(type: 'integer', nullable: true)]
+    private $site;
+
     public function __construct()
     {
         $this->acFormations = new ArrayCollection();
@@ -411,6 +414,18 @@ class AcEtablissement
     public function setAssiduite(int $assiduite): self
     {
         $this->assiduite = $assiduite;
+
+        return $this;
+    }
+
+    public function getSite(): ?int
+    {
+        return $this->site;
+    }
+
+    public function setSite(?int $site): self
+    {
+        $this->site = $site;
 
         return $this;
     }
