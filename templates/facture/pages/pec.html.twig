@@ -3,11 +3,11 @@
     <select class="form-control" name="pec" id="pec">
         <option value="" selected disabled>Choix De Pec</option>
         {% for pec in pecs %}
-            {# {% if facture.pec and facture.pec == pec %} #}
-                {# <option value="{{pec.id}}" selected>{{pec.designation}}</option> #}
-                {# {% else %} #}
+            {% if facture.pec and facture.pec == pec %}
+                <option value="{{pec.id}}" selected>{{pec.designation}}</option>
+                {% else %}
                 <option value="{{pec.id}}">{{pec.designation}}</option>
-            {# {% endif %} #}
+            {% endif %}
             
         {% endfor %}
     </select>
@@ -18,7 +18,7 @@
     <input type="text" class="form-control" name="n-pec" id="n-pec" value="{{facture.npec}}" placeholder="Numero de Pec"/>
 </div>
 {# {% if facture.pec == null %} #}
-    <div class="d-flex mt-5 mb-5">
+    <div class="d-flex mt-5">
         <button type="submit" class="btn btn-success ml-auto" id="enregistrer"> <i class="fas fa-check-circle"></i>  Enregistrer</button>
     </div>
 {# {% endif %} #}
