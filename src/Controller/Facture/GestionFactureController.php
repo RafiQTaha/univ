@@ -22,6 +22,7 @@ use App\Entity\AcEtablissement;
 use App\Entity\TPreinscription;
 use App\Controller\ApiController;
 use App\Controller\DatatablesController;
+use App\Entity\Pec;
 use Doctrine\Persistence\ManagerRegistry;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
@@ -56,6 +57,8 @@ class GestionFactureController extends AbstractController
         $paiements = $this->em->getRepository(XModalites::class)->findBy(['active'=>1]);
         $reglements = $this->em->getRepository(TReglement::class)->findAll();
         $annees = $this->em->getRepository(AcAnnee::class)->findBy([],['designation'=>'DESC'],['designation']);
+        $pecs = $this->em->getRepository(Pec::class)->findBy(['active' => 1],['designation' => 'ASC']);
+        
         return $this->render('facture/gestion_facture.html.twig', [
             'etablissements' => $etablissements,
             'reglements' => $reglements,
@@ -63,7 +66,8 @@ class GestionFactureController extends AbstractController
             'banques' => $banques,
             'paiements' => $paiements,
             'organismes' => $organismes,
-            'annees' => $annees
+            'annees' => $annees,
+            'pecs' => $pecs,
         ]);
     }
     
@@ -1224,6 +1228,32 @@ class GestionFactureController extends AbstractController
         
         return new JsonResponse($counter.' Facture Bien Crée', 200);    
         return new JsonResponse('Montant Total: '.$total. ' Pour ' .$counter.' Facture Bien Crée', 200);    
+    }
+    
+
+    #[Route('/getFacturePec/{id}', name: 'getFacturePec')]
+    public function getFacturePec(Request $request,TOperationcab $facture): Response
+    { 
+        
+        $pecs = $this->em->getRepository(Pec::class)->findBy(['active' => 1],['designation' => 'ASC']);
+        $html =  $this->render('facture/pages/pec.html.twig', [
+            'facture' => $facture,
+            'pecs' => $pecs,
+        ])->getContent();
+        return new JsonResponse($html, 200);    
+    }
+
+    
+    #[Route('/ajouter_pec/{id}', name: 'ajouter_pec')]
+    public function ajouter_pec(Request $request,TOperationcab $operationcab): Response
+    { 
+        if ($request->get('n-pec') == "" or $request->get('n-pec') == "") {
+            return new JsonResponse('Veuillez renseigner tous les champs!', 500);
+        }
+        $operationcab->setPec($this->em->getRepository(Pec::class)->find($request->get('pec')));
+        $operationcab->setNPec($request->get('n-pec'));
+        $this->em->flush();
+        return new JsonResponse('Pec Bien Ajouter!', 200);        
     }
 
 }

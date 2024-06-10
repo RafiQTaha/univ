@@ -63,6 +63,12 @@ class TOperationcab
     #[ORM\Column(type: 'integer', nullable: true)]
     private $facAnnuler;
 
+    #[ORM\ManyToOne(targetEntity: Pec::class, inversedBy: 'operatioCab')]
+    private $pec;
+
+    #[ORM\Column(type: 'string', length: 20, nullable: true)]
+    private $npec;
+
     public function __construct()
     {
         $this->reglements = new ArrayCollection();
@@ -298,6 +304,30 @@ class TOperationcab
     public function setFacAnnuler(?int $facAnnuler): self
     {
         $this->facAnnuler = $facAnnuler;
+
+        return $this;
+    }
+
+    public function getPec(): ?Pec
+    {
+        return $this->pec;
+    }
+
+    public function setPec(?Pec $pec): self
+    {
+        $this->pec = $pec;
+
+        return $this;
+    }
+
+    public function getNpec(): ?string
+    {
+        return $this->npec;
+    }
+
+    public function setNpec(?string $npec): self
+    {
+        $this->npec = $npec;
 
         return $this;
     }

@@ -379,6 +379,7 @@ $(document).ready(function () {
       $("#ajouter_modal .modal-body .alert").remove();
     }, 4000);
   });
+
   $("body").on("click", "#imprimer", async function (e) {
     e.preventDefault();
     if (!id_facture) {
@@ -657,4 +658,67 @@ $(document).ready(function () {
       }
     }
   });
+
+  $("body").on("click", "#btn_pec", async function (e) {
+    e.preventDefault();
+    if (!id_facture) {
+        Toast.fire({
+          icon: "error",
+          title: "Veuillez selection une ligne!",
+        });
+        return;
+    }
+    const icon = $("#btn_pec i");
+    icon.removeClass("fa-check-circle").addClass("fa-spinner fa-spin");
+    try {
+      const request = await axios.post("/facture/factures/getFacturePec/"+id_facture);
+      const response = request.data;
+      $("body #form-pec").html(response);
+      $("body #pec").select2();
+      icon.addClass("fa-check-circle").removeClass("fa-spinner fa-spin ");
+    } catch (error) {
+      const message = error.response.data;
+      icon.addClass("fa-check-circle").removeClass("fa-spinner fa-spin ");
+    }
+    $("#pec_modal").modal("show");
+  });
+
+  $("body").on("submit", "#form-pec", async function (e) {
+    e.preventDefault();
+    let formdata = $(this).serialize();
+    let modalAlert = $("#pec_modal .modal-body .alert");
+    modalAlert.remove();
+    const icon = $("#form-pec .btn i");
+    icon.removeClass("fa-check-circle").addClass("fa-spinner fa-spin");
+    $("#form-pec #enregistrer").addClass("disabled").attr("disabled", true);
+    // $("#enregistrer").removeClass('btn-secondary').addClass('btn-info').attr('disabled', false)
+    try {
+      const request = await axios.post(
+        "/facture/factures/ajouter_pec/" + id_facture,formdata);
+      const data = request.data;
+      $("#pec_modal .modal-body").prepend(
+        `<div class="alert alert-success">${data}</div>`
+      );
+      $(this).trigger("reset");
+      $("#form-pec select").val("").trigger("change");
+      getMontant();
+      icon.addClass("fa-check-circle").removeClass("fa-spinner fa-spin");
+      $("#form-pec #enregistrer").removeClass("disabled").attr("disabled", false);
+      reglement = false;
+      table_facture.ajax.reload(null, false);
+    } catch (error) {
+      const message = error.response.data;
+      console.log(error, error.response);
+      modalAlert.remove();
+      $("#pec_modal .modal-body").prepend(
+        `<div class="alert alert-danger">${message}</div>`
+      );
+      icon.addClass("fa-check-circle").removeClass("fa-spinner fa-spin ");
+      $("#form-pec #enregistrer").removeClass("disabled").attr("disabled", false);
+    }
+    setTimeout(() => {
+      $("#pec_modal .modal-body .alert").remove();
+    }, 4000);
+  });
+
 });

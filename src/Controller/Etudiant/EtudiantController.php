@@ -56,7 +56,6 @@ class EtudiantController extends AbstractController
         $typebacs = $this->em->getRepository(XTypeBac::class)->findBy(['active'=>1],['designation' => 'ASC']);
         $langues = $this->em->getRepository(XLangue::class)->findBy(['active'=>1],['designation' => 'ASC']);
         $natureDemandes = $this->em->getRepository(NatureDemande::class)->findBy(['active' => 1],['designation' => 'ASC']);
-        $pecs = $this->em->getRepository(Pec::class)->findBy(['active' => 1],['designation' => 'ASC']);
         
         return $this->render('etudiant/etudiant/index.html.twig', [
             'operations' => $operations,
@@ -66,7 +65,6 @@ class EtudiantController extends AbstractController
             'langues' => $langues,
             'natureDemandes' => $natureDemandes,
             'academies' => $academies,
-            'pecs' => $pecs,
         ]);
     }
     

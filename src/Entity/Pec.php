@@ -27,9 +27,13 @@ class Pec
     #[ORM\OneToMany(mappedBy: 'pec', targetEntity: TPreinscription::class)]
     private $tPreinscriptions;
 
+    #[ORM\OneToMany(mappedBy: 'pec', targetEntity: TOperationcab::class)]
+    private $operatioCab;
+
     public function __construct()
     {
         $this->tPreinscriptions = new ArrayCollection();
+        $this->operatioCab = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -97,6 +101,36 @@ class Pec
             // set the owning side to null (unless already changed)
             if ($tPreinscription->getPec() === $this) {
                 $tPreinscription->setPec(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, TOperationcab>
+     */
+    public function getOperatioCab(): Collection
+    {
+        return $this->operatioCab;
+    }
+
+    public function addOperatioCab(TOperationcab $operatioCab): self
+    {
+        if (!$this->operatioCab->contains($operatioCab)) {
+            $this->operatioCab[] = $operatioCab;
+            $operatioCab->setPec($this);
+        }
+
+        return $this;
+    }
+
+    public function removeOperatioCab(TOperationcab $operatioCab): self
+    {
+        if ($this->operatioCab->removeElement($operatioCab)) {
+            // set the owning side to null (unless already changed)
+            if ($operatioCab->getPec() === $this) {
+                $operatioCab->setPec(null);
             }
         }
 
