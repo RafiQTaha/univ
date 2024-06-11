@@ -99,8 +99,10 @@
 Université Internationale Abulcasis des Sciences de la Santé
 {% elseif laz == 1 %}
 Lycée d'excellence AL-ZAHRAWI
+{% elseif inscription.annee.formation.etablissement.id == 25 and inscription.annee.formation.etabSec.id != null %}
+    {{inscription.annee.formation.etabSec.designation}}
 {% else %} 
-{{inscription.annee.formation.etablissement.designation}}
+    {{inscription.annee.formation.etablissement.designation}}
 {% endif %}
 </span>, sis à Madinat Al Irfane, avenue Allal El Fassi, Rabat, atteste par la présente que:
             </td>

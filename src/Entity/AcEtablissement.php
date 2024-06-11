@@ -81,12 +81,16 @@ class AcEtablissement
     #[ORM\Column(type: 'integer', nullable: true)]
     private $site;
 
+    #[ORM\OneToMany(mappedBy: 'EtabSec', targetEntity: AcFormation::class)]
+    private $formation;
+
     public function __construct()
     {
         $this->acFormations = new ArrayCollection();
         $this->acDepartements = new ArrayCollection();
         $this->documents = new ArrayCollection();
         $this->bordereaux = new ArrayCollection();
+        $this->formation = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -426,6 +430,36 @@ class AcEtablissement
     public function setSite(?int $site): self
     {
         $this->site = $site;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, AcFormation>
+     */
+    public function getFormation(): Collection
+    {
+        return $this->formation;
+    }
+
+    public function addFormation(AcFormation $formation): self
+    {
+        if (!$this->formation->contains($formation)) {
+            $this->formation[] = $formation;
+            $formation->setEtabSec($this);
+        }
+
+        return $this;
+    }
+
+    public function removeFormation(AcFormation $formation): self
+    {
+        if ($this->formation->removeElement($formation)) {
+            // set the owning side to null (unless already changed)
+            if ($formation->getEtabSec() === $this) {
+                $formation->setEtabSec(null);
+            }
+        }
 
         return $this;
     }

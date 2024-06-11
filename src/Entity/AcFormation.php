@@ -69,6 +69,9 @@ class AcFormation
     #[ORM\Column(type: 'string', length: 30, nullable: true)]
     private $Doyen;
 
+    #[ORM\ManyToOne(targetEntity: AcEtablissement::class, inversedBy: 'formation')]
+    private $EtabSec;
+
     public function __construct()
     {
         $this->acPromotions = new ArrayCollection();
@@ -404,6 +407,18 @@ class AcFormation
     public function setDoyen(?string $Doyen): self
     {
         $this->Doyen = $Doyen;
+
+        return $this;
+    }
+
+    public function getEtabSec(): ?AcEtablissement
+    {
+        return $this->EtabSec;
+    }
+
+    public function setEtabSec(?AcEtablissement $EtabSec): self
+    {
+        $this->EtabSec = $EtabSec;
 
         return $this;
     }
