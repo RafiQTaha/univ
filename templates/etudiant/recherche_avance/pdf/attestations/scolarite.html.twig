@@ -86,8 +86,12 @@
 <table style="width: 100%;"  cellspacing="0">
     <tbody>
         <tr>
+        {% set isCFC = 0 %}
         {% if laz == 1 %}
                 {% set doyen = 'Mohammed Nabil NGOTE' %}
+            {% elseif inscription.annee.formation.etablissement.id == 25 and inscription.annee.formation.etabSec.id != null %}
+                {% set isCFC = 1 %}
+                {% set doyen = inscription.annee.formation.doyen %}
             {% else %}
                 {% set doyen = inscription.annee.formation.etablissement.doyen %}
         {% endif %}
@@ -99,7 +103,7 @@
 Université Internationale Abulcasis des Sciences de la Santé
 {% elseif laz == 1 %}
 Lycée d'excellence AL-ZAHRAWI
-{% elseif inscription.annee.formation.etablissement.id == 25 and inscription.annee.formation.etabSec.id != null %}
+{% elseif isCFC == 1 %}
     {{inscription.annee.formation.etabSec.designation}}
 {% else %} 
     {{inscription.annee.formation.etablissement.designation}}
@@ -189,9 +193,11 @@ Lycée d'excellence AL-ZAHRAWI
             <td style="width: 10%; text-align: left;line-height: 30px">
 
             </td>
-            <td style="width: 70%; text-align: left;line-height: 30px">
+            <td style="width: 80%; text-align: left;line-height: 30px;">
                 {% if laz == 1 %}
                         <span style="font-size:11px;font-weight: bold;color:#000;">Etablissement </span> : Lycée d'excellence AL-ZAHRAWI
+                {% elseif isCFC == 1 %}
+                        <span style="font-size:11px;font-weight: bold;color:#000;">Etablissement </span> : {{inscription.annee.formation.etablissement.designation}} de l’université Abulcasis des Sciences de la Santé
                     {% else %}
                         <span style="font-size:11px;font-weight: bold;color:#000;">Etablissement </span> : {{inscription.annee.formation.etablissement.designation}}
                 {% endif %}
