@@ -253,12 +253,12 @@
 					)}}
 					{% endset %}
 
-					{% if validationModules == "0" %}
+					{% if snote.statutDef.id not in [40,57,78]  %}
 						{% set oui = "check.png" %}
 						{% set non = "white.png" %}
 					{% else %}
 						{% set oui = "white.png" %}
-						{% set non = "uncheck.png" %}
+						{% set non = "check.png" %}
 					{% endif %}
 
 
@@ -295,7 +295,7 @@
 							{% set non = "white.png" %}
 						{% else %}
 							{% set oui = "white.png" %}
-							{% set non = "uncheck.png" %}
+							{% set non = "check.png" %}
 						{% endif %}
 					{% else %}
 						{% set oui = "dash.png" %}
@@ -319,7 +319,7 @@
 							{% set non = "white.png" %}
 						{% else %}
 							{% set oui = "white.png" %}
-							{% set non = "uncheck.png" %}
+							{% set non = "check.png" %}
 						{% endif %}
 
 						<!-- validation annuelle -->
@@ -339,12 +339,12 @@
 						</td>
 
 						<!-- rachat -->
-						{% if anote.statutDef.id in [43] %}
+						{% if anote.statutDef.id in [43,73] %}
 							{% set oui = "check.png" %}
 							{% set non = "white.png" %}
 						{% else %}
 							{% set oui = "white.png" %}
-							{% set non = "uncheck.png" %}
+							{% set non = "check.png" %}
 						{% endif %}
 						<td class="border" rowspan="2">
 							<img width="8px" src="./assets/img/{{oui}}" alt=""/>
@@ -386,7 +386,7 @@
 				{% set non = "white.png" %}
 			{% else %}
 				{% set oui = "white.png" %}
-				{% set non = "uncheck.png" %}
+				{% set non = "check.png" %}
 			{% endif %}
 
 			<td class="border" width="6.6%" style="padding: 15px !important">
