@@ -83,7 +83,16 @@
 		</tr>
 		<tr>
 			<td class="border" width="70%" style="text-align: center;background-color: black;color: white;font-size: 10px;">
-				ATTESTATION DE VALIDATION DU CURSUS - FACULTE DE MEDECINE ABULCASIS
+				{% set Id_etablissement = inscription.annee.formation.etablissement.id %}
+				{% if Id_etablissement == '1' %}
+					ATTESTATION DE VALIDATION DU CURSUS - FACULTE DE MEDECINE ABULCASIS
+				{% elseif Id_etablissement == '2' %}
+					ATTESTATION DE VALIDATION DU CURSUS - FACULTE DE DENTAIRE ABULCASIS
+				{% elseif Id_etablissement == '22' %}
+					ATTESTATION DE VALIDATION DU CURSUS - FACULTE DE PHARMACIE ABULCASIS
+				{% else %}
+					ATTESTATION DE VALIDATION DU CURSUS - FACULTE DE MEDECINE ABULCASIS
+				{% endif %}
 			</td>
 			<td class="border" width="7%" style="text-align: center;background-color: rgb(182, 182, 182);color: black;">
 				Date
