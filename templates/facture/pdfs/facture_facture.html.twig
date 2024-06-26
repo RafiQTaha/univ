@@ -122,7 +122,12 @@
                 {% endif %}
         </tr>  
         <tr>
-            <td style="font-size:10px;padding:2px 0px 5px 2px;width:70%">Source :  {{source}}</td>
+            {% if source == 'Payant' %}
+                <td style="font-size:10px;padding:2px 0px 5px 2px;width:70%">Source :  Payant</td>
+            {% else %}
+                <td style="font-size:10px;padding:2px 0px 5px 2px;width:70%">Source :  Fondation Cheikh Zaid</td>
+            {% endif %}
+            <td style="font-size:10px;padding:2px 0px 5px 2px;">Structure   :   {{source}}</td>
         </tr>  
     </table>
     <br/>
