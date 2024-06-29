@@ -671,12 +671,12 @@ class EtudiantController extends AbstractController
             empty($request->get('categorie_preinscription'))
         ){return new JsonResponse("Merci de remplir tout les champs obligatoire!!",500);}
 
-        if ($request->get('cin') != "") {
-            $etudiantExist = $this->em->getRepository(TEtudiant::class)->findOneBy(['cin'=>trim($request->get('cin'))]);
-            if ($etudiantExist) {
-                return new JsonResponse("Ce Compte Etudiant est déja existé sur le systeme!",500);
-            }
-        }
+        // if ($request->get('cin') != "") {
+        //     $etudiantExist = $this->em->getRepository(TEtudiant::class)->findOneBy(['cin'=>trim($request->get('cin'))]);
+        //     if ($etudiantExist) {
+        //         return new JsonResponse("Ce Compte Etudiant est déja existé sur le systeme!",500);
+        //     }
+        // }
 
         $etudiant = new TEtudiant();
         $etudiant->setNom(strtoupper($request->get('nom')));
