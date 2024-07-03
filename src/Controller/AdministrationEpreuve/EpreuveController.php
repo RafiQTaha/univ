@@ -662,13 +662,16 @@ class EpreuveController extends AbstractController
                             // $moyen = $this->em->getRepository(ExGnotes::class)->findOneBy(['inscription'=>$inscription,'epreuve'=>$EpreuveNormals[0]])->getNote();
                         } elseif (count($EpreuveNormals) == 2) {
                             $moyen = 0;
+                            $DivCoeff = 0;
                             foreach ($EpreuveNormals as $EpreuveNormal) {
                                 $gnoteExEpreuve = $this->em->getRepository(ExGnotes::class)->findOneBy(['inscription' => $inscription, 'epreuve' => $EpreuveNormal]);
                                 if ($gnoteExEpreuve) {
-                                    $moyen += $gnoteExEpreuve->getNote();
+                                    $coef = $gnoteExEpreuve->getEpreuve()->getCoefficient();
+                                    $DivCoeff += $coef;
+                                    $moyen += $gnoteExEpreuve->getNote() * $coef;
                                 }
                             }
-                            $moyen = $moyen / 2;
+                            $moyen = $moyen / $DivCoeff;
                         }
                         if ($moyen < $moy or $checkcomposant == true ) {
                             // $gnote = $this->em->getRepository(ExGnotes::class)->findOneBy(['inscription' => $inscription, 'epreuve' => $epreuve]);
