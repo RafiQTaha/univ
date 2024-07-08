@@ -479,7 +479,8 @@ class ConseildisciplinaireController extends AbstractController
         $sheet->setCellValue('I1', 'MOTIF DE L\'INCIDENT');
         $sheet->setCellValue('J1', 'DATE DU CONSEIL');
         $sheet->setCellValue('K1', 'DÉCISION DU CONSEIL');
-        $sheet->setCellValue('L1', 'ANNEE UNIVERSITAIRE');
+        $sheet->setCellValue('L1', 'SANS SUITE');
+        $sheet->setCellValue('M1', 'ANNEE UNIVERSITAIRE');
         $i=2;
         $j=1;
         // Avoir une list d'historique des notifications et des convocations des etudiants. 
@@ -502,7 +503,8 @@ class ConseildisciplinaireController extends AbstractController
                     }
                     $sheet->setCellValue('J'.$i, $InsSanctionner->getDateReunion()->format('d/m/Y h:i:s'));
                     $sheet->setCellValue('K'.$i, $sanction->getDesignation());
-                    $sheet->setCellValue('L'.$i, $InsSanctionner->getInscription()->getAnnee()->getDesignation());
+                    $sheet->setCellValue('L'.$i, $InsSanctionner->getSansSuite() == 0 ? 'Non' : 'Oui');
+                    $sheet->setCellValue('M'.$i, $InsSanctionner->getInscription()->getAnnee()->getDesignation());
                     $i++;
                     $j++;
                 }
@@ -522,7 +524,8 @@ class ConseildisciplinaireController extends AbstractController
                     }
                     $sheet->setCellValue('J'.$i, $InsSanctionner->getDateReunion()->format('d/m/Y H:i:s'));
                     $sheet->setCellValue('K'.$i, $sanction);
-                    $sheet->setCellValue('L'.$i, $InsSanctionner->getInscription()->getAnnee()->getDesignation());
+                    $sheet->setCellValue('L'.$i, $InsSanctionner->getSansSuite() == 0 ? 'Non' : 'Oui');
+                    $sheet->setCellValue('M'.$i, $InsSanctionner->getInscription()->getAnnee()->getDesignation());
                     $i++;
                     $j++;
                 }
@@ -540,7 +543,8 @@ class ConseildisciplinaireController extends AbstractController
                 }else{
                     $sheet->setCellValue('I'.$i, $InsSanctionner->getAgression()->getDesignation());
                 }
-                $sheet->setCellValue('L'.$i, $InsSanctionner->getInscription()->getAnnee()->getDesignation());
+                $sheet->setCellValue('L'.$i, $InsSanctionner->getSansSuite() == 0 ? 'Non' : 'Oui');
+                $sheet->setCellValue('M'.$i, $InsSanctionner->getInscription()->getAnnee()->getDesignation());
                 $i++;
                 $j++;
             }
