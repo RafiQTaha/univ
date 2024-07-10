@@ -121,11 +121,15 @@
                 
             </td>
         </tr>
-        <tr>
-            <td class="txt" style="text-align: left;" >
-                <b>Filiere : </b> {{insSanction.inscription.annee.formation.etablissement.abreviation}}
+        <tr style="">
+            <td class="txt" style="">
+            {% set filiere = insSanction.inscription.annee.formation.etablissement.abreviation %}
+            {% if insSanction.inscription.annee.formation.etablissement.id == 25 %}
+                {% set filiere = insSanction.inscription.annee.formation.etablissement.abreviation ~ ' - ' ~ insSanction.inscription.annee.formation.abreviation %}   
+            {% endif %}
+                <b>Filiere : </b> {{filiere}}
             </td>
-            <td class="txt" style="float:right;text-align: right;">
+            <td style="">
                 
             </td>
         </tr>
