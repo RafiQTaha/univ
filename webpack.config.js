@@ -50,6 +50,9 @@ Encore
     .addEntry('note', './assets/components/administration/note.js')
     
     .addEntry('impression_concours', './assets/components/concours/impression.js')
+    .addEntry('imprimer_concours', './assets/components/concours/imprimer.js')
+    .addEntry('controle_concours', './assets/components/concours/controle.js')
+    .addEntry('etat_impression_concours', './assets/components/concours/etat_impression.js')
 
     .addEntry('evaluationAnnee', './assets/components/evaluation/annee.js')
     .addEntry('evaluationElement', './assets/components/evaluation/element.js')

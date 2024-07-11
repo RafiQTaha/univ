@@ -190,7 +190,31 @@
         "/build/runtime.de6b8033.js",
         "/build/9755.58d5f244.js",
         "/build/8029.7c64de8b.js",
-        "/build/impression_concours.55c5e4bb.js"
+        "/build/impression_concours.00034141.js"
+      ]
+    },
+    "imprimer_concours": {
+      "js": [
+        "/build/runtime.de6b8033.js",
+        "/build/9755.58d5f244.js",
+        "/build/8029.7c64de8b.js",
+        "/build/imprimer_concours.34bb6fea.js"
+      ]
+    },
+    "controle_concours": {
+      "js": [
+        "/build/runtime.de6b8033.js",
+        "/build/9755.58d5f244.js",
+        "/build/8029.7c64de8b.js",
+        "/build/controle_concours.1ec8ffc6.js"
+      ]
+    },
+    "etat_impression_concours": {
+      "js": [
+        "/build/runtime.de6b8033.js",
+        "/build/9755.58d5f244.js",
+        "/build/8029.7c64de8b.js",
+        "/build/etat_impression_concours.354a7348.js"
       ]
     },
     "evaluationAnnee": {

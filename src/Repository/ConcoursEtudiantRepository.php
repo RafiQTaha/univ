@@ -54,13 +54,12 @@ class ConcoursEtudiantRepository extends ServiceEntityRepository
 //        ;
 //    }
 
-//    public function findOneBySomeField($value): ?ConcoursEtudiant
-//    {
-//        return $this->createQueryBuilder('c')
-//            ->andWhere('c.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+   public function findEtudiantsGroupedByGroupement()
+   {
+       return $this->createQueryBuilder('c')
+            ->groupBy('c.groupement')
+            ->getQuery()
+            ->getResult()
+       ;
+   }
 }

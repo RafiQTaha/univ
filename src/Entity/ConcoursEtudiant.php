@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\ConcoursEtudiantRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ConcoursEtudiantRepository::class)]
@@ -19,7 +21,7 @@ class ConcoursEtudiant
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $prenom;
 
-    #[ORM\Column(type: 'string', length: 8, nullable: true)]
+    #[ORM\Column(type: 'string', length: 15, nullable: true)]
     private $cin;
 
     #[ORM\Column(type: 'integer', nullable: true)]
@@ -36,6 +38,21 @@ class ConcoursEtudiant
 
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'concoursEtudiantsUpdated')]
     private $userUpdated;
+
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private $groupement;
+
+    #[ORM\OneToMany(mappedBy: 'Etudiant', targetEntity: ConcoursEtudiantLog::class)]
+    private $concoursEtudiantLogs;
+
+    #[ORM\OneToMany(mappedBy: 'etudiant', targetEntity: ConcoursEtudiantControle::class)]
+    private $concoursEtudiantControles;
+
+    public function __construct()
+    {
+        $this->concoursEtudiantLogs = new ArrayCollection();
+        $this->concoursEtudiantControles = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -134,6 +151,78 @@ class ConcoursEtudiant
     public function setUserUpdated(?User $userUpdated): self
     {
         $this->userUpdated = $userUpdated;
+
+        return $this;
+    }
+
+    public function getGroupement(): ?string
+    {
+        return $this->groupement;
+    }
+
+    public function setGroupement(?string $groupement): self
+    {
+        $this->groupement = $groupement;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, ConcoursEtudiantLog>
+     */
+    public function getConcoursEtudiantLogs(): Collection
+    {
+        return $this->concoursEtudiantLogs;
+    }
+
+    public function addConcoursEtudiantLog(ConcoursEtudiantLog $concoursEtudiantLog): self
+    {
+        if (!$this->concoursEtudiantLogs->contains($concoursEtudiantLog)) {
+            $this->concoursEtudiantLogs[] = $concoursEtudiantLog;
+            $concoursEtudiantLog->setEtudiant($this);
+        }
+
+        return $this;
+    }
+
+    public function removeConcoursEtudiantLog(ConcoursEtudiantLog $concoursEtudiantLog): self
+    {
+        if ($this->concoursEtudiantLogs->removeElement($concoursEtudiantLog)) {
+            // set the owning side to null (unless already changed)
+            if ($concoursEtudiantLog->getEtudiant() === $this) {
+                $concoursEtudiantLog->setEtudiant(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, ConcoursEtudiantControle>
+     */
+    public function getConcoursEtudiantControles(): Collection
+    {
+        return $this->concoursEtudiantControles;
+    }
+
+    public function addConcoursEtudiantControle(ConcoursEtudiantControle $concoursEtudiantControle): self
+    {
+        if (!$this->concoursEtudiantControles->contains($concoursEtudiantControle)) {
+            $this->concoursEtudiantControles[] = $concoursEtudiantControle;
+            $concoursEtudiantControle->setEtudiant($this);
+        }
+
+        return $this;
+    }
+
+    public function removeConcoursEtudiantControle(ConcoursEtudiantControle $concoursEtudiantControle): self
+    {
+        if ($this->concoursEtudiantControles->removeElement($concoursEtudiantControle)) {
+            // set the owning side to null (unless already changed)
+            if ($concoursEtudiantControle->getEtudiant() === $this) {
+                $concoursEtudiantControle->setEtudiant(null);
+            }
+        }
 
         return $this;
     }

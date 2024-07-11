@@ -16,7 +16,7 @@ $(document).ready(function () {
             [10, 15, 25, 50, 100, "All"],
         ],
         order: [[0, "desc"]],
-        ajax: "/administration/imprimer/list",
+        ajax: "/concours/imprimer/list",
         processing: true,
         serverSide: true,
         deferRender: true,
@@ -50,15 +50,15 @@ $(document).ready(function () {
             }
             try {
                 let formData = new FormData();
-                formData.append("inscription", $("#id_etudiant").val())
+                formData.append("id_etudiant", $("#id_etudiant").val())
                 formData.append("nombre_etiquettes", nombre_etiquettes)
-                const request = await axios.post('/administration/imprimer/new', formData);
+                const request = await axios.post('/concours/imprimer/new', formData);
                 let response = request.data
                 Toast.fire({
                     icon: 'success',
                     title: response,
                 })
-                let win = window.open("/administration/imprimer/print/" + $('#id_etudiant').val() + "/"+nombre_etiquettes,'_blank', "toolbar=yes,scrollbars=yes,top=500,left=500,width=400,height=320");
+                let win = window.open("/concours/imprimer/print/" + $('#id_etudiant').val() + "/"+nombre_etiquettes,'_blank', "toolbar=yes,scrollbars=yes,top=500,left=500,width=400,height=320");
                 win.onfocus = function () {
                     win.print();
                     setTimeout(function () {
@@ -82,7 +82,7 @@ $(document).ready(function () {
     });
     $('#datables_imprimer').on('click', 'tbody tr .get_cd', function (event) {
         var code = $(this).attr('role');
-        let win = window.open("/administration/imprimer/print/" + code + "/1",'_blank', "toolbar=yes,scrollbars=yes,top=500,left=500,width=400,height=330");
+        let win = window.open("/concours/imprimer/print/" + code + "/1",'_blank', "toolbar=yes,scrollbars=yes,top=500,left=500,width=400,height=330");
         win.onfocus = function () {
             win.print();
         }

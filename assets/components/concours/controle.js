@@ -16,7 +16,7 @@ $(document).ready(function () {
             [10, 15, 25, 50, 100, "All"],
         ],
         order: [[0, "desc"]],
-        ajax: "/administration/controle/list",
+        ajax: "/concours/controle/list",
         processing: true,
         serverSide: true,
         deferRender: true,
@@ -42,9 +42,9 @@ $("body").on('keydown',"#input2", async function(e){
     if (e.which === 13) {
         try {
             let formData = new FormData();
-            formData.append("inscription", $("#input1").val())
+            formData.append("etudiant", $("#input1").val())
             formData.append("anonymat", $("#input2").val())
-            const request = await axios.post('/administration/controle/validation', formData);
+            const request = await axios.post('/concours/controle/validation', formData);
             let response = request.data
             Toast.fire({
                 icon: 'success',
@@ -64,7 +64,7 @@ $("body").on('keydown',"#input2", async function(e){
 });
     $('#datables_controle').on('click', 'tbody tr .get_cd', function (event) {
        var code = $(this).attr('role');
-       window.open("/administration/controle/print/" + code + "/2",'_blank', "toolbar=yes,scrollbars=yes,top=500,left=500,width=400,height=330");
+       window.open("/concours/controle/print/" + code + "/2",'_blank', "toolbar=yes,scrollbars=yes,top=500,left=500,width=400,height=330");
        event.preventDefault();
    });
     

@@ -60,12 +60,20 @@ $(document).ready(function  () {
     $("#get_list_etudiant").trigger("click")
     $("#get_list_etudiant").on('click', async function(e){
         e.preventDefault();
+        let groupement = $('#groupement').val();
+        if(groupement == "" || !groupement) {
+            Toast.fire({
+                icon: 'error',
+                title: 'Veuillez selection un groupement!',
+            })
+            return;
+        }
         $("#list_etudiants").empty()
         const icon = $("#get_list_etudiant i");
         icon.removeClass('fa-search').addClass("fa-spinner fa-spin");
         try {
             let formData = new FormData();
-            formData.append("order", $("#order").val())
+            formData.append("groupement", groupement)
             const request = await axios.post('/concours/impression/list', formData);
             let response = request.data
             // $("#list_epreuve_normal").DataTable().destroy()

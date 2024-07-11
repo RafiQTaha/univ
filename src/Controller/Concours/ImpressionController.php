@@ -38,18 +38,20 @@ class ImpressionController extends AbstractController
         if(!$operations) {
             return $this->render("errors/403.html.twig");
         }
-        $etablissements =  $this->em->getRepository(AcEtablissement::class)->findBy(['active'=>1]);
+        // $etablissements =  $this->em->getRepository(AcEtablissement::class)->findBy(['active'=>1]);
+        $groupements =  $this->em->getRepository(ConcoursEtudiant::class)->findEtudiantsGroupedByGroupement();
+        // dd($groupements);
         return $this->render('concours/impression.html.twig', [
             'operations' => $operations,
-            'etablissements' => $etablissements,
+            'groupements' => $groupements,
         ]);
     }
     #[Route('/list', name: 'concours_impression_list')]
     public function list(Request $request): Response
     {
-        $order = $request->get('order');
-        // dd($order);
-        $ConcoursEtudiants = $this->em->getRepository(ConcoursEtudiant::class)->findBy([],['id'=>'DESC']);
+        $groupement = $request->get('groupement');
+        // dd($groupement);
+        $ConcoursEtudiants = $this->em->getRepository(ConcoursEtudiant::class)->findBy(['groupement'=>$groupement],['id'=>'DESC']);
         // $annee = $this->em->getRepository(AcAnnee::class)->getActiveAnneeByFormation($promotion->getFormation());
         // $inscriptions = $this->em->getRepository(TInscription::class)->getInscriptionsByAnneeAndPromoAndSalle($salle, $annee, $promotion, $order);           
         $html = $this->render("concours/pages/list_etudiant.html.twig", [
@@ -68,6 +70,7 @@ class ImpressionController extends AbstractController
         $sheet->setCellValue('B1', 'Prenom');
         $sheet->setCellValue('C1', 'Cin');
         $sheet->setCellValue('D1', 'Anonymat');
+        $sheet->setCellValue('E1', 'Groupement');
 
         $writer = new Xlsx($spreadsheet);
         $fileName = 'anonymat_Concours.xlsx';
@@ -128,6 +131,7 @@ class ImpressionController extends AbstractController
             $ConcoursEtudiant->setPrenom(trim($sheet[1]));
             $ConcoursEtudiant->setCin(trim($sheet[2]));
             $ConcoursEtudiant->setAnonymat(trim($sheet[3]));
+            $ConcoursEtudiant->setGroupement(trim($sheet[4]));
             $this->em->persist($ConcoursEtudiant);
             $count++;
         }
@@ -140,6 +144,8 @@ class ImpressionController extends AbstractController
         ini_set("pcre.backtrack_limit", "5000000");
         $session = $request->getSession();
         $ConcoursEtudiants = $session->get('ConcoursEtudiants');
+        if (!$ConcoursEtudiants) die('Aucun Etudiant Trouvé. '); 
+
         $html = $this->render("concours/pdfs/impression.html.twig", ["ConcoursEtudiants" => $ConcoursEtudiants])->getContent();
         $mpdf = new Mpdf([
             'mode' => 'utf-8',
@@ -148,7 +154,7 @@ class ImpressionController extends AbstractController
             'margin_top' => '0',
             'margin_bottom' => '0',
             'showBarcodeNumbers' => FALSE
-            ]);
+        ]);
        
         $mpdf->WriteHTML($html);
         $mpdf->Output("index_impression.pdf", "I");

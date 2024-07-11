@@ -23,40 +23,15 @@
             <div class="card-body">
             <div class="card-search" style="margin-bottom: 1.5rem;">
                     <div class="row">
-                        {# <div class="col-md-2">
-                            <label for="etablissement">Etablissement:</label>
-                            <select class="form-control" name="etablissement" id="etablissement">
-                                <option value="">Choix etablissement</option>
-                                {% for etablissement in etablissements %}
-                                    <option value="{{etablissement.id}}">{{etablissement.designation}}</option>
+                        <div class="col-md-2">
+                            <label for="groupement">Groupements:</label>
+                            <select class="form-control" name="groupement" id="groupement">
+                                <option value="">Choix groupements</option>
+                                {% for groupement in groupements %}
+                                    <option value="{{groupement.groupement}}">{{groupement.groupement}}</option>
                                 {% endfor %}
                             </select>
                         </div>
-                        <div class="col-md-2">
-                            <label for="formation">Formation:</label>
-                            <select class="form-control" name="formation" id="formation">
-                            </select>
-                        </div>
-                        <div class="col-md-2">
-                            <label for="promotion">Promotion:</label>
-                            <select class="form-control" name="promotion" id="promotion">
-                            </select>
-                        </div>
-                        <div class="col-md-2">
-                            <label for="salle">Salle:</label>
-                            <select class="form-control" name="salle" id="salle">
-                            </select>
-                        </div>   #}
-                        {# <div class="col-md-2">
-                            <label for="order">Order By:</label>
-                            <select class="form-control"  name="order" id="order" >
-                                <option value="0">Choix Order (optionnel)</option>
-                                <option value="1">Nom De A à Z</option>
-                                <option value="2">Nom De Z à A</option>
-                                <option value="3">Prenom De A à Z</option>
-                                <option value="4">Prenom De Z à A</option>
-                            </select>
-                        </div>                     #}
                     </div>
                 </div>
                 
