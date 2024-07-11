@@ -34,6 +34,10 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\Reader\Xlsx as reader;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 
 #[Route('/api')]
 class ApiController extends AbstractController
@@ -532,7 +536,7 @@ class ApiController extends AbstractController
     //           inner join epreuve_etudiant_correction_detail on epreuve_etudiant_correction_detail.epreuve_etudiant_correction_id = epreuve_etudiant_correction.id
     //           inner join question on question.id = epreuve_etudiant_correction_detail.question_id
               
-    //           where epreuve.id in (582)";
+    //           where epreuve.id in (671)";
     //       $conn = $this->em->getConnection();
     //       $stmt = $conn->prepare($sql)->executeQuery();
     //     //   $stmt->executeQuery();
