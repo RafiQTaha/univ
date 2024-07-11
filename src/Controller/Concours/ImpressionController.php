@@ -49,7 +49,7 @@ class ImpressionController extends AbstractController
     {
         $order = $request->get('order');
         // dd($order);
-        $ConcoursEtudiants = $this->em->getRepository(ConcoursEtudiant::class)->findAll();
+        $ConcoursEtudiants = $this->em->getRepository(ConcoursEtudiant::class)->findBy([],['id'=>'DESC']);
         // $annee = $this->em->getRepository(AcAnnee::class)->getActiveAnneeByFormation($promotion->getFormation());
         // $inscriptions = $this->em->getRepository(TInscription::class)->getInscriptionsByAnneeAndPromoAndSalle($salle, $annee, $promotion, $order);           
         $html = $this->render("concours/pages/list_etudiant.html.twig", [
@@ -112,10 +112,10 @@ class ImpressionController extends AbstractController
         // dd($spreadSheetArys);
         $count = 0;
         foreach ($spreadSheetArys as $sheet) {
-            if ($sheet[0] == "" || $sheet[1] == "" || $sheet[2] == "" || $sheet[3] == "" ) {
+            if (trim($sheet[0]) == "" || trim($sheet[1]) == "" || trim($sheet[2]) == "" || trim($sheet[3]) == "" ) {
                 return new JsonResponse('Merci de renseigner toutes les informations pour tous les étudiants !', 500);
             } 
-            $ConcoursEtudiant = $this->em->getRepository(ConcoursEtudiant::class)->find($sheet[2]);
+            $ConcoursEtudiant = $this->em->getRepository(ConcoursEtudiant::class)->find(trim($sheet[2]));
             if (!$ConcoursEtudiant) {
                 $ConcoursEtudiant = new ConcoursEtudiant();
                 $ConcoursEtudiant->setUserCreated($this->getUser());
@@ -124,16 +124,15 @@ class ImpressionController extends AbstractController
                 $ConcoursEtudiant->setUserUpdated($this->getUser());
                 $ConcoursEtudiant->setUpdated(new DateTime('now'));
             }
-            $ConcoursEtudiant->setNom($sheet[0]);
-            $ConcoursEtudiant->setPrenom($sheet[1]);
-            $ConcoursEtudiant->setCin($sheet[2]);
-            $ConcoursEtudiant->setAnonymat($sheet[3]);
-            $ConcoursEtudiant->setAnonymat($sheet[3]);
+            $ConcoursEtudiant->setNom(trim($sheet[0]));
+            $ConcoursEtudiant->setPrenom(trim($sheet[1]));
+            $ConcoursEtudiant->setCin(trim($sheet[2]));
+            $ConcoursEtudiant->setAnonymat(trim($sheet[3]));
             $this->em->persist($ConcoursEtudiant);
             $count++;
         }
         $this->em->flush();
-        return new JsonResponse($count . "Bien Modifier",200);
+        return new JsonResponse($count . " Bien Modifier sur ". $sheetCount,200);
     }
     #[Route('/imprimer', name: 'concours_impression_imprimer')]
     public function imprimer(Request $request)
