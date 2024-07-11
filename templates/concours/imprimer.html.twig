@@ -1,0 +1,82 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Univ - Imprimer{% endblock %}
+
+
+{% block body %}
+<div class="main-content">
+    <section class="section">
+        <div class="section-header">
+          <h1>Imprimer</h1>
+          <div class="section-header-breadcrumb">
+            {% for operation in operations %}
+                 <a href="{{operation.link}}" class="{{operation.classTag}}" id="{{operation.idTag}}"><i class="{{operation.icon}}"></i>  {{operation.designation}}</a>
+            {% endfor %}
+          </div>
+        </div>
+        <div class="section-body">
+        <div class="card">
+            <div class="card-header">
+                {% if anonymatActuel.abreviation == "anonymat" %}
+                        {% set color = 'green' %}
+                    {% else %}
+                        {% set color = 'orange' %}
+                {% endif %}
+                <h4 id="c-anonymat">Anonymat Actuel: <span style="text-transform: uppercase;font-weight: 800;color:{{color}}">{{anonymatActuel.abreviation}}</span></h4>
+            </div>
+            <div class="card-body">
+                <div class="card-search" style="margin-bottom: 1.5rem;">
+                    <form autocomplete="off" class="row">
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>  Nombre d'étiquettes (*) :</label>
+                                <input class="form-control nombre_etiquettes" type="number" name="nombre_etiquettes" id="nombre_etiquettes" placeholder="nombre d'étiquettes"/> 
+                            </div>
+                        </div>
+
+                        <div class="col-md-3" style="clear: both">
+                            <div class="form-group">
+                                <label>  Id Etudiant (*) :</label>
+                                <input class="form-control id_etudiant"  type="text" name="id_etudiant" id="id_etudiant" placeholder="Id Etudiant" /> 
+                            </div>
+                        </div>
+                    </form>
+                    <table id="datables_imprimer"  cellpadding="0" cellspacing="0" border="0" class="display nowrap" width="100%">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Id</th>
+                                <th>ID Inscription</th>
+                                <th>Code Inscription</th>
+                                <th>Nom</th>
+                                <th>Prénom</th>
+                                <th>Code Anonymat</th>
+                                <th>Code Anonymat Rat</th>
+                                <th>Duplicata</th>
+                            </tr>
+                        </thead>
+                    </table>
+                    {# {% include 'administration_epreuve/pages/etiquettes.html.twig' %} #}
+                </div>
+            </div>
+        </div>
+        </div>
+    </section>
+</div>
+
+
+
+<!--Modal Import Group-->
+{% include 'administration_epreuve/modals/anonymat.html.twig' with {'anonymatActuel': anonymatActuel} %}
+{# {% include 'administration_epreuve/modals/import.html.twig' %}
+{% include 'administration_epreuve/modals/imprimer.html.twig' %} #}
+
+{% endblock %}
+
+{% block javascripts %}
+{{parent()}}
+{{ encore_entry_script_tags('imprimer') }}
+
+
+{% endblock %}
+

@@ -1,0 +1,84 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Univ - Etat Impression{% endblock %}
+
+
+{% block body %}
+<div class="main-content">
+    <section class="section">
+        <div class="section-header">
+          <h1>Etat Impression</h1>
+          <div class="section-header-breadcrumb">
+            {% for operation in operations %}
+                 <a href="{{operation.link}}" class="{{operation.classTag}}" id="{{operation.idTag}}"><i class="{{operation.icon}}"></i>  {{operation.designation}}</a>
+            {% endfor %}
+          </div>
+        </div>
+        <div class="section-body">
+        <div class="card">
+            <div class="card-header">
+                {# <h4>Tableau des Epreuves</h4> #}
+            </div>
+            <div class="card-body">
+                <div class="card-search" style="margin-bottom: 1.5rem;">
+                    <div class="row">
+                        <div class="col-md-2">
+                            <label for="etablissement">Etablissement:</label>
+                            <select class="form-control" name="etablissement" id="etablissement">
+                                <option value="">Choix Etablissement</option>
+                                {% for etablissement in etablissements %}
+                                    <option value="{{etablissement.id}}">{{etablissement.designation}}</option>
+                                {% endfor %} 
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label for="formation">Formation:</label>
+                            <select class="form-control" name="formation" id="formation">
+                                <option value="">Choix Formation</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label for="promotion">Promotion:</label>
+                            <select class="form-control" name="promotion" id="promotion">
+                                <option value="">Choix Promotion</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label for="semestre">Semestre:</label>
+                            <select class="form-control" name="semestre" id="semestre">
+                                <option value="">Choix Semestre</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label for="semaine">semaine:</label>
+                            <select class="form-control" name="semaine" id="semaine">
+                                <option value="">Choix semaine</option>
+                                {% for semaine in semaines %}
+                                    <option value="{{semaine.id}}">Semaine {{semaine.nsemaine}} de: {{semaine.datedebut | date('j/m')}} à {{semaine.datefin | date('j/m')}} {{semaine.datefin | date('Y')}}</option>
+                                {% endfor %} 
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+    </section>
+</div>
+
+
+
+<!--Modal Import Group-->
+{# {% include 'administration_epreuve/modals/notes.html.twig' %}
+{% include 'administration_epreuve/modals/import.html.twig' %}
+{% include 'administration_epreuve/modals/imprimer.html.twig' %} #}
+
+{% endblock %}
+
+{% block javascripts %}
+{{parent()}}
+{{ encore_entry_script_tags('etat_impression') }}
+
+
+{% endblock %}
+

@@ -1,0 +1,21 @@
+<thead>
+    <tr style= "background-color:white; position: sticky; top: 0;">
+        <th>#</th>
+        <th>Nom</th>
+        <th>Prenom</th>                
+        <th>Cin</th>  
+        <th>Anonymat</th>   
+    </tr>
+</thead>
+<tbody>
+    {% for ConcoursEtudiant in ConcoursEtudiants %}
+    {# {% set salle = inscription.salle|split("-") %} #}
+        <tr>
+            <td>{{loop.index}}</td>
+            <td>{{ConcoursEtudiant.nom}}</td>
+            <td>{{ConcoursEtudiant.prenom}}</td>                          
+            <td>{{ConcoursEtudiant.cin}}</td>                          
+            <td>{{ConcoursEtudiant.anonymat}}</td>                       
+        </tr>
+    {% endfor %}
+</tbody>

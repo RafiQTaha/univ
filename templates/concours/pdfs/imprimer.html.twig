@@ -1,0 +1,24 @@
+<link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro" rel="stylesheet">
+
+<style>
+    .barcode {
+        padding: 1.5mm;
+        margin: 0;
+        vertical-align: top;
+        color: #000044;
+    }
+    .barcodecell {
+        text-align: center;
+        vertical-align: middle;
+    }
+</style>
+{% for i in 1..netiquettes %}
+    <page backtop="0mm" backbottom="0mm" backleft="0mm" backright="0mm" style="margin-top:50%;">
+        <div class="barcodecell">
+            <barcode code="{{anonymat}}" type="C128A" height="0.7" size="{{size}}" />
+            {# <barcode code="https://open.spotify.com/playlist/3kSxbAeURM926aGOU2f6cN?si=8b07a1ed9ebf4a13&pt=2bf8ab80eb6de694f0dca85e94eabefa" type="QR" height="1" size="3.5" style="margin-top: -35px;"/> #}
+            <p style="font-weight:700;font-size:150px;margin-top: -20px;"> {{anonymat}}</p>
+        </div>
+    </page>
+    {% if i < netiquettes %} <pagebreak> {% endif %}
+{% endfor %}

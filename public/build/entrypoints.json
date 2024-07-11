@@ -185,6 +185,14 @@
         "/build/note.e1f8ca90.js"
       ]
     },
+    "impression_concours": {
+      "js": [
+        "/build/runtime.de6b8033.js",
+        "/build/9755.58d5f244.js",
+        "/build/8029.7c64de8b.js",
+        "/build/impression_concours.55c5e4bb.js"
+      ]
+    },
     "evaluationAnnee": {
       "js": [
         "/build/runtime.de6b8033.js",

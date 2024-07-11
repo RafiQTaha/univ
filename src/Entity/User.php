@@ -106,6 +106,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'userVerified', targetEntity: PlEmptime::class)]
     private $userVerified;
 
+    #[ORM\OneToMany(mappedBy: 'UserCreated', targetEntity: ConcoursEtudiant::class)]
+    private $concoursEtudiants;
+
+    #[ORM\OneToMany(mappedBy: 'userUpdated', targetEntity: ConcoursEtudiant::class)]
+    private $concoursEtudiantsUpdated;
+
 
     public function __construct()
     {
@@ -131,6 +137,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->tPreinscriptions = new ArrayCollection();
         $this->Preinscriptions = new ArrayCollection();
         $this->userVerified = new ArrayCollection();
+        $this->concoursEtudiants = new ArrayCollection();
+        $this->concoursEtudiantsUpdated = new ArrayCollection();
     }
 
     
@@ -884,6 +892,66 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($userVerified->getUserVerified() === $this) {
                 $userVerified->setUserVerified(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, ConcoursEtudiant>
+     */
+    public function getConcoursEtudiants(): Collection
+    {
+        return $this->concoursEtudiants;
+    }
+
+    public function addConcoursEtudiant(ConcoursEtudiant $concoursEtudiant): self
+    {
+        if (!$this->concoursEtudiants->contains($concoursEtudiant)) {
+            $this->concoursEtudiants[] = $concoursEtudiant;
+            $concoursEtudiant->setUserCreated($this);
+        }
+
+        return $this;
+    }
+
+    public function removeConcoursEtudiant(ConcoursEtudiant $concoursEtudiant): self
+    {
+        if ($this->concoursEtudiants->removeElement($concoursEtudiant)) {
+            // set the owning side to null (unless already changed)
+            if ($concoursEtudiant->getUserCreated() === $this) {
+                $concoursEtudiant->setUserCreated(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, ConcoursEtudiant>
+     */
+    public function getConcoursEtudiantsUpdated(): Collection
+    {
+        return $this->concoursEtudiantsUpdated;
+    }
+
+    public function addConcoursEtudiantsUpdated(ConcoursEtudiant $concoursEtudiantsUpdated): self
+    {
+        if (!$this->concoursEtudiantsUpdated->contains($concoursEtudiantsUpdated)) {
+            $this->concoursEtudiantsUpdated[] = $concoursEtudiantsUpdated;
+            $concoursEtudiantsUpdated->setUserUpdated($this);
+        }
+
+        return $this;
+    }
+
+    public function removeConcoursEtudiantsUpdated(ConcoursEtudiant $concoursEtudiantsUpdated): self
+    {
+        if ($this->concoursEtudiantsUpdated->removeElement($concoursEtudiantsUpdated)) {
+            // set the owning side to null (unless already changed)
+            if ($concoursEtudiantsUpdated->getUserUpdated() === $this) {
+                $concoursEtudiantsUpdated->setUserUpdated(null);
             }
         }
 
