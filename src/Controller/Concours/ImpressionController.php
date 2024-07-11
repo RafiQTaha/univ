@@ -141,7 +141,7 @@ class ImpressionController extends AbstractController
     #[Route('/imprimer', name: 'concours_impression_imprimer')]
     public function imprimer(Request $request)
     {
-        ini_set("pcre.backtrack_limit", "5000000");
+        ini_set("pcre.backtrack_limit", "100000000");
         $session = $request->getSession();
         $ConcoursEtudiants = $session->get('ConcoursEtudiants');
         if (!$ConcoursEtudiants) die('Aucun Etudiant Trouvé. '); 
