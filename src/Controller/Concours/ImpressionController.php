@@ -51,7 +51,7 @@ class ImpressionController extends AbstractController
     {
         $groupement = $request->get('groupement');
         // dd($groupement);
-        $ConcoursEtudiants = $this->em->getRepository(ConcoursEtudiant::class)->findBy(['groupement'=>$groupement],['id'=>'DESC']);
+        $ConcoursEtudiants = $this->em->getRepository(ConcoursEtudiant::class)->findBy(['groupement'=>$groupement],['Nom'=>'ASC']);
         // $annee = $this->em->getRepository(AcAnnee::class)->getActiveAnneeByFormation($promotion->getFormation());
         // $inscriptions = $this->em->getRepository(TInscription::class)->getInscriptionsByAnneeAndPromoAndSalle($salle, $annee, $promotion, $order);           
         $html = $this->render("concours/pages/list_etudiant.html.twig", [
