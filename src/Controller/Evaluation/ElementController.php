@@ -36,10 +36,10 @@ class ElementController extends AbstractController
     {
         $operations = ApiController::check($this->getUser(), 'evaluation_element', $this->em, $request);
         // dd($operations);
-        if(!$operations) {
+        if (!$operations) {
             return $this->render("errors/403.html.twig");
         }
-        $etablissements =  $this->em->getRepository(AcEtablissement::class)->findBy(['active'=>1]);
+        $etablissements =  $this->em->getRepository(AcEtablissement::class)->findBy(['active' => 1]);
         return $this->render('evaluation/element/index.html.twig', [
             'operations' => $operations,
             'etablissements' => $etablissements,
@@ -53,11 +53,11 @@ class ElementController extends AbstractController
         $verify = $this->em->getRepository(ExControle::class)->checkIfyoucanElement($annee, $element);
         $check = 0; //valider cette opération
         // dd($verify);
-        if(!$verify){
+        if (!$verify) {
             $check = 1; //opération déja validé
         }
         $promotion = $element->getModule()->getSemestre()->getPromotion();
-        $inscriptions = $this->em->getRepository(TInscription::class)->getInscriptionsByAnneeAndPromoAndElement($annee, $promotion,$element, $order);
+        $inscriptions = $this->em->getRepository(TInscription::class)->getInscriptionsByAnneeAndPromoAndElement($annee, $promotion, $element, $order);
         $data_saved = [];
         // dd($inscriptions);
         foreach ($inscriptions as $inscription) {
@@ -68,7 +68,7 @@ class ElementController extends AbstractController
             $m_cc = $enote->getCcr() < $enote->getMcc() || !$enote->getCcr() ? $enote->getMcc() : $enote->getCcr();
             $m_tp = $enote->getTpr() < $enote->getMtp() || !$enote->getTpr() ? $enote->getMtp() : $enote->getTpr();
             $m_ef = $enote->getEfr() < $enote->getMef() || !$enote->getEfr() ? $enote->getMef() : $enote->getEfr();
-            if($element->getNature()->getCode() == "NE003" || $element->getNature()->getCode() == "NE004" || $element->getNature()->getCode() == "NE005"){
+            if ($element->getNature()->getCode() == "NE003" || $element->getNature()->getCode() == "NE004" || $element->getNature()->getCode() == "NE005") {
                 $moyenne_ini = $this->CalculMoyenneElement($element->getCoefficientEpreuve(), $m_cc, $m_tp, $enote->getPondMef() * $enote->getMef());
                 if ($moyenne_ini < 10 || $enote->getMef() < 10 || (!empty($enote->getMtp()) && $enote->getMtp() >= 0 && $enote->getMtp() < 10) || (!empty($enote->getMcc()) && $enote->getMcc() >= 0 && $enote->getMcc() < 10) || $statutS1 == 12 || $statutS1 == 13) {
                     $moyenne_rat = $this->CalculMoyenneElement($element->getCoefficientEpreuve(), $m_cc, $m_tp, $enote->getPondMef() * $m_ef);
@@ -80,7 +80,7 @@ class ElementController extends AbstractController
             } else {
                 $moyenne_ini = $this->CalculMoyenneElement($element->getCoefficientEpreuve(), $m_cc, $m_tp, $enote->getPondMef() * $enote->getMef());
                 // [10119,10120] deux element avec moyen de validation 13 c'est temporaire à changer apres les delebiration annuelle 2022/2023.
-                if ($moyenne_ini < in_array($element->getId(),[10119,10120]) ? 13 : 10 || $enote->getMef() < 7 || $statutS1 == 12 || $statutS1 == 13) {
+                if ($moyenne_ini < in_array($element->getId(), [10119, 10120]) ? 13 : 10 || $enote->getMef() < 7 || $statutS1 == 12 || $statutS1 == 13) {
                     $moyenne_rat = $this->CalculMoyenneElement($element->getCoefficientEpreuve(), $m_cc, $m_tp, $m_ef);
                     $moyenne_tot = $moyenne_rat + $enote->getNoteRachat();
                 } else {
@@ -88,31 +88,31 @@ class ElementController extends AbstractController
                     $moyenne_tot = $moyenne_ini + $enote->getNoteRachat();
                 }
             }
-            
+
             array_push($data_saved, [
-                'inscription' => $inscription, 
+                'inscription' => $inscription,
                 'mcc' => $m_cc,
                 'mef' => $m_ef,
                 'mtp' => $m_tp,
                 'mefini' => $enote->getMef(),
-                'noteRachat' =>$enote->getNoteRachat(),
-                'moyenneIni' => $moyenne_ini, 
-                'moyenneRat' => $moyenne_rat, 
+                'noteRachat' => $enote->getNoteRachat(),
+                'moyenneIni' => $moyenne_ini,
+                'moyenneRat' => $moyenne_rat,
                 'moyenneTot' => $moyenne_tot,
                 'enote' => $enote
             ]);
         }
         // dd($data_saved);
-        if($order == 3) {
+        if ($order == 3) {
             $moyenne = array_column($data_saved, 'moyenneTot');
             array_multisort($moyenne, SORT_DESC, $data_saved);
-        } else if($order == 4){
+        } else if ($order == 4) {
             $moyenne = array_column($data_saved, 'moyenneTot');
             array_multisort($moyenne, SORT_ASC, $data_saved);
         }
         $session = $request->getSession();
         $session->set('data_element', [
-            'data_saved' => $data_saved, 
+            'data_saved' => $data_saved,
             'element' => $element
         ]);
         $html = $this->render('evaluation/element/pages/list_epreuve_normal.html.twig', [
@@ -120,10 +120,11 @@ class ElementController extends AbstractController
         ])->getContent();
         // dd($html);
         return new JsonResponse(['html' => $html, 'check' => $check]);
-    } 
+    }
 
 
-    public function CalculMoyenneElement($coef, $m_cc, $m_tp, $m_ef){
+    public function CalculMoyenneElement($coef, $m_cc, $m_tp, $m_ef)
+    {
         $m_cc = $m_cc ? $m_cc : 0;
         $m_tp = $m_tp ? $m_tp : 0;
         $m_ef = $m_ef ? $m_ef : 0;
@@ -132,8 +133,8 @@ class ElementController extends AbstractController
     }
 
     #[Route('/impression/{type}/{affichage}', name: 'administration_element_impression')]
-    public function administrationElementImpression(Request $request, $type, $affichage) 
-    {         
+    public function administrationElementImpression(Request $request, $type, $affichage)
+    {
         $session = $request->getSession();
         $dataSaved = $session->get('data_element')['data_saved'];
         $element = $session->get('data_element')['element'];
@@ -144,19 +145,17 @@ class ElementController extends AbstractController
             'affichage' => $affichage,
             'etablissement' => $annee->getFormation()->getEtablissement(),
         ];
-        if($type == "normal"){
+        if ($type == "normal") {
             $html = $this->render("evaluation/element/pdfs/normal.html.twig", $infos)->getContent();
         } else if ($type == "anonymat") {
             $html = $this->render("evaluation/element/pdfs/anonymat.html.twig", $infos)->getContent();
-        }
-        else if ($type == "clair") {
+        } else if ($type == "clair") {
             $html = $this->render("evaluation/element/pdfs/clair.html.twig", $infos)->getContent();
-        }
-        else if ($type == "rat") {
+        } else if ($type == "rat") {
             $moy = $annee->getFormation()->getEtablissement()->getId() == 26 ? 12 : 10;
-            foreach($dataSaved as $key => $value) {
-                if($value['moyenneTot'] >= $moy and $value['enote']->getStatutDef()->getId() != 12) {  
-                  unset($dataSaved[$key]);
+            foreach ($dataSaved as $key => $value) {
+                if ($value['moyenneTot'] >= $moy and $value['enote']->getStatutDef()->getId() != 12) {
+                    unset($dataSaved[$key]);
                 }
             }
             // dd($inscriptionsArray);
@@ -167,15 +166,15 @@ class ElementController extends AbstractController
         }
         $html .= $this->render("evaluation/element/pdfs/footer.html.twig")->getContent();
         $mpdf = new Mpdf([
-                'mode' => 'utf-8',
-                'margin_left' => '5',
-                'margin_right' => '5',
-                'margin_top' => '35',
-                'margin_bottom' => '10',
-                'format' => 'A4-L',
-                'margin_header' => '2',
-                'margin_footer' => '2'
-            ]);
+            'mode' => 'utf-8',
+            'margin_left' => '5',
+            'margin_right' => '5',
+            'margin_top' => '35',
+            'margin_bottom' => '10',
+            'format' => 'A4-L',
+            'margin_header' => '2',
+            'margin_footer' => '2'
+        ]);
         $mpdf->SetHTMLHeader($this->render("evaluation/element/pdfs/header.html.twig", [
             'element' => $element,
             'annee' => $annee,
@@ -184,12 +183,12 @@ class ElementController extends AbstractController
         $mpdf->defaultfooterline = 0;
         $mpdf->SetFooter('Page {PAGENO} / {nb}');
         $mpdf->WriteHTML($html);
-        $mpdf->Output("element_deliberation_".$element->getDesignation()."_".$element->getId().".pdf", "I");
+        $mpdf->Output("element_deliberation_" . $element->getDesignation() . "_" . $element->getId() . ".pdf", "I");
     }
-    
+
     #[Route('/impression_excel/{type}', name: 'administration_element_impression_excel')]
-    public function administration_element_impression_excel(Request $request, $type) 
-    {         
+    public function administration_element_impression_excel(Request $request, $type)
+    {
         $session = $request->getSession();
         $inscriptionsArray = $session->get('data_element')['data_saved'];
         $element = $session->get('data_element')['element'];
@@ -204,51 +203,50 @@ class ElementController extends AbstractController
             // 'natureEpreuve' => $natureEpreuve
         ];
         if ($type == "excel_rat") {
-            
+
             $spreadsheet = new Spreadsheet();
             $sheet = $spreadsheet->getActiveSheet();
             $sheet->setCellValue('A1', 'ORD');
             $sheet->setCellValue('B1', 'CODE');
             $sheet->setCellValue('C1', 'NOM');
             $sheet->setCellValue('D1', 'Prenom');
-            $i=2;
-            $j=1;
+            $i = 2;
+            $j = 1;
             // dd($operationcabs);
             $moy = $annee->getFormation()->getEtablissement()->getId() == 26 ? 12 : 10;
-                foreach($inscriptionsArray as $key => $value) {
-                    $etudiant = $value['inscription']->getAdmission()->getPreinscription()->getEtudiant();
-                    if(($value['moyenneTot'] < $moy && !str_contains($etudiant->getNom(), 'test')) || $value['enote']->getStatutDef()->getId() == 12) {  
-                        $sheet->setCellValue('A'.$i, $j);
-                        $sheet->setCellValue('B'.$i, $value['inscription']->getId());
-                        $sheet->setCellValue('C'.$i, $etudiant->getNom());
-                        $sheet->setCellValue('D'.$i, $etudiant->getPrenom());
-                        $i++;
-                        $j++;
-                    }
+            foreach ($inscriptionsArray as $key => $value) {
+                $etudiant = $value['inscription']->getAdmission()->getPreinscription()->getEtudiant();
+                if (($value['moyenneTot'] < $moy && !str_contains($etudiant->getNom(), 'test')) || $value['enote']->getStatutDef()->getId() == 12) {
+                    $sheet->setCellValue('A' . $i, $j);
+                    $sheet->setCellValue('B' . $i, $value['inscription']->getId());
+                    $sheet->setCellValue('C' . $i, $etudiant->getNom());
+                    $sheet->setCellValue('D' . $i, $etudiant->getPrenom());
+                    $i++;
+                    $j++;
                 }
-            
+            }
+
             $writer = new Xlsx($spreadsheet);
-            $fileName = $element->getDesignation()."_".$element->getId().".xlsx";
+            $fileName = $element->getDesignation() . "_" . $element->getId() . ".xlsx";
             $temp_file = tempnam(sys_get_temp_dir(), $fileName);
             $writer->save($temp_file);
             return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);
-            
         } else {
             die("403 something wrong !");
         }
     }
     #[Route('/enregistre', name: 'administration_element_enregistre')]
-    public function administrationElementEnregistre(Request $request) 
-    {         
+    public function administrationElementEnregistre(Request $request)
+    {
         $session = $request->getSession();
         $dataSaved = $session->get('data_element')['data_saved'];
         $element = $session->get('data_element')['element'];
         $annee = $this->em->getRepository(AcAnnee::class)->getActiveAnneeByFormation($element->getModule()->getSemestre()->getPromotion()->getFormation());
         $verify = $this->em->getRepository(ExControle::class)->checkIfyoucanElement($annee, $element);
-        if(!$verify){
+        if (!$verify) {
             return new JsonResponse("Operation déja valider", 500);
         }
-        if(count($dataSaved) == 0) {
+        if (count($dataSaved) == 0) {
             return new JsonResponse("No data à enregistre", 500);
         }
         foreach ($dataSaved as $data) {
@@ -257,66 +255,66 @@ class ElementController extends AbstractController
             $moyenne_ini = $data['moyenneIni'];
             $moyenne_rat = $data['moyenneRat'];
             $moyenne_tot = $data['moyenneTot'];
-        
+
             $noteElement->setNote($moyenne_tot);
             $noteElement->setNoteIni($moyenne_ini);
             if ($moyenne_ini < 10 || $data['mefini'] < 7 || $moyenne_rat > 0) {
                 $noteElement->setNoteRat($moyenne_rat);
-            }elseif ($moyenne_rat <= 0) {
+            } elseif ($moyenne_rat <= 0) {
                 $noteElement->setNoteRat(null);
             }
-            ApiController::mouchard($this->getUser(), $this->em,$noteElement, 'ExEnotes', 'Enregistrer ENotes');
+            ApiController::mouchard($this->getUser(), $this->em, $noteElement, 'ExEnotes', 'Enregistrer ENotes');
             $this->em->flush();
         }
         // create exControle if not exist
         $coef = $element->getCoefficientEpreuve();
         $exControle = $this->em->getRepository(ExControle::class)->findOneBy(['element' => $element, 'annee' => $annee]);
-        if ($coef['NAT000000001'] == 0){
+        if ($coef['NAT000000001'] == 0) {
             // $_POST['m_cc']=1;
             $exControle->setMcc(1);
         }
-        if ($coef['NAT000000002'] == 0){
+        if ($coef['NAT000000002'] == 0) {
             $exControle->setMtp(1);
         }
-        if ($coef['NAT000000003']==0){
+        if ($coef['NAT000000003'] == 0) {
             $exControle->setMef(1);
         }
         $this->em->flush();
-        
+
         return new JsonResponse("Bien Enregistre", 200);
     }
     #[Route('/valider', name: 'administration_element_valider')]
-    public function administrationElementValider(Request $request) 
-    {         
+    public function administrationElementValider(Request $request)
+    {
         $session = $request->getSession();
         $element = $session->get('data_element')['element'];
         $annee = $this->em->getRepository(AcAnnee::class)->getActiveAnneeByFormation($element->getModule()->getSemestre()->getPromotion()->getFormation());
         $exControle = $this->em->getRepository(ExControle::class)->canValidateElement($element, $annee);
-        if(!$exControle) {
+        if (!$exControle) {
             return new JsonResponse("Veuillez Valider Toutes les Contrôles continus , Travaux pratiques , Examen Final pour valider cet élément ", 500);
         }
         $exControle->setMelement(1);
-        ApiController::mouchard($this->getUser(), $this->em,$exControle, 'exControle', 'Validation Circuit ELE');
+        ApiController::mouchard($this->getUser(), $this->em, $exControle, 'exControle', 'Validation Circuit ELE');
         $this->em->flush();
 
         return new JsonResponse("Bien Valider", 200);
     }
     #[Route('/devalider', name: 'administration_element_devalider')]
-    public function administrationElementDealider(Request $request) 
-    {         
+    public function administrationElementDealider(Request $request)
+    {
         $session = $request->getSession();
         $element = $session->get('data_element')['element'];
         $annee = $this->em->getRepository(AcAnnee::class)->getActiveAnneeByFormation($element->getModule()->getSemestre()->getPromotion()->getFormation());
         $exControle = $this->em->getRepository(ExControle::class)->findOneBy(['element' => $element, 'annee' => $annee]);
         $exControle->setMelement(0);
-        ApiController::mouchard($this->getUser(), $this->em,$exControle, 'exControle', 'Dévalidation Circuit ELE');
+        ApiController::mouchard($this->getUser(), $this->em, $exControle, 'exControle', 'Dévalidation Circuit ELE');
         $this->em->flush();
 
         return new JsonResponse("Bien Devalider", 200);
     }
     #[Route('/recalculer', name: 'administration_element_recalculer')]
-    public function administrationElementDeder(Request $request) 
-    {         
+    public function administrationElementDeder(Request $request)
+    {
         $session = $request->getSession();
         $dataSaved = $session->get('data_element')['data_saved'];
         $element = $session->get('data_element')['element'];
@@ -326,38 +324,37 @@ class ElementController extends AbstractController
             $moyenne_ini = $data['moyenneIni'];
             $moyenne_rat = $data['moyenneRat'];
             $moyenne_tot = $data['moyenneTot'];
-        
+
             $noteElement->setNote($moyenne_tot);
             $noteElement->setNoteIni($moyenne_ini);
-            if(($moyenne_rat > 0 && ($element->getNature()->getCode()=="NE003" || $element->getNature()->getCode()=="NE004" || $element->getNature()->getCode()=="NE005")) 
-            or ($moyenne_ini < 10 || $data['mefini'] < 7 || $moyenne_rat > 0)){
-                $noteElement->setNoteRat($moyenne_rat);                
+            if (($moyenne_rat > 0 && ($element->getNature()->getCode() == "NE003" || $element->getNature()->getCode() == "NE004" || $element->getNature()->getCode() == "NE005"))
+                or ($moyenne_ini < 10 || $data['mefini'] < 7 || $moyenne_rat > 0)
+            ) {
+                $noteElement->setNoteRat($moyenne_rat);
             }
-
         }
-        ApiController::mouchard($this->getUser(), $this->em,$noteElement, 'ExEnotes', 'Recalcule noteElement');
+        ApiController::mouchard($this->getUser(), $this->em, $noteElement, 'ExEnotes', 'Recalcule noteElement');
         $this->em->flush();
         return new JsonResponse("Bien Recalculer", 200);
-
     }
     #[Route('/statut/{type}', name: 'administration_element_statut')]
-    public function administrationElementStatut(Request $request, $type) 
-    {         
+    public function administrationElementStatut(Request $request, $type)
+    {
         $session = $request->getSession();
         $dataSaved = $session->get('data_element')['data_saved'];
         // dd($dataSaved);
         $element = $session->get('data_element')['element'];
-        if($type == 's1'){
+        if ($type == 's1') {
             foreach ($dataSaved as $data) {
                 $inscription = $this->em->getRepository(TInscription::class)->find($data['inscription']->getId());
                 $enote = $this->em->getRepository(ExEnotes::class)->findOneBy(['element' => $element, 'inscription' => $inscription]);
                 $m_cc = $enote->getCcr() < $enote->getMcc() ?? 0 || !$enote->getCcr() ? $enote->getMcc() : $enote->getCcr();
                 $m_tp = $enote->getTpr() < $enote->getMtp() ?? 0 || !$enote->getTpr() ? $enote->getMtp() : $enote->getTpr();
                 $m_ef = $enote->getEfr() < $enote->getMef() ?? 0 || !$enote->getEfr() ? $enote->getMef() : $enote->getEfr();
-                if($element->getNature()->getCode() == "NE003" || $element->getNature()->getCode() == "NE004" || $element->getNature()->getCode() == "NE005"){
-                    $result = $this->ElementGetStatutS1_pratique($enote, ['mcc' => $m_cc, 'mtp'=>$m_tp, 'mef'=>$m_ef], 10,10);
+                if ($element->getNature()->getCode() == "NE003" || $element->getNature()->getCode() == "NE004" || $element->getNature()->getCode() == "NE005") {
+                    $result = $this->ElementGetStatutS1_pratique($enote, ['mcc' => $m_cc, 'mtp' => $m_tp, 'mef' => $m_ef], 10, 10);
                 } else {
-                    $result = $this->ElementGetStatutS1($enote, ['mcc' => $m_cc, 'mtp'=>$m_tp, 'mef'=>$m_ef], 7, 10);
+                    $result = $this->ElementGetStatutS1($enote, ['mcc' => $m_cc, 'mtp' => $m_tp, 'mef' => $m_ef], 7, 10);
                 }
                 if (isset($result) and !empty($result)) {
                     $enote->setStatutS1(
@@ -371,18 +368,17 @@ class ElementController extends AbstractController
                     );
                 }
             }
-        }
-        elseif($type == "s2") {
+        } elseif ($type == "s2") {
             foreach ($dataSaved as $data) {
                 $inscription = $this->em->getRepository(TInscription::class)->find($data['inscription']->getId());
                 $enote = $this->em->getRepository(ExEnotes::class)->findOneBy(['element' => $element, 'inscription' => $inscription]);
-                $m_cc = $enote->getCcr() < $enote->getMcc() ?? 0 || !$enote->getCcr() ? $enote->getMcc() : $enote->getCcr() ;
+                $m_cc = $enote->getCcr() < $enote->getMcc() ?? 0 || !$enote->getCcr() ? $enote->getMcc() : $enote->getCcr();
                 $m_tp = $enote->getTpr() < $enote->getMtp() ?? 0 || !$enote->getTpr() ? $enote->getMtp() : $enote->getTpr();
-                $m_ef = $enote->getEfr() < $enote->getMef() ?? 0 || !$enote->getEfr() ? $enote->getMef() : $enote->getEfr() ;
-                if($element->getNature()->getCode() == "NE003" || $element->getNature()->getCode() == "NE004" || $element->getNature()->getCode() == "NE005"){
-                    $result = $this->ElementGetStatutS2_pratique($enote, ['mcc' => $m_cc, 'mtp'=>$m_tp, 'mef'=>$m_ef], 10,10);
+                $m_ef = $enote->getEfr() < $enote->getMef() ?? 0 || !$enote->getEfr() ? $enote->getMef() : $enote->getEfr();
+                if ($element->getNature()->getCode() == "NE003" || $element->getNature()->getCode() == "NE004" || $element->getNature()->getCode() == "NE005") {
+                    $result = $this->ElementGetStatutS2_pratique($enote, ['mcc' => $m_cc, 'mtp' => $m_tp, 'mef' => $m_ef], 10, 10);
                 } else {
-                    $result = $this->ElementGetStatutS2($enote, ['mcc' => $m_cc, 'mtp'=>$m_tp, 'mef'=>$m_ef], 7, 10);
+                    $result = $this->ElementGetStatutS2($enote, ['mcc' => $m_cc, 'mtp' => $m_tp, 'mef' => $m_ef], 7, 10);
                 }
                 if (isset($result) and !empty($result)) {
                     $enote->setStatutS2(
@@ -396,12 +392,11 @@ class ElementController extends AbstractController
                     );
                 }
             }
-        }
-        elseif($type == "rachat") {
+        } elseif ($type == "rachat") {
             foreach ($dataSaved as $data) {
                 $inscription = $this->em->getRepository(TInscription::class)->find($data['inscription']->getId());
                 $enote = $this->em->getRepository(ExEnotes::class)->findOneBy(['element' => $element, 'inscription' => $inscription]);
-                if($element->getNature()->getCode() == "NE003" || $element->getNature()->getCode() == "NE004" || $element->getNature()->getCode() == "NE005"){
+                if ($element->getNature()->getCode() == "NE003" || $element->getNature()->getCode() == "NE004" || $element->getNature()->getCode() == "NE005") {
                     $result = $this->ElementGetStatutRachat_pratique($enote);
                     if (isset($result) and !empty($result)) {
                         $enote->setStatutS2(
@@ -416,7 +411,7 @@ class ElementController extends AbstractController
                     }
                 } else {
                     $result = $this->ElementGetStatutRachat($enote);
-                   
+
                     if (isset($result) and !empty($result)) {
                         $enote->setStatutRachat(
                             $this->em->getRepository(PeStatut::class)->find($result['statut_rachat'])
@@ -427,59 +422,57 @@ class ElementController extends AbstractController
                         $enote->setStatutDef(
                             $this->em->getRepository(PeStatut::class)->find($result['statut_def'])
                         );
-                    
                     }
                 }
             }
         }
-        ApiController::mouchard($this->getUser(), $this->em,$enote, 'ExEnotes', 'Statuée noteElement');
+        ApiController::mouchard($this->getUser(), $this->em, $enote, 'ExEnotes', 'Statuée noteElement');
         $this->em->flush();
         return new JsonResponse("Bien enregistre", 200);
-
     }
 
-    public function ElementGetStatutS1_pratique($enote, $noteComposantInitial, $note_eliminatoire, $note_validation) {
+    public function ElementGetStatutS1_pratique($enote, $noteComposantInitial, $note_eliminatoire, $note_validation)
+    {
         //var_dump($data);
         $moy = $enote->getInscription()->getAnnee()->getFormation()->getEtablissement()->getId() == 26 ? 12 : 10;
-        $ntpJdb = $this->em->getRepository(ExGnotes::class)->getNoteTpByInscription($enote,'Journal de bord',2);
-        $ntpJdbRatt = $this->em->getRepository(ExGnotes::class)->getNoteTpByInscription($enote,'Journal de bord',12);
-        $ntpPerformance = $this->em->getRepository(ExGnotes::class)->getNoteTpByInscription($enote,'Performance',2);
+        $ntpJdb = $this->em->getRepository(ExGnotes::class)->getNoteTpByInscription($enote, 'Journal de bord', 2);
+        $ntpJdbRatt = $this->em->getRepository(ExGnotes::class)->getNoteTpByInscription($enote, 'Journal de bord', 12);
+        $ntpPerformance = $this->em->getRepository(ExGnotes::class)->getNoteTpByInscription($enote, 'Performance', 2);
         $send_data = array();
-        if(($ntpPerformance and $ntpPerformance[0]->getNote() < 10 ) || ($ntpJdb and $ntpJdb[0]->getNote() < 10 and $ntpJdbRatt and $ntpJdbRatt[0]->getNote() < 10) ){
+        if (($ntpPerformance and $ntpPerformance[0]->getNote() < 10) || ($ntpJdb and $ntpJdb[0]->getNote() < 10 and $ntpJdbRatt and $ntpJdbRatt[0]->getNote() < 10)) {
             $send_data['statut_s1'] = 16;
             $send_data['statut_def'] = 16;
             $send_data['statut_aff'] = 16;
-        }elseif ($enote->getNoteIni() < $moy || ($enote->getMef() && $enote->getMef() < $moy))   {
-        // if ($enote->getNoteIni() < $moy || ($enote->getMef() && $enote->getMef() < $moy) || ($ntp1 < 10 || $ntp2 < 10))   {
+        } elseif ($enote->getNoteIni() < $moy || ($enote->getMef() && $enote->getMef() < $moy)) {
+            // if ($enote->getNoteIni() < $moy || ($enote->getMef() && $enote->getMef() < $moy) || ($ntp1 < 10 || $ntp2 < 10))   {
             $send_data['statut_s1'] = 12;
             $send_data['statut_def'] = 12;
             $send_data['statut_aff'] = 12;
         } else {
-            if((isset($noteComposantInitial["mcc"]) && $noteComposantInitial["mcc"] < $moy) || (isset($noteComposantInitial["mtp"]) && $noteComposantInitial["mtp"] < $moy)){
+            if ((isset($noteComposantInitial["mcc"]) && $noteComposantInitial["mcc"] < $moy) || (isset($noteComposantInitial["mtp"]) && $noteComposantInitial["mtp"] < $moy)) {
                 $send_data['statut_s1'] = 16;
                 $send_data['statut_def'] = 16;
                 $send_data['statut_aff'] = 16;
-            }
-            else{
+            } else {
                 $send_data['statut_s1'] = 15;
                 $send_data['statut_def'] = 15;
                 $send_data['statut_aff'] = 15;
             }
-            
         }
         return $send_data;
     }
-    public function ElementGetStatutS1($enote, $noteComposantInitial, $note_eliminatoire, $note_validation) {
+    public function ElementGetStatutS1($enote, $noteComposantInitial, $note_eliminatoire, $note_validation)
+    {
         $etablissement_id = $enote->getInscription()->getAnnee()->getFormation()->getEtablissement()->getId();
         if ($enote->getElement()->getModule()->getId() == 7419) {
             //temporaire
-            if (in_array($enote->getElement()->getId(),[10119,10120])) {
+            if (in_array($enote->getElement()->getId(), [10119, 10120])) {
                 $moy = 13;
-            }else {
+            } else {
                 $moy = 10;
             }
             $moyIni = 10;
-        }else{
+        } else {
             $moy = $etablissement_id == 26 ? 12 : 10;
             $moyIni = $etablissement_id == 26 ? 8 : 7;
         }
@@ -487,19 +480,19 @@ class ElementController extends AbstractController
         // $moyIni = $etablissement_id == 26 ? 8 : 7;
         $send_data = array();
         $capitaliser = $this->em->getRepository(ExGnotes::class)->checkIfModuleCapitaliser($enote);
-        if(count($capitaliser) > 0){
+        if (count($capitaliser) > 0) {
             $send_data['statut_s1'] = 52;
             $send_data['statut_def'] = 52;
             $send_data['statut_aff'] = 52;
-        }elseif ($enote->getNoteIni() < $moyIni) {
+        } elseif ($enote->getNoteIni() < $moyIni) {
             $send_data['statut_s1'] = 12;
             $send_data['statut_def'] = 12;
             $send_data['statut_aff'] = 12;
         } else {
             if ($enote->getNoteIni() < $moy) {
-                
+
                 //NE PAS METTRE A JOUR. MERCI
-                if ((isset($noteComposantInitial["mcc"]) && $noteComposantInitial["mcc"] < $moyIni) || (isset($noteComposantInitial["mtp"]) && $noteComposantInitial["mtp"] < $moyIni ) || ( $enote->getMef() && $enote->getMef() < $moyIni )) {
+                if ((isset($noteComposantInitial["mcc"]) && $noteComposantInitial["mcc"] < $moyIni) || (isset($noteComposantInitial["mtp"]) && $noteComposantInitial["mtp"] < $moyIni) || ($enote->getMef() && $enote->getMef() < $moyIni)) {
                     $send_data['statut_s1'] = 12;
                     $send_data['statut_def'] = 12;
                     $send_data['statut_aff'] = 12;
@@ -515,12 +508,12 @@ class ElementController extends AbstractController
                     $send_data['statut_aff'] = 12;
                 } else {
                     if ((isset($noteComposantInitial["mcc"]) && $noteComposantInitial["mcc"] < $moyIni) || (isset($noteComposantInitial["mtp"]) && $noteComposantInitial["mtp"] < $moyIni)) {
-//                    if ((isset($noteComposantInitial['mtp']) && $noteComposantInitial['mtp'] < $moyIni)) {
+                        //                    if ((isset($noteComposantInitial['mtp']) && $noteComposantInitial['mtp'] < $moyIni)) {
                         $send_data['statut_s1'] = 16;
                         $send_data['statut_def'] = 16;
                         $send_data['statut_aff'] = 16;
                     } else {
-                        if ((isset($noteComposantInitial["mcc"]) && $noteComposantInitial["mcc"] < $moy ) || (isset($noteComposantInitial["mtp"]) && $noteComposantInitial["mtp"] < $moy ) || ($enote->getMef() && $enote->getMef() < $moy)) {
+                        if ((isset($noteComposantInitial["mcc"]) && $noteComposantInitial["mcc"] < $moy) || (isset($noteComposantInitial["mtp"]) && $noteComposantInitial["mtp"] < $moy) || ($enote->getMef() && $enote->getMef() < $moy)) {
                             $send_data['statut_s1'] = 19;
                             $send_data['statut_def'] = 19;
                         } else {
@@ -534,7 +527,8 @@ class ElementController extends AbstractController
         }
         return $send_data;
     }
-    public function ElementGetStatutS2_pratique($enote, $noteComposantInitial, $note_eliminatoire, $note_validation) {
+    public function ElementGetStatutS2_pratique($enote, $noteComposantInitial, $note_eliminatoire, $note_validation)
+    {
         //  var_dump($data); die();
         $send_data = array();
 
@@ -556,24 +550,24 @@ class ElementController extends AbstractController
 
         return $send_data;
     }
-    public function ElementGetStatutS2($enote, $noteComposantInitial, $note_eliminatoire, $note_validation) 
+    public function ElementGetStatutS2($enote, $noteComposantInitial, $note_eliminatoire, $note_validation)
     {
-        $etablissement_id = $enote->getInscription()->getAnnee()->getFormation()->getEtablissement()->getId(); 
+        $etablissement_id = $enote->getInscription()->getAnnee()->getFormation()->getEtablissement()->getId();
         if ($enote->getElement()->getModule()->getId() == 7419) {
             //temporaire
-            if (in_array($enote->getElement()->getId(),[10119,10120])) {
+            if (in_array($enote->getElement()->getId(), [10119, 10120])) {
                 $moy = 13;
-            }else {
+            } else {
                 $moy = 10;
             }
             $moyIni = 10;
-        }else{
+        } else {
             $moy = $etablissement_id == 26 ? 12 : 10;
             $moyIni = $etablissement_id == 26 ? 8 : 7;
         }
         $send_data = array();
 
-         if ($enote->getStatutS1()->getId() == 52) {
+        if ($enote->getStatutS1()->getId() == 52) {
             $send_data['statut_s2'] = 52;
             $send_data['statut_def'] = 52;
             $send_data['statut_aff'] = 52;
@@ -583,14 +577,14 @@ class ElementController extends AbstractController
                 $send_data['statut_s2'] = 21;
                 $send_data['statut_def'] = 21;
                 $send_data['statut_aff'] = 21;
-            } 
+            }
             if ($enote->getStatutS1()->getId() == 19) {
                 $send_data['statut_s2'] = 19;
                 $send_data['statut_def'] = 19;
                 $send_data['statut_aff'] = 21;
-            }else {
+            } else {
 
-                if ((isset($noteComposantInitial['mcc']) && $noteComposantInitial['mcc'] < $moyIni) || (isset($noteComposantInitial['mtp']) && $noteComposantInitial['mtp'] < $moyIni ) || ( isset($noteComposantInitial['mef']) && $noteComposantInitial['mef'] < $moyIni ) || ( $enote->getNote() && $enote->getNote() == 0.0 ? 0 : $enote->getNote() < $note_eliminatoire )) {
+                if ((isset($noteComposantInitial['mcc']) && $noteComposantInitial['mcc'] < $moyIni) || (isset($noteComposantInitial['mtp']) && $noteComposantInitial['mtp'] < $moyIni) || (isset($noteComposantInitial['mef']) && $noteComposantInitial['mef'] < $moyIni) || ($enote->getNote() && $enote->getNote() == 0.0 ? 0 : $enote->getNote() < $note_eliminatoire)) {
                     $send_data['statut_s2'] = 16;
                     $send_data['statut_def'] = 16;
                     $send_data['statut_aff'] = 16;
@@ -600,7 +594,7 @@ class ElementController extends AbstractController
                         $send_data['statut_def'] = 18;
                         $send_data['statut_aff'] = 18;
                     } else {
-                        if ((isset($noteComposantInitial['mcc']) && $noteComposantInitial['mcc'] < $moy ) || (isset($noteComposantInitial['mtp']) && $noteComposantInitial['mtp'] < $moy ) || (isset($noteComposantInitial['mef']) && $noteComposantInitial['mef'] < $moy)) {
+                        if ((isset($noteComposantInitial['mcc']) && $noteComposantInitial['mcc'] < $moy) || (isset($noteComposantInitial['mtp']) && $noteComposantInitial['mtp'] < $moy) || (isset($noteComposantInitial['mef']) && $noteComposantInitial['mef'] < $moy)) {
                             $send_data['statut_s2'] = 19;
                             $send_data['statut_def'] = 19;
                             if ($enote->getStatutS1()->getId() == 12 || $enote->getStatutS1()->getId() == 13 || $enote->getStatutS1()->getId() == 11) {
@@ -609,19 +603,20 @@ class ElementController extends AbstractController
                                 $send_data['statut_aff'] = 21;
                             }
                         } else {
-                        if ($enote->getStatutS1()->getId() == 12 || $enote->getStatutS1()->getId() == 13) {
-                            $send_data['statut_s2'] = 54;
-                            $send_data['statut_def'] = 54;
-                            $send_data['statut_aff'] = 54;
+                            if ($enote->getStatutS1()->getId() == 12 || $enote->getStatutS1()->getId() == 13) {
+                                $send_data['statut_s2'] = 54;
+                                $send_data['statut_def'] = 54;
+                                $send_data['statut_aff'] = 54;
+                            }
                         }
                     }
                 }
             }
         }
-        }
         return $send_data;
     }
-    public function ElementGetStatutRachat_pratique($enote) {
+    public function ElementGetStatutRachat_pratique($enote)
+    {
         $send_data = array();
         $etablissement_id = $enote->getInscription()->getAnnee()->getFormation()->getEtablissement()->getId();
         $moy = $etablissement_id == 26 ? 12 : 10;
@@ -632,7 +627,8 @@ class ElementController extends AbstractController
         }
         return $send_data;
     }
-    public function ElementGetStatutRachat($enote) {
+    public function ElementGetStatutRachat($enote)
+    {
         $send_data = array();
         $etablissement_id = $enote->getInscription()->getAnnee()->getFormation()->getEtablissement()->getId();
         $moy = $etablissement_id == 26 ? 12 : 10;
@@ -652,15 +648,16 @@ class ElementController extends AbstractController
     }
 
 
-    #[Route('/extraction_element', name: 'evaluation_element_extraction_element')]
-    public function evaluationElementExtraction(Request $request) 
-    {   
-        $current_year = date('m') > 7 ? date('Y').'/'.date('Y')+1 :  date('Y') - 1 .'/' .date('Y');
+    #[Route('/extraction_element/{etab}', name: 'evaluation_element_extraction_element')]
+    public function evaluationElementExtraction($etab, Request $request)
+    {
+        $etablissement = $this->em->getRepository(AcEtablissement::class)->find($etab);
+        $current_year = date('m') > 7 ? date('Y') . '/' . date('Y') + 1 :  date('Y') - 1 . '/' . date('Y');
         // $elements = $this->em->getRepository(AcElement::class)->getElementByCurrentYear($current_year);
-        $elements = $this->em->getRepository(ExEnotes::class)->getElementByCurrentYear($current_year);
+        $elements = $this->em->getRepository(ExEnotes::class)->getElementByCurrentYear($current_year, $etablissement ? $etablissement->getId() : null);
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
-        $i=2;
+        $i = 2;
         // $j=1;
         // dump($gnotes);die;
         $sheet->fromArray(
@@ -672,18 +669,17 @@ class ElementController extends AbstractController
             $sheet->fromArray(
                 $element,
                 null,
-                'A'.$i
+                'A' . $i
             );
             $i++;
             // $j++;
         }
         $writer = new Xlsx($spreadsheet);
-        $year = date('m') > 7 ? date('Y').'-'.date('Y')+1 : date('Y') - 1 .'-' .date('Y');
+        $year = date('m') > 7 ? date('Y') . '-' . date('Y') + 1 : date('Y') - 1 . '-' . date('Y');
         $fileName = "Extraction elements $year.xlsx";
         $temp_file = tempnam(sys_get_temp_dir(), $fileName);
         $writer->save($temp_file);
         return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);
-        
     }
     public function getStatut($id)
     {

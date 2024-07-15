@@ -35,10 +35,10 @@ class ModuleController extends AbstractController
     public function index(Request $request): Response
     {
         $operations = ApiController::check($this->getUser(), 'evaluation_module', $this->em, $request);
-        if(!$operations) {
+        if (!$operations) {
             return $this->render("errors/403.html.twig");
         }
-        $etablissements =  $this->em->getRepository(AcEtablissement::class)->findBy(['active'=>1]);
+        $etablissements =  $this->em->getRepository(AcEtablissement::class)->findBy(['active' => 1]);
 
         return $this->render('evaluation/module/index.html.twig', [
             'operations' => $operations,
@@ -53,7 +53,7 @@ class ModuleController extends AbstractController
         $verify = $this->em->getRepository(ExControle::class)->checkIfyoucanCalculModule($annee, $module);
         // dd($verify);
         $check = 0; //valider cette opération
-        if(!$verify){
+        if (!$verify) {
             $check = 1; //opération déja validé
         }
         // $validated = $this->em->getRepository(ExControle::class)->checkIfAllElementValide($annee, $module);
@@ -82,75 +82,70 @@ class ModuleController extends AbstractController
             foreach ($elements as $element) {
                 $total_coef += $element->getCoefficient();
                 $enote = $this->em->getRepository(ExEnotes::class)->findOneBy(['element' => $element, 'inscription' => $inscription]);
-                
+
                 // dd($element, $inscription);
-                if(!$enote->getNoteIni()){
-                    $nb_ini++; 
-                }
-                else{
+                if (!$enote->getNoteIni()) {
+                    $nb_ini++;
+                } else {
                     $moyenne_ini += $enote->getNoteIni() * $element->getCoefficient();
                 }
-                if(!$enote->getNoteRat()){
-                    $nb_rat++;           
+                if (!$enote->getNoteRat()) {
+                    $nb_rat++;
                     $moyenne_rat += $enote->getNoteIni() * $element->getCoefficient();
+                } else {
+                    $moyenne_rat += $enote->getNoteRat() * $element->getCoefficient();
                 }
-                else{
-                    $moyenne_rat += $enote->getNoteRat() * $element->getCoefficient();  
-                }
-                if(!$enote->getNote()){
+                if (!$enote->getNote()) {
                     $nb_tot++;
-                }
-                else{
+                } else {
                     $moyenne_tot += $enote->getNote() * $element->getCoefficient();
                 }
-                
-                if(!$enote->getNoteRachat()){
+
+                if (!$enote->getNoteRachat()) {
                     $nb_rachat++;
-                }
-                else{
-                    $note_rachat +=$enote->getNoteRachat()* $element->getCoefficient();
+                } else {
+                    $note_rachat += $enote->getNoteRachat() * $element->getCoefficient();
                 }
                 $nb_ele++;
                 array_push($noteElements, $enote->getNote());
-
             }
-            if($nb_ele == $nb_ini){
+            if ($nb_ele == $nb_ini) {
                 $moyenne_ini = "-1";
             }
-            if($nb_ele == $nb_rat){
+            if ($nb_ele == $nb_rat) {
                 $moyenne_rat = "-1";
             }
-            if($nb_ele == $nb_rachat){
+            if ($nb_ele == $nb_rachat) {
                 $note_rachat = "-1";
             }
-            if($nb_ele == $nb_tot){
+            if ($nb_ele == $nb_tot) {
                 $moyenne_tot = "-1";
             }
-            $moy_ini = number_format($moyenne_ini / $total_coef, 2, '.', ' ') ; 
-            $moy_rat = number_format($moyenne_rat / $total_coef, 2, '.', ' ') ; 
-            $nt_rach = number_format($note_rachat / $total_coef, 2, '.', ' ') ; 
-            $moy_tot = number_format($moyenne_tot / $total_coef, 2, '.', ' ') ; 
+            $moy_ini = number_format($moyenne_ini / $total_coef, 2, '.', ' ');
+            $moy_rat = number_format($moyenne_rat / $total_coef, 2, '.', ' ');
+            $nt_rach = number_format($note_rachat / $total_coef, 2, '.', ' ');
+            $moy_tot = number_format($moyenne_tot / $total_coef, 2, '.', ' ');
 
             array_push($data_saved, [
                 'inscription' => $inscription,
                 'noteElements' => $noteElements,
-                'moyenneIni' => $moy_ini, 
-                'moyenneRat' => $moy_rat, 
-                'noteRachat' =>$nt_rach, 
+                'moyenneIni' => $moy_ini,
+                'moyenneRat' => $moy_rat,
+                'noteRachat' => $nt_rach,
                 'moyenneTot' => $moy_tot
             ]);
         }
         // dd($data_saved);
-        if($order == 3) {
+        if ($order == 3) {
             $moyenne = array_column($data_saved, 'moyenneTot');
             array_multisort($moyenne, SORT_DESC, $data_saved);
-        } else if($order == 4){
+        } else if ($order == 4) {
             $moyenne = array_column($data_saved, 'moyenneTot');
             array_multisort($moyenne, SORT_ASC, $data_saved);
         }
         $session = $request->getSession();
         $session->set('data_module', [
-            'data_saved' => $data_saved, 
+            'data_saved' => $data_saved,
             'module' => $module,
             'elements' => $elements
         ]);
@@ -160,10 +155,10 @@ class ModuleController extends AbstractController
         ])->getContent();
         // dd($html);
         return new JsonResponse(['html' => $html, 'check' => $check]);
-    } 
+    }
     #[Route('/impression/{type}/{affichage}', name: 'evaluation_module_impression')]
-    public function evaluationModuleImpression(Request $request, $type, $affichage) 
-    {         
+    public function evaluationModuleImpression(Request $request, $type, $affichage)
+    {
         $session = $request->getSession();
         $dataSaved = $session->get('data_module')['data_saved'];
         $module = $session->get('data_module')['module'];
@@ -177,18 +172,16 @@ class ModuleController extends AbstractController
             'statuts' => $this->em->getRepository(PeStatut::class)->findBy(['type' => 'M']),
             'etablissement' => $annee->getFormation()->getEtablissement(),
         ];
-        if($type == "normal"){
+        if ($type == "normal") {
             $html = $this->render("evaluation/module/pdfs/normal.html.twig", $infos)->getContent();
         } else if ($type == "anonymat") {
             $html = $this->render("evaluation/module/pdfs/anonymat.html.twig", $infos)->getContent();
-        }
-        else if ($type == "clair") {
+        } else if ($type == "clair") {
             $html = $this->render("evaluation/module/pdfs/clair.html.twig", $infos)->getContent();
-        }
-        else if ($type == "rat") {
-            foreach($dataSaved as $key => $value) {
-                if($value['moyenneTot'] >= 10) {  
-                  unset($dataSaved[$key]);
+        } else if ($type == "rat") {
+            foreach ($dataSaved as $key => $value) {
+                if ($value['moyenneTot'] >= 10) {
+                    unset($dataSaved[$key]);
                 }
             }
             // dd($inscriptionsArray);
@@ -207,7 +200,7 @@ class ModuleController extends AbstractController
             'format' => 'A4-L',
             'margin_header' => '2',
             'margin_footer' => '2'
-            ]);
+        ]);
         $mpdf->SetHTMLHeader($this->render("evaluation/module/pdfs/header.html.twig", [
             'module' => $module,
             'annee' => $annee,
@@ -216,69 +209,69 @@ class ModuleController extends AbstractController
         $mpdf->defaultfooterline = 0;
         $mpdf->SetFooter('Page {PAGENO} / {nb}');
         $mpdf->WriteHTML($html);
-        $mpdf->Output("module_deliberation_".$module->getId().".pdf", "I");
+        $mpdf->Output("module_deliberation_" . $module->getId() . ".pdf", "I");
     }
 
     public function getStatut($inscription, $module, $statut)
     {
         $abreviation = $this->em->getRepository(ExMnotes::class)->getStatutByColumn($inscription, $module, $statut);
         if ($abreviation != null) {
-        return new Response($abreviation['abreviation'], 200, ['Content-Type' => 'text/html']);
-        }else{
+            return new Response($abreviation['abreviation'], 200, ['Content-Type' => 'text/html']);
+        } else {
             return new Response("");
         }
     }
 
     #[Route('/valider', name: 'evaluation_module_valider')]
-    public function evaluationModuleValider(Request $request) 
-    {         
-        $session = $request->getSession(); 
+    public function evaluationModuleValider(Request $request)
+    {
+        $session = $request->getSession();
         $module = $session->get('data_module')['module'];
         $annee = $this->em->getRepository(AcAnnee::class)->getActiveAnneeByFormation($module->getSemestre()->getPromotion()->getFormation());
         $exControle = $this->em->getRepository(ExControle::class)->canValidateModule($module, $annee);
-        if($exControle) {
+        if ($exControle) {
             return new JsonResponse("Veuillez Valider Toutes les elements pour valider ce module ", 500);
         }
         $this->em->getRepository(ExControle::class)->updateModuleByElement($module, $annee, 1);
         // ------------------ Mouchard à Verifier Apres ------------------------
-        ApiController::mouchard($this->getUser(), $this->em,$module, 'exControle', 'Validation Circuit MDL');
+        ApiController::mouchard($this->getUser(), $this->em, $module, 'exControle', 'Validation Circuit MDL');
         $this->em->flush();
         return new JsonResponse("Bien Valider", 200);
     }
     #[Route('/devalider', name: 'evaluation_module_devalider')]
-    public function evaluationModuleDealider(Request $request) 
-    {         
+    public function evaluationModuleDealider(Request $request)
+    {
         $session = $request->getSession();
         $module = $session->get('data_module')['module'];
         $annee = $this->em->getRepository(AcAnnee::class)->getActiveAnneeByFormation($module->getSemestre()->getPromotion()->getFormation());
         $this->em->getRepository(ExControle::class)->updateModuleByElement($module, $annee, 0);
         // ------------------ Mouchard à Verifier Apres ------------------------
-        ApiController::mouchard($this->getUser(), $this->em,$module, 'exControle', 'Dévalidation Circuit MDL');
+        ApiController::mouchard($this->getUser(), $this->em, $module, 'exControle', 'Dévalidation Circuit MDL');
         $this->em->flush();
 
         return new JsonResponse("Bien Devalider", 200);
     }
 
     #[Route('/enregistre', name: 'evaluation_module_enregistre')]
-    public function evaluationModuleEnregistre(Request $request) 
-    {         
+    public function evaluationModuleEnregistre(Request $request)
+    {
         $session = $request->getSession();
         $dataSaved = $session->get('data_module')['data_saved'];
         $module = $this->em->getRepository(AcModule::class)->find($session->get('data_module')['module']->getId());
         $annee = $this->em->getRepository(AcAnnee::class)->getActiveAnneeByFormation($module->getSemestre()->getPromotion()->getFormation());
         $exControle = $this->em->getRepository(ExControle::class)->alreadyValidateModule($module, $annee);
         $verify = $this->em->getRepository(ExControle::class)->checkIfyoucanCalculModule($annee, $module);
-        if(!$exControle) {
+        if (!$exControle) {
             return new JsonResponse("Module deja valide", 500);
         }
-        if(!$verify){
+        if (!$verify) {
             return new JsonResponse("Operation déja valider", 500);
         }
 
         foreach ($dataSaved as $data) {
             $inscription = $this->em->getRepository(TInscription::class)->find($data['inscription']->getId());
             $inscriptionModule  = $this->em->getRepository(ExMnotes::class)->findOneBy(['inscription' => $inscription, 'module' => $module]);
-            if(!$inscriptionModule) {
+            if (!$inscriptionModule) {
                 $inscriptionModule = new ExMnotes();
                 $inscriptionModule->setInscription($inscription);
                 $inscriptionModule->setModule($module);
@@ -299,15 +292,15 @@ class ModuleController extends AbstractController
             $inscriptionModule->setNote(
                 $data['moyenneTot'] < 0 ? null : $data['moyenneTot']
             );
-            ApiController::mouchard($this->getUser(), $this->em,$inscriptionModule, 'ExMnotes', 'Enregistrer noteModule');
+            ApiController::mouchard($this->getUser(), $this->em, $inscriptionModule, 'ExMnotes', 'Enregistrer noteModule');
             $this->em->flush();
-        }      
-        
+        }
+
         return new JsonResponse("Bien Enregistre", 200);
     }
     #[Route('/recalculer', name: 'evaluation_module_recalculer')]
-    public function evaluationModuleRecalculer(Request $request) 
-    {         
+    public function evaluationModuleRecalculer(Request $request)
+    {
         $session = $request->getSession();
         $dataSaved = $session->get('data_module')['data_saved'];
         $module = $this->em->getRepository(AcModule::class)->find($session->get('data_module')['module']->getId());
@@ -327,19 +320,19 @@ class ModuleController extends AbstractController
                 $data['moyenneTot'] < 0 ? null : $data['moyenneTot']
             );
         }
-        ApiController::mouchard($this->getUser(), $this->em,$inscriptionModule, 'ExMnotes', 'Recalculer noteModule');
+        ApiController::mouchard($this->getUser(), $this->em, $inscriptionModule, 'ExMnotes', 'Recalculer noteModule');
         $this->em->flush();
         return new JsonResponse("Bien Recalculer", 200);
     }
     #[Route('/statut/{type}', name: 'administration_module_statut')]
-    public function administrationElementStatut(Request $request, $type) 
-    {         
+    public function administrationElementStatut(Request $request, $type)
+    {
         $session = $request->getSession();
         $dataSaved = $session->get('data_module')['data_saved'];
         $elements = $session->get('data_module')['elements'];
         $module = $session->get('data_module')['module'];
         $annee = $this->em->getRepository(AcAnnee::class)->getActiveAnneeByFormation($module->getSemestre()->getPromotion()->getFormation());
-        if($type == 'avantrachat'){
+        if ($type == 'avantrachat') {
             foreach ($dataSaved as $data) {
                 $inscription = $this->em->getRepository(TInscription::class)->find($data['inscription']->getId());
                 $mnote = $this->em->getRepository(ExMnotes::class)->findOneBy(['module' => $module, 'inscription' => $inscription]);
@@ -369,15 +362,13 @@ class ModuleController extends AbstractController
                     );
                 }
             }
-        
-        }
-        elseif($type == "apresrachat") {
+        } elseif ($type == "apresrachat") {
             foreach ($dataSaved as $data) {
                 $inscription = $this->em->getRepository(TInscription::class)->find($data['inscription']->getId());
                 $mnote = $this->em->getRepository(ExMnotes::class)->findOneBy(['module' => $module, 'inscription' => $inscription]);
-                
+
                 $data_elements = $this->em->getRepository(ExEnotes::class)->GetElementsByCodeAnneeCodeModule($annee, $module, $inscription, 'all', 'statutDef');
-                
+
                 $result = $this->ModuleGetStatutApresRachat($data_elements, $mnote, 8, 10);
 
                 if (isset($result) and !empty($result)) {
@@ -393,13 +384,12 @@ class ModuleController extends AbstractController
                 }
             }
         }
-        ApiController::mouchard($this->getUser(), $this->em,$mnote, 'ExMnotes', 'Statué noteModule');
+        ApiController::mouchard($this->getUser(), $this->em, $mnote, 'ExMnotes', 'Statué noteModule');
         $this->em->flush();
         return new JsonResponse("Bien enregistre", 200);
-
     }
 
-    public function ModuleGetStatutAvantRachat($mnote, $note_eliminatoire, $note_validation, $min_element_module_statut_def, $max_element_module_statut_def, $max_element_module_statut_aff) 
+    public function ModuleGetStatutAvantRachat($mnote, $note_eliminatoire, $note_validation, $min_element_module_statut_def, $max_element_module_statut_def, $max_element_module_statut_aff)
     {
         $send_data = array();
 
@@ -407,16 +397,15 @@ class ModuleController extends AbstractController
         if ($mnote->getModule()->getId() == 7419) {
             $note_eliminatoire = 13;
             $note_validation = 13;
-        }else{
+        } else {
             $note_validation = $etablissement_id == 26 ? 12 : 10;
         }
         // $note_eliminatoire = $etablissement_id == 26 ? 8 : 7;
-        if($min_element_module_statut_def == 52 || $max_element_module_statut_aff == 52){
+        if ($min_element_module_statut_def == 52 || $max_element_module_statut_aff == 52) {
             $send_data['statut_s2'] = 53;
             $send_data['statut_def'] = 53;
             $send_data['statut_aff'] = 53;
-        }
-        else{
+        } else {
             if ($mnote->getNote() < $note_eliminatoire || $min_element_module_statut_def == 16) {
                 $send_data['statut_s2'] = 29;
                 $send_data['statut_def'] = 29;
@@ -473,14 +462,15 @@ class ModuleController extends AbstractController
                 }
             }
         }
-//        }
+        //        }
         return $send_data;
     }
 
-    public function ModuleGetStatutApresRachat($data, $mnote, $note_eliminatoire, $note_validation) {
+    public function ModuleGetStatutApresRachat($data, $mnote, $note_eliminatoire, $note_validation)
+    {
         $send_data = array();
         $etablissement_id = $mnote->getInscription()->getAnnee()->getFormation()->getEtablissement()->getId();
-        
+
         if ($mnote->getModule()->getId() == 7419) {
             $note_validation = 13;
         }
@@ -503,17 +493,18 @@ class ModuleController extends AbstractController
         }
         return $send_data;
     }
-    
-    #[Route('/extraction_module', name: 'evaluation_module_extraction_module')]
-    public function evaluationModuleExtraction(Request $request) 
-    {   
-        $current_year = date('m') > 7 ? date('Y').'/'.date('Y')+1 :  date('Y') - 1 .'/' .date('Y');
+
+    #[Route('/extraction_module/{etab}', name: 'evaluation_module_extraction_module')]
+    public function evaluationModuleExtraction($etab, Request $request)
+    {
+        $etablissement = $this->em->getRepository(AcEtablissement::class)->find($etab);
+        $current_year = date('m') > 7 ? date('Y') . '/' . date('Y') + 1 :  date('Y') - 1 . '/' . date('Y');
         // $elements = $this->em->getRepository(AcElement::class)->getElementByCurrentYear($current_year);
-        $modules = $this->em->getRepository(ExMnotes::class)->getModuleByCurrentYear($current_year);
+        $modules = $this->em->getRepository(ExMnotes::class)->getModuleByCurrentYear($current_year, $etablissement ? $etablissement->getId() : null);
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
-        $i=2;
-        $j=1;
+        $i = 2;
+        $j = 1;
         // dump($gnotes);die;
         $sheet->fromArray(
             array_keys($modules[0]),
@@ -524,17 +515,16 @@ class ModuleController extends AbstractController
             $sheet->fromArray(
                 $module,
                 null,
-                'A'.$i
+                'A' . $i
             );
             $i++;
             $j++;
         }
         $writer = new Xlsx($spreadsheet);
-        $year = date('m') > 7 ? date('Y').'-'.date('Y')+1 : date('Y') - 1 .'-' .date('Y');
+        $year = date('m') > 7 ? date('Y') . '-' . date('Y') + 1 : date('Y') - 1 . '-' . date('Y');
         $fileName = "Extraction modules $year.xlsx";
         $temp_file = tempnam(sys_get_temp_dir(), $fileName);
         $writer->save($temp_file);
         return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);
-        
     }
 }
