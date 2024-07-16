@@ -192,7 +192,7 @@ class ExAnotesRepository extends ServiceEntityRepository
         left join pe_statut st11 on st11.id = a.statut_def_id
         
         left join pe_statut st12 on st12.id = a.statut_aff_id
-        where an.designation = '$currentyear' $filter and frm.designation not like '%Résidanat%'";
+        where an.designation = '$currentyear' $filter and frm.designation not like '%Résidanat%' ";
         // dd($sqls);
         $stmts = $this->em->getConnection()->prepare($sqls);
         $resultSets = $stmts->executeQuery();
