@@ -632,6 +632,7 @@ class GestionPreinscriptionController extends AbstractController
         $sheet->setCellValue('AA1', 'DATE REGLEMENT');
         $sheet->setCellValue('AB1', 'CREE PAR');
         $sheet->setCellValue('AC1', 'NATIONALITE');
+        $sheet->setCellValue('AD1', 'DATE PRE-INSCRIPTION');
         // $sheet->setCellValue('AB1', 'U-PREINS');
         // $sheet->setCellValue('AC1', 'U-REGLEMENT');
         $i=2;
@@ -689,6 +690,7 @@ class GestionPreinscriptionController extends AbstractController
                 }
                 $sheet->setCellValue('AB'.$i, $preinscription->getUserCreated() != null ? $preinscription->getUserCreated()->getUsername() : null );
                 $sheet->setCellValue('AC'.$i, $preinscription->getEtudiant()->getNationalite() );
+                $sheet->setCellValue('AD'.$i, $preinscription->getCreated());
                 $i++;
                 $j++;
             }
