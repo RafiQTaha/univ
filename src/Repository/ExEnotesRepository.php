@@ -23,8 +23,8 @@ class ExEnotesRepository extends ServiceEntityRepository
     // /**
     //  * @return ExEnotes[] Returns an array of ExEnotes objects
     //  */
-    
-    
+
+
 
     /*
     
@@ -60,15 +60,14 @@ and ex_e.code_inscription = '$code_inscription' group by ex_e.id order by ex_e.$
             ->setParameter('annee', $annee)
             ->setParameter('module', $module)
             ->groupBy("e.id")
-            ->orderBy("e.".$statut, $minOrMax)
+            ->orderBy("e." . $statut, $minOrMax)
             ->setMaxResults($limit)
             ->getQuery()
-            ->getResult()
-        ;
+            ->getResult();
     }
     public function findByModule($module, $inscription)
     {
-        
+
         return $this->createQueryBuilder('e')
             ->innerJoin("e.element", 'element')
             ->innerJoin("element.module", 'module')
@@ -78,13 +77,13 @@ and ex_e.code_inscription = '$code_inscription' group by ex_e.id order by ex_e.$
             ->setParameter('inscription', $inscription)
             ->setParameter('module', $module)
             ->getQuery()
-            ->getResult()
-        ;
+            ->getResult();
     }
-    
-    public function getElementByCurrentYear($currentyear)
+
+    public function getElementByCurrentYear($currentyear, $etab)
     {
-        $sqls="SELECT ex.id, etab.code as code, etab.designation as etablissement, frm.code, frm.designation as formation, ann.code, ann.designation as annee, ins.code as code_ins, adm.code as code_adm, pre.code as code_preins, ins.code_anonymat as anonymat, st.code as statut, etu.nom, etu.prenom, prm.code, prm.designation as promotion, sem.code, sem.designation as semestre,mdl.code, mdl.designation as mosule, ele.code, ele.designation as element, ele.coefficient, ele.coefficient_epreuve, ex.mcc , ex.mtp, ex.mef, ex.ccr , ex.tpr , ex.efr, ex.note_ini, ex.note, ex.note_rat, ex.note_rachat ,ex.cc_rachat, ex.tp_rachat, ex.ef_rachat,st1.id 'id_stat_s1',st1.designation 'statut S1',st2.id 'id_stat_s2',st2.designation 'statut S2',stdetf.id 'id_stat_def',stdetf.designation 'statut Def',staff.id 'id_stat_aff',staff.designation 'statut Aff'
+        $filter = $etab ? "and etab.id = $etab" : "";
+        $sqls = "SELECT ex.id, etab.code as code, etab.designation as etablissement, frm.code, frm.designation as formation, ann.code, ann.designation as annee, ins.code as code_ins, adm.code as code_adm, pre.code as code_preins, ins.code_anonymat as anonymat, st.code as statut, etu.nom, etu.prenom, prm.code, prm.designation as promotion, sem.code, sem.designation as semestre,mdl.code, mdl.designation as mosule, ele.code, ele.designation as element, ele.coefficient, ele.coefficient_epreuve, ex.mcc , ex.mtp, ex.mef, ex.ccr , ex.tpr , ex.efr, ex.note_ini, ex.note, ex.note_rat, ex.note_rachat ,ex.cc_rachat, ex.tp_rachat, ex.ef_rachat,st1.id 'id_stat_s1',st1.designation 'statut S1',st2.id 'id_stat_s2',st2.designation 'statut S2',stdetf.id 'id_stat_def',stdetf.designation 'statut Def',staff.id 'id_stat_aff',staff.designation 'statut Aff'
         from ex_enotes ex
         inner join ac_element ele on ele.id = ex.element_id
         INNER JOIN ac_module mdl on mdl.id = ele.module_id
@@ -103,12 +102,11 @@ and ex_e.code_inscription = '$code_inscription' group by ex_e.id order by ex_e.$
         LEFT JOIN pe_statut st2 on st2.id = ex.statut_s2_id 
         LEFT JOIN pe_statut stdetf on stdetf.id = ex.statut_def_id 
         LEFT JOIN pe_statut staff on staff.id = ex.statut_aff_id 
-        where ann.designation = '$currentyear' and frm.designation not like '%Résidanat%'";
+        where ann.designation = '$currentyear' $filter and frm.designation not like '%Résidanat%'";
         // dd($sqls);
         $stmts = $this->em->getConnection()->prepare($sqls);
         $resultSets = $stmts->executeQuery();
         $result = $resultSets->fetchAll();
         return $result;
     }
- 
 }

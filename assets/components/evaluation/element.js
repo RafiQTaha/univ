@@ -10,16 +10,16 @@ const Toast = Swal.mixin({
     },
 })
 
-    let check;
-    
-$(document).ready(function  () {
-    
+let check;
+
+$(document).ready(function () {
+
     $("#enregister, #valider, #devalider, #recalculer, #imprimer, #statut").attr('disabled', true)
     const enableButtons = () => {
         $("#imprimer").removeClass('btn-secondary').addClass('btn-info').attr('disabled', false)
         $("#statut").removeClass('btn-secondary').addClass('btn-primary').attr('disabled', false)
 
-        if(check == 0) {
+        if (check == 0) {
             $("#enregister").removeClass('btn-secondary').addClass('btn-primary').attr('disabled', false)
             $("#valider").removeClass('btn-secondary').addClass('btn-danger').attr('disabled', false)
             $("#devalider").addClass('btn-secondary').removeClass('btn-success').attr('disabled', true)
@@ -33,59 +33,59 @@ $(document).ready(function  () {
     }
     $("#etablissement").select2();
     $("#order").select2();
-    $("#etablissement").on('change', async function (){
+    $("#etablissement").on('change', async function () {
         const id_etab = $(this).val();
         let response = ""
-        if(id_etab != "") {
-            const request = await axios.get('/api/formation/'+id_etab);
+        if (id_etab != "") {
+            const request = await axios.get('/api/formation/' + id_etab);
             response = request.data
         }
         $('#formation').html(response).select2();
     })
-    $("#formation").on('change', async function (){
+    $("#formation").on('change', async function () {
         const id_formation = $(this).val();
         let response = ""
-        if(id_formation != "") {
-            const request = await axios.get('/api/promotion/'+id_formation);
+        if (id_formation != "") {
+            const request = await axios.get('/api/promotion/' + id_formation);
             response = request.data
         }
         $('#promotion').html(response).select2();
     })
-    $("#promotion").on('change', async function (){
+    $("#promotion").on('change', async function () {
         const id_promotion = $(this).val();
         let response = ""
-        if(id_promotion != "") {
-            const request = await axios.get('/api/semestre/'+id_promotion);
+        if (id_promotion != "") {
+            const request = await axios.get('/api/semestre/' + id_promotion);
             response = request.data
         }
         $('#semestre').html(response).select2();
     })
-    $("#semestre").on('change', async function (){
+    $("#semestre").on('change', async function () {
         const id_semestre = $(this).val();
         let response = ""
-        if(id_semestre != "") {
-            const request = await axios.get('/api/module/'+id_semestre);
+        if (id_semestre != "") {
+            const request = await axios.get('/api/module/' + id_semestre);
             response = request.data
         }
         $('#module').html(response).select2();
     })
-    $("#module").on('change', async function (){
+    $("#module").on('change', async function () {
         const id_module = $(this).val();
         let response = ""
-        if(id_module != "") {
-            const request = await axios.get('/api/element/'+id_module);
+        if (id_module != "") {
+            const request = await axios.get('/api/element/' + id_module);
             response = request.data
         }
         $('#element').html(response).select2();
     })
 
-    $("#get_list_etudiant").on('click', async function(e){
+    $("#get_list_etudiant").on('click', async function (e) {
         e.preventDefault();
         let button = $(this);
         button.attr("disabled", true)
         $("#list_epreuve_normal").empty()
         let element_id = $('#element').val();
-        if(element_id == "" || !element_id) {
+        if (element_id == "" || !element_id) {
             Toast.fire({
                 icon: 'error',
                 title: 'Veuillez selection element!',
@@ -97,21 +97,21 @@ $(document).ready(function  () {
         try {
             let formData = new FormData();
             formData.append("order", $("#order").val())
-            const request = await axios.post('/evaluation/element/list/'+element_id, formData);
+            const request = await axios.post('/evaluation/element/list/' + element_id, formData);
             let response = request.data
             // $("#list_epreuve_normal").DataTable().destroy()
             if ($.fn.DataTable.isDataTable("#list_epreuve_normal")) {
                 $('#list_epreuve_normal').DataTable().clear().destroy();
-              }
+            }
             $("#list_epreuve_normal").html(response.html).DataTable({
                 language: datatablesFrench,
             });
             check = response.check;
-            if(check == 1){
+            if (check == 1) {
                 Toast.fire({
                     icon: 'info',
                     title: "Operation déja valider",
-                }) 
+                })
             }
             enableButtons();
             icon.addClass('fa-search').removeClass("fa-spinner fa-spin");
@@ -123,16 +123,16 @@ $(document).ready(function  () {
             Toast.fire({
                 icon: 'error',
                 title: message,
-            }) 
+            })
             button.attr("disabled", false)
         }
 
     })
-    $("#imprimer").on("click", () => {  
+    $("#imprimer").on("click", () => {
         $("#imprimer_list").modal("show")
     })
 
-    $("#valider").on('click', async function(){
+    $("#valider").on('click', async function () {
         const icon = $("#valider i");
         let button = $(this);
         button.attr("disabled", true)
@@ -160,7 +160,7 @@ $(document).ready(function  () {
 
         }
     })
-    $("#devalider").on('click', async function(){
+    $("#devalider").on('click', async function () {
         const icon = $("#devalider i");
         let button = $(this);
         button.attr("disabled", true)
@@ -189,7 +189,7 @@ $(document).ready(function  () {
 
         }
     })
-    $("#enregister").on('click', async function(){
+    $("#enregister").on('click', async function () {
         const icon = $("#enregister i");
         let button = $(this);
         button.attr("disabled", true)
@@ -218,18 +218,18 @@ $(document).ready(function  () {
 
         }
     })
-    $("#imprimer").on("click", () => {  
+    $("#imprimer").on("click", () => {
         $("#imprimer_list").modal("show")
     })
-    $("#affichage").on('change', function() {
+    $("#affichage").on('change', function () {
         let affichage = $(this).val();
-        $("#impression_list").attr("href",  $("#impression_list").attr("href").slice(0,-1)+affichage) 
-        $("#impression_clair").attr("href",  $("#impression_clair").attr("href").slice(0,-1)+affichage) 
-        $("#impression_anonymat").attr("href",  $("#impression_anonymat").attr("href").slice(0,-1)+affichage) 
-        $("#impression_rat").attr("href",  $("#impression_rat").attr("href").slice(0,-1)+affichage) 
-             
+        $("#impression_list").attr("href", $("#impression_list").attr("href").slice(0, -1) + affichage)
+        $("#impression_clair").attr("href", $("#impression_clair").attr("href").slice(0, -1) + affichage)
+        $("#impression_anonymat").attr("href", $("#impression_anonymat").attr("href").slice(0, -1) + affichage)
+        $("#impression_rat").attr("href", $("#impression_rat").attr("href").slice(0, -1) + affichage)
+
     })
-    $("#recalculer").on('click', async function(){
+    $("#recalculer").on('click', async function () {
         const icon = $("#recalculer i");
         let button = $(this);
         button.attr("disabled", true)
@@ -257,10 +257,10 @@ $(document).ready(function  () {
         }
     })
 
-    $("#statut").on("click", () => {  
+    $("#statut").on("click", () => {
         $("#statut_modal").modal("show")
     })
-    $("#statut_s1").on('click', async function() {
+    $("#statut_s1").on('click', async function () {
         const icon = $("#statut_s1 i");
         icon.removeClass('fa-sync').addClass("fa-spinner fa-spin");
         try {
@@ -282,7 +282,7 @@ $(document).ready(function  () {
             });
         }
     })
-    $("#statut_s2").on('click', async function() {
+    $("#statut_s2").on('click', async function () {
         const icon = $("#statut_s2 i");
         icon.removeClass('fa-sync').addClass("fa-spinner fa-spin");
         try {
@@ -304,7 +304,7 @@ $(document).ready(function  () {
             });
         }
     })
-    $("#statut_rachat").on('click', async function() {
+    $("#statut_rachat").on('click', async function () {
         const icon = $("#statut_rachat i");
         icon.removeClass('fa-sync').addClass("fa-spinner fa-spin");
         try {
@@ -327,12 +327,17 @@ $(document).ready(function  () {
         }
     })
 
-    $('body').on('click','#extraction', function (){
-        window.open('/evaluation/element/extraction_element', '_blank');
+    $('body').on('click', '#extraction', function () {
+        var etab = $("#etablissement").val();
+        if ($("#etablissement").val() == "") {
+            etab = 0;
+
+        }
+        window.open('/evaluation/element/extraction_element/' + etab, '_blank');
     })
 })
 
 
-    
+
 
 
