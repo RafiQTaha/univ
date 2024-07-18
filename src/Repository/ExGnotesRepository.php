@@ -102,6 +102,7 @@ class ExGnotesRepository extends ServiceEntityRepository
                     ->AndWhere('epreuve.nature = :nature')
                     ->AndWhere('epreuve.natureEpreuve = :natureEpreuve')
                     ->AndWhere('element = :element')
+                    ->AndWhere('epreuve.statut = 30')
                     ->AndWhere('inscription = :inscription')
                     ->setParameter('annee', $enote->getInscription()->getAnnee())
                     ->setParameter('nature', $nature)
