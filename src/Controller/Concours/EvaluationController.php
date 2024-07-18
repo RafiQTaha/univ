@@ -247,7 +247,7 @@ class EvaluationController extends AbstractController
     #[Route('/imprimer/{etablissement}/{type}/{type_list}', name: 'concours_evaluation_imprimer')]
     public function imprimer($etablissement,$type,$type_list)
     {
-        $havePermission = $this->em->getRepository(UsOperation::class)->havePermission(315,$this->getUser());
+        $havePermission = $this->em->getRepository(UsOperation::class)->havePermission(316,$this->getUser());
         $isAdmin = in_array('ROLE_ADMIN',$this->getUser()->getRoles());
         if (!$isAdmin && !$havePermission) {
             return new Response("Vous n'avez pas le drois !",500);
