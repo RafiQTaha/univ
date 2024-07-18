@@ -168,22 +168,41 @@ class ExMnotesRepository extends ServiceEntityRepository
     }
 
 
+    // public function getModuleNonAquis($semestre, $inscription)
+    // {
+    //     return $this->createQueryBuilder('m')
+    //         ->innerJoin("m.module", 'module')
+    //         ->innerJoin("module.semestre", 'semestre')
+    //         ->innerJoin("m.statutDef", 'def')
+    //         ->where("m.inscription = :inscription")
+    //         ->andWhere('semestre = :semestre')
+    //         ->andWhere('module.type != :type')
+    //         ->andWhere('def.id in (31,30)')
+    //         ->setParameter('inscription', $inscription)
+    //         ->setParameter('semestre', $semestre)
+    //         ->setParameter('type', 'A')
+    //         ->getQuery()
+    //         ->getResult();
+    // }
+
     public function getModuleNonAquis($semestre, $inscription)
     {
         return $this->createQueryBuilder('m')
             ->innerJoin("m.module", 'module')
             ->innerJoin("module.semestre", 'semestre')
+            ->innerJoin("semestre.promotion", 'promotion')
             ->innerJoin("m.statutDef", 'def')
             ->where("m.inscription = :inscription")
-            ->andWhere('semestre = :semestre')
+            ->andWhere('promotion = :promotion')
             ->andWhere('module.type != :type')
             ->andWhere('def.id in (31,30)')
             ->setParameter('inscription', $inscription)
-            ->setParameter('semestre', $semestre)
+            ->setParameter('promotion', $semestre->getPromotion())
             ->setParameter('type', 'A')
             ->getQuery()
             ->getResult();
     }
+
     public function getModuleNonAquisByYear($inscription)
     {
         return $this->createQueryBuilder('m')

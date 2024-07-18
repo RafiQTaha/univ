@@ -503,7 +503,7 @@ class ConseildisciplinaireController extends AbstractController
                     }
                     $sheet->setCellValue('J'.$i, $InsSanctionner->getDateReunion()->format('d/m/Y h:i:s'));
                     $sheet->setCellValue('K'.$i, $sanction->getDesignation());
-                    $sheet->setCellValue('L'.$i, $InsSanctionner->getSansSuite() == 0 ? 'Non' : 'Oui');
+                    $sheet->setCellValue('L'.$i, $InsSanctionner->getSansSuite() == 0 ? '' : 'SANS SUITE');
                     $sheet->setCellValue('M'.$i, $InsSanctionner->getInscription()->getAnnee()->getDesignation());
                     $i++;
                     $j++;
