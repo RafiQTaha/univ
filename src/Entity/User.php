@@ -118,6 +118,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'userCreated', targetEntity: ConcoursEtudiantControle::class)]
     private $concoursEtudiantControles;
 
+    #[ORM\OneToMany(mappedBy: 'userCreated', targetEntity: ConcoursEvaluation::class)]
+    private $concoursEvaluations;
+
 
     public function __construct()
     {
@@ -147,6 +150,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->concoursEtudiantsUpdated = new ArrayCollection();
         $this->concoursEtudiantLogs = new ArrayCollection();
         $this->concoursEtudiantControles = new ArrayCollection();
+        $this->concoursEvaluations = new ArrayCollection();
     }
 
     
@@ -1020,6 +1024,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($concoursEtudiantControle->getUserCreated() === $this) {
                 $concoursEtudiantControle->setUserCreated(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, ConcoursEvaluation>
+     */
+    public function getConcoursEvaluations(): Collection
+    {
+        return $this->concoursEvaluations;
+    }
+
+    public function addConcoursEvaluation(ConcoursEvaluation $concoursEvaluation): self
+    {
+        if (!$this->concoursEvaluations->contains($concoursEvaluation)) {
+            $this->concoursEvaluations[] = $concoursEvaluation;
+            $concoursEvaluation->setUserCreated($this);
+        }
+
+        return $this;
+    }
+
+    public function removeConcoursEvaluation(ConcoursEvaluation $concoursEvaluation): self
+    {
+        if ($this->concoursEvaluations->removeElement($concoursEvaluation)) {
+            // set the owning side to null (unless already changed)
+            if ($concoursEvaluation->getUserCreated() === $this) {
+                $concoursEvaluation->setUserCreated(null);
             }
         }
 

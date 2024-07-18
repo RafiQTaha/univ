@@ -529,8 +529,7 @@ class GestionPreinscriptionController extends AbstractController
         $preinscription->getEtudiant()->setMail1(strtoupper($request->get('mail1')));
         $preinscription->getEtudiant()->setMail2(strtoupper($request->get('mail2')));
         $preinscription->getEtudiant()->setAdresse(strtoupper($request->get('adresse')));
-        $etudiant =$this->em->getRepository(TEtudiant::class)->findOneBy(['codeAssurance'=>$request->get('code_assurance')]);
-        if ($request->get('code_assurance') != "" && $etudiant != $preinscription->getEtudiant()) {
+        if ($request->get('code_assurance') != "" && $this->em->getRepository(TEtudiant::class)->findOneBy(['codeAssurance'=>$request->get('code_assurance')])) {
             return new JsonResponse("Le code Assurance Exist déja!!",500);
         }
         if ($request->get('code_assurance') != "") {

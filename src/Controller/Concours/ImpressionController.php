@@ -3,11 +3,7 @@
 namespace App\Controller\Concours;
 
 use App\Controller\ApiController;
-use App\Entity\AcAnnee;
-use App\Entity\AcEtablissement;
-use App\Entity\AcPromotion;
 use App\Entity\ConcoursEtudiant;
-use App\Entity\TInscription;
 use DateTime;
 use Doctrine\Persistence\ManagerRegistry;
 use Mpdf\Mpdf;

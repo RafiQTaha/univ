@@ -297,10 +297,14 @@ class TEtudiant
     #[ORM\Column(type: 'integer', nullable: true)]
     private $codeAssurance;
 
+    #[ORM\OneToMany(mappedBy: 'etudiant', targetEntity: ConcoursEvaluation::class)]
+    private $concoursEvaluations;
+
     public function __construct()
     {
         $this->preinscriptions = new ArrayCollection();
         $this->tPreinscritionReleveNotes = new ArrayCollection();
+        $this->concoursEvaluations = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -1468,6 +1472,36 @@ class TEtudiant
     public function setCodeAssurance(?int $codeAssurance): self
     {
         $this->codeAssurance = $codeAssurance;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, ConcoursEvaluation>
+     */
+    public function getConcoursEvaluations(): Collection
+    {
+        return $this->concoursEvaluations;
+    }
+
+    public function addConcoursEvaluation(ConcoursEvaluation $concoursEvaluation): self
+    {
+        if (!$this->concoursEvaluations->contains($concoursEvaluation)) {
+            $this->concoursEvaluations[] = $concoursEvaluation;
+            $concoursEvaluation->setEtudiant($this);
+        }
+
+        return $this;
+    }
+
+    public function removeConcoursEvaluation(ConcoursEvaluation $concoursEvaluation): self
+    {
+        if ($this->concoursEvaluations->removeElement($concoursEvaluation)) {
+            // set the owning side to null (unless already changed)
+            if ($concoursEvaluation->getEtudiant() === $this) {
+                $concoursEvaluation->setEtudiant(null);
+            }
+        }
 
         return $this;
     }

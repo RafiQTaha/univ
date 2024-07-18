@@ -1,6 +1,27 @@
-<div style="text-align: center; margin-bottom: 60px !important;">
-    <img 
-    src="./assets/img/logo/logo_uaiss_bkack.png" 
-    style=" width: 25%; margin: 0 auto;"
-    >
-</div>
+<link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro" rel="stylesheet">
+<table style="width:100%">
+    <tr style="width:100%">
+        <td style="width: 20%;" align="left">
+            <img style=" width: 150px;" src="./assets/img/logo/logo_uaiss_bkack.png" alt="Logo">
+        </td>
+        <td style="width:60%;font-family: 'Source Sans Pro', sans-serif;" align="left"> 
+            <center><b>RESULTATS CONCOURS D'ACCES DE LA FACULTE DE MEDECINE ABULCASIS</b></center>
+            <center>
+                {% if type_list == '1' %}
+                    <b style="text-transform: uppercase;">LISTE DES ADMIS - {{type}}</b>
+                {% elseif type_list == '2'%}
+                    <b style="text-transform: uppercase;">LISTE D'ATTENTE - {{type}}</b>
+                {% elseif type_list == '3' %}
+                    <b style="text-transform: uppercase;">LISTE DES NON ADMIS - {{type}}</b>
+                {% endif %}
+            </center>
+            <center><b>{{current_year}}</b></center>
+        </td>
+        <td style="width: 20%;" align="left">
+            {# <img style=" width: 150px;" src="./assets/img/logo/logo_uaiss_bkack.png" alt="Logo"> #}
+        </td>
+    </tr>
+</table>
+
+
+       
