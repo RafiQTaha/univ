@@ -16,6 +16,9 @@ use App\Entity\TInscription;
 use Doctrine\Persistence\ManagerRegistry;
 use Mpdf\Mpdf;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Style\Color;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -690,4 +693,100 @@ class SemestreController extends AbstractController
         $writer->save($temp_file);
         return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);
     }
+
+    // #[Route('/ExtractionSemestreBysemestre/{semestre}', name: 'ExtractionSemestreBysemestre')]
+    // public function ExtractionSemestreBysemestre(AcSemestre $semestre, Request $request)
+    // {
+    //     // $current_year = date('m') > 7 ? date('Y') . '/' . date('Y') + 1 :  date('Y') - 1 . '/' . date('Y');
+    //     // $annee = $this->em->getRepository(AcAnnee::class)->findOneBy(['designation'=>$current_year,'formation'=>$semestre->getPromotion()->getFormation()]);
+    //     // // dd($annee);
+    //     // // $elements = $this->em->getRepository(AcElement::class)->getElementByCurrentYear($current_year);
+    //     // $snotes = $this->em->getRepository(ExSnotes::class)->GetSnotesByAnneeAndSemestre($annee, $semestre);
+    //     // dd($snotes);
+    //     $spreadsheet = new Spreadsheet();
+    //     $sheet = $spreadsheet->getActiveSheet();
+    //     // $sheet->getStyle('A1:G1')->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
+    //     // ->getStartColor()->setARGB('FFFF0000');
+
+    //     $sheet->setCellValue('A1', "DIVISION D'ACTIVITE STRATEGIQUE ENSEIGNEMET ET FORMATION UNIVERSITE INTERNATIONALE ABULCASIS DES SCIENCES DE LA SANTE");
+
+    //     // Merge cells from A1 to G1
+    //     $sheet->mergeCells('A1:G1');
+
+    //     // Set fill color for the merged cells
+    //     // $sheet->getStyle('A1:G1')->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setARGB('FFFF0000');
+
+    //     // Set text color, font family, font size, bold, wrap text, and alignment for the merged cells
+    //     $sheet->getStyle('A1:G1')->applyFromArray([
+    //         'font' => [
+    //             'color' => ['argb' => 'FFA6A6A6'], // Corrected color format
+    //             'name' => 'Aptos Narrow', // Change font family here
+    //             'bold' => true,
+    //             'size' => 8, // Adjusted size
+    //         ],
+    //         'alignment' => [
+    //             // 'horizontal' => Alignment::HORIZONTAL_LEFT, // Align horizontally to the left
+    //             'vertical' => Alignment::VERTICAL_CENTER, // Center align vertically
+    //             'wrapText' => true, // Enable text wrap
+    //         ],
+    //     ]);
+
+    //     $sheet->setCellValue('A2', 'PRE-DÉLIBÉRATIONS FPA1 SEMESTRE 1');
+    //     // Merge cells from A1 to G1
+    //     $sheet->mergeCells('A1:G1');
+    //     $sheet->getStyle('A2')->applyFromArray([
+    //         'font' => [
+    //             'color' => ['argb' => 'FFA0ACB1'], // Text color #A0ACB1
+    //             'name' => 'Aptos Narrow', // Font family
+    //             'bold' => true, // Bold text
+    //             'size' => 72, // Font size
+    //         ],
+    //         'alignment' => [
+    //             'vertical' => Alignment::VERTICAL_CENTER, // Vertical alignment center
+    //             // 'wrapText' => true, // Wrap text
+    //         ],
+    //     ]);
+
+    //     // Set row height for the first row to 25 pixels
+    //     $sheet->getRowDimension('1')->setRowHeight(25); // Adjusted row height
+
+    //     // Set row height for the second row to 30 pixels
+    //     $sheet->getRowDimension('2')->setRowHeight(30);
+        
+
+
+
+
+    //     // $sheet->setCellValue('D1', 'CODE ADMISSION');
+    //     // $sheet->setCellValue('E1', 'ID INSCRIPTION');
+    //     // $sheet->setCellValue('F1', 'CODE INSCRIPTION');
+    //     // $sheet->setCellValue('G1', 'STATUT');
+    //     // $sheet->setCellValue('H1', 'NOM');
+    //     // $sheet->setCellValue('I1', 'PRENOM');
+    //     // $sheet->setCellValue('J1', 'SEXE');
+    //     // $sheet->setCellValue('K1', 'DATE NAISSANCE');
+    //     // $i = 2;
+    //     // $j = 1;
+    //     // // dump($gnotes);die;
+    //     // $sheet->fromArray(
+    //     //     array_keys($semestres[0]),
+    //     //     null,
+    //     //     'A1'
+    //     // );
+    //     // foreach ($semestres as $semestre) {
+    //     //     $sheet->fromArray(
+    //     //         $semestre,
+    //     //         null,
+    //     //         'A' . $i
+    //     //     );
+    //     //     $i++;
+    //     //     $j++;
+    //     // }
+    //     $writer = new Xlsx($spreadsheet);
+    //     $year = date('m') > 7 ? date('Y') . '-' . date('Y') + 1 : date('Y') - 1 . '-' . date('Y');
+    //     $fileName = "Extraction semestres $year.xlsx";
+    //     $temp_file = tempnam(sys_get_temp_dir(), $fileName);
+    //     $writer->save($temp_file);
+    //     return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);
+    // }
 }

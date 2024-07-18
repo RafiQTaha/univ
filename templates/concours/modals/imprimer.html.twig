@@ -1,29 +1,38 @@
-<div
-  class="modal"
-  role="dialog"
-  id="imprimer_epreuve"
-  aria-modal="true"
->
+<div class="modal" role="dialog" id="imprimer_list" aria-modal="true">
   <div class="modal-dialog modal-md" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">Epreuve: <span class="epreuve_title">15896</span></h5>
-        <button
-          type="button"
-          class="close"
-          data-dismiss="modal"
-          aria-label="Close"
-        >
+        <h5 class="modal-title">Lists Resultats Concours</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" >
           <span aria-hidden="true">×</span>
         </button>
       </div>
       <div class="modal-body">
-        <div class="etudiant_info" style="display: block;">
-          
-         
+        <div class="type_condidat" style="display: block;">
+          <select class="form-control" name="type" id="type">
+            <option value="Payant">Payant</option>
+            <option value="Boursier">Boursier</option>
+          </select>
         </div>
-        <div class="actions">
-
+        <div class="type_list  mt-3" style="display: block;">
+          <select class="form-control" name="type_list" id="type_list">
+            <option value="1">List Des Admis</option>
+            <option value="2">Liste D'attente </option>
+            <option value="3">Liste Des Non Admis</option>
+          </select>
+        </div>
+        <div class="actions text-center">
+          <a href="" class="btn btn-primary mt-3" id="impression_FMA">Medcine</a>
+          <a href="" class="btn btn-primary mt-3" id="impression_FMDA">Dentaire</a>
+          <a href="" class="btn btn-primary mt-3" id="impression_FPA">Pharmacie</a>
+          <a href="" class="btn btn-primary mt-3" id="impression_ISITS">ISITS</a>
+          <a href="" class="btn btn-primary mt-3" id="impression_FASIMH">FASIMH</a>
+          {# <a href="{{path('concours_evaluation_imprimer', {etablissement: 'FMA', type:"Payant", type_list:"admis"})}}" target="_blank" class="btn btn-primary mt-3" id="impression_FMA">Medcine</a> #}
+          {# <a href="{{path('concours_evaluation_imprimer', {etablissement: 'FMDA', type:"Payant", type_list:"admis"})}}" target="_blank" class="btn btn-primary mt-3" id="impression_FMDA">Dentaire</a>
+          <a href="{{path('concours_evaluation_imprimer', {etablissement: 'FPA', type:"Payant", type_list:"admis"})}}" target="_blank" class="btn btn-primary mt-3" id="impression_FPA">Pharmacie</a>
+          <a href="{{path('concours_evaluation_imprimer', {etablissement: 'ISITS', type:"Payant", type_list:"admis"})}}" target="_blank" class="btn btn-primary mt-3" id="impression_ISITS">ISITS</a>
+          <a href="{{path('concours_evaluation_imprimer', {etablissement: 'FASIMH', type:"Payant", type_list:"admis"})}}" target="_blank" class="btn btn-primary mt-3" id="impression_FASIMH">FASIMH</a> #}
+          {# <a href="{{path('concours_evaluation_imprimer', {type: 'excel_rat'})}}" target="_blank" class="btn btn-success" id="impression_excel_rat">Impression Liste Rattrapage Excel</a> #}
         </div>
       </div>
     </div>

@@ -53,6 +53,7 @@ Encore
     .addEntry('imprimer_concours', './assets/components/concours/imprimer.js')
     .addEntry('controle_concours', './assets/components/concours/controle.js')
     .addEntry('etat_impression_concours', './assets/components/concours/etat_impression.js')
+    .addEntry('evaluation_concours', './assets/components/concours/evaluation.js')
 
     .addEntry('evaluationAnnee', './assets/components/evaluation/annee.js')
     .addEntry('evaluationElement', './assets/components/evaluation/element.js')

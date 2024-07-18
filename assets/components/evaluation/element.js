@@ -227,7 +227,6 @@ $(document).ready(function () {
         $("#impression_clair").attr("href", $("#impression_clair").attr("href").slice(0, -1) + affichage)
         $("#impression_anonymat").attr("href", $("#impression_anonymat").attr("href").slice(0, -1) + affichage)
         $("#impression_rat").attr("href", $("#impression_rat").attr("href").slice(0, -1) + affichage)
-
     })
     $("#recalculer").on('click', async function () {
         const icon = $("#recalculer i");

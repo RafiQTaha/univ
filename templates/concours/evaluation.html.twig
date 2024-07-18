@@ -1,0 +1,62 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Univ - Evaluation Concours{% endblock %}
+
+
+{% block body %}
+<div class="main-content">
+    <section class="section">
+        <div class="section-header">
+          <h1>Evaluation Concours</h1>
+          <div class="section-header-breadcrumb">
+              {% for operation in operations %}
+                <button class="{{operation.classTag}}" id="{{operation.idTag}}"><i class="{{operation.icon}}"></i>  {{operation.designation}}</button>
+              {% endfor %}
+              {# <a href="#" class="btn btn-primary ml-1" id="get_list_etudiant"><i class="fas fa-search" ></i>  Recherche</a> #}
+
+          </div>
+        </div>
+
+        <div class="section-body">
+            {# <div class="card">
+                
+                <div class="card-body">
+                <div class="card-search" style="margin-bottom: 1.5rem;">
+                        <div class="row">
+                            <div class="col-md-2">
+                                <label for="groupement">Groupements:</label>
+                                <select class="form-control" name="groupement" id="groupement">
+                                    <option value="">Choix groupements</option>
+                                    {% for groupement in groupements %}
+                                        <option value="{{groupement.groupement}}">{{groupement.groupement}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <table id="list_etudiants"  class="table table-striped" style="width:100%; overflow:scroll">
+                    </table>
+                    
+                </div>
+                
+            </div> #}
+        </div>
+    </section>
+</div>
+
+
+
+<!--Modal Import Group-->
+{# {% include 'evaluation/simulation_deliberation/modals/note.html.twig' %} #}
+{% include 'concours/modals/evaluation.html.twig' %}
+{% include 'concours/modals/imprimer.html.twig' %}
+
+{% endblock %}
+
+{% block javascripts %}
+{{parent()}}
+{{ encore_entry_script_tags('evaluation_concours') }}
+
+{% endblock %}
+
