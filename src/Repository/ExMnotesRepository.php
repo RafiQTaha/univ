@@ -268,8 +268,9 @@ class ExMnotesRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function getModuleByCurrentYear($currentyear)
+    public function getModuleByCurrentYear($currentyear, $etab)
     {
+        $filter = $etab ? "and etab.id = $etab" : "";
         $sqls = "SELECT ex.id, etab.code as code, etab.designation as etablissement, frm.code, 
         frm.designation as formation, ann.code, ann.designation as annee, ins.code as code_ins, 
         adm.code as code_adm, pre.code as code_preins, ins.code_anonymat as anonymat, 
@@ -317,7 +318,7 @@ class ExMnotesRepository extends ServiceEntityRepository
         LEFT JOIN pe_statut stsdef on stsdef.id = es.statut_def_id 
         LEFT JOIN pe_statut stsaff on stsaff.id = es.statut_aff_id
         
-        where ann.designation = '$currentyear' and frm.designation not like '%Résidanat%'";
+        where ann.designation = '$currentyear' $filter and frm.designation not like '%Résidanat%'";
         // dd($sqls);
         $stmts = $this->em->getConnection()->prepare($sqls);
         $resultSets = $stmts->executeQuery();
