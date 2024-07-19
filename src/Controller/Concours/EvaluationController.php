@@ -113,7 +113,8 @@ class EvaluationController extends AbstractController
 
         unset($spreadSheetArys[0]);
         $sheetCount = count($spreadSheetArys);
-        $current_year = date('m') >= 7 ? date('Y').'/'.date('Y')+1 : date('Y') - 1 .'/' .date('Y');
+        // $current_year = date('m') >= 7 ? date('Y').'/'.date('Y')+1 : date('Y') - 1 .'/' .date('Y');
+        $current_year = '2023/2024';
         $count = 0;
         foreach ($spreadSheetArys as $sheet) {
             if (trim($sheet[0]) == "") {
@@ -156,45 +157,31 @@ class EvaluationController extends AbstractController
     #[Route('/traiter', name: 'concours_evaluation_traiter')]
     public function traiter(Request $request)
     {
-        $current_year = date('m') >= 7 ? date('Y').'/'.date('Y')+1 : date('Y') - 1 .'/' .date('Y');
-        $this->Traitement($current_year,'FMA',250);
-        $this->Traitement($current_year,'FMDA',150);
-        $this->Traitement($current_year,'FPA',100);
-        // $ISITS = $this->Traitement($current_year,'ISITS',50);
-        // $FASIMH = $this->Traitement($current_year,'FASIMH',50);
+        // $current_year = date('m') >= 7 ? date('Y').'/'.date('Y')+1 : date('Y') - 1 .'/' .date('Y');
+        $current_year = '2023/2024';
+        $this->Traitement($current_year,'FMA',148);
+        $this->Traitement($current_year,'FMDA',75);
+        $this->Traitement($current_year,'FPA',50);
+        $this->TraitementISITS_FASIMH($current_year,'ISITS',50);
+        $this->TraitementISITS_FASIMH($current_year,'FASIMH',50);
         return new JsonResponse('Bien Traité !',200);
     }
     public function Traitement($current_year,$etablissement,$limit)
     {
-        $ConcoursEvaluations = $this->em->getRepository(ConcoursEvaluation::class)->findBy(['annee'=>$current_year,$etablissement=>1,'TypeCondidat'=>'Payant'],['MoyenConcour'=>'DESC']);
-        // dd($ConcoursEvaluations);
-        // $ConcoursEvaluations = $this->em->getRepository(ConcoursEvaluation::class)->findBy(['id'=>756],['MoyenConcour'=>'DESC']);
-        // $ConcoursEvaluations = $this->em->getRepository(ConcoursEvaluation::class)->findListEtudiant($current_year,$etablissement, 'Payant');
-        // if ($etablissement == 'FMDA') {
-        //     $ConcoursEvaluations = $this->em->getRepository(ConcoursEvaluation::class)->findListEtudiantDTR($current_year, 'Payant');
-        // }elseif ($etablissement == 'FPA') {
-        //     $ConcoursEvaluations = $this->em->getRepository(ConcoursEvaluation::class)->findListEtudiantPH($current_year, 'Payant');
-        //     // dd($ConcoursEvaluations);
-        // }else {
-        //     $ConcoursEvaluations = $this->em->getRepository(ConcoursEvaluation::class)->findBy(['annee'=>$current_year,$etablissement=>1,'TypeCondidat'=>'Payant'],['MoyenConcour'=>'DESC']);
-        // }
-        // dd($ConcoursEvaluations);
+        $ConcoursEvaluations = $this->em->getRepository(ConcoursEvaluation::class)->findListEtudiant($current_year,$etablissement,'Payant');
         $set = 'setList'.$etablissement;
         $rang = 'setRang'.$etablissement;
         $count = 1;
         foreach ($ConcoursEvaluations as $ConcoursEvaluation) {
-            if($ConcoursEvaluation->getAbs() == 1) {
+            if($ConcoursEvaluation->getAbs() === 1 || (!$ConcoursEvaluation->getMoyenConcour() || $ConcoursEvaluation->getMoyenConcour() === 0)) {
                 $ConcoursEvaluation->$set(3);
             }elseif ($count <= $limit) {
-                // dd('test');
                 $ConcoursEvaluation->$set(1);
             }elseif ($ConcoursEvaluation->getAbs() == 0 and $count > $limit) {
                 $ConcoursEvaluation->$set(2);
             }
-            // if($etablissement == "FMA") $ConcoursEvaluation->$rang($count);
             if ($etablissement == "FMDA") {
                 if ($ConcoursEvaluation->getListFMA() != 1) {
-                    // dd($count,$rang,$ConcoursEvaluation);
                     $ConcoursEvaluation->$rang($count);
                     $count++;
                 }
@@ -208,36 +195,64 @@ class EvaluationController extends AbstractController
                 $count++;
             }
         }
-        
-        // if ($etablissement == 'FMDA') {
-        //     $ConcoursEvaluations = $this->em->getRepository(ConcoursEvaluation::class)->findListEtudiantDTR($current_year, 'Boursier');
-        // }elseif ($etablissement == 'FPA') {
-        //     $ConcoursEvaluations = $this->em->getRepository(ConcoursEvaluation::class)->findListEtudiantPH($current_year, 'Boursier');
-        // }else {
-        //     $ConcoursEvaluations = $this->em->getRepository(ConcoursEvaluation::class)->findBy(['annee'=>$current_year,$etablissement=>1,'TypeCondidat'=>'Boursier'],['MoyenConcour'=>'DESC']);
-        // }
-        $ConcoursEvaluations = $this->em->getRepository(ConcoursEvaluation::class)->findBy(['annee'=>$current_year,$etablissement=>1,'TypeCondidat'=>'Boursier'],['MoyenConcour'=>'DESC']);
-        $countB = 0;
+        $ConcoursEvaluations = $this->em->getRepository(ConcoursEvaluation::class)->findListEtudiant($current_year,$etablissement,'Boursier');
+        // $ConcoursEvaluations = $this->em->getRepository(ConcoursEvaluation::class)->findBy(['annee'=>$current_year,$etablissement=>1,'TypeCondidat'=>'Boursier'],['MoyenConcour'=>'DESC']);
+        $countB = 1;
         foreach ($ConcoursEvaluations as $ConcoursEvaluation) {
-            if ($countB < 2) {
-                $ConcoursEvaluation->$set(1);
-            }elseif ($ConcoursEvaluation->getAbs() == 0) {
-                $ConcoursEvaluation->$set(2);
-            }else {
+            if($ConcoursEvaluation->getAbs() == 1 || $ConcoursEvaluation->getMoyenConcour() == 0) {
                 $ConcoursEvaluation->$set(3);
+            }elseif ($countB <= 2) {
+                $ConcoursEvaluation->$set(1);
+            }elseif ($ConcoursEvaluation->getAbs() == 0 and $count > $limit) {
+                $ConcoursEvaluation->$set(2);
             }
         }
         if ($etablissement == "FMDA") {
-            if ($ConcoursEvaluation->getListFMA() != 1) {
+            if (!$ConcoursEvaluation->getListFMA() || $ConcoursEvaluation->getListFMA() != 1) {
                 $ConcoursEvaluation->$rang($count);
                 $countB++;
             }
         }elseif ($etablissement == "FPA") {
-            if ($ConcoursEvaluation->getListFMA() != 1 and $ConcoursEvaluation->getListFMDA() != 1 ) {
+            if ((!$ConcoursEvaluation->getListFMA() || $ConcoursEvaluation->getListFMA() != 1) and (!$ConcoursEvaluation->getListFMDA() || $ConcoursEvaluation->getListFMDA() != 1) ) {
                 $ConcoursEvaluation->$rang($count);
                 $countB++;
             }
         }else {
+            $ConcoursEvaluation->$rang($count);
+            $countB++;
+        }
+        $this->em->flush();
+    }
+
+    
+    public function TraitementISITS_FASIMH($current_year,$etablissement,$limit)
+    {
+        $ConcoursEvaluations = $this->em->getRepository(ConcoursEvaluation::class)->findListEtudiant($current_year,$etablissement,'Payant');
+        $set = 'setList'.$etablissement;
+        $rang = 'setRang'.$etablissement;
+        $count = 1;
+        foreach ($ConcoursEvaluations as $ConcoursEvaluation) {
+            if($ConcoursEvaluation->getAbs() == 1 || $ConcoursEvaluation->getMoyenConcour() == 0) {
+                $ConcoursEvaluation->$set(3);
+            }elseif ($count <= $limit) {
+                $ConcoursEvaluation->$set(1);
+            }elseif ($ConcoursEvaluation->getAbs() == 0 and $count > $limit) {
+                $ConcoursEvaluation->$set(2);
+            }
+            $ConcoursEvaluation->$rang($count);
+            $count++;
+        }
+        $ConcoursEvaluations = $this->em->getRepository(ConcoursEvaluation::class)->findListEtudiant($current_year,$etablissement,'Boursier');
+        // $ConcoursEvaluations = $this->em->getRepository(ConcoursEvaluation::class)->findBy(['annee'=>$current_year,$etablissement=>1,'TypeCondidat'=>'Boursier'],['MoyenConcour'=>'DESC']);
+        $countB = 1;
+        foreach ($ConcoursEvaluations as $ConcoursEvaluation) {
+            if($ConcoursEvaluation->getAbs() == 1 || $ConcoursEvaluation->getMoyenConcour() == 0) {
+                $ConcoursEvaluation->$set(3);
+            }elseif ($countB <= 2) {
+                $ConcoursEvaluation->$set(1);
+            }elseif ($ConcoursEvaluation->getAbs() == 0 and $count > 2) {
+                $ConcoursEvaluation->$set(2);
+            }
             $ConcoursEvaluation->$rang($count);
             $countB++;
         }
@@ -254,7 +269,8 @@ class EvaluationController extends AbstractController
         }
         $list = 'list'.$etablissement;
         $rang = 'rang'.$etablissement;
-        $current_year = date('m') >= 7 ? date('Y').'/'.date('Y')+1 : date('Y') - 1 .'/' .date('Y');
+        // $current_year = date('m') >= 7 ? date('Y').'/'.date('Y')+1 : date('Y') - 1 .'/' .date('Y');
+        $current_year = '2023/2024';
         if ($etablissement == 'FMA') {
             $ConcoursEvaluations = $this->em->getRepository(ConcoursEvaluation::class)->findBy([
                 'annee' => $current_year,
@@ -264,15 +280,89 @@ class EvaluationController extends AbstractController
             ],[$rang=>'ASC']);
         }elseif ($etablissement == 'FMDA') {
             $ConcoursEvaluations = $this->em->getRepository(ConcoursEvaluation::class)->findListEtudiantDentaire($current_year, $type,$type_list);
-            // dd($ConcoursEvaluations);
         }elseif ($etablissement == 'FPA') {
             $ConcoursEvaluations = $this->em->getRepository(ConcoursEvaluation::class)->findListEtudiantPharmacie($current_year, $type,$type_list);
         }
         
         $html = $this->render("concours/pdfs/list.html.twig", [
             'ConcoursEvaluations' => $ConcoursEvaluations,
-            // 'statut' => $statut,
-            'etab'=>$etablissement])->getContent();
+            'etab'=>$etablissement
+        ])->getContent();
+            
+        $mpdf = new Mpdf([
+            'mode' => 'utf-8',
+            'margin_left' => '5',
+            'margin_right' => '5',
+            'margin_top' => '30',
+            'margin_bottom' => '10',
+            'format' => 'A4-L',
+            'margin_header' => '2',
+            'margin_footer' => '2'
+        ]);
+        
+        switch ($etablissement) {
+            case 'FMDA':
+                $ettab = "DENTAIRE";
+                break;
+            case 'FPA':
+                $ettab = "PHARMACIE";
+                break;
+            default:
+                $ettab = "MEDECINE";
+                break;
+        }
+
+        $mpdf->SetHTMLHeader($this->render("concours/pdfs/header.html.twig", [
+            'current_year' => $current_year,
+            'type' => $type,
+            'type_list' => $type_list,
+            'etablissement' => $ettab
+        ])->getContent());
+        $mpdf->defaultfooterline = 0;
+        // $mpdf->SetFooter('Page {PAGENO} sur {nb}');
+        setlocale(LC_TIME, 'fr_FR.UTF-8', 'fra');
+
+        // Get the current date formatted as "samedi 29 juillet 2023"
+        $currentDate = strftime('%A %d %B %Y');
+
+        // Set the footer with the current date on the left and page number on the right
+        $mpdf->SetHTMLFooter('
+            <table width="100%" style="border: none; font-size: 12px;font-family: Source Sans Pro, sans-serif;">
+                <tr>
+                    <td width="50%" style="text-align: left;">' . ucfirst($currentDate) . '</td>
+                    <td width="50%" style="text-align: right;">Page {PAGENO} sur {nb}</td>
+                </tr>
+            </table>
+        ');
+        $mpdf->WriteHTML($html);
+        $mpdf->SetTitle("List ".$etablissement." ".$type." ".$current_year);
+        $mpdf->Output("List_".$etablissement."_".$type."_".$current_year.".pdf", "I");
+    }
+    
+    #[Route('/imprimerISITS_FASIMH/{etablissement}/{type}/{type_list}', name: 'concours_evaluation_imprimerISITS_FASIMH')]
+    public function imprimerISITS_FASIMH($etablissement,$type,$type_list)
+    {
+        $havePermission = $this->em->getRepository(UsOperation::class)->havePermission(316,$this->getUser());
+        $isAdmin = in_array('ROLE_ADMIN',$this->getUser()->getRoles());
+        if (!$isAdmin && !$havePermission) {
+            return new Response("Vous n'avez pas le drois !",500);
+        }
+        $list = 'list'.$etablissement;
+        $rang = 'rang'.$etablissement;
+        // $current_year = date('m') >= 7 ? date('Y').'/'.date('Y')+1 : date('Y') - 1 .'/' .date('Y');
+        $current_year = '2023/2024';
+        
+        $ConcoursEvaluations = $this->em->getRepository(ConcoursEvaluation::class)->findBy([
+            'annee' => $current_year,
+            $etablissement => 1,
+            'TypeCondidat' => $type,
+            $list => $type_list
+        ],[$rang=>'ASC']);
+        
+        $html = $this->render("concours/pdfs/listISITS_FASIMH.html.twig", [
+            'ConcoursEvaluations' => $ConcoursEvaluations,
+            'etab'=>$etablissement
+        ])->getContent();
             
         $mpdf = new Mpdf([
             'mode' => 'utf-8',
@@ -285,11 +375,25 @@ class EvaluationController extends AbstractController
             'margin_footer' => '2'
         ]);
 
+        switch ($etablissement) {
+            case 'FMDA':
+                $ettab = "DENTAIRE";
+                break;
+            case 'FPA':
+                $ettab = "PHARMACIE";
+                break;
+            default:
+                $ettab = "MEDECINE";
+                break;
+        }
+
         $mpdf->SetHTMLHeader($this->render("concours/pdfs/header.html.twig", [
             'current_year' => $current_year,
             'type' => $type,
-            'type_list' => $type_list
+            'type_list' => $type_list,
+            'etablissement' => $ettab
         ])->getContent());
+
         $mpdf->defaultfooterline = 0;
         // $mpdf->SetFooter('Page {PAGENO} sur {nb}');
         setlocale(LC_TIME, 'fr_FR.UTF-8', 'fra');

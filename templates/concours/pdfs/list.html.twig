@@ -30,7 +30,8 @@
             <th style="width:180px;text-align: left;font-weight: 600">PRENOM</th>
             <th style="width:80px;text-align: left;font-weight: 600">TYPE BAC</th>
             <th style="width:80;text-align: left;font-weight: 600">CIN/PASS</th>
-            <th style="width:80;text-align: left;font-weight: 600">M-BAC</th>
+            {# <th style="width:80;text-align: left;font-weight: 600">M-BAC</th #}
+            <th style="width:80;text-align: center;font-weight: 600">MOYENNE BAC</th>>
             <th style="width:120px; {{colorFMA}} text-align: center;font-weight: 800">MEDCINE</th>
             <th style="width:120px; {{colorFMDA}} text-align: center;font-weight: 800">DENTAIRE</th>
             <th style="width:120px; {{colorFPA}} text-align: center;font-weight: 800">PHARMACIE</th>
@@ -61,10 +62,10 @@
                             {{ConcoursEvaluation.etudiant.cin}}
                     {% endif %}
                 </td>
-                <td style="width:80;text-align: left;font-weight: 600">{{ConcoursEvaluation.MoyenConcour|number_format(2, '.', ',') }}</td>
+                <td style="width:80;text-align: center;font-weight: 600">{{ConcoursEvaluation.etudiant.MoyenneBac|number_format(2, '.', ',') }}</td>
                 <td style="width:120px; {{colorFMA}} text-align: center;font-weight: 800">
                     {% if ConcoursEvaluation.listFMA == 1 %}
-                        LISTE PRINCIPALE-1
+                        LISTE PRINCIPALE
                     {% elseif ConcoursEvaluation.listFMA == 2 %}
                         LISTE D'ATTENTE
                     {% elseif ConcoursEvaluation.listFMA == 3 %}
@@ -76,7 +77,7 @@
                         {# LISTE PRINCIPALE-2 #}
                         VALIDE
                     {% elseif ConcoursEvaluation.listFMA != 1  and ConcoursEvaluation.listFMDA == 1 %}
-                        LISTE PRINCIPALE-1
+                        LISTE PRINCIPALE
                     {% elseif ConcoursEvaluation.listFMDA == 2 %}
                         LISTE D'ATTENTE
                     {% elseif ConcoursEvaluation.listFMDA == 3 %}
@@ -84,14 +85,17 @@
                     {% endif %}
                 </td>
                 <td style="width:120px; {{colorFPA}} text-align: center;font-weight: 800">
-                    {% if ConcoursEvaluation.listFMA == 1 and ConcoursEvaluation.listFMDA == 1 and ConcoursEvaluation.listFPA == 1 %}
+                {# <pre>
+                    {{ dump(ConcoursEvaluation.listFPA) }}
+                </pre> #}
+                    {% if ConcoursEvaluation.listFMA == 1 or ConcoursEvaluation.listFMDA == 1 and ConcoursEvaluation.listFPA == 1 %}
                         {# LISTE PRINCIPALE-3 #}
                         VALIDE
                     {% elseif (ConcoursEvaluation.listFMA == 1 or ConcoursEvaluation.listFMDA == 1) and ConcoursEvaluation.listFPA == 1 %}
                         {# LISTE PRINCIPALE-2 #}
                         VALIDE
-                    {% elseif ConcoursEvaluation.listFMA != 1 and ConcoursEvaluation.listFPA != 1  and ConcoursEvaluation.listFPA == 1 %}
-                        LISTE PRINCIPALE-1
+                    {% elseif  ConcoursEvaluation.listFPA == 1 %}
+                        LISTE PRINCIPALE
                     {% elseif ConcoursEvaluation.listFPA == 2 %}
                         LISTE D'ATTENTE
                     {% elseif ConcoursEvaluation.listFPA == 3 %}
