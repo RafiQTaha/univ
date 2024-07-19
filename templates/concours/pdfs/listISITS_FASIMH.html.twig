@@ -1,8 +1,11 @@
-<link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro" rel="stylesheet">
+{# <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro" rel="stylesheet"> #}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
 
 <style type="text/Css">
     body{
-        font-family: 'Source Sans Pro', sans-serif;
+        font-family: 'Courier Prime';
     }
     .slh tr td {
         border-bottom: 1px solid #292929;
@@ -11,18 +14,19 @@
 </style>
 <br>
 {% set color = "background-color: #dddd4f;color:#000;" %}
+    {# {% set colorFMA = "background-color: #dddd4f;color:#000;" %} #}
 
 <table align="center" style=" background: #FFFFFF;font-size: 11px" cellspacing="0" class="slh">
     <thead>
-        <tr style="background-color: #bfbfbf;font-size: 9px;text-align: center">
-            <th style="width:50px;text-align: center;padding: 8px; font-weight: 600">RANG</th>
-            <th style="width:150px;text-align: left;font-weight: 400">CODE CANDIDAT</th>
-            <th style="width:180px; text-align: left;font-weight: 600">NOM</th>
-            <th style="width:180px;text-align: left;font-weight: 600">PRENOM</th>
-            <th style="width:80px;text-align: left;font-weight: 600">TYPE BAC</th>
-            <th style="width:80;text-align: left;font-weight: 600">CIN/PASS</th>
-            <th style="width:80;text-align: left;font-weight: 600">MOYENNE BAC</th>
-            <th style="width:120px; {{color}} text-align: center;font-weight: 800">{{etab}}</th>
+        <tr style="background-color: #000;font-size: 9px;text-align: center">
+            <th style="width:50px;color:#fff;text-align: center;padding: 8px; font-weight: 600"><center>RANG</center></th>
+            <th style="width:180px;color:#fff;text-align: left;font-weight: 400"><center>CODE CANDIDAT</center></th>
+            <th style="width:220px;color:#fff; text-align: left;font-weight: 600"><center>NOM</center></th>
+            <th style="width:220px;color:#fff;text-align: left;font-weight: 600"><center>PRENOM</center></th>
+            <th style="width:100px;color:#fff;text-align: left;font-weight: 600"> <center>TYPEBAC</center></th>
+            <th style="width:100px;color:#fff;text-align: left;font-weight: 600"><center>CIN/PASS</center></th>
+            <th style="width:100px;color:#fff;text-align: left;font-weight: 600"><center>MOY. BAC</center></th>
+            <th style="width:180px; {{color}} text-align: center;font-weight: 800"><center>{{etab}}</center></th>
         </tr>
     </thead>
     <tbody>
@@ -35,21 +39,21 @@
                         {{ConcoursEvaluation.RangFASIMH}}
                     {% endif %}
                 </td>
-                <td style="width:150px;text-align: left;font-weight: 400">{{ConcoursEvaluation.etudiant.code}}</td>
-                <td style="width:180px; text-align: left;font-weight: 600">{{ConcoursEvaluation.etudiant.nom}}</td>
-                <td style="width:180px;text-align: left;font-weight: 600">{{ConcoursEvaluation.etudiant.prenom}}</td>
-                <td style="width:80px;text-align: left;font-weight: 600">
+                <td style="width:180px;text-align: left;font-weight: 400">{{ConcoursEvaluation.etudiant.code}}</td>
+                <td style="width:220px; text-align: left;font-weight: 600">{{ConcoursEvaluation.etudiant.nom}}</td>
+                <td style="width:220px;text-align: left;font-weight: 600">{{ConcoursEvaluation.etudiant.prenom}}</td>
+                <td style="width:100px;text-align: left;font-weight: 600">
                     {% if ConcoursEvaluation.etudiant.typeBac %}{{ConcoursEvaluation.etudiant.typeBac.designation}}{% endif %}
                 </td>
-                <td style="width:80;text-align: left;font-weight: 600">
+                <td style="width:100px;text-align: left;font-weight: 600">
                     {% if ConcoursEvaluation.etudiant.cin == "" %}
                             {{ConcoursEvaluation.etudiant.passeport}}
                     {% else %}
                             {{ConcoursEvaluation.etudiant.cin}}
                     {% endif %}
                 </td>
-                <td style="width:80;text-align: center;font-weight: 600">{{ConcoursEvaluation.etudiant.MoyenneBac|number_format(2, '.', ',') }}</td>
-                <td style="width:120px; {{color}} text-align: center;font-weight: 800">
+                <td style="width:100px;text-align: center;font-weight: 600">{{ConcoursEvaluation.etudiant.MoyenneBac|number_format(2, '.', ',') }}</td>
+                <td style="width:180px; {{color}} text-align: center;font-weight: 800">
                     {% if etab == "ISITS" %}
                         {% if ConcoursEvaluation.listISITS == 1 %}
                             LISTE PRINCIPALE

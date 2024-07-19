@@ -298,7 +298,8 @@ class EvaluationController extends AbstractController
             'margin_bottom' => '10',
             'format' => 'A4-L',
             'margin_header' => '2',
-            'margin_footer' => '2'
+            'margin_footer' => '2',
+            // 'default_font' => 'arialnarrow'
         ]);
         
         switch ($etablissement) {
@@ -317,9 +318,11 @@ class EvaluationController extends AbstractController
             'current_year' => $current_year,
             'type' => $type,
             'type_list' => $type_list,
-            'etablissement' => $ettab
+            'etablissement' => $ettab,
+            'etab' => $etablissement
         ])->getContent());
         $mpdf->defaultfooterline = 0;
+        // $mpdf->SetDefaultFont('arialnarrow');
         // $mpdf->SetFooter('Page {PAGENO} sur {nb}');
         setlocale(LC_TIME, 'fr_FR.UTF-8', 'fra');
 
@@ -328,7 +331,7 @@ class EvaluationController extends AbstractController
 
         // Set the footer with the current date on the left and page number on the right
         $mpdf->SetHTMLFooter('
-            <table width="100%" style="border: none; font-size: 12px;font-family: Source Sans Pro, sans-serif;">
+            <table width="100%" style="border: none; font-size: 12px;font-family: arialnarrow">
                 <tr>
                     <td width="50%" style="text-align: left;">' . ucfirst($currentDate) . '</td>
                     <td width="50%" style="text-align: right;">Page {PAGENO} sur {nb}</td>
@@ -392,7 +395,8 @@ class EvaluationController extends AbstractController
             'current_year' => $current_year,
             'type' => $type,
             'type_list' => $type_list,
-            'etablissement' => $ettab
+            'etablissement' => $ettab,
+            'etab' => $etablissement
         ])->getContent());
 
         $mpdf->defaultfooterline = 0;

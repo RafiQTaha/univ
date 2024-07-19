@@ -1,12 +1,18 @@
-<link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro" rel="stylesheet">
-
+{# <link href="https://db.onlinewebfonts.com/c/7c6661efce01eac269383bac79303c1b?family=Arial+Narrow" rel="stylesheet"> #}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
 <style type="text/Css">
-    body{
-        font-family: 'Source Sans Pro', sans-serif;
+    body{ 
+        /*font-family: 'Courier New';*/
+        font-family: 'Courier Prime';
     }
     .slh tr td {
-        border-bottom: 1px solid #292929;
+        border-bottom: 1px solid #bfbfbf;
         line-height: .5;
+    }
+    .slh tr th {
+        line-height: 1.5;
     }
 </style>
 <br>
@@ -23,18 +29,17 @@
 
 <table align="center" style=" background: #FFFFFF;font-size: 11px" cellspacing="0" class="slh">
     <thead>
-        <tr style="background-color: #bfbfbf;font-size: 9px;text-align: center">
-            <th style="width:50px;text-align: center;padding: 8px; font-weight: 600">RANG</th>
-            <th style="width:150px;text-align: left;font-weight: 400">CODE CANDIDAT</th>
-            <th style="width:180px; text-align: left;font-weight: 600">NOM</th>
-            <th style="width:180px;text-align: left;font-weight: 600">PRENOM</th>
-            <th style="width:80px;text-align: left;font-weight: 600">TYPE BAC</th>
-            <th style="width:80;text-align: left;font-weight: 600">CIN/PASS</th>
-            {# <th style="width:80;text-align: left;font-weight: 600">M-BAC</th #}
-            <th style="width:80;text-align: left;font-weight: 600">MOYENNE BAC</th>>
-            <th style="width:120px; {{colorFMA}} text-align: center;font-weight: 800">MEDCINE</th>
-            <th style="width:120px; {{colorFMDA}} text-align: center;font-weight: 800">DENTAIRE</th>
-            <th style="width:120px; {{colorFPA}} text-align: center;font-weight: 800">PHARMACIE</th>
+        <tr style="background-color: #000;font-size: 9px;text-align: center">
+            <th style="width:50px;color:#fff;text-align: center;padding: 8px; font-weight: 600"><center>RANG</center></th>
+            <th style="width:150px;color:#fff;text-align: left;font-weight: 400"><center>CODE CANDIDAT</center></th>
+            <th style="width:180px;color:#fff; text-align: left;font-weight: 600"><center>NOM</center></th>
+            <th style="width:180px;color:#fff;text-align: left;font-weight: 600"><center>PRENOM</center></th>
+            <th style="width:80px;color:#fff;text-align: left;font-weight: 600"> <center>TYPEBAC</center></th>
+            <th style="width:80;color:#fff;text-align: left;font-weight: 600"><center>CIN/PASS</center></th>
+            <th style="width:80;color:#fff;text-align: left;font-weight: 600"><center>MOY. BAC</center></th>
+            <th style="width:120px;color:#fff; {{colorFMA}} text-align: center;font-weight: 800"><center>MEDCINE</center></th>
+            <th style="width:120px;color:#fff; {{colorFMDA}} text-align: center;font-weight: 800"><center>DENTAIRE</center></th>
+            <th style="width:120px;color:#fff; {{colorFPA}} text-align: center;font-weight: 800"><center>PHARMACIE</center></th>
         </tr>
     </thead>
     <tbody>
