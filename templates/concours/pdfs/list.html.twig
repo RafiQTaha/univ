@@ -31,7 +31,7 @@
             <th style="width:80px;text-align: left;font-weight: 600">TYPE BAC</th>
             <th style="width:80;text-align: left;font-weight: 600">CIN/PASS</th>
             {# <th style="width:80;text-align: left;font-weight: 600">M-BAC</th #}
-            <th style="width:80;text-align: center;font-weight: 600">MOYENNE BAC</th>>
+            <th style="width:80;text-align: left;font-weight: 600">MOYENNE BAC</th>>
             <th style="width:120px; {{colorFMA}} text-align: center;font-weight: 800">MEDCINE</th>
             <th style="width:120px; {{colorFMDA}} text-align: center;font-weight: 800">DENTAIRE</th>
             <th style="width:120px; {{colorFPA}} text-align: center;font-weight: 800">PHARMACIE</th>
@@ -88,7 +88,7 @@
                 {# <pre>
                     {{ dump(ConcoursEvaluation.listFPA) }}
                 </pre> #}
-                    {% if ConcoursEvaluation.listFMA == 1 or ConcoursEvaluation.listFMDA == 1 and ConcoursEvaluation.listFPA == 1 %}
+                    {% if ConcoursEvaluation.listFMA == 1 and ConcoursEvaluation.listFMDA == 1 and ConcoursEvaluation.listFPA == 1 %}
                         {# LISTE PRINCIPALE-3 #}
                         VALIDE
                     {% elseif (ConcoursEvaluation.listFMA == 1 or ConcoursEvaluation.listFMDA == 1) and ConcoursEvaluation.listFPA == 1 %}

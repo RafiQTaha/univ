@@ -203,23 +203,24 @@ class EvaluationController extends AbstractController
                 $ConcoursEvaluation->$set(3);
             }elseif ($countB <= 2) {
                 $ConcoursEvaluation->$set(1);
-            }elseif ($ConcoursEvaluation->getAbs() == 0 and $count > $limit) {
+            }elseif ($ConcoursEvaluation->getAbs() == 0 and $countB > 2) {
                 $ConcoursEvaluation->$set(2);
             }
-        }
-        if ($etablissement == "FMDA") {
-            if (!$ConcoursEvaluation->getListFMA() || $ConcoursEvaluation->getListFMA() != 1) {
-                $ConcoursEvaluation->$rang($count);
+            if ($etablissement == "FMDA") {
+                if (!$ConcoursEvaluation->getListFMA() || $ConcoursEvaluation->getListFMA() != 1) {
+                    $ConcoursEvaluation->$rang($countB);
+                    $countB++;
+                }
+            }elseif ($etablissement == "FPA") {
+                if ((!$ConcoursEvaluation->getListFMA() || $ConcoursEvaluation->getListFMA() != 1) and (!$ConcoursEvaluation->getListFMDA() || $ConcoursEvaluation->getListFMDA() != 1) ) {
+                    $ConcoursEvaluation->$rang($countB);
+                    $countB++;
+                }
+            }else {
+                // dd($ConcoursEvaluations[0]);
+                $ConcoursEvaluation->$rang($countB);
                 $countB++;
             }
-        }elseif ($etablissement == "FPA") {
-            if ((!$ConcoursEvaluation->getListFMA() || $ConcoursEvaluation->getListFMA() != 1) and (!$ConcoursEvaluation->getListFMDA() || $ConcoursEvaluation->getListFMDA() != 1) ) {
-                $ConcoursEvaluation->$rang($count);
-                $countB++;
-            }
-        }else {
-            $ConcoursEvaluation->$rang($count);
-            $countB++;
         }
         $this->em->flush();
     }
@@ -248,9 +249,9 @@ class EvaluationController extends AbstractController
         foreach ($ConcoursEvaluations as $ConcoursEvaluation) {
             if($ConcoursEvaluation->getAbs() == 1 || $ConcoursEvaluation->getMoyenConcour() == 0) {
                 $ConcoursEvaluation->$set(3);
-            }elseif ($countB <= 2) {
+            }elseif ($countB <= 14) {
                 $ConcoursEvaluation->$set(1);
-            }elseif ($ConcoursEvaluation->getAbs() == 0 and $count > 2) {
+            }elseif ($ConcoursEvaluation->getAbs() == 0 and $count > 14) {
                 $ConcoursEvaluation->$set(2);
             }
             $ConcoursEvaluation->$rang($count);
