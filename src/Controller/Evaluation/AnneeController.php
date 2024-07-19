@@ -39,6 +39,8 @@ class AnneeController extends AbstractController
     #[Route('/', name: 'evaluation_annee')]
     public function index(Request $request): Response
     {
+        ini_set('memory_limit', '-1');
+        set_time_limit(0);
         $operations = ApiController::check($this->getUser(), 'evaluation_annee', $this->em, $request);
         if (!$operations) {
             return $this->render("errors/403.html.twig");
@@ -53,6 +55,8 @@ class AnneeController extends AbstractController
     #[Route('/list/{promotion}', name: 'evaluation_annee_list')]
     public function evaluationAnneeList(Request $request, AcPromotion $promotion): Response
     {
+        ini_set('memory_limit', '-1');
+        set_time_limit(0);
         $order = $request->get('order');
         $annee = $this->em->getRepository(AcAnnee::class)->getActiveAnneeByFormation($promotion->getFormation());
         // $annee = $this->em->getRepository(AcAnnee::class)->find(494);
@@ -141,7 +145,7 @@ class AnneeController extends AbstractController
         $semstre2 = $semestres[1];
         $annee = $this->em->getRepository(AcAnnee::class)->getActiveAnneeByFormation($promotion->getFormation());
         // $annee = $this->em->getRepository(AcAnnee::class)->find(494);
-        $infos =  [
+        $infoss =  [
             'dataSaved' => $dataSaved,
             'modules' => $modules,
             'affichage' => $affichage,
@@ -153,11 +157,11 @@ class AnneeController extends AbstractController
             'semestre2' => $semstre2
         ];
         if ($type == "normal") {
-            $html = $this->render("evaluation/annee/pdfs/normal.html.twig", $infos)->getContent();
+            $html = $this->render("evaluation/annee/pdfs/normal.html.twig", $infoss)->getContent();
         } else if ($type == "anonymat") {
-            $html = $this->render("evaluation/annee/pdfs/anonymat.html.twig", $infos)->getContent();
+            $html = $this->render("evaluation/annee/pdfs/anonymat.html.twig", $infoss)->getContent();
         } else if ($type == "clair") {
-            $html = $this->render("evaluation/annee/pdfs/clair.html.twig", $infos)->getContent();
+            $html = $this->render("evaluation/annee/pdfs/clair.html.twig", $infoss)->getContent();
         } else if ($type == "rat") {
             foreach ($dataSaved as $key => $value) {
                 if ($value['moyenneSec'] >= 10) {
@@ -165,8 +169,8 @@ class AnneeController extends AbstractController
                 }
             }
             // dd($inscriptionsArray);
-            $infos['dataSaved'] = $dataSaved;
-            $html = $this->render("evaluation/annee/pdfs/rattrapage.html.twig", $infos)->getContent();
+            $infoss['dataSaved'] = $dataSaved;
+            $html = $this->render("evaluation/annee/pdfs/rattrapage.html.twig", $infoss)->getContent();
         } else {
             die("403 something wrong !");
         }
@@ -690,6 +694,89 @@ class AnneeController extends AbstractController
         $writer = new Xlsx($spreadsheet);
         $year = date('m') > 7 ? date('Y') . '-' . date('Y') + 1 : date('Y') - 1 . '-' . date('Y');
         $fileName = "Extraction annee $year.xlsx";
+        $temp_file = tempnam(sys_get_temp_dir(), $fileName);
+        $writer->save($temp_file);
+        return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);
+    }
+
+    #[Route('/extraction_list', name: 'evaluation_annee_extraction_list')]
+    public function evaluationAnneeExtractionList(Request $request)
+    {
+        ini_set('memory_limit', '-1');
+        set_time_limit(0);
+        $session = $request->getSession();
+        $dataSaved = $session->get('data_annee')['data_saved'];
+        $modules = $session->get('data_annee')['modules'];
+        $promotion = $session->get('data_annee')['promotion'];
+        $semestres = $this->em->getRepository(AcSemestre::class)->findBy(['promotion' => $promotion, 'active' => 1]);
+        $semstre1 = $semestres[0];
+        $semstre2 = $semestres[1];
+        $annee = $this->em->getRepository(AcAnnee::class)->getActiveAnneeByFormation($promotion->getFormation());
+        // dd($dataSaved, $modules, $promotion, $semstre1, $semstre2);
+        $headers = ['ord', 'idInscription', 'CodeAnonymat', 'CodeAnonymatRat', 'Nom', 'Prénom'];
+        foreach ($modules as $module) {
+            array_push($headers,  $module->getDesignation());
+            array_push($headers, 'STAT-AFF');
+        }
+        array_push($headers, $semstre1->getDesignation(), "Statut", $semstre2->getDesignation(), "Statut", "Moyenne Validation", "Moyenne Classement", "Statut", "Catégorie");
+        // dd($headers);
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        $i = 2;
+        // $j = 1;
+        $sheet->fromArray(
+            array_values($headers),
+            null,
+            'A1'
+        );
+
+        $ord = 1;
+        foreach ($dataSaved as $data) {
+            // dd($data);
+            $infos = [];
+
+            $infos[] = $ord;
+            $infos[] = $data['inscription']->getId();
+            $infos[] = $data['inscription']->getCodeAnonymat();
+            $infos[] = $data['inscription']->getCodeAnonymatRat();
+            $infos[] = $data['inscription']->getAdmission()->getPreinscription()->getEtudiant()->getNom();
+            $infos[] = $data['inscription']->getAdmission()->getPreinscription()->getEtudiant()->getPrenom();
+
+            foreach ($data['noteModules'] as $key => $noteModule) {
+                $infos[] = $noteModule['note'];
+                $infos[] = $noteModule['statut']['abreviationAff'];
+            }
+
+            $snote1 = $this->em->getRepository(ExSnotes::class)->getSnoteByInscriptionAndSemestre($data['inscription']->getId(), $semstre1->getId());
+            $snote2 = $this->em->getRepository(ExSnotes::class)->getSnoteByInscriptionAndSemestre($data['inscription']->getId(), $semstre2->getId());
+
+            $infos[] = round($snote1->getNote(), 2);
+            $infos[] = $snote1->getStatutAff()->getAbreviation();
+
+            $infos[] = $snote2 ? round($snote2->getNote(), 2) : "null";
+            $infos[] = $snote2 ? $snote2->getStatutAff()->getAbreviation() : "null";
+
+            $anote = $this->em->getRepository(ExAnotes::class)->findOneBy(['inscription' => $data['inscription'], 'annee' => $annee]);
+            // dd($anote);
+            $categorie = $anote != null ? $anote->getCategorie() : "";
+
+            $infos[] = round($anote->getNote(), 2);
+            $infos[] = round($anote->getNoteSec(), 2);
+            $infos[] = $this->getStatut($data['inscription'], statut: "statutAff")->getContent();
+            $infos[] = $categorie;
+
+            // dd($infos);
+            $sheet->fromArray(
+                $infos,
+                null,
+                'A' . $i
+            );
+            $i++;
+            $ord++;
+        }
+        $writer = new Xlsx($spreadsheet);
+        $current_year = date('m') > 7 ? date('Y') . '-' . date('Y') + 1 : date('Y') - 1 . '-' . date('Y');
+        $fileName = "Extraction List " . $annee->getFormation()->getAbreviation() . " " . $current_year . ".xlsx";
         $temp_file = tempnam(sys_get_temp_dir(), $fileName);
         $writer->save($temp_file);
         return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);

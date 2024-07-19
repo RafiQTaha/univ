@@ -260,4 +260,15 @@ class ExSnotesRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    public function getSnoteByInscriptionAndSemestre($inscription, $semestre)
+    {
+        return $this->createQueryBuilder('e')
+            ->where('e.semestre = :semestre')
+            ->andWhere('e.inscription = :inscription')
+            ->setParameter('semestre', $semestre)
+            ->setParameter('inscription', $inscription)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
 }
