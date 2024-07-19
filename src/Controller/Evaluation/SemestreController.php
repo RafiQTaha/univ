@@ -204,13 +204,13 @@ class SemestreController extends AbstractController
         $semestre = $session->get('data_semestre')['semestre'];
         $modules = $session->get('data_semestre')['modules'];
         $annee = $this->em->getRepository(AcAnnee::class)->getActiveAnneeByFormation($semestre->getPromotion()->getFormation());
-        $headers = ['ord','Code','Nom','Prénom'];
+        $headers = ['ord', 'Code', 'CodeAnonymat', 'CodeAnonymatRat', 'Nom', 'Prénom'];
         foreach ($modules as $module) {
-            array_push($headers,'MOD'.$module->getId());
-            array_push($headers,'STAT-AFF');
+            array_push($headers, 'MOD' . $module->getId());
+            array_push($headers, 'STAT-AFF');
         }
         array_push($headers, "Moyenne Validation", "Moyenne Classement", "Statut", "Categorie");
-        
+
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
         $i = 2;
@@ -220,35 +220,37 @@ class SemestreController extends AbstractController
             null,
             'A1'
         );
-        
+
         // xxxxxxxxx
         foreach ($dataSaved as $data) {
-            $sheet->setCellValue('A'.$i, $i-1);
-            $sheet->setCellValue('B'.$i, $data['inscription']->getId());
-            $sheet->setCellValue('C'.$i, $data['inscription']->getAdmission()->getPreinscription()->getEtudiant()->getNom());
-            $sheet->setCellValue('D'.$i, $data['inscription']->getAdmission()->getPreinscription()->getEtudiant()->getPrenom());
-            $alphabet = range('E', 'Z');
-            $k=0;
+            $sheet->setCellValue('A' . $i, $i - 1);
+            $sheet->setCellValue('B' . $i, $data['inscription']->getId());
+            $sheet->setCellValue('C' . $i, $data['inscription']->getCodeAnonymat());
+            $sheet->setCellValue('D' . $i, $data['inscription']->getCodeAnonymatRat());
+            $sheet->setCellValue('E' . $i, $data['inscription']->getAdmission()->getPreinscription()->getEtudiant()->getNom());
+            $sheet->setCellValue('F' . $i, $data['inscription']->getAdmission()->getPreinscription()->getEtudiant()->getPrenom());
+            $alphabet = range('G', 'Z');
+            $k = 0;
             foreach ($data['noteModules'] as $key => $noteModule) {
                 $column = $alphabet[$k];
                 // $sheet->setCellValue($column.$i, $noteModule['note']." ". $noteModule['statut']['abreviationAff']);
-                $sheet->setCellValue($column.$i, $noteModule['note']);
+                $sheet->setCellValue($column . $i, $noteModule['note']);
                 $k++;
                 $column = $alphabet[$k];
-                $sheet->setCellValue($column.$i, $noteModule['statut']['abreviationAff']);
+                $sheet->setCellValue($column . $i, $noteModule['statut']['abreviationAff']);
                 $k++;
             }
             $alphabet = range($column, 'Z');
-            $sheet->setCellValue($alphabet[1].$i, round($data['moyenneNormal'],2));
-            $sheet->setCellValue($alphabet[2].$i, round($data['moyenneSec'],2));
-            $sheet->setCellValue($alphabet[3].$i, $this->getStatut($data['inscription'], $semestre, statut: "statutAff")->getContent());
-            $sheet->setCellValue($alphabet[4].$i, $data['categorie']);
+            $sheet->setCellValue($alphabet[1] . $i, round($data['moyenneNormal'], 2));
+            $sheet->setCellValue($alphabet[2] . $i, round($data['moyenneSec'], 2));
+            $sheet->setCellValue($alphabet[3] . $i, $this->getStatut($data['inscription'], $semestre, statut: "statutAff")->getContent());
+            $sheet->setCellValue($alphabet[4] . $i, $data['categorie']);
             $i++;
             // $j++;
         }
         $writer = new Xlsx($spreadsheet);
-        $current_year = date('m') > 7 ? date('Y').'-'.date('Y')+1 : date('Y') - 1 .'-' .date('Y');
-        $fileName = "Extraction List ".$annee->getFormation()->getAbreviation()." ".$semestre->getDesignation().".xlsx";
+        $current_year = date('m') > 7 ? date('Y') . '-' . date('Y') + 1 : date('Y') - 1 . '-' . date('Y');
+        $fileName = "Extraction List " . $annee->getFormation()->getAbreviation() . " " . $semestre->getDesignation() . ".xlsx";
         $temp_file = tempnam(sys_get_temp_dir(), $fileName);
         $writer->save($temp_file);
         return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);
@@ -752,7 +754,7 @@ class SemestreController extends AbstractController
 
     //     // Set row height for the second row to 30 pixels
     //     $sheet->getRowDimension('2')->setRowHeight(30);
-        
+
 
 
 
