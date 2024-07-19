@@ -1,21 +1,30 @@
-<link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
 <table style="width:100%">
     <tr style="width:100%">
         <td style="width: 20%;" align="left">
             <img style=" width: 150px;" src="./assets/img/logo/logo_uaiss_bkack.png" alt="Logo">
         </td>
-        <td style="width:60%;font-family: 'Source Sans Pro', sans-serif;" align="left"> 
-            <center><b>RESULTATS CONCOURS D'ACCES DE LA FACULTE DE {{etablissement}} ABULCASIS</b></center>
+        <td style="width:60%;font-family: 'Courier Prime'" align="left"> 
+            {% if etab == "ISITS" %}
+                <center><b style="text-transform: uppercase;font-size:16px">RESULTATS CONCOURS D'ACCES DE L'institut supérieur d'ingénierie et technologies de santé</b></center>
+            {% elseif etab == "FASIMH" %}
+                <center><b style="text-transform: uppercase;font-size:16px">RESULTATS CONCOURS D'ACCES DE la faculté abulcasis des sciences infirmières et du management hospitalier</b></center>
+            {% else %}
+                <center><b style="font-size:16px">RESULTATS CONCOURS D'ACCES DE LA FACULTE DE {{etablissement}} ABULCASIS</b></center>
+            {% endif %}
+            
             <center>
                 {% if type_list == '1' %}
-                    <b style="text-transform: uppercase;">LISTE DES ADMIS - {{type}}</b>
+                    <b style="text-transform: uppercase;font-size:16px">LISTE DES ADMIS - {{type}}</b>
                 {% elseif type_list == '2'%}
-                    <b style="text-transform: uppercase;">LISTE D'ATTENTE - {{type}}</b>
+                    <b style="text-transform: uppercase;font-size:16px">LISTE D'ATTENTE - {{type}}</b>
                 {% elseif type_list == '3' %}
-                    <b style="text-transform: uppercase;">LISTE DES NON ADMIS - {{type}}</b>
+                    <b style="text-transform: uppercase;font-size:16px">LISTE DES NON ADMIS - {{type}}</b>
                 {% endif %}
             </center>
-            <center><b>{{current_year}}</b></center>
+            <center><b style="font-size:16px">{{current_year}}</b></center>
         </td>
         <td style="width: 20%;" align="left">
             {# <img style=" width: 150px;" src="./assets/img/logo/logo_uaiss_bkack.png" alt="Logo"> #}
