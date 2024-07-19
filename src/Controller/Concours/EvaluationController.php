@@ -113,8 +113,8 @@ class EvaluationController extends AbstractController
 
         unset($spreadSheetArys[0]);
         $sheetCount = count($spreadSheetArys);
-        // $current_year = date('m') >= 7 ? date('Y').'/'.date('Y')+1 : date('Y') - 1 .'/' .date('Y');
-        $current_year = '2023/2024';
+        $current_year = date('m') >= 7 ? date('Y').'/'.date('Y')+1 : date('Y') - 1 .'/' .date('Y');
+        // $current_year = '2023/2024';
         $count = 0;
         foreach ($spreadSheetArys as $sheet) {
             if (trim($sheet[0]) == "") {
@@ -157,8 +157,8 @@ class EvaluationController extends AbstractController
     #[Route('/traiter', name: 'concours_evaluation_traiter')]
     public function traiter(Request $request)
     {
-        // $current_year = date('m') >= 7 ? date('Y').'/'.date('Y')+1 : date('Y') - 1 .'/' .date('Y');
-        $current_year = '2023/2024';
+        $current_year = date('m') >= 7 ? date('Y').'/'.date('Y')+1 : date('Y') - 1 .'/' .date('Y');
+        // $current_year = '2023/2024';
         $this->Traitement($current_year,'FMA',148);
         $this->Traitement($current_year,'FMDA',75);
         $this->Traitement($current_year,'FPA',50);
@@ -269,8 +269,8 @@ class EvaluationController extends AbstractController
         }
         $list = 'list'.$etablissement;
         $rang = 'rang'.$etablissement;
-        // $current_year = date('m') >= 7 ? date('Y').'/'.date('Y')+1 : date('Y') - 1 .'/' .date('Y');
-        $current_year = '2023/2024';
+        $current_year = date('m') >= 7 ? date('Y').'/'.date('Y')+1 : date('Y') - 1 .'/' .date('Y');
+        // $current_year = '2023/2024';
         if ($etablissement == 'FMA') {
             $ConcoursEvaluations = $this->em->getRepository(ConcoursEvaluation::class)->findBy([
                 'annee' => $current_year,
@@ -349,8 +349,8 @@ class EvaluationController extends AbstractController
         }
         $list = 'list'.$etablissement;
         $rang = 'rang'.$etablissement;
-        // $current_year = date('m') >= 7 ? date('Y').'/'.date('Y')+1 : date('Y') - 1 .'/' .date('Y');
-        $current_year = '2023/2024';
+        $current_year = date('m') >= 7 ? date('Y').'/'.date('Y')+1 : date('Y') - 1 .'/' .date('Y');
+        // $current_year = '2023/2024';
         
         $ConcoursEvaluations = $this->em->getRepository(ConcoursEvaluation::class)->findBy([
             'annee' => $current_year,
