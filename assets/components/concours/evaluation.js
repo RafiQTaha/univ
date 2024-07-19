@@ -155,12 +155,12 @@ $(document).ready(function  () {
     $("#impression_ISITS").on('click', function () {
         let type = $('#type').val();
         let type_list = $('#type_list').val();
-        window.open("/concours/evaluation/imprimer/ISITS/"+type+"/"+type_list, '_blank');
+        window.open("/concours/evaluation/imprimerISITS_FASIMH/ISITS/"+type+"/"+type_list, '_blank');
     })
     $("#impression_FASIMH").on('click', function () {
         let type = $('#type').val();
         let type_list = $('#type_list').val();
-        window.open("/concours/evaluation/imprimer/FASIMH/"+type+"/"+type_list, '_blank');
+        window.open("/concours/evaluation/imprimerISITS_FASIMH/FASIMH/"+type+"/"+type_list, '_blank');
     })
 })
 
