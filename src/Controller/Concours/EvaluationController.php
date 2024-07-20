@@ -339,8 +339,20 @@ class EvaluationController extends AbstractController
             </table>
         ');
         $mpdf->WriteHTML($html);
-        $mpdf->SetTitle("List ".$etablissement." ".$type." ".$current_year);
-        $mpdf->Output("List_".$etablissement."_".$type."_".$current_year.".pdf", "I");
+        
+        switch ($type_list) {
+            case '2':
+                $type_list = "LISTE D'ATTENTE";
+                break;
+            case '3':
+                $type_list = "LISTE DES NON ADMIS";
+                break;
+            default:
+                $type_list = "LISTE PRINCIPALE";
+                break;
+        }
+        $mpdf->SetTitle($type_list." ".$etablissement." ".$type." ".$current_year);
+        $mpdf->Output($type_list." ".$etablissement."_".$type."_".$current_year.".pdf", "I");
     }
     
     #[Route('/imprimerISITS_FASIMH/{etablissement}/{type}/{type_list}', name: 'concours_evaluation_imprimerISITS_FASIMH')]
@@ -416,8 +428,19 @@ class EvaluationController extends AbstractController
             </table>
         ');
         $mpdf->WriteHTML($html);
-        $mpdf->SetTitle("List ".$etablissement." ".$type." ".$current_year);
-        $mpdf->Output("List_".$etablissement."_".$type."_".$current_year.".pdf", "I");
+        switch ($type_list) {
+            case '2':
+                $type_list = "LISTE D'ATTENTE";
+                break;
+            case '3':
+                $type_list = "LISTE DES NON ADMIS";
+                break;
+            default:
+                $type_list = "LISTE PRINCIPALE";
+                break;
+        }
+        $mpdf->SetTitle($type_list." ".$etablissement." ".$type." ".$current_year);
+        $mpdf->Output($type_list." ".$etablissement."_".$type."_".$current_year.".pdf", "I");
     }
     
 }

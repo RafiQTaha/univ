@@ -13,8 +13,8 @@
     }
 </style>
 <br>
-{% set color = "background-color: #dddd4f;color:#000;" %}
-    {# {% set colorFMA = "background-color: #dddd4f;color:#000;" %} #}
+{% set color = "" %}
+{# {% set color = "background-color: #dddd4f;color:#000;" %} #}
 
 <table align="center" style=" background: #FFFFFF;font-size: 11px" cellspacing="0" class="slh">
     <thead>
@@ -26,7 +26,7 @@
             <th style="width:100px;color:#fff;text-align: left;font-weight: 600"> <center>TYPEBAC</center></th>
             <th style="width:100px;color:#fff;text-align: left;font-weight: 600"><center>CIN/PASS</center></th>
             <th style="width:100px;color:#fff;text-align: left;font-weight: 600"><center>MOY. BAC</center></th>
-            <th style="width:180px; {{color}} text-align: center;font-weight: 800"><center>{{etab}}</center></th>
+            <th style="width:180px;color:#fff;  {{color}} text-align: center;font-weight: 800"><center>{{etab}}</center></th>
         </tr>
     </thead>
     <tbody>
@@ -58,17 +58,17 @@
                         {% if ConcoursEvaluation.listISITS == 1 %}
                             LISTE PRINCIPALE
                         {% elseif ConcoursEvaluation.listISITS == 2 %}
-                            LISTE D'ATTENTE
+                            LISTE COMPLÉMENTAIRE
                         {% elseif ConcoursEvaluation.listISITS == 3 %}
-                            NON ADMIS
+                            NON VALIDÉ
                         {% endif %}
                     {% elseif etab == "FASIMH" %}
                         {% if ConcoursEvaluation.listFASIMH == 1 %}
                             LISTE PRINCIPALE
                         {% elseif ConcoursEvaluation.listFASIMH == 2 %}
-                            LISTE D'ATTENTE
+                            LISTE COMPLÉMENTAIRE
                         {% elseif ConcoursEvaluation.listFASIMH == 3 %}
-                            NON ADMIS
+                            NON VALIDÉ
                         {% endif %}
                     {% endif %}
                 </td>

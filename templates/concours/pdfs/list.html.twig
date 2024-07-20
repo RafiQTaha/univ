@@ -9,7 +9,7 @@
     }
     .slh tr td {
         border-bottom: 1px solid #bfbfbf;
-        line-height: .5;
+        line-height: .8;
     }
     .slh tr th {
         line-height: 1.5;
@@ -20,11 +20,14 @@
 {% set colorFMDA = "" %}
 {% set colorFPA = "" %}
 {% if etab == "FMA" %}
-    {% set colorFMA = "background-color: #dddd4f;color:#000;" %}
+    {# {% set colorFMA = "background-color: #dddd4f;color:#000;" %} #}
+    {% set colorFMA = "" %}
 {% elseif etab == "FMDA" %}
-    {% set colorFMDA = "background-color: #dddd4f;color:#000;" %}
+    {# {% set colorFMDA = "background-color: #dddd4f;color:#000;" %} #}
+    {% set colorFMDA = "" %}
 {% elseif etab == "FPA" %}
-    {% set colorFPA = "background-color: #dddd4f;color:#000;" %}
+    {# {% set colorFPA = "background-color: #dddd4f;color:#000;" %} #}
+    {% set colorFPA = "" %}
 {% endif %}
 
 <table align="center" style=" background: #FFFFFF;font-size: 11px" cellspacing="0" class="slh">
@@ -37,9 +40,9 @@
             <th style="width:80px;color:#fff;text-align: left;font-weight: 600"> <center>TYPEBAC</center></th>
             <th style="width:80;color:#fff;text-align: left;font-weight: 600"><center>CIN/PASS</center></th>
             <th style="width:80;color:#fff;text-align: left;font-weight: 600"><center>MOY. BAC</center></th>
-            <th style="width:120px;color:#fff; {{colorFMA}} text-align: center;font-weight: 800"><center>MEDCINE</center></th>
-            <th style="width:120px;color:#fff; {{colorFMDA}} text-align: center;font-weight: 800"><center>DENTAIRE</center></th>
-            <th style="width:120px;color:#fff; {{colorFPA}} text-align: center;font-weight: 800"><center>PHARMACIE</center></th>
+            <th style="width:150px;color:#fff; {{colorFMA}} text-align: center;font-weight: 800"><center>MEDCINE</center></th>
+            <th style="width:150px;color:#fff; {{colorFMDA}} text-align: center;font-weight: 800"><center>DENTAIRE</center></th>
+            <th style="width:150px;color:#fff; {{colorFPA}} text-align: center;font-weight: 800"><center>PHARMACIE</center></th>
         </tr>
     </thead>
     <tbody>
@@ -68,43 +71,43 @@
                     {% endif %}
                 </td>
                 <td style="width:80;text-align: center;font-weight: 600">{{ConcoursEvaluation.etudiant.MoyenneBac|number_format(2, '.', ',') }}</td>
-                <td style="width:120px; {{colorFMA}} text-align: center;font-weight: 800">
+                <td style="width:150px; {{colorFMA}} text-align: center;font-weight: 800">
                     {% if ConcoursEvaluation.listFMA == 1 %}
                         LISTE PRINCIPALE
                     {% elseif ConcoursEvaluation.listFMA == 2 %}
-                        LISTE D'ATTENTE
+                        LISTE COMPLÉMENTAIRE
                     {% elseif ConcoursEvaluation.listFMA == 3 %}
-                        NON ADMIS
+                        NON VALIDÉ
                     {% endif %}
                 </td>
-                <td style="width:120px; {{colorFMDA}} text-align: center;font-weight: 800">
+                <td style="width:150px; {{colorFMDA}} text-align: center;font-weight: 800">
                     {% if ConcoursEvaluation.listFMA == 1  and ConcoursEvaluation.listFMDA == 1 %}
-                        {# LISTE PRINCIPALE-2 #}
-                        VALIDE
+                        {# 2ÈME CHOIX RETENU #}
+                        RETENU
                     {% elseif ConcoursEvaluation.listFMA != 1  and ConcoursEvaluation.listFMDA == 1 %}
                         LISTE PRINCIPALE
                     {% elseif ConcoursEvaluation.listFMDA == 2 %}
-                        LISTE D'ATTENTE
+                        LISTE COMPLÉMENTAIRE
                     {% elseif ConcoursEvaluation.listFMDA == 3 %}
-                        NON ADMIS
+                        NON VALIDÉ
                     {% endif %}
                 </td>
-                <td style="width:120px; {{colorFPA}} text-align: center;font-weight: 800">
+                <td style="width:150px; {{colorFPA}} text-align: center;font-weight: 800">
                 {# <pre>
                     {{ dump(ConcoursEvaluation.listFPA) }}
                 </pre> #}
                     {% if ConcoursEvaluation.listFMA == 1 and ConcoursEvaluation.listFMDA == 1 and ConcoursEvaluation.listFPA == 1 %}
-                        {# LISTE PRINCIPALE-3 #}
-                        VALIDE
+                        {# 3ÈME CHOIX RETENU #}
+                        RETENU
                     {% elseif (ConcoursEvaluation.listFMA == 1 or ConcoursEvaluation.listFMDA == 1) and ConcoursEvaluation.listFPA == 1 %}
-                        {# LISTE PRINCIPALE-2 #}
-                        VALIDE
+                        {# 2ÈME CHOIX RETENU #}
+                        RETENU
                     {% elseif  ConcoursEvaluation.listFPA == 1 %}
                         LISTE PRINCIPALE
                     {% elseif ConcoursEvaluation.listFPA == 2 %}
-                        LISTE D'ATTENTE
+                        LISTE COMPLÉMENTAIRE
                     {% elseif ConcoursEvaluation.listFPA == 3 %}
-                        NON ADMIS
+                        NON VALIDÉ
                     {% endif %}
                 </td>
             </tr>
