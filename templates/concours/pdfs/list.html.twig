@@ -83,11 +83,11 @@
                 <td style="width:150px; {{colorFMDA}} text-align: center;font-weight: 800">
                     {% if ConcoursEvaluation.listFMA == 1  and ConcoursEvaluation.listFMDA == 1 %}
                         {# 2ÈME CHOIX RETENU #}
-                        RETENU
+                        CHOIX RETENU
                     {% elseif ConcoursEvaluation.listFMA != 1  and ConcoursEvaluation.listFMDA == 1 %}
                         LISTE PRINCIPALE
                     {% elseif ConcoursEvaluation.listFMDA == 2 %}
-                        LISTE COMPLÉMENTAIRE
+                        LISTE COMPLÉMENTAIRE 
                     {% elseif ConcoursEvaluation.listFMDA == 3 %}
                         NON VALIDÉ
                     {% endif %}
@@ -98,10 +98,10 @@
                 </pre> #}
                     {% if ConcoursEvaluation.listFMA == 1 and ConcoursEvaluation.listFMDA == 1 and ConcoursEvaluation.listFPA == 1 %}
                         {# 3ÈME CHOIX RETENU #}
-                        RETENU
+                        CHOIX RETENU
                     {% elseif (ConcoursEvaluation.listFMA == 1 or ConcoursEvaluation.listFMDA == 1) and ConcoursEvaluation.listFPA == 1 %}
                         {# 2ÈME CHOIX RETENU #}
-                        RETENU
+                        CHOIX RETENU
                     {% elseif  ConcoursEvaluation.listFPA == 1 %}
                         LISTE PRINCIPALE
                     {% elseif ConcoursEvaluation.listFPA == 2 %}
