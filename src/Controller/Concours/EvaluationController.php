@@ -159,14 +159,14 @@ class EvaluationController extends AbstractController
     {
         $current_year = date('m') >= 7 ? date('Y').'/'.date('Y')+1 : date('Y') - 1 .'/' .date('Y');
         // $current_year = '2023/2024';
-        $this->Traitement($current_year,'FMA',148);
-        $this->Traitement($current_year,'FMDA',75);
-        $this->Traitement($current_year,'FPA',50);
-        $this->TraitementISITS_FASIMH($current_year,'ISITS',50);
-        $this->TraitementISITS_FASIMH($current_year,'FASIMH',50);
+        $this->Traitement($current_year,'FMA',148,2);
+        $this->Traitement($current_year,'FMDA',75,2);
+        $this->Traitement($current_year,'FPA',50,2);
+        $this->TraitementISITS_FASIMH($current_year,'ISITS',50,14);
+        $this->TraitementISITS_FASIMH($current_year,'FASIMH',50,14);
         return new JsonResponse('Bien Traité !',200);
     }
-    public function Traitement($current_year,$etablissement,$limit)
+    public function Traitement($current_year,$etablissement,$limit,$limitB)
     {
         $ConcoursEvaluations = $this->em->getRepository(ConcoursEvaluation::class)->findListEtudiant($current_year,$etablissement,'Payant');
         $set = 'setList'.$etablissement;
@@ -201,9 +201,9 @@ class EvaluationController extends AbstractController
         foreach ($ConcoursEvaluations as $ConcoursEvaluation) {
             if($ConcoursEvaluation->getAbs() == 1 || $ConcoursEvaluation->getMoyenConcour() == 0) {
                 $ConcoursEvaluation->$set(3);
-            }elseif ($countB <= 2) {
+            }elseif ($countB <= $limitB) {
                 $ConcoursEvaluation->$set(1);
-            }elseif ($ConcoursEvaluation->getAbs() == 0 and $countB > 2) {
+            }elseif ($ConcoursEvaluation->getAbs() == 0 and $countB > $limitB) {
                 $ConcoursEvaluation->$set(2);
             }
             if ($etablissement == "FMDA") {
@@ -226,7 +226,7 @@ class EvaluationController extends AbstractController
     }
 
     
-    public function TraitementISITS_FASIMH($current_year,$etablissement,$limit)
+    public function TraitementISITS_FASIMH($current_year,$etablissement,$limit,$limitB)
     {
         $ConcoursEvaluations = $this->em->getRepository(ConcoursEvaluation::class)->findListEtudiant($current_year,$etablissement,'Payant');
         $set = 'setList'.$etablissement;
@@ -249,12 +249,12 @@ class EvaluationController extends AbstractController
         foreach ($ConcoursEvaluations as $ConcoursEvaluation) {
             if($ConcoursEvaluation->getAbs() == 1 || $ConcoursEvaluation->getMoyenConcour() == 0) {
                 $ConcoursEvaluation->$set(3);
-            }elseif ($countB <= 14) {
+            }elseif ($countB <= $limitB) {
                 $ConcoursEvaluation->$set(1);
-            }elseif ($ConcoursEvaluation->getAbs() == 0 and $count > 14) {
+            }elseif ($ConcoursEvaluation->getAbs() == 0 and $countB > $limitB) {
                 $ConcoursEvaluation->$set(2);
             }
-            $ConcoursEvaluation->$rang($count);
+            $ConcoursEvaluation->$rang($countB);
             $countB++;
         }
         $this->em->flush();
@@ -331,7 +331,7 @@ class EvaluationController extends AbstractController
 
         // Set the footer with the current date on the left and page number on the right
         $mpdf->SetHTMLFooter('
-            <table width="100%" style="border: none; font-size: 12px;font-family: arialnarrow">
+            <table width="100%" style="border: none; font-size: 12px;font-family: "Courier Prime"">
                 <tr>
                     <td width="50%" style="text-align: left;">' . ucfirst($currentDate) . '</td>
                     <td width="50%" style="text-align: right;">Page {PAGENO} sur {nb}</td>
@@ -420,7 +420,7 @@ class EvaluationController extends AbstractController
 
         // Set the footer with the current date on the left and page number on the right
         $mpdf->SetHTMLFooter('
-            <table width="100%" style="border: none; font-size: 12px;font-family: Source Sans Pro, sans-serif;">
+            <table width="100%" style="border: none; font-size: 12px;font-family: "Courier Prime"">
                 <tr>
                     <td width="50%" style="text-align: left;">' . ucfirst($currentDate) . '</td>
                     <td width="50%" style="text-align: right;">Page {PAGENO} sur {nb}</td>
