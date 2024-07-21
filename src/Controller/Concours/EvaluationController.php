@@ -159,9 +159,9 @@ class EvaluationController extends AbstractController
     {
         $current_year = date('m') >= 7 ? date('Y').'/'.date('Y')+1 : date('Y') - 1 .'/' .date('Y');
         // $current_year = '2023/2024';
-        $this->Traitement($current_year,'FMA',148,2);
-        $this->Traitement($current_year,'FMDA',75,2);
-        $this->Traitement($current_year,'FPA',50,2);
+        $this->Traitement($current_year,'FMA',250,28);
+        $this->Traitement($current_year,'FMDA',100,6);
+        $this->Traitement($current_year,'FPA',100,5);
         $this->TraitementISITS_FASIMH($current_year,'ISITS',50,14);
         $this->TraitementISITS_FASIMH($current_year,'FASIMH',50,14);
         return new JsonResponse('Bien Traité !',200);
