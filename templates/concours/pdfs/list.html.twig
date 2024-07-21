@@ -75,7 +75,7 @@
                     {% if ConcoursEvaluation.listFMA == 1 %}
                         LISTE PRINCIPALE
                     {% elseif ConcoursEvaluation.listFMA == 2 %}
-                        LISTE COMPLÉMENTAIRE
+                        LISTE D'ATTENTE
                     {% elseif ConcoursEvaluation.listFMA == 3 %}
                         NON VALIDÉ
                     {% endif %}
@@ -87,7 +87,7 @@
                     {% elseif ConcoursEvaluation.listFMA != 1  and ConcoursEvaluation.listFMDA == 1 %}
                         LISTE PRINCIPALE
                     {% elseif ConcoursEvaluation.listFMDA == 2 %}
-                        LISTE COMPLÉMENTAIRE 
+                        LISTE D'ATTENTE 
                     {% elseif ConcoursEvaluation.listFMDA == 3 %}
                         NON VALIDÉ
                     {% endif %}
@@ -105,7 +105,7 @@
                     {% elseif  ConcoursEvaluation.listFPA == 1 %}
                         LISTE PRINCIPALE
                     {% elseif ConcoursEvaluation.listFPA == 2 %}
-                        LISTE COMPLÉMENTAIRE
+                        LISTE D'ATTENTE
                     {% elseif ConcoursEvaluation.listFPA == 3 %}
                         NON VALIDÉ
                     {% endif %}
