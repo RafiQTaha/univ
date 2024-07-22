@@ -1,0 +1,212 @@
+<link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro" rel="stylesheet">
+
+<style type="text/Css">
+    body{
+        font-family: 'Poppins', sans-serif;
+    }
+    footer {
+        /* font-family: 'Courier', Courier; */
+
+    }
+    .titre-reb{
+        width: 100%;
+        background: #1f4f7a;
+        font-size: 9px ;
+        padding:3px 10px;
+        color: #f1f1f1;
+        /* font-weight: bold */
+    }
+    div.zone_over
+    {
+        display: block;
+        width: 40%;
+        word-wrap:break-word !important;
+    }
+    .slh tr td {
+        border-bottom: 1px solid #8d8d8d;
+    }
+    
+    .txt {
+        width: 100%;
+        text-align: left;
+        line-height: 20px; 
+        padding-top: 0px ;  
+        padding-bottom:  0px ;
+        padding-left: 60px ;
+        padding-right:  60px ;
+        text-align: justify; 
+        font-size : 12px;
+        font-weight: normal ;
+    }
+    .txt span {
+        /* font-size:11px; */
+        /* font-weight: bold; */
+        /* color:black; */
+        margin-left: 5px ; 
+        margin-right: 5px ; 
+    }
+</style>
+
+<div style="text-align: center;">
+    <table style="width: 100% ;" cellspacing="0">
+        <tr>
+            <th
+                style="width: 100% ; font-size: 13px ;font-weight: 200;font-weight: bold;padding:0 4px;color:rgb(3, 35, 68);">
+            </th>
+            <th
+                style="width: 100% ; font-size: 13px ;font-weight: 200;font-weight: bold;padding:0 4px;color:rgb(3, 35, 68);">
+                {% if inscription.annee.formation.etablissement.id == 28 %}
+                {# {% if laz == 1 %} #}
+                {# <img src="./assets/img/logo/logo_lez.png" style=" width: 600px; margin: 0 auto;"> #}
+                {# {% else %} #}
+                <img src="./assets/img/logo/cpge.svg" style=" width: 550px; margin: 0 auto;"> {# {% endif %} #}
+                {% elseif inscription.annee.formation.etablissement.id == 5 %}
+                <img src="./assets/img/logo/logo_lez.png" style=" width: 550px; margin: 0 auto;">
+                {% else %}
+                <img src="./assets/img/logo/Logo_UIASS_bkack2.png" style=" width: 550px; margin: 0 auto;">
+                {% endif %}
+                {# <img src="./assets/img/logo/Logo_UIASS_bkack2.png" style=" width: 400px; margin: 0 auto;"> #}
+            </th>
+            <th
+                style="width: 100% ; font-size: 13px ;font-weight: 200;font-weight: bold;padding:0 4px;color:rgb(3, 35, 68);">
+            </th>
+        </tr>
+    </table>
+    {# <img src="./assets/img/logo/Logo_UIASS_bkack2.png" style=" width: 180px; margin: 0 auto;"> #}
+    {# <img src="./assets/img/logo/cpge.jpg" style=" width: 250px; margin: 0 auto;"> #}
+</div>
+<br />
+<br />
+<p style="text-align:center;font-size:18px;font-weight: bold;color:#000;">ATTESTATION DE REUSSITE</p>
+<br />
+<br />
+<table style="width: 100%;" cellspacing="0">
+    <tbody>
+        <tr>
+            <td class="txt">
+                L’Université Internationale Abulcasis des Sciences de la Santé, sise à Madinat Al Irfane, Avenue Allal
+                El Fassi,Hay Riad, Rabat, atteste par la présente que :
+            </td>
+        </tr>
+    </tbody>
+
+</table>
+
+
+<table style="width: 100%;font-size:12px;margin: 10px 60px" cellspacing="0">
+
+    <tbody>
+        <tr>
+            <td style="width: 10%; text-align: left;line-height: 30px">
+                <span style="font-size:12.5px;font-weight: bold;color:#000;">L’étudiant (e)</span>
+            </td>
+            <td style="font-size:12.5px;width: 80%; text-align: left;line-height: 30px">
+                :
+                {{inscription.admission.preinscription.etudiant.nom}}
+                {{inscription.admission.preinscription.etudiant.prenom}}
+            </td>
+        </tr>
+
+        <tr>
+            <td style="width: 10%; text-align: left;line-height: 30px">
+                <span style="font-size:12.5px;font-weight: bold;color:#000;"></span>
+            </td>
+            <td style="width: 80%; text-align: left;line-height: 30px">
+                <span style="font-size:12.5px;font-size:12px;font-weight: bold;color:#000;"></span>
+            </td>
+        </tr>
+
+        <tr>
+            <td style="width: 10%; text-align: left;line-height: 30px">
+                <span style="font-size:12.5px;font-weight: bold;color:#000;">Code admission</span>
+            </td>
+            <td style="font-size:12.5px;width: 80%; text-align: left;line-height: 30px">
+                :
+                {{inscription.admission.code}}
+            </td>
+        </tr>
+
+        <tr>
+            <td style="width: 10%; text-align: left;line-height: 30px">
+                <span style="font-size:12.5px;font-weight: bold;color:#000;"></span>
+            </td>
+            <td style="width: 80%; text-align: left;line-height: 30px">
+                <span style="font-size:12.5px;font-weight: bold;color:#000;"></span>
+            </td>
+        </tr>
+
+        <tr>
+            <td style="width: 10%; text-align: left;line-height: 30px">
+                <span style="font-size:12.5px;font-weight: bold;color:#000;">CIN/Passeport
+                </span>
+            </td>
+            <td style="font-size:12.5px;width: 80%; text-align: left;line-height: 30px">
+                :
+                {{inscription.admission.preinscription.etudiant.cin}}
+            </td>
+        </tr>
+
+
+    </tbody>
+
+</table>
+
+<p style="line-height: 1.8; margin: 10px 60px;font-size:12px;text-align: justify; ">
+
+    A été inscrit à <span style="font-size:12px;font-weight: bold;color:black;">l'{{inscription.annee.formation.etablissement.designation}}</span>
+    «EIA» a suivi avec succès le cursus universitaire de la filière
+    {% if inscription.annee.formation.id == 843 %}« <span style="font-size:12px;font-weight: bold;color:black;">Génie des Procédés Industriels Pharmaceutiques</span> » et a été déclaré
+    (e) « <span style="font-size:12px;font-weight: bold;color:black;">Ingénieur en Génie des Procédés Industriels Pharmaceutiques</span> »
+    {% else %}
+    «<span style="font-size:12px;font-weight: bold;color:black;">{{inscription.annee.formation.designation}}</span>» et
+    a été déclaré (e) « Ingénieur en {{inscription.annee.formation.designation}} »
+    {% endif %}, au titre de l’année universitaire
+    {{inscription.annee.designation}}.
+
+    <br><br>
+
+    Cette attestation est délivrée à l'intéressé(e) pour servir et valoir ce que de droit.
+
+</p>
+
+<br><br>
+
+<table style="width: 100%;font-size:10.5px;margin: 10px 60px" align="center" cellspacing="0">
+    <tbody>
+        <tr>
+            <td style="width: 70%; text-align: left;">
+                <p style="font-size: 10px;color:#000">
+                    <b>
+                        <u>Avis important :</u>
+                    </b>
+                </p>
+                <p style="font-size: 10px;">Il ne peut être délivré qu'un seul exemplaire de la présente attestation de
+                    réussite <br> Aucun duplicata ne sera fourni.
+                </p>
+            </td>
+            <td style="width: 30%; text-align: left;"></td>
+        </tr>
+    </tbody>
+</table>
+<table style="width: 100%;margin: 10px 60px" align="center" cellspacing="0">
+    <thead>
+        <tr>
+            <th style="width: 30%; text-align: left;"></th>
+        </tr>
+    </thead>
+    <tbody>
+
+        <tr>
+
+            <td style="width: 89%; text-align: right;">
+                <br><br><br>
+                <span style="font-size:10px;font-weight: bold;color:black;">
+                    Fait à Rabat, le
+                    {{"now"|date("d/m/Y")}}</span>
+
+            </td>
+
+        </tr>
+    </tbody>
+
+</table>
