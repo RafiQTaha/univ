@@ -230,21 +230,24 @@ class SemestreController extends AbstractController
             $sheet->setCellValue('E' . $i, $data['inscription']->getAdmission()->getPreinscription()->getEtudiant()->getNom());
             $sheet->setCellValue('F' . $i, $data['inscription']->getAdmission()->getPreinscription()->getEtudiant()->getPrenom());
             $alphabet = range('G', 'Z');
+            $j = count($alphabet);
+            foreach (range('A', 'Z') as $range) {
+                $alphabet[$j] = 'A'.$range;
+                $j++; 
+            }
             $k = 0;
             foreach ($data['noteModules'] as $key => $noteModule) {
                 $column = $alphabet[$k];
-                // $sheet->setCellValue($column.$i, $noteModule['note']." ". $noteModule['statut']['abreviationAff']);
                 $sheet->setCellValue($column . $i, $noteModule['note']);
                 $k++;
                 $column = $alphabet[$k];
                 $sheet->setCellValue($column . $i, $noteModule['statut']['abreviationAff']);
                 $k++;
             }
-            $alphabet = range($column, 'Z');
-            $sheet->setCellValue($alphabet[1] . $i, round($data['moyenneNormal'], 2));
-            $sheet->setCellValue($alphabet[2] . $i, round($data['moyenneSec'], 2));
-            $sheet->setCellValue($alphabet[3] . $i, $this->getStatut($data['inscription'], $semestre, statut: "statutAff")->getContent());
-            $sheet->setCellValue($alphabet[4] . $i, $data['categorie']);
+            $sheet->setCellValue($alphabet[$k] . $i, round($data['moyenneNormal'], 2));
+            $sheet->setCellValue($alphabet[$k+1] . $i, round($data['moyenneSec'], 2));
+            $sheet->setCellValue($alphabet[$k+2] . $i, $this->getStatut($data['inscription'], $semestre, statut: "statutAff")->getContent());
+            $sheet->setCellValue($alphabet[$k+3] . $i, $data['categorie']);
             $i++;
             // $j++;
         }
