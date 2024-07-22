@@ -465,7 +465,7 @@ class ElementController extends AbstractController
     {
         $etablissement_id = $enote->getInscription()->getAnnee()->getFormation()->getEtablissement()->getId();
         if ($enote->getElement()->getModule()->getId() == 7419) {
-            //temporaire
+            ////temporaire
             $moy = 10;
             $moyIni = 10;
             // if (in_array($enote->getElement()->getId(), [10119, 10120])) {
