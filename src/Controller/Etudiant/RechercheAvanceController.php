@@ -78,46 +78,87 @@ class RechercheAvanceController extends AbstractController
     #[Route('/attestation/inscription/{inscription}', name: 'etudiant_recherche_attestation_inscription')]
     public function attestationInscription(TInscription $inscription)
     {
-        $html = $this->render("etudiant/recherche_avance/pdf/attestations/inscription.html.twig", [
-            'inscription' => $inscription
-        ])->getContent();
-        // dd($html);
-        $mpdf = new Mpdf([
-            'mode' => 'utf-8',
-            'margin_left' => 5,
-            'margin_right' => 5,
-        ]);
-        // $mpdf->SetHTMLHeader(
-        //     $this->render("etudiant/recherche_avance/pdf/attestations/header.html.twig")->getContent()
-        // );
-        $mpdf->SetHTMLFooter(
-            $this->render("etudiant/recherche_avance/pdf/attestations/footer.html.twig")->getContent()
-        );
-        $mpdf->WriteHTML($html);
-        $mpdf->SetTitle('Attestation d\'inscription');
-        $mpdf->Output("attestaion.pdf", "I");
+        ini_set('memory_limit', '-1');
+        if ($inscription->getAnnee()->getFormation()->getEtablissement()->getId() == 25) {
+            $html = $this->render("etudiant/recherche_avance/pdf/attestations/inscription_CFC.html.twig", [
+                'inscription' => $inscription
+            ])->getContent();
+            // dd($html);
+            $mpdf = new Mpdf([
+                'mode' => 'utf-8',
+                'margin_left' => 5,
+                'margin_right' => 5,
+            ]);
+            // $mpdf->SetHTMLHeader(
+            //     $this->render("etudiant/recherche_avance/pdf/attestations/header.html.twig")->getContent()
+            // );
+            $mpdf->SetHTMLFooter(
+                $this->render("etudiant/recherche_avance/pdf/attestations/footer.html.twig")->getContent()
+            );
+            $mpdf->WriteHTML($html);
+            $mpdf->SetTitle('Attestation d\'inscription');
+            $mpdf->Output("attestaion.pdf", "I");
+        } else {
+            $html = $this->render("etudiant/recherche_avance/pdf/attestations/inscription.html.twig", [
+                'inscription' => $inscription
+            ])->getContent();
+            // dd($html);
+            $mpdf = new Mpdf([
+                'mode' => 'utf-8',
+                'margin_left' => 5,
+                'margin_right' => 5,
+            ]);
+            // $mpdf->SetHTMLHeader(
+            //     $this->render("etudiant/recherche_avance/pdf/attestations/header.html.twig")->getContent()
+            // );
+            $mpdf->SetHTMLFooter(
+                $this->render("etudiant/recherche_avance/pdf/attestations/footer.html.twig")->getContent()
+            );
+            $mpdf->WriteHTML($html);
+            $mpdf->SetTitle('Attestation d\'inscription');
+            $mpdf->Output("attestaion.pdf", "I");
+        }
     }
     #[Route('/attestation/scolarite/{inscription}', name: 'etudiant_recherche_attestation_scolarite')]
     public function attestationScolarite(TInscription $inscription)
     {
-        $html = $this->render("etudiant/recherche_avance/pdf/attestations/scolarite.html.twig", [
-            'inscription' => $inscription,
-            'laz' => 0
-        ])->getContent();
-        // dd($html);
-        $mpdf = new Mpdf([
-            'margin_left' => 5,
-            'margin_right' => 5,
-        ]);
-        // $mpdf->SetHTMLHeader(
-        //     $this->render("etudiant/recherche_avance/pdf/attestations/header.html.twig")->getContent()
-        // );
-        $mpdf->SetHTMLFooter(
-            $this->render("etudiant/recherche_avance/pdf/attestations/footer.html.twig")->getContent()
-        );
-        $mpdf->WriteHTML($html);
-        $mpdf->SetTitle('Attestation de scolarité');
-        $mpdf->Output("scolarite.pdf", "I");
+        ini_set('memory_limit', '-1');
+        if ($inscription->getAnnee()->getFormation()->getEtablissement()->getId() == 25) {
+            $html = $this->render("etudiant/recherche_avance/pdf/attestations/scolarite_CFC.html.twig", [
+                'inscription' => $inscription,
+                'laz' => 0
+            ])->getContent();
+            // dd($html);
+            $mpdf = new Mpdf([
+                'margin_left' => 5,
+                'margin_right' => 5,
+            ]);
+            $mpdf->SetHTMLFooter(
+                $this->render("etudiant/recherche_avance/pdf/attestations/footer.html.twig")->getContent()
+            );
+            $mpdf->WriteHTML($html);
+            $mpdf->SetTitle('Attestation de scolarité');
+            $mpdf->Output("scolarite.pdf", "I");
+        } else {
+            $html = $this->render("etudiant/recherche_avance/pdf/attestations/scolarite.html.twig", [
+                'inscription' => $inscription,
+                'laz' => 0
+            ])->getContent();
+            // dd($html);
+            $mpdf = new Mpdf([
+                'margin_left' => 5,
+                'margin_right' => 5,
+            ]);
+            // $mpdf->SetHTMLHeader(
+            //     $this->render("etudiant/recherche_avance/pdf/attestations/header.html.twig")->getContent()
+            // );
+            $mpdf->SetHTMLFooter(
+                $this->render("etudiant/recherche_avance/pdf/attestations/footer.html.twig")->getContent()
+            );
+            $mpdf->WriteHTML($html);
+            $mpdf->SetTitle('Attestation de scolarité');
+            $mpdf->Output("scolarite.pdf", "I");
+        }
     }
     #[Route('/attestation/suiviFr/{inscription}', name: 'etudiant_recherche_attestation_suivi')]
     public function attestationSiuvi(TInscription $inscription)
@@ -238,7 +279,6 @@ class RechercheAvanceController extends AbstractController
     #[Route('/attestation/reussite/{inscription}', name: 'etudiant_recherche_attestation_reussite')]
     public function attestationReussite(TInscription $inscription)
     {
-        ini_set('memory_limit', '-1');
         $prm = $this->em->getRepository(TInscription::class)->findBy([
             'admission' => $inscription->getAdmission(),
             'promotion' => $inscription->getPromotion()
@@ -262,6 +302,23 @@ class RechercheAvanceController extends AbstractController
                 'margin_left' => 5,
                 'margin_right' => 5,
             ]);
+
+            $mpdf->WriteHTML($html);
+            $mpdf->SetTitle('Attestation de réussite');
+            $mpdf->Output("reussite.pdf", "I");
+        } elseif ($inscription->getAnnee()->getFormation()->getEtablissement()->getId() == 25) {
+            $html = $this->render("etudiant/recherche_avance/pdf/attestations/reussite_CFC.html.twig", [
+                'inscription' => $inscription,
+            ])->getContent();
+
+            $mpdf = new Mpdf([
+                'margin_left' => 5,
+                'margin_right' => 5,
+            ]);
+
+            $mpdf->SetHTMLFooter(
+                $this->render("etudiant/recherche_avance/pdf/attestations/footer.html.twig")->getContent()
+            );
 
             $mpdf->WriteHTML($html);
             $mpdf->SetTitle('Attestation de réussite');
