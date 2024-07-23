@@ -534,7 +534,7 @@ class AnneeController extends AbstractController
     }
     public function AnneeGetStatutCategories($categ_semestre_1, $categ_semestre_2, $statut_annee, $statut_semestre_1, $statut_semestre_2)
     {
-        $categorie = max($categ_semestre_1,$categ_semestre_2);
+        $categorie = max($categ_semestre_1, $categ_semestre_2);
         return $categorie;
         // dd($categorie);
         // $categorie = null;
@@ -721,7 +721,7 @@ class AnneeController extends AbstractController
             array_push($headers,  $module->getDesignation());
             array_push($headers, 'STAT-AFF');
         }
-        array_push($headers, $semstre1->getDesignation(), "Statut", $semstre2->getDesignation(), "Statut", "Moyenne Validation", "Moyenne Classement", "Statut", "Catégorie");
+        array_push($headers, $semstre1->getDesignation(), "Statut S1", "categorie S1", $semstre2->getDesignation(), "Statut S2", "categorie S2", "Moyenne Validation", "Moyenne Classement", "Statut", "Catégorie");
         // dd($headers);
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
@@ -755,9 +755,11 @@ class AnneeController extends AbstractController
 
             $infos[] = round($snote1->getNote(), 2);
             $infos[] = $snote1->getStatutAff()->getAbreviation();
+            $infos[] = $snote1->getCategorie();
 
             $infos[] = $snote2 ? round($snote2->getNote(), 2) : "null";
             $infos[] = $snote2 ? $snote2->getStatutAff()->getAbreviation() : "null";
+            $infos[] = $snote2 ? $snote2->getCategorie() : "null";
 
             $anote = $this->em->getRepository(ExAnotes::class)->findOneBy(['inscription' => $data['inscription'], 'annee' => $annee]);
             // dd($anote);
