@@ -534,39 +534,42 @@ class AnneeController extends AbstractController
     }
     public function AnneeGetStatutCategories($categ_semestre_1, $categ_semestre_2, $statut_annee, $statut_semestre_1, $statut_semestre_2)
     {
-        $categorie = null;
-
-        switch ($statut_annee) {
-            case 41:
-                $categorie = 'A';
-                break;
-            case 70:
-                $categorie = 'B';
-                break;
-            case 42:
-                $categorie = 'C';
-                break;
-            case 43:
-                $categorie = 'CR';
-                break;
-            case 46:
-                $categorie = 'D';
-                break;
-            case 44:
-                if ($statut_semestre_1 == 57) {
-                    $categorie = 'E';
-                } else {
-                    if ($statut_semestre_1 == 39) {
-                        $categorie = 'F';
-                    } else {
-                        $categorie = $categ_semestre_2;
-                    }
-                }
-                break;
-        }
-        //        echo 'categ f : '.$categorie;
-
+        $categorie = max($categ_semestre_1,$categ_semestre_2);
         return $categorie;
+        // dd($categorie);
+        // $categorie = null;
+
+        // switch ($statut_annee) {
+        //     case 41:
+        //         $categorie = 'A';
+        //         break;
+        //     case 70:
+        //         $categorie = 'B';
+        //         break;
+        //     case 42:
+        //         $categorie = 'C';
+        //         break;
+        //     case 43:
+        //         $categorie = 'CR';
+        //         break;
+        //     case 46:
+        //         $categorie = 'D';
+        //         break;
+        //     case 44:
+        //         if ($statut_semestre_1 == 57) {
+        //             $categorie = 'E';
+        //         } else {
+        //             if ($statut_semestre_1 == 39) {
+        //                 $categorie = 'F';
+        //             } else {
+        //                 $categorie = $categ_semestre_2;
+        //             }
+        //         }
+        //         break;
+        // }
+        ////        echo 'categ f : '.$categorie;
+
+        // return $categorie;
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////
