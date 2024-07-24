@@ -75,14 +75,14 @@ class TOperationcab
     #[ORM\Column(type: 'string', length: 30, nullable: true)]
     private $anneeFinPec;
 
-    #[ORM\Column(type: 'float', nullable: true)]
-    private $nbrAnnee;
+    // #[ORM\Column(type: 'float', nullable: true)]
+    // private $nbrAnnee;
 
-    #[ORM\Column(type: 'string', length: 20, nullable: true)]
-    private $anneePecDebut;
+    // #[ORM\Column(type: 'string', length: 20, nullable: true)]
+    // private $anneePecDebut;
 
-    #[ORM\Column(type: 'string', length: 20, nullable: true)]
-    private $anneePecFin;
+    // #[ORM\Column(type: 'string', length: 20, nullable: true)]
+    // private $anneePecFin;
 
     #[ORM\Column(type: 'float', nullable: true)]
     private $nbrAnneePec;
@@ -383,41 +383,41 @@ class TOperationcab
         return $this;
     }
 
-    public function getNbrAnnee(): ?float
-    {
-        return $this->nbrAnnee;
-    }
+    // public function getNbrAnnee(): ?float
+    // {
+    //     return $this->nbrAnnee;
+    // }
 
-    public function setNbrAnnee(?float $nbrAnnee): self
-    {
-        $this->nbrAnnee = $nbrAnnee;
+    // public function setNbrAnnee(?float $nbrAnnee): self
+    // {
+    //     $this->nbrAnnee = $nbrAnnee;
 
-        return $this;
-    }
+    //     return $this;
+    // }
 
-    public function getAnneePecDebut(): ?string
-    {
-        return $this->anneePecDebut;
-    }
+    // public function getAnneePecDebut(): ?string
+    // {
+    //     return $this->anneePecDebut;
+    // }
 
-    public function setAnneePecDebut(?string $anneePecDebut): self
-    {
-        $this->anneePecDebut = $anneePecDebut;
+    // public function setAnneePecDebut(?string $anneePecDebut): self
+    // {
+    //     $this->anneePecDebut = $anneePecDebut;
 
-        return $this;
-    }
+    //     return $this;
+    // }
 
-    public function getAnneePecFin(): ?string
-    {
-        return $this->anneePecFin;
-    }
+    // public function getAnneePecFin(): ?string
+    // {
+    //     return $this->anneePecFin;
+    // }
 
-    public function setAnneePecFin(?string $anneePecFin): self
-    {
-        $this->anneePecFin = $anneePecFin;
+    // public function setAnneePecFin(?string $anneePecFin): self
+    // {
+    //     $this->anneePecFin = $anneePecFin;
 
-        return $this;
-    }
+    //     return $this;
+    // }
 
     public function getNbrAnneePec(): ?float
     {
