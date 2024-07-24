@@ -672,6 +672,8 @@ class AnneeController extends AbstractController
     #[Route('/extraction_annee/{etab}', name: 'evaluation_annee_extraction_annee')]
     public function evaluationAnneeExtraction($etab, Request $request)
     {
+        ini_set('memory_limit', '-1');
+        set_time_limit(0);
         $etablissement = $this->em->getRepository(AcEtablissement::class)->find($etab);
         $current_year = date('m') > 7 ? date('Y') . '/' . date('Y') + 1 :  date('Y') - 1 . '/' . date('Y');
         $annees = $this->em->getRepository(ExAnotes::class)->getAnneeByCurrentYear($current_year, $etablissement ? $etablissement->getId() : null);

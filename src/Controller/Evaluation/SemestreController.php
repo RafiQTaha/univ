@@ -668,6 +668,8 @@ class SemestreController extends AbstractController
     #[Route('/extraction_semestre/{etab}', name: 'evaluation_semestre_extraction_semestre')]
     public function evaluationSemestreExtraction($etab, Request $request)
     {
+        ini_set('memory_limit', '-1');
+        set_time_limit(0);
         $etablissement = $this->em->getRepository(AcEtablissement::class)->find($etab);
         $current_year = date('m') > 7 ? date('Y') . '/' . date('Y') + 1 :  date('Y') - 1 . '/' . date('Y');
         // $elements = $this->em->getRepository(AcElement::class)->getElementByCurrentYear($current_year);
