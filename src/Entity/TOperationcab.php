@@ -90,6 +90,12 @@ class TOperationcab
     #[ORM\Column(type: 'string', length: 50, nullable: true)]
     private $codePec;
 
+    #[ORM\Column(type: 'float', nullable: true)]
+    private $pecSocialId;
+
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private $PecRefSocial;
+
     public function __construct()
     {
         $this->reglements = new ArrayCollection();
@@ -433,6 +439,30 @@ class TOperationcab
     public function setCodePec(?string $codePec): self
     {
         $this->codePec = $codePec;
+
+        return $this;
+    }
+
+    public function getPecSocialId(): ?float
+    {
+        return $this->pecSocialId;
+    }
+
+    public function setPecSocialId(?float $pecSocialId): self
+    {
+        $this->pecSocialId = $pecSocialId;
+
+        return $this;
+    }
+
+    public function getPecRefSocial(): ?string
+    {
+        return $this->PecRefSocial;
+    }
+
+    public function setPecRefSocial(?string $PecRefSocial): self
+    {
+        $this->PecRefSocial = $PecRefSocial;
 
         return $this;
     }
