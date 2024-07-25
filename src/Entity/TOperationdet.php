@@ -52,6 +52,9 @@ class TOperationdet
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'tOperationdets')]
     private $userUpdated;
 
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private $observation;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -209,6 +212,18 @@ class TOperationdet
     public function setUserUpdated(?User $userUpdated): self
     {
         $this->userUpdated = $userUpdated;
+
+        return $this;
+    }
+
+    public function getObservation(): ?string
+    {
+        return $this->observation;
+    }
+
+    public function setObservation(?string $observation): self
+    {
+        $this->observation = $observation;
 
         return $this;
     }
