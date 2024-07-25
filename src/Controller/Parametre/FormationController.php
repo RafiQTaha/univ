@@ -121,6 +121,7 @@ class FormationController extends AbstractController
        $formation->setNbrAnnee($request->get('duree'));
        $formation->setActive($request->get('active') == "on" ? true : false);
        $formation->setCreated(new \DateTime("now"));
+       $formation->setUserCreated($this->getUser());
        $formation->setEtablissement(
            $this->em->getRepository(AcEtablissement::class)->find($request->get("etablissement_id"))
        );
@@ -144,10 +145,15 @@ class FormationController extends AbstractController
     #[Route('/update/{formation}', name: 'parametre_formation_update')]
     public function update(Request $request, AcFormation $formation): Response
     {
-        $formation->setDesignation($request->get('designation'));
+        if (trim($request->get('designation')) != $formation->getDesignation()) {
+            $formation->setOldDesignation($formation->getDesignation());
+        }
+        $formation->setDesignation(trim($request->get('designation')));
         $formation->setAbreviation($request->get('abreviation'));
         $formation->setActive($request->get('active') == "on" ? true : false);
         $formation->setNbrAnnee($request->get('duree'));
+        $formation->setUpdated(new \DateTime("now"));
+        $formation->setUserUpdated($this->getUser());
         $this->em->flush();
  
         return new JsonResponse(1);
@@ -156,6 +162,8 @@ class FormationController extends AbstractController
     public function delete(Request $request, AcFormation $formation): Response
     {
         $formation->setActive('0');
+        $formation->setUpdated(new \DateTime("now"));
+        $formation->setUserUpdated($this->getUser());
         $this->em->flush();
  
         return new JsonResponse(1);

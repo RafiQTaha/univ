@@ -72,6 +72,9 @@ class AcFormation
     #[ORM\ManyToOne(targetEntity: AcEtablissement::class, inversedBy: 'formation')]
     private $EtabSec;
 
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private $oldDesignation;
+
     public function __construct()
     {
         $this->acPromotions = new ArrayCollection();
@@ -419,6 +422,18 @@ class AcFormation
     public function setEtabSec(?AcEtablissement $EtabSec): self
     {
         $this->EtabSec = $EtabSec;
+
+        return $this;
+    }
+
+    public function getOldDesignation(): ?string
+    {
+        return $this->oldDesignation;
+    }
+
+    public function setOldDesignation(?string $oldDesignation): self
+    {
+        $this->oldDesignation = $oldDesignation;
 
         return $this;
     }
