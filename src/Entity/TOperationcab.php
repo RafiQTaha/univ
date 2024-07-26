@@ -75,15 +75,6 @@ class TOperationcab
     #[ORM\Column(type: 'string', length: 30, nullable: true)]
     private $anneeFinPec;
 
-    // #[ORM\Column(type: 'float', nullable: true)]
-    // private $nbrAnnee;
-
-    // #[ORM\Column(type: 'string', length: 20, nullable: true)]
-    // private $anneePecDebut;
-
-    // #[ORM\Column(type: 'string', length: 20, nullable: true)]
-    // private $anneePecFin;
-
     #[ORM\Column(type: 'float', nullable: true)]
     private $nbrAnneePec;
 
@@ -95,6 +86,9 @@ class TOperationcab
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $PecRefSocial;
+
+    #[ORM\Column(type: 'float', nullable: true)]
+    private $montantPec;
 
     public function __construct()
     {
@@ -178,18 +172,6 @@ class TOperationcab
 
         return $this;
     }
-
-    // public function getOrganisme(): ?POrganisme
-    // {
-    //     return $this->organisme;
-    // }
-
-    // public function setOrganisme(?POrganisme $organisme): self
-    // {
-    //     $this->organisme = $organisme;
-
-    //     return $this;
-    // }
 
     /**
      * @return Collection|TReglement[]
@@ -383,42 +365,6 @@ class TOperationcab
         return $this;
     }
 
-    // public function getNbrAnnee(): ?float
-    // {
-    //     return $this->nbrAnnee;
-    // }
-
-    // public function setNbrAnnee(?float $nbrAnnee): self
-    // {
-    //     $this->nbrAnnee = $nbrAnnee;
-
-    //     return $this;
-    // }
-
-    // public function getAnneePecDebut(): ?string
-    // {
-    //     return $this->anneePecDebut;
-    // }
-
-    // public function setAnneePecDebut(?string $anneePecDebut): self
-    // {
-    //     $this->anneePecDebut = $anneePecDebut;
-
-    //     return $this;
-    // }
-
-    // public function getAnneePecFin(): ?string
-    // {
-    //     return $this->anneePecFin;
-    // }
-
-    // public function setAnneePecFin(?string $anneePecFin): self
-    // {
-    //     $this->anneePecFin = $anneePecFin;
-
-    //     return $this;
-    // }
-
     public function getNbrAnneePec(): ?float
     {
         return $this->nbrAnneePec;
@@ -463,6 +409,18 @@ class TOperationcab
     public function setPecRefSocial(?string $PecRefSocial): self
     {
         $this->PecRefSocial = $PecRefSocial;
+
+        return $this;
+    }
+
+    public function getMontantPec(): ?float
+    {
+        return $this->montantPec;
+    }
+
+    public function setMontantPec(?float $montantPec): self
+    {
+        $this->montantPec = $montantPec;
 
         return $this;
     }
