@@ -13,61 +13,61 @@ $(document).ready(function () {
     let id_reglement = false;
     let ids_reglement = [];
     var table_reglement = $("#datables_reglement").DataTable({
-            lengthMenu: [
-                [10, 15, 25, 50, 100, 20000000000000],
-                [10, 15, 25, 50, 100, "All"],
-            ],
-            order: [[0, "desc"]],
-            ajax: "/facture/reglements/list",
-            processing: true,
-            serverSide: true,
-            deferRender: true,
-            scrollX: true,
-            drawCallback: function () {
-                // ids_reglement.forEach((e) => {
-                //     $("body tr#" + e)
-                //     .find("input")
-                //     .prop("checked", true);
-                // });
-                $("body tr#" + id_reglement).addClass('active_databales');
-            },
-            preDrawCallback: function(settings) {
-                if ($.fn.DataTable.isDataTable('#datables_reglement')) {
-                    var dt = $('#datables_reglement').DataTable();
-    
-                    //Abort previous ajax request if it is still in process.
-                    var settings = dt.settings();
-                    if (settings[0].jqXHR) {
-                        settings[0].jqXHR.abort();
-                    }
+        lengthMenu: [
+            [10, 15, 25, 50, 100, 20000000000000],
+            [10, 15, 25, 50, 100, "All"],
+        ],
+        order: [[0, "desc"]],
+        ajax: "/facture/reglements/list",
+        processing: true,
+        serverSide: true,
+        deferRender: true,
+        scrollX: true,
+        drawCallback: function () {
+            // ids_reglement.forEach((e) => {
+            //     $("body tr#" + e)
+            //     .find("input")
+            //     .prop("checked", true);
+            // });
+            $("body tr#" + id_reglement).addClass('active_databales');
+        },
+        preDrawCallback: function (settings) {
+            if ($.fn.DataTable.isDataTable('#datables_reglement')) {
+                var dt = $('#datables_reglement').DataTable();
+
+                //Abort previous ajax request if it is still in process.
+                var settings = dt.settings();
+                if (settings[0].jqXHR) {
+                    settings[0].jqXHR.abort();
                 }
-            },
-            language: datatablesFrench,
+            }
+        },
+        language: datatablesFrench,
     });
     const getReglementInfos = () => {
-        let modalAlert =  $("#modifier_org-modal .modal-body .alert");
+        let modalAlert = $("#modifier_org-modal .modal-body .alert");
         modalAlert.remove();
         const icon = $("#modifier i");
         icon.removeClass('fa-edit').addClass("fa-spinner fa-spin");
-        axios.get('/facture/reglements/getReglementInfos/'+id_reglement)
-        .then(success => {
-            icon.removeClass('fa-spinner fa-spin').addClass("fa-edit");
-            console.log(success);
-            $('#edit_modal .edit_reglement-form').html(success.data)
-            $('#edit_modal .edit_reglement-form select').select2()
-        })
-        .catch(err => {
-            console.log(err)
-            icon.removeClass('fa-spinner fa-spin ').addClass("fa-edit");
-        })
+        axios.get('/facture/reglements/getReglementInfos/' + id_reglement)
+            .then(success => {
+                icon.removeClass('fa-spinner fa-spin').addClass("fa-edit");
+                console.log(success);
+                $('#edit_modal .edit_reglement-form').html(success.data)
+                $('#edit_modal .edit_reglement-form select').select2()
+            })
+            .catch(err => {
+                console.log(err)
+                icon.removeClass('fa-spinner fa-spin ').addClass("fa-edit");
+            })
     }
     $("select").select2();
     // $("#paiement").select2();
-    $("#etablissement").on('change', async function (){
+    $("#etablissement").on('change', async function () {
         const id_etab = $(this).val();
         table_reglement.columns(1).search("");
         let response = ""
-        if(id_etab != "") {
+        if (id_etab != "") {
             if ($("#paiement") && $("#paiement").val() != "") {
                 table_reglement.columns(2).search($("#paiement").val())
             }
@@ -75,9 +75,9 @@ $(document).ready(function () {
                 table_reglement.columns(3).search($("#bordereaux").val())
             }
             table_reglement.columns(0).search(id_etab).draw();
-            const request = await axios.get('/api/formation/'+id_etab);
+            const request = await axios.get('/api/formation/' + id_etab);
             response = request.data
-        }else{
+        } else {
             table_reglement.columns(0).search(id_etab).draw();
             if ($("#paiement") && $("#paiement").val() != "") {
                 table_reglement.columns(2).search($("#paiement").val())
@@ -88,7 +88,7 @@ $(document).ready(function () {
         }
         $('#formation').html(response).select2();
     })
-    $("#formation").on('change', async function (){
+    $("#formation").on('change', async function () {
         const id_formation = $(this).val();
         table_reglement.columns().search("");
         if ($("#paiement").val() != "") {
@@ -98,25 +98,25 @@ $(document).ready(function () {
             table_reglement.columns(3).search($("#bordereaux").val());
         }
         let response = ""
-        if(id_formation != "") {
+        if (id_formation != "") {
             table_reglement.columns(1).search(id_formation).draw();
-            const request = await axios.get('/api/promotion/'+id_formation);
+            const request = await axios.get('/api/promotion/' + id_formation);
             response = request.data
-        }else{
+        } else {
             table_reglement.columns(0).search($("#etablissement").val()).draw();
         }
     })
-    $("#paiement").on('change', async function (){
+    $("#paiement").on('change', async function () {
         const id_paiement = $(this).val();
         table_reglement.columns(2).search(id_paiement).draw();
     })
-    $("#bordereaux").on('change', async function (){
+    $("#bordereaux").on('change', async function () {
         const id_bordereaux = $(this).val();
         table_reglement.columns(3).search(id_bordereaux).draw();
     })
-    $('body').on('dblclick','#datables_reglement tbody tr',function (e) {
+    $('body').on('dblclick', '#datables_reglement tbody tr', function (e) {
         e.preventDefault();
-        if($(this).hasClass('active_databales')) {
+        if ($(this).hasClass('active_databales')) {
             $(this).removeClass('active_databales');
             id_reglement = null;
         } else {
@@ -146,37 +146,37 @@ $(document).ready(function () {
     //     }
     //     console.log(ids_reglement);
     // })
-    $('body').on('click', '#check', function() {
+    $('body').on('click', '#check', function () {
         const input = $(this)
         console.log(input.attr("data-id"))
-        if(input.is(":checked")){
+        if (input.is(":checked")) {
             ids_reglement.push(input.attr("data-id"));
-        }else{
+        } else {
             const index = ids_reglement.indexOf(input.attr("data-id"));
-            ids_reglement.splice(index,1);
+            ids_reglement.splice(index, 1);
         }
-      console.log(ids_reglement)
-      });
+        console.log(ids_reglement)
+    });
     $("body").on("click", '#imprimer', async function (e) {
         e.preventDefault();
-        if(!id_reglement){
+        if (!id_reglement) {
             Toast.fire({
                 icon: 'error',
                 title: 'Veuillez selection une ligne!',
             })
             return;
         }
-        window.open('/facture/reglements/reglementprint/'+id_reglement, '_blank');
+        window.open('/facture/reglements/reglementprint/' + id_reglement, '_blank');
     });
     $("body").on("click", '#borderaux', async function (e) {
         e.preventDefault();
-        let modalAlert =  $("#modifier_org-modal .modal-body .alert");
+        let modalAlert = $("#modifier_org-modal .modal-body .alert");
         modalAlert.remove();
         const icon = $("#borderaux i");
-        if(ids_reglement.length === 0|| $("#etablissement").val() == "" || $('#formation').val() == "" || $("#paiement").val() == ""){
+        if (ids_reglement.length === 0 || $("#etablissement").val() == "" || $('#formation').val() == "" || $("#paiement").val() == "") {
             Toast.fire({
-            icon: 'error',
-            title: 'Merci de Choisir l\'etablissement, la formation, mode de paiement et au moins une ligne, ',
+                icon: 'error',
+                title: 'Merci de Choisir l\'etablissement, la formation, mode de paiement et au moins une ligne, ',
             })
             return;
         }
@@ -184,7 +184,7 @@ $(document).ready(function () {
         var formData = new FormData();
         formData.append('ids_reglement', JSON.stringify(ids_reglement));
         try {
-            const request = await axios.post("/facture/reglements/borderaux/"+$('#formation').val()+'/'+$("#paiement").val(), formData);
+            const request = await axios.post("/facture/reglements/borderaux/" + $('#formation').val() + '/' + $("#paiement").val(), formData);
             const data = request.data;
             icon.addClass('fa-folder').removeClass("fa-spinner fa-spin");
             Toast.fire({
@@ -192,8 +192,8 @@ $(document).ready(function () {
                 title: 'Borderaux Bien Genere',
             })
             ids_reglement.length = [];
-            window.open('/facture/reglements/printborderaux/'+data, '_blank');
-            table_reglement.ajax.reload(null,false);
+            window.open('/facture/reglements/printborderaux/' + data, '_blank');
+            table_reglement.ajax.reload(null, false);
             console.log(ids_reglement);
         } catch (error) {
             const message = error.response.data;
@@ -209,7 +209,7 @@ $(document).ready(function () {
         e.preventDefault();
         window.open('/facture/reglements/creanceprint', '_blank');
     });
-    
+
     // $('body').on('click','#ajouter',function (e) {
     //     e.preventDefault();
     //     if(!id_facture){
@@ -221,9 +221,9 @@ $(document).ready(function () {
     //     }
     //     $("#ajouter_modal").modal('show');
     // });
-    $('body').on('click','#annuler',function (e) {
+    $('body').on('click', '#annuler', function (e) {
         e.preventDefault();
-        if(!id_reglement){
+        if (!id_reglement) {
             Toast.fire({
                 icon: 'error',
                 title: 'Merci de choisir un reglement',
@@ -232,17 +232,17 @@ $(document).ready(function () {
         }
         $('#annuler_reglement_modal').modal("show");
     });
-    
-    $('body').on('click','#Annuler_reglement', async function (e) {
+
+    $('body').on('click', '#Annuler_reglement', async function (e) {
         e.preventDefault();
-        if(!id_reglement){
+        if (!id_reglement) {
             Toast.fire({
-            icon: 'error',
-            title: 'Merci de choisir un reglement',
+                icon: 'error',
+                title: 'Merci de choisir un reglement',
             })
             return;
         }
-        if($('#motif_annuler').find(':selected').val() == "" ){
+        if ($('#motif_annuler').find(':selected').val() == "") {
             Toast.fire({
                 icon: 'error',
                 title: 'Merci de Choisir Le Motif d\'annulation',
@@ -251,19 +251,19 @@ $(document).ready(function () {
         }
         // alert($('#annuler_select').val());
         var res = confirm('Vous voulez vraiment Annuler cette Reglement ?');
-        if(res == 1){
+        if (res == 1) {
             const icon = $("#Annuler_reglement i");
             icon.removeClass('fa-times-circle').addClass("fa-spinner fa-spin");
             var formData = new FormData();
-            formData.append('motif_annuler', $('#motif_annuler').val()); 
+            formData.append('motif_annuler', $('#motif_annuler').val());
             try {
-                const request = await axios.post('/facture/reglements/annuler_reglement/'+id_reglement,formData);
+                const request = await axios.post('/facture/reglements/annuler_reglement/' + id_reglement, formData);
                 const response = request.data;
                 Toast.fire({
                     icon: 'success',
                     title: response,
                 })
-                table_reglement.ajax.reload(null,false);
+                table_reglement.ajax.reload(null, false);
                 icon.addClass('fa-times-circle').removeClass("fa-spinner fa-spin");
             } catch (error) {
                 const message = error.response.data;
@@ -273,11 +273,11 @@ $(document).ready(function () {
                 })
                 icon.addClass('fa-times-circle').removeClass("fa-spinner fa-spin");
             }
-        }  
+        }
     })
-    $('body').on('click','#modifier',function (e) {
+    $('body').on('click', '#modifier', function (e) {
         e.preventDefault();
-        if(!id_reglement){
+        if (!id_reglement) {
             Toast.fire({
                 icon: 'error',
                 title: 'Veuillez selection une ligne!',
@@ -286,26 +286,26 @@ $(document).ready(function () {
         }
         $("#edit_modal").modal('show');
     });
-    
+
     $("body").on("submit", '.edit_reglement-form', async function (e) {
         e.preventDefault();
         // alert('test');
         let formdata = $(this).serialize()
-        let modalAlert =  $("#edit_modal .modal-body .alert");
+        let modalAlert = $("#edit_modal .modal-body .alert");
         modalAlert.remove();
         const icon = $(".edit_reglement-form .btn i");
         icon.removeClass('fa-check-circle').addClass("fa-spinner fa-spin");
-        try{
-            const request = await  axios.post('/facture/reglements/modifier_reglement/'+id_reglement,formdata)
+        try {
+            const request = await axios.post('/facture/reglements/modifier_reglement/' + id_reglement, formdata)
             const data = request.data;
             $("#edit_modal .modal-body").prepend(
                 `<div class="alert alert-success">${data}</div>`
-            ); 
+            );
             icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin");
             reglement = false;
             table_reglement.ajax.reload(null, false);
-            window.open('/facture/reglements/reglementprint/'+id_reglement, '_blank');
-        }catch(error){
+            window.open('/facture/reglements/reglementprint/' + id_reglement, '_blank');
+        } catch (error) {
             const message = error.response.data;
             console.log(error, error.response);
             modalAlert.remove();
@@ -315,12 +315,84 @@ $(document).ready(function () {
             icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
         }
         setTimeout(() => {
-           $("#edit_modal .modal-body .alert").remove();
+            $("#edit_modal .modal-body .alert").remove();
         }, 4000);
     });
-  
-    $('body').on('click','#extraction', function (){
-      window.open('/facture/reglements/extraction_reglement', '_blank');
+
+    $('body').on('click', '#extraction', function () {
+        window.open('/facture/reglements/extraction_reglement', '_blank');
     })
-    
+
+
+    // validation
+    $('body').on('click', '#valider', async function (e) {
+        e.preventDefault();
+        if (!id_reglement) {
+            Toast.fire({
+                icon: 'error',
+                title: 'Veuillez selection une ligne!',
+            })
+            return;
+        }
+        const icon = $("#valider i");
+        icon.removeClass('fa-check').addClass("fa-spinner fa-spin");
+        try {
+            const request = await axios.get('/facture/reglements/getUgouvEncaissement/' + id_reglement);
+            response = request.data
+            $('body #encaissement_ugouv').html(response).select2();
+            $("#valider_modal").modal('show');
+            icon.addClass('fa-check').removeClass("fa-spinner fa-spin ");
+        } catch (error) {
+            const message = error.response.data;
+            Toast.fire({
+                icon: 'error',
+                title: message,
+            })
+            icon.addClass('fa-check').removeClass("fa-spinner fa-spin ");
+        }
+    });
+
+    $("body").on("submit", '.valider_reglement-form', async function (e) {
+        e.preventDefault();
+        const selectedOption = $("body #encaissement_ugouv").find('option:selected');
+        console.log(selectedOption);
+
+        const montant = selectedOption.data("montant");
+        const code = selectedOption.data("code");
+        const societe = selectedOption.data("societe");
+        const partner = selectedOption.data("partner");
+
+        let formData = new FormData(this);
+
+        formData.append('montant', montant);
+        formData.append('code', code);
+        formData.append('societe', societe);
+        formData.append('partner', partner);
+
+        const icon = $(".valider_reglement-form .btn i");
+        icon.removeClass('fa-check-circle').addClass("fa-spinner fa-spin");
+        try {
+            const request = await axios.post('/facture/reglements/valider_reglement/' + id_reglement, formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            })
+            const data = request.data;
+            $("#valider_modal").modal('hide');
+            Toast.fire({
+                icon: 'success',
+                title: "Bien valider",
+            })
+            icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin");
+            id_reglement = false;
+            table_reglement.ajax.reload(null, false);
+        } catch (error) {
+            const message = error.response.data;
+            Toast.fire({
+                icon: 'error',
+                title: message,
+            })
+            icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
+        }
+    })
 })

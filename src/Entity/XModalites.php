@@ -30,6 +30,9 @@ class XModalites
     #[ORM\Column(type: 'float', nullable: true)]
     private $active;
 
+    #[ORM\Column(type: 'integer', nullable: true)]
+    private $envoie;
+
     public function __construct()
     {
         $this->reglements = new ArrayCollection();
@@ -133,6 +136,18 @@ class XModalites
     public function setActive(?float $active): self
     {
         $this->active = $active;
+
+        return $this;
+    }
+
+    public function getEnvoie(): ?float
+    {
+        return $this->envoie;
+    }
+
+    public function setEnvoie(?float $envoie): self
+    {
+        $this->envoie = $envoie;
 
         return $this;
     }

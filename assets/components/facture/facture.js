@@ -190,7 +190,7 @@ $(document).ready(function () {
     }
   });
 
-  $("body").on("click", "#facture", function (e) {
+  $("body").on("click", "#facture", async function (e) {
     e.preventDefault();
     if (!id_facture) {
       Toast.fire({
@@ -199,7 +199,23 @@ $(document).ready(function () {
       });
       return;
     }
-    $("#detail_facture_modal").modal("show");
+    const icon = $("#facture i");
+    icon.removeClass('fa-money-bill-alt').addClass("fa-spinner fa-spin");
+    try {
+      const request = await axios.get('/facture/factures/getSomething/' + id_facture);
+      response = request.data
+      $('body #api_dropdown').html(response).select2();
+      $("#detail_facture_modal").modal("show");
+      icon.addClass('fa-money-bill-alt').removeClass("fa-spinner fa-spin ");
+    } catch (error) {
+      const message = error.response.data;
+      Toast.fire({
+        icon: 'error',
+        title: message,
+      })
+      icon.addClass('fa-money-bill-alt').removeClass("fa-spinner fa-spin ");
+    }
+
   });
 
   $("input[type=radio][name=organ]").on("change", async function (e) {
@@ -618,7 +634,7 @@ $(document).ready(function () {
   $("#facture_canvas").on("click", function () {
     window.open("/facture/factures/canvas", "_blank");
   });
-  
+
   $("#ouverture_facture").on("click", async function (e) {
     e.preventDefault();
     if (!id_facture) {
@@ -662,16 +678,16 @@ $(document).ready(function () {
   $("body").on("click", "#btn_pec", async function (e) {
     e.preventDefault();
     if (!id_facture) {
-        Toast.fire({
-          icon: "error",
-          title: "Veuillez selection une ligne!",
-        });
-        return;
+      Toast.fire({
+        icon: "error",
+        title: "Veuillez selection une ligne!",
+      });
+      return;
     }
     const icon = $("#btn_pec i");
     icon.removeClass("fa-check-circle").addClass("fa-spinner fa-spin");
     try {
-      const request = await axios.post("/facture/factures/getFacturePec/"+id_facture);
+      const request = await axios.post("/facture/factures/getFacturePec/" + id_facture);
       const response = request.data;
       $("body #form-pec").html(response);
       $("body #pec").select2();
@@ -693,7 +709,7 @@ $(document).ready(function () {
     $("#form-pec #enregistrer").addClass("disabled").attr("disabled", true);
     try {
       const request = await axios.post(
-        "/facture/factures/ajouter_pec/" + id_facture,formdata);
+        "/facture/factures/ajouter_pec/" + id_facture, formdata);
       const data = request.data;
       $("#pec_modal .modal-body").prepend(
         `<div class="alert alert-success">${data}</div>`
