@@ -299,7 +299,7 @@ class AnneeController extends AbstractController
         $dataSaved = $session->get('data_annee')['data_saved'];
         foreach ($dataSaved as $data) {
             $inscription = $this->em->getRepository(TInscription::class)->find($data['inscription']->getId());
-            $inscriptionAnnee  = $this->em->getRepository(ExSnotes::class)->findOneBy(['inscription' => $inscription]);
+            $inscriptionAnnee  = $this->em->getRepository(ExAnotes::class)->findOneBy(['inscription' => $inscription]);
             $inscriptionAnnee->setNote(
                 $data['moyenneNormal']
             );
