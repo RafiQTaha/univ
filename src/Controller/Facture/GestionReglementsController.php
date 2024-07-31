@@ -39,10 +39,13 @@ class GestionReglementsController extends AbstractController
 {
     private $em;
     private $httpClient;
+    private $apiUgouv;
+
     public function __construct(HttpClientInterface $httpClient, ManagerRegistry $doctrine)
     {
         $this->httpClient = $httpClient;
         $this->em = $doctrine->getManager();
+        $this->apiUgouv = $this->getParameter('api_ugouv');
     }
     #[Route('/', name: 'gestion_reglements')]
     public function index(Request $request): Response
@@ -511,12 +514,13 @@ class GestionReglementsController extends AbstractController
     #[Route('/getUgouvEncaissement/{reglement}', name: 'getUgouvEncaissement')]
     public function getUgouvEncaissement(TReglement $reglement): Response
     {
+        $apiUgouv = $this->getParameter('api_ugouv');
         if ($reglement->getLettrerFlag() == 1) {
             return new JsonResponse('Réglement est deja lettré!', 500);
         }
         $response = $this->httpClient->request(
             'GET',
-            'https://ugouv-fcz.ma/api/univ/getEncaissement',
+            $apiUgouv . '/getEncaissement',
             [
                 'headers' => [
                     'Authorization' => 'Bearer your_api_key_here'
@@ -536,6 +540,7 @@ class GestionReglementsController extends AbstractController
     #[Route('/valider_reglement/{id}', name: 'valider_reglement')]
     public function valider_reglement(Request $request, TReglement $reglement): Response
     {
+        dd($request->request);
         if ($reglement->getPayant() == 0) {
             $id_to_compare = 2106;
         } elseif (!$reglement->getOperation()->getPreinscription()->getEtudiant()->isStrange()) {
@@ -552,9 +557,43 @@ class GestionReglementsController extends AbstractController
             return new JsonResponse('Les montants doivent etre égales', 500);
         }
 
-        $reglement->setLettrerFlag(1);
 
-        $this->em->flush();
+        $code = $request->request->get("code");
+
+        try {
+            $response = $this->httpClient->request(
+                'POST',
+                $this->apiUgouv . '/setEncaissement',
+                [
+                    'headers' => [
+                        'Authorization' => 'Bearer your_api_key_here'
+                    ],
+                    'json' => [
+                        'code' => $code
+                    ],
+                    'verify_peer' => false,
+                ]
+            );
+
+            $statusCode = $response->getStatusCode();
+            if ($statusCode !== 200) {
+                throw new \Exception('API ERROR');
+            }
+
+            $responseData = $response->toArray();
+            if (!isset($responseData['success']) || !$responseData['success']) {
+                throw new \Exception('API ERROR');
+            }
+
+            $reglement->setLettrerFlag(1);
+            $this->em->flush();
+
+            return new JsonResponse('Reglement bien valider', 200);
+        } catch (\Exception $e) {
+            return new JsonResponse('Erreur lors de la validation du règlement: ' . $e->getMessage(), 500);
+        }
+
+
         return new JsonResponse('Reglement bien valider', 200);
     }
 }
