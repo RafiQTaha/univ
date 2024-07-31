@@ -22,7 +22,7 @@ Encore
      */
     .addEntry('app', './assets/app.js')
     .addEntry('login', './assets/components/login/login.js')
-    
+
     .addEntry('etudiant', './assets/components/etudiant/etudiant.js')
     .addEntry('rechercheavance', './assets/components/etudiant/rechercheavance.js')
     .addEntry('centreappel', './assets/components/etudiant/centre_appel.js')
@@ -48,7 +48,7 @@ Encore
     .addEntry('imprimer', './assets/components/administration/imprimer.js')
     .addEntry('controle', './assets/components/administration/controle.js')
     .addEntry('note', './assets/components/administration/note.js')
-    
+
     .addEntry('impression_concours', './assets/components/concours/impression.js')
     .addEntry('imprimer_concours', './assets/components/concours/imprimer.js')
     .addEntry('controle_concours', './assets/components/concours/controle.js')
@@ -63,7 +63,7 @@ Encore
     .addEntry('evaluationSemestre', './assets/components/evaluation/semestre.js')
     .addEntry('evaluationSimulationDeliberation', './assets/components/evaluation/simulationdeliberation.js')
     .addEntry('evaluationPv', './assets/components/evaluation/pv.js')
-    
+
     .addEntry('gestionPlanification', './assets/components/planification/gestion_planification.js')
     .addEntry('planification', './assets/components/planification/planification.js')
 
@@ -93,6 +93,8 @@ Encore
     .addEntry('serieBac', './assets/components/parametre/serieBac.js')
     .addEntry('typeBac', './assets/components/parametre/typeBac.js')
     .addEntry('semaines', './assets/components/parametre/semaines.js')
+
+    .addEntry('auto_functions', './assets/components/auto_functions.js')
 
 
     // .addStyleEntry('login', './assets/styles/components/login/login.scss')
@@ -144,7 +146,7 @@ Encore
 
     // uncomment if you're having problems with a jQuery plugin
     .autoProvidejQuery()
-   
-;
+
+    ;
 
 module.exports = Encore.getWebpackConfig();

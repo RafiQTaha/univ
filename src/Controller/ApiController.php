@@ -38,147 +38,154 @@ use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use PhpOffice\PhpSpreadsheet\Reader\Xlsx as reader;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
+use Doctrine\ORM\EntityManagerInterface;
 
 #[Route('/api')]
 class ApiController extends AbstractController
 {
     private $em;
-    public function __construct(ManagerRegistry $doctrine)
+    private $httpClient;
+    public function __construct(HttpClientInterface $httpClient, ManagerRegistry $doctrine)
     {
         $this->em = $doctrine->getManager();
+        $this->httpClient = $httpClient;
         // $this->emUniv = $doctrine->getManager("univ");
         // $em = $this->getDoctrine()->getManager();
     }
     #[Route('/etablissement', name: 'getetablissement')]
     public function getetbalissement(): Response
     {
-        $etbalissements = $this->em->getRepository(AcEtablissement::class)->findBy(['active'=>1]);
-        $data = self::dropdown($etbalissements,'Etablissement');
+        $etbalissements = $this->em->getRepository(AcEtablissement::class)->findBy(['active' => 1]);
+        $data = self::dropdown($etbalissements, 'Etablissement');
         return new JsonResponse($data);
     }
     #[Route('/formation/{id}', name: 'getformation')]
     public function getformation($id): Response
     {
-        $formations = $this->em->getRepository(AcFormation::class)->findBy(['etablissement'=>$id, 'active' => 1],['id'=>'ASC']);
-        $data = self::dropdown($formations,'Formation');
+        $formations = $this->em->getRepository(AcFormation::class)->findBy(['etablissement' => $id, 'active' => 1], ['id' => 'ASC']);
+        $data = self::dropdown($formations, 'Formation');
         return new JsonResponse($data);
     }
 
-    
+
     #[Route('/promotion/{formation}', name: 'getPromotion')]
     public function getPromotion(AcFormation $formation): Response
-    {   
-        $promotions = $this->em->getRepository(AcPromotion::class)->findBy(['formation'=>$formation, 'active' => 1],['id'=>'ASC']);
-        $data = self::dropdown($promotions,'promotion');
+    {
+        $promotions = $this->em->getRepository(AcPromotion::class)->findBy(['formation' => $formation, 'active' => 1], ['id' => 'ASC']);
+        $data = self::dropdown($promotions, 'promotion');
         return new JsonResponse($data);
     }
     #[Route('/annee/{id}', name: 'getAnnee')]
     public function getAnnee($id): Response
-    {   
-        $annee = $this->em->getRepository(AcAnnee::class)->findBy(['formation'=>$id, 'active' => 1],['designation'=>'DESC']);
-        $data = self::dropdown($annee,'Annee');
+    {
+        $annee = $this->em->getRepository(AcAnnee::class)->findBy(['formation' => $id, 'active' => 1], ['designation' => 'DESC']);
+        $data = self::dropdown($annee, 'Annee');
         return new JsonResponse($data);
     }
-    
+
     #[Route('/semestre/{id}', name: 'getSemestre')]
     public function getSemestre($id): Response
-    {   
-        $semestre = $this->em->getRepository(AcSemestre::class)->findBy(['promotion'=>$id, 'active' => 1],['designation'=>'ASC']);
-        $data = self::dropdown($semestre,'Semestre');
+    {
+        $semestre = $this->em->getRepository(AcSemestre::class)->findBy(['promotion' => $id, 'active' => 1], ['designation' => 'ASC']);
+        $data = self::dropdown($semestre, 'Semestre');
         return new JsonResponse($data);
     }
 
     #[Route('/module/{id}', name: 'getModule')]
     public function getModule($id): Response
-    {   
-        $module = $this->em->getRepository(AcModule::class)->findBy(['semestre'=>$id, 'active' => 1],['designation'=>'ASC']);
-        $data = self::dropdown($module,'Module');
+    {
+        $module = $this->em->getRepository(AcModule::class)->findBy(['semestre' => $id, 'active' => 1], ['designation' => 'ASC']);
+        $data = self::dropdown($module, 'Module');
         return new JsonResponse($data);
     }
 
     #[Route('/element/{id}', name: 'getElement')]
     public function getElement($id): Response
-    {   
-        $element = $this->em->getRepository(AcElement::class)->findBy(['module'=>$id, 'active' => 1],['designation'=>'ASC']);
-        $data = self::dropdown($element,'Element');
+    {
+        $element = $this->em->getRepository(AcElement::class)->findBy(['module' => $id, 'active' => 1], ['designation' => 'ASC']);
+        $data = self::dropdown($element, 'Element');
         return new JsonResponse($data);
     }
 
     #[Route('/enseignantsByProgramme/{element}/{nature_epreuve}', name: 'enseignantsByProgramme')]
-    public function enseignantsByProgramme(AcElement $element,PNatureEpreuve $nature_epreuve): Response
-    {   
+    public function enseignantsByProgramme(AcElement $element, PNatureEpreuve $nature_epreuve): Response
+    {
         $annee = $this->em->getRepository(AcAnnee::class)->findOneBy([
-            'formation'=>$element->getModule()->getSemestre()->getPromotion()->getFormation(),
+            'formation' => $element->getModule()->getSemestre()->getPromotion()->getFormation(),
             'validation_academique' => 'non'
         ]);
-        $programmation = $this->em->getRepository(PrProgrammation::class)->findOneBy([
-            'element'=> $element,
-            'nature_epreuve' => $nature_epreuve,
-            'annee' =>  $annee]
+        $programmation = $this->em->getRepository(PrProgrammation::class)->findOneBy(
+            [
+                'element' => $element,
+                'nature_epreuve' => $nature_epreuve,
+                'annee' =>  $annee
+            ]
         );
-        
+
         $data = "<option enabled value='' disabled='disabled'>Choix Enseignants</option>";
         if ($programmation != NULL) {
             foreach ($programmation->getEnseignants() as $enseignant) {
-                $data .="<option value=".$enseignant->getId().">".$enseignant->getNom()." ".$enseignant->getPrenom()."</option>";
+                $data .= "<option value=" . $enseignant->getId() . ">" . $enseignant->getNom() . " " . $enseignant->getPrenom() . "</option>";
             }
         }
         return new JsonResponse($data);
     }
-    
+
     #[Route('/nature_demande', name: 'nature_demande')]
     public function getnature_demande(): Response
     {
         $nature = $this->em->getRepository(NatureDemande::class)->findBy(['active' => 1]);
-        $data = self::dropdown($nature,'Nature De Demande');
+        $data = self::dropdown($nature, 'Nature De Demande');
         return new JsonResponse($data);
     }
 
     #[Route('/anneeProgrammation/{formation}', name: 'anneeProgrammation')]
     public function anneeProgrammation(AcFormation $formation): Response
-    {   
-        $annee = $this->em->getRepository(AcAnnee::class)->findBy(['formation'=>$formation,'active'=>1],['id'=>'DESC'],4);
-        $data = self::dropdown($annee,'Annee');
+    {
+        $annee = $this->em->getRepository(AcAnnee::class)->findBy(['formation' => $formation, 'active' => 1], ['id' => 'DESC'], 4);
+        $data = self::dropdown($annee, 'Annee');
         return new JsonResponse($data);
     }
     #[Route('/formationAndanneeOuverte/{formation}', name: 'formationAndanneeOuverte')]
     public function formationAndanneeOuverte(AcFormation $formation): Response
-    {   
+    {
         $annee = $this->em->getRepository(AcAnnee::class)->getActiveAnneeByFormation($formation);
-        $data = [   'formation' => $formation->getDesignation(),
-                    'annee' => $annee->getDesignation()];
+        $data = [
+            'formation' => $formation->getDesignation(),
+            'annee' => $annee->getDesignation()
+        ];
         return new JsonResponse($data);
     }
-    
+
     #[Route('/anneeresidanat/{id}', name: 'anneeResidanat')]
     public function anneeResidanat(AcFormation $formation): Response
-    {   
+    {
         // if((strpos($formation->getDesignation(), 'Résidanat') === false) && $formation->getEtablissement()->getId() != 25){
-        if((strpos($formation->getDesignation(), 'Résidanat') === false) && $formation->getEtablissement()->getId() != 25){
+        if ((strpos($formation->getDesignation(), 'Résidanat') === false) && $formation->getEtablissement()->getId() != 25) {
             return new JsonResponse(1);
-        }else{
-            $annee = $this->em->getRepository(AcAnnee::class)->findBy(['formation'=>$formation],['id'=>'DESC'],3);
-            $data = self::dropdown($annee,'Annee');
+        } else {
+            $annee = $this->em->getRepository(AcAnnee::class)->findBy(['formation' => $formation], ['id' => 'DESC'], 3);
+            $data = self::dropdown($annee, 'Annee');
             return new JsonResponse($data);
         }
-        
     }
     #[Route('/organisme', name: 'getorganisme')]
     public function getOrganisme(): Response
-    {   
-        $organisme = $this->em->getRepository(POrganisme::class)->findBy(['active'=>1]);
-        $data = self::dropdown($organisme,'organisme');
-        return new JsonResponse($data);        
+    {
+        $organisme = $this->em->getRepository(POrganisme::class)->findBy(['active' => 1]);
+        $data = self::dropdown($organisme, 'organisme');
+        return new JsonResponse($data);
     }
-    
+
     #[Route('/getorganismepasPayant', name: 'getorganismepasPayant')]
     public function getOrganismepasPayant(): Response
-    {  
+    {
         //  dd('test');
         $organisme = $this->em->getRepository(POrganisme::class)->getorganismepasPayant();
         // dd($organisme);
-        $data = self::dropdown($organisme,'organisme');
-        return new JsonResponse($data);        
+        $data = self::dropdown($organisme, 'organisme');
+        return new JsonResponse($data);
     }
 
     // #[Route('/organisme/{operationcab}', name: 'getOrganismeByoperation')]
@@ -195,119 +202,119 @@ class ApiController extends AbstractController
     //     }
     //     return new JsonResponse($data);        
     // }
-    
+
     #[Route('/nature_etudiant/{admission}', name: 'getnatureetudiant')]
     public function getNatureEtudiant(TAdmission $admission): Response
-    {   
+    {
         $nature = $admission->getPreinscription()->getEtudiant()->getNatureDemande()->getDesignation();
         // dd($nature);
         if ($nature !== 'Payant') {
             $organisme = $this->em->getRepository(POrganisme::class)->findAll();
-        }else {
+        } else {
             $organisme = [];
         }
-        $data = self::dropdown($organisme,'organisme');
-        return new JsonResponse($data);        
+        $data = self::dropdown($organisme, 'organisme');
+        return new JsonResponse($data);
     }
     #[Route('/frais/{admission}', name: 'getFraisByFormation')]
     public function getFraisByFormation(TAdmission $admission): Response
-    {   
+    {
         $formation = $admission->getPreinscription()->getAnnee()->getFormation();
-        $operationcab = $this->em->getRepository(TOperationcab::class)->findOneBy(['preinscription'=>$admission->getPreinscription(),'categorie'=>'admission']);
-        $frais = $this->em->getRepository(PFrais::class)->findBy(["formation" => $formation, 'categorie' => "admission",'active'=>1]);
-        $data = self::dropdownData($frais,'frais');
-                
-        return new JsonResponse(['list' => $data, 'codefacture' => $operationcab->getCode()]);        
+        $operationcab = $this->em->getRepository(TOperationcab::class)->findOneBy(['preinscription' => $admission->getPreinscription(), 'categorie' => 'admission']);
+        $frais = $this->em->getRepository(PFrais::class)->findBy(["formation" => $formation, 'categorie' => "admission", 'active' => 1]);
+        $data = self::dropdownData($frais, 'frais');
+
+        return new JsonResponse(['list' => $data, 'codefacture' => $operationcab->getCode()]);
     }
-  
+
     #[Route('/banque', name: 'getbanque')]
     public function getbanque(): Response
     {
         $banques = $this->em->getRepository(XBanque::class)->findAll();
-        $data = self::dropdown($banques,'Banque');
+        $data = self::dropdown($banques, 'Banque');
         return new JsonResponse($data);
     }
-  
+
     #[Route('/paiement', name: 'getpaiement')]
     public function getpaiement(): Response
     {
         $paiements = $this->em->getRepository(XModalites::class)->findAll();
-        $data = self::dropdown($paiements,'Type De Paiement');
+        $data = self::dropdown($paiements, 'Type De Paiement');
         return new JsonResponse($data);
     }
     #[Route('/nature_erpeuve/{nature}', name: 'getNatureEpreuveByNature')]
     public function getNatureEpreuveByNature($nature): Response
-    {   
+    {
         $natrueEpreuves = $this->em->getRepository(PNatureEpreuve::class)->findBy(["nature" => $nature]);
-        $data = self::dropdown($natrueEpreuves,'nature epreuve');
-        return new JsonResponse($data);        
+        $data = self::dropdown($natrueEpreuves, 'nature epreuve');
+        return new JsonResponse($data);
     }
-    
+
     #[Route('/niv1/{promotion}', name: 'getNiv1Bypromotion')]
     public function getNiv1Bypromotion(AcPromotion $promotion): Response
-    {   
+    {
         $annee = $this->em->getRepository(AcAnnee::class)->getActiveAnneeByFormation($promotion->getFormation());
-        $inscriptions = $this->em->getRepository(TInscription::class)->getNiveaux($promotion,$annee);
+        $inscriptions = $this->em->getRepository(TInscription::class)->getNiveaux($promotion, $annee);
         $data = "<option selected enabled value=''>Choix Niveau 1</option>";
         $groupes = [];
         foreach ($inscriptions as $inscription) {
             $groupe = $inscription->getGroupe();
             // if ($groupe != Null) {
-                if ($groupe->getGroupe() == Null) {
-                    if (!in_array($groupe, $groupes)){
-                        array_push($groupes,$groupe);
-                    }
-                    // $data .="<option value=".$groupe->getId().">".$groupe->getNiveau()."</option>";
-                }elseif ($groupe->getGroupe()->getGroupe() == Null) {
-                    $groupe = $groupe->getGroupe();
-                    if (!in_array($groupe, $groupes)){
-                        array_push($groupes,$groupe);
-                    }
-                    // $data .="<option value=".$groupe->getId().">".$groupe->getNiveau()."</option>";
-                }else {
-                    $groupe = $groupe->getGroupe()->getGroupe();
-                    if (!in_array($groupe, $groupes)){
-                        array_push($groupes,$groupe);
-                    }
-                    // $data .="<option value=".$groupe->getId().">".$groupe->getNiveau()."</option>";
+            if ($groupe->getGroupe() == Null) {
+                if (!in_array($groupe, $groupes)) {
+                    array_push($groupes, $groupe);
                 }
-                
                 // $data .="<option value=".$groupe->getId().">".$groupe->getNiveau()."</option>";
-                
+            } elseif ($groupe->getGroupe()->getGroupe() == Null) {
+                $groupe = $groupe->getGroupe();
+                if (!in_array($groupe, $groupes)) {
+                    array_push($groupes, $groupe);
+                }
+                // $data .="<option value=".$groupe->getId().">".$groupe->getNiveau()."</option>";
+            } else {
+                $groupe = $groupe->getGroupe()->getGroupe();
+                if (!in_array($groupe, $groupes)) {
+                    array_push($groupes, $groupe);
+                }
+                // $data .="<option value=".$groupe->getId().">".$groupe->getNiveau()."</option>";
+            }
+
+            // $data .="<option value=".$groupe->getId().">".$groupe->getNiveau()."</option>";
+
             // }
         }
         foreach ($groupes as $groupe) {
-            $data .="<option value=".$groupe->getId().">".$groupe->getNiveau()."</option>";
+            $data .= "<option value=" . $groupe->getId() . ">" . $groupe->getNiveau() . "</option>";
         }
         return new JsonResponse($data);
     }
 
     #[Route('/niv2/{niv1}', name: 'getNiv2ByNiv1')]
     public function getNiv2ByNiv1(PGroupe $niv1): Response
-    {   
-        $niveaux2 = $this->em->getRepository(PGroupe::class)->findBy(['groupe'=>$niv1]);
+    {
+        $niveaux2 = $this->em->getRepository(PGroupe::class)->findBy(['groupe' => $niv1]);
         $data = "<option selected enabled value=''>Choix Niveau 2</option>";
         foreach ($niveaux2 as $niveau2) {
-                $data .="<option value=".$niveau2->getId().">".$niveau2->getNiveau()."</option>";
+            $data .= "<option value=" . $niveau2->getId() . ">" . $niveau2->getNiveau() . "</option>";
         }
-        return new JsonResponse($data);     
+        return new JsonResponse($data);
     }
 
     #[Route('/niv3/{niv2}', name: 'getNiv2ByNiv3')]
     public function getNiv2ByNiv3($niv2): Response
-    {   
+    {
         // $niveaux3 = $this->em->getRepository(PGroupe::class)->findBy(['groupe'=>$niv2]);
         $niveaux3 = $this->em->getRepository(PGroupe::class)->getInscriptionsByNiveaux3($niv2);
         // dd($niveaux3);
         $data = "<option selected enabled value=''>Choix Niveau 3</option>";
         foreach ($niveaux3 as $niveau3) {
-                $data .="<option value=".$niveau3->getId().">".$niveau3->getNiveau()."</option>"; 
+            $data .= "<option value=" . $niveau3->getId() . ">" . $niveau3->getNiveau() . "</option>";
         }
-        return new JsonResponse($data);       
-    } 
+        return new JsonResponse($data);
+    }
     #[Route('/salle/{promotion}', name: 'getSalle')]
     public function getSalle(AcPromotion $promotion): Response
-    {   
+    {
         $annee = $this->em->getRepository(AcAnnee::class)->getActiveAnneeByFormation($promotion->getFormation());
         // dump($annee->getId(), $promotion->getId());
         $salles = $this->em->getRepository(TInscription::class)->getSalle($promotion, $annee);
@@ -315,22 +322,22 @@ class ApiController extends AbstractController
         $data = "<option selected enabled value=''>Choix Salle</option>";
         foreach ($salles as $salle) {
             $sallearray = explode("-", $salle['salle']);
-            $data .="<option value='".$salle['salle']."'>".$sallearray[0]." ". $sallearray[1] ."</option>";
+            $data .= "<option value='" . $salle['salle'] . "'>" . $sallearray[0] . " " . $sallearray[1] . "</option>";
             // dd($data);
-         }
+        }
         return new JsonResponse($data);
     }
-    
+
     #[Route('/changeAnonymat', name: 'changeAnonymat')]
     public function changeAnonymat(Request $request): Response
-    {   
+    {
         $anonymatActuel = $this->em->getRepository(PAnonymatActuel::class)->find(1);
         $an_actuel = "";
         if ($request->get('anonymat') == 0) {
             $anonymatActuel->setDesignation('Anonymat');
             $anonymatActuel->setAbreviation('anonymat');
             $an_actuel = "Anonymat Actuel: <span style='text-transform: uppercase;font-weight: 800;color:green'>anonymat</span>";
-        }else{
+        } else {
             $anonymatActuel->setDesignation('Anonymat Ratrappage');
             $anonymatActuel->setAbreviation('anonymatrat');
             $an_actuel = "Anonymat Actuel: <span style='text-transform: uppercase;font-weight: 800;color:orange'>anonymatrat</span>";
@@ -340,30 +347,30 @@ class ApiController extends AbstractController
         if ($an_actuel != "") {
             $this->em->flush();
         }
-        return new JsonResponse($an_actuel,200);
+        return new JsonResponse($an_actuel, 200);
     }
-    
+
     #[Route('/sousagression/{agression}', name: 'getsousagression')]
     public function getsousagression(Agression $agression): Response
-    {   
-        $sousagression = $this->em->getRepository(SousAgression::class)->findBy(['agression'=>$agression, 'active' => 1],['designation'=>'ASC']);
-        $data = self::dropdown($sousagression,'Incident');
+    {
+        $sousagression = $this->em->getRepository(SousAgression::class)->findBy(['agression' => $agression, 'active' => 1], ['designation' => 'ASC']);
+        $data = self::dropdown($sousagression, 'Incident');
         return new JsonResponse($data);
     }
     #[Route('/sanction/{agression}', name: 'getsanction')]
     public function getsanction(Agression $agression): Response
-    {   
-        $sanctions = $this->em->getRepository(Sanction::class)->findBy(['agression'=>$agression, 'active' => 1],['designation'=>'ASC']);
+    {
+        $sanctions = $this->em->getRepository(Sanction::class)->findBy(['agression' => $agression, 'active' => 1], ['designation' => 'ASC']);
         // $data = self::dropdown($sanctions,'Sanction');
         // $data = "<option selected enabled value=''>Choix ".$choix."</option>";
-        $data ="";
+        $data = "";
         foreach ($sanctions as $sanction) {
-            $data .="<option value=".$sanction->getId().">".$sanction->getDesignation()."</option>";
-         }
+            $data .= "<option value=" . $sanction->getId() . ">" . $sanction->getDesignation() . "</option>";
+        }
         //  return $data;
         return new JsonResponse($data);
     }
-    
+
     // #[Route('/findSemaine', name: 'findSemaine')]
     // public function findSemaine(Request $request): Response
     // {
@@ -379,49 +386,50 @@ class ApiController extends AbstractController
     //     // return new Response(json_encode($admissions));
     // }
 
-    static function dropdown($objects,$choix)
+    static function dropdown($objects, $choix)
     {
-        $data = "<option selected enabled value=''>Choix ".$choix."</option>";
+        $data = "<option selected enabled value=''>Choix " . $choix . "</option>";
         foreach ($objects as $object) {
-            $data .="<option value=".$object->getId().">".$object->getDesignation()."</option>";
-         }
-         return $data;
+            $data .= "<option value=" . $object->getId() . ">" . $object->getDesignation() . "</option>";
+        }
+        return $data;
     }
-    static function dropdownData($objects,$choix)
+    static function dropdownData($objects, $choix)
     {
-        $data = "<option selected enabled value=''>Choix ".$choix."</option>";
+        $data = "<option selected enabled value=''>Choix " . $choix . "</option>";
         foreach ($objects as $object) {
-            $data .="<option value=".$object->getId()." data-frais=".$object->getMontant().">".$object->getDesignation()."</option>";
-         }
-         return $data;
+            $data .= "<option value=" . $object->getId() . " data-frais=" . $object->getMontant() . ">" . $object->getDesignation() . "</option>";
+        }
+        return $data;
     }
-    static function dropDownSelected($objects,$choix, $value)
+    static function dropDownSelected($objects, $choix, $value)
     {
-        $data = "<option selected enabled value=''>Choix ".$choix."</option>";
+        $data = "<option selected enabled value=''>Choix " . $choix . "</option>";
         foreach ($objects as $object) {
-            if($object->getId() === $value->getId()) {
-                $data .="<option value=".$object->getId()." selected>".$object->getDesignation()."</option>";
+            if ($object->getId() === $value->getId()) {
+                $data .= "<option value=" . $object->getId() . " selected>" . $object->getDesignation() . "</option>";
             } else {
-                $data .="<option value=".$object->getId()." >".$object->getDesignation()."</option>";
+                $data .= "<option value=" . $object->getId() . " >" . $object->getDesignation() . "</option>";
             }
-         }
-         return $data;
+        }
+        return $data;
     }
 
-    static function check($user, $link, $em, $request) {
-        if(!$request->getSession()->get("modules")){
-            if(in_array('ROLE_ADMIN', $user->getRoles())){
-                $sousModules = $em->getRepository(UsSousModule::class)->findBy([],['ordre'=>'ASC']);
+    static function check($user, $link, $em, $request)
+    {
+        if (!$request->getSession()->get("modules")) {
+            if (in_array('ROLE_ADMIN', $user->getRoles())) {
+                $sousModules = $em->getRepository(UsSousModule::class)->findBy([], ['ordre' => 'ASC']);
             } else {
                 $sousModules = $em->getRepository(UsSousModule::class)->findByUserOperations($user);
             }
             $modules = $em->getRepository(UsModule::class)->getModuleBySousModule($sousModules);
             $data = [];
-            foreach($modules as $module) {
+            foreach ($modules as $module) {
                 $sousModuleArray = [];
                 foreach ($sousModules as $sousModule) {
-                    if($sousModule->getModule()->getId() == $module->getId()) {
-                        array_push($sousModuleArray,$sousModule);
+                    if ($sousModule->getModule()->getId() == $module->getId()) {
+                        array_push($sousModuleArray, $sousModule);
                     }
                 }
                 array_push($data, [
@@ -431,23 +439,22 @@ class ApiController extends AbstractController
             }
             // dd($data);
             $request->getSession()->set('modules', $data);
-            
         }
-        if(in_array('ROLE_ADMIN', $user->getRoles())) {
+        if (in_array('ROLE_ADMIN', $user->getRoles())) {
             $operations = $em->getRepository(UsOperation::class)->findAllBySousModule($link);
             return $operations;
         }
         $operations = $em->getRepository(UsOperation::class)->getOperationByLinkSousModule($user, $link);
         return $operations;
     }
-    
-    static function mouchard($user,$em,$object,$table,$action)
+
+    static function mouchard($user, $em, $object, $table, $action)
     {
-        $entity = "App\Entity\\".$table;
+        $entity = "App\Entity\\" . $table;
         $array = (array) $object;
         foreach ($array as $key => $value) {
             if (!is_object($value)) {
-                $nkey = str_replace($entity, '', $key) ;
+                $nkey = str_replace($entity, '', $key);
                 $nkey = preg_replace('/[\x00-\x1F\x7F]/u', '', $nkey);
                 $array[$nkey] = $array[$key];
             }
@@ -462,7 +469,7 @@ class ApiController extends AbstractController
         $em->persist($mouchard);
         $em->flush();
     }
-    
+
     // /**
     //  * @Route("/gnote", name="app_gnote")
     //  */
@@ -479,7 +486,7 @@ class ApiController extends AbstractController
     //                 ex_gnotes.anonymat,
     //                 ac_epreuve.id_epreuve as epreuve_id,
     //                 t_inscription.id_inscription as inscription_id
-    
+
     //             FROM `ex_gnotes`
     //                 INNER JOIN ac_epreuve  on ac_epreuve.code =ex_gnotes.code_epreuve
     //                 INNER JOIN t_inscription  on t_inscription.code = ex_gnotes.code_inscription
@@ -509,7 +516,7 @@ class ApiController extends AbstractController
     //         $this->em->persist($gnote);
     //     }
     //     $this->em->flush();
-  
+
     //     // return $this->render('gnote/index.html.twig', [
     //     //     'controller_name' => 'GnoteController',
     //     // ]);
@@ -526,7 +533,7 @@ class ApiController extends AbstractController
     //        $sql = "select epreuve.designation, t_inscription.code_admission, t_etudiant.nom, t_etudiant.prenom,
     //        epreuve_etudiant_correction.note, question.id,  question.libelle, 
     //         epreuve_etudiant_correction_detail.reponses
-              
+
     //           from epreuve_etudiant_correction
     //           inner join epreuve on epreuve.id = epreuve_etudiant_correction.epreuve_id
     //           inner join t_inscription on t_inscription.id = epreuve_etudiant_correction.t_inscription_id
@@ -535,18 +542,18 @@ class ApiController extends AbstractController
     //           inner join t_etudiant on t_etudiant.id = t_preinscription.t_etudiant_id
     //           inner join epreuve_etudiant_correction_detail on epreuve_etudiant_correction_detail.epreuve_etudiant_correction_id = epreuve_etudiant_correction.id
     //           inner join question on question.id = epreuve_etudiant_correction_detail.question_id
-              
+
     //           where epreuve.id in (671)";
     //       $conn = $this->em->getConnection();
     //       $stmt = $conn->prepare($sql)->executeQuery();
     //     //   $stmt->executeQuery();
-          
+
     //     //   $stmt = $this->em->getConnection()->prepare($sql);
     //     //   $stmt = $stmt->executeQuery();
     //     //   $semaine = $resultSet->fetchAll();
     //       $etudiants = $stmt->fetchAll();
     //     //   dd($etudiants);
-          
+
     //       $spreadsheet = new Spreadsheet();
     //     //   die("amine");
     //       $sheet = $spreadsheet->getActiveSheet();
@@ -599,17 +606,18 @@ class ApiController extends AbstractController
     //          $sheet->setCellValue('G' . $rowCount,  $etudiant['libelle']);
     //          $sheet->setCellValue('H' . $rowCount,  $letters);
     //          $sheet->setCellValue('I' . $rowCount,  $lettreReponse);
-             
+
     //          $rowCount++;
     //      }
-         
-         
+
+
     //      $writer = new Xlsx($spreadsheet);
     //      $fileName = 'exctraction_epreuve.xlsx';
     //      $temp_file = tempnam(sys_get_temp_dir(), $fileName);
     //      $writer->save($temp_file);
-    
+
     //      return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);
-            
+
     //     }
+
 }

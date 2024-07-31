@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Entity;
-    
+
 use App\Repository\TReglementRepository;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -33,7 +33,7 @@ class TReglement
 
     #[ORM\ManyToOne(targetEntity: XModalites::class, inversedBy: 'Reglements')]
     private $paiement;
-    
+
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $reference;
 
@@ -72,6 +72,9 @@ class TReglement
 
     #[ORM\Column(type: 'float', nullable: true)]
     private $synFlag = 0;
+
+    #[ORM\Column(type: 'float', nullable: true)]
+    private $lettrerFlag = 0;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $ice;
@@ -317,6 +320,18 @@ class TReglement
     public function setSynFlag(?float $synFlag): self
     {
         $this->synFlag = $synFlag;
+
+        return $this;
+    }
+
+    public function getLettrerFlag(): ?float
+    {
+        return $this->lettrerFlag;
+    }
+
+    public function setLettrerFlag(?float $lettrerFlag): self
+    {
+        $this->lettrerFlag = $lettrerFlag;
 
         return $this;
     }
