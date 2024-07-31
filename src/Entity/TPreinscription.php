@@ -83,6 +83,9 @@ class TPreinscription
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $pecNumber;
 
+    #[ORM\OneToMany(mappedBy: 'preinscription', targetEntity: InfoPec::class)]
+    private $infoPecs;
+
     // #[ORM\Column(type: 'float', nullable: true)]
     // private $validation;
 
@@ -94,6 +97,7 @@ class TPreinscription
         $this->admissionDocuments = new ArrayCollection();
         $this->Documents = new ArrayCollection();
         $this->documents = new ArrayCollection();
+        $this->infoPecs = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -447,6 +451,36 @@ class TPreinscription
     public function setPecNumber(?string $pecNumber): self
     {
         $this->pecNumber = $pecNumber;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, InfoPec>
+     */
+    public function getInfoPecs(): Collection
+    {
+        return $this->infoPecs;
+    }
+
+    public function addInfoPec(InfoPec $infoPec): self
+    {
+        if (!$this->infoPecs->contains($infoPec)) {
+            $this->infoPecs[] = $infoPec;
+            $infoPec->setPreinscription($this);
+        }
+
+        return $this;
+    }
+
+    public function removeInfoPec(InfoPec $infoPec): self
+    {
+        if ($this->infoPecs->removeElement($infoPec)) {
+            // set the owning side to null (unless already changed)
+            if ($infoPec->getPreinscription() === $this) {
+                $infoPec->setPreinscription(null);
+            }
+        }
 
         return $this;
     }
