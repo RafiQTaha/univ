@@ -18,6 +18,8 @@ parameters:
   inscriptions_affiliation_directory: "%kernel.project_dir%/public/uploads/inscription_groupes"
   pv: "%kernel.project_dir%/public/uploads/pv"
 
+  api_ugouv: "https://ugouv-fcz.ma/api/univ"
+
 services:
   # default configuration for services in *this* file
   _defaults:
