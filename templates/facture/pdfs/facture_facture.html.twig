@@ -214,18 +214,26 @@
                 <tr>
                     <td style="width: 100% ;padding:15px 2px 2px 30px ">NB : EN CAS DE DEPASSEMENT DES DELAIS DE PAIEMENT,UNE PENALITE DE RETARD EST APPLIQUEE. </td> 
                 </tr>
-                <tr>
-                    {% if operationcab.preinscription.annee.formation.etablissement.id == 28 or operationcab.preinscription.annee.formation.etablissement.id == 5 %}
-                        <td style="width: 100% ;padding:40px 2px 2px 30px;"><b>RIB UIASS - LEZ : 007 810 0012405000301617 32</b></td>
-                        {% else %}
-                        <td style="width: 100% ;padding:40px 2px 2px 30px;"><b>RIB UIASS : 007 810 0012404000300234 15</b></td>
-                    {% endif %}
-                </tr>
-                <tr>
-                    {% if operationcab.preinscription.annee.formation.etablissement.id != 28 and operationcab.preinscription.annee.formation.etablissement.id != 5 %}
-                        <td style="width: 100% ;padding:2px 2px 2px 30px;"><b>RIB UIASS - EAS : 007 810 0012405000301616 35</b></td> 
-                    {% endif %}
-                </tr>
+                {% if 'Résidanat' in operationcab.preinscription.annee.formation.designation %}
+                        <tr>
+                            <td style="width: 100% ;padding:40px 2px 2px 30px;"><b>RIB UIASS-RES : 007 810 0012405000301575 61</b></td> 
+                        </tr>
+                    {% else %}
+                        <tr>
+                            {% if operationcab.preinscription.annee.formation.etablissement.id == 28 or operationcab.preinscription.annee.formation.etablissement.id == 5 %}
+                                <td style="width: 100% ;padding:40px 2px 2px 30px;"><b>RIB UIASS - LEZ : 007 810 0012405000301617 32</b></td>
+                                {% else %}
+                                <td style="width: 100% ;padding:40px 2px 2px 30px;"><b>RIB UIASS : 007 810 0012404000300234 15</b></td>
+                            {% endif %}
+                        </tr>
+                        <tr>
+                            {% if operationcab.preinscription.annee.formation.etablissement.id != 28 and operationcab.preinscription.annee.formation.etablissement.id != 5 %}
+                                <td style="width: 100% ;padding:2px 2px 2px 30px;"><b>RIB UIASS - EAS : 007 810 0012405000301616 35</b></td> 
+                            {% endif %}
+                        </tr>
+                {% endif %}
+                
+                
             {% endif %}
         </table>
 
