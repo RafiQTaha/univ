@@ -168,6 +168,23 @@ $(document).ready(function () {
         });
     }
   };
+  const getPecSocialInfos = () => {
+    let modalAlert = $("#modifier_org-modal .modal-body .alert");
+    modalAlert.remove();
+    const icon = $("#modifier i");
+    icon.removeClass('fa-edit').addClass("fa-spinner fa-spin");
+    axios.get('/facture/factures/getPecSocial/' + id_facture)
+    .then(success => {
+        icon.removeClass('fa-spinner fa-spin').addClass("fa-edit");
+        console.log(success);
+        $('#detail_facture_modal #pecSocial').html(success.data).select2()
+        // $('#detail_facture_modal #pecSocial').select2()
+    })
+    .catch(err => {
+        console.log(err)
+        icon.removeClass('fa-spinner fa-spin ').addClass("fa-edit");
+    })
+  }
   $("body").on("click", "#datables_facture tbody tr", function (e) {
     e.preventDefault();
     if ($(this).hasClass("active_databales")) {
@@ -184,6 +201,7 @@ $(document).ready(function () {
       id_facture = $(this).attr("id");
       console.log(id_facture);
       // getOrganismeByFacture()
+      getPecSocialInfos()
       getMontant();
       getFacture();
       load_frais_preins();
@@ -199,23 +217,7 @@ $(document).ready(function () {
       });
       return;
     }
-    const icon = $("#facture i");
-    icon.removeClass('fa-money-bill-alt').addClass("fa-spinner fa-spin");
-    try {
-      const request = await axios.get('/facture/factures/getSomething/' + id_facture);
-      response = request.data
-      $('body #api_dropdown').html(response).select2();
-      $("#detail_facture_modal").modal("show");
-      icon.addClass('fa-money-bill-alt').removeClass("fa-spinner fa-spin ");
-    } catch (error) {
-      const message = error.response.data;
-      Toast.fire({
-        icon: 'error',
-        title: message,
-      })
-      icon.addClass('fa-money-bill-alt').removeClass("fa-spinner fa-spin ");
-    }
-
+    $("#detail_facture_modal").modal("show");
   });
 
   $("input[type=radio][name=organ]").on("change", async function (e) {

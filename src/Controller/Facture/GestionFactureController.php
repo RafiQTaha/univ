@@ -22,6 +22,7 @@ use App\Entity\AcEtablissement;
 use App\Entity\TPreinscription;
 use App\Controller\ApiController;
 use App\Controller\DatatablesController;
+use App\Entity\InfoPec;
 use App\Entity\Pec;
 use Doctrine\Persistence\ManagerRegistry;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
@@ -33,15 +34,19 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpClient\HttpClient;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 
 #[Route('/facture/factures')]
 class GestionFactureController extends AbstractController
 {
     private $em;
+    private $api_ugouv;
+
     public function __construct(ManagerRegistry $doctrine)
     {
         $this->em = $doctrine->getManager();
+        $this->api_ugouv = HttpClient::create();
     }
     #[Route('/', name: 'gestion_facture')]
     public function index(Request $request): Response
@@ -1262,6 +1267,26 @@ class GestionFactureController extends AbstractController
         $operationcab->setNPec($request->get('n-pec'));
         $this->em->flush();
         return new JsonResponse('Pec Bien Ajouter!', 200);
+    }
+    
+    #[Route('/getPecSocial/{facture}', name: 'getPecSocial')]
+    public function getPecSocial(TOperationcab $facture): Response
+    {
+        // $apiUgouv = $this->getParameter('api_ugouv');
+        // if ($reglement->getLettrerFlag() == 1) {
+        //     return new JsonResponse('Réglement est deja lettré!', 500);
+        // }
+        
+        // $responseUNiv = $this->api_univ->request('GET', $this->getParameter('api_univ') . $link . '/' . $from_id);
+        // $pecs = $this->api_ugouv->request('GET', $this->getParameter('api_ugouv'). '/getEncaissement')->toArray();
+        $pecs = $this->em->getRepository(InfoPec::class)->findBy(['preinscription'=>$facture->getPreinscription(), 'annee'=>$facture->getAnnee()]);
+        
+        $data = "<option selected enabled value=''>Choix de Pec Social</option>";
+        foreach ($pecs as $pec) {
+            $data .= "<option data-montant='" . $pec["montant"] . "' data-code='" . $pec["code_bq"] . "' data-societe='" . $pec["societe"] . "' data-partner = '" . $pec["id_partner"] . "' value='" . $pec["code_bq"] . "'>" . $pec["code_bq"] . "</option>";
+            break;
+        }
+        return new JsonResponse($data);
     }
 
     #[Route('/getSomething/{operationcab}', name: 'getSomething')]

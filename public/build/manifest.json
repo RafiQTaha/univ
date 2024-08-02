@@ -1,6 +1,6 @@
 {
   "build/app.css": "/build/app.36f2aff0.css",
-  "build/app.js": "/build/app.5f9eda84.js",
+  "build/app.js": "/build/app.59e14d7d.js",
   "build/login.css": "/build/login.b0135c94.css",
   "build/login.js": "/build/login.5ecf60f3.js",
   "build/etudiant.js": "/build/etudiant.087c55fb.js",
@@ -13,7 +13,7 @@
   "build/gestionadmission.js": "/build/gestionadmission.99934db7.js",
   "build/gestionGroupe.js": "/build/gestionGroupe.50d4cd2f.js",
   "build/inscription.js": "/build/inscription.df31ec15.js",
-  "build/facture.js": "/build/facture.445c7328.js",
+  "build/facture.js": "/build/facture.85d835f4.js",
   "build/bordereau.js": "/build/bordereau.a7dde177.js",
   "build/reglement.js": "/build/reglement.929a8e43.js",
   "build/epreuve.js": "/build/epreuve.48cb6937.js",

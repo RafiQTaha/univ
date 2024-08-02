@@ -33,19 +33,22 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpClient\HttpClient;
 
 #[Route('/facture/reglements')]
 class GestionReglementsController extends AbstractController
 {
     private $em;
     private $httpClient;
-    private $apiUgouv;
+    // private $apiUgouv;
+    private $api_ugouv;
 
     public function __construct(HttpClientInterface $httpClient, ManagerRegistry $doctrine)
     {
-        $this->httpClient = $httpClient;
+        // $this->httpClient = $httpClient;
         $this->em = $doctrine->getManager();
-        $this->apiUgouv = $this->getParameter('api_ugouv');
+        // $this->apiUgouv = $this->getParameter('api_ugouv');
+        $this->api_ugouv = HttpClient::create();
     }
     #[Route('/', name: 'gestion_reglements')]
     public function index(Request $request): Response
@@ -514,20 +517,13 @@ class GestionReglementsController extends AbstractController
     #[Route('/getUgouvEncaissement/{reglement}', name: 'getUgouvEncaissement')]
     public function getUgouvEncaissement(TReglement $reglement): Response
     {
-        $apiUgouv = $this->getParameter('api_ugouv');
+        // $apiUgouv = $this->getParameter('api_ugouv');
         if ($reglement->getLettrerFlag() == 1) {
             return new JsonResponse('Réglement est deja lettré!', 500);
         }
-        $response = $this->httpClient->request(
-            'GET',
-            $apiUgouv . '/getEncaissement',
-            [
-                'headers' => [
-                    'Authorization' => 'Bearer your_api_key_here'
-                ],
-                'verify_peer' => false,
-            ]
-        );
+        
+        // $responseUNiv = $this->api_univ->request('GET', $this->getParameter('api_univ') . $link . '/' . $from_id);
+        $response = $this->api_ugouv->request('GET', $this->getParameter('api_ugouv'). '/getEncaissement');
 
         $result = $response->toArray();
         $data = "<option selected enabled value=''>Choix de Encaissement</option>";
@@ -559,21 +555,31 @@ class GestionReglementsController extends AbstractController
 
 
         $code = $request->request->get("code");
-
+        
+        $response = $this->api_ugouv->request('GET', $this->getParameter('api_ugouv'). '/getEncaissement',[
+            'json' => [
+                'code' => $code
+            ],
+        ]);
         try {
-            $response = $this->httpClient->request(
-                'POST',
-                $this->apiUgouv . '/setEncaissement',
-                [
-                    'headers' => [
-                        'Authorization' => 'Bearer your_api_key_here'
-                    ],
-                    'json' => [
-                        'code' => $code
-                    ],
-                    'verify_peer' => false,
-                ]
-            );
+            $response = $this->api_ugouv->request('GET', $this->getParameter('api_ugouv'). '/getEncaissement',[
+                'json' => [
+                    'code' => $code
+                ],
+            ]);
+            // $response = $this->httpClient->request(
+            //     'POST',
+            //     $this->apiUgouv . '/setEncaissement',
+            //     [
+            //         'headers' => [
+            //             'Authorization' => 'Bearer your_api_key_here'
+            //         ],
+            //         'json' => [
+            //             'code' => $code
+            //         ],
+            //         'verify_peer' => false,
+            //     ]
+            // );
 
             $statusCode = $response->getStatusCode();
             if ($statusCode !== 200) {
