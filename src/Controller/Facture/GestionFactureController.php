@@ -1289,28 +1289,17 @@ class GestionFactureController extends AbstractController
         return new JsonResponse($data);
     }
 
-    #[Route('/getSomething/{operationcab}', name: 'getSomething')]
-    public function getSomething(TOperationcab $operationcab): Response
+    #[Route('/getSomething', name: 'getSomething')]
+    public function getSomething(Request $request)
     {
-        // if ($reglement->getLettrerFlag() == 1) {
-        //     return new JsonResponse('Réglement est deja lettré!', 500);
-        // }
-        // $response = $this->httpClient->request(
-        //     'GET',
-        //     'https://ugouv-fcz.ma/api/univ/getEncaissement',
-        //     [
-        //         'headers' => [
-        //             'Authorization' => 'Bearer your_api_key_here'
-        //         ],
-        //         'verify_peer' => false,
-        //     ]
-        // );
+        // $pecs = $this->api_ugouv->request('GET', $this->getParameter('api_ugouv'). '/getEncaissement')->toArray();
+        $datas[] = ['preinscription_id' => 5069,"annee" => "2017/2018","code_pec" => "CHR_108027","nbr_annee_pec" => 7,"annee_debut_pec" => "2017/2018","annee_fin_pec" => "2023/2024","pec_social_id" => 1,"pec_ref_social" => null,"montant_pec" => 466000];
+        $datas[] = ['preinscription_id' => null,"annee" => "2017/2018","code_pec" => "CHR_108027","nbr_annee_pec" => 7,"annee_debut_pec" => "2017/2018","annee_fin_pec" => "2023/2024","pec_social_id" => 1,"pec_ref_social" => null,"montant_pec" => 466000];
+        dd($datas);
+        foreach ($datas as $data) {
+            if (!$data['preinscription_id']) continue;
 
-        // $result = $response->toArray();
-        $data = "<option selected enabled value=''>Choix de Encaissement</option>";
-        // foreach ($result as $res) {
-        //     $data .= "<option data-montant='" . $res["montant"] . "' data-code='" . $res["code_bq"] . "' data-societe='" . $res["societe"] . "' data-partner = '" . $res["id_partner"] . "' value='" . $res["code_bq"] . "'>" . $res["code_bq"] . "</option>";
-        // }
+        }
         return new JsonResponse($data);
     }
 }
