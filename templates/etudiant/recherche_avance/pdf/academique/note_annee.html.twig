@@ -165,6 +165,12 @@
                             {% set adms = [2534] %}
                             {% if inscription.admission.id in adms %}
                                 <td style="width: 100%">DU Génie de la Santé</td>
+                            {% elseif inscription.annee.formation.etablissement.id == 25 %}
+                                {% if inscription.annee.formation.etabSec %}
+                                    <td style="width: 100%">{{inscription.annee.formation.etabSec.designation}}</td>
+                                {% else %}
+                                    <td style="width: 100%">{{inscription.annee.formation.designation}}</td>
+                                {% endif %}
                             {% else %}
                                 <td style="width: 100%">{{inscription.annee.formation.designation}}</td>
                             {% endif %}
