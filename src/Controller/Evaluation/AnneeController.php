@@ -136,6 +136,8 @@ class AnneeController extends AbstractController
     #[Route('/impression/{type}/{affichage}', name: 'evaluation_annee_impression')]
     public function evaluationAnneeImpression(Request $request, $type, $affichage)
     {
+        ini_set('max_execution_time', '300');
+        ini_set("pcre.backtrack_limit", "5000000");
         $session = $request->getSession();
         $dataSaved = $session->get('data_annee')['data_saved'];
         $modules = $session->get('data_annee')['modules'];
