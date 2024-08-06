@@ -200,7 +200,7 @@ class EtudiantController extends AbstractController
                     $date = new DateTime();
                     $etudiant->setDateNaissance($date->setTimestamp(strtotime($sheet[3])));
                     $etudiant->setLieuNaissance($sheet[4]);
-                    $etudiant->setSexe($sheet[5]);
+                    $etudiant->setSexe(strtoupper($sheet[5]));
                     $etudiant->setTeleListe('Intéressé');
                     // $etudiant->setStFamille();
                     // $etudiant->setStFamilleParent();
@@ -784,7 +784,7 @@ class EtudiantController extends AbstractController
         $etudiant->setPrenom(ucfirst(strtolower($request->get('prenom'))));
         $etudiant->setDateNaissance(new \DateTime($request->get('date_naissance')));
         $etudiant->setLieuNaissance($request->get('lieu_naissance'));
-        $etudiant->setSexe($request->get('sexe'));
+        $etudiant->setSexe(strtoupper($request->get('sexe')));
         $stfamille = $request->get('st_famille') == "" ? Null : $this->em->getRepository(PSituation::class)->find($request->get('st_famille'));
         $etudiant->setStFamille($stfamille);
         $etudiant->setNationalite(strtoupper($request->get('nationalite') == "" ? $etudiant->getNationalite() : $request->get('nationalite')));
