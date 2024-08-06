@@ -1279,12 +1279,16 @@ class GestionFactureController extends AbstractController
         
         // $responseUNiv = $this->api_univ->request('GET', $this->getParameter('api_univ') . $link . '/' . $from_id);
         // $pecs = $this->api_ugouv->request('GET', $this->getParameter('api_ugouv'). '/getEncaissement')->toArray();
-        $pecs = $this->em->getRepository(InfoPec::class)->findBy(['preinscription'=>$facture->getPreinscription(), 'annee'=>$facture->getAnnee()]);
-        
+        if ($facture->getCodePec() != null) {
+            $pec = $this->em->getRepository(InfoPec::class)->findOneBy(['codePec'=>$facture->getCodePec()]);
+            $data = "<option selected enabled value='".$pec->getId()."'>".$pec->getCodePec()."</option>";
+            return new JsonResponse($data);
+        }
+        $pecs = $this->em->getRepository(InfoPec::class)->findBy(['preinscription'=>$facture->getPreinscription(), 'annee'=>$facture->getAnnee()->getDesignation()]);
+        // dd($pecs);
         $data = "<option selected enabled value=''>Choix de Pec Social</option>";
         foreach ($pecs as $pec) {
-            $data .= "<option data-montant='" . $pec["montant"] . "' data-code='" . $pec["code_bq"] . "' data-societe='" . $pec["societe"] . "' data-partner = '" . $pec["id_partner"] . "' value='" . $pec["code_bq"] . "'>" . $pec["code_bq"] . "</option>";
-            break;
+            $data .= "<option value='".$pec->getId()."'>".$pec->getCodePec()."</option>";
         }
         return new JsonResponse($data);
     }
@@ -1293,13 +1297,28 @@ class GestionFactureController extends AbstractController
     public function getSomething(Request $request)
     {
         // $pecs = $this->api_ugouv->request('GET', $this->getParameter('api_ugouv'). '/getEncaissement')->toArray();
-        $datas[] = ['preinscription_id' => 5069,"annee" => "2017/2018","code_pec" => "CHR_108027","nbr_annee_pec" => 7,"annee_debut_pec" => "2017/2018","annee_fin_pec" => "2023/2024","pec_social_id" => 1,"pec_ref_social" => null,"montant_pec" => 466000];
-        $datas[] = ['preinscription_id' => null,"annee" => "2017/2018","code_pec" => "CHR_108027","nbr_annee_pec" => 7,"annee_debut_pec" => "2017/2018","annee_fin_pec" => "2023/2024","pec_social_id" => 1,"pec_ref_social" => null,"montant_pec" => 466000];
-        dd($datas);
-        foreach ($datas as $data) {
-            if (!$data['preinscription_id']) continue;
-
+        $preinscription_id = 5069;
+        $annee = '2017/2018';
+        $code_pec = 'CHR_108027';
+        $nbr_annee_pec = 7;
+        $annee_debut_pec = '2017/2018';
+        $annee_fin_pec = '2023/2024';
+        $pec_social_id = 1;
+        $pec_ref_social = null;
+        $montant_pec = 466000;
+        
+        
+        $sql = "SELECT * from tpreinscription where id = " . $preinscription_id . " limit 1";
+        $stmt = $this->em->getConnection()->prepare($sql);
+        $preinscription =  $stmt->execute()->fetch();
+        
+        if (!$preinscription) {
+            return new JsonResponse('Preinscription Introuvable!', 500);
         }
-        return new JsonResponse($data);
+        $sql = "INSERT INTO `info_pec` (`preinscription_id`, `code_pec`, `montant_pec`, `annee`, `solde`) VALUES ($preinscription_id, '$code_pec', $montant_pec, '$annee', $montant_pec)";
+        // dd($sql);
+        $stmt = $this->em->getConnection()->prepare($sql);
+        $stmt->execute();
+        return new JsonResponse('Done');
     }
 }
