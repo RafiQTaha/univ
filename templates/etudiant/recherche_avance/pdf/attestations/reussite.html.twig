@@ -174,8 +174,9 @@
        {% set a =' au ' %}
     {% endif %} 
     
-   Est inscrit(e){{a}}  <span style="font-size:12px;font-weight: bold;color:black;">{% if inscription.annee.formation.id in [46,63] %} {{inscription.annee.formation.etabSec.designation}} {% else %} {{inscription.annee.formation.etablissement.designation}}{% endif %}
-    {{inscription.annee.formation.etablissement.designation}}</span>
+   Est inscrit(e){{a}}  <span style="font-size:12px;font-weight: bold;color:black;">
+        {% if inscription.annee.formation.id in [46,63] %} {{inscription.annee.formation.etabSec.designation}} {% else %} {{inscription.annee.formation.etablissement.designation}}{% endif %}
+    </span>
                 sous le N° <span style="font-size:12px;font-weight: bold;color:black;">{{inscription.code}}</span> en <span style="font-size:12px;font-weight: bold;color:black;">{{inscription.annee.formation.designation}}</span>
                     , et a réussi avec succès les examens du 
                     {% set i = 1 %}
