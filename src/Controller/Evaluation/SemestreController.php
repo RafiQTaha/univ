@@ -252,7 +252,7 @@ class SemestreController extends AbstractController
             // $j++;
         }
         $writer = new Xlsx($spreadsheet);
-        $current_year = date('m') > 7 ? date('Y') . '-' . date('Y') + 1 : date('Y') - 1 . '-' . date('Y');
+        $current_year = date('m') > 8 ? date('Y') . '-' . date('Y') + 1 : date('Y') - 1 . '-' . date('Y');
         $fileName = "Extraction List " . $annee->getFormation()->getAbreviation() . " " . $semestre->getDesignation() . ".xlsx";
         $temp_file = tempnam(sys_get_temp_dir(), $fileName);
         $writer->save($temp_file);
@@ -671,7 +671,7 @@ class SemestreController extends AbstractController
         ini_set('memory_limit', '-1');
         set_time_limit(0);
         $etablissement = $this->em->getRepository(AcEtablissement::class)->find($etab);
-        $current_year = date('m') > 7 ? date('Y') . '/' . date('Y') + 1 :  date('Y') - 1 . '/' . date('Y');
+        $current_year = date('m') > 8 ? date('Y') . '/' . date('Y') + 1 :  date('Y') - 1 . '/' . date('Y');
         // $elements = $this->em->getRepository(AcElement::class)->getElementByCurrentYear($current_year);
         $semestres = $this->em->getRepository(ExSnotes::class)->getSemestreByCurrentYear($current_year, $etablissement ? $etablissement->getId() : null);
         $spreadsheet = new Spreadsheet();
@@ -694,7 +694,7 @@ class SemestreController extends AbstractController
             $j++;
         }
         $writer = new Xlsx($spreadsheet);
-        $year = date('m') > 7 ? date('Y') . '-' . date('Y') + 1 : date('Y') - 1 . '-' . date('Y');
+        $year = date('m') > 8 ? date('Y') . '-' . date('Y') + 1 : date('Y') - 1 . '-' . date('Y');
         $fileName = "Extraction semestres $year.xlsx";
         $temp_file = tempnam(sys_get_temp_dir(), $fileName);
         $writer->save($temp_file);
@@ -704,7 +704,7 @@ class SemestreController extends AbstractController
     // #[Route('/ExtractionSemestreBysemestre/{semestre}', name: 'ExtractionSemestreBysemestre')]
     // public function ExtractionSemestreBysemestre(AcSemestre $semestre, Request $request)
     // {
-    //     // $current_year = date('m') > 7 ? date('Y') . '/' . date('Y') + 1 :  date('Y') - 1 . '/' . date('Y');
+    //     // $current_year = date('m') > 8 ? date('Y') . '/' . date('Y') + 1 :  date('Y') - 1 . '/' . date('Y');
     //     // $annee = $this->em->getRepository(AcAnnee::class)->findOneBy(['designation'=>$current_year,'formation'=>$semestre->getPromotion()->getFormation()]);
     //     // // dd($annee);
     //     // // $elements = $this->em->getRepository(AcElement::class)->getElementByCurrentYear($current_year);
@@ -790,7 +790,7 @@ class SemestreController extends AbstractController
     //     //     $j++;
     //     // }
     //     $writer = new Xlsx($spreadsheet);
-    //     $year = date('m') > 7 ? date('Y') . '-' . date('Y') + 1 : date('Y') - 1 . '-' . date('Y');
+    //     $year = date('m') > 8 ? date('Y') . '-' . date('Y') + 1 : date('Y') - 1 . '-' . date('Y');
     //     $fileName = "Extraction semestres $year.xlsx";
     //     $temp_file = tempnam(sys_get_temp_dir(), $fileName);
     //     $writer->save($temp_file);

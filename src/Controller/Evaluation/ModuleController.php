@@ -498,7 +498,7 @@ class ModuleController extends AbstractController
     public function evaluationModuleExtraction($etab, Request $request)
     {
         $etablissement = $this->em->getRepository(AcEtablissement::class)->find($etab);
-        $current_year = date('m') > 7 ? date('Y') . '/' . date('Y') + 1 :  date('Y') - 1 . '/' . date('Y');
+        $current_year = date('m') > 8 ? date('Y') . '/' . date('Y') + 1 :  date('Y') - 1 . '/' . date('Y');
         // $elements = $this->em->getRepository(AcElement::class)->getElementByCurrentYear($current_year);
         $modules = $this->em->getRepository(ExMnotes::class)->getModuleByCurrentYear($current_year, $etablissement ? $etablissement->getId() : null);
         $spreadsheet = new Spreadsheet();
@@ -521,7 +521,7 @@ class ModuleController extends AbstractController
             $j++;
         }
         $writer = new Xlsx($spreadsheet);
-        $year = date('m') > 7 ? date('Y') . '-' . date('Y') + 1 : date('Y') - 1 . '-' . date('Y');
+        $year = date('m') > 8 ? date('Y') . '-' . date('Y') + 1 : date('Y') - 1 . '-' . date('Y');
         $fileName = "Extraction modules $year.xlsx";
         $temp_file = tempnam(sys_get_temp_dir(), $fileName);
         $writer->save($temp_file);

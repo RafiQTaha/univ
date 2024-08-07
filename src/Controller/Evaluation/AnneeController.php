@@ -677,7 +677,7 @@ class AnneeController extends AbstractController
         ini_set('memory_limit', '-1');
         set_time_limit(0);
         $etablissement = $this->em->getRepository(AcEtablissement::class)->find($etab);
-        $current_year = date('m') > 7 ? date('Y') . '/' . date('Y') + 1 :  date('Y') - 1 . '/' . date('Y');
+        $current_year = date('m') > 8 ? date('Y') . '/' . date('Y') + 1 :  date('Y') - 1 . '/' . date('Y');
         $annees = $this->em->getRepository(ExAnotes::class)->getAnneeByCurrentYear($current_year, $etablissement ? $etablissement->getId() : null);
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
@@ -699,7 +699,7 @@ class AnneeController extends AbstractController
             $j++;
         }
         $writer = new Xlsx($spreadsheet);
-        $year = date('m') > 7 ? date('Y') . '-' . date('Y') + 1 : date('Y') - 1 . '-' . date('Y');
+        $year = date('m') > 8 ? date('Y') . '-' . date('Y') + 1 : date('Y') - 1 . '-' . date('Y');
         $fileName = "Extraction annee $year.xlsx";
         $temp_file = tempnam(sys_get_temp_dir(), $fileName);
         $writer->save($temp_file);
@@ -784,7 +784,7 @@ class AnneeController extends AbstractController
             $ord++;
         }
         $writer = new Xlsx($spreadsheet);
-        $current_year = date('m') > 7 ? date('Y') . '-' . date('Y') + 1 : date('Y') - 1 . '-' . date('Y');
+        $current_year = date('m') > 8 ? date('Y') . '-' . date('Y') + 1 : date('Y') - 1 . '-' . date('Y');
         $fileName = "Extraction List " . $annee->getFormation()->getAbreviation() . " " . $current_year . ".xlsx";
         $temp_file = tempnam(sys_get_temp_dir(), $fileName);
         $writer->save($temp_file);

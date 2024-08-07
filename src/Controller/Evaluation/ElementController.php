@@ -61,8 +61,6 @@ class ElementController extends AbstractController
         $data_saved = [];
         // dd($inscriptions);
         foreach ($inscriptions as $inscription) {
-            // dd($inscription);
-
             $enote = $this->em->getRepository(ExEnotes::class)->findOneBy(['element' => $element, 'inscription' => $inscription]);
             $statutS1 = $enote->getStatutS1() ? $enote->getStatutS1()->getId() : null;
             $m_cc = $enote->getCcr() < $enote->getMcc() || !$enote->getCcr() ? $enote->getMcc() : $enote->getCcr();
@@ -80,7 +78,7 @@ class ElementController extends AbstractController
             } else {
                 $moyenne_ini = $this->CalculMoyenneElement($element->getCoefficientEpreuve(), $m_cc, $m_tp, $enote->getPondMef() * $enote->getMef());
                 // [10119,10120] deux element avec moyen de validation 13 c'est temporaire à changer apres les delebiration annuelle 2022/2023.
-                if ($moyenne_ini < in_array($element->getId(), [10119, 10120]) ? 13 : 10 || $enote->getMef() < 7 || $statutS1 == 12 || $statutS1 == 13) {
+                if ($moyenne_ini < (in_array($element->getId(), [10119, 10120]) ? 13 : 10) || $enote->getMef() < 7 || $statutS1 == 12 || $statutS1 == 13) {
                     $moyenne_rat = $this->CalculMoyenneElement($element->getCoefficientEpreuve(), $m_cc, $m_tp, $m_ef);
                     $moyenne_tot = $moyenne_rat + $enote->getNoteRachat();
                 } else {
@@ -324,14 +322,15 @@ class ElementController extends AbstractController
             $moyenne_ini = $data['moyenneIni'];
             $moyenne_rat = $data['moyenneRat'];
             $moyenne_tot = $data['moyenneTot'];
-
             $noteElement->setNote($moyenne_tot);
             $noteElement->setNoteIni($moyenne_ini);
-            if (($moyenne_rat > 0 && ($element->getNature()->getCode() == "NE003" || $element->getNature()->getCode() == "NE004" || $element->getNature()->getCode() == "NE005"))
-                or ($moyenne_ini < 10 || $data['mefini'] < 7 || $moyenne_rat > 0)
-            ) {
+            // if (($moyenne_rat > 0 && ($element->getNature()->getCode() == "NE003" || $element->getNature()->getCode() == "NE004" || $element->getNature()->getCode() == "NE005"))
+            //     or ($moyenne_ini < 10 || $data['mefini'] < 7 || $moyenne_rat > 0)
+            // ) {
                 $noteElement->setNoteRat($moyenne_rat);
-            }
+            // }
+            
+            // dd($moyenne_rat > 0);
         }
         ApiController::mouchard($this->getUser(), $this->em, $noteElement, 'ExEnotes', 'Recalcule noteElement');
         $this->em->flush();
@@ -656,7 +655,7 @@ class ElementController extends AbstractController
     public function evaluationElementExtraction($etab, Request $request)
     {
         $etablissement = $this->em->getRepository(AcEtablissement::class)->find($etab);
-        $current_year = date('m') > 7 ? date('Y') . '/' . date('Y') + 1 :  date('Y') - 1 . '/' . date('Y');
+        $current_year = date('m') > 8 ? date('Y') . '/' . date('Y') + 1 :  date('Y') - 1 . '/' . date('Y');
         // $elements = $this->em->getRepository(AcElement::class)->getElementByCurrentYear($current_year);
         $elements = $this->em->getRepository(ExEnotes::class)->getElementByCurrentYear($current_year, $etablissement ? $etablissement->getId() : null);
         $spreadsheet = new Spreadsheet();
