@@ -119,8 +119,9 @@ class SemainesController extends AbstractController
         if (count($SemaineLastYear) >= 52) {
             $anneeS = substr($anneeS,-4)."/".substr($anneeS,-4) +1;
         }
+        $count = 1;
         $nsemaine++;
-        while ($nsemaine != 36) {
+        while ($nsemaine != 36 or $count < 52) {
             $nsemaine = $nsemaine == 53 ? 1 : $nsemaine;
             $dDebut = $dateDebut->modify('+7 days');
             $dFin = $dateFin->modify('+7 days');
@@ -132,6 +133,7 @@ class SemainesController extends AbstractController
             $this->em->persist($semaine);
             $this->em->flush();
             $nsemaine++;
+            $count++;
         }
 
        return new JsonResponse('Les semaines de l\'annee '.$anneeS.' sont bien crée',200);
