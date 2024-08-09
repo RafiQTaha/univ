@@ -125,15 +125,13 @@
                     </td>
                     <td style="width: 35%;border: 0.5px solid #292929">
                         <table style="width: 100% ;">
-                            <tr><td style="width: 100%">{{inscription.annee.formation.etablissement.designation}}</td></tr>
+                            {% if inscription.annee.formation.etablissement.id == 25 and inscription.annee.formation.etabSec != null %}
+                                <tr><td style="width: 100%">{{inscription.annee.formation.etabSec.designation}}</td></tr>
+                            {% else %}
+                                <tr><td style="width: 100%">{{inscription.annee.formation.etablissement.designation}}</td></tr>
+                            {% endif %}
                         </table>
                     </td>
-                    
-                    
-                    
-
-                 
-
 
                 </tr>
                 <tr>
@@ -165,15 +163,10 @@
                             {% set adms = [2534] %}
                             {% if inscription.admission.id in adms %}
                                 <td style="width: 100%">DU Génie de la Santé</td>
-                            {% elseif inscription.annee.formation.id in [46,63] %}
-                                {% if inscription.annee.formation.etabSec %}
-                                    <td style="width: 100%">{{inscription.annee.formation.etabSec.designation}}</td>
-                                {% else %}
-                                    <td style="width: 100%">{{inscription.annee.formation.designation}}</td>
-                                {% endif %}
                             {% else %}
                                 <td style="width: 100%">{{inscription.annee.formation.designation}}</td>
                             {% endif %}
+                            
                             </tr>
                         </table>
                     </td>
