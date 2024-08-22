@@ -299,13 +299,13 @@ $("#annulation").on('click', async (e) => {
         })
         return;
     }
-    const icon = $("#annulation i");
-    icon.removeClass('fa-times-circle').addClass("fa-spinner fa-spin");
     var formData = new FormData();
     formData.append('idpreins', JSON.stringify(idpreins));
     
     var res = confirm('Vous voulez Confirmer cette operation ?');
     if (res == 1) {
+        const icon = $("#annulation i");
+        icon.removeClass('fa-times-circle').addClass("fa-spinner fa-spin");
         try {
             const request = await axios.post("/preinscription/gestion/annulation_preinscription", formData);
             const data = await request.data;

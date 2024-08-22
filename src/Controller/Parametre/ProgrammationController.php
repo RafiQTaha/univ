@@ -16,7 +16,6 @@ use App\Entity\PrProgrammation;
 use App\Entity\TypeElement;
 use DateTime;
 use Doctrine\Persistence\ManagerRegistry;
-use Proxies\__CG__\App\Entity\AcAnnee as EntityAcAnnee;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;

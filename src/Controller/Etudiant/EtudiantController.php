@@ -788,7 +788,7 @@ class EtudiantController extends AbstractController
         $stfamille = $request->get('st_famille') == "" ? Null : $this->em->getRepository(PSituation::class)->find($request->get('st_famille'));
         $etudiant->setStFamille($stfamille);
         $etudiant->setNationalite(strtoupper($request->get('nationalite') == "" ? $etudiant->getNationalite() : $request->get('nationalite')));
-        if ($request->get('nationalite') != "" and $request->get('nationalite') != 'Morocco') {
+        if ($request->get('nationalite') != "" and $request->get('nationalite') != 'MAROCAINNE') {
             $etudiant->setStrange(1);
         }else{
             $etudiant->setStrange(0);

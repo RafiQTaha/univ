@@ -514,7 +514,7 @@ class GestionPreinscriptionController extends AbstractController
             $preinscription->getEtudiant()->setStFamille($this->em->getRepository(PSituation::class)->find($request->get('st_famille')));
         }
         $preinscription->getEtudiant()->setNationalite(strtoupper($request->get('nationalite')));
-        if ($request->get('nationalite') != "" and $request->get('nationalite') != 'Morocco') {
+        if ($request->get('nationalite') != "" and $request->get('nationalite') != 'MAROCAINNE') {
             $preinscription->getEtudiant()->setStrange(1);
         }else{
             $preinscription->getEtudiant()->setStrange(0);
