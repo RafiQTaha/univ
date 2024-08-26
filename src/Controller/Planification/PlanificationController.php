@@ -445,23 +445,24 @@ class PlanificationController extends AbstractController
             foreach ($inscriptions as $inscription) {
                 $groupe = $inscription->getGroupe();
                 if ($groupe->getGroupe() == Null) {
-                    if (!in_array($groupe, $groupes)){
-                        array_push($groupes,$groupe);
+                    if (!in_array($groupe->getId(), $groupes)){
+                        array_push($groupes,$groupe->getId());
                     }
                 }elseif ($groupe->getGroupe()->getGroupe() == Null) {
-                    $groupe = $groupe->getGroupe();
-                    if (!in_array($groupe, $groupes)){
-                        array_push($groupes,$groupe);
+                    // $groupe = $groupe->getGroupe();
+                    if (!in_array($groupe->getId(), $groupes)){
+                        array_push($groupes,$groupe->getId());
                     }
                 }else {
-                    $groupe = $groupe->getGroupe()->getGroupe();
-                    if (!in_array($groupe, $groupes)){
-                        array_push($groupes,$groupe);
+                    // $groupe = $groupe->getGroupe()->getGroupe();
+                    if (!in_array($groupe->getId(), $groupes)){
+                        array_push($groupes,$groupe->getId());
                     }
                 }
             }
             $CountGroupe = count($groupes) == 0 ? 1 : count($groupes);
             $totalMinute =0;
+            // dd($groupes);
             $seancesActive = $this->em->getRepository(PlEmptime::class)->findBy(['active' => 1,'programmation' => $programmation,'annuler'=>0]);
 
             foreach ($seancesActive as $seance) {
