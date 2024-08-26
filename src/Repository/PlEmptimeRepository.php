@@ -272,6 +272,28 @@ class PlEmptimeRepository extends ServiceEntityRepository
             ->getResult()
         ;
     }
+    public function getEmptimeBySemestreAndGroupeAndSemaineAndVerified($semestre,$groupe,$semaine)
+    {
+        return $this->createQueryBuilder('e')
+            ->innerJoin("e.groupe", "groupe")
+            ->innerJoin("e.semaine", "semaine")
+            ->innerJoin("e.programmation", "programmation")
+            ->innerJoin("programmation.element", "element")
+            ->innerJoin("element.module", "module")
+            ->innerJoin("module.semestre", "semestre")
+            ->where('semestre.id = :semestre')
+            ->andWhere("groupe = :groupe")
+            ->andWhere("semaine = :semaine")
+            ->andWhere("e.active = 1")
+            ->andWhere("e.verifier = 1")
+            // ->andWhere("e.annuler = 0")
+            ->setParameter('semestre', $semestre)
+            ->setParameter('groupe', $groupe)
+            ->setParameter('semaine', $semaine)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
 
     
     public function getEmptimeBySemestreAndGroupesAndSemaine($semestre,$groupes,$semaine)
@@ -313,6 +335,28 @@ class PlEmptimeRepository extends ServiceEntityRepository
             ->getResult()
         ;
     }
+
+    public function getEmptimeBySemestreAndSemaineAndVerified($semestre,$semaine)
+    {
+        return $this->createQueryBuilder('e')
+            ->innerJoin("e.semaine", "semaine")
+            ->innerJoin("e.programmation", "programmation")
+            ->innerJoin("programmation.element", "element")
+            ->innerJoin("element.module", "module")
+            ->innerJoin("module.semestre", "semestre")
+            ->where('semestre = :semestre')
+            ->andWhere("semaine = :semaine")
+            ->andWhere("e.active = 1")
+            ->andWhere("e.verifier = 1")
+            ->setParameter('semestre', $semestre)
+            ->setParameter('semaine', $semaine)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
+
+
     public function getEmptimeBySemestreAndGroupeAndSemaineToGenerer($semestre,$groupe,$semaine)
     {
         return $this->createQueryBuilder('e')

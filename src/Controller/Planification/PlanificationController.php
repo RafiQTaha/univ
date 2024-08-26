@@ -715,11 +715,11 @@ class PlanificationController extends AbstractController
             if ($groupe == 0) {
                 $emptimesValider = $this->em->getRepository(PlEmptime::class)->getEmptimeBySemestreAndSemaineToGenerer($semestre,$semaine);
                 $emptimesAnnuler = $this->em->getRepository(PlEmptime::class)->getEmptimeAnnulerBySemestreAndSemaineToGenerer($semestre,$semaine);
-                $Allemptimes = $this->em->getRepository(PlEmptime::class)->getEmptimeBySemestreAndSemaine($semestre,$semaine);
+                $Allemptimes = $this->em->getRepository(PlEmptime::class)->getEmptimeBySemestreAndSemaineAndVerified($semestre,$semaine);
             }else{
                 $emptimesValider = $this->em->getRepository(PlEmptime::class)->getEmptimeBySemestreAndGroupeAndSemaineToGenerer($semestre,$groupe,$semaine);
                 $emptimesAnnuler = $this->em->getRepository(PlEmptime::class)->getEmptimeAnnulerBySemestreAndGroupeAndSemaineToGenerer($semestre,$groupe,$semaine);
-                $Allemptimes = $this->em->getRepository(PlEmptime::class)->getEmptimeBySemestreAndGroupeAndSemaine($semestre,$groupe,$semaine);
+                $Allemptimes = $this->em->getRepository(PlEmptime::class)->getEmptimeBySemestreAndGroupeAndSemaineAndVerified($semestre,$groupe,$semaine);
             }
             $count = count($emptimesValider) + count($emptimesAnnuler);
             if (count($Allemptimes) == $count && $emptimesValider != NULL) {
