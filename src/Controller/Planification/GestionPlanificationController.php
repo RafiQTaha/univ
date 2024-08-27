@@ -21,8 +21,6 @@ use App\Entity\TInscription;
 use Mpdf\Mpdf;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
-use PhpOffice\PhpSpreadsheet\Reader\Xlsx as reader;
-use Proxies\__CG__\App\Entity\PlEmptime as EntityPlEmptime;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 
@@ -450,7 +448,7 @@ class GestionPlanificationController extends AbstractController
         $sheet = $spreadsheet->getActiveSheet();
         $i=2;
         $j=1;
-        $currentyear = date('m') > 8 ? $current_year = date('Y').'/'.date('Y')+1 : $current_year = date('Y') - 1 .'/' .date('Y');
+        $currentyear = date('m') > 7 ? $current_year = date('Y').'/'.date('Y')+1 : $current_year = date('Y') - 1 .'/' .date('Y');
         $seances = $this->em->getRepository(PlEmptime::class)->findSeanceByCurrentYears($currentyear);
         // dd($seances);
         if (count($seances) < 1) {
