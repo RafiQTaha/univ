@@ -470,7 +470,8 @@ class GestionPlanificationController extends AbstractController
         }
         $writer = new Xlsx($spreadsheet);
         $currentyear = date('m') > 7 ? date('Y').'-'.date('Y')+1 : date('Y') - 1 .'-' .date('Y');
-        $fileName = 'Extraction Seances '.$current_year.'.xlsx';
+        $fileName = 'Extraction Seances '.$currentyear.'.xlsx';
+        // dd($fileName);
         $temp_file = tempnam(sys_get_temp_dir(), $fileName);
         $writer->save($temp_file);
         return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);

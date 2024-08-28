@@ -446,17 +446,17 @@ class PlanificationController extends AbstractController
                 $groupe = $inscription->getGroupe();
                 if ($groupe->getGroupe() == Null) {
                     if (!in_array($groupe->getId(), $groupes)){
-                        array_push($groupes,$groupe->getId());
+                        array_push($groupes,$groupe->getNiveau());
                     }
                 }elseif ($groupe->getGroupe()->getGroupe() == Null) {
                     // $groupe = $groupe->getGroupe();
                     if (!in_array($groupe->getId(), $groupes)){
-                        array_push($groupes,$groupe->getId());
+                        array_push($groupes,$groupe->getNiveau());
                     }
                 }else {
                     // $groupe = $groupe->getGroupe()->getGroupe();
                     if (!in_array($groupe->getId(), $groupes)){
-                        array_push($groupes,$groupe->getId());
+                        array_push($groupes,$groupe->getNiveau());
                     }
                 }
             }
