@@ -670,7 +670,7 @@ class EtudiantController extends AbstractController
             empty($request->get('moyen_regional')) || empty($request->get('moyen_national')) || 
             empty($request->get('categorie_preinscription'))
         ){return new JsonResponse("Merci de remplir tout les champs obligatoire!!",500);}
-        if ($request->get('nationalite') == 'MAROCAINNE') {
+        if ($request->get('nationalite') == 'Marocainne') {
             $etudiantExist = $this->em->getRepository(TEtudiant::class)->findOneBy(['cin'=>trim($request->get('cin'))]);
         }else {
             $etudiantExist = $this->em->getRepository(TEtudiant::class)->findOneBy(['passeport'=>trim($request->get('passeport'))]);
@@ -692,7 +692,7 @@ class EtudiantController extends AbstractController
         $stfamille = $request->get('st_famille') == "" ? Null : $this->em->getRepository(PSituation::class)->find($request->get('st_famille'));
         $etudiant->setStFamille($stfamille);
         $etudiant->setNationalite(strtoupper($request->get('nationalite')));
-        if ($request->get('nationalite') != 'MAROCAINNE') {
+        if ($request->get('nationalite') != 'Marocainne') {
             $etudiant->setStrange(1);
         }else{
             $etudiant->setStrange(0);
