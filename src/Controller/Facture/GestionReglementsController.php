@@ -204,6 +204,7 @@ class GestionReglementsController extends AbstractController
             'margin_top' => 3,
         ]);
         $mpdf->WriteHTML($html);
+        $mpdf->SetTitle('Quittance - '.$reglement->getCode());
         $mpdf->Output("Reglement-".$reglement->getCode().".pdf", "I");
     }
     

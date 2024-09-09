@@ -308,7 +308,8 @@ class GestionFactureController extends AbstractController
             'margin_top' => 5,
             'margin_bottom' => 5,
         ]);
-        $mpdf->SetTitle('Facture Reglée');
+        // $mpdf->SetTitle('Facture Reglée');
+        $mpdf->SetTitle('Quittance - '.$reglement->getCode());
         $mpdf->WriteHTML($html);
         $mpdf->Output("facture.pdf", "I");
     }
