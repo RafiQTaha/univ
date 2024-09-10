@@ -216,9 +216,19 @@
 <tr>
     <td style="width:16%;border:1px solid #ddd;background:#eee;padding:5px;font-size:8px">MONTANT A PAYER</td>
     <td style="width:0.67%;"></td>
-    <td style="width:83.33%;border:1px solid #ddd;background:white;padding:5px;font-size:8px">
+    <td style="width:32.80%;border:1px solid #ddd;background:white;padding:5px;font-size:8px">
         {{operationTotal | first}}
     </td>
+    {# <td style="width:16%;border:1px solid #ddd;background:#eee;padding:5px;font-size:8px">MONTANT A PAYER</td>
+    <td style="width:0.67%;"></td>
+    <td style="width:83.33%;border:1px solid #ddd;background:white;padding:5px;font-size:8px">
+        {{operationTotal | first}}
+    </td> #}
+
+    <td style="width:0.67%;"></td>
+    <td style="width:16%;border:1px solid #ddd;background:#eee;padding:5px;font-size:8px">MONTANT EN DEVISE</td>
+    <td style="width:0.67%;"></td>
+    <td style="width:33.3%;border:1px solid #ddd;background:white;padding:5px;font-size:8px">{{reglement.mdevis}}</td>
 
 </tr>
 
@@ -254,11 +264,15 @@
 <table style="width: 100%;margin-top:.5px;">
 <tr>
 <td style="width:100%;border:1px solid #ddd;background:white;padding:5px;font-size:7px;text-align:justify;font-weight:bold">
-    NB:ll est à noter que le seuil de dépôt de dossier défini annuellement par l'Université ne constitue en aucun cas une convocation au concours d'accès. En cas d'absence de convocation, les frais engagés ne sont pas remboursables.
+    NB:
+    <ul>
+        <li>ll est à noter que le seuil de dépôt de dossier défini annuellement par l'Université ne constitue en aucun cas une convocation au concours d'accès. En cas d'absence de convocation, les frais engagés ne sont pas remboursables.</li>
+        <li>Sous réserve de la confirmation de la banque.</li>
+    </ul>
 </td>
 
 </tr>
 
 </table>
-<br>
+{# <br> #}
 {# <br><br><br><br><br><br><br><br><br><br><br><br> #}

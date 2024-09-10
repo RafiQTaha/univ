@@ -641,7 +641,7 @@ class GestionAdmissionController extends AbstractController
         $fileName = "";
         if ($sheetCount > 0) {
             $writer = new Xlsx($spreadsheet);
-            $fileName = 'Total des inscription crée est ' .$sheetCount.'.xlsx';
+            $fileName = 'Total des inscriptions crée est ' .$sheetCount.'.xlsx';
             $temp_file = tempnam(sys_get_temp_dir(), $fileName);
             $writer->save($fileName);
         }
