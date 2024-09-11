@@ -627,7 +627,7 @@ class GestionFactureController extends AbstractController
         $j=1;
         // $currentyear = '2022/2023';
         $currentyear = date('m') >= 7 ? date('Y').'/'.date('Y')+1 : date('Y') - 1 .'/' .date('Y');
-        $operationcabs = $this->em->getRepository(TOperationcab::class)->getFacturesByCurrentYear($currentyear);
+        $operationcabs = $this->em->getRepository(TOperationcab::class)->getFacturesByCurrentYear2($currentyear);
         // dd($operationcabs);
         foreach ($operationcabs as $operationcab) {
             $montant = $this->em->getRepository(TOperationdet::class)->getSumMontantByCodeFacture($operationcab['id']);
