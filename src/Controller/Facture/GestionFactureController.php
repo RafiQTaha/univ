@@ -359,7 +359,7 @@ class GestionFactureController extends AbstractController
         $inscription = $this->em->getRepository(TInscription::class)->findOneBy([
             'admission'=>$this->em->getRepository(TAdmission::class)->findBy([
                 'preinscription'=>$operationcab->getPreinscription()]),
-            'annee' => $operationcab->getAnnee()]);
+            'annee' => $operationcab->getAnnee(),'statut'=>13]);
                 // dd($inscription);
         $promotion = $inscription == NULL ? "" : $inscription->getPromotion()->getDesignation();
         $reglementOrg = $this->em->getRepository(TReglement::class)->getReglementSumMontantByCodeFactureByOrganisme($operationcab)['total'];
