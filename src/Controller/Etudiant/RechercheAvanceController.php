@@ -354,10 +354,10 @@ class RechercheAvanceController extends AbstractController
         $html = "";
         $i = 1;
         foreach ($inscriptions as $inscription) {
-            $prm = $this->em->getRepository(TInscription::class)->findBy([
-                'admission' => $inscription->getAdmission(),
-                'promotion' => $inscription->getPromotion()
-            ]);
+            // $prm = $this->em->getRepository(TInscription::class)->findBy([
+            //     'admission' => $inscription->getAdmission(),
+            //     'promotion' => $inscription->getPromotion()
+            // ]);
             // ,'statutAff'=>[41,42,43,44,70,73]
             $anote = $this->em->getRepository(ExAnotes::class)->findOneBy(['inscription' => $inscription]);
             if ($anote and in_array($anote->getStatutAff()->getId(), [41, 42, 43, 70, 73])) {
