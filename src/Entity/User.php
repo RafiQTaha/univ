@@ -121,6 +121,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'userCreated', targetEntity: ConcoursEvaluation::class)]
     private $concoursEvaluations;
 
+    #[ORM\OneToMany(mappedBy: 'observationUser', targetEntity: TInscription::class)]
+    private $tInscriptions;
+
 
     public function __construct()
     {
@@ -151,6 +154,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->concoursEtudiantLogs = new ArrayCollection();
         $this->concoursEtudiantControles = new ArrayCollection();
         $this->concoursEvaluations = new ArrayCollection();
+        $this->tInscriptions = new ArrayCollection();
     }
 
     
@@ -1054,6 +1058,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($concoursEvaluation->getUserCreated() === $this) {
                 $concoursEvaluation->setUserCreated(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, TInscription>
+     */
+    public function getTInscriptions(): Collection
+    {
+        return $this->tInscriptions;
+    }
+
+    public function addTInscription(TInscription $tInscription): self
+    {
+        if (!$this->tInscriptions->contains($tInscription)) {
+            $this->tInscriptions[] = $tInscription;
+            $tInscription->setObservationUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTInscription(TInscription $tInscription): self
+    {
+        if ($this->tInscriptions->removeElement($tInscription)) {
+            // set the owning side to null (unless already changed)
+            if ($tInscription->getObservationUser() === $this) {
+                $tInscription->setObservationUser(null);
             }
         }
 

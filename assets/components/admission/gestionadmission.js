@@ -443,6 +443,7 @@ $(document).ready(function () {
       $("#annee_inscription, #promotion_inscription, #pec").empty();
       $(this).trigger("reset");
       table.ajax.reload(null, false);
+      button.prop("disabled", false);
     } catch (error) {
       const message = error.response.data;
       console.log(error, error.response);

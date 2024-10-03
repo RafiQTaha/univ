@@ -349,6 +349,7 @@ class GestionAdmissionController extends AbstractController
     public function inscriptionAction(Request $request, TAdmission $admission)
     {
         // return new JsonResponse("Bien ", 200);
+        // dd($request);
         $annee = $this->em->getRepository(AcAnnee::class)->find($request->get('annee_inscription'));
         $inscription = $this->em->getRepository(TInscription::class)->getActiveInscriptionByAnnee($admission,$annee);
         if ($inscription != null) {
@@ -378,6 +379,7 @@ class GestionAdmissionController extends AbstractController
         $inscription->setStatut(
             $this->em->getRepository(PStatut::class)->find(13)
         );
+        $inscription->setObservation($request->get('observation_inscription') != "" ? $request->get('observation_inscription') : NULL);
         $inscription->setUserCreated($this->getUser());
         $inscription->setAnnee($annee);
         $inscription->setPromotion($promotion);
