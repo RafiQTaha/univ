@@ -75,7 +75,7 @@ class AdmissionController extends AbstractController
                 inner join ac_annee an on an.id = pre.annee_id
                 inner join ac_formation form on form.id = an.formation_id              
                 inner join ac_etablissement etab on etab.id = form.etablissement_id 
-                LEFT JOIN nature_demande nd ON pre.nature_demande_id = nd.id
+                LEFT JOIN nature_demande nd ON pre.nature_id = nd.id
                 INNER JOIN pstatut st ON st.id = pre.categorie_liste_id
                 LEFT JOIN pstatut st2 ON st2.id = pre.admission_liste_id
                 LEFT JOIN tadmission adm on adm.preinscription_id = pre.id
