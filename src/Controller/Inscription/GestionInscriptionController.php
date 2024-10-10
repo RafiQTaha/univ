@@ -456,6 +456,7 @@ class GestionInscriptionController extends AbstractController
         $sheet->setCellValue('AF1', 'CODE ASSURANCE');
         $sheet->setCellValue('AG1', 'CNE');
         $sheet->setCellValue('AH1', 'EMAIL');
+        $sheet->setCellValue('AI1', 'ADRESSE');
         $i=2;
         $j=1;
         // $current_year = date('m') > 7 ? date('Y').'/'.date('Y')+1 : date('Y') - 1 .'/' .date('Y');
@@ -502,6 +503,7 @@ class GestionInscriptionController extends AbstractController
             $sheet->setCellValue('AF'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getCodeAssurance());
             $sheet->setCellValue('AG'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getCne());
             $sheet->setCellValue('AH'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getMail1());
+            $sheet->setCellValue('AI'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->setAdresse());
 
             $i++;
             $j++;
