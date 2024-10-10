@@ -52,6 +52,7 @@ class TInscriptionRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('t')
             ->innerJoin("t.annee", "annee")
+            ->innerJoin("t.promotion", "promotion")
             ->innerJoin("t.admission", "admission")
             ->innerJoin("admission.preinscription", "preinscription")
             ->innerJoin("preinscription.etudiant", "etudiant")

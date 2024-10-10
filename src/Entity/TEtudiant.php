@@ -300,11 +300,15 @@ class TEtudiant
     #[ORM\OneToMany(mappedBy: 'etudiant', targetEntity: ConcoursEvaluation::class)]
     private $concoursEvaluations;
 
+    #[ORM\OneToMany(mappedBy: 'etudiant', targetEntity: EtudiantSousNatureDemande::class)]
+    private $etudiantSousNatureDemandes;
+
     public function __construct()
     {
         $this->preinscriptions = new ArrayCollection();
         $this->tPreinscritionReleveNotes = new ArrayCollection();
         $this->concoursEvaluations = new ArrayCollection();
+        $this->etudiantSousNatureDemandes = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -1500,6 +1504,36 @@ class TEtudiant
             // set the owning side to null (unless already changed)
             if ($concoursEvaluation->getEtudiant() === $this) {
                 $concoursEvaluation->setEtudiant(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, EtudiantSousNatureDemande>
+     */
+    public function getEtudiantSousNatureDemandes(): Collection
+    {
+        return $this->etudiantSousNatureDemandes;
+    }
+
+    public function addEtudiantSousNatureDemande(EtudiantSousNatureDemande $etudiantSousNatureDemande): self
+    {
+        if (!$this->etudiantSousNatureDemandes->contains($etudiantSousNatureDemande)) {
+            $this->etudiantSousNatureDemandes[] = $etudiantSousNatureDemande;
+            $etudiantSousNatureDemande->setEtudiant($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEtudiantSousNatureDemande(EtudiantSousNatureDemande $etudiantSousNatureDemande): self
+    {
+        if ($this->etudiantSousNatureDemandes->removeElement($etudiantSousNatureDemande)) {
+            // set the owning side to null (unless already changed)
+            if ($etudiantSousNatureDemande->getEtudiant() === $this) {
+                $etudiantSousNatureDemande->setEtudiant(null);
             }
         }
 

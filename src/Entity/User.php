@@ -124,6 +124,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'observationUser', targetEntity: TInscription::class)]
     private $tInscriptions;
 
+    #[ORM\OneToMany(mappedBy: 'userCreated', targetEntity: EtudiantSousNatureDemande::class)]
+    private $etudiantSousNatureDemandes;
+
 
     public function __construct()
     {
@@ -155,6 +158,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->concoursEtudiantControles = new ArrayCollection();
         $this->concoursEvaluations = new ArrayCollection();
         $this->tInscriptions = new ArrayCollection();
+        $this->etudiantSousNatureDemandes = new ArrayCollection();
     }
 
     
@@ -1088,6 +1092,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($tInscription->getObservationUser() === $this) {
                 $tInscription->setObservationUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, EtudiantSousNatureDemande>
+     */
+    public function getEtudiantSousNatureDemandes(): Collection
+    {
+        return $this->etudiantSousNatureDemandes;
+    }
+
+    public function addEtudiantSousNatureDemande(EtudiantSousNatureDemande $etudiantSousNatureDemande): self
+    {
+        if (!$this->etudiantSousNatureDemandes->contains($etudiantSousNatureDemande)) {
+            $this->etudiantSousNatureDemandes[] = $etudiantSousNatureDemande;
+            $etudiantSousNatureDemande->setUserCreated($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEtudiantSousNatureDemande(EtudiantSousNatureDemande $etudiantSousNatureDemande): self
+    {
+        if ($this->etudiantSousNatureDemandes->removeElement($etudiantSousNatureDemande)) {
+            // set the owning side to null (unless already changed)
+            if ($etudiantSousNatureDemande->getUserCreated() === $this) {
+                $etudiantSousNatureDemande->setUserCreated(null);
             }
         }
 
