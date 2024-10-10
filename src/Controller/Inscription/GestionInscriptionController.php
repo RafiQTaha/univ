@@ -405,7 +405,7 @@ class GestionInscriptionController extends AbstractController
             $sheet->setCellValue('AF'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getCodeAssurance());
             $sheet->setCellValue('AG'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getCne());
             $sheet->setCellValue('AH'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getMail1());
-            $sheet->setCellValue('AI'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->setAdresse());
+            $sheet->setCellValue('AI'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getAdresse());
 
             $i++;
             $j++;
@@ -505,7 +505,7 @@ class GestionInscriptionController extends AbstractController
             $sheet->setCellValue('AF'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getCodeAssurance());
             $sheet->setCellValue('AG'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getCne());
             $sheet->setCellValue('AH'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getMail1());
-            $sheet->setCellValue('AI'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->setAdresse());
+            $sheet->setCellValue('AI'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getAdresse());
 
             $i++;
             $j++;

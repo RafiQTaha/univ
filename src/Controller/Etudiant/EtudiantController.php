@@ -519,35 +519,35 @@ class EtudiantController extends AbstractController
     // }
 
     
-    #[Route('/etudiant_natureDemande', name: 'etudiant_natureDemande')]
-    public function etudiant_natureDemande(Request $request): Response
-    {   
-        if ($request->get('etudiant') == "" || $request->get('sousNature') == "" ) {
-            return new JsonResponse("Merci de choisir un etudiant et un sous Nature De Demande !", 500);
-        }
-        $etudiant = $this->em->getRepository(TEtudiant::class)->find($request->get('etudiant'));
-        $sousNatureDemande = $this->em->getRepository(SousNatureDemande::class)->find($request->get('sousNature'));
+    // #[Route('/etudiant_natureDemande', name: 'etudiant_natureDemande')]
+    // public function etudiant_natureDemande(Request $request): Response
+    // {   
+    //     if ($request->get('etudiant') == "" || $request->get('sousNature') == "" ) {
+    //         return new JsonResponse("Merci de choisir un etudiant et un sous Nature De Demande !", 500);
+    //     }
+    //     $etudiant = $this->em->getRepository(TEtudiant::class)->find($request->get('etudiant'));
+    //     $sousNatureDemande = $this->em->getRepository(SousNatureDemande::class)->find($request->get('sousNature'));
 
-        // dd($etudiant);
-        $etudiantNature = $this->em->getRepository(EtudiantSousNatureDemande::class)->findOneBy([
-            "etudiant" => $etudiant,
-            "sousNature" => $sousNatureDemande,
-            "active" => 1
-        ]);
-        if ($etudiantNature) {
-            return new JsonResponse("Sous Nature demande déja affecté à cet etudiant !", 500);
-        }
-        // $etudiant->addSousNature($sousNatureDemande);
-        $etudiantNature = new EtudiantSousNatureDemande();
-        $etudiantNature->setEtudiant($etudiant);
-        $etudiantNature->setSousNature($sousNatureDemande);
-        $etudiantNature->setUserCreated($this->getUser());
-        $etudiantNature->setCreated(new datetime('now'));
-        $this->em->persist($etudiantNature);
-        $this->em->flush();
+    //     // dd($etudiant);
+    //     $etudiantNature = $this->em->getRepository(EtudiantSousNatureDemande::class)->findOneBy([
+    //         "etudiant" => $etudiant,
+    //         "sousNature" => $sousNatureDemande,
+    //         "active" => 1
+    //     ]);
+    //     if ($etudiantNature) {
+    //         return new JsonResponse("Sous Nature demande déja affecté à cet etudiant !", 500);
+    //     }
+    //     // $etudiant->addSousNature($sousNatureDemande);
+    //     $etudiantNature = new EtudiantSousNatureDemande();
+    //     $etudiantNature->setEtudiant($etudiant);
+    //     $etudiantNature->setSousNature($sousNatureDemande);
+    //     $etudiantNature->setUserCreated($this->getUser());
+    //     $etudiantNature->setCreated(new datetime('now'));
+    //     $this->em->persist($etudiantNature);
+    //     $this->em->flush();
 
-        return new JsonResponse('Nature demande Bien Enregistré');
-    }
+    //     return new JsonResponse('Nature demande Bien Enregistré');
+    // }
     
     #[Route('/list/preinscription/{etudiant}', name: 'list_etudiant_preinscription')]
     public function listPreinscription(Request $request,TEtudiant $etudiant): Response
