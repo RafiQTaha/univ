@@ -618,7 +618,6 @@ class EtudiantController extends AbstractController
         );
         // die;
         return new Response(json_encode($json_data));
-        
     }
 
     #[Route('/matiere/{etudiant}', name: 'etudiant_exist_matiere')]

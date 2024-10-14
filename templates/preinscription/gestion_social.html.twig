@@ -1,0 +1,105 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Univ - Gestion Social{% endblock %}
+
+
+{% block body %}
+<div class="main-content">
+    <section class="section">
+        <div class="section-header">
+          <h1>Gestion Des Prises en charge</h1>
+          <div class="section-header-breadcrumb">
+            {% for operation in operations %}
+                 <a href="{{operation.link}}" class="{{operation.classTag}}" id="{{operation.idTag}}"><i class="{{operation.icon}}"></i>  {{operation.designation}}</a>
+            {% endfor %}
+          </div>
+        </div>
+        <div class="section-body">
+        <div class="card">
+            <div class="card-header">
+                <h4>Tableau des Prise En Charge</h4>
+            </div>
+            <div class="card-body">
+                <div class="card-search" style="margin-bottom: 1.5rem;">
+                    <div class="row">
+                        <div class="col-md-2">
+                            <label for="etablissement">Etablissement:</label>
+                            <select class="form-control" name="etablissement" id="etablissement">
+                                 <option value="">Choix etablissement</option>
+                                {% for etablissement in etablissements %}
+                                    <option value="{{etablissement.id}}">{{etablissement.designation}}</option>
+                                {% endfor %} 
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label for="formation">Formation:</label>
+                            <select class="form-control" name="formation" id="formation">
+                                <option value="">Choix Formation</option>
+                            </select>
+                        </div>
+                        {# <div class="col-md-2">
+                            <label for="nature">Nature De Demande:</label>
+                            <select class="form-control" name="nature" id="nature">
+                                <option value="">Choix Nature De Demande</option>
+                                {% for nature in natures %}
+                                    <option value="{{nature.id}}">{{nature.designation}}</option>
+                                {% endfor %} 
+                            </select>
+                        </div> #}
+                    </div>
+                </div>
+            <table id="datables_gestion_social" class="table table-striped" style="width:100%">
+                <thead>
+                    <tr>
+                        {# <th width="1">#</th> #}
+                        <th>Id</th>
+                        <th>Code</th>
+                        <th>Nom</th>
+                        <th>Prenom</th>
+                        <th>Cin</th>
+                        <th>Etablissement</th>
+                        <th>Formation</th>
+                        <th>Categorie</th>
+                        <th>Note</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+                </tbody>
+                <tfoot>
+                    <tr>
+                        {# <th width="1">#</th> #}
+                        <th>Id</th>
+                        <th>Code</th>
+                        <th>Nom</th>
+                        <th>Prenom</th>
+                        <th>Cin</th>
+                        <th>Etablissement</th>
+                        <th>Formation</th>
+                        <th>Categorie</th>
+                        <th>Note</th>
+                    </tr>
+                </tfoot>
+            </table>
+            </div>
+            
+        </div>
+        </div>
+    </section>
+</div>
+
+
+
+<!--Modal Import Group-->
+
+{% include 'preinscription/modals/prise_en_charge.html.twig' %}
+{% endblock %}
+
+{% block javascripts %}
+{{parent()}}
+{{ encore_entry_script_tags('gestionSocial') }}
+
+{# <script src="/assets/js/preinscription/gestionpreinscription.js"></script> #}
+
+{% endblock %}
+

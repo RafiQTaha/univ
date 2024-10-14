@@ -83,6 +83,9 @@ class TPreinscription
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $pecNumber;
 
+    #[ORM\OneToMany(mappedBy: 'preinscription', targetEntity: PriseEnCharge::class)]
+    private $priseEnCharges;
+
     // #[ORM\Column(type: 'float', nullable: true)]
     // private $validation;
 
@@ -94,6 +97,7 @@ class TPreinscription
         $this->admissionDocuments = new ArrayCollection();
         $this->Documents = new ArrayCollection();
         $this->documents = new ArrayCollection();
+        $this->priseEnCharges = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -447,6 +451,36 @@ class TPreinscription
     public function setPecNumber(?string $pecNumber): self
     {
         $this->pecNumber = $pecNumber;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, PriseEnCharge>
+     */
+    public function getPriseEnCharges(): Collection
+    {
+        return $this->priseEnCharges;
+    }
+
+    public function addPriseEnCharge(PriseEnCharge $priseEnCharge): self
+    {
+        if (!$this->priseEnCharges->contains($priseEnCharge)) {
+            $this->priseEnCharges[] = $priseEnCharge;
+            $priseEnCharge->setPreinscription($this);
+        }
+
+        return $this;
+    }
+
+    public function removePriseEnCharge(PriseEnCharge $priseEnCharge): self
+    {
+        if ($this->priseEnCharges->removeElement($priseEnCharge)) {
+            // set the owning side to null (unless already changed)
+            if ($priseEnCharge->getPreinscription() === $this) {
+                $priseEnCharge->setPreinscription(null);
+            }
+        }
 
         return $this;
     }

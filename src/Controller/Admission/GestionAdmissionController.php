@@ -15,7 +15,9 @@ use App\Entity\AcEtablissement;
 use App\Controller\ApiController;
 use App\Entity\TAdmissionDocument;
 use App\Controller\DatatablesController;
+use App\Entity\NatureDemande;
 use App\Entity\Pec;
+use DateTime;
 use Doctrine\Persistence\ManagerRegistry;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
@@ -345,11 +347,100 @@ class GestionAdmissionController extends AbstractController
 
         return new JsonResponse("Etudiant deja inscrit à l'année courante!", 500);
     }
+
+    // #[Route('/inscription/{admission}', name: 'admission_inscription')]
+    // public function inscriptionAction(Request $request, TAdmission $admission)
+    // {
+    //     // return new JsonResponse("Bien ", 200);
+    //     // dd($request);
+    //     $annee = $this->em->getRepository(AcAnnee::class)->find($request->get('annee_inscription'));
+    //     $inscription = $this->em->getRepository(TInscription::class)->getActiveInscriptionByAnnee($admission,$annee);
+    //     if ($inscription != null) {
+    //         return new JsonResponse("Etudiant deja inscrit à l'année courante!", 500);
+    //     }
+    //     $promotion = $this->em->getRepository(AcPromotion::class)->find($request->get('promotion_inscription'));
+    //     $etudiant = $admission->getPreinscription()->getEtudiant();
+        
+    //     if ($etudiant->getNationalite() == 'MOROCCO' || $etudiant->getCategoriePreinscription() == 'NOUVELLE PRE-INSCRIPTION') {            
+    //         if ($promotion->getLimite() != Null) {
+    //             $inss = $this->em->getRepository(TInscription::class)->findBy(['promotion'=>$promotion,'annee'=>$annee,'statut'=>13]);
+    //             if (count($inss) >= $promotion->getLimite()) {
+    //                 return new JsonResponse("La liste est Complete!!", 500);
+    //             }
+    //         }
+    //     }
+    //     // if ($admission->getPreinscription()->getPec() == null) {
+    //     //     $pec = $this->em->getRepository(Pec::class)->find($request->get('pec'));
+    //     //     if ($pec && trim($request->get('n-pec')) == "" ) {
+    //     //         return new JsonResponse("Merci d'entrer le numero de pec !", 500);
+    //     //     }
+    //     //     $admission->getPreinscription()->setPec($pec);
+    //     //     $admission->getPreinscription()->setPecNumber(trim($request->get('n-pec')));
+    //     // }
+
+    //     $inscription = new TInscription();
+    //     $inscription->setStatut(
+    //         $this->em->getRepository(PStatut::class)->find(13)
+    //     );
+    //     $inscription->setObservation($request->get('observation_inscription') != "" ? $request->get('observation_inscription') : NULL);
+    //     $inscription->setUserCreated($this->getUser());
+    //     $inscription->setAnnee($annee);
+    //     $inscription->setPromotion($promotion);
+    //     $inscription->setAdmission($admission);
+    //     $inscription->setCreated(new \DateTime("now"));
+    //     $this->em->persist($inscription);
+    //     $this->em->flush();
+    //     $inscription->setCode('INS-'. $annee->getFormation()->getEtablissement()->getAbreviation().str_pad($inscription->getId(), 8, '0', STR_PAD_LEFT).'/'.date("Y"));
+    //     $this->em->flush();
+
+    //     // Add New Facture Inscription
+    //     // dd($operationcabs = $this->em->getRepository(TOperationcab::class)->findBy(['preinscription'=>$admission->getPreinscription()]));
+
+    //     if (count($admission->getInscriptions()) > 1) {
+    //         $operationcabs = $this->em->getRepository(TOperationcab::class)->findBy(['preinscription'=>$inscription->getAdmission()->getPreinscription()]);
+    //         foreach($operationcabs as $operationcab){
+    //             $operationcab->setActive(0);
+    //         }   
+    //     }
+    //     $isBoursier = 0;
+    //     if ($admission->getPreinscription()->getNature() and $admission->getPreinscription()->getNature()->getId() != 1) {
+    //         $isBoursier = 1;
+    //     }
+    //     // dd($isBoursier);
+    //     $k = $isBoursier == 0 ? 1 : 2 ;
+    //     // for ($i=0; $i < $k; $i++) { 
+    //     // for ($i=0; $i < 2; $i++) { 
+    //     for ($i=1; $i <= $k; $i++) { 
+    //         $operationCab = new TOperationcab();
+    //         $operationCab->setPreinscription($inscription->getAdmission()->getPreinscription());
+    //         $operationCab->setUserCreated($this->getUser());
+    //         $operationCab->setAnnee($inscription->getAnnee());
+    //         $operationCab->setActive(1);
+    //         $operationCab->setDateContable(date('Y'));
+    //         $categorie = $i == 1 ? 'inscription' : 'inscription organisme';
+    //         $organisme = $i == 1 ? 'Payant' : 'Organisme';
+    //         $operationCab->setCategorie($categorie);
+    //         $operationCab->setOrganisme($organisme);
+    //         $operationCab->setCreated(new \DateTime("now"));
+    //         $this->em->persist($operationCab);
+    //         $this->em->flush();
+    //         $operationCab->setCode(
+    //             $inscription->getAnnee()->getFormation()->getEtablissement()->getAbreviation()."-FAC".str_pad($operationCab->getId(), 8, '0', STR_PAD_LEFT)."/".date('Y')
+    //         );
+    //         $this->em->flush();
+    //     }
+    //     return new JsonResponse("Bien Enregistre code inscription: " . $inscription->getCode(), 200);
+    // }
+
+    
     #[Route('/inscription/{admission}', name: 'admission_inscription')]
     public function inscriptionAction(Request $request, TAdmission $admission)
     {
-        // return new JsonResponse("Bien ", 200);
-        // dd($request);
+        $etudiantNatures = $this->em->getRepository(NatureDemande::class)->findNatureDemandeByEtudiant($admission->getPreinscription()->getEtudiant());
+
+        if (!$etudiantNatures) {
+            return new JsonResponse("Cet etudiant n'a aucun Nature de demande !", 500);
+        }
         $annee = $this->em->getRepository(AcAnnee::class)->find($request->get('annee_inscription'));
         $inscription = $this->em->getRepository(TInscription::class)->getActiveInscriptionByAnnee($admission,$annee);
         if ($inscription != null) {
@@ -366,14 +457,6 @@ class GestionAdmissionController extends AbstractController
                 }
             }
         }
-        // if ($admission->getPreinscription()->getPec() == null) {
-        //     $pec = $this->em->getRepository(Pec::class)->find($request->get('pec'));
-        //     if ($pec && trim($request->get('n-pec')) == "" ) {
-        //         return new JsonResponse("Merci d'entrer le numero de pec !", 500);
-        //     }
-        //     $admission->getPreinscription()->setPec($pec);
-        //     $admission->getPreinscription()->setPecNumber(trim($request->get('n-pec')));
-        // }
 
         $inscription = new TInscription();
         $inscription->setStatut(
@@ -399,35 +482,73 @@ class GestionAdmissionController extends AbstractController
                 $operationcab->setActive(0);
             }   
         }
-        $isBoursier = 0;
-        if ($admission->getPreinscription()->getNature() and $admission->getPreinscription()->getNature()->getId() != 1) {
-            $isBoursier = 1;
+
+
+        $naturePriseEnCharge = $this->em->getRepository(NatureDemande::class)->find(7);
+        if (in_array($naturePriseEnCharge, $etudiantNatures, true)) {
+            return new JsonResponse("Bien Enregistre code inscription: " . $inscription->getCode(), 200);
         }
-        // dd($isBoursier);
-        $k = $isBoursier == 0 ? 1 : 2 ;
-        // for ($i=0; $i < $k; $i++) { 
-        // for ($i=0; $i < 2; $i++) { 
-        for ($i=1; $i <= $k; $i++) { 
-            $operationCab = new TOperationcab();
-            $operationCab->setPreinscription($inscription->getAdmission()->getPreinscription());
-            $operationCab->setUserCreated($this->getUser());
-            $operationCab->setAnnee($inscription->getAnnee());
-            $operationCab->setActive(1);
-            $operationCab->setDateContable(date('Y'));
-            $categorie = $i == 1 ? 'inscription' : 'inscription organisme';
-            $organisme = $i == 1 ? 'Payant' : 'Organisme';
-            $operationCab->setCategorie($categorie);
-            $operationCab->setOrganisme($organisme);
-            $operationCab->setCreated(new \DateTime("now"));
-            $this->em->persist($operationCab);
+
+        foreach ($etudiantNatures as $key => $nature) {
+            $org = "";
+            $categorie = "";
+            $operationcab = new TOperationcab();
+            $operationcab->setPreinscription($inscription->getAdmission()->getPreinscription());
+            $operationcab->setAnnee($inscription->getAnnee());
+            $operationcab->setCreated(new DateTime('now'));
+            $operationcab->setUserCreated($this->getUser());
+            if ($nature->getId() == 1) {
+                $org = "Payant";
+                $categorie = "inscription";
+            }elseif ($nature->getId() == 4) {
+                $org = "Organisme";
+                $categorie = "inscription organisme";
+            }else {
+                continue;
+            }
+            $operationcab->setCategorie($categorie);
+            $operationcab->setOrganisme($org);
+            $operationcab->setActive(1);
+            $operationcab->setDateContable(date('Y'));
+            $this->em->persist($operationcab);
             $this->em->flush();
-            $operationCab->setCode(
-                $inscription->getAnnee()->getFormation()->getEtablissement()->getAbreviation()."-FAC".str_pad($operationCab->getId(), 8, '0', STR_PAD_LEFT)."/".date('Y')
-            );
+            $etab = $inscription->getAnnee()->getFormation()->getEtablissement()->getAbreviation();
+            $operationcab->setCode($etab.'-FAC'.str_pad($operationcab->getId(), 8, '0', STR_PAD_LEFT).'/'.date('Y'));
             $this->em->flush();
         }
         return new JsonResponse("Bien Enregistre code inscription: " . $inscription->getCode(), 200);
+
+
+
+
+        // $isBoursier = 0;
+        // if ($admission->getPreinscription()->getNature() and $admission->getPreinscription()->getNature()->getId() != 1) {
+        //     $isBoursier = 1;
+        // }
+        // // dd($isBoursier);
+        // $k = $isBoursier == 0 ? 1 : 2 ;
+        // for ($i=1; $i <= $k; $i++) { 
+        //     $operationCab = new TOperationcab();
+        //     $operationCab->setPreinscription($inscription->getAdmission()->getPreinscription());
+        //     $operationCab->setUserCreated($this->getUser());
+        //     $operationCab->setAnnee($inscription->getAnnee());
+        //     $operationCab->setActive(1);
+        //     $operationCab->setDateContable(date('Y'));
+        //     $categorie = $i == 1 ? 'inscription' : 'inscription organisme';
+        //     $organisme = $i == 1 ? 'Payant' : 'Organisme';
+        //     $operationCab->setCategorie($categorie);
+        //     $operationCab->setOrganisme($organisme);
+        //     $operationCab->setCreated(new \DateTime("now"));
+        //     $this->em->persist($operationCab);
+        //     $this->em->flush();
+        //     $operationCab->setCode(
+        //         $inscription->getAnnee()->getFormation()->getEtablissement()->getAbreviation()."-FAC".str_pad($operationCab->getId(), 8, '0', STR_PAD_LEFT)."/".date('Y')
+        //     );
+        //     $this->em->flush();
+        // }
+        // return new JsonResponse("Bien Enregistre code inscription: " . $inscription->getCode(), 200);
     }
+
     #[Route('/listadmission/{annee}', name: 'admission_list_admis')]
     public function admissionListAdmis(Request $request, AcAnnee $annee)
     {

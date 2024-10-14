@@ -127,6 +127,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'userCreated', targetEntity: EtudiantSousNatureDemande::class)]
     private $etudiantSousNatureDemandes;
 
+    #[ORM\OneToMany(mappedBy: 'userCreated', targetEntity: PriseEnCharge::class)]
+    private $priseEnCharges;
+
 
     public function __construct()
     {
@@ -159,6 +162,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->concoursEvaluations = new ArrayCollection();
         $this->tInscriptions = new ArrayCollection();
         $this->etudiantSousNatureDemandes = new ArrayCollection();
+        $this->priseEnCharges = new ArrayCollection();
     }
 
     
@@ -1122,6 +1126,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($etudiantSousNatureDemande->getUserCreated() === $this) {
                 $etudiantSousNatureDemande->setUserCreated(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, PriseEnCharge>
+     */
+    public function getPriseEnCharges(): Collection
+    {
+        return $this->priseEnCharges;
+    }
+
+    public function addPriseEnCharge(PriseEnCharge $priseEnCharge): self
+    {
+        if (!$this->priseEnCharges->contains($priseEnCharge)) {
+            $this->priseEnCharges[] = $priseEnCharge;
+            $priseEnCharge->setUserCreated($this);
+        }
+
+        return $this;
+    }
+
+    public function removePriseEnCharge(PriseEnCharge $priseEnCharge): self
+    {
+        if ($this->priseEnCharges->removeElement($priseEnCharge)) {
+            // set the owning side to null (unless already changed)
+            if ($priseEnCharge->getUserCreated() === $this) {
+                $priseEnCharge->setUserCreated(null);
             }
         }
 

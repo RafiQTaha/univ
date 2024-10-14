@@ -37,6 +37,9 @@ class POrganisme
     #[ORM\OneToMany(mappedBy: 'organisme', targetEntity: TOperationdet::class)]
     private $operationdets;
 
+    #[ORM\OneToMany(mappedBy: 'organisme', targetEntity: PriseEnCharge::class)]
+    private $priseEnCharges;
+
     
 
     public function __construct()
@@ -44,6 +47,7 @@ class POrganisme
         $this->operationcabs = new ArrayCollection();
         $this->etudiants = new ArrayCollection();
         $this->operationdets = new ArrayCollection();
+        $this->priseEnCharges = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -183,6 +187,36 @@ class POrganisme
             // set the owning side to null (unless already changed)
             if ($operationdet->getOrganisme() === $this) {
                 $operationdet->setOrganisme(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, PriseEnCharge>
+     */
+    public function getPriseEnCharges(): Collection
+    {
+        return $this->priseEnCharges;
+    }
+
+    public function addPriseEnCharge(PriseEnCharge $priseEnCharge): self
+    {
+        if (!$this->priseEnCharges->contains($priseEnCharge)) {
+            $this->priseEnCharges[] = $priseEnCharge;
+            $priseEnCharge->setOrganisme($this);
+        }
+
+        return $this;
+    }
+
+    public function removePriseEnCharge(PriseEnCharge $priseEnCharge): self
+    {
+        if ($this->priseEnCharges->removeElement($priseEnCharge)) {
+            // set the owning side to null (unless already changed)
+            if ($priseEnCharge->getOrganisme() === $this) {
+                $priseEnCharge->setOrganisme(null);
             }
         }
 

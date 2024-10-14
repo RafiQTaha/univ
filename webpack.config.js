@@ -31,6 +31,7 @@ Encore
 
     .addEntry('preinscription', './assets/components/preinscription/preinscription.js')
     .addEntry('gestionPreinscription', './assets/components/preinscription/gestionpreinscription.js')
+    .addEntry('gestionSocial', './assets/components/preinscription/gestionsocial.js')
 
     .addEntry('admission', './assets/components/admission/admissions.js')
     .addEntry('gestionadmission', './assets/components/admission/gestionadmission.js')
