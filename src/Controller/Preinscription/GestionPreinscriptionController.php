@@ -66,7 +66,7 @@ class GestionPreinscriptionController extends AbstractController
          
         $params = $request->query;
         $where = $totalRows = $sqlRequest = "";
-        $filtre = "where 1=1 AND inscription_valide = 1 ";
+        $filtre = "where 1=1 AND inscription_valide = 1 and pre.id = 20604";
         
         if (!empty($params->all('columns')[0]['search']['value'])) {
             $filtre .= " and etab.id = '" . $params->all('columns')[0]['search']['value'] . "' ";
@@ -754,4 +754,23 @@ class GestionPreinscriptionController extends AbstractController
         $mpdf->WriteHTML($html);
         $mpdf->Output("attestaion.pdf", "I");
     } 
+
+    
+
+    #[Route('/CreeFacture', name: 'CreeFacture')]
+    public function CreeFacture(Request $request) 
+    {
+        dd($request);
+
+        
+        $candidats_infos = $this->render("preinscription/pages/candidats_infos.html.twig", [
+            'etudiant' => $preinscription->getEtudiant(),
+            'situations' => $situations,
+        ])->getContent();
+
+        $info_etudiant = [ 
+            'divers' => $divers,
+        ];
+        return new JsonResponse($info_etudiant);
+    }
 }

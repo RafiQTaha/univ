@@ -89,7 +89,7 @@ $(document).ready(function () {
 
     
 
-    $('body').on('click','#ajouter',function () {
+    $('body').on('click','#ajouter',async function ()  {
         
         if(!id_preinscription){
             Toast.fire({
@@ -98,8 +98,26 @@ $(document).ready(function () {
             })
             return;
         }
-        list_priseEncharge();
-        $('#ajouterPriseEnCharge_modal').modal("show");
+        const icon = $("body #ajouter i");
+        icon.removeClass('fa-plus').addClass("fa-spinner fa-spin");
+        try{
+            const request = await axios.get('/api/sousNatureDemande/7');
+            response = request.data
+            $('body #ajouterPriseEnCharge_modal #nature').html(response).select2();
+            // $('#ajouterPriseEnCharge_modal').modal("show")
+            list_priseEncharge();
+            $('#ajouterPriseEnCharge_modal').modal("show");
+            icon.addClass('fa-plus').removeClass("fa-spinner fa-spin ");
+            
+        }catch (error) {
+            const message = error.response.data;
+            Toast.fire({
+                icon: 'error',
+                title: message,
+            })
+            icon.addClass('fa-plus').removeClass("fa-spinner fa-spin ");
+        }
+
         
     }) 
 

@@ -33,9 +33,16 @@ class SousNatureDemande
     #[ORM\OneToMany(mappedBy: 'sousNature', targetEntity: EtudiantSousNatureDemande::class)]
     private $etudiantSousNatureDemandes;
 
+    #[ORM\ManyToOne(targetEntity: POrganisme::class, inversedBy: 'sousNatureDemandes')]
+    private $organisme;
+
+    #[ORM\OneToMany(mappedBy: 'sousNatureDemande', targetEntity: PriseEnCharge::class)]
+    private $priseEnCharges;
+
     public function __construct()
     {
         $this->etudiantSousNatureDemandes = new ArrayCollection();
+        $this->priseEnCharges = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -127,6 +134,48 @@ class SousNatureDemande
             // set the owning side to null (unless already changed)
             if ($etudiantSousNatureDemande->getSousNature() === $this) {
                 $etudiantSousNatureDemande->setSousNature(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getOrganisme(): ?POrganisme
+    {
+        return $this->organisme;
+    }
+
+    public function setOrganisme(?POrganisme $organisme): self
+    {
+        $this->organisme = $organisme;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, PriseEnCharge>
+     */
+    public function getPriseEnCharges(): Collection
+    {
+        return $this->priseEnCharges;
+    }
+
+    public function addPriseEnCharge(PriseEnCharge $priseEnCharge): self
+    {
+        if (!$this->priseEnCharges->contains($priseEnCharge)) {
+            $this->priseEnCharges[] = $priseEnCharge;
+            $priseEnCharge->setSousNatureDemande($this);
+        }
+
+        return $this;
+    }
+
+    public function removePriseEnCharge(PriseEnCharge $priseEnCharge): self
+    {
+        if ($this->priseEnCharges->removeElement($priseEnCharge)) {
+            // set the owning side to null (unless already changed)
+            if ($priseEnCharge->getSousNatureDemande() === $this) {
+                $priseEnCharge->setSousNatureDemande(null);
             }
         }
 

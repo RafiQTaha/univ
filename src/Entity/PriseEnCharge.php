@@ -16,8 +16,8 @@ class PriseEnCharge
     #[ORM\ManyToOne(targetEntity: TPreinscription::class, inversedBy: 'priseEnCharges')]
     private $preinscription;
 
-    #[ORM\ManyToOne(targetEntity: POrganisme::class, inversedBy: 'priseEnCharges')]
-    private $organisme;
+    // #[ORM\ManyToOne(targetEntity: POrganisme::class, inversedBy: 'priseEnCharges')]
+    // private $organisme;
 
     #[ORM\Column(type: 'string', length: 20, nullable: true)]
     private $codePec;
@@ -37,6 +37,9 @@ class PriseEnCharge
     #[ORM\Column(type: 'datetime', nullable: true)]
     private $created;
 
+    #[ORM\ManyToOne(targetEntity: SousNatureDemande::class, inversedBy: 'priseEnCharges')]
+    private $sousNatureDemande;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -54,17 +57,17 @@ class PriseEnCharge
         return $this;
     }
 
-    public function getOrganisme(): ?POrganisme
-    {
-        return $this->organisme;
-    }
+    // public function getOrganisme(): ?POrganisme
+    // {
+    //     return $this->organisme;
+    // }
 
-    public function setOrganisme(?POrganisme $organisme): self
-    {
-        $this->organisme = $organisme;
+    // public function setOrganisme(?POrganisme $organisme): self
+    // {
+    //     $this->organisme = $organisme;
 
-        return $this;
-    }
+    //     return $this;
+    // }
 
     public function getCodePec(): ?string
     {
@@ -134,6 +137,18 @@ class PriseEnCharge
     public function setCreated(?\DateTimeInterface $created): self
     {
         $this->created = $created;
+
+        return $this;
+    }
+
+    public function getSousNatureDemande(): ?SousNatureDemande
+    {
+        return $this->sousNatureDemande;
+    }
+
+    public function setSousNatureDemande(?SousNatureDemande $sousNatureDemande): self
+    {
+        $this->sousNatureDemande = $sousNatureDemande;
 
         return $this;
     }

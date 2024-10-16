@@ -26,9 +26,13 @@ use App\Entity\SousAgression;
 use App\Entity\TOperationcab;
 use App\Entity\PNatureEpreuve;
 use App\Entity\AcEtablissement;
+use App\Entity\EtudiantSousNatureDemande;
 use App\Entity\PAnonymatActuel;
+use App\Entity\PriseEnCharge;
 use App\Entity\PrProgrammation;
 use App\Entity\SousNatureDemande;
+use App\Entity\TEtudiant;
+use App\Entity\TPreinscription;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -368,8 +372,43 @@ class ApiController extends AbstractController
         $data ="";
         foreach ($sanctions as $sanction) {
             $data .="<option value=".$sanction->getId().">".$sanction->getDesignation()."</option>";
-         }
+        }
         //  return $data;
+        return new JsonResponse($data);
+    }
+
+    #[Route('/info_NatureDemande/{preinscription}', name: 'info_NatureDemande')]
+    public function info_NatureDemande(TPreinscription $preinscription): Response
+    {   
+        $EtudiantSousNatureDemandes = $this->em->getRepository(EtudiantSousNatureDemande::class)->findBy(['etudiant' => $preinscription->getEtudiant(),
+        'active' => 1]);
+        if (!$EtudiantSousNatureDemandes) {
+            return new JsonResponse("Aucun Nature demande trouvé !",500);
+        }
+        $data = "<option selected enabled value=''>Choix Nature Demande</option>";
+        foreach ($EtudiantSousNatureDemandes as $EtudiantSousNatureDemande) {
+            $designation = $EtudiantSousNatureDemande->getSousNature()->getNatureDemande()->getDesignation().' - '.$EtudiantSousNatureDemande->getSousNature()->getDesignation();
+            $data .="<option value=".$EtudiantSousNatureDemande->getId().">".$designation."</option>";
+        }
+        return new JsonResponse($data);
+    }
+
+    #[Route('/info_priseEnCharge/{sousNature}/{preinscription}', name: 'info_priseEnCharge')]
+    public function info_priseEnCharge(SousNatureDemande $sousNature, TPreinscription $preinscription): Response
+    {   
+        if ($sousNature->getNatureDemande()->getId() != 7) {
+            return new JsonResponse(1);
+        }
+        $priseEnCharges = $this->em->getRepository(PriseEnCharge::class)->findBy([
+            'preinscription'    => $preinscription,
+            'sousNatureDemande' => $sousNature, 
+            'active'            => 1
+        ]);
+        $data = "<option selected enabled value=''>Choix Prise En Charge</option>";
+        foreach ($priseEnCharges as $priseEnCharge) {
+            $designation = $priseEnCharge->getCodePec().' - '.$priseEnCharge->getMontant().'DH';
+            $data .="<option value=".$priseEnCharge->getId().">".$designation."</option>";
+        }
         return new JsonResponse($data);
     }
     

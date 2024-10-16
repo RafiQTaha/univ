@@ -8,6 +8,7 @@ use App\Entity\AcEtablissement;
 use App\Entity\NatureDemande;
 use App\Entity\POrganisme;
 use App\Entity\PriseEnCharge;
+use App\Entity\SousNatureDemande;
 use App\Entity\TPreinscription;
 use DateTime;
 use Doctrine\Persistence\ManagerRegistry;
@@ -34,12 +35,12 @@ class GestionSocialController extends AbstractController
         //     return $this->render("errors/403.html.twig");
         // }
         $etbalissements =  $this->em->getRepository(AcEtablissement::class)->findBy(['active'=>1]);
-        $natures = $this->em->getRepository(NatureDemande::class)->findBy(['active'=>1]);
-        $organismes = $this->em->getRepository(POrganisme::class)->findBy(['active'=>1]);
+        // $natures = $this->em->getRepository(NatureDemande::class)->findBy(['active'=>1]);
+        // $organismes = $this->em->getRepository(POrganisme::class)->findBy(['active'=>1]);
         return $this->render('preinscription/gestion_social.html.twig',[
             'etablissements' => $etbalissements,
-            'natures' => $natures,
-            'organismes' => $organismes,
+            // 'natures' => $natures,
+            // 'organismes' => $organismes,
             'operations' => $operations
         ]);
     }
@@ -163,11 +164,11 @@ class GestionSocialController extends AbstractController
                 inner join ac_annee an on an.id = pre.annee_id
                 inner join ac_formation form on form.id = an.formation_id              
                 inner join ac_etablissement etab on etab.id = form.etablissement_id
-                inner join etudiant_sous_nature_demande snatureetu on snatureetu.etudiant_id = etu.id
-                inner join sous_nature_demande snature on snature.id = snatureetu.sous_nature_id
-                inner join nature_demande nat on nat.id = snature.nature_demande_id
                 inner join prise_en_charge pcharge on pcharge.preinscription_id = pre.id
-                inner join porganisme org on org.id = pcharge.organisme_id
+                inner join sous_nature_demande snature on snature.id = pcharge.sous_nature_demande_id
+                inner join nature_demande nat on nat.id = snature.nature_demande_id
+                inner join porganisme org on org.id = snature.organisme_id
+
 
                 $filtre"
         ;
@@ -222,15 +223,16 @@ class GestionSocialController extends AbstractController
     #[Route('/ajouter_pcharge', name: 'ajouter_pcharge')]
     public function ajouter_pcharge(Request $request)
     {   
-        if ($request->get('preinscription') == "" || $request->get('organisme') == "" || $request->get('cpec') == "" || $request->get('montant') == "" ) {
+        if ($request->get('preinscription') == "" || $request->get('nature') == "" || $request->get('cpec') == "" || $request->get('montant') == "" ) {
             return new JsonResponse("Merci de choisir un étudiant et de remplir tous les champs !", 500);
         }
         $preinscription = $this->em->getRepository(TPreinscription::class)->find($request->get('preinscription'));
-        $organisme = $this->em->getRepository(POrganisme::class)->find($request->get('organisme'));
-        
+        $sousNatureDemande = $this->em->getRepository(SousNatureDemande::class)->find($request->get('nature'));
+        // dd($sousNatureDemande);
         $priseEnCharge = new PriseEnCharge();
         $priseEnCharge->setPreinscription($preinscription);
-        $priseEnCharge->setOrganisme($organisme);
+        // $priseEnCharge->setOrganisme($sousNatureDemande->getOrganisme());
+        $priseEnCharge->setSousNatureDemande($sousNatureDemande);
         $priseEnCharge->setCodePec($request->get('cpec'));
         $priseEnCharge->setMontant($request->get('montant'));
         $priseEnCharge->setUserCreated($this->getUser());

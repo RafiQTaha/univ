@@ -37,8 +37,11 @@ class POrganisme
     #[ORM\OneToMany(mappedBy: 'organisme', targetEntity: TOperationdet::class)]
     private $operationdets;
 
-    #[ORM\OneToMany(mappedBy: 'organisme', targetEntity: PriseEnCharge::class)]
-    private $priseEnCharges;
+    // #[ORM\OneToMany(mappedBy: 'organisme', targetEntity: PriseEnCharge::class)]
+    // private $priseEnCharges;
+
+    #[ORM\OneToMany(mappedBy: 'organisme', targetEntity: SousNatureDemande::class)]
+    private $sousNatureDemandes;
 
     
 
@@ -47,7 +50,8 @@ class POrganisme
         $this->operationcabs = new ArrayCollection();
         $this->etudiants = new ArrayCollection();
         $this->operationdets = new ArrayCollection();
-        $this->priseEnCharges = new ArrayCollection();
+        // $this->priseEnCharges = new ArrayCollection();
+        $this->sousNatureDemandes = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -193,30 +197,60 @@ class POrganisme
         return $this;
     }
 
+    // /**
+    //  * @return Collection<int, PriseEnCharge>
+    //  */
+    // public function getPriseEnCharges(): Collection
+    // {
+    //     return $this->priseEnCharges;
+    // }
+
+    // public function addPriseEnCharge(PriseEnCharge $priseEnCharge): self
+    // {
+    //     if (!$this->priseEnCharges->contains($priseEnCharge)) {
+    //         $this->priseEnCharges[] = $priseEnCharge;
+    //         $priseEnCharge->setOrganisme($this);
+    //     }
+
+    //     return $this;
+    // }
+
+    // public function removePriseEnCharge(PriseEnCharge $priseEnCharge): self
+    // {
+    //     if ($this->priseEnCharges->removeElement($priseEnCharge)) {
+    //         // set the owning side to null (unless already changed)
+    //         if ($priseEnCharge->getOrganisme() === $this) {
+    //             $priseEnCharge->setOrganisme(null);
+    //         }
+    //     }
+
+    //     return $this;
+    // }
+
     /**
-     * @return Collection<int, PriseEnCharge>
+     * @return Collection<int, SousNatureDemande>
      */
-    public function getPriseEnCharges(): Collection
+    public function getSousNatureDemandes(): Collection
     {
-        return $this->priseEnCharges;
+        return $this->sousNatureDemandes;
     }
 
-    public function addPriseEnCharge(PriseEnCharge $priseEnCharge): self
+    public function addSousNatureDemande(SousNatureDemande $sousNatureDemande): self
     {
-        if (!$this->priseEnCharges->contains($priseEnCharge)) {
-            $this->priseEnCharges[] = $priseEnCharge;
-            $priseEnCharge->setOrganisme($this);
+        if (!$this->sousNatureDemandes->contains($sousNatureDemande)) {
+            $this->sousNatureDemandes[] = $sousNatureDemande;
+            $sousNatureDemande->setOrganisme($this);
         }
 
         return $this;
     }
 
-    public function removePriseEnCharge(PriseEnCharge $priseEnCharge): self
+    public function removeSousNatureDemande(SousNatureDemande $sousNatureDemande): self
     {
-        if ($this->priseEnCharges->removeElement($priseEnCharge)) {
+        if ($this->sousNatureDemandes->removeElement($sousNatureDemande)) {
             // set the owning side to null (unless already changed)
-            if ($priseEnCharge->getOrganisme() === $this) {
-                $priseEnCharge->setOrganisme(null);
+            if ($sousNatureDemande->getOrganisme() === $this) {
+                $sousNatureDemande->setOrganisme(null);
             }
         }
 

@@ -500,9 +500,103 @@ $("body").on('submit', "#form_modifier", async (e) => {
     window.open('/preinscription/gestion/print_documents_preinscription/'+id_preinscription, '_blank');
   })
   
-$('.nav-pills a').on('click', function (e) {
-    $(this).tab('show');
-})
+    $('.nav-pills a').on('click', function (e) {
+        $(this).tab('show');
+    })
 
+    $("#new_fac").on('click', async () => {
+        if(!id_preinscription){
+          Toast.fire({
+            icon: 'error',
+            title: 'Veuillez selection une ligne!',
+          })
+          return;
+        }
+        const icon = $("body #new_fac i");
+        icon.removeClass('fa-file-invoice-dollar').addClass("fa-spinner fa-spin");
+        // $('#creationFacturemodal select').val("").trigger('change');
+        try{
+            const request = await axios.get('/api/info_NatureDemande/'+id_preinscription);
+            response = request.data
+            $('body #creationFacturemodal #nature').html(response).select2();
+            $('#creationFacturemodal').modal("show")
+            icon.addClass('fa-file-invoice-dollar').removeClass("fa-spinner fa-spin ");
+            
+        }catch (error) {
+            const message = error.response.data;
+            Toast.fire({
+                icon: 'error',
+                title: message,
+            })
+            icon.addClass('fa-file-invoice-dollar').removeClass("fa-spinner fa-spin ");
+        }
+    })
+    
+    $('body').on('change','#creationFacturemodal #nature',async function (e) {
+        e.preventDefault();
+        let sousNature = $(this).val();
+        if (sousNature == "") {
+            $('#creationFacturemodal #form-creationFacture .pec').css('display','none');
+            return;
+        }
+        try{
+            const request = await axios.get('/api/info_priseEnCharge/'+sousNature+'/'+id_preinscription);
+            response = request.data
+            $('#creationFacturemodal #form-creationFacture #pec').val("").trigger('change');
+            // console.log(success)
+            if(response !== 1){
+                $('#creationFacturemodal #form-creationFacture .pec').css('display','block');
+                $('#creationFacturemodal #form-creationFacture #pec').html(response).select2();
+            }else{
+                $('#creationFacturemodal #form-creationFacture .pec').css('display','none');
+                // $('#creationFacturemodal #form-creationFacture #enregistrer').removeAttr("disabled");
+                // $('#natureDemandemodal #enregistrer').removeAttr("disabled");
+            }
+            
+        }catch (error) {
+            const message = error.response.data;
+            Toast.fire({
+                icon: 'error',
+                title: message,
+            })
+        }
+    })
+    $('body').on('submit','#form-creationFacture',async function (e) {
+        e.preventDefault();
+        // alert('test');
+        
+        let formData = new FormData($(this)[0]);
+        console.log(formData)
+        // let formdata = new FormData($(this));
+        // formdata.append('preinscription',id_etudiant)
+        // formdata.append('sousNature',$('#sousNature').val())
+        // formdata.append('sousNature',$('#pec').val())
+
+        // let modalAlert =  $("#creationFacturemodal .modal-body .alert");
+        // modalAlert.remove();
+        const icon = $(".form-creationFacture .btn i");
+        icon.removeClass('fa-check-circle').addClass("fa-spinner fa-spin");
+        try{
+        const request = await  axios.post('/preinscription/gestion/CreeFacture',formData)
+        const response = request.data;
+        $("#creationFacturemodal .modal-body").prepend(
+            `<div class="alert alert-success">${response}</div>`
+        );
+        icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin");
+        $('#creationFacturemodal #enregistrer').prop('disabled', true);
+        $('#creationFacturemodal select').val("").trigger('change');
+        }catch(error){
+        const message = error.response.data;
+        // console.log(error, error.response);
+        modalAlert.remove();
+        $("#creationFacturemodal .modal-body").prepend(
+            `<div class="alert alert-danger">${message}</div>`
+        );
+        icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
+        } 
+        // setTimeout(() => {
+        // $(".modal-body .alert").remove();
+        // }, 2000)  
+    })
 })
 
