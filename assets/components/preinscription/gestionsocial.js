@@ -101,7 +101,7 @@ $(document).ready(function () {
         const icon = $("body #ajouter i");
         icon.removeClass('fa-plus').addClass("fa-spinner fa-spin");
         try{
-            const request = await axios.get('/api/sousNatureDemande/7');
+            const request = await axios.get('/api/info_NatureDemande_Pec/'+id_preinscription);
             response = request.data
             $('body #ajouterPriseEnCharge_modal #nature').html(response).select2();
             // $('#ajouterPriseEnCharge_modal').modal("show")
@@ -152,7 +152,7 @@ $(document).ready(function () {
             );
             icon.addClass('fa-edit').removeClass("fa-spinner fa-spin ");
             list_priseEncharge();
-            id_preinscription = false;
+            // id_preinscription = false;
             $('.form-ajouter_pcharge')[0].reset()
             $('.form-ajouter_pcharge select').val("").trigger('change');
         }catch (error) {

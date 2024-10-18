@@ -393,6 +393,26 @@ class ApiController extends AbstractController
         return new JsonResponse($data);
     }
 
+    
+
+    #[Route('/info_NatureDemande_Pec/{preinscription}', name: 'info_NatureDemande_Pec')]
+    public function info_NatureDemande_Pec(TPreinscription $preinscription): Response
+    {   
+        $EtudiantSousNatureDemandes = $this->em->getRepository(EtudiantSousNatureDemande::class)->findBy([
+            'etudiant' => $preinscription->getEtudiant(),
+            'sousNature'=> $this->em->getRepository(SousNatureDemande::class)->findBy(['active'=>1,'natureDemande'=>7]),
+            'active' => 1]);
+        if (!$EtudiantSousNatureDemandes) {
+            return new JsonResponse("Aucun Nature demande trouvé !",500);
+        }
+        $data = "<option selected enabled value=''>Choix Nature Demande</option>";
+        foreach ($EtudiantSousNatureDemandes as $EtudiantSousNatureDemande) {
+            $designation = $EtudiantSousNatureDemande->getSousNature()->getNatureDemande()->getDesignation().' - '.$EtudiantSousNatureDemande->getSousNature()->getDesignation();
+            $data .="<option value=".$EtudiantSousNatureDemande->getSousNature()->getId().">".$designation."</option>";
+        }
+        return new JsonResponse($data);
+    }
+
     #[Route('/info_priseEnCharge/{sousNature}/{preinscription}', name: 'info_priseEnCharge')]
     public function info_priseEnCharge(SousNatureDemande $sousNature, TPreinscription $preinscription): Response
     {   

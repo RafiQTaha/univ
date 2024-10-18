@@ -566,33 +566,27 @@ $("body").on('submit', "#form_modifier", async (e) => {
         // alert('test');
         
         let formData = new FormData($(this)[0]);
-        console.log(formData)
-        // let formdata = new FormData($(this));
-        // formdata.append('preinscription',id_etudiant)
-        // formdata.append('sousNature',$('#sousNature').val())
-        // formdata.append('sousNature',$('#pec').val())
-
-        // let modalAlert =  $("#creationFacturemodal .modal-body .alert");
-        // modalAlert.remove();
-        const icon = $(".form-creationFacture .btn i");
+        formData.append('preinscription',id_preinscription)
+        const icon = $("#form-creationFacture .btn i");
         icon.removeClass('fa-check-circle').addClass("fa-spinner fa-spin");
         try{
-        const request = await  axios.post('/preinscription/gestion/CreeFacture',formData)
-        const response = request.data;
-        $("#creationFacturemodal .modal-body").prepend(
-            `<div class="alert alert-success">${response}</div>`
-        );
-        icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin");
-        $('#creationFacturemodal #enregistrer').prop('disabled', true);
-        $('#creationFacturemodal select').val("").trigger('change');
+            const request = await  axios.post('/preinscription/gestion/CreeFacture',formData)
+            const response = request.data;
+            icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin");
+            $('#form-creationFacture #enregistrer').prop('disabled', true);
+            $('#form-creationFacture select').val("").trigger('change');
+            Toast.fire({
+                icon: 'success',
+                title: response,
+            })
         }catch(error){
-        const message = error.response.data;
-        // console.log(error, error.response);
-        modalAlert.remove();
-        $("#creationFacturemodal .modal-body").prepend(
-            `<div class="alert alert-danger">${message}</div>`
-        );
-        icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
+            const message = error.response.data;
+            // console.log(error, error.response);
+            Toast.fire({
+                icon: 'error',
+                title: message,
+            })
+            icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
         } 
         // setTimeout(() => {
         // $(".modal-body .alert").remove();

@@ -19,6 +19,7 @@ use App\Entity\User;
 use App\Controller\ApiController;
 use App\Controller\DatatablesController;
 use App\Entity\PSituation;
+use App\Entity\SousNatureDemande;
 use App\Entity\TAdmission;
 use App\Entity\TEtudiant;
 use App\Entity\TInscription;
@@ -760,17 +761,28 @@ class GestionPreinscriptionController extends AbstractController
     #[Route('/CreeFacture', name: 'CreeFacture')]
     public function CreeFacture(Request $request) 
     {
-        dd($request);
+        dd($request->get("nature"));
+        // $etudiantSousNature = $this->em->getRepository(Prise::class)->find($request->get("nature"));
+        // dd($etudiantSousNature);
 
-        
-        $candidats_infos = $this->render("preinscription/pages/candidats_infos.html.twig", [
-            'etudiant' => $preinscription->getEtudiant(),
-            'situations' => $situations,
-        ])->getContent();
 
-        $info_etudiant = [ 
-            'divers' => $divers,
-        ];
+        $operationCab = new TOperationcab();
+        $operationCab->setPreinscription($inscription->getAdmission()->getPreinscription());
+        $operationCab->setUserCreated($this->getUser());
+        $operationCab->setAnnee($inscription->getAnnee());
+        $operationCab->setActive(1);
+        $operationCab->setDateContable(date('Y'));
+        $categorie = $i == 1 ? 'inscription' : 'inscription organisme';
+        $organisme = $i == 1 ? 'Payant' : 'Organisme';
+        $operationCab->setCategorie($categorie);
+        $operationCab->setOrganisme($organisme);
+        $operationCab->setCreated(new \DateTime("now"));
+        $this->em->persist($operationCab);
+        $this->em->flush();
+        $operationCab->setCode(
+            $inscription->getAnnee()->getFormation()->getEtablissement()->getAbreviation()."-FAC".str_pad($operationCab->getId(), 8, '0', STR_PAD_LEFT)."/".date('Y')
+        );
+        $this->em->flush();
         return new JsonResponse($info_etudiant);
     }
 }

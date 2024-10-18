@@ -5,6 +5,7 @@ namespace App\Controller\Preinscription;
 use App\Controller\ApiController;
 use App\Controller\DatatablesController;
 use App\Entity\AcEtablissement;
+use App\Entity\EtudiantSousNatureDemande;
 use App\Entity\NatureDemande;
 use App\Entity\POrganisme;
 use App\Entity\PriseEnCharge;
@@ -227,7 +228,8 @@ class GestionSocialController extends AbstractController
             return new JsonResponse("Merci de choisir un étudiant et de remplir tous les champs !", 500);
         }
         $preinscription = $this->em->getRepository(TPreinscription::class)->find($request->get('preinscription'));
-        $sousNatureDemande = $this->em->getRepository(SousNatureDemande::class)->find($request->get('nature'));
+        $sousNatureDemande = $this->em->getRepository(EtudiantSousNatureDemande::class)->find($request->get('nature'))->getSousNature();
+        // $sousNatureDemande = $this->em->getRepository(SousNatureDemande::class)->find($request->get('nature'));
         // dd($sousNatureDemande);
         $priseEnCharge = new PriseEnCharge();
         $priseEnCharge->setPreinscription($preinscription);
