@@ -227,8 +227,9 @@ class GestionSocialController extends AbstractController
         if ($request->get('preinscription') == "" || $request->get('nature') == "" || $request->get('cpec') == "" || $request->get('montant') == "" ) {
             return new JsonResponse("Merci de choisir un étudiant et de remplir tous les champs !", 500);
         }
+        // dd($request->get('nature'));
         $preinscription = $this->em->getRepository(TPreinscription::class)->find($request->get('preinscription'));
-        $sousNatureDemande = $this->em->getRepository(EtudiantSousNatureDemande::class)->find($request->get('nature'))->getSousNature();
+        $sousNatureDemande = $this->em->getRepository(SousNatureDemande::class)->find($request->get('nature'));
         // $sousNatureDemande = $this->em->getRepository(SousNatureDemande::class)->find($request->get('nature'));
         // dd($sousNatureDemande);
         $priseEnCharge = new PriseEnCharge();

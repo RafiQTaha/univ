@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\PriseEnChargeRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: PriseEnChargeRepository::class)]
@@ -39,6 +41,14 @@ class PriseEnCharge
 
     #[ORM\ManyToOne(targetEntity: SousNatureDemande::class, inversedBy: 'priseEnCharges')]
     private $sousNatureDemande;
+
+    #[ORM\OneToMany(mappedBy: 'priseEnCharge', targetEntity: TOperationcab::class)]
+    private $tOperationcabs;
+
+    public function __construct()
+    {
+        $this->tOperationcabs = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -149,6 +159,36 @@ class PriseEnCharge
     public function setSousNatureDemande(?SousNatureDemande $sousNatureDemande): self
     {
         $this->sousNatureDemande = $sousNatureDemande;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, TOperationcab>
+     */
+    public function getTOperationcabs(): Collection
+    {
+        return $this->tOperationcabs;
+    }
+
+    public function addTOperationcab(TOperationcab $tOperationcab): self
+    {
+        if (!$this->tOperationcabs->contains($tOperationcab)) {
+            $this->tOperationcabs[] = $tOperationcab;
+            $tOperationcab->setPriseEnCharge($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTOperationcab(TOperationcab $tOperationcab): self
+    {
+        if ($this->tOperationcabs->removeElement($tOperationcab)) {
+            // set the owning side to null (unless already changed)
+            if ($tOperationcab->getPriseEnCharge() === $this) {
+                $tOperationcab->setPriseEnCharge(null);
+            }
+        }
 
         return $this;
     }

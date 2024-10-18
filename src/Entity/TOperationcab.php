@@ -90,6 +90,9 @@ class TOperationcab
     #[ORM\Column(type: 'float', nullable: true)]
     private $montantPec;
 
+    #[ORM\ManyToOne(targetEntity: PriseEnCharge::class, inversedBy: 'tOperationcabs')]
+    private $priseEnCharge;
+
     public function __construct()
     {
         $this->reglements = new ArrayCollection();
@@ -421,6 +424,18 @@ class TOperationcab
     public function setMontantPec(?float $montantPec): self
     {
         $this->montantPec = $montantPec;
+
+        return $this;
+    }
+
+    public function getPriseEnCharge(): ?PriseEnCharge
+    {
+        return $this->priseEnCharge;
+    }
+
+    public function setPriseEnCharge(?PriseEnCharge $priseEnCharge): self
+    {
+        $this->priseEnCharge = $priseEnCharge;
 
         return $this;
     }

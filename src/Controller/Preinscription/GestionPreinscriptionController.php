@@ -67,7 +67,7 @@ class GestionPreinscriptionController extends AbstractController
          
         $params = $request->query;
         $where = $totalRows = $sqlRequest = "";
-        $filtre = "where 1=1 AND inscription_valide = 1 and pre.id = 20604";
+        $filtre = "where 1=1 AND inscription_valide = 1 and pre.id = 20605";
         
         if (!empty($params->all('columns')[0]['search']['value'])) {
             $filtre .= " and etab.id = '" . $params->all('columns')[0]['search']['value'] . "' ";
