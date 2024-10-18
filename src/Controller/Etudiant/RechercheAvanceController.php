@@ -670,6 +670,30 @@ class RechercheAvanceController extends AbstractController
         $mpdf->SetTitle('Attestation d\'inscription');
         $mpdf->Output("attestaion.pdf", "I");
     }
+    #[Route('/attestation/inscriptionperiode/{inscription}', name: 'etudiant_recherche_inscription_periode')]
+    public function etudiant__inscription_periode(TInscription $inscription)
+    {
+        // dd('test');
+        ini_set('memory_limit', '-1');
+        $html = $this->render("etudiant/recherche_avance/pdf/attestations/inscription_periode.html.twig", [
+            'inscription' => $inscription
+        ])->getContent();
+        // dd($html);
+        $mpdf = new Mpdf([
+            'mode' => 'utf-8',
+            'margin_left' => 5,
+            'margin_right' => 5,
+        ]);
+        // $mpdf->SetHTMLHeader(
+        //     $this->render("etudiant/recherche_avance/pdf/attestations/header.html.twig")->getContent()
+        // );
+        $mpdf->SetHTMLFooter(
+            $this->render("etudiant/recherche_avance/pdf/attestations/footer.html.twig")->getContent()
+        );
+        $mpdf->WriteHTML($html);
+        $mpdf->SetTitle('Attestation d\'inscription');
+        $mpdf->Output("attestaion.pdf", "I");
+    }
 
     public function validationModules($inscription, $semestre)
     {
