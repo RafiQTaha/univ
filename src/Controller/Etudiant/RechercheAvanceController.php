@@ -646,6 +646,31 @@ class RechercheAvanceController extends AbstractController
         $mpdf->Output("avc" . $inscription->getId() . ".pdf", "I");
     }
 
+    
+    #[Route('/attestation/autorisation/{inscription}', name: 'etudiant_recherche_autorisation_retait')]
+    public function attestationAutorisationRetrait(TInscription $inscription)
+    {
+        ini_set('memory_limit', '-1');
+        $html = $this->render("etudiant/recherche_avance/pdf/attestations/autorisation_retrait.html.twig", [
+            'inscription' => $inscription
+        ])->getContent();
+        // dd($html);
+        $mpdf = new Mpdf([
+            'mode' => 'utf-8',
+            'margin_left' => 5,
+            'margin_right' => 5,
+        ]);
+        // $mpdf->SetHTMLHeader(
+        //     $this->render("etudiant/recherche_avance/pdf/attestations/header.html.twig")->getContent()
+        // );
+        $mpdf->SetHTMLFooter(
+            $this->render("etudiant/recherche_avance/pdf/attestations/footer.html.twig")->getContent()
+        );
+        $mpdf->WriteHTML($html);
+        $mpdf->SetTitle('Attestation d\'inscription');
+        $mpdf->Output("attestaion.pdf", "I");
+    }
+
     public function validationModules($inscription, $semestre)
     {
         return new Response(count($this->em->getRepository(ExMnotes::class)->getModulesTheoriqueBySemestre($semestre, $inscription)), 200, ['Content-Type' => 'text/html']);
