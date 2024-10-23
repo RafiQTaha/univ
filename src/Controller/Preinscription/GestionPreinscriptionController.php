@@ -18,6 +18,7 @@ use App\Entity\NatureDemande;
 use App\Entity\User;
 use App\Controller\ApiController;
 use App\Controller\DatatablesController;
+use App\Entity\PriseEnCharge;
 use App\Entity\PSituation;
 use App\Entity\SousNatureDemande;
 use App\Entity\TAdmission;
@@ -67,7 +68,7 @@ class GestionPreinscriptionController extends AbstractController
          
         $params = $request->query;
         $where = $totalRows = $sqlRequest = "";
-        $filtre = "where 1=1 AND inscription_valide = 1 and pre.id = 20605";
+        $filtre = "where 1=1 AND inscription_valide = 1 ";
         
         if (!empty($params->all('columns')[0]['search']['value'])) {
             $filtre .= " and etab.id = '" . $params->all('columns')[0]['search']['value'] . "' ";
@@ -756,33 +757,56 @@ class GestionPreinscriptionController extends AbstractController
         $mpdf->Output("attestaion.pdf", "I");
     } 
 
-    
-
     #[Route('/CreeFacture', name: 'CreeFacture')]
     public function CreeFacture(Request $request) 
     {
-        dd($request->get("nature"));
-        // $etudiantSousNature = $this->em->getRepository(Prise::class)->find($request->get("nature"));
-        // dd($etudiantSousNature);
-
+        $sousNature = $this->em->getRepository(SousNatureDemande::class)->find($request->get("nature"));
+        $priseEnCharge = null;
+        if ($request->get("pec")) {
+            $priseEnCharge = $this->em->getRepository(PriseEnCharge::class)->find($request->get("pec"));
+        }
+        // dd($priseEnCharge);
+        if ($sousNature->getNatureDemande()->getId() == 7 and !$priseEnCharge) {
+            return new JsonResponse("Prise En Charge Introuvable !", 500);
+        }
+        $preinscription = $this->em->getRepository(TPreinscription::class)->find($request->get("preinscription"));
+        if (!$preinscription) {
+            return new JsonResponse("Preinscription Introuvable !", 500);
+        }
+        $natureDemande = $sousNature->getNatureDemande();
+        if ($natureDemande->getId() == 1) {
+            $organisme = "Payant";
+        }else {
+            $organisme = "Organisme";
+        }
+        $operationCab = $this->em->getRepository(TOperationcab::class)->findOneBy([
+            'preinscription'=>$preinscription,
+            'priseEnCharge' =>$priseEnCharge,
+            'organisme'     =>$organisme,
+            'categorie'     =>'pré-inscription',
+            'active'        =>1
+        ]);
+        if ($operationCab) {
+            return new JsonResponse("Vous avez déja une facture ouverte avec le code ".$operationCab->getId(), 500);
+        }
 
         $operationCab = new TOperationcab();
-        $operationCab->setPreinscription($inscription->getAdmission()->getPreinscription());
-        $operationCab->setUserCreated($this->getUser());
-        $operationCab->setAnnee($inscription->getAnnee());
+        $operationCab->setPreinscription($preinscription);
+        $operationCab->setAnnee($preinscription->getAnnee());
         $operationCab->setActive(1);
         $operationCab->setDateContable(date('Y'));
-        $categorie = $i == 1 ? 'inscription' : 'inscription organisme';
-        $organisme = $i == 1 ? 'Payant' : 'Organisme';
-        $operationCab->setCategorie($categorie);
+        $operationCab->setCategorie('pré-inscription');
+        $operationCab->setSousNatureDemande($sousNature);
+        $operationCab->setPriseEnCharge($priseEnCharge);
         $operationCab->setOrganisme($organisme);
         $operationCab->setCreated(new \DateTime("now"));
+        $operationCab->setUserCreated($this->getUser());
         $this->em->persist($operationCab);
         $this->em->flush();
         $operationCab->setCode(
-            $inscription->getAnnee()->getFormation()->getEtablissement()->getAbreviation()."-FAC".str_pad($operationCab->getId(), 8, '0', STR_PAD_LEFT)."/".date('Y')
+            $preinscription->getAnnee()->getFormation()->getEtablissement()->getAbreviation()."-FAC".str_pad($operationCab->getId(), 8, '0', STR_PAD_LEFT)."/".date('Y')
         );
         $this->em->flush();
-        return new JsonResponse($info_etudiant);
+        return new JsonResponse("Bien Enregistre code facture: " . $operationCab->getCode(), 200);
     }
 }

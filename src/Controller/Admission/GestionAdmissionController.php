@@ -17,6 +17,7 @@ use App\Entity\TAdmissionDocument;
 use App\Controller\DatatablesController;
 use App\Entity\NatureDemande;
 use App\Entity\Pec;
+use App\Entity\SousNatureDemande;
 use DateTime;
 use Doctrine\Persistence\ManagerRegistry;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
@@ -490,6 +491,7 @@ class GestionAdmissionController extends AbstractController
         }
 
         foreach ($etudiantNatures as $key => $nature) {
+            $sousNature = $this->em->getRepository(SousNatureDemande::class)->findSousNatureEtudiantByNatureDemande($etudiant,$nature);
             $org = "";
             $categorie = "";
             $operationcab = new TOperationcab();
@@ -506,6 +508,7 @@ class GestionAdmissionController extends AbstractController
             }else {
                 continue;
             }
+            $operationcab->setSousNatureDemande($sousNature);
             $operationcab->setCategorie($categorie);
             $operationcab->setOrganisme($org);
             $operationcab->setActive(1);

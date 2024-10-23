@@ -125,6 +125,7 @@ class GestionFactureController extends AbstractController
             array( 'db' => 'Upper(stat.designation)','dt' => 7),
             array( 'db' => 'upper(etu.nationalite)','dt' => 8),
             array( 'db' => 'opcab.categorie','dt' => 9),
+            // array( 'db' => 'Upper(org.abreviation)','dt' => 10),
             array( 'db' => 'opcab.active','dt' => 10),
         );
         $sql = "SELECT DISTINCT " . implode(", ", DatatablesController::Pluck($columns, 'db')) . "
@@ -137,6 +138,9 @@ class GestionFactureController extends AbstractController
         INNER JOIN tetudiant etu on etu.id = pre.etudiant_id
         INNER JOIN ac_formation frma on frma.id = an.formation_id
         INNER JOIN ac_etablissement etab on etab.id = frma.etablissement_id
+        LEFT JOIN prise_en_charge pec on pec.id = opcab.prise_en_charge_id
+        LEFT JOIN sous_nature_demande snd on snd.id = pec.sous_nature_demande_id
+        LEFT JOIN porganisme org on org.id = snd.organisme_id
         $filtre ";
         // dd($sql);
         $totalRows .= $sql;
@@ -169,6 +173,7 @@ class GestionFactureController extends AbstractController
             $nestedData[] = $i;
             $etat_bg="";
             foreach (array_values($row) as $key => $value) { 
+                // dd(array_values($row)[0]);
                 if($key > 0) {
                     if($key == 10){
                         $operationTotal = $this->em->getRepository(TOperationdet::class)->getSumMontantByCodeFacture($cd)['total'];
@@ -200,6 +205,8 @@ class GestionFactureController extends AbstractController
                             }
                         }
                         $nestedData[] = $org;
+                        $operationCab = $this->em->getRepository(TOperationcab::class)->find(array_values($row)[0]);
+                        $nestedData[] = $operationCab->getPriseEnCharge() != null ? $operationCab->getPriseEnCharge()->getSousNatureDemande()->getOrganisme()->getAbreviation() : "-";
                         $value = $value == 0 ? 'Cloture' : 'Ouverte';
                     }
                     $nestedData[] = $value;
@@ -529,7 +536,13 @@ class GestionFactureController extends AbstractController
         if ($operationcab->getOrganisme() == 'Payant' ) {
             $org = $this->em->getRepository(POrganisme::class)->find(7);
         }else {
-            $org = $this->em->getRepository(POrganisme::class)->find(1);
+            // $operationcab->getPriseEnCharge()->getSousNatureDemande()->getOrganisme()->getAbreviation()
+            $natureDemande = $operationcab->getPriseEnCharge()->getSousNatureDemande()->getNatureDemande();
+            if ($natureDemande->getId() == 7) {
+                $org = $operationcab->getPriseEnCharge()->getSousNatureDemande()->getOrganisme();
+            }else {
+                $org = $this->em->getRepository(POrganisme::class)->find(1);
+            }
         }
         $operationDet = new TOperationdet();
         $operationDet->setOperationcab($operationcab);

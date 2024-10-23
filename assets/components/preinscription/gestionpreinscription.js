@@ -514,7 +514,6 @@ $("body").on('submit', "#form_modifier", async (e) => {
         }
         const icon = $("body #new_fac i");
         icon.removeClass('fa-file-invoice-dollar').addClass("fa-spinner fa-spin");
-        // $('#creationFacturemodal select').val("").trigger('change');
         try{
             const request = await axios.get('/api/info_NatureDemande/'+id_preinscription);
             response = request.data
@@ -543,14 +542,12 @@ $("body").on('submit', "#form_modifier", async (e) => {
             const request = await axios.get('/api/info_priseEnCharge/'+sousNature+'/'+id_preinscription);
             response = request.data
             $('#creationFacturemodal #form-creationFacture #pec').val("").trigger('change');
-            // console.log(success)
             if(response !== 1){
                 $('#creationFacturemodal #form-creationFacture .pec').css('display','block');
                 $('#creationFacturemodal #form-creationFacture #pec').html(response).select2();
             }else{
                 $('#creationFacturemodal #form-creationFacture .pec').css('display','none');
-                // $('#creationFacturemodal #form-creationFacture #enregistrer').removeAttr("disabled");
-                // $('#natureDemandemodal #enregistrer').removeAttr("disabled");
+                $('#form-creationFacture #enregistrer').prop('disabled', false);
             }
             
         }catch (error) {
@@ -561,16 +558,26 @@ $("body").on('submit', "#form_modifier", async (e) => {
             })
         }
     })
+    
+    
+    $('body').on('change','#creationFacturemodal #pec',async function (e) {
+        e.preventDefault();
+        let priseEnCharge = $(this).val();
+        if (priseEnCharge == "") {
+            $('#form-creationFacture #enregistrer').prop('disabled', true);
+        }else{
+            $('#form-creationFacture #enregistrer').prop('disabled', false);
+        }
+    })
     $('body').on('submit','#form-creationFacture',async function (e) {
         e.preventDefault();
-        // alert('test');
         
         let formData = new FormData($(this)[0]);
         formData.append('preinscription',id_preinscription)
         const icon = $("#form-creationFacture .btn i");
         icon.removeClass('fa-check-circle').addClass("fa-spinner fa-spin");
         try{
-            const request = await  axios.post('/preinscription/gestion/CreeFacture',formData)
+            const request = await  axios.post('/preinscription/gestion/creeFacture',formData)
             const response = request.data;
             icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin");
             $('#form-creationFacture #enregistrer').prop('disabled', true);
@@ -581,16 +588,12 @@ $("body").on('submit', "#form_modifier", async (e) => {
             })
         }catch(error){
             const message = error.response.data;
-            // console.log(error, error.response);
             Toast.fire({
                 icon: 'error',
                 title: message,
             })
             icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
         } 
-        // setTimeout(() => {
-        // $(".modal-body .alert").remove();
-        // }, 2000)  
     })
 })
 

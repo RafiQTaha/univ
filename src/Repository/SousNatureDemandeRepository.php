@@ -63,4 +63,21 @@ class SousNatureDemandeRepository extends ServiceEntityRepository
 //            ->getOneOrNullResult()
 //        ;
 //    }
+    public function findSousNatureEtudiantByNatureDemande($etudiant,$nature)
+    {
+        // dd($etudiant);
+       return $this->createQueryBuilder('sousNature')
+            ->innerJoin('sousNature.natureDemande', 'nature')
+            ->innerjoin('sousNature.etudiantSousNatureDemandes','etudiantsousNature')
+            ->innerjoin('etudiantsousNature.etudiant','etudiant')
+            ->Where('etudiant = :etudiant')
+            ->andWhere('nature = :nature')
+            ->andWhere('etudiantsousNature.active = 1')
+            ->setParameter('etudiant', $etudiant)
+            ->setParameter('nature', $nature)
+            ->getQuery()
+            ->getOneOrNullResult()
+        //    ->getResult()
+       ;
+    }
 }

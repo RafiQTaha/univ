@@ -93,6 +93,9 @@ class TOperationcab
     #[ORM\ManyToOne(targetEntity: PriseEnCharge::class, inversedBy: 'tOperationcabs')]
     private $priseEnCharge;
 
+    #[ORM\ManyToOne(targetEntity: SousNatureDemande::class, inversedBy: 'tOperationcabs')]
+    private $sousNatureDemande;
+
     public function __construct()
     {
         $this->reglements = new ArrayCollection();
@@ -436,6 +439,18 @@ class TOperationcab
     public function setPriseEnCharge(?PriseEnCharge $priseEnCharge): self
     {
         $this->priseEnCharge = $priseEnCharge;
+
+        return $this;
+    }
+
+    public function getSousNatureDemande(): ?SousNatureDemande
+    {
+        return $this->sousNatureDemande;
+    }
+
+    public function setSousNatureDemande(?SousNatureDemande $sousNatureDemande): self
+    {
+        $this->sousNatureDemande = $sousNatureDemande;
 
         return $this;
     }

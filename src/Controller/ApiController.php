@@ -388,7 +388,7 @@ class ApiController extends AbstractController
         $data = "<option selected enabled value=''>Choix Nature Demande</option>";
         foreach ($EtudiantSousNatureDemandes as $EtudiantSousNatureDemande) {
             $designation = $EtudiantSousNatureDemande->getSousNature()->getNatureDemande()->getDesignation().' - '.$EtudiantSousNatureDemande->getSousNature()->getDesignation();
-            $data .="<option value=".$EtudiantSousNatureDemande->getId().">".$designation."</option>";
+            $data .="<option value=".$EtudiantSousNatureDemande->getSousNature()->getId().">".$designation."</option>";
         }
         return new JsonResponse($data);
     }

@@ -13,6 +13,9 @@ use App\Entity\TOperationdet;
 use App\Entity\AcEtablissement;
 use App\Controller\ApiController;
 use App\Controller\DatatablesController;
+use App\Entity\EtudiantSousNatureDemande;
+use App\Entity\PriseEnCharge;
+use App\Entity\SousNatureDemande;
 use App\Entity\TAdmission;
 use Doctrine\Persistence\ManagerRegistry;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
@@ -72,15 +75,16 @@ class GestionInscriptionController extends AbstractController
         $columns = array(
             array( 'db' => 'ins.id','dt' => 0),
             array( 'db' => 'ins.code','dt' => 1),
-            array( 'db' => 'etu.nom','dt' => 2),
-            array( 'db' => 'etu.prenom','dt' => 3),
-            array( 'db' => 'etu.cne','dt' => 4),
-            array( 'db' => 'etu.cin','dt' => 5),
-            array( 'db' => 'etab.abreviation','dt' => 6),
-            array( 'db' => 'UPPER(form.abreviation)','dt' => 7),
-            array( 'db' => 'UPPER(prom.designation)','dt' => 8),
-            array( 'db' => 'LOWER(an.designation)','dt' => 9),
-            array( 'db' => 'st.designation','dt' => 10),
+            array( 'db' => 'upper(pre.code)','dt' => 2),
+            array( 'db' => 'etu.nom','dt' => 3),
+            array( 'db' => 'etu.prenom','dt' => 4),
+            array( 'db' => 'etu.cne','dt' => 5),
+            array( 'db' => 'etu.cin','dt' => 6),
+            array( 'db' => 'etab.abreviation','dt' => 7),
+            array( 'db' => 'UPPER(form.abreviation)','dt' => 8),
+            array( 'db' => 'UPPER(prom.designation)','dt' => 9),
+            array( 'db' => 'LOWER(an.designation)','dt' => 10),
+            array( 'db' => 'st.designation','dt' => 11),
         );
         $sql = "SELECT " . implode(", ", DatatablesController::Pluck($columns, 'db')) . "
         FROM tinscription ins
@@ -514,4 +518,118 @@ class GestionInscriptionController extends AbstractController
         return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);
     }
 
+    
+    #[Route('/info_NatureDemande/{inscription}', name: 'info_NatureDemande_inscription')]
+    public function info_NatureDemande(TInscription $inscription): Response
+    {   
+        $preinscription = $inscription->getAdmission()->getPreinscription();
+        $EtudiantSousNatureDemandes = $this->em->getRepository(EtudiantSousNatureDemande::class)->findBy(['etudiant' => $preinscription->getEtudiant(),
+        'active' => 1]);
+        if (!$EtudiantSousNatureDemandes) {
+            return new JsonResponse("Aucun Nature demande trouvé !",500);
+        }
+        $data = "<option selected enabled value=''>Choix Nature Demande</option>";
+        foreach ($EtudiantSousNatureDemandes as $EtudiantSousNatureDemande) {
+            $designation = $EtudiantSousNatureDemande->getSousNature()->getNatureDemande()->getDesignation().' - '.$EtudiantSousNatureDemande->getSousNature()->getDesignation();
+            $data .="<option value=".$EtudiantSousNatureDemande->getSousNature()->getId().">".$designation."</option>";
+        }
+        return new JsonResponse($data);
+    }
+
+    
+
+    #[Route('/info_NatureDemande_Pec/{inscription}', name: 'info_NatureDemande_Pec_inscription')]
+    public function info_NatureDemande_Pec(TInscription $inscription): Response
+    {   
+        $preinscription = $inscription->getAdmission()->getPreinscription();
+        $EtudiantSousNatureDemandes = $this->em->getRepository(EtudiantSousNatureDemande::class)->findBy([
+            'etudiant' => $preinscription->getEtudiant(),
+            'sousNature'=> $this->em->getRepository(SousNatureDemande::class)->findBy(['active'=>1,'natureDemande'=>7]),
+            'active' => 1]);
+        if (!$EtudiantSousNatureDemandes) {
+            return new JsonResponse("Aucun Nature demande trouvé !",500);
+        }
+        $data = "<option selected enabled value=''>Choix Nature Demande</option>";
+        foreach ($EtudiantSousNatureDemandes as $EtudiantSousNatureDemande) {
+            $designation = $EtudiantSousNatureDemande->getSousNature()->getNatureDemande()->getDesignation().' - '.$EtudiantSousNatureDemande->getSousNature()->getDesignation();
+            $data .="<option value=".$EtudiantSousNatureDemande->getSousNature()->getId().">".$designation."</option>";
+        }
+        return new JsonResponse($data);
+    }
+
+    #[Route('/info_priseEnCharge/{sousNature}/{inscription}', name: 'info_priseEnCharge_inscription')]
+    public function info_priseEnCharge(SousNatureDemande $sousNature, TInscription $inscription): Response
+    {   
+        if ($sousNature->getNatureDemande()->getId() != 7) {
+            return new JsonResponse(1);
+        }
+        $preinscription = $inscription->getAdmission()->getPreinscription();
+        $priseEnCharges = $this->em->getRepository(PriseEnCharge::class)->findBy([
+            'preinscription'    => $preinscription,
+            'sousNatureDemande' => $sousNature, 
+            'active'            => 1
+        ]);
+        $data = "<option selected enabled value=''>Choix Prise En Charge</option>";
+        foreach ($priseEnCharges as $priseEnCharge) {
+            $designation = $priseEnCharge->getCodePec().' - '.$priseEnCharge->getMontant().'DH';
+            $data .="<option value=".$priseEnCharge->getId().">".$designation."</option>";
+        }
+        return new JsonResponse($data);
+    }
+
+    #[Route('/creeFacture', name: 'CreeFacture_inscription')]
+    public function CreeFacture_inscription(Request $request) 
+    {
+        $sousNature = $this->em->getRepository(SousNatureDemande::class)->find($request->get("nature"));
+        $priseEnCharge = null;
+        if ($request->get("pec")) {
+            $priseEnCharge = $this->em->getRepository(PriseEnCharge::class)->find($request->get("pec"));
+        }
+        // dd($priseEnCharge);
+        if ($sousNature->getNatureDemande()->getId() == 7 and !$priseEnCharge) {
+            return new JsonResponse("Prise En Charge Introuvable !", 500);
+        }
+        $inscription = $this->em->getRepository(TInscription::class)->find($request->get("inscription"));
+        if (!$inscription) {
+            return new JsonResponse("Inscription Introuvable !", 500);
+        }
+        $preinscription = $inscription->getAdmission()->getPreinscription();
+        $natureDemande = $sousNature->getNatureDemande();
+        if ($natureDemande->getId() == 1) {
+            $organisme = "Payant";
+            $categorie = "inscription";
+        }else {
+            $organisme = "Organisme";
+            $categorie = "inscription organisme";
+        }
+        $operationCab = $this->em->getRepository(TOperationcab::class)->findOneBy([
+            'preinscription'=>$preinscription,
+            'priseEnCharge' =>$priseEnCharge,
+            'organisme'     =>$organisme,
+            'categorie'     =>$categorie,
+            'active'        =>1
+        ]);
+        if ($operationCab) {
+            return new JsonResponse("Vous avez déja une facture ouverte avec le code ".$operationCab->getId(), 500);
+        }
+
+        $operationCab = new TOperationcab();
+        $operationCab->setPreinscription($preinscription);
+        $operationCab->setAnnee($preinscription->getAnnee());
+        $operationCab->setActive(1);
+        $operationCab->setDateContable(date('Y'));
+        $operationCab->setCategorie($categorie);
+        $operationCab->setSousNatureDemande($sousNature);
+        $operationCab->setPriseEnCharge($priseEnCharge);
+        $operationCab->setOrganisme($organisme);
+        $operationCab->setCreated(new \DateTime("now"));
+        $operationCab->setUserCreated($this->getUser());
+        $this->em->persist($operationCab);
+        $this->em->flush();
+        $operationCab->setCode(
+            $preinscription->getAnnee()->getFormation()->getEtablissement()->getAbreviation()."-FAC".str_pad($operationCab->getId(), 8, '0', STR_PAD_LEFT)."/".date('Y')
+        );
+        $this->em->flush();
+        return new JsonResponse("Bien Enregistre code facture: " . $operationCab->getCode(), 200);
+    }
 }

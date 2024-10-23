@@ -444,7 +444,7 @@ class EtudiantController extends AbstractController
         if (!$etudiantNatures) {
             return new JsonResponse("Vous devez d'abord choisir une nature de demande !", 500);
         }
-        
+        // dd($etudiantNatures);
         $formation = $this->em->getRepository(AcFormation::class)->find($request->get('formation'));
         if(strpos($formation->getDesignation(), 'Résidanat') === false && $formation->getEtablissement()->getId() != 25){
             $currentYear = date('Y') - 1 .'/'.date('Y');  // means current year
@@ -481,7 +481,6 @@ class EtudiantController extends AbstractController
         $preinscription->setAnnee($annee);
 
         $this->em->persist($preinscription);
-        // dd($preinscription);
         $this->em->flush();
         $preinscription->setCode('PRE-'.$formation->getAbreviation().str_pad($preinscription->getId(), 8, '0', STR_PAD_LEFT).'/'.date('Y'));
         $this->em->flush();
@@ -492,6 +491,9 @@ class EtudiantController extends AbstractController
         }
 
         foreach ($etudiantNatures as $key => $nature) {
+            // dd($etudiant);
+            $sousNature = $this->em->getRepository(SousNatureDemande::class)->findSousNatureEtudiantByNatureDemande($etudiant,$nature);
+            // dd($sousNature);
             $org = "";
             $operationcab = new TOperationcab();
             $operationcab->setPreinscription($preinscription);
@@ -506,6 +508,7 @@ class EtudiantController extends AbstractController
             }else {
                 continue;
             }
+            $operationcab->setSousNatureDemande($sousNature);
             $operationcab->setOrganisme($org);
             $operationcab->setActive(1);
             $operationcab->setDateContable(date('Y'));
