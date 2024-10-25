@@ -95,6 +95,24 @@ class TOperationcab
 
     #[ORM\ManyToOne(targetEntity: sousNatureDemande::class, inversedBy: 'tOperationcabs')]
     private $sousNatureDemande;
+    
+    #[ORM\Column(type: 'string', length: 100, nullable: true)]
+    private $statut;
+
+    #[ORM\Column(type: 'string', length: 100, nullable: true)]
+    private $programmePec;
+
+    #[ORM\Column(type: 'float', nullable: true)]
+    private $mtPec;
+
+    #[ORM\Column(type: 'string', length: 100, nullable: true)]
+    private $typePec;
+
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private $motifPec;
+
+    #[ORM\Column(type: 'string', length: 100, nullable: true)]
+    private $niveau;
 
     public function __construct()
     {
@@ -451,6 +469,78 @@ class TOperationcab
     public function setSousNatureDemande(?sousNatureDemande $sousNatureDemande): self
     {
         $this->sousNatureDemande = $sousNatureDemande;
+
+        return $this;
+    }    
+
+    public function getStatut(): ?string
+    {
+        return $this->statut;
+    }
+
+    public function setStatut(?string $statut): self
+    {
+        $this->statut = $statut;
+
+        return $this;
+    }
+
+    public function getProgrammePec(): ?string
+    {
+        return $this->programmePec;
+    }
+
+    public function setProgrammePec(?string $programmePec): self
+    {
+        $this->programmePec = $programmePec;
+
+        return $this;
+    }
+
+    public function getMtPec(): ?float
+    {
+        return $this->mtPec;
+    }
+
+    public function setMtPec(?float $mtPec): self
+    {
+        $this->mtPec = $mtPec;
+
+        return $this;
+    }
+
+    public function getTypePec(): ?string
+    {
+        return $this->typePec;
+    }
+
+    public function setTypePec(?string $typePec): self
+    {
+        $this->typePec = $typePec;
+
+        return $this;
+    }
+
+    public function getMotifPec(): ?string
+    {
+        return $this->motifPec;
+    }
+
+    public function setMotifPec(?string $motifPec): self
+    {
+        $this->motifPec = $motifPec;
+
+        return $this;
+    }
+
+    public function getNiveau(): ?string
+    {
+        return $this->niveau;
+    }
+
+    public function setNiveau(?string $niveau): self
+    {
+        $this->niveau = $niveau;
 
         return $this;
     }
