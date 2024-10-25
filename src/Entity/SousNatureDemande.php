@@ -33,9 +33,13 @@ class SousNatureDemande
     #[ORM\OneToMany(mappedBy: 'sousNature', targetEntity: EtudiantSousNatureDemande::class)]
     private $etudiantSousNatureDemandes;
 
+    #[ORM\OneToMany(mappedBy: 'sousNatureDemande', targetEntity: TOperationcab::class)]
+    private $tOperationcabs;
+
     public function __construct()
     {
         $this->etudiantSousNatureDemandes = new ArrayCollection();
+        $this->tOperationcabs = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -127,6 +131,36 @@ class SousNatureDemande
             // set the owning side to null (unless already changed)
             if ($etudiantSousNatureDemande->getSousNature() === $this) {
                 $etudiantSousNatureDemande->setSousNature(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, TOperationcab>
+     */
+    public function getTOperationcabs(): Collection
+    {
+        return $this->tOperationcabs;
+    }
+
+    public function addTOperationcab(TOperationcab $tOperationcab): self
+    {
+        if (!$this->tOperationcabs->contains($tOperationcab)) {
+            $this->tOperationcabs[] = $tOperationcab;
+            $tOperationcab->setSousNatureDemande($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTOperationcab(TOperationcab $tOperationcab): self
+    {
+        if ($this->tOperationcabs->removeElement($tOperationcab)) {
+            // set the owning side to null (unless already changed)
+            if ($tOperationcab->getSousNatureDemande() === $this) {
+                $tOperationcab->setSousNatureDemande(null);
             }
         }
 

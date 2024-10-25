@@ -90,6 +90,12 @@ class TOperationcab
     #[ORM\Column(type: 'float', nullable: true)]
     private $montantPec;
 
+    #[ORM\ManyToOne(targetEntity: infoPec::class, inversedBy: 'tOperationcabs')]
+    private $infoPec;
+
+    #[ORM\ManyToOne(targetEntity: sousNatureDemande::class, inversedBy: 'tOperationcabs')]
+    private $sousNatureDemande;
+
     public function __construct()
     {
         $this->reglements = new ArrayCollection();
@@ -421,6 +427,30 @@ class TOperationcab
     public function setMontantPec(?float $montantPec): self
     {
         $this->montantPec = $montantPec;
+
+        return $this;
+    }
+
+    public function getInfoPec(): ?infoPec
+    {
+        return $this->infoPec;
+    }
+
+    public function setInfoPec(?infoPec $infoPec): self
+    {
+        $this->infoPec = $infoPec;
+
+        return $this;
+    }
+
+    public function getSousNatureDemande(): ?sousNatureDemande
+    {
+        return $this->sousNatureDemande;
+    }
+
+    public function setSousNatureDemande(?sousNatureDemande $sousNatureDemande): self
+    {
+        $this->sousNatureDemande = $sousNatureDemande;
 
         return $this;
     }
