@@ -90,7 +90,7 @@ class TOperationcab
     #[ORM\Column(type: 'float', nullable: true)]
     private $montantPec;
 
-    #[ORM\ManyToOne(targetEntity: infoPec::class, inversedBy: 'tOperationcabs')]
+    #[ORM\ManyToOne(targetEntity: InfoPec::class, inversedBy: 'tOperationcabs')]
     private $infoPec;
 
     #[ORM\ManyToOne(targetEntity: sousNatureDemande::class, inversedBy: 'tOperationcabs')]
@@ -449,12 +449,12 @@ class TOperationcab
         return $this;
     }
 
-    public function getInfoPec(): ?infoPec
+    public function getInfoPec(): ?InfoPec
     {
         return $this->infoPec;
     }
 
-    public function setInfoPec(?infoPec $infoPec): self
+    public function setInfoPec(?InfoPec $infoPec): self
     {
         $this->infoPec = $infoPec;
 
