@@ -522,34 +522,118 @@ class EtudiantController extends AbstractController
     }
 
     
+    
+    #[Route('/list/nature/{etudiant}', name: 'list_etudiant_nature')]
+    public function listNature(Request $request,TEtudiant $etudiant): Response
+    {   
+        $params = $request->query;
+        $where = $totalRows = $sqlRequest = "";
+        $filtre = "where esnd.active = 1 and etu.id =" . $etudiant->getId();        
+        $columns = array(
+            array( 'db' => 'etu.id','dt' => 0 ),
+            array( 'db' => 'UPPER(nat.designation)','dt' => 1),
+            array( 'db' => 'UPPER(snd.designation)','dt' => 2),
+            array( 'db' => 'esnd.annee_debut','dt' => 3),
+            array( 'db' => 'esnd.annee_fin','dt' => 4),
+        );
+        // dd($columns);
+        $sql = "SELECT " . implode(", ", DatatablesController::Pluck($columns, 'db')) . "
+                FROM tetudiant etu
+                inner join etudiant_sous_nature_demande esnd on esnd.etudiant_id = etu.id
+                inner join sous_nature_demande snd on snd.id = esnd.sous_nature_id
+                inner join nature_demande nat on nat.id = snd.nature_demande_id
+                $filtre ";
+        // dd($sql);
+        $totalRows .= $sql;
+        $sqlRequest .= $sql;
+        // $stmt = $this->em->getConnection()->prepare($sql);
+        // $newstmt = $stmt->executeQuery();
+        // $totalRecords = count($newstmt->fetchAll());
+        // dd($totalRecords);
+        // $my_columns = DatatablesController::Pluck($columns, 'db');
+
+        // search 
+        $where = DatatablesController::Search($request, $columns);
+        if (isset($where) && $where != '') {
+            $sqlRequest .= $where;
+        }
+        $sqlRequest .= DatatablesController::Order($request, $columns);
+        // dd($sqlRequest);
+        $stmt = $this->em->getConnection()->prepare($sqlRequest);
+        $resultSet = $stmt->executeQuery();
+        $result = $resultSet->fetchAll();
+        $totalRecords = count($result);
+
+
+        $data = array();
+        // dd($result);
+        $i = 1;
+        foreach ($result as $key => $row) {
+            // dump($row);
+            $nestedData = array();
+            $cd = $i;
+            $nestedData[] = $cd;
+            foreach (array_values($row) as $key => $value) {
+                $nestedData[] = $value;
+            }
+            $data[] = $nestedData;
+            // dd($nestedData);
+            $i++;
+        }
+        // dd($data);
+        $json_data = array(
+            "draw" => intval($params->get('draw')),
+            "recordsTotal" => intval($totalRecords),
+            "recordsFiltered" => intval($totalRecords),
+            "data" => $data   
+        );
+        // die;
+        return new Response(json_encode($json_data));
+    }
+    
     #[Route('/etudiant_natureDemande', name: 'etudiant_natureDemande')]
     public function etudiant_natureDemande(Request $request): Response
     {   
-        if ($request->get('etudiant') == "" || $request->get('sousNature') == "" ) {
-            return new JsonResponse("Merci de choisir un etudiant et un sous Nature De Demande !", 500);
+        if ($request->get('etudiant') == "" || $request->get('sousNature') == "" || $request->get('anneeDebut') == "" ) {
+            return new JsonResponse("Merci de choisir un etudiant et un sous Nature De Demande et une date Debut!", 500);
+        }
+        $sousNatureDemande = $this->em->getRepository(SousNatureDemande::class)->find($request->get('sousNature'));
+        if ($sousNatureDemande->getNatureDemande()->getId() != 1 && $request->get('anneeFin') == "" ) {
+            return new JsonResponse("Merci d'inserer une annee Fin!", 500);
         }
         $etudiant = $this->em->getRepository(TEtudiant::class)->find($request->get('etudiant'));
         $sousNatureDemande = $this->em->getRepository(SousNatureDemande::class)->find($request->get('sousNature'));
-
+        $anneeDebut = $request->get('anneeDebut');
+        $anneeFin = $request->get('anneeFin');
         // dd($etudiant);
         $etudiantNature = $this->em->getRepository(EtudiantSousNatureDemande::class)->findOneBy([
             "etudiant" => $etudiant,
             "sousNature" => $sousNatureDemande,
+            "anneeDebut" => $anneeDebut,
+            // "anneeFin" => $anneeFin ? $anneeFin : null,
             "active" => 1
         ]);
-        if ($etudiantNature) {
-            return new JsonResponse("Sous Nature demande déja affecté à cet etudiant !", 500);
+        // if ($etudiantNature) {
+        //     return new JsonResponse("Sous Nature demande déja affecté à cet etudiant !", 500);
+        // }
+        // dd($anneeFin ? $anneeFin : null,$etudiantNature);
+        $message = "Nature demande Bien Enregistré";
+        if (!$etudiantNature) {
+            $etudiantNature = new EtudiantSousNatureDemande();
+            $etudiantNature->setEtudiant($etudiant);
+            $etudiantNature->setSousNature($sousNatureDemande);
+            $etudiantNature->setAnneeDebut($anneeDebut);
+            $etudiantNature->setUserCreated($this->getUser());
+            $etudiantNature->setCreated(new datetime('now'));
+            $this->em->persist($etudiantNature);
+        }else {
+            $message = "Annee Fin bien modifier !";
         }
-        // $etudiant->addSousNature($sousNatureDemande);
-        $etudiantNature = new EtudiantSousNatureDemande();
-        $etudiantNature->setEtudiant($etudiant);
-        $etudiantNature->setSousNature($sousNatureDemande);
-        $etudiantNature->setUserCreated($this->getUser());
-        $etudiantNature->setCreated(new datetime('now'));
-        $this->em->persist($etudiantNature);
+        if ($anneeFin) $etudiantNature->setAnneeFin($anneeFin);
+        // dd($etudiantNature);
         $this->em->flush();
 
-        return new JsonResponse('Nature demande Bien Enregistré');
+        return new JsonResponse($message,200);
     }
     
     #[Route('/list/preinscription/{etudiant}', name: 'list_etudiant_preinscription')]
@@ -576,7 +660,6 @@ class EtudiantController extends AbstractController
 
                 $filtre"
         ;
-        // dd($sql);
         $totalRows .= $sql;
         $sqlRequest .= $sql;
         $stmt = $this->em->getConnection()->prepare($sql);

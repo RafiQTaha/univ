@@ -28,6 +28,12 @@ class EtudiantSousNatureDemande
     #[ORM\Column(type: 'datetime', nullable: true)]
     private $created;
 
+    #[ORM\Column(type: 'integer', nullable: true)]
+    private $anneeDebut;
+
+    #[ORM\Column(type: 'integer', nullable: true)]
+    private $anneeFin;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -89,6 +95,30 @@ class EtudiantSousNatureDemande
     public function setCreated(?\DateTimeInterface $created): self
     {
         $this->created = $created;
+
+        return $this;
+    }
+
+    public function getAnneeDebut(): ?int
+    {
+        return $this->anneeDebut;
+    }
+
+    public function setAnneeDebut(?int $anneeDebut): self
+    {
+        $this->anneeDebut = $anneeDebut;
+
+        return $this;
+    }
+
+    public function getAnneeFin(): ?int
+    {
+        return $this->anneeFin;
+    }
+
+    public function setAnneeFin(?int $anneeFin): self
+    {
+        $this->anneeFin = $anneeFin;
 
         return $this;
     }

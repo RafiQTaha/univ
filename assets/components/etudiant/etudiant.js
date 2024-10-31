@@ -256,6 +256,23 @@ $(document).ready(function  () {
     }, 2000)  
   })
 
+  
+  const list_natureDemande = () => {
+    $("#datables_nature_modal").DataTable({
+        lengthMenu: [
+          [10, 15, 25, 50, 100, 20000000000000],
+          [10, 15, 25, 50, 100, "All"],
+        ],
+        order: [[0, "desc"]],
+        ajax: "/etudiant/etudiants/list/nature/"+id_etudiant,
+        processing: true,
+        serverSide: true,
+        deferRender: true,
+        language: datatablesFrench,
+        stateSave: true,
+        bDestroy: true
+    });
+}
 
   
   // rrrrrrrrrrrr
@@ -269,8 +286,9 @@ $(document).ready(function  () {
       return;
     }
     // $("#validermodal .modal-body #annee,#validermodal .modal-body #formation").empty();
+    list_natureDemande()
     $("select").select2()
-    $('#natureDemandemodal #enregistrer').prop('disabled', true);
+    // $('#natureDemandemodal #enregistrer').prop('disabled', true);
     $('#natureDemandemodal').modal("show")
   })
   
@@ -285,20 +303,22 @@ $(document).ready(function  () {
       // $('#natureDemandemodal #enregistrer').removeAttr("disabled");
     })
   })
-  $('body').on('change','#sousNature',function () {
-    let sousNature = $(this).val();
-    if (sousNature == "") {
-      $('#natureDemandemodal #enregistrer').prop('disabled', true);
-    }else{
-      $('#natureDemandemodal #enregistrer').removeAttr("disabled");
-    }
-  })
+  // $('body').on('change','#sousNature',function () {
+  //   let sousNature = $(this).val();
+    // if (sousNature == "") {
+    //   $('#natureDemandemodal #enregistrer').prop('disabled', true);
+    // }else{
+    //   $('#natureDemandemodal #enregistrer').removeAttr("disabled");
+    // }
+  // }) 
   $('body').on('submit','.form-natureDemande',async function (e) {
     e.preventDefault();
     // alert('test');
     let formdata = new FormData();
     formdata.append('etudiant',id_etudiant)
     formdata.append('sousNature',$('#sousNature').val())
+    formdata.append('anneeDebut',$('#anneeDebut').val())
+    formdata.append('anneeFin',$('#anneeFin').val())
     let modalAlert =  $("#natureDemandemodal .modal-body .alert");
     modalAlert.remove();
     const icon = $(".form-natureDemande .btn i");
@@ -310,7 +330,8 @@ $(document).ready(function  () {
         `<div class="alert alert-success">${data}</div>`
       );
       icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin");
-      $('#natureDemandemodal #enregistrer').prop('disabled', true);
+      // $('#natureDemandemodal #enregistrer').prop('disabled', true);
+      list_natureDemande()
       $('#natureDemandemodal select').val("").trigger('change');
       // tableListNatureDemande.ajax.reload(null, false);
       // table.ajax.reload(null, false);

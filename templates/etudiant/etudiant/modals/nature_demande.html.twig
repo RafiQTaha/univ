@@ -24,21 +24,31 @@
               <select class="form-control" name="sousNature" id="sousNature">
               </select>
             </div>
+            <div class="periodeAnnee row">
+                <div class="col-6">
+                    <label for="anneeDebut">Annee Debut:</label>
+                    <input class="form-control" name="anneeDebut" id="anneeDebut" placeholder="{{'now'|date('Y')}}"  value="{{'now'|date('Y')}}">
+                </div>
+                <div class="col-6">
+                    <label for="anneeFin">Annee Fin:</label>
+                    <input class="form-control" name="anneeFin" id="anneeFin" placeholder="{{'now'|date_modify('+1 Year')|date('Y')}}">
+                </div>
+            </div>
             
             <div class="d-flex mt-5 mb-5">
               {# <button class="btn btn-primary ml-auto">G.Preinscription</button> #}
-              <button type="submit" class="btn btn-success ml-auto" id="enregistrer" disabled> <i class="fas fa-check-circle"></i> Enregistrer</button>
+              <button type="submit" class="btn btn-success ml-auto" id="enregistrer"> <i class="fas fa-check-circle"></i> Enregistrer</button>
             </div>
           </form>
-          {# <table id="datables_etudiant_modal" class="table table-striped mt-3" style="width:100%">
+          <table id="datables_nature_modal" class="table table-striped mt-3" style="width:100%">
             <thead>
               <tr>
                 <th>ORD</th>
                 <th>CODE</th>
-                <th>NOM</th>
-                <th>PRENOM</th>
-                <th>ETABLISSEMENT</th>
-                <th>FORMATION</th>
+                <th>NATURE</th>
+                <th>PROGRAMME</th>
+                <th>A-Debut</th>
+                <th>A-Fin</th>
               </tr>
           </thead>
           <tbody>
@@ -48,13 +58,13 @@
               <tr>
                 <th>ORD</th>
                 <th>CODE</th>
-                <th>NOM</th>
-                <th>PRENOM</th>
-                <th>ETABLISSEMENT</th>
-                <th>FORMATION</th>
+                <th>NATURE</th>
+                <th>PROGRAMME</th>
+                <th>A-Debut</th>
+                <th>A-Fin</th>
               </tr>
           </tfoot>
-        </table> #}
+        </table>
       </div>
     </div>
   </div>
