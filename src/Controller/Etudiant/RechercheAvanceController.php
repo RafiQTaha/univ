@@ -477,6 +477,7 @@ class RechercheAvanceController extends AbstractController
         $mpdf = new Mpdf([
             'margin_left' => 5,
             'margin_right' => 5,
+            'margin_top' => 33,
         ]);
         $mpdf->SetHTMLHeader(
             $this->render("etudiant/recherche_avance/pdf/academique/header.html.twig")->getContent()
