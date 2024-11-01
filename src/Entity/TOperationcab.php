@@ -114,6 +114,18 @@ class TOperationcab
     #[ORM\Column(type: 'string', length: 100, nullable: true)]
     private $niveau;
 
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private $autofinancement;
+
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private $modePec;
+
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private $referenceUgouvRefacturation;
+
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private $montantRefacturation;
+
     public function __construct()
     {
         $this->reglements = new ArrayCollection();
@@ -541,6 +553,54 @@ class TOperationcab
     public function setNiveau(?string $niveau): self
     {
         $this->niveau = $niveau;
+
+        return $this;
+    }
+
+    public function getAutofinancement(): ?string
+    {
+        return $this->autofinancement;
+    }
+
+    public function setAutofinancement(?string $autofinancement): self
+    {
+        $this->autofinancement = $autofinancement;
+
+        return $this;
+    }
+
+    public function getModePec(): ?string
+    {
+        return $this->modePec;
+    }
+
+    public function setModePec(?string $modePec): self
+    {
+        $this->modePec = $modePec;
+
+        return $this;
+    }
+
+    public function getReferenceUgouvRefacturation(): ?string
+    {
+        return $this->referenceUgouvRefacturation;
+    }
+
+    public function setReferenceUgouvRefacturation(?string $referenceUgouvRefacturation): self
+    {
+        $this->referenceUgouvRefacturation = $referenceUgouvRefacturation;
+
+        return $this;
+    }
+
+    public function getMontantRefacturation(): ?string
+    {
+        return $this->montantRefacturation;
+    }
+
+    public function setMontantRefacturation(?string $montantRefacturation): self
+    {
+        $this->montantRefacturation = $montantRefacturation;
 
         return $this;
     }
