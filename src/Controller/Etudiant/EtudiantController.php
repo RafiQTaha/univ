@@ -491,9 +491,7 @@ class EtudiantController extends AbstractController
         }
 
         foreach ($etudiantNatures as $key => $nature) {
-            // dd($etudiant);
             $sousNature = $this->em->getRepository(SousNatureDemande::class)->findSousNatureEtudiantByNatureDemande($etudiant,$nature);
-            // dd($sousNature);
             $org = "";
             $operationcab = new TOperationcab();
             $operationcab->setPreinscription($preinscription);
