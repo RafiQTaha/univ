@@ -522,8 +522,9 @@ class EtudiantController extends AbstractController
     
     
     #[Route('/list/nature/{etudiant}', name: 'list_etudiant_nature')]
-    public function listNature(Request $request,TEtudiant $etudiant): Response
+    public function listNature(Request $request,TEtudiant $etudiant)
     {   
+        // dump($request);
         $params = $request->query;
         $where = $totalRows = $sqlRequest = "";
         $filtre = "where esnd.active = 1 and etu.id =" . $etudiant->getId();        
@@ -542,25 +543,26 @@ class EtudiantController extends AbstractController
                 inner join nature_demande nat on nat.id = snd.nature_demande_id
                 $filtre ";
         // dd($sql);
+        
         $totalRows .= $sql;
         $sqlRequest .= $sql;
-        // $stmt = $this->em->getConnection()->prepare($sql);
-        // $newstmt = $stmt->executeQuery();
-        // $totalRecords = count($newstmt->fetchAll());
-        // dd($totalRecords);
-        // $my_columns = DatatablesController::Pluck($columns, 'db');
+        $stmt = $this->em->getConnection()->prepare($sql);
+        $newstmt = $stmt->executeQuery();
+        $totalRecords = count($newstmt->fetchAll());
+        // dd($sql);
+        $my_columns = DatatablesController::Pluck($columns, 'db');
 
         // search 
         $where = DatatablesController::Search($request, $columns);
         if (isset($where) && $where != '') {
             $sqlRequest .= $where;
         }
+        // dump($request);
         $sqlRequest .= DatatablesController::Order($request, $columns);
         // dd($sqlRequest);
         $stmt = $this->em->getConnection()->prepare($sqlRequest);
         $resultSet = $stmt->executeQuery();
         $result = $resultSet->fetchAll();
-        $totalRecords = count($result);
 
 
         $data = array();
@@ -639,7 +641,7 @@ class EtudiantController extends AbstractController
     {   
         $params = $request->query;
         $where = $totalRows = $sqlRequest = "";
-        $filtre = "where 1 = 1 and pre.etudiant_id =" . $etudiant->getId();        
+        $filtre = "where pre.etudiant_id =" . $etudiant->getId();        
         $columns = array(
             array( 'db' => 'pre.code','dt' => 0 ),
             array( 'db' => 'etu.nom','dt' => 1),

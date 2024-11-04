@@ -332,7 +332,7 @@ $(document).ready(function  () {
       icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin");
       // $('#natureDemandemodal #enregistrer').prop('disabled', true);
       list_natureDemande()
-      $('#natureDemandemodal select').val("").trigger('change');
+      $('#natureDemandemodal .form-natureDemande select').val("").trigger('change');
       // tableListNatureDemande.ajax.reload(null, false);
       // table.ajax.reload(null, false);
     }catch(error){
