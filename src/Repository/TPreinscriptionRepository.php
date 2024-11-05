@@ -59,4 +59,27 @@ class TPreinscriptionRepository extends ServiceEntityRepository
             ->getResult()
         ;
     }
+
+   
+
+    public function findPreinscription($value)
+    {
+        return $this->createQueryBuilder('preinscription')
+            ->select('preinscription.id, preinscription.code, etudiant.nom, etudiant.prenom')
+            ->innerJoin("preinscription.etudiant","etudiant")
+            ->innerJoin("preinscription.priseEnCharges","pec")
+            ->innerJoin("pec.sousNatureDemande","snd")
+            ->innerJoin("snd.natureDemande","nat")
+            ->where('preinscription.code like :val')
+            ->orWhere("etudiant.nom like :val")
+            ->orWhere("etudiant.prenom like :val")
+            ->andWhere('nat.id = :idNat')
+            ->setParameter('val', "%".$value."%")
+            ->setParameter('idNat', 7)
+            ->orderBy('preinscription.id', 'ASC')
+            ->setMaxResults(10)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
 }

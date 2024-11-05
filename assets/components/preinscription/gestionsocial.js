@@ -91,21 +91,75 @@ $(document).ready(function () {
 
     $('body').on('click','#ajouter',async function ()  {
         
-        if(!id_preinscription){
-            Toast.fire({
-                icon: 'error',
-                title: 'Veuillez selection une ligne!',
+        // if(!id_preinscription){
+        //     Toast.fire({
+        //         icon: 'error',
+        //         title: 'Veuillez selection une ligne!',
+        //     })
+        //     return;
+        // }
+        // const icon = $("body #ajouter i");
+        // icon.removeClass('fa-plus').addClass("fa-spinner fa-spin");
+        // try{
+        //     const request = await axios.get('/api/info_NatureDemande_Pec/'+id_preinscription);
+        //     response = request.data
+        //     $('body #ajouterPriseEnCharge_modal #nature').html(response).select2();
+        //     // $('#ajouterPriseEnCharge_modal').modal("show")
+        //     list_priseEncharge();
+        //     $('#ajouterPriseEnCharge_modal').modal("show");
+        //     icon.addClass('fa-plus').removeClass("fa-spinner fa-spin ");
+        
+        // }catch (error) {
+        //     const message = error.response.data;
+        //     Toast.fire({
+            //         icon: 'error',
+            //         title: message,
+            //     })
+            //     icon.addClass('fa-plus').removeClass("fa-spinner fa-spin ");
+            // }
+                
+        $('#ajouterPriseEnCharge_modal').modal("show");
+        
+    }) 
+
+    $("#etudiant").select2({
+        minimumInputLength: 3,  // required enter 3 characters or more
+        allowClear: true,
+        placeholder: 'Etudiant',
+        language: "fr",
+        ajax: {
+           dataType: 'json',
+           url: '/preinscription/social/recherchePreinscription',  
+        //    delay: 5,  // ini bebas mau di pake atau tidak
+           data: function(params) {
+             return {
+               search: params.term
+             }
+           },
+           processResults: function (data, page) {
+            var dataArray = data.map(function (item) {
+                return {
+                    text: item.code +" "+item.nom + " " +item.prenom,
+                    id: item.id
+                }
             })
-            return;
-        }
-        const icon = $("body #ajouter i");
-        icon.removeClass('fa-plus').addClass("fa-spinner fa-spin");
+            return {
+                results: dataArray
+            };
+         },
+       }
+    })
+
+    
+    $("body").on("change", "#etudiant", async function(){
+        
+        let id_preinscription = $('body #etudiant').val();
         try{
             const request = await axios.get('/api/info_NatureDemande_Pec/'+id_preinscription);
             response = request.data
             $('body #ajouterPriseEnCharge_modal #nature').html(response).select2();
             // $('#ajouterPriseEnCharge_modal').modal("show")
-            list_priseEncharge();
+            // list_priseEncharge();
             $('#ajouterPriseEnCharge_modal').modal("show");
             icon.addClass('fa-plus').removeClass("fa-spinner fa-spin ");
             
@@ -117,10 +171,7 @@ $(document).ready(function () {
             })
             icon.addClass('fa-plus').removeClass("fa-spinner fa-spin ");
         }
-
-        
-    }) 
-
+    })
     
     $("body").on('submit', ".form-ajouter_pcharge", async (e) => {
         e.preventDefault();

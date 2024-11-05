@@ -10,15 +10,12 @@
       <div class="modal-body">
         {# <div class="alert alert-info">Veuillez selectionner un ligne Pour Continuer Cette opération !!</div> #}
           <form action="" class="form-ajouter_pcharge">
-            {# <div class="organisme">
-              <label for="organisme">Organisme:</label>
-              <select class="form-control" name="organisme" id="organisme">
-                    <option value="">Choix Organisme</option>
-                    {% for organisme in organismes %}
-                        <option value="{{organisme.id}}">{{organisme.designation}}</option>
-                    {% endfor %} 
-              </select>
-            </div> #}
+            <div class="etudiant">
+                <label for="etudiant">Etudiant:</label>
+                <select name="etudiant" id="etudiant">
+
+                </select>
+            </div>
             <div class="nature">
               <label for="nature">nature:</label>
               <select class="form-control" name="nature" id="nature">
@@ -39,7 +36,7 @@
               <button type="submit" class="btn btn-success ml-auto" id="enregistrer"> <i class="fas fa-check-circle"></i> Enregistrer</button>
             </div>
           </form>
-          <table id="datables_social_modal" class="table table-striped mt-3" style="width:100%">
+          {# <table id="datables_social_modal" class="table table-striped mt-3" style="width:100%">
             <thead>
               <tr>
                 <th>CODE</th>
@@ -65,7 +62,7 @@
                 <th>ORG</th>
               </tr>
           </tfoot>
-        </table>
+        </table> #}
       </div>
     </div>
   </div>

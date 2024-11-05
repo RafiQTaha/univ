@@ -72,19 +72,31 @@ class GestionSocialController extends AbstractController
             array( 'db' => 'etab.abreviation','dt' => 5),
             array( 'db' => 'UPPER(form.abreviation)','dt' => 6),
             array( 'db' => 'UPPER(nat.designation)','dt' => 7),
+            array( 'db' => 'UPPER(snature.designation)','dt' => 7),
             array( 'db' => 'etu.moyenne_bac','dt' => 8),
         );
         // SELECT pre.code , etu.nom , etu.prenom , frm.abreviation as for_abreviation , etab.abreviation as etab_abreviation , nat.designation as categorie, tbac.designation as typdes, etu.moyenne_bac as note , DATE_FORMAT(pre.created,'%d/%m/%Y') as date_creation,stat.code 
         $sql = "SELECT " . implode(", ", DatatablesController::Pluck($columns, 'db')) . "
-        FROM `tpreinscription` pre 
-        inner join tetudiant etu on etu.id = pre.etudiant_id
-        inner join ac_annee an on an.id = pre.annee_id
-        inner join ac_formation form on form.id = an.formation_id
-        inner join ac_etablissement etab on etab.id = form.etablissement_id
-        inner join etudiant_sous_nature_demande snatureetu on snatureetu.etudiant_id = etu.id
-        inner join sous_nature_demande snature on snature.id = snatureetu.sous_nature_id
-        inner join nature_demande nat on nat.id = snature.nature_demande_id
-        $filtre ";
+            FROM tpreinscription pre
+            inner join tetudiant etu on etu.id = pre.etudiant_id
+            inner join ac_annee an on an.id = pre.annee_id
+            inner join ac_formation form on form.id = an.formation_id              
+            inner join ac_etablissement etab on etab.id = form.etablissement_id
+            inner join prise_en_charge pcharge on pcharge.preinscription_id = pre.id
+            inner join sous_nature_demande snature on snature.id = pcharge.sous_nature_demande_id
+            inner join nature_demande nat on nat.id = snature.nature_demande_id
+            left join porganisme org on org.id = snature.organisme_id
+            $filtre "
+        ;
+        
+        // FROM `tpreinscription` pre 
+        // inner join tetudiant etu on etu.id = pre.etudiant_id
+        // inner join ac_annee an on an.id = pre.annee_id
+        // inner join ac_formation form on form.id = an.formation_id
+        // inner join ac_etablissement etab on etab.id = form.etablissement_id
+        // inner join etudiant_sous_nature_demande snatureetu on snatureetu.etudiant_id = etu.id
+        // inner join sous_nature_demande snature on snature.id = snatureetu.sous_nature_id
+        // inner join nature_demande nat on nat.id = snature.nature_demande_id
         // $sql .= "";
         // dd($sql);    
         $totalRows .= $sql;
@@ -141,6 +153,14 @@ class GestionSocialController extends AbstractController
     }
 
     
+    #[Route('/recherchePreinscription', name: 'social_find_Preinscription')]
+    public function social_find_Preinscription(Request $request)
+    {
+        $admissions = $this->em->getRepository(TPreinscription::class)->findPreinscription($request->query->get("search"));
+
+        // dd($admissions);
+        return new Response(json_encode($admissions));
+    }
     
     #[Route('/list/priseEncharge/{preinscription}', name: 'list_priseEncharge')]
     public function ListpriseEncharge(Request $request,TPreinscription $preinscription): Response
@@ -155,7 +175,7 @@ class GestionSocialController extends AbstractController
             array( 'db' => 'UPPER(form.abreviation)','dt' => 3),
             array( 'db' => 'UPPER(pcharge.code_pec)','dt' => 4),
             array( 'db' => 'UPPER(pcharge.montant)','dt' => 5),
-            array( 'db' => 'UPPER(org.abreviation)','dt' => 6),
+            array( 'db' => 'UPPER(snature.designation)','dt' => 6),
         );
         // dd($columns);
         $sql = "SELECT " . implode(", ", DatatablesController::Pluck($columns, 'db')) . "
@@ -168,9 +188,7 @@ class GestionSocialController extends AbstractController
                 inner join prise_en_charge pcharge on pcharge.preinscription_id = pre.id
                 inner join sous_nature_demande snature on snature.id = pcharge.sous_nature_demande_id
                 inner join nature_demande nat on nat.id = snature.nature_demande_id
-                inner join porganisme org on org.id = snature.organisme_id
-
-
+                left join porganisme org on org.id = snature.organisme_id
                 $filtre"
         ;
         // dd($sql);
