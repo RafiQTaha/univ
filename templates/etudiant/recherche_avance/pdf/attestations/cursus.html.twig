@@ -186,7 +186,12 @@
         {% set doc = "Docteur en" %}
     {% endif %}
     <p style="line-height: 1.8; margin: 10px 30px;font-size:11px;">
-    A suivi avec succès le cursus universitaire de la filière <b>{{lastinscription.annee.formation.designation}}</b> et a été déclaré (e) ‘’ {{doc}} <b>{{lastinscription.annee.formation.designation}}</b>‘’ au titre de l’année académique {{lastinscription.annee.designation}}
+    {% if inscription.annee.formation.etablissement.id == 22 %}
+        A suivi avec succès le cursus universitaire de la filière <b>Pharmacie</b> et a été déclaré (e) ‘’ {{doc}} <b>Pharmacie</b>, option <b>{{lastinscription.annee.formation.designation}}</b> ‘’ au titre de l’année académique {{lastinscription.annee.designation}}.
+    {% else %}
+        A suivi avec succès le cursus universitaire de la filière <b>{{lastinscription.annee.formation.designation}}</b> et a été déclaré (e) ‘’ {{doc}} <b>{{lastinscription.annee.formation.designation}}</b>‘’ au titre de l’année académique {{lastinscription.annee.designation}}.
+    {% endif %}
+    
     </p>
 {% endif %}
 

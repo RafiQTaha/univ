@@ -279,10 +279,10 @@ class RechercheAvanceController extends AbstractController
     #[Route('/attestation/reussite/{inscription}', name: 'etudiant_recherche_attestation_reussite')]
     public function attestationReussite(TInscription $inscription)
     {
-        $prm = $this->em->getRepository(TInscription::class)->findBy([
-            'admission' => $inscription->getAdmission(),
-            'promotion' => $inscription->getPromotion()
-        ]);
+        // $prm = $this->em->getRepository(TInscription::class)->findBy([
+        //     'admission' => $inscription->getAdmission(),
+        //     'promotion' => $inscription->getPromotion()
+        // ]);
         // ,'statutAff'=>[41,42,43,44,70,73]
         $anote = $this->em->getRepository(ExAnotes::class)->findOneBy(['inscription' => $inscription]);
         if (!$anote) {
@@ -538,6 +538,7 @@ class RechercheAvanceController extends AbstractController
         $mpdf = new Mpdf([
             'margin_left' => 5,
             'margin_right' => 5,
+            'margin_top' => 33,
         ]);
         $mpdf->SetHTMLHeader(
             $this->render("etudiant/recherche_avance/pdf/academique/header.html.twig")->getContent()
