@@ -11,23 +11,33 @@
         {# <div class="alert alert-info">Veuillez selectionner un ligne Pour Continuer Cette opération !!</div> #}
           <form action="" class="form-ajouter_pcharge">
             <div class="etudiant">
-                <label for="etudiant">Etudiant:</label>
+                <label for="etudiant">Etudiant (*):</label>
                 <select name="etudiant" id="etudiant">
 
                 </select>
             </div>
             <div class="nature">
-              <label for="nature">nature:</label>
+              <label for="nature">nature (*):</label>
               <select class="form-control" name="nature" id="nature">
-              
+
               </select>
             </div>
-              <label for="code-pec">Code Pec (*):</label>
-              <input type="text" class="form-control" id='code-pec' name="cpec" placeholder="CHR_123456">
+            <label for="code-pec">Code Pec (*):</label>
+            <input type="text" class="form-control" id='code-pec' name="cpec" placeholder="CHR_123456">
 
-              <label for="montant">Montant (*):</label>
-              <input type="number" class="form-control" id='montant' name="montant" min="0">
+            <label for="montant">Montant (*):</label>
+            <input type="number" class="form-control" id='montant' name="montant" min="0">
             
+            {# <div class="periodeAnnee row">
+                <div class="col-6">
+                    <label for="anneeDebut">Annee Debut:</label>
+                    <input class="form-control" name="anneeDebut" id="anneeDebut" placeholder="{{'now'|date('Y')}}"  value="{{'now'|date('Y')}}">
+                </div>
+                <div class="col-6">
+                    <label for="anneeFin">Annee Fin:</label>
+                    <input class="form-control" name="anneeFin" id="anneeFin" placeholder="{{'now'|date_modify('+1 Year')|date('Y')}}">
+                </div>
+            </div> #}
             <div class="d-flex mt-5 mb-5">
               {# <button class="btn btn-primary ml-auto">G.Preinscription</button> #}
               <button type="submit" class="btn btn-success ml-auto" id="enregistrer"> <i class="fas fa-check-circle"></i> Enregistrer</button>

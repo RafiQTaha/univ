@@ -72,8 +72,10 @@ class GestionSocialController extends AbstractController
             array( 'db' => 'etab.abreviation','dt' => 5),
             array( 'db' => 'UPPER(form.abreviation)','dt' => 6),
             array( 'db' => 'UPPER(nat.designation)','dt' => 7),
-            array( 'db' => 'UPPER(snature.designation)','dt' => 7),
-            array( 'db' => 'etu.moyenne_bac','dt' => 8),
+            array( 'db' => 'UPPER(snature.designation)','dt' => 8),
+            array( 'db' => 'UPPER(pcharge.code_pec)','dt' => 9),
+            array( 'db' => 'pcharge.montant','dt' => 10),
+            array( 'db' => 'etu.moyenne_bac','dt' => 11),
         );
         // SELECT pre.code , etu.nom , etu.prenom , frm.abreviation as for_abreviation , etab.abreviation as etab_abreviation , nat.designation as categorie, tbac.designation as typdes, etu.moyenne_bac as note , DATE_FORMAT(pre.created,'%d/%m/%Y') as date_creation,stat.code 
         $sql = "SELECT " . implode(", ", DatatablesController::Pluck($columns, 'db')) . "
@@ -162,96 +164,100 @@ class GestionSocialController extends AbstractController
         return new Response(json_encode($admissions));
     }
     
-    #[Route('/list/priseEncharge/{preinscription}', name: 'list_priseEncharge')]
-    public function ListpriseEncharge(Request $request,TPreinscription $preinscription): Response
-    {   
-        $params = $request->query;
-        $where = $totalRows = $sqlRequest = "";
-        $filtre = " where pre.active = 1 and nat.id = 7 and pcharge.active = 1 and pre.id = " . $preinscription->getId();        
-        $columns = array(
-            array( 'db' => 'pre.id','dt' => 0 ),
-            array('db' =>  'CONCAT(etu.nom," ",etu.prenom)', 'dt' => 1),
-            array( 'db' => 'etab.abreviation','dt' => 2),
-            array( 'db' => 'UPPER(form.abreviation)','dt' => 3),
-            array( 'db' => 'UPPER(pcharge.code_pec)','dt' => 4),
-            array( 'db' => 'UPPER(pcharge.montant)','dt' => 5),
-            array( 'db' => 'UPPER(snature.designation)','dt' => 6),
-        );
-        // dd($columns);
-        $sql = "SELECT " . implode(", ", DatatablesController::Pluck($columns, 'db')) . "
+    // #[Route('/list/priseEncharge/{preinscription}', name: 'list_priseEncharge')]
+    // public function ListpriseEncharge(Request $request,TPreinscription $preinscription): Response
+    // {   
+    //     $params = $request->query;
+    //     $where = $totalRows = $sqlRequest = "";
+    //     $filtre = " where pre.active = 1 and nat.id = 7 and pcharge.active = 1 and pre.id = " . $preinscription->getId();        
+    //     $columns = array(
+    //         array( 'db' => 'pre.id','dt' => 0 ),
+    //         array('db' =>  'CONCAT(etu.nom," ",etu.prenom)', 'dt' => 1),
+    //         array( 'db' => 'etab.abreviation','dt' => 2),
+    //         array( 'db' => 'UPPER(form.abreviation)','dt' => 3),
+    //         array( 'db' => 'UPPER(pcharge.code_pec)','dt' => 4),
+    //         array( 'db' => 'UPPER(pcharge.montant)','dt' => 5),
+    //         array( 'db' => 'UPPER(snature.designation)','dt' => 6),
+    //     );
+    //     // dd($columns);
+    //     $sql = "SELECT " . implode(", ", DatatablesController::Pluck($columns, 'db')) . "
                       
-                FROM tpreinscription pre
-                inner join tetudiant etu on etu.id = pre.etudiant_id
-                inner join ac_annee an on an.id = pre.annee_id
-                inner join ac_formation form on form.id = an.formation_id              
-                inner join ac_etablissement etab on etab.id = form.etablissement_id
-                inner join prise_en_charge pcharge on pcharge.preinscription_id = pre.id
-                inner join sous_nature_demande snature on snature.id = pcharge.sous_nature_demande_id
-                inner join nature_demande nat on nat.id = snature.nature_demande_id
-                left join porganisme org on org.id = snature.organisme_id
-                $filtre"
-        ;
-        // dd($sql);
-        $totalRows .= $sql;
-        $sqlRequest .= $sql;
-        $stmt = $this->em->getConnection()->prepare($sql);
-        $newstmt = $stmt->executeQuery();
-        $totalRecords = count($newstmt->fetchAll());
-        // dd($sql);
-        // $my_columns = DatatablesController::Pluck($columns, 'db');
+    //             FROM tpreinscription pre
+    //             inner join tetudiant etu on etu.id = pre.etudiant_id
+    //             inner join ac_annee an on an.id = pre.annee_id
+    //             inner join ac_formation form on form.id = an.formation_id              
+    //             inner join ac_etablissement etab on etab.id = form.etablissement_id
+    //             inner join prise_en_charge pcharge on pcharge.preinscription_id = pre.id
+    //             inner join sous_nature_demande snature on snature.id = pcharge.sous_nature_demande_id
+    //             inner join nature_demande nat on nat.id = snature.nature_demande_id
+    //             left join porganisme org on org.id = snature.organisme_id
+    //             $filtre"
+    //     ;
+    //     // dd($sql);
+    //     $totalRows .= $sql;
+    //     $sqlRequest .= $sql;
+    //     $stmt = $this->em->getConnection()->prepare($sql);
+    //     $newstmt = $stmt->executeQuery();
+    //     $totalRecords = count($newstmt->fetchAll());
+    //     // dd($sql);
+    //     // $my_columns = DatatablesController::Pluck($columns, 'db');
 
-        // search 
-        $where = DatatablesController::Search($request, $columns);
-        if (isset($where) && $where != '') {
-            $sqlRequest .= $where;
-        }
-        $sqlRequest .= DatatablesController::Order($request, $columns);
-        // dd($sqlRequest);
-        $stmt = $this->em->getConnection()->prepare($sqlRequest);
-        $resultSet = $stmt->executeQuery();
-        $result = $resultSet->fetchAll();
+    //     // search 
+    //     $where = DatatablesController::Search($request, $columns);
+    //     if (isset($where) && $where != '') {
+    //         $sqlRequest .= $where;
+    //     }
+    //     $sqlRequest .= DatatablesController::Order($request, $columns);
+    //     // dd($sqlRequest);
+    //     $stmt = $this->em->getConnection()->prepare($sqlRequest);
+    //     $resultSet = $stmt->executeQuery();
+    //     $result = $resultSet->fetchAll();
 
 
-        $data = array();
-        // dd($result);
-        $i = 1;
-        foreach ($result as $key => $row) {
-            // dump($row);
-            $nestedData = array();
-            // $cd = $i;
-            // $nestedData[] = $cd;
-            foreach (array_values($row) as $key => $value) {
-                $nestedData[] = $value;
-            }
-            $data[] = $nestedData;
-            // dd($nestedData);
-            $i++;
-        }
-        // dd($data);
-        $json_data = array(
-            "draw" => intval($params->get('draw')),
-            "recordsTotal" => intval($totalRecords),
-            "recordsFiltered" => intval($totalRecords),
-            "data" => $data   
-        );
-        // die;
-        return new Response(json_encode($json_data));
-    }
+    //     $data = array();
+    //     // dd($result);
+    //     $i = 1;
+    //     foreach ($result as $key => $row) {
+    //         // dump($row);
+    //         $nestedData = array();
+    //         // $cd = $i;
+    //         // $nestedData[] = $cd;
+    //         foreach (array_values($row) as $key => $value) {
+    //             $nestedData[] = $value;
+    //         }
+    //         $data[] = $nestedData;
+    //         // dd($nestedData);
+    //         $i++;
+    //     }
+    //     // dd($data);
+    //     $json_data = array(
+    //         "draw" => intval($params->get('draw')),
+    //         "recordsTotal" => intval($totalRecords),
+    //         "recordsFiltered" => intval($totalRecords),
+    //         "data" => $data   
+    //     );
+    //     // die;
+    //     return new Response(json_encode($json_data));
+    // }
 
     
     #[Route('/ajouter_pcharge', name: 'ajouter_pcharge')]
     public function ajouter_pcharge(Request $request)
     {   
-        if ($request->get('preinscription') == "" || $request->get('nature') == "" || $request->get('cpec') == "" || $request->get('montant') == "" ) {
+        // dd($request);
+        if ($request->get('etudiant') == "" || $request->get('nature') == "" || $request->get('cpec') == "" || $request->get('montant') == "" ) {
             return new JsonResponse("Merci de choisir un étudiant et de remplir tous les champs !", 500);
         }
+
         // dd($request->get('nature'));
-        $preinscription = $this->em->getRepository(TPreinscription::class)->find($request->get('preinscription'));
+        $preinscription = $this->em->getRepository(TPreinscription::class)->find($request->get('etudiant'));
         $sousNatureDemande = $this->em->getRepository(SousNatureDemande::class)->find($request->get('nature'));
         // $sousNatureDemande = $this->em->getRepository(SousNatureDemande::class)->find($request->get('nature'));
         // dd($sousNatureDemande);
         $priseEnCharge = new PriseEnCharge();
         $priseEnCharge->setPreinscription($preinscription);
+        // $priseEnCharge->setAnneeDebut($preinscription);
+        // $priseEnCharge->setAnneeFin($preinscription);
         // $priseEnCharge->setOrganisme($sousNatureDemande->getOrganisme());
         $priseEnCharge->setSousNatureDemande($sousNatureDemande);
         $priseEnCharge->setCodePec($request->get('cpec'));

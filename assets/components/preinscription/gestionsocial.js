@@ -10,7 +10,7 @@ $(document).ready(function () {
             toast.addEventListener('mouseleave', Swal.resumeTimer)
         },
     })
-    let id_preinscription = false;
+    // let id_preinscription = false;
 
     var table_gestion_preins = $("#datables_gestion_social").DataTable({
         lengthMenu: [
@@ -70,22 +70,22 @@ $(document).ready(function () {
     // $("#nature").on('change', async function (){
     //     table_gestion_preins.columns(2).search($(this).val()).draw();
     // })
-    const list_priseEncharge = () => {
-        $("#datables_social_modal").DataTable({
-            lengthMenu: [
-              [10, 15, 25, 50, 100, 20000000000000],
-              [10, 15, 25, 50, 100, "All"],
-            ],
-            order: [[0, "desc"]],
-            ajax: "/preinscription/social/list/priseEncharge/"+id_preinscription,
-            processing: true,
-            serverSide: true,
-            deferRender: true,
-            language: datatablesFrench,
-            stateSave: true,
-            bDestroy: true
-        });
-    }
+    // const list_priseEncharge = () => {
+    //     $("#datables_social_modal").DataTable({
+    //         lengthMenu: [
+    //           [10, 15, 25, 50, 100, 20000000000000],
+    //           [10, 15, 25, 50, 100, "All"],
+    //         ],
+    //         order: [[0, "desc"]],
+    //         ajax: "/preinscription/social/list/priseEncharge/"+id_preinscription,
+    //         processing: true,
+    //         serverSide: true,
+    //         deferRender: true,
+    //         language: datatablesFrench,
+    //         stateSave: true,
+    //         bDestroy: true
+    //     });
+    // }
 
     
 
@@ -154,6 +154,9 @@ $(document).ready(function () {
     $("body").on("change", "#etudiant", async function(){
         
         let id_preinscription = $('body #etudiant').val();
+        if (!id_preinscription) {
+            return;
+        }
         try{
             const request = await axios.get('/api/info_NatureDemande_Pec/'+id_preinscription);
             response = request.data
@@ -176,17 +179,17 @@ $(document).ready(function () {
     $("body").on('submit', ".form-ajouter_pcharge", async (e) => {
         e.preventDefault();
         // alert('et');
-        if(!id_preinscription){
-            Toast.fire({
-            icon: 'error',
-            title: 'Merci de Choisir Un Etudiant!',
-            })
-            return;
-        }
+        // if(!id_preinscription){
+        //     Toast.fire({
+        //     icon: 'error',
+        //     title: 'Merci de Choisir Un Etudiant!',
+        //     })
+        //     return;
+        // }
         var res = confirm('Vous voulez vraiment Ajouter cette prise en charge ?');
         if(res == 1){
         var formData = new FormData($('.form-ajouter_pcharge')[0]);
-        formData.append('preinscription', id_preinscription)
+        // formData.append('preinscription', id_preinscription)
         // formData.append('preinscription', id_preinscription)
         console.log(formData);
         let modalAlert = $("#ajouterPriseEnCharge_modal .modal-body .alert")
@@ -201,8 +204,9 @@ $(document).ready(function () {
                 <p>${response}</p>
                 </div>`
             );
+            table_gestion_preins.ajax.reload(null, false)
             icon.addClass('fa-edit').removeClass("fa-spinner fa-spin ");
-            list_priseEncharge();
+            // list_priseEncharge();
             // id_preinscription = false;
             $('.form-ajouter_pcharge')[0].reset()
             $('.form-ajouter_pcharge select').val("").trigger('change');

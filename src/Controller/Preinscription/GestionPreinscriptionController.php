@@ -757,9 +757,10 @@ class GestionPreinscriptionController extends AbstractController
         $mpdf->Output("attestaion.pdf", "I");
     } 
 
-    #[Route('/CreeFacture', name: 'CreeFacture')]
+    #[Route('/creeFacture', name: 'CreeFacture')]
     public function CreeFacture(Request $request) 
     {
+        // dd($request);
         $sousNature = $this->em->getRepository(SousNatureDemande::class)->find($request->get("nature"));
         $priseEnCharge = null;
         if ($request->get("pec")) {
