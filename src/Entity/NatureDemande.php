@@ -45,11 +45,15 @@ class NatureDemande
     #[ORM\OneToMany(mappedBy: 'nature', targetEntity: TPreinscription::class)]
     private $preinscriptions;
 
+    #[ORM\OneToMany(mappedBy: 'natureDemande', targetEntity: SousNatureDemande::class)]
+    private $sousNatureDemandes;
+
     public function __construct()
     {
         $this->etudiants = new ArrayCollection();
         $this->documents = new ArrayCollection();
         $this->preinscriptions = new ArrayCollection();
+        $this->sousNatureDemandes = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -225,6 +229,36 @@ class NatureDemande
             // set the owning side to null (unless already changed)
             if ($preinscription->getNature() === $this) {
                 $preinscription->setNature(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, SousNatureDemande>
+     */
+    public function getSousNatureDemandes(): Collection
+    {
+        return $this->sousNatureDemandes;
+    }
+
+    public function addSousNatureDemande(SousNatureDemande $sousNatureDemande): self
+    {
+        if (!$this->sousNatureDemandes->contains($sousNatureDemande)) {
+            $this->sousNatureDemandes[] = $sousNatureDemande;
+            $sousNatureDemande->setNatureDemande($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSousNatureDemande(SousNatureDemande $sousNatureDemande): self
+    {
+        if ($this->sousNatureDemandes->removeElement($sousNatureDemande)) {
+            // set the owning side to null (unless already changed)
+            if ($sousNatureDemande->getNatureDemande() === $this) {
+                $sousNatureDemande->setNatureDemande(null);
             }
         }
 

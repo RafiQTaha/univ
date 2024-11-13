@@ -186,11 +186,29 @@ class GestionInscriptionController extends AbstractController
         $inscription->setStatut(
             $this->em->getRepository(PStatut::class)->find($request->get("statut_inscription"))
         );
-        $inscription->setUpdated(new \DateTime('now'));
-        $inscription->setUserUpdated($this->getUser());
 
         $inscription->setStatutUpdated(new \DateTime('now'));
         $inscription->setUserStatutUpdated($this->getUser());
+        $this->em->flush();
+        return new JsonResponse("Bien Enregistre", 200);
+    }
+
+    #[Route('/observation/{inscription}', name: 'observation')]
+    public function observation(Request $request, TInscription $inscription): Response
+    {
+        
+        if ($inscription->getObservation()) {
+            return new JsonResponse("Vous ne pouvez pas changer une observation déjà saisie !", 500);
+        }
+
+        if ($request->get('observation_inscription') == "") {
+            return new JsonResponse("Merci de choisir un statut!", 500);
+        }
+
+        $inscription->setObservation($request->get("observation_inscription"));
+
+        $inscription->setObservationCreated(new \DateTime('now'));
+        $inscription->setObservationUser($this->getUser());
         $this->em->flush();
         return new JsonResponse("Bien Enregistre", 200);
     }
@@ -312,36 +330,38 @@ class GestionInscriptionController extends AbstractController
         $sheet->setCellValue('A1', 'ORD');
         $sheet->setCellValue('B1', 'CODE CONDIDAT');
         $sheet->setCellValue('C1', 'CODE PREINSCRIPTION');
-        $sheet->setCellValue('D1', 'CODE ADMISSION');
-        $sheet->setCellValue('E1', 'ID INSCRIPTION');
-        $sheet->setCellValue('F1', 'CODE INSCRIPTION');
-        $sheet->setCellValue('G1', 'STATUT');
-        $sheet->setCellValue('H1', 'NOM');
-        $sheet->setCellValue('I1', 'PRENOM');
-        $sheet->setCellValue('J1', 'SEXE');
-        $sheet->setCellValue('K1', 'DATE NAISSANCE');
-        $sheet->setCellValue('L1', 'CIN');
-        $sheet->setCellValue('M1', 'PASSEPORT');
-        $sheet->setCellValue('N1', 'NATIONALITE');
-        $sheet->setCellValue('O1', 'TEL CANDIDAT');
-        $sheet->setCellValue('P1', 'MAIL CANDIDAT');
-        $sheet->setCellValue('Q1', 'ETABLISSEMENT');
-        $sheet->setCellValue('R1', 'CODE_ETAB');
-        $sheet->setCellValue('S1', 'FORMATION');
-        $sheet->setCellValue('T1', 'CODE_FORMATION');
-        $sheet->setCellValue('U1', "PROMOTION");
-        $sheet->setCellValue('V1', "CODE_PROMO");
-        $sheet->setCellValue('W1', 'TYPE DE BAC');
-        $sheet->setCellValue('X1', 'ANNEE BAC');
-        $sheet->setCellValue('Y1', 'FILIERE');
-        $sheet->setCellValue('Z1', 'MOYENNE GENERALE');
-        $sheet->setCellValue('AA1', 'MOYENNE NATIONALE');
-        $sheet->setCellValue('AB1', 'MOYENNE REGIONALE');
-        $sheet->setCellValue('AC1', 'D-INSCRIPTION');
-        $sheet->setCellValue('AD1', 'STATUT');
-        $sheet->setCellValue('AE1', 'CODE ASSURANCE');
-        $sheet->setCellValue('AF1', 'CNE');
-        $sheet->setCellValue('AG1', 'EMAIL');
+        $sheet->setCellValue('D1', 'ID ADMISSION'); // Updated this line
+        $sheet->setCellValue('E1', 'CODE ADMISSION');
+        $sheet->setCellValue('F1', 'ID INSCRIPTION');
+        $sheet->setCellValue('G1', 'CODE INSCRIPTION');
+        $sheet->setCellValue('H1', 'STATUT');
+        $sheet->setCellValue('I1', 'NOM');
+        $sheet->setCellValue('J1', 'PRENOM');
+        $sheet->setCellValue('K1', 'SEXE');
+        $sheet->setCellValue('L1', 'DATE NAISSANCE');
+        $sheet->setCellValue('M1', 'CIN');
+        $sheet->setCellValue('N1', 'PASSEPORT');
+        $sheet->setCellValue('O1', 'NATIONALITE');
+        $sheet->setCellValue('P1', 'TEL CANDIDAT');
+        $sheet->setCellValue('Q1', 'MAIL CANDIDAT');
+        $sheet->setCellValue('R1', 'ETABLISSEMENT');
+        $sheet->setCellValue('S1', 'CODE_ETAB');
+        $sheet->setCellValue('T1', 'FORMATION');
+        $sheet->setCellValue('U1', 'CODE_FORMATION');
+        $sheet->setCellValue('V1', 'PROMOTION');
+        $sheet->setCellValue('W1', 'CODE_PROMO');
+        $sheet->setCellValue('X1', 'TYPE DE BAC');
+        $sheet->setCellValue('Y1', 'ANNEE BAC');
+        $sheet->setCellValue('Z1', 'FILIERE');
+        $sheet->setCellValue('AA1', 'MOYENNE GENERALE');
+        $sheet->setCellValue('AB1', 'MOYENNE NATIONALE');
+        $sheet->setCellValue('AC1', 'MOYENNE REGIONALE');
+        $sheet->setCellValue('AD1', 'D-INSCRIPTION');
+        $sheet->setCellValue('AE1', 'STATUT');
+        $sheet->setCellValue('AF1', 'CODE ASSURANCE');
+        $sheet->setCellValue('AG1', 'CNE');
+        $sheet->setCellValue('AH1', 'EMAIL');
+        $sheet->setCellValue('AI1', 'ADRESSE');
         $i=2;
         $j=1;
         $current_year = date('m') >= 7 ? date('Y').'/'.date('Y')+1 : date('Y') - 1 .'/' .date('Y');
@@ -351,40 +371,42 @@ class GestionInscriptionController extends AbstractController
             $sheet->setCellValue('A'.$i, $j);
             $sheet->setCellValue('B'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getCode());
             $sheet->setCellValue('C'.$i, $inscription->getAdmission()->getPreinscription()->getCode());
-            $sheet->setCellValue('D'.$i, $inscription->getAdmission()->getCode());
-            $sheet->setCellValue('E'.$i, $inscription->getId());
-            $sheet->setCellValue('F'.$i, $inscription->getCode());
+            $sheet->setCellValue('D'.$i, $inscription->getAdmission()->getId()); // Admission ID in D
+            $sheet->setCellValue('E'.$i, $inscription->getAdmission()->getCode()); // Admission Code moved to E
+            $sheet->setCellValue('F'.$i, $inscription->getId());
+            $sheet->setCellValue('G'.$i, $inscription->getCode());
             if ($inscription->getAdmission()->getPreinscription()->getNature() != null) {
-                $sheet->setCellValue('G'.$i, $inscription->getAdmission()->getPreinscription()->getNature()->getDesignation());
+                $sheet->setCellValue('H'.$i, $inscription->getAdmission()->getPreinscription()->getNature()->getDesignation());
             }
-            $sheet->setCellValue('H'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getNom());
-            $sheet->setCellValue('I'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getPrenom());
-            $sheet->setCellValue('J'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getSexe());
-            $sheet->setCellValue('K'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getDateNaissance());
-            $sheet->setCellValue('L'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getCin());
-            $sheet->setCellValue('M'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getPasseport());
-            $sheet->setCellValue('N'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getNationalite());
-            $sheet->setCellValue('O'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getTel1());
-            $sheet->setCellValue('P'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getMail1());
-            $sheet->setCellValue('Q'.$i, $inscription->getAnnee()->getFormation()->getEtablissement()->getDesignation());
-            
-            $sheet->setCellValue('R'.$i, $inscription->getAnnee()->getFormation()->getEtablissement()->getCode());
-            $sheet->setCellValue('S'.$i, $inscription->getAnnee()->getFormation()->getDesignation());
-            $sheet->setCellValue('T'.$i, $inscription->getAnnee()->getFormation()->getCode());
-            $sheet->setCellValue('U'.$i, $inscription->getPromotion()->getDesignation());
-            $sheet->setCellValue('V'.$i, $inscription->getPromotion()->getCode());
-            $sheet->setCellValue('W'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getTypeBac() == Null ? "" : $inscription->getAdmission()->getPreinscription()->getEtudiant()->getTypeBac()->getDesignation());
-            $sheet->setCellValue('X'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getAnneeBac());
+            $sheet->setCellValue('I'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getNom());
+            $sheet->setCellValue('J'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getPrenom());
+            $sheet->setCellValue('K'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getSexe());
+            $sheet->setCellValue('L'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getDateNaissance());
+            $sheet->setCellValue('M'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getCin());
+            $sheet->setCellValue('N'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getPasseport());
+            $sheet->setCellValue('O'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getNationalite());
+            $sheet->setCellValue('P'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getTel1());
+            $sheet->setCellValue('Q'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getMail1());
+            $sheet->setCellValue('R'.$i, $inscription->getAnnee()->getFormation()->getEtablissement()->getDesignation());
+            $sheet->setCellValue('S'.$i, $inscription->getAnnee()->getFormation()->getEtablissement()->getCode());
+            $sheet->setCellValue('T'.$i, $inscription->getAnnee()->getFormation()->getDesignation());
+            $sheet->setCellValue('U'.$i, $inscription->getAnnee()->getFormation()->getCode());
+            $sheet->setCellValue('V'.$i, $inscription->getPromotion()->getDesignation());
+            $sheet->setCellValue('W'.$i, $inscription->getPromotion()->getCode());
+            $sheet->setCellValue('X'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getTypeBac() == null ? "" : $inscription->getAdmission()->getPreinscription()->getEtudiant()->getTypeBac()->getDesignation());
+            $sheet->setCellValue('Y'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getAnneeBac());
             $filiere = $inscription->getAdmission()->getPreinscription()->getEtudiant()->getFiliere();
-            $sheet->setCellValue('Y'.$i, $filiere != null ? $filiere->getDesignation() : "");
-            $sheet->setCellValue('Z'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getMoyenneBac());
-            $sheet->setCellValue('AA'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getMoyenNational());
-            $sheet->setCellValue('AB'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getMoyenRegional());
-            $sheet->setCellValue('AC'.$i, $inscription->getCreated());
-            $sheet->setCellValue('AD'.$i, $inscription->getStatut()->GetDesignation());
-            $sheet->setCellValue('AE'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getCodeAssurance());
-            $sheet->setCellValue('AF'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getCne());
-            $sheet->setCellValue('AG'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getMail1());
+            $sheet->setCellValue('Z'.$i, $filiere != null ? $filiere->getDesignation() : "");
+            $sheet->setCellValue('AA'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getMoyenneBac());
+            $sheet->setCellValue('AB'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getMoyenNational());
+            $sheet->setCellValue('AC'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getMoyenRegional());
+            $sheet->setCellValue('AD'.$i, $inscription->getCreated());
+            $sheet->setCellValue('AE'.$i, $inscription->getStatut()->GetDesignation());
+            $sheet->setCellValue('AF'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getCodeAssurance());
+            $sheet->setCellValue('AG'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getCne());
+            $sheet->setCellValue('AH'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getMail1());
+            $sheet->setCellValue('AI'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getAdresse());
+
             $i++;
             $j++;
         }
@@ -405,35 +427,38 @@ class GestionInscriptionController extends AbstractController
         $sheet->setCellValue('A1', 'ORD');
         $sheet->setCellValue('B1', 'CODE CONDIDAT');
         $sheet->setCellValue('C1', 'CODE PREINSCRIPTION');
-        $sheet->setCellValue('D1', 'CODE ADMISSION');
-        $sheet->setCellValue('E1', 'ID INSCRIPTION');
-        $sheet->setCellValue('F1', 'CODE INSCRIPTION');
-        $sheet->setCellValue('G1', 'STATUT');
-        $sheet->setCellValue('H1', 'NOM');
-        $sheet->setCellValue('I1', 'PRENOM');
-        $sheet->setCellValue('J1', 'SEXE');
-        $sheet->setCellValue('K1', 'DATE NAISSANCE');
-        $sheet->setCellValue('L1', 'CIN');
-        $sheet->setCellValue('M1', 'PASSEPORT');
-        $sheet->setCellValue('N1', 'NATIONALITE');
-        $sheet->setCellValue('O1', 'TEL CANDIDAT');
-        $sheet->setCellValue('P1', 'MAIL CANDIDAT');
-        $sheet->setCellValue('Q1', 'ETABLISSEMENT');
-        $sheet->setCellValue('R1', 'CODE_ETAB');
-        $sheet->setCellValue('S1', 'FORMATION');
-        $sheet->setCellValue('T1', 'CODE_FORMATION');
-        $sheet->setCellValue('U1', "PROMOTION");
-        $sheet->setCellValue('V1', "CODE_PROMO");
-        $sheet->setCellValue('W1', 'TYPE DE BAC');
-        $sheet->setCellValue('X1', 'ANNEE BAC');
-        $sheet->setCellValue('Y1', 'FILIERE');
-        $sheet->setCellValue('Z1', 'MOYENNE GENERALE');
-        $sheet->setCellValue('AA1', 'MOYENNE NATIONALE');
-        $sheet->setCellValue('AB1', 'MOYENNE REGIONALE');
-        $sheet->setCellValue('AC1', 'D-INSCRIPTION');
-        $sheet->setCellValue('AD1', 'STATUT');
-        $sheet->setCellValue('AE1', 'CODE ASSURANCE');
-        $sheet->setCellValue('AF1', 'CNE');
+        $sheet->setCellValue('D1', 'ID ADMISSION'); // Updated this line
+        $sheet->setCellValue('E1', 'CODE ADMISSION');
+        $sheet->setCellValue('F1', 'ID INSCRIPTION');
+        $sheet->setCellValue('G1', 'CODE INSCRIPTION');
+        $sheet->setCellValue('H1', 'STATUT');
+        $sheet->setCellValue('I1', 'NOM');
+        $sheet->setCellValue('J1', 'PRENOM');
+        $sheet->setCellValue('K1', 'SEXE');
+        $sheet->setCellValue('L1', 'DATE NAISSANCE');
+        $sheet->setCellValue('M1', 'CIN');
+        $sheet->setCellValue('N1', 'PASSEPORT');
+        $sheet->setCellValue('O1', 'NATIONALITE');
+        $sheet->setCellValue('P1', 'TEL CANDIDAT');
+        $sheet->setCellValue('Q1', 'MAIL CANDIDAT');
+        $sheet->setCellValue('R1', 'ETABLISSEMENT');
+        $sheet->setCellValue('S1', 'CODE_ETAB');
+        $sheet->setCellValue('T1', 'FORMATION');
+        $sheet->setCellValue('U1', 'CODE_FORMATION');
+        $sheet->setCellValue('V1', 'PROMOTION');
+        $sheet->setCellValue('W1', 'CODE_PROMO');
+        $sheet->setCellValue('X1', 'TYPE DE BAC');
+        $sheet->setCellValue('Y1', 'ANNEE BAC');
+        $sheet->setCellValue('Z1', 'FILIERE');
+        $sheet->setCellValue('AA1', 'MOYENNE GENERALE');
+        $sheet->setCellValue('AB1', 'MOYENNE NATIONALE');
+        $sheet->setCellValue('AC1', 'MOYENNE REGIONALE');
+        $sheet->setCellValue('AD1', 'D-INSCRIPTION');
+        $sheet->setCellValue('AE1', 'STATUT');
+        $sheet->setCellValue('AF1', 'CODE ASSURANCE');
+        $sheet->setCellValue('AG1', 'CNE');
+        $sheet->setCellValue('AH1', 'EMAIL');
+        $sheet->setCellValue('AI1', 'ADRESSE');
         $i=2;
         $j=1;
         // $current_year = date('m') > 7 ? date('Y').'/'.date('Y')+1 : date('Y') - 1 .'/' .date('Y');
@@ -446,39 +471,42 @@ class GestionInscriptionController extends AbstractController
             $sheet->setCellValue('A'.$i, $j);
             $sheet->setCellValue('B'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getCode());
             $sheet->setCellValue('C'.$i, $inscription->getAdmission()->getPreinscription()->getCode());
-            $sheet->setCellValue('D'.$i, $inscription->getAdmission()->getCode());
-            $sheet->setCellValue('E'.$i, $inscription->getId());
-            $sheet->setCellValue('F'.$i, $inscription->getCode());
+            $sheet->setCellValue('D'.$i, $inscription->getAdmission()->getId()); // Admission ID in D
+            $sheet->setCellValue('E'.$i, $inscription->getAdmission()->getCode()); // Admission Code moved to E
+            $sheet->setCellValue('F'.$i, $inscription->getId());
+            $sheet->setCellValue('G'.$i, $inscription->getCode());
             if ($inscription->getAdmission()->getPreinscription()->getNature() != null) {
-                $sheet->setCellValue('G'.$i, $inscription->getAdmission()->getPreinscription()->getNature()->getDesignation());
+                $sheet->setCellValue('H'.$i, $inscription->getAdmission()->getPreinscription()->getNature()->getDesignation());
             }
-            $sheet->setCellValue('H'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getNom());
-            $sheet->setCellValue('I'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getPrenom());
-            $sheet->setCellValue('J'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getSexe());
-            $sheet->setCellValue('K'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getDateNaissance());
-            $sheet->setCellValue('L'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getCin());
-            $sheet->setCellValue('M'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getPasseport());
-            $sheet->setCellValue('N'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getNationalite());
-            $sheet->setCellValue('O'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getTel1());
-            $sheet->setCellValue('P'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getMail1());
-            $sheet->setCellValue('Q'.$i, $inscription->getAnnee()->getFormation()->getEtablissement()->getDesignation());
-            
-            $sheet->setCellValue('R'.$i, $inscription->getAnnee()->getFormation()->getEtablissement()->getCode());
-            $sheet->setCellValue('S'.$i, $inscription->getAnnee()->getFormation()->getDesignation());
-            $sheet->setCellValue('T'.$i, $inscription->getAnnee()->getFormation()->getCode());
-            $sheet->setCellValue('U'.$i, $inscription->getPromotion()->getDesignation());
-            $sheet->setCellValue('V'.$i, $inscription->getPromotion()->getCode());
-            $sheet->setCellValue('W'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getTypeBac() == Null ? "" : $inscription->getAdmission()->getPreinscription()->getEtudiant()->getTypeBac()->getDesignation());
-            $sheet->setCellValue('X'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getAnneeBac());
+            $sheet->setCellValue('I'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getNom());
+            $sheet->setCellValue('J'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getPrenom());
+            $sheet->setCellValue('K'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getSexe());
+            $sheet->setCellValue('L'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getDateNaissance());
+            $sheet->setCellValue('M'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getCin());
+            $sheet->setCellValue('N'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getPasseport());
+            $sheet->setCellValue('O'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getNationalite());
+            $sheet->setCellValue('P'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getTel1());
+            $sheet->setCellValue('Q'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getMail1());
+            $sheet->setCellValue('R'.$i, $inscription->getAnnee()->getFormation()->getEtablissement()->getDesignation());
+            $sheet->setCellValue('S'.$i, $inscription->getAnnee()->getFormation()->getEtablissement()->getCode());
+            $sheet->setCellValue('T'.$i, $inscription->getAnnee()->getFormation()->getDesignation());
+            $sheet->setCellValue('U'.$i, $inscription->getAnnee()->getFormation()->getCode());
+            $sheet->setCellValue('V'.$i, $inscription->getPromotion()->getDesignation());
+            $sheet->setCellValue('W'.$i, $inscription->getPromotion()->getCode());
+            $sheet->setCellValue('X'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getTypeBac() == null ? "" : $inscription->getAdmission()->getPreinscription()->getEtudiant()->getTypeBac()->getDesignation());
+            $sheet->setCellValue('Y'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getAnneeBac());
             $filiere = $inscription->getAdmission()->getPreinscription()->getEtudiant()->getFiliere();
-            $sheet->setCellValue('Y'.$i, $filiere != null ? $filiere->getDesignation() : "");
-            $sheet->setCellValue('Z'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getMoyenneBac());
-            $sheet->setCellValue('AA'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getMoyenNational());
-            $sheet->setCellValue('AB'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getMoyenRegional());
-            $sheet->setCellValue('AC'.$i, $inscription->getCreated());
-            $sheet->setCellValue('AD'.$i, $inscription->getStatut()->GetDesignation());
-            $sheet->setCellValue('AE'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getCodeAssurance());
-            $sheet->setCellValue('AF'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getCne());
+            $sheet->setCellValue('Z'.$i, $filiere != null ? $filiere->getDesignation() : "");
+            $sheet->setCellValue('AA'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getMoyenneBac());
+            $sheet->setCellValue('AB'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getMoyenNational());
+            $sheet->setCellValue('AC'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getMoyenRegional());
+            $sheet->setCellValue('AD'.$i, $inscription->getCreated());
+            $sheet->setCellValue('AE'.$i, $inscription->getStatut()->GetDesignation());
+            $sheet->setCellValue('AF'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getCodeAssurance());
+            $sheet->setCellValue('AG'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getCne());
+            $sheet->setCellValue('AH'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getMail1());
+            $sheet->setCellValue('AI'.$i, $inscription->getAdmission()->getPreinscription()->getEtudiant()->getAdresse());
+
             $i++;
             $j++;
         }

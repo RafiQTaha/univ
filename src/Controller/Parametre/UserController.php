@@ -27,6 +27,10 @@ class UserController extends AbstractController
     #[Route('/', name: 'parametre_user')]
     public function index(): Response
     {
+        $isAdmin = in_array('ROLE_ADMIN',$this->getUser()->getRoles());
+        if(!$isAdmin) {
+            return $this->render("errors/403.html.twig");
+        }
         $modules = $this->em->getRepository(UsModule::class)->findAll();
         return $this->render('parametre/user/index.html.twig', [
             'modules' => $modules

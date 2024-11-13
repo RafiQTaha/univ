@@ -28,6 +28,7 @@ use App\Entity\PNatureEpreuve;
 use App\Entity\AcEtablissement;
 use App\Entity\PAnonymatActuel;
 use App\Entity\PrProgrammation;
+use App\Entity\SousNatureDemande;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -131,6 +132,14 @@ class ApiController extends AbstractController
     {
         $nature = $this->em->getRepository(NatureDemande::class)->findBy(['active' => 1]);
         $data = self::dropdown($nature,'Nature De Demande');
+        return new JsonResponse($data);
+    }
+    
+    #[Route('/sousNatureDemande/{nature}', name: 'sousNatureDemande')]
+    public function sousNatureDemande($nature): Response
+    {
+        $Sousnature = $this->em->getRepository(SousNatureDemande::class)->findBy(['natureDemande'=>$nature,'active' => 1]);
+        $data = self::dropdown($Sousnature,'Sous Nature De Demande');
         return new JsonResponse($data);
     }
 

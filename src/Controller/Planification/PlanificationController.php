@@ -357,34 +357,6 @@ class PlanificationController extends AbstractController
             return new Response("Programmation introuvable ou l'annee ".$annee->getDesignation()." est cloturée!!",500);
         }
         if ($annee->getFormation()->getEtablissement()->getId() != 28) {
-            // $inscriptions = $this->em->getRepository(TInscription::class)->getNiveaux($element->getModule()->getSemestre()->getPromotion(),$annee);
-            // $groupes = [];
-            // foreach ($inscriptions as $inscription) {
-            //     $groupe = $inscription->getGroupe();
-            //     if ($groupe->getGroupe() == Null) {
-            //         if (!in_array($groupe, $groupes)){
-            //             array_push($groupes,$groupe);
-            //         }
-            //     }elseif ($groupe->getGroupe()->getGroupe() == Null) {
-            //         $groupe = $groupe->getGroupe();
-            //         if (!in_array($groupe, $groupes)){
-            //             array_push($groupes,$groupe);
-            //         }
-            //     }else {
-            //         $groupe = $groupe->getGroupe()->getGroupe();
-            //         if (!in_array($groupe, $groupes)){
-            //             array_push($groupes,$groupe);
-            //         }
-            //     }
-            // }
-            // $CountGroupe = count($groupes);
-            // $totalMinute =0;
-            // $seancesActive = $this->em->getRepository(PlEmptime::class)->findBy(['active' => 1,'programmation' => $programmation,'annuler'=>0]);
-
-            // foreach ($seancesActive as $seance) {
-            //     $interval = $seance->getHeurDb()->diff($seance->getHeurFin());
-            //     $totalMinute += $interval->h * 60 + $interval->i;
-            // }
             $MaxVolumeHoraire = $this->MaxVolumeHoraire($element,$annee,$programmation);
             if (!$MaxVolumeHoraire) {
                 return new Response("Vous avez atteint le maximum des heures pour cet élément !",500); 

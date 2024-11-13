@@ -190,14 +190,14 @@ $(document).ready(function  () {
         $('#annee').html(success.data).select2();
       }else{
         $('.annee').css('display','none');
+        $('#validermodal #enregistrer').removeAttr("disabled");
       }
     })
-    $('#enregistrer').removeAttr("disabled");
   })
 
   $('body').on('change','#annee',function (e) {
     e.preventDefault();
-    $('#enregistrer').removeAttr("disabled");
+    $('#validermodal #enregistrer').removeAttr("disabled");
   })
   
   $("#valider-modal").on('click', () => {
@@ -255,6 +255,80 @@ $(document).ready(function  () {
       $(".modal-body .alert").remove();
     }, 2000)  
   })
+
+
+  
+  // rrrrrrrrrrrr
+  $("#nature-modal").on('click', () => {
+    // console.log(id_etudiant);
+    if(!id_etudiant){
+      Toast.fire({
+        icon: 'error',
+        title: 'Veuillez selection une ligne!',
+      })
+      return;
+    }
+    // $("#validermodal .modal-body #annee,#validermodal .modal-body #formation").empty();
+    $("select").select2()
+    $('#natureDemandemodal #enregistrer').prop('disabled', true);
+    $('#natureDemandemodal').modal("show")
+  })
+  
+  $('body').on('change','#nature',function () {
+    let nature = $(this).val();
+    
+      //Save the cancel token for the current request
+    cancelToken = axios.CancelToken.source()
+    axios.get('/api/sousNatureDemande/'+nature, { cancelToken: cancelToken.token })
+    .then(success => {
+      $('#sousNature').html(success.data).select2();
+      // $('#natureDemandemodal #enregistrer').removeAttr("disabled");
+    })
+  })
+  $('body').on('change','#sousNature',function () {
+    let sousNature = $(this).val();
+    if (sousNature == "") {
+      $('#natureDemandemodal #enregistrer').prop('disabled', true);
+    }else{
+      $('#natureDemandemodal #enregistrer').removeAttr("disabled");
+    }
+  })
+  $('body').on('submit','.form-natureDemande',async function (e) {
+    e.preventDefault();
+    // alert('test');
+    let formdata = new FormData();
+    formdata.append('etudiant',id_etudiant)
+    formdata.append('sousNature',$('#sousNature').val())
+    let modalAlert =  $("#natureDemandemodal .modal-body .alert");
+    modalAlert.remove();
+    const icon = $(".form-natureDemande .btn i");
+    icon.removeClass('fa-check-circle').addClass("fa-spinner fa-spin");
+    try{
+      const request = await  axios.post('/etudiant/etudiants/etudiant_natureDemande',formdata)
+      const data = request.data;
+      $("#natureDemandemodal .modal-body").prepend(
+        `<div class="alert alert-success">${data}</div>`
+      );
+      icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin");
+      $('#natureDemandemodal #enregistrer').prop('disabled', true);
+      $('#natureDemandemodal select').val("").trigger('change');
+      // tableListNatureDemande.ajax.reload(null, false);
+      // table.ajax.reload(null, false);
+    }catch(error){
+      const message = error.response.data;
+      // console.log(error, error.response);
+      modalAlert.remove();
+      $("#natureDemandemodal .modal-body").prepend(
+        `<div class="alert alert-danger">${message}</div>`
+      );
+      icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
+    } 
+    setTimeout(() => {
+      $(".modal-body .alert").remove();
+    }, 2000)  
+  })
+
+
 
   $('#releve_note').on('click', () => {
     if(!id_etudiant){

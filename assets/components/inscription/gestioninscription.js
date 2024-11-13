@@ -337,6 +337,17 @@ const Toast = Swal.mixin({
         $("#statut_modal .modal-body .alert").remove()
         $("#statut_modal").modal("show")
     })
+    $("#observation-modal").on("click", () => {
+        if(!id_inscription){
+          Toast.fire({
+            icon: 'error',
+            title: 'Veuillez selection une ligne!',
+          })
+          return;
+        }
+        $("#observation_modal .modal-body .alert").remove()
+        $("#observation_modal").modal("show")
+    })
 
     $("#statut_save").on("submit", async function (e){
         e.preventDefault();
@@ -368,6 +379,38 @@ const Toast = Swal.mixin({
           icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
         }
     })
+
+    $("#observation_save").on("submit", async function (e){
+        e.preventDefault();
+        let formData = new FormData($(this)[0]);
+        let modalAlert = $("#observation_modal .modal-body .alert")
+    
+        modalAlert.remove();
+        const icon = $("#observation_save .btn i");
+        icon.removeClass('fa-check-circle').addClass("fa-spinner fa-spin");
+        
+        try {
+            const request = await axios.post('/inscription/gestion/observation/'+id_inscription, formData);
+            const response = request.data;
+            $("#observation_modal .modal-body").prepend(
+                `<div class="alert alert-success">
+                    <p>${response}</p>
+                </div>`
+            );
+            icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
+            $("#observation_inscription").empty()
+            table.ajax.reload(null, false)
+        } catch (error) {
+            const message = error.response.data;
+            console.log(error, error.response);
+            modalAlert.remove();
+            $("#observation_modal .modal-body").prepend(
+                `<div class="alert alert-danger">${message}</div>`
+            );
+            icon.addClass('fa-check-circle').removeClass("fa-spinner fa-spin ");
+        }
+    })
+
     $('body').on('click','#extraction', function (){
         window.open('/inscription/gestion/extraction_ins', '_blank');
     })

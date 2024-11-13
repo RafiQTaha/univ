@@ -96,6 +96,15 @@ class TInscription
     #[ORM\ManyToOne(targetEntity: User::class)]
     private $userStatutUpdated;
 
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private $observation;
+
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'tInscriptions')]
+    private $observationUser;
+
+    #[ORM\Column(type: 'datetime', nullable: true)]
+    private $observationCreated;
+
     public function __construct()
     {
         $this->gnotes = new ArrayCollection();
@@ -569,6 +578,42 @@ class TInscription
     public function setStatutUpdated(?\DateTimeInterface $statutUpdated): self
     {
         $this->statutUpdated = $statutUpdated;
+
+        return $this;
+    }
+
+    public function getObservation(): ?string
+    {
+        return $this->observation;
+    }
+
+    public function setObservation(?string $observation): self
+    {
+        $this->observation = $observation;
+
+        return $this;
+    }
+
+    public function getObservationUser(): ?User
+    {
+        return $this->observationUser;
+    }
+
+    public function setObservationUser(?User $observationUser): self
+    {
+        $this->observationUser = $observationUser;
+
+        return $this;
+    }
+
+    public function getObservationCreated(): ?\DateTimeInterface
+    {
+        return $this->observationCreated;
+    }
+
+    public function setObservationCreated(?\DateTimeInterface $observationCreated): self
+    {
+        $this->observationCreated = $observationCreated;
 
         return $this;
     }

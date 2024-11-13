@@ -13,9 +13,11 @@ use App\Entity\NatureDemande;
 use App\Entity\AcAnnee;
 use App\Controller\DatatablesController;
 use App\Entity\AcFormation;
+use App\Entity\EtudiantSousNatureDemande;
 use App\Entity\Pec;
 use App\Entity\PMatiere;
 use App\Entity\PSituation;
+use App\Entity\SousNatureDemande;
 use App\Entity\XFiliere;
 use App\Entity\XLangue;
 use App\Entity\TOperationcab;
@@ -432,6 +434,120 @@ class EtudiantController extends AbstractController
         $this->em->flush();
         return new JsonResponse('Bien Enregistrer');
     }
+
+    
+    // #[Route('/etudiant_valider/{etudiant}', name: 'etudiant_valider')]
+    // public function etudiant_valider(Request $request,TEtudiant $etudiant): Response
+    // {   
+    //     $etudiantNatures = $this->em->getRepository(NatureDemande::class)->findNatureDemandeByEtudiant($etudiant);
+
+    //     if (!$etudiantNatures) {
+    //         return new JsonResponse("Vous devez d'abord choisir une nature de demande !", 500);
+    //     }
+        
+    //     $formation = $this->em->getRepository(AcFormation::class)->find($request->get('formation'));
+    //     if(strpos($formation->getDesignation(), 'Résidanat') === false && $formation->getEtablissement()->getId() != 25){
+    //         $currentYear = date('Y') - 1 .'/'.date('Y');  // means current year
+    //         $currentMonth = date('m');
+    //         if($currentMonth >= 4) { // april and above
+    //             $currentYear = date('Y') . '/'.date('Y')+1; // means next year
+    //         }
+    //         $annee = $this->em->getRepository(AcAnnee::class)->findOneBy(['formation'=>$formation,'designation'=>$currentYear]);
+    //     }else{
+    //         $id_annee = $request->get('annee');
+    //         $annee = $this->em->getRepository(AcAnnee::class)->find($id_annee);
+    //     }
+    //     if(!$annee) {
+    //         return new JsonResponse('Annee Introuvable!', 500);
+    //     }
+    //     $exist = count($this->em->getRepository(TPreinscription::class)->findBy(['etudiant'=>$etudiant,'annee'=>$annee,'active'=>1]));
+    //     // dd($exist);
+    //     if ($exist > 0) {
+    //         return new JsonResponse("Etudiant déja une preinscription dans cette année / formation", 500);
+    //     }
+
+    //     $etudiant->setStatutCondidat("PRE-INSCRIT");
+
+    //     $preinscription = new TPreinscription();
+    //     $preinscription->setStatut($etudiant->getStatut());
+    //     $preinscription->setEtudiant($etudiant);
+    //     $preinscription->setInscriptionValide(1);
+    //     $preinscription->setRangP(0);
+    //     $preinscription->setRangS(0);
+    //     $preinscription->setActive(1);
+    //     // $preinscription->setNature($nature);
+    //     $preinscription->setCreated(new DateTime('now'));
+    //     $preinscription->setUserCreated($this->getUser());
+    //     $preinscription->setAnnee($annee);
+
+    //     $this->em->persist($preinscription);
+    //     // dd($preinscription);
+    //     $this->em->flush();
+    //     $preinscription->setCode('PRE-'.$formation->getAbreviation().str_pad($preinscription->getId(), 8, '0', STR_PAD_LEFT).'/'.date('Y'));
+    //     $this->em->flush();
+        
+    //     $naturePriseEnCharge = $this->em->getRepository(NatureDemande::class)->find(7);
+    //     if (in_array($naturePriseEnCharge, $etudiantNatures, true)) {
+    //         return new JsonResponse('Preinscription Bien Crée');
+    //     }
+
+    //     foreach ($etudiantNatures as $key => $nature) {
+    //         $org = "";
+    //         $operationcab = new TOperationcab();
+    //         $operationcab->setPreinscription($preinscription);
+    //         $operationcab->setAnnee($preinscription->getAnnee());
+    //         $operationcab->setCategorie('pré-inscription');
+    //         $operationcab->setCreated(new DateTime('now'));
+    //         $operationcab->setUserCreated($this->getUser());
+    //         if ($nature->getId() == 1) {
+    //             $org = "Payant";
+    //         }elseif ($nature->getId() == 4) {
+    //             $org = "Organisme";
+    //         }else {
+    //             continue;
+    //         }
+    //         $operationcab->setOrganisme($org);
+    //         $operationcab->setActive(1);
+    //         $operationcab->setDateContable(date('Y'));
+    //         $this->em->persist($operationcab);
+    //         $this->em->flush();
+    //         $etab = $formation->getEtablissement()->getAbreviation();
+    //         $operationcab->setCode($etab.'-FAC'.str_pad($operationcab->getId(), 8, '0', STR_PAD_LEFT).'/'.date('Y'));
+    //         $this->em->flush();
+    //     }
+    //     return new JsonResponse('Preinscription Bien Crée');
+    // }
+
+    
+    // #[Route('/etudiant_natureDemande', name: 'etudiant_natureDemande')]
+    // public function etudiant_natureDemande(Request $request): Response
+    // {   
+    //     if ($request->get('etudiant') == "" || $request->get('sousNature') == "" ) {
+    //         return new JsonResponse("Merci de choisir un etudiant et un sous Nature De Demande !", 500);
+    //     }
+    //     $etudiant = $this->em->getRepository(TEtudiant::class)->find($request->get('etudiant'));
+    //     $sousNatureDemande = $this->em->getRepository(SousNatureDemande::class)->find($request->get('sousNature'));
+
+    //     // dd($etudiant);
+    //     $etudiantNature = $this->em->getRepository(EtudiantSousNatureDemande::class)->findOneBy([
+    //         "etudiant" => $etudiant,
+    //         "sousNature" => $sousNatureDemande,
+    //         "active" => 1
+    //     ]);
+    //     if ($etudiantNature) {
+    //         return new JsonResponse("Sous Nature demande déja affecté à cet etudiant !", 500);
+    //     }
+    //     // $etudiant->addSousNature($sousNatureDemande);
+    //     $etudiantNature = new EtudiantSousNatureDemande();
+    //     $etudiantNature->setEtudiant($etudiant);
+    //     $etudiantNature->setSousNature($sousNatureDemande);
+    //     $etudiantNature->setUserCreated($this->getUser());
+    //     $etudiantNature->setCreated(new datetime('now'));
+    //     $this->em->persist($etudiantNature);
+    //     $this->em->flush();
+
+    //     return new JsonResponse('Nature demande Bien Enregistré');
+    // }
     
     #[Route('/list/preinscription/{etudiant}', name: 'list_etudiant_preinscription')]
     public function listPreinscription(Request $request,TEtudiant $etudiant): Response

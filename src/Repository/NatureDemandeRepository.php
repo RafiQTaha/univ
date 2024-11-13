@@ -47,4 +47,18 @@ class NatureDemandeRepository extends ServiceEntityRepository
         ;
     }
     */
+    public function findNatureDemandeByEtudiant($etudiant)
+    {
+        return $this->createQueryBuilder('nature')
+            ->innerjoin('nature.sousNatureDemandes','sousNature')
+            ->innerjoin('sousNature.etudiantSousNatureDemandes','etudiantsousNature')
+            ->innerjoin('etudiantsousNature.etudiant','etudiant')
+            ->Where('etudiant = :etudiant')
+            ->andWhere('etudiantsousNature.active = 1')
+            ->setParameter('etudiant', $etudiant)
+            ->groupBy('nature')
+            ->getQuery()
+            ->getResult()
+        ;
+    }
 }

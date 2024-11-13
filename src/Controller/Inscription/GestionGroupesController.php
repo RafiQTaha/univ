@@ -322,6 +322,7 @@ class GestionGroupesController extends AbstractController
         $sheet->setCellValue('T1', 'Niveau2');
         $sheet->setCellValue('U1', 'Niveau3');
         $sheet->setCellValue('V1', 'STATUT');
+
         $i=2;
         foreach ($inscriptions as $inscription) {
             $sheet->setCellValue('A'.$i, $inscription->getId());

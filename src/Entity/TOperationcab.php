@@ -90,6 +90,42 @@ class TOperationcab
     #[ORM\Column(type: 'float', nullable: true)]
     private $montantPec;
 
+    #[ORM\ManyToOne(targetEntity: InfoPec::class, inversedBy: 'tOperationcabs')]
+    private $infoPec;
+
+    #[ORM\ManyToOne(targetEntity: sousNatureDemande::class, inversedBy: 'tOperationcabs')]
+    private $sousNatureDemande;
+    
+    #[ORM\Column(type: 'string', length: 100, nullable: true)]
+    private $statut;
+
+    #[ORM\Column(type: 'string', length: 100, nullable: true)]
+    private $programmePec;
+
+    #[ORM\Column(type: 'float', nullable: true)]
+    private $mtPec;
+
+    #[ORM\Column(type: 'string', length: 100, nullable: true)]
+    private $typePec;
+
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private $motifPec;
+
+    #[ORM\Column(type: 'string', length: 100, nullable: true)]
+    private $niveau;
+
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private $autofinancement;
+
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private $modePec;
+
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private $referenceUgouvRefacturation;
+
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private $montantRefacturation;
+
     public function __construct()
     {
         $this->reglements = new ArrayCollection();
@@ -421,6 +457,150 @@ class TOperationcab
     public function setMontantPec(?float $montantPec): self
     {
         $this->montantPec = $montantPec;
+
+        return $this;
+    }
+
+    public function getInfoPec(): ?InfoPec
+    {
+        return $this->infoPec;
+    }
+
+    public function setInfoPec(?InfoPec $infoPec): self
+    {
+        $this->infoPec = $infoPec;
+
+        return $this;
+    }
+
+    public function getSousNatureDemande(): ?sousNatureDemande
+    {
+        return $this->sousNatureDemande;
+    }
+
+    public function setSousNatureDemande(?sousNatureDemande $sousNatureDemande): self
+    {
+        $this->sousNatureDemande = $sousNatureDemande;
+
+        return $this;
+    }    
+
+    public function getStatut(): ?string
+    {
+        return $this->statut;
+    }
+
+    public function setStatut(?string $statut): self
+    {
+        $this->statut = $statut;
+
+        return $this;
+    }
+
+    public function getProgrammePec(): ?string
+    {
+        return $this->programmePec;
+    }
+
+    public function setProgrammePec(?string $programmePec): self
+    {
+        $this->programmePec = $programmePec;
+
+        return $this;
+    }
+
+    public function getMtPec(): ?float
+    {
+        return $this->mtPec;
+    }
+
+    public function setMtPec(?float $mtPec): self
+    {
+        $this->mtPec = $mtPec;
+
+        return $this;
+    }
+
+    public function getTypePec(): ?string
+    {
+        return $this->typePec;
+    }
+
+    public function setTypePec(?string $typePec): self
+    {
+        $this->typePec = $typePec;
+
+        return $this;
+    }
+
+    public function getMotifPec(): ?string
+    {
+        return $this->motifPec;
+    }
+
+    public function setMotifPec(?string $motifPec): self
+    {
+        $this->motifPec = $motifPec;
+
+        return $this;
+    }
+
+    public function getNiveau(): ?string
+    {
+        return $this->niveau;
+    }
+
+    public function setNiveau(?string $niveau): self
+    {
+        $this->niveau = $niveau;
+
+        return $this;
+    }
+
+    public function getAutofinancement(): ?string
+    {
+        return $this->autofinancement;
+    }
+
+    public function setAutofinancement(?string $autofinancement): self
+    {
+        $this->autofinancement = $autofinancement;
+
+        return $this;
+    }
+
+    public function getModePec(): ?string
+    {
+        return $this->modePec;
+    }
+
+    public function setModePec(?string $modePec): self
+    {
+        $this->modePec = $modePec;
+
+        return $this;
+    }
+
+    public function getReferenceUgouvRefacturation(): ?string
+    {
+        return $this->referenceUgouvRefacturation;
+    }
+
+    public function setReferenceUgouvRefacturation(?string $referenceUgouvRefacturation): self
+    {
+        $this->referenceUgouvRefacturation = $referenceUgouvRefacturation;
+
+        return $this;
+    }
+
+    public function getMontantRefacturation(): ?string
+    {
+        return $this->montantRefacturation;
+    }
+
+    public function setMontantRefacturation(?string $montantRefacturation): self
+    {
+        $this->montantRefacturation = $montantRefacturation;
 
         return $this;
     }
