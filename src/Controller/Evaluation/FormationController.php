@@ -67,9 +67,10 @@ class FormationController extends AbstractController
         $nbr_annee = $dataInfosGenerales['nbr_annee'];
         $data_annee = $this->em->getRepository(AcAnnee::class)->getAnnee($annee, $nbr_annee);
 
-        // dd($nbr_annee);
+        dd($nbr_annee);
 
         $promotion = $this->em->getRepository(AcPromotion::class)->findOneBy(['formation' => $annee->getFormation(), 'ordre' => $nbr_annee]);
+        dd($promotion);
         // $promotion = $this->em->getRepository(AcPromotion::class)->find(384);
         $inscriptions = $this->em->getRepository(TInscription::class)->findBy(['annee' => $annee, 'promotion' => $promotion, 'statut' => 13]);
         $lastYear = $annee->getId();
@@ -493,8 +494,8 @@ class FormationController extends AbstractController
         $year = $year . '_' . $lastyear;
 
         $writer = new Xlsx($spreadsheet);
-        $fileName = $formation->getDesignation().'_'.$year.'.xlsx';
-        $fileName = str_replace(" : ","_",$fileName); 
+        $fileName = $formation->getDesignation() . '_' . $year . '.xlsx';
+        $fileName = str_replace(" : ", "_", $fileName);
         //dd($fileName);
         $writer->save($fileName);
         // return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);
