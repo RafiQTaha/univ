@@ -1,69 +1,70 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Univ - Controle{% endblock %}
+{% block title %}Univ - Controle
+{% endblock %}
 
 
 {% block body %}
-<div class="main-content">
-    <section class="section">
-        <div class="section-header">
-          <h1>Controle</h1>
-          <div class="section-header-breadcrumb">
-            {% for operation in operations %}
-                 <a href="{{operation.link}}" class="{{operation.classTag}}" id="{{operation.idTag}}"><i class="{{operation.icon}}"></i>  {{operation.designation}}</a>
-            {% endfor %}
-          </div>
-        </div>
-        <div class="section-body">
-        <div class="card">
-            <div class="card-header">
-            
-            </div>
-            <div class="card-body">
-                <div class="card-search" style="margin-bottom: 1.5rem;">
-                    <form autocomplete="off" class="row">
-                        <div class="col-md-3" style="clear: both">
-                            <div class="form-group">
-                                <label>  Id Etudiant (*) :</label>
-                                <input class="form-control id_etudiant"  type="text" name="id_etudiant" id="input1" placeholder="Id Etudiant" /> 
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="form-group">
-                                <label>  Code Anonymat (*) :</label>
-                                <input class="form-control anonymat" type="text" name="anonymat" id="input2" placeholder="Code Anonymat"/> 
-                            </div>
-                        </div>
+	<div class="main-content">
+		<section class="section">
+			<div class="section-header">
+				<h1>Controle</h1>
+				{# <div class="section-header-breadcrumb">
+				            {% for operation in operations %}
+				                 <a href="{{operation.link}}" class="{{operation.classTag}}" id="{{operation.idTag}}"><i class="{{operation.icon}}"></i>  {{operation.designation}}</a>
+				            {% endfor %}
+				          </div> #}
+				{% include "inc/action.html.twig" %}
+			</div>
+			<div class="section-body">
+				<div class="card">
+					<div class="card-header"></div>
+					<div class="card-body">
+						<div class="card-search" style="margin-bottom: 1.5rem;">
+							<form autocomplete="off" class="row">
+								<div class="col-md-3" style="clear: both">
+									<div class="form-group">
+										<label>
+											Id Etudiant (*) :</label>
+										<input class="form-control id_etudiant" type="text" name="id_etudiant" id="input1" placeholder="Id Etudiant"/>
+									</div>
+								</div>
+								<div class="col-md-3">
+									<div class="form-group">
+										<label>
+											Code Anonymat (*) :</label>
+										<input class="form-control anonymat" type="text" name="anonymat" id="input2" placeholder="Code Anonymat"/>
+									</div>
+								</div>
 
-                    </form>
-                    <table id="datables_controle"  cellpadding="0" cellspacing="0" border="0" class="display nowrap" width="100%">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Id</th>
-                                <th>Nom</th>
-                                <th>Prénom</th>
-                                <th>CIN</th>
-                                <th>Code Anonymat</th>
-                                <th>Groupement</th>
-                                <th>Duplicata</th>
-                            </tr>
-                        </thead>
-                    </table>
-                    {# {% include 'administration_epreuve/pages/etiquettes.html.twig' %} #}
-                </div>
-            </div>
-        </div>
-        </div>
-    </section>
-</div>
+							</form>
+							<table id="datables_controle" cellpadding="0" cellspacing="0" border="0" class="display nowrap" width="100%">
+								<thead>
+									<tr>
+										<th>#</th>
+										<th>Id</th>
+										<th>Nom</th>
+										<th>Prénom</th>
+										<th>CIN</th>
+										<th>Code Anonymat</th>
+										<th>Groupement</th>
+										<th>Duplicata</th>
+									</tr>
+								</thead>
+							</table>
+							{# {% include 'administration_epreuve/pages/etiquettes.html.twig' %} #}
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+	</div>
 
 {% endblock %}
 
 {% block javascripts %}
-{{parent()}}
-{{ encore_entry_script_tags('controle_concours') }}
+	{{parent()}}
+	{{ encore_entry_script_tags('controle_concours') }}
 
 
 {% endblock %}
-
