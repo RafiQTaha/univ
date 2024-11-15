@@ -9,12 +9,14 @@
 		<section class="section">
 			<div class="section-header">
 				<h1>Adminstration Des Notes</h1>
-				<div class="section-header-breadcrumb">
-					{% for operation in operations %}
-						<a href="{{operation.link}}" class="{{operation.classTag}}" id="{{operation.idTag}}">
-							<i class="{{operation.icon}}"></i>
-							{{operation.designation}}</a>
-					{% endfor %}
+				<div
+					class="section-header-breadcrumb">
+					{# {% for operation in operations %}
+											<a href="{{operation.link}}" class="{{operation.classTag}}" id="{{operation.idTag}}">
+												<i class="{{operation.icon}}"></i>
+												{{operation.designation}}</a>
+										{% endfor %} #}
+					{% include "inc/action.html.twig" %}
 				</div>
 			</div>
 			<div class="section-body">
