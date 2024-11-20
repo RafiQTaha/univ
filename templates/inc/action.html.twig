@@ -1,0 +1,7 @@
+<div class="section-header-breadcrumb">
+	{% for operation in operations %}
+		<button class="{{operation.classTag}}" id="{{operation.idTag}}">
+			<i class="{{operation.icon}}"></i>
+			{{operation.designation}}</button>
+	{% endfor %}
+</div>

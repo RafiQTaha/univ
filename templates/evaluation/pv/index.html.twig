@@ -1,129 +1,127 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Univ - PV{% endblock %}
+{% block title %}Univ - PV
+{% endblock %}
 
 
 {% block body %}
-<div class="main-content">
-    <section class="section">
-        <div class="section-header">
-          <h1>PVs</h1>
-          <div class="section-header-breadcrumb">
-            {% for operation in operations %}
-                 <a href="{{operation.link}}" class="{{operation.classTag}}" id="{{operation.idTag}}"><i class="{{operation.icon}}"></i>  {{operation.designation}}</a>
-            {% endfor %}
-          </div>
-        </div>
-        <div class="section-body">
-        <div class="card">
-            <div class="card-header">
-                <h4>Tableau des PVs</h4>
-            </div>
-            <div class="card-body">
-                <div class="card-search" style="margin-bottom: 1.5rem;">
-                    <div class="row">
-                        <div class="col-md-2">
-                            <label for="etablissement">Etablissement:</label>
-                            <select class="form-control" name="etablissement" id="etablissement">
-                                <option value="">Choix Etablissement</option>
-                                {% for etablissement in etablissements %}
-                                    <option value="{{etablissement.id}}">{{etablissement.designation}}</option>
-                                {% endfor %} 
-                            </select>
-                        </div>
-                        <div class="col-md-2">
-                            <label for="formation">Formation:</label>
-                            <select class="form-control" name="formation" id="formation">
-                                <option value="">Choix Formation</option>
-                            </select>
-                        </div>
-                        <div class="col-md-2">
-                            <label for="annee">Annee:</label>
-                            <select class="form-control" name="annee" id="annee">
-                                <option value="">Choix Annee</option>
-                            </select>
-                        </div>
-                        <div class="col-md-2">
-                            <label for="promotion">Promotion:</label>
-                            <select class="form-control" name="promotion" id="promotion">
-                                <option value="">Choix Promotion</option>
-                            </select>
-                        </div>
-                        <div class="col-md-2">
-                            <label for="semestre">Semestre:</label>
-                            <select class="form-control" name="semestre" id="semestre">
-                                <option value="">Choix Semestre</option>
-                            </select>
-                        </div>
-                        {# <div class="col-md-2">
-                            <label for="module">Module:</label>
-                            <select class="form-control" name="module" id="module">
-                                <option value="">Choix Module</option>
-                            </select>
-                        </div>
-                        <div class="col-md-2">
-                            <label for="element">Elément:</label>
-                            <select class="form-control" name="element" id="element">
-                                <option value="">Choix Elément</option>
-                            </select>
-                        </div> #}
-                    </div>
-                </div>
-            <table id="datables_pvs" class="table table-striped" style="width:100%">
-                <thead>
-                    <tr>
-                        <th>Id</th>
-                        <th>Code</th>
-                        <th >Date</th>
-                        <th>Etablissement</th>
-                        <th>Formation</th>
-                        <th>Annee</th>
-                        <th width="8%">Promotion</th>
-                        <th>Semestre</th>
-                        <th>President</th>
-                        <th>Coordonnateur</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    
-                </tbody>
-                <tfoot>
-                    <tr>
-                        <th>Id</th>
-                        <th>Code</th>
-                        <th >Date</th>
-                        <th>Etablissement</th>
-                        <th>Formation</th>
-                        <th>Annee</th>
-                        <th width="8%">Promotion</th>
-                        <th>Semestre</th>
-                        <th>President</th>
-                        <th>Coordonnateur</th>
-                    </tr>
-                </tfoot>
-            </table>
-            </div>
-            
-        </div>
-        </div>
-    </section>
-</div>
+	<div class="main-content">
+		<section class="section">
+			<div class="section-header">
+				<h1>PVs</h1>
+				{# <div class="section-header-breadcrumb">
+				            {% for operation in operations %}
+				                 <a href="{{operation.link}}" class="{{operation.classTag}}" id="{{operation.idTag}}"><i class="{{operation.icon}}"></i>  {{operation.designation}}</a>
+				            {% endfor %}
+				          </div> #}
+				{% include "inc/action.html.twig" %}
+			</div>
+			<div class="section-body">
+				<div class="card">
+					<div class="card-header">
+						<h4>Tableau des PVs</h4>
+					</div>
+					<div class="card-body">
+						<div class="card-search" style="margin-bottom: 1.5rem;">
+							<div class="row">
+								<div class="col-md-2">
+									<label for="etablissement">Etablissement:</label>
+									<select class="form-control" name="etablissement" id="etablissement">
+										<option value="">Choix Etablissement</option>
+										{% for etablissement in etablissements %}
+											<option value="{{etablissement.id}}">{{etablissement.designation}}</option>
+										{% endfor %}
+									</select>
+								</div>
+								<div class="col-md-2">
+									<label for="formation">Formation:</label>
+									<select class="form-control" name="formation" id="formation">
+										<option value="">Choix Formation</option>
+									</select>
+								</div>
+								<div class="col-md-2">
+									<label for="annee">Annee:</label>
+									<select class="form-control" name="annee" id="annee">
+										<option value="">Choix Annee</option>
+									</select>
+								</div>
+								<div class="col-md-2">
+									<label for="promotion">Promotion:</label>
+									<select class="form-control" name="promotion" id="promotion">
+										<option value="">Choix Promotion</option>
+									</select>
+								</div>
+								<div class="col-md-2">
+									<label for="semestre">Semestre:</label>
+									<select class="form-control" name="semestre" id="semestre">
+										<option value="">Choix Semestre</option>
+									</select>
+								</div>
+								{# <div class="col-md-2">
+								                            <label for="module">Module:</label>
+								                            <select class="form-control" name="module" id="module">
+								                                <option value="">Choix Module</option>
+								                            </select>
+								                        </div>
+								                        <div class="col-md-2">
+								                            <label for="element">Elément:</label>
+								                            <select class="form-control" name="element" id="element">
+								                                <option value="">Choix Elément</option>
+								                            </select>
+								                        </div> #}
+							</div>
+						</div>
+						<table id="datables_pvs" class="table table-striped" style="width:100%">
+							<thead>
+								<tr>
+									<th>Id</th>
+									<th>Code</th>
+									<th>Date</th>
+									<th>Etablissement</th>
+									<th>Formation</th>
+									<th>Annee</th>
+									<th width="8%">Promotion</th>
+									<th>Semestre</th>
+									<th>President</th>
+									<th>Coordonnateur</th>
+								</tr>
+							</thead>
+							<tbody></tbody>
+							<tfoot>
+								<tr>
+									<th>Id</th>
+									<th>Code</th>
+									<th>Date</th>
+									<th>Etablissement</th>
+									<th>Formation</th>
+									<th>Annee</th>
+									<th width="8%">Promotion</th>
+									<th>Semestre</th>
+									<th>President</th>
+									<th>Coordonnateur</th>
+								</tr>
+							</tfoot>
+						</table>
+					</div>
+
+				</div>
+			</div>
+		</section>
+	</div>
 
 
-
-<!--Modal Import Group-->
-{% include 'evaluation/pv/modals/ajouter.html.twig' %}
-{% include 'evaluation/pv/modals/update_pv.html.twig' %}
-{% include 'evaluation/pv/modals/importer.html.twig' %}
-{# {% include 'evaluation/pv/modals/imprimer.html.twig' %} #}
+	<!--Modal Import Group-->
+	{% include 'evaluation/pv/modals/ajouter.html.twig' %}
+	{% include 'evaluation/pv/modals/update_pv.html.twig' %}
+	{% include 'evaluation/pv/modals/importer.html.twig' %}
+	{# {% include 'evaluation/pv/modals/imprimer.html.twig' %} #}
 
 {% endblock %}
 
 {% block javascripts %}
-{{parent()}}
-{{ encore_entry_script_tags('evaluationPv') }}
+	{{parent()}}
+	{{ encore_entry_script_tags('evaluationPv') }}
 
-{# <script src="/assets/js/administration/note.js"></script> #}
+	{# <script src="/assets/js/administration/note.js"></script> #}
 
 {% endblock %}
-

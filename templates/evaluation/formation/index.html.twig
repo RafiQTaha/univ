@@ -1,76 +1,71 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Univ - Formation{% endblock %}
+{% block title %}Univ - Formation
+{% endblock %}
 
 
 {% block body %}
-<div class="main-content">
-    <section class="section">
-        <div class="section-header">
-          <h1>Evaluation Des Formations</h1>
-          <div class="section-header-breadcrumb">
-              {% for operation in operations %}
-                <button class="{{operation.classTag}}" id="{{operation.idTag}}"><i class="{{operation.icon}}"></i>  {{operation.designation}}</button>
-              {% endfor %}
-              {# <a href="#" class="btn btn-primary ml-1" id="get_list_etudiant"><i class="fas fa-search" ></i>  Recherche</a> #}
+	<div class="main-content">
+		<section class="section">
+			<div class="section-header">
+				<h1>Evaluation Des Formations</h1>
+				<!--<div class="section-header-breadcrumb">
+				              {% for operation in operations %}
+				                <button class="{{operation.classTag}}" id="{{operation.idTag}}"><i class="{{operation.icon}}"></i>  {{operation.designation}}</button>
+				              {% endfor %}
+				              {# <a href="#" class="btn btn-primary ml-1" id="get_list_etudiant"><i class="fas fa-search" ></i>  Recherche</a> #}
+				
+				          </div>-->
+				{% include "inc/action.html.twig" %}
+			</div>
 
-          </div>
-        </div>
+			<div class="section-body">
+				<div class="card">
 
-        <div class="section-body">
-        <div class="card">
-            
-            <div class="card-body">
-                <div class="card-search first-card" style="margin-bottom: 1.5rem;">
-                    <div class="row">
-                        <div class="col-md-2">
-                            <label for="etablissement">Etablissement:</label>
-                            <select class="form-control" name="etablissement" id="etablissement">
-                                <option value="">Choix etablissement</option>
-                                {% for etablissement in etablissements %}
-                                    <option value="{{etablissement.id}}">{{etablissement.designation}}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                        <div class="col-md-2">
-                            <label for="formation">Formation:</label>
-                            <select class="form-control" name="formation" id="formation">
-                            </select>
-                        </div> 
-                        <div class="col-md-3">
-                            <label for="annee">Fin de formation (Année):</label>
-                            <select class="form-control" name="annee" id="annee">
-                            </select>
-                        </div>                   
-                    </div>
-                </div>
-                <div class="card-search" id="infos" style="margin-bottom: 1.5rem;" data-select2-id="select2-data-10-170j">
+					<div class="card-body">
+						<div class="card-search first-card" style="margin-bottom: 1.5rem;">
+							<div class="row">
+								<div class="col-md-2">
+									<label for="etablissement">Etablissement:</label>
+									<select class="form-control" name="etablissement" id="etablissement">
+										<option value="">Choix etablissement</option>
+										{% for etablissement in etablissements %}
+											<option value="{{etablissement.id}}">{{etablissement.designation}}</option>
+										{% endfor %}
+									</select>
+								</div>
+								<div class="col-md-2">
+									<label for="formation">Formation:</label>
+									<select class="form-control" name="formation" id="formation"></select>
+								</div>
+								<div class="col-md-3">
+									<label for="annee">Fin de formation (Année):</label>
+									<select class="form-control" name="annee" id="annee"></select>
+								</div>
+							</div>
+						</div>
+						<div class="card-search" id="infos" style="margin-bottom: 1.5rem;" data-select2-id="select2-data-10-170j"></div>
+						<table id="list_etu" class="table table-striped" style="width:100%"></table>
 
-                </div>
-                <table id="list_etu"  class="table table-striped" style="width:100%">
-                </table>
-                
-            </div>
-            
-        </div>
-        </div>
-    </section>
-</div>
+					</div>
+
+				</div>
+			</div>
+		</section>
+	</div>
 
 
-
-<!--Modal Import Group-->
-{% include 'evaluation/formation/modals/imprimer.html.twig' %}
-{% include 'evaluation/formation/modals/statut.html.twig' %}
-{% include 'evaluation/formation/modals/edit_notes.html.twig' %}
+	<!--Modal Import Group-->
+	{% include 'evaluation/formation/modals/imprimer.html.twig' %}
+	{% include 'evaluation/formation/modals/statut.html.twig' %}
+	{% include 'evaluation/formation/modals/edit_notes.html.twig' %}
 
 {% endblock %}
 
 {% block javascripts %}
-{{parent()}}
-{{ encore_entry_script_tags('evaluationFormation') }}
+	{{parent()}}
+	{{ encore_entry_script_tags('evaluationFormation') }}
 
-{# <script src="/assets/js/evaluation/module.js"></script> #}
+	{# <script src="/assets/js/evaluation/module.js"></script> #}
 
 {% endblock %}
-
