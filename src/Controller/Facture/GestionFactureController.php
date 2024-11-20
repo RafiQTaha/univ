@@ -533,13 +533,11 @@ class GestionFactureController extends AbstractController
         if ($frais == null) {
             return new JsonResponse('Merci de verifier le frais!', 500);  
         }
-        if ($operationcab->getOrganisme() == 'Payant' ) {
-            $org = $this->em->getRepository(POrganisme::class)->find(7);
+        if ($operationcab->getSousNatureDemande()) {
+            $org = $this->em->getRepository(POrganisme::class)->find($operationcab->getSousNatureDemande()->getOrganisme());
         }else {
-            // $operationcab->getPriseEnCharge()->getSousNatureDemande()->getOrganisme()->getAbreviation()
-            $natureDemande = $operationcab->getPriseEnCharge()->getSousNatureDemande()->getNatureDemande();
-            if ($natureDemande->getId() == 7) {
-                $org = $operationcab->getPriseEnCharge()->getSousNatureDemande()->getOrganisme();
+            if ($operationcab->getOrganisme() == 'Payant' ) {
+                $org = $this->em->getRepository(POrganisme::class)->find(7);
             }else {
                 $org = $this->em->getRepository(POrganisme::class)->find(1);
             }
@@ -556,6 +554,7 @@ class GestionFactureController extends AbstractController
         // $operationDet->setOrganisme($this->em->getRepository(POrganisme::class)->find($request->get('organisme_id')));
         $operationDet->setOrganisme($org);
         $this->em->persist($operationDet);
+        // dd($operationDet->getOrganisme());
         $this->em->flush();
         $operationDet->setCode(
             "OPD".str_pad($operationDet->getId(), 8, '0', STR_PAD_LEFT)

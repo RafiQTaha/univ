@@ -55,11 +55,17 @@
 /* 3.1 Misc */
 @import url("//fonts.googleapis.com/css?family=Nunito:400,600,700,800");
 :root {
-  --dark-color: #03152D; /*#6c757d*/
-  --main-bg-dark: #224F75; /*#6777ef*/
-  --second-bg: #256279; /*#394eea*/
-  --third-bg: #63949E; /*#acb5f6*/ 
-  --fourth-bg: #C8D8E7; /*#acb5f6*/ 
+  // --dark-color: #03152D; /*#6c757d*/
+  // --main-bg-dark: #224F75; /*#6777ef*/
+  // --second-bg: #256279; /*#394eea*/
+  // --third-bg: #63949E; /*#acb5f6*/ 
+  // --fourth-bg: #C8D8E7; /*#acb5f6*/ 
+  
+  --dark-color: #6c757d;
+  --main-bg-dark: #6777ef;
+  --second-bg: #394eea;
+  --third-bg: #acb5f6; 
+  --fourth-bg: #acb5f6; 
 }
 .btn:focus,
 .btn:active,
