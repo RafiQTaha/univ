@@ -99,7 +99,12 @@
 				</span>
 				:
 				{# {{inscription.annee.formation.etablissement.designation}} #}
-				{{inscription.annee.formation.etabSec.designation}}
+				{# {{inscription.annee.formation.etabSec.designation}} #}
+				{% if inscription.annee.formation.etabSec.id in [4,3] %}
+					{{inscription.annee.formation.etabSec.designation}}
+				{% else %}
+					{{inscription.annee.formation.etablissement.designation}}
+				{% endif %}
 			</td>
 			<td style="width: 20%; text-align: left;line-height: 20px">
 				<span style="font-size:14px;font-weight: bold;color:#000;"></span>
