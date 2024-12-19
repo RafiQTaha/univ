@@ -167,19 +167,22 @@
 	{% endif %} #}
 
 	Est inscrit(e)
-	<span style="font-size:14px;font-weight: bold;color:black;">
-	
 		{% if inscription.annee.formation.etabSec.id in [4,3] %}
-		{{a}} {{inscription.annee.formation.etabSec.designation}}
+		{{a}} 
+		<span style="font-size:14px;font-weight: bold;color:black;">
+		 {{inscription.annee.formation.etabSec.designation}}
+		</span>
 		{% else %}
-			Au {{inscription.annee.formation.etablissement.designation}}
+			Au 
+		<span style="font-size:14px;font-weight: bold;color:black;">
+		  {{inscription.annee.formation.etablissement.designation}}
+		</span>
 		{% endif %}
 		{# {% if inscription.annee.formation.etablissement.id == 25 %}
 			{{inscription.annee.formation.etabSec.designation}}
 		{% else %}
 			{{inscription.annee.formation.etablissement.designation}}
 		{% endif %} #}
-	</span>
 	sous le N°
 	<span style="font-size:14px;font-weight: bold;color:black;text-align: justify;">{{inscription.code}}</span>
 	en
